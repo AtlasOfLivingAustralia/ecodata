@@ -1,0 +1,243 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "inSituExSitu",
+                    "constraints": [
+                        "Ex-situ",
+                        "In-situ"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "newOrMaintained",
+                    "constraints": [
+                        "Newly established",
+                        "Maintained"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfSitesCreated",
+                    "validate": "required,min[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfDaysMaintainingBreedingPrograms",
+                    "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesOfBreedingProgram",
+                    "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesOfBreedingProgram)"
+                    },
+                    "dataType": "number",
+                    "name": "areaOfEnclosureHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesOfBreedingProgram)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesOfBreedingProgram)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "targetSpecies",
+                            "dwcAttribute": "scientificName",
+                            "description": "The threatened species targeted by the breeding program",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "breedingTechnique",
+                            "constraints": [
+                                "Seed bank or captive breeding",
+                                "Seed orchard",
+                                "Seed nursery",
+                                "Propagation",
+                                "Seed viability testing",
+                                "Seed genetic testing",
+                                "Fauna captive breeding program",
+                                "Fauna wild breeding program",
+                                "Other"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "otherBreedingTechnique",
+                            "description": "",
+                            "behaviour": [{
+                                "condition": "breedingTechnique == \"Other\"",
+                                "type": "enable"
+                            }],
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "individualsOrGroups",
+                            "constraints": [
+                                "Individuals",
+                                "Groups"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfIndividualsOrGroups",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfIndividualsReleased",
+                            "validate": "required,min[0]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "speciesInBreedingProgram"
+                }
+            ],
+            "dataType": "list",
+            "name": "breedingProgramDetails"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Establishing ex-situ breeding programs",
+    "title": "Establishing and maintaining breeding programs",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "addRowText": "Add a new breeding area",
+                "userAddedRows": true,
+                "source": "breedingProgramDetails",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Ex-situ / In-situ",
+                                "css": "span3",
+                                "source": "inSituExSitu",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Is this a newly established or maintained breeding program?",
+                                "css": "span3",
+                                "source": "newOrMaintained",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Number of breeding sites created",
+                                "css": "span3",
+                                "source": "numberOfSitesCreated",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Number of days maintaining breeding program",
+                                "css": "span3",
+                                "source": "numberOfDaysMaintainingBreedingPrograms",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Site/s of breeding program",
+                                "css": "span3",
+                                "source": "sitesOfBreedingProgram",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) of feral-free enclosures established or maintained",
+                                "css": "span3",
+                                "source": "areaOfEnclosureHa",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "addRowText": "Add a species",
+                        "columns": [
+                            {
+                                "width": "30%",
+                                "source": "targetSpecies",
+                                "title": "Targeted threatened species",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "breedingTechnique",
+                                "type": "select2",
+                                "title": "Technique of breeding program"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "otherBreedingTechnique",
+                                "type": "text",
+                                "title": "Technique of breeding program (if Other)"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "individualsOrGroups",
+                                "type": "selectOne",
+                                "title": "Individuals or groups?"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberOfIndividualsOrGroups",
+                                "title": "Number of groups / individuals in breeding program",
+                                "type": "number"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberOfIndividualsReleased",
+                                "title": "Number of individuals released or established in the wild",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "speciesInBreedingProgram",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

@@ -1,0 +1,47 @@
+{
+    "modelName": "Lessons Learned",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Discussion of the assumptions and project design. Did the project implementation happen as it was planned/envisaged?",
+            "name": "assumptions",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Discussion on whether the project risks impacted the project outcomes, or whether the controls to mitigate them were acceptable.",
+            "name": "projectRiskManagement",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of other lessons learnt from the project and how they may be applied to other projects in the future.",
+            "name": "projectLessons",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "assumptions",
+                    "preLabel": "ASSUMPTIONS - Did the project implementation happen as it was planned / envisaged?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectRiskManagement",
+                    "preLabel": "RISK MANAGEMENT - Discuss the effectiveness of your approach to managing project risks:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectLessons",
+                    "preLabel": "LESSONS - What other lessons did you or your organisation learn while undertaking this project?:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

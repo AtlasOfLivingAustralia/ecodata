@@ -1,0 +1,47 @@
+{
+    "modelName": "projectStageOutcomes",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Description of the environmental outcomes achieved by the project for this stage.",
+            "name": "projectEnvironmentalOutcomes",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the environmental outcomes achieved by the project for this stage.",
+            "name": "projectSocialOutcomes",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the environmental outcomes achieved by the project for this stage.",
+            "name": "projectEconomicOutcomes",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "projectEnvironmentalOutcomes",
+                    "preLabel": "Environmental outcomes of the project for this stage:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectSocialOutcomes",
+                    "preLabel": "Social outcomes of the project for this stage:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectEconomicOutcomes",
+                    "preLabel": "Economic outcomes of the project for this stage:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

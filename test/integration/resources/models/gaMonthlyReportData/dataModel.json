@@ -1,0 +1,179 @@
+{
+    "modelName": "Monthly Status Report Data",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Indicate the most appropriate status of the project at the end of the reporting month.",
+            "name": "projectStatus",
+            "constraints": [
+                "Commenced",
+                "Progressing - behind schedule",
+                "Progressing - on schedule",
+                "Completed",
+                "Cancelled"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "description": "If the project is running behind schedule and/or you have not completed data entry into MERIT for all relevant activities in the project schedule, you are required to explain why.",
+            "name": "projectStatusReason"
+        },
+        {
+            "dataType": "text",
+            "description": "If the project is running behind schedule, please explain how you intend to bring it back on schedule, including what actions you plan to take.",
+            "name": "remedialActions"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the number of participants who entered into a Participant Agreement for the Project and commenced the Project during the current month.",
+            "name": "totalParticipantsCommenced",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the number of Participants who fulfilled the requirements of their Participant Agreement and therefore completed the Project in the current month.",
+            "name": "totalParticipantsCompleted",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the number of Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
+            "name": "totalParticipantsNotCompleted",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Indigenous people who commenced participation in the Project in the current month.",
+            "name": "totalIndigenousParticipantsCommenced",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
+            "name": "trainingCommencedAccredited",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
+            "name": "trainingNoExited",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
+            "name": "trainingNoCompleted",
+            "validate": "required,min[0],max[9]"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [{
+                        "source": "projectStatus",
+                        "preLabel": "How is the project tracking?:",
+                        "type": "selectOne"
+                    }],
+                    "width": "30%",
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "projectStatusReason",
+                        "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
+                        "type": "textarea"
+                    }],
+                    "width": "30%",
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "remedialActions",
+                        "preLabel": "Intended remedial actions (if appropriate):",
+                        "type": "textarea"
+                    }],
+                    "width": "30%",
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'<\/i> to be provided separately.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Project Participation<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "totalParticipantsCommenced",
+                            "preLabel": "No. commencing projects:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalParticipantsCompleted",
+                            "preLabel": "No. completing projects:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalParticipantsNotCompleted",
+                            "preLabel": "No. not completing projects:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalIndigenousParticipantsCommenced",
+                            "preLabel": "No. of indigenous participants commenced:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Participant Training<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "trainingCommencedAccredited",
+                            "preLabel": "No. Commenced training:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "trainingNoExited",
+                            "preLabel": "No. Exited training:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "trainingNoCompleted",
+                            "preLabel": "No. Completed training:",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

@@ -1,0 +1,240 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the photos were taken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the photos were taken."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the photographer."
+        },
+        {
+            "dataType": "text",
+            "name": "ecosystemType",
+            "description": "",
+            "constraints": [
+                "Intertidal reef",
+                "Mangroves",
+                "Saltmarsh",
+                "Seagrass",
+                "Soft sediment"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "image",
+                    "name": "locationPhoto",
+                    "description": "Upload a photo taken of the fixed photo point location, including the direction that the photo was taken and any comments applicable.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "bearingInDegrees",
+                    "description": "Compass bearing for middle of photo (degrees clockwise from N)",
+                    "validate": "required,min[0],max[360]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "description": "Observation notes about the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "photoPointTable"
+        },
+        {
+            "defaultAccuracy": 10,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "seaSearch_fixedPhotoPoints",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Sea Search - Fixed Photo Points<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Notes:<\/b> Please record all marine pest species in the Image Library datasheet. Photos should be taken at or near low tide for intertidal habitats.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Photos at Fixed Location",
+                            "type": "section",
+                            "items": [{
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [
+                                        {
+                                            "computed": null,
+                                            "type": "row",
+                                            "items": [{
+                                                "preLabel": "Ecosystem type",
+                                                "inline": true,
+                                                "dataClass": "span8",
+                                                "source": "ecosystemType",
+                                                "preLabelClass": "span4",
+                                                "type": "selectOne"
+                                            }],
+                                            "class": ""
+                                        },
+                                        {
+                                            "allowHeaderWrap": "true",
+                                            "columns": [
+                                                {
+                                                    "computed": null,
+                                                    "width": "30%",
+                                                    "source": "locationPhoto",
+                                                    "title": "Photo point image",
+                                                    "type": "image"
+                                                },
+                                                {
+                                                    "width": "20%",
+                                                    "source": "bearingInDegrees",
+                                                    "title": "Compass bearing",
+                                                    "type": "number"
+                                                },
+                                                {
+                                                    "width": "50%",
+                                                    "source": "comments",
+                                                    "title": "Comments",
+                                                    "type": "textarea"
+                                                }
+                                            ],
+                                            "userAddedRows": "true",
+                                            "source": "photoPointTable",
+                                            "type": "table"
+                                        }
+                                    ]
+                                }],
+                                "class": ""
+                            }]
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Visit Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Photographer",
+                                        "inline": true,
+                                        "dataClass": "span8",
+                                        "source": "recordedBy",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }],
+                                    "class": ""
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Date",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyDate",
+                                        "preLabelClass": "span4",
+                                        "type": "date"
+                                    }],
+                                    "class": ""
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Time",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyStartTime",
+                                        "preLabelClass": "span4",
+                                        "type": "time"
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": true,
+                                "readonly": true,
+                                "includeSource": false,
+                                "includeAccuracy": true,
+                                "hideSiteSelection": false,
+                                "source": "location",
+                                "type": "geoMap",
+                                "zoomToProjectArea": true,
+                                "includeLocality": false
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                }
+            ],
+            "class": ""
+        }
+    ]
+}

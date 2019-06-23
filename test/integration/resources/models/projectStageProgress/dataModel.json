@@ -1,0 +1,46 @@
+{
+    "modelName": "projectStageOverview",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "stageOverviewProgress",
+            "description": "Describe in general terms how the project has progressed in this stage in respect to the achievement of immediate and intermediate targeted activities and outcomes.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "stageOverviewChallenges",
+            "description": "Provide a brief analysis of the overall project successes and challenges, and how the project has adapted. Include a brief summary about what has worked and what has not worked.",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "computed": null,
+            "type": "col",
+            "items": [
+                {
+                    "mode": "edit",
+                    "computed": null,
+                    "width": "100%",
+                    "source": "This section should provide an overview of how your project has progressed over this stage against the information for the activities and deliverables identified in your plan. Information provided here is used in the Stage Report Summary. More detail is requested in other sections below.",
+                    "type": "literal"
+                },
+                {
+                    "preLabel": "Progress against planned activities and outcomes:",
+                    "computed": null,
+                    "source": "stageOverviewProgress",
+                    "type": "textarea"
+                },
+                {
+                    "preLabel": "Successes, challenges and adaptations:",
+                    "computed": null,
+                    "source": "stageOverviewChallenges",
+                    "type": "textarea"
+                }
+            ]
+        }],
+        "class": "output-section"
+    }]
+}

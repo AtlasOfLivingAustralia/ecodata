@@ -1,0 +1,144 @@
+{
+    "modelName": "Plan Development Details",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Categorisation of the type of plan developed",
+            "name": "typeOfPlan",
+            "constraints": [
+                "Implementation works design",
+                "Project arrangements and governance",
+                "Regional plan",
+                "Catchment plan",
+                "Resource management plan",
+                "Marine protection plan",
+                "Property or Reserve plan",
+                "Recovery plan",
+                "Burn plan (fire management)",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The title of the product of the planning process",
+            "name": "nameOfPlan",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Version of plan being developed",
+            "name": "versionOfPlan",
+            "constraints": [
+                "New plan",
+                "Revision of an existing plan"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Revision number of the version of plan being developed",
+            "name": "versionRevisionNo"
+        },
+        {
+            "dataType": "number",
+            "description": "The area in square kilometres that the plan covers",
+            "name": "planCoverageArea"
+        },
+        {
+            "dataType": "date",
+            "description": "The date that the plan was completed or authorised (not implemented)",
+            "name": "planCompletionDate"
+        },
+        {
+            "dataType": "text",
+            "description": "Brief description of the planning process, outputs from it, and objectives of the plan",
+            "name": "activityOutline"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "typeOfPlan",
+                            "computed": null,
+                            "preLabel": "Type of planning being undertaken:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "nameOfPlan",
+                            "computed": null,
+                            "preLabel": "Name of the plan being developed:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "versionOfPlan",
+                            "computed": null,
+                            "preLabel": "Is this a new Plan or a revision of an existing Plan?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "versionRevisionNo",
+                            "computed": null,
+                            "preLabel": "Version number of the plan being developed:",
+                            "type": "text"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "planCoverageArea",
+                            "computed": null,
+                            "preLabel": "Area of plan coverage (km2):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "planCompletionDate",
+                            "computed": null,
+                            "preLabel": "Date that the plan was completed:",
+                            "type": "date"
+                        },
+                        {
+                            "source": "<h4>Please attach a copy of the Plan document via the Admin tab<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "activityOutline",
+                    "computed": null,
+                    "preLabel": "Describe what you are doing in this planning activity:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ],
+    "class": "output-section",
+    "type": "row"
+}

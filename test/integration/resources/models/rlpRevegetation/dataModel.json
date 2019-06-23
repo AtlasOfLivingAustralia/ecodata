@@ -1,0 +1,134 @@
+{
+  "title": "Revegetation",
+  "modelName": "RLP - Revegetation",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "description": "This is the total area where revegetation has been undertaken on sites for this project only.  Please see the reference guide for more information on revegetation.",
+      "name": "areaRevegetatedHa",
+      "units":"ha",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "description": "This is the total area where infill treatment has been undertaken on sites for this project only.  Please see the reference guide for more information on infill.",
+      "name": "areaInfillHa",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "revegetationDetails",
+      "columns": [
+        {
+          "dataType": "species",
+          "description": "",
+          "name": "species",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "revegetationMethod",
+          "dwcAttribute": "establishmentMeans",
+          "description": "The method used for planting",
+          "constraints": [
+            "Direct seeding",
+            "Planting",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherRevegetationMethod",
+          "description":"Please specify the revegetation method if Other was selected in the Revegetation Method column.",
+          "behaviour":[
+            {
+              "condition": "revegetationMethod == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "areaRevegetatedHa",
+              "preLabel": "Area of revegetation (ha)",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "source": "areaInfillHa",
+              "preLabel": "Area of revegetation (ha) - infill",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where revegetation was undertaken",
+              "css":"span6"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "source": "revegetationDetails",
+          "columns": [
+            {
+              "title": "Species planted / sown",
+              "source": "species",
+              "type": "speciesSelect",
+              "width":"40%"
+            },
+            {
+              "title": "Revegetation method",
+              "source": "revegetationMethod",
+              "type": "select2",
+              "width":"30%"
+            },
+            {
+              "title":"Revegetation method (if other)",
+              "source":"otherRevegetationMethod",
+              "type":"text",
+              "width":"30%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

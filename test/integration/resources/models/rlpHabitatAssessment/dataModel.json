@@ -1,0 +1,124 @@
+{
+  "title": "Habitat assessment",
+  "modelName": "RLP - Habitat assessment",
+  "dataModel": [
+    {
+      "dataType":"number",
+      "name":"areaCoveredByAssessmentHa",
+      "units":"ha",
+      "validate":"required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType":"list",
+      "name":"habitatsAssessed",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "habitatType",
+          "constraints":[
+            "type 1",
+            "type 2",
+            "type 3"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfAssessments",
+          "validate": "required,min[0]"
+        }
+      ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"number",
+              "source":"areaCoveredByAssessmentHa",
+              "preLabel":"Area covered by habitat assessment (ha)",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where assessments were undertaken",
+              "css":"span9"
+            }
+
+          ]
+        },
+        {
+          "columns": [
+            {
+              "source": "habitatType",
+              "title": "Target community / word heritage / Ramsar site",
+              "type": "select2",
+              "width":"70%"
+            },
+            {
+              "source": "numberOfAssessments",
+              "title": "Number of assessments undertaken",
+              "type": "number",
+              "width":"30%"
+            }
+          ],
+          "source":"habitatsAssessed",
+          "type": "table",
+          "userAddedRows": true
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"literal",
+              "source":"<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

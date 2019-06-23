@@ -1,0 +1,404 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "multiplePaddocks",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "paddockNum",
+                    "behaviour": [{
+                        "condition": "multiplePaddocks == \"Yes\"",
+                        "type": "enable"
+                    }]
+                },
+                {
+                    "dataType": "date",
+                    "name": "startDate",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "name": "endDate",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "typeOfStock",
+                    "description": "",
+                    "constraints": [
+                        "Cattle",
+                        "Sheep",
+                        "Goats",
+                        "Horses"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "productionType",
+                    "description": "",
+                    "constraints": {
+                        "default": [],
+                        "options": [
+                            {
+                                "condition": "typeOfStock == \"Cattle\"",
+                                "value": [
+                                    "N/A",
+                                    "Dairy",
+                                    "Meat"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Sheep\"",
+                                "value": [
+                                    "N/A",
+                                    "Dairy",
+                                    "Meat",
+                                    "Wool"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Goats\"",
+                                "value": [
+                                    "N/A",
+                                    "Dairy",
+                                    "Meat",
+                                    "Fibre"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Horses\"",
+                                "value": [
+                                    "N/A",
+                                    "Adjistment"
+                                ]
+                            }
+                        ],
+                        "type": "computed"
+                    }
+                },
+                {
+                    "dataType": "text",
+                    "name": "growthStage",
+                    "description": "",
+                    "constraints": {
+                        "default": [],
+                        "options": [
+                            {
+                                "condition": "typeOfStock == \"Cattle\"",
+                                "value": [
+                                    "Bull",
+                                    "Calf",
+                                    "Cow",
+                                    "Cow - Pregnant",
+                                    "Heifer",
+                                    "Steer",
+                                    "Weanling"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Sheep\"",
+                                "value": [
+                                    "Ewe",
+                                    "Ewe - Pregnant",
+                                    "Hogget",
+                                    "Lamb",
+                                    "Ram",
+                                    "Wether"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Goats\"",
+                                "value": [
+                                    "Buck",
+                                    "Weaner",
+                                    "Doe",
+                                    "Doe - Pregnant",
+                                    "Kid"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Horses\"",
+                                "value": [
+                                    "Colt",
+                                    "Filly",
+                                    "Foal",
+                                    "Gelding",
+                                    "Mare",
+                                    "Mare - Pregnant",
+                                    "Stallion",
+                                    "Yearling"
+                                ]
+                            }
+                        ],
+                        "type": "computed"
+                    }
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "description": "",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "breed",
+                    "description": "",
+                    "constraints": {
+                        "default": [],
+                        "options": [
+                            {
+                                "condition": "typeOfStock == \"Cattle\"",
+                                "value": [
+                                    "Africander",
+                                    "Angus",
+                                    "Anjou",
+                                    "Beef Shorthorn",
+                                    "Belgian Blue",
+                                    "Belmont Red",
+                                    "Black Wagyu",
+                                    "Blonde Aquitaine",
+                                    "Boran",
+                                    "Braford",
+                                    "Brahman",
+                                    "Brangus",
+                                    "Brown Swiss",
+                                    "Charbray",
+                                    "Charolais",
+                                    "Chianina",
+                                    "Crossbreed",
+                                    "Devon",
+                                    "Droughtmaster",
+                                    "Galloway",
+                                    "Gelbvieh",
+                                    "Hereford",
+                                    "Holstein",
+                                    "Jersey",
+                                    "Limousin",
+                                    "Maine",
+                                    "Maine Anjou",
+                                    "Murray Grey",
+                                    "Piedmontese",
+                                    "Poll Hereford",
+                                    "Red Wagyu",
+                                    "Romagnola",
+                                    "Sahiwal",
+                                    "Santa Gertrudis",
+                                    "Senepol",
+                                    "Shorthorn",
+                                    "Simmental",
+                                    "South Devon",
+                                    "Tuli",
+                                    "Other"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Sheep\"",
+                                "value": [
+                                    "Afrino",
+                                    "Aussiedown",
+                                    "Australian Finnsheep",
+                                    "Bond",
+                                    "Border Leicester",
+                                    "Cheviot",
+                                    "Composite",
+                                    "Coopworth",
+                                    "Cormo",
+                                    "Corriedale",
+                                    "Crossbreed",
+                                    "Damaras",
+                                    "Dohne",
+                                    "Dorper",
+                                    "Dorset Down",
+                                    "Dorset Horn",
+                                    "Drysdale",
+                                    "East Friesian",
+                                    "English Leiceter",
+                                    "Gromark",
+                                    "Hampshire Down",
+                                    "Lincoln",
+                                    "Merino",
+                                    "Perendale",
+                                    "Poll Dorset",
+                                    "Poll Merino",
+                                    "Poll Wiltshire",
+                                    "Polwarth",
+                                    "Romney",
+                                    "Ryeland",
+                                    "Sharlea",
+                                    "Shropshire",
+                                    "South Suffolk",
+                                    "Southdown",
+                                    "Suffolk",
+                                    "Texel",
+                                    "Tukidale",
+                                    "White Suffolk",
+                                    "Wiltipoll",
+                                    "Wiltshire Horn",
+                                    "Other"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Goats\"",
+                                "value": [
+                                    "Anglo-Nubian",
+                                    "Angora",
+                                    "Australian Brown",
+                                    "Australian Melaan",
+                                    "Boer",
+                                    "British Alpine",
+                                    "Cashmere",
+                                    "Crossbreed",
+                                    "Kalahari Red",
+                                    "Mohair",
+                                    "Rangeland",
+                                    "Saanen",
+                                    "Toggenburg",
+                                    "Other"
+                                ]
+                            },
+                            {
+                                "condition": "typeOfStock == \"Horses\"",
+                                "value": []
+                            }
+                        ],
+                        "type": "computed"
+                    }
+                },
+                {
+                    "dataType": "number",
+                    "name": "swardHeightCm",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "groundCoverPercent",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "grazingPeriods"
+        },
+        {
+            "dataType": "number",
+            "name": "cost",
+            "validate": "integer,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "modelName": "ESP Livestock Grazing Management",
+    "title": "Livestock Grazing Management",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. <br/><i>Please endeavour to record sward height and ground cover percentage after each grazing period.<\/i>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "preLabel": "Is this site divided up into multiple paddocks?",
+                    "source": "multiplePaddocks",
+                    "type": "selectOne"
+                }]
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": true,
+                "disableTableUpload": false,
+                "columns": [
+                    {
+                        "source": "paddockNum",
+                        "title": "Paddock (if applicable)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "startDate",
+                        "title": "Start Date",
+                        "type": "simpleDate"
+                    },
+                    {
+                        "source": "endDate",
+                        "title": "End Date",
+                        "type": "simpleDate"
+                    },
+                    {
+                        "source": "typeOfStock",
+                        "title": "Type of Stock",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "productionType",
+                        "title": "Production Type",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "growthStage",
+                        "title": "Growth Stage",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "individualCount",
+                        "title": "No. Individuals",
+                        "type": "number"
+                    },
+                    {
+                        "source": "breed",
+                        "title": "Breed",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "swardHeightCm",
+                        "title": "Sward Height (cm)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "groundCoverPercent",
+                        "title": "Ground cover %",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "grazingPeriods",
+                "title": "<b>Please record all grazing periods for this site:<\/b> <br/>If your situation makes it impractical to record your grazing information in the table below, please delete any row(s) from the table below and instead provide a summary of your grazing activities in the textbox below.<p/>",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Total cost of management actions",
+                "source": "cost",
+                "type": "currency"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea",
+                "rows": 5
+            }]
+        }
+    ]
+}

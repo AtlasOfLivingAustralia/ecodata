@@ -1,0 +1,246 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name(s) of people who participated in the survey. For schools and community groups, provide the names of the school or group only.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "submittedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the survey started."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The time at which the survey finished."
+        },
+        {
+            "dataType": "stringList",
+            "name": "eventWeather",
+            "description": "Weather conditions at the time of the survey. Select all that apply. If 'Other', please describe in comments.",
+            "constraints": [
+                "Sunny",
+                "Cloudy",
+                "Rainy",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "debrisWeightInKilograms",
+            "description": "The weight in kilograms of litter and debris collected during the survey event.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "weedsWeightInKilograms",
+            "description": "The weight in kilograms of weeds removed during the survey event.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfSpeciesPlanted",
+            "description": "The different species planted on the site during the event.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalNumberPlanted",
+            "description": "The total number of individual plants planted on the site during the event.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalParticipantsNotEmployed",
+            "description": "The total number of people involved in all activities undertaken during the event. Should not include delivery partners or people employed in the project. These would typically be the volunteer participants.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "stringList",
+            "name": "activityType",
+            "description": "The types of coastal works activities undertaken during the event. Select all that apply. If 'Other', please describe in comments.",
+            "constraints": [
+                "Dune restoration",
+                "Construction work",
+                "Maintenance work",
+                "Dredging",
+                "Landscaping",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "Include any comments or notes as appropriate. If 'Other' selected for any other field, please also describe here."
+        },
+        {
+            "dataType": "Image",
+            "name": "surveyPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Photo of the survey event/activity."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "dunewatchActivitySummary",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h4 class='text-default text-left'><b>Registration Details<\/b><\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Submitted by",
+                        "computed": null,
+                        "source": "submittedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Survey worker(s)",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Date",
+                        "computed": null,
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Start time",
+                        "computed": null,
+                        "source": "surveyStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Finish time",
+                        "computed": null,
+                        "source": "surveyFinishTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Weather (tick all that apply)",
+                        "computed": null,
+                        "source": "eventWeather",
+                        "type": "selectMany"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<br><h4 class='text-default text-left'><b>Activity Summary<\/b><\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Rubbish weight (kg)",
+                        "computed": null,
+                        "source": "debrisWeightInKilograms",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Weeds weight (kg)",
+                        "computed": null,
+                        "source": "weedsWeightInKilograms",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Number of plant species planted",
+                        "computed": null,
+                        "source": "numberOfSpeciesPlanted",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Total number of plants planted",
+                        "computed": null,
+                        "source": "totalNumberPlanted",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Volunteers attended",
+                        "computed": null,
+                        "source": "totalParticipantsNotEmployed",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Coastal works (tick all that apply)",
+                        "computed": null,
+                        "source": "activityType",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Comments",
+                        "computed": null,
+                        "source": "eventRemarks",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Photo of the activity site",
+                        "computed": null,
+                        "source": "eventPhoto",
+                        "type": "image"
+                    }
+                ],
+                "class": "output-section"
+            },
+            {
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<i>Zoom in on the map, select the marker, then click on the location of the dive site.<br><b>Give the site a name in the 'Matched locality' field, then save<\/b> the location to store it for future use.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

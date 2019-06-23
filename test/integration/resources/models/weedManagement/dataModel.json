@@ -1,0 +1,184 @@
+{
+    "modelName": "Weed Management",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "activityPurpose",
+            "constraints": [
+                "Biodiverse plantings",
+                "Protecting and enhancing existing native vegetation",
+                "Managing threats to biodiversity",
+                "Enhancing and enabling technologies & industries"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "targetSpecies"
+        },
+        {
+            "dataType": "text",
+            "name": "infestationStatus",
+            "constraints": [
+                "New infestation",
+                "Active infestation",
+                "Under control",
+                "Under monitoring",
+                "Closed",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "typeOfTreatment",
+            "constraints": [
+                "Initial treatment",
+                "Follow-up treatment"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "treatmentStatus",
+            "constraints": [
+                "Proposed (PROW)",
+                "Completed (COMW)",
+                "Abandoned (ABNW)",
+                "Evident (EVNW)",
+                "Not recorded (NRAS)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "howEffectiveWasLastTreatment",
+            "constraints": [
+                "0% - Ineffective",
+                "10% -"
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "areaTreatedHa"
+        },
+        {
+            "dataType": "text",
+            "name": "treatmentMethod",
+            "constraints": []
+        },
+        {
+            "dataType": "text",
+            "name": "bioControlAgent",
+            "constraints": []
+        },
+        {
+            "dataType": "text",
+            "name": "detailsOfControlMethod"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "title": "Weed Treatment Details",
+        "items": [
+            {
+                "items": [
+                    {
+                        "items": [
+                            {
+                                "source": "activityPurpose",
+                                "computed": null,
+                                "preLabel": "Activity purpose:",
+                                "type": "selectOne",
+                                "validate": "required"
+                            },
+                            {
+                                "source": "targetSpecies",
+                                "computed": null,
+                                "preLabel": "Target species",
+                                "type": "autocomplete",
+                                "validate": "required"
+                            },
+                            {
+                                "source": "infestationStatus",
+                                "computed": null,
+                                "preLabel": "Infestation status:",
+                                "type": "selectOne"
+                            },
+                            {
+                                "source": "typeOfTreatment",
+                                "computed": null,
+                                "preLabel": "Type of treatment:",
+                                "type": "selectOne"
+                            },
+                            {
+                                "source": "treatmentStatus",
+                                "computed": null,
+                                "preLabel": "Treatment status:",
+                                "type": "selectOne"
+                            }
+                        ],
+                        "computed": null,
+                        "type": "col"
+                    },
+                    {
+                        "items": [
+                            {
+                                "source": "howEffectiveWasLastTreatment",
+                                "computed": null,
+                                "preLabel": "How effective was the last treatment?",
+                                "type": "selectOne"
+                            },
+                            {
+                                "source": "areaTreatedHa",
+                                "computed": null,
+                                "preLabel": "Area Treated (Ha):",
+                                "type": "number"
+                            },
+                            {
+                                "source": "treatmentMethod",
+                                "computed": null,
+                                "preLabel": "Treatment method:",
+                                "type": "selectOne"
+                            },
+                            {
+                                "source": "bioControlAgent",
+                                "computed": null,
+                                "preLabel": "Bio-control agent:",
+                                "type": "selectOne"
+                            }
+                        ],
+                        "computed": null,
+                        "type": "col"
+                    }
+                ],
+                "computed": null,
+                "class": "output-section",
+                "type": "row"
+            },
+            {
+                "items": [{
+                    "source": "detailsOfControlMethod",
+                    "computed": null,
+                    "preLabel": "Details of control method:",
+                    "type": "textarea",
+                    "span": "12"
+                }],
+                "computed": null,
+                "type": "row"
+            },
+            {
+                "items": [{
+                    "source": "notes",
+                    "computed": null,
+                    "width": "100%",
+                    "preLabel": "Notes:",
+                    "type": "textarea"
+                }],
+                "computed": null,
+                "type": "row"
+            }
+        ],
+        "type": "section"
+    }]
+}

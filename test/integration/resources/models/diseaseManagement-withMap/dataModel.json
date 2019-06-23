@@ -1,0 +1,178 @@
+{
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "The method used in this activity to manage disease",
+            "name": "diseaseManagementMethod",
+            "constraints": [
+                "Biological control agents",
+                "Fumigation",
+                "Host destruction",
+                "Plant disease management - quarantine",
+                "Plant disease management - treatment",
+                "Plant disease management – hygiene",
+                "Positive competition",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The purpose for which this activity is being undertaken",
+            "name": "diseaseManagementPurpose",
+            "constraints": [
+                "Experimental",
+                "Management",
+                "Research",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "species",
+            "description": "Disease species targeted for treatment (start typing a  scientific or common name for a species)",
+            "name": "targetSpecies",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares covered by quarantine protocols and / or treatment:",
+            "name": "areaTreatedHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Number of individual plants or animals (or colonies as applicable) covered by quarantine protocols and / or treatment:",
+            "name": "numberTreated",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Cost of the treatment on a per hectare basis",
+            "name": "treatmentCostPerHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "diseaseManagement_withMap",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "targetSpecies",
+                            "preLabel": "Target species:",
+                            "computed": null,
+                            "type": "autocomplete"
+                        },
+                        {
+                            "source": "areaTreatedHa",
+                            "preLabel": "Area quarantined / treated (Ha):",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "<h3>OR<\/h3>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "numberTreated",
+                            "preLabel": "No. of individuals or colonies quarantined / treated:",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "treatmentCostPerHa",
+                            "preLabel": "Cost of treatment / Ha.:",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "activityDuration",
+                            "preLabel": "Activity duration (Hrs):",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "diseaseManagementPurpose",
+                            "preLabel": "Disease management purpose:",
+                            "computed": null,
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "diseaseManagementMethod",
+                            "preLabel": "Disease management method:",
+                            "computed": null,
+                            "type": "selectMany"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "items": [{
+                            "includeSource": false,
+                            "orientation": "vertical",
+                            "includeNotes": false,
+                            "hideSiteSelection": true,
+                            "zoomToProjectArea": true,
+                            "source": "location",
+                            "computed": null,
+                            "autoLocalitySearch": true,
+                            "type": "geoMap",
+                            "includeAccuracy": false,
+                            "readonly": false,
+                            "includeLocality": false
+                        }],
+                        "computed": null,
+                        "type": "col"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "width": "90%",
+                "preLabel": "Comments / Notes",
+                "computed": null,
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

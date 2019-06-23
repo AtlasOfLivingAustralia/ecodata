@@ -1,0 +1,533 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "basisOfRecord",
+            "dwcAttribute": "basisOfRecord"
+        },
+        {
+            "dataType": "text",
+            "name": "deviceId",
+            "description": "A unique identifier of the particular camera device.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "cameraModel",
+            "description": "Select the make and model of the camera. If 'Other', please indicate in camera comments.",
+            "constraints": [
+                "Browning Recon Force Platinum",
+                "Browning Spec Ops Platinum",
+                "Browning Strike Force Elite",
+                "Browning Strike Force HD",
+                "Bushnell Aggressor Wireless",
+                "Bushnell Aggressor HD",
+                "Bushnell Aggressor No Glow",
+                "Bushnell Essential E2",
+                "Bushnell Natureview",
+                "Covert Blackhawk 12.0",
+                "Covert Illuminator",
+                "Covert Night Stalker",
+                "Covert Night Stryker",
+                "Covert Outlook",
+                "Moultrie M-888",
+                "Moultrie M-888i",
+                "Moultrie White Flash",
+                "Muddy Pro-Cam 10",
+                "Muddy Pro-Cam 12",
+                "Plotwatcher Pro",
+                "Primos Proof Cam 2",
+                "Primos Proof Cam 3",
+                "Reconyx HC550",
+                "Reconyx HyperFire HC500",
+                "Reconyx HyperFire HC600",
+                "Reconyx SC950",
+                "Reconyx SC950C",
+                "Reconyx SM750",
+                "Reconyx UltraFire XR6",
+                "Reconyx Ultrafire XS8",
+                "Reconyx WR6",
+                "ScoutGuard SG550",
+                "ScoutGuard SG551",
+                "Scoutguard SG560C",
+                "Scoutguard SG565",
+                "Spartan GoCam AT&T Red Glow",
+                "Spartan GoCam No Glow",
+                "Spypoint Force 10",
+                "Spypoint Force 11D",
+                "Spypoint Link 3G",
+                "Spypoint MMS ",
+                "Spypoint Solar",
+                "Stealth Cam G34 Pro",
+                "Stealth Cam G45NG Pro",
+                "Stealth Cam PX36NG",
+                "Stealth Cam ZX24",
+                "Stealth Cam ZX36NG",
+                "Other"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "sensorType",
+            "description": "Indicate the type of sensor used to trigger the camera. Please also describe in the comments section any other relevant information about the sensor.",
+            "constraints": [
+                "Passive infra-red",
+                "Active infra-red",
+                "Beam-breaker",
+                "Microwave motion",
+                "Mechanical trigger",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "mountingInfrastructure",
+            "description": "Indicate what type of structure the camera was mounted on.",
+            "constraints": [
+                "Tree trunk or stem",
+                "Tree branch",
+                "Fixed tripod/post",
+                "Temporary tripod/post",
+                "Installation on rock face",
+                "Installation on building wall or ledge",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "mountingHeight",
+            "description": "Indicate how high above the ground the PIR of the camera was mounted.",
+            "constraints": [
+                "0 - 20 cm",
+                "21 - 50 cm",
+                "51 - 70 cm",
+                "71 - 100 cm",
+                "101 - 150 cm",
+                "151 - 200 cm",
+                ">200 cm"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "bait",
+            "description": "Indicate whether a bait or lure was used and if so, what kind of bait/lure. Please describe details in the comments section.",
+            "constraints": [
+                "None",
+                "Audio",
+                "Food",
+                "Olafactory",
+                "Visual",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "date",
+            "name": "surveyStartDate",
+            "description": "The date on which the sampling event commenced.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyEndDate",
+            "description": "The date that the date card was retrived from the camera (ie. the end date of the sampling event).",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "samplingEffort",
+            "dwcAttribute": "samplingEffort",
+            "description": "The number of days that the camera was deployed for the sampling event."
+        },
+        {
+            "dataType": "text",
+            "name": "comments1",
+            "dwcAttribute": "locationRemarks",
+            "description": "Notes about the camera used (including serial number), general location description, mounting and baiting information, etc."
+        },
+        {
+            "dataType": "number",
+            "name": "cameraOrientation",
+            "description": "The angle of orientation of the camera (degrees). ie. the direction that the camera is pointing.",
+            "validate": "min[1],max[360]"
+        },
+        {
+            "dataType": "text",
+            "name": "environment",
+            "dwcAttribute": "habitat",
+            "description": "The type of vegetation and environment in which the camera was located.",
+            "constraints": [
+                "Native open grassland",
+                "Non-native open grassland",
+                "Native grassy woodland",
+                "Native woodland",
+                "Native open forest",
+                "Native dense forest",
+                "Mallee woodland",
+                "Plantation softwood forest",
+                "Plantation hardwood forest",
+                "Dryland grazing pastures",
+                "Irrigated grazing pastures",
+                "Dryland cropping",
+                "Irrigated cropping",
+                "Horticulture",
+                "Extractive industry",
+                "Urban parkland",
+                "Urban built area"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "slope",
+            "description": "Please indicate how steep the terrain was at the camera position.",
+            "constraints": [
+                "Flat",
+                "1 - 5 %",
+                "6 - 10 %",
+                "11 - 15 %",
+                "16 - 20 %",
+                "21 - 30 %",
+                "31 - 50 %",
+                ">50 %"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "aspect",
+            "description": "Please indicate the aspect of the terrain at the camera position.",
+            "constraints": [
+                "North",
+                "North east",
+                "East",
+                "South east",
+                "South",
+                "South west",
+                "West",
+                "North west"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "trapSetBy",
+            "description": "The name of the person who set up/established the camera trap for the sampling event.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "dataRetrivedBy",
+            "description": "The name of the person who collected the data card from the camera device."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the main person who entered data from the data card into the database"
+        },
+        {
+            "dataType": "image",
+            "name": "locationPhoto",
+            "description": "Upload a photo taken of the mounted camera and it's surroundings."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "recordDate",
+                    "dwcAttribute": "eventDate",
+                    "description": "The date on which the sighting was made.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "recordTime",
+                    "dwcAttribute": "eventTime",
+                    "description": "The time at which the sighting was made."
+                },
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the animal observed."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence",
+                    "dwcAttribute": "identificationQualifier",
+                    "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "identifiedBy",
+                    "dwcAttribute": "identifiedBy",
+                    "description": "The name of the person who identified the species recorded in the image."
+                },
+                {
+                    "dataType": "text",
+                    "name": "notes",
+                    "dwcAttribute": "eventRemarks",
+                    "description": "Observation notes about the record."
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Upload the camera trap image containing the species at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "multiSightingTable"
+        }
+    ],
+    "modelName": "cameraTrapRecords_1",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Camera information for trapping survey<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<b><i>Note: A trapping survey is a single period of deployment of a specific camera at a specific location.<\/i><\/b>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Unique id of the camera",
+                            "computed": null,
+                            "source": "deviceId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Make and model of camera",
+                            "computed": null,
+                            "source": "cameraModel",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Type of sensor",
+                            "computed": null,
+                            "source": "sensorType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "What was the camera mounted on?",
+                            "computed": null,
+                            "source": "mountingInfrastructure",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Mounting height of the PIR",
+                            "computed": null,
+                            "source": "mountingHeight",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Camera orientation (degrees)",
+                            "computed": null,
+                            "source": "cameraOrientation",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Bait or lure used (describe in camera notes)",
+                            "computed": null,
+                            "source": "bait",
+                            "type": "selectMany"
+                        },
+                        {
+                            "preLabel": "Sampling start date",
+                            "computed": null,
+                            "source": "surveyStartDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Sampling end date",
+                            "computed": null,
+                            "source": "surveyEndDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Camera notes",
+                            "computed": null,
+                            "source": "comments1",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Name of person who set up the camera trap",
+                            "computed": null,
+                            "source": "trapSetBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Name of person who retrieved the camera trap data",
+                            "computed": null,
+                            "source": "dataRetrivedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Name of person who databased the camera trap data",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "includeNotes": true,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": false,
+                            "includeSource": false,
+                            "includeAccuracy": true,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": false
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Site Description<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "What best describes the environment in which the camera trap is mounted?",
+                            "computed": null,
+                            "source": "environment",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "How steep is the ground around the camera position?",
+                            "computed": null,
+                            "source": "slope",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "What direction does the general slope of the land face?",
+                            "computed": null,
+                            "source": "aspect",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Image of camera location and mounting",
+                            "computed": null,
+                            "source": "locationPhoto",
+                            "type": "image"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Species sightings recorded by the camera during the camera trapping survey<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "recordDate",
+                        "title": "Date of sighting",
+                        "type": "text"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "recordTime",
+                        "title": "Time of species recording",
+                        "type": "text"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "species",
+                        "title": "Species recorded",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "identificationConfidence",
+                        "title": "Id confidence",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "individualCount",
+                        "title": "No. of individuals",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "identifiedBy",
+                        "title": "Name of identifier",
+                        "type": "text"
+                    },
+                    {
+                        "width": "30%",
+                        "source": "notes",
+                        "title": "Comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "19%",
+                        "source": "sightingPhoto",
+                        "title": "Camera image of species",
+                        "type": "imageDialog"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "multiSightingTable",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

@@ -1,0 +1,172 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "surveyType",
+            "description": "",
+            "constraints": [
+                "S - Survey",
+                "I - Incidental",
+                "M - Sightings over a Month"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "raouNumber",
+            "description": "The number allocated by the RAOU to represent the species."
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the bird observed. Start typing a common or scientific name. Choose 'Unknown' if you don't know.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals of the species observed.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyStartDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made or the start date of the survey (if it is a month-long survey).",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyFinishDate",
+            "dwcAttribute": "eventFinishDate",
+            "description": "The finish date of the survey (if it was a month-long survey)."
+        },
+        {
+            "dataType": "text",
+            "name": "sightingComments",
+            "dwcAttribute": "comments",
+            "description": "Notes relevant to a particular sighting."
+        },
+        {
+            "dataType": "text",
+            "name": "bookNumber",
+            "description": "The number of the field notebook in which the observation was recorded."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the sighing, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "wolliCk-Rankin_observations",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Survey type",
+                        "source": "surveyType",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "RAOU Number",
+                        "source": "raouNumber",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Species name",
+                        "source": "species",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "preLabel": "Individual count",
+                        "source": "individualCount",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Date",
+                        "source": "surveyStartDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "End Date",
+                        "source": "surveyFinishDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Notes",
+                        "source": "comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Book number",
+                        "source": "bookNumber",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Notes",
+                        "computed": null,
+                        "source": "notes",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "source": "<font-size='0.8em'><i>Select a location (from the drop-down list) where you made the sighting. Change the base map to show the satellite image.<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

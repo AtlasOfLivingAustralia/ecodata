@@ -1,0 +1,51 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "number",
+                "name": "groundCoverPercent",
+                "validate": "required,min[0],max[100]"
+            },
+            {
+                "dataType": "date",
+                "name": "dateMeasured",
+                "validate": "required"
+            }
+        ],
+        "dataType": "list",
+        "name": "groundCoverPercent"
+    }],
+    "description": "Ground cover is the plant material covering the ground, both living and dead. To get a % estimate stand with your feet about 50cm apart. Visualise a 50cm square in front of your feet and estimate the percentage of groundcover in it. Do this a few times across the site and average the results.",
+    "modelName": "ESP Ground Cover",
+    "title": "Ground Cover % Estimate",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "If you undertake grazing, please record ground cover at the end of your grazing periods (in the table under “Livestock Grazing Management). If you do not undertake grazing, then record ground cover percentage at the same time that you take the photo-point photograph for this site. Please ensure that this is done at the same time each year.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "groundCoverPercent",
+                        "title": "Ground cover %",
+                        "type": "number"
+                    },
+                    {
+                        "source": "dateMeasured",
+                        "title": "Date measured",
+                        "type": "date"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "groundCoverPercent",
+                "type": "table"
+            }]
+        }
+    ]
+}

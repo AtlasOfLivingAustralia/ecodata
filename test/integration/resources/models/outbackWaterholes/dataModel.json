@@ -1,0 +1,184 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that the survey was undertaken",
+            "validate": "required,past[now]"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person or group undertaking the sampling event",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "sampleId",
+            "dwcAttribute": "materialSampleID",
+            "description": "The pre-allocated bottle number or your particular bottle number or identifier (if using your own bottle).",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "fieldNotes",
+            "dwcAttribute": "fieldNotes",
+            "description": "General observations about site and weather conditions at the time of sampling."
+        },
+        {
+            "dataType": "image",
+            "name": "locationPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Attach a photo(s) of the sample location."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "outbackWaterholes",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Outback Water Sampling<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Sampling Information",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Sampling date",
+                                        "source": "surveyDate",
+                                        "type": "date"
+                                    }]
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Recorded by",
+                                        "source": "recordedBy",
+                                        "type": "text"
+                                    }]
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "col",
+                                        "items": [{
+                                            "source": "Enter the number on the provided sample bottle or, if using your own bottle, write a unique number on the bottle in permanent marker and enter that number here.",
+                                            "type": "literal"
+                                        }]
+                                    },
+                                    {
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Sample bottle number",
+                                            "source": "sampleId",
+                                            "type": "text"
+                                        }]
+                                    }
+                                ]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Notes, comments and observations",
+                                        "source": "fieldNotes",
+                                        "type": "textarea"
+                                    }]
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "location photo",
+                                        "source": "locationPhoto",
+                                        "type": "image"
+                                    }]
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [{
+                            "boxed": true,
+                            "title": "Location",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": false,
+                                    "readonly": true,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": true,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "zoomToProjectArea": true,
+                                    "includeLocality": false
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    }]
+                }
+            ]
+        }
+    ]
+}

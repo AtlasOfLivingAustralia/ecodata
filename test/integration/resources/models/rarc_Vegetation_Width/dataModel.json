@@ -1,0 +1,132 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "parameter",
+                "description": ""
+            },
+            {
+                "dataType": "number",
+                "name": "transectOne",
+                "description": "",
+                "validate": "min[0]"
+            },
+            {
+                "dataType": "number",
+                "name": "transectTwo",
+                "description": "",
+                "validate": "min[0]"
+            },
+            {
+                "dataType": "number",
+                "name": "transectThree",
+                "description": "",
+                "validate": "min[0]"
+            },
+            {
+                "dataType": "number",
+                "name": "transectFour",
+                "description": "",
+                "validate": "min[0]"
+            },
+            {
+                "dataType": "number",
+                "name": "vegetationWidthAverageScore",
+                "description": ""
+            }
+        ],
+        "dataType": "list",
+        "name": "canopyVegetationTable",
+        "defaultRows": [
+            {
+                "channelWidth_T1": "",
+                "channelWidth_averageScore": "",
+                "channelWidth_T2": "",
+                "channelWidth_T3": "",
+                "channelWidth_T4": "",
+                "parameter": "Channel Width (CW)"
+            },
+            {
+                "vegetationWidth_T2": "",
+                "vegetationWidth_T1": "",
+                "vegetationWidth_T4": "",
+                "parameter": "Vegetation Width (VW)",
+                "vegetationWidth_T3": "",
+                "vegetationWidth_averageScore": ""
+            },
+            {
+                "vegetationWidth_T2_score": "",
+                "vegetationWidth_T1_score": "",
+                "vegetationWidth_averageScoreTotal": "",
+                "vegetationWidth_T3_score": "",
+                "parameter": "Score",
+                "vegetationWidth_T4_score": ""
+            }
+        ]
+    }],
+    "modelName": "rarc_vegetationWidthScores",
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "type": "col",
+            "items": [{
+                "boxed": true,
+                "title": "Width of Riparian Canopy Vegetation",
+                "type": "section",
+                "items": [{
+                    "computed": null,
+                    "type": "row",
+                    "items": [{
+                        "allowRowDelete": "false",
+                        "allowHeaderWrap": true,
+                        "columns": [
+                            {
+                                "width": "25%",
+                                "noEdit": true,
+                                "source": "parameter",
+                                "type": "text",
+                                "title": ""
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectOne",
+                                "type": "number",
+                                "title": "Transect 1"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectTwo",
+                                "type": "number",
+                                "title": "Transect 2"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectThree",
+                                "type": "number",
+                                "title": "Transect 3"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectFour",
+                                "title": "Transect 4",
+                                "type": "number"
+                            },
+                            {
+                                "width": "15%",
+                                "noEdit": true,
+                                "source": "vegetationWidthAverageScore",
+                                "title": "Average Score",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": false,
+                        "source": "canopyVegetationTable",
+                        "type": "table"
+                    }]
+                }],
+                "class": ""
+            }]
+        }]
+    }]
+}

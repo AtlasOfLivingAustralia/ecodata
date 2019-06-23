@@ -1,0 +1,264 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "siteTreated"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(siteTreated)"
+                    },
+                    "dataType": "number",
+                    "name": "areaTreatedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(siteTreated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(siteTreated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(siteTreated)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthTreatedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(siteTreated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(siteTreated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "targetDisease",
+                    "description": "",
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "managementMethod",
+                    "dwcAttribute": "treatmentMethod",
+                    "constraints": [
+                        "Biological control agents",
+                        "Fumigation",
+                        "Host destruction",
+                        "Plant disease management - quarantine",
+                        "Plant disease management - treatment",
+                        "Plant disease management - hygiene",
+                        "Positive competition",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherManagementMethod",
+                    "description": "Please specify the management method used if Other (specify in notes) was selected in the Management Method column.",
+                    "behaviour": [{
+                        "condition": "managementMethod == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "treatmentObjective",
+                    "description": "Please start with either part of the field heading [dash]. If reporting on both separate the information with a ';'. (eg. 'Management method -' and a brief description of method being used to fix the area; 'Treatment objective -' and a brief description of how the work will contribute to the area.",
+                    "validate": "required,maxSize[300]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "offSiteBenefitSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(offSiteBenefitSites)"
+                    },
+                    "dataType": "number",
+                    "name": "offSiteBenefitAreaHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(offSiteBenefitSites)"
+                    },
+                    "dataType": "number",
+                    "name": "offSiteBenefitLengthKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(offSiteBenefitSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(offSiteBenefitSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceOfBenefit",
+                    "validate": "maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "diseaseManagementDetails"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Disease management",
+    "title": "Managing disease",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "columns": [
+                    {
+                        "width": "5%",
+                        "source": "initialOrFollowup",
+                        "title": "Initial or follow-up treatment?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "siteTreated",
+                        "type": "feature",
+                        "title": "Site/s where disease managed"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "areaTreatedHa",
+                        "type": "number",
+                        "title": "Area (ha) treated for disease"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "lengthTreatedKm",
+                        "type": "number",
+                        "title": "Length (km) treated for disease"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "targetDisease",
+                        "title": "Disease treated",
+                        "type": "text"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "managementMethod",
+                        "title": "Type of management method / treatment",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "12%",
+                        "source": "otherManagementMethod",
+                        "title": "Type of management method / treatment (if other)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "12%",
+                        "source": "treatmentObjective",
+                        "title": "Management method / treatment objective",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitSites",
+                        "title": "Please map any off-site area/s if they have also benefitted from this disease management",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitAreaHa",
+                        "title": "Area (ha) where disease threat is reduced",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitLengthKm",
+                        "title": "Length (km) where disease threat is reduced",
+                        "type": "number"
+                    },
+                    {
+                        "width": "13%",
+                        "source": "evidenceOfBenefit",
+                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "diseaseManagementDetails",
+                "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

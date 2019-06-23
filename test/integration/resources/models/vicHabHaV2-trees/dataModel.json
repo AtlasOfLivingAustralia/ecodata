@@ -1,0 +1,443 @@
+{
+    "modelName": "vicHabHaV2-trees",
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "largeTreePlotSize",
+                    "description": "",
+                    "constraints": [
+                        "20 sq. metres",
+                        "40 sq. metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree1",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree2",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree3",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree4",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree5",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree6",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree7",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree8",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree9",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTree10",
+                    "description": ""
+                }
+            ],
+            "dataType": "list",
+            "name": "largestTrees"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "Tree tally"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh10to20"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh20to30"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh30to40"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh40to50"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh50to60"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh60to70"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh70to80"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh80to90"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh90to100"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh100to120"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh120to140"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh140plus"
+                }
+            ],
+            "dataType": "matrix",
+            "rowValues": "trees",
+            "name": "otherTrees",
+            "rows": [{
+                "dataType": "number",
+                "name": "tally"
+            }],
+            "columnValues": "size"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Largest Trees<\/h4> (DBH in centimetres)",
+                "type": "literal"
+            }]
+        },
+        {
+            "primaryResult": "true",
+            "columns": [
+                {
+                    "source": "largeTreePlotSize",
+                    "title": "Relevant tree sample plot size:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "largeTree1",
+                    "title": "Tree 1",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree2",
+                    "title": "Tree 2",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree3",
+                    "title": "Tree 3",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree4",
+                    "title": "Tree 4",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree5",
+                    "title": "Tree 5",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree6",
+                    "title": "Tree 6",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree7",
+                    "title": "Tree 7",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree8",
+                    "title": "Tree 8",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree9",
+                    "title": "Tree 9",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTree10",
+                    "title": "Tree 10",
+                    "type": "number"
+                }
+            ],
+            "source": "largestTrees",
+            "type": "table"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Other Trees<\/h4> <i>(All other trees in plot > 10cm - does not include the 10 largest trees previously recorded)<\/i>",
+                "type": "literal"
+            }]
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "computed": null,
+                    "source": "No. of Trees",
+                    "type": "literal"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh10to20"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh10to20",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh20to30"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh20to30",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh30to40"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh30to40",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh40to50"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh40to50",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh50to60"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh50to60",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh60to70"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh60to70",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh70to80"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh70to80",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh80to90"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh80to90",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh90to100"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh90to100",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh100to120"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh100to120",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh120to140"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh120to140",
+                    "type": "number"
+                },
+                {
+                    "computed": {
+                        "dependents": {
+                            "fromMatrix": "otherTrees",
+                            "source": "dbh140plus"
+                        },
+                        "operation": "sum"
+                    },
+                    "rounding": "0",
+                    "source": "totalDbh140plus",
+                    "type": "number"
+                }
+            ]}]},
+            "columns": [
+                {
+                    "width": "10%",
+                    "source": "",
+                    "title": "DBH class (cm)",
+                    "type": "text"
+                },
+                {
+                    "source": "dbh10to20",
+                    "title": "10 < 20",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh20to30",
+                    "title": "20 < 30",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh30to40",
+                    "title": "30 < 40",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh40to50",
+                    "title": "40 < 50",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh50to60",
+                    "title": "50 < 60",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh60to70",
+                    "title": "60 < 70",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh70to80",
+                    "title": "70 < 80",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh80to90",
+                    "title": "80 < 90",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh90to100",
+                    "title": "90 < 100",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh100to120",
+                    "title": "100 < 120",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh120to140",
+                    "title": "120 < 140",
+                    "type": "number"
+                },
+                {
+                    "source": "dbh140plus",
+                    "title": ">= 140",
+                    "type": "number"
+                }
+            ],
+            "source": "otherTrees",
+            "type": "grid",
+            "rows": [{
+                "source": "tally",
+                "title": "Tree tally",
+                "type": "text"
+            }]
+        }
+    ]
+}

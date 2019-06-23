@@ -1,0 +1,88 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "plantDensity",
+                    "constraints": [
+                        "Dense",
+                        "Scattered",
+                        "Isolated"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "photo"
+                }
+            ],
+            "dataType": "list",
+            "name": "regeneration"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "modelName": "ESP Regeneration",
+    "title": "Regeneration",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities relating to Regeneration are included under any or all of the following; “Monitor and manage regeneration”, “Buffering”, “Connectivity” and “Reduce isolation”. ",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "species",
+                        "title": "Species Observed Regenerating (if known)",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "plantDensity",
+                        "title": "How widespread is the regeneration",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "photo",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {"disableDragDrop": true}
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "regeneration",
+                "title": "Please complete the following: ",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

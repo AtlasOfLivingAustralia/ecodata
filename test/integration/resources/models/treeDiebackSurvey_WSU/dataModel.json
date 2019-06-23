@@ -1,0 +1,596 @@
+{
+    "dataModel": [
+        {
+            "dataType": "image",
+            "name": "observationPhoto",
+            "dwcAttribute": "associatedMedia",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The person who made the observation.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "observationDate",
+            "dwcAttribute": "eventDate",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "treeSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "Enter the name of the tree species, if known"
+        },
+        {
+            "dataType": "text",
+            "name": "landuse",
+            "description": "Select the most appropriate category applying to the use of the land.",
+            "constraints": [
+                "Cropping",
+                "Grazing (improved paddock)",
+                "Grazing (unimproved paddock)",
+                "Native vegetation",
+                "Other rural",
+                "Urban - Private garden",
+                "Urban - Public space"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "topography",
+            "description": "Select the most appropriate category that describes the slope at the location.",
+            "constraints": [
+                "Ridge",
+                "Gully",
+                "Flat"
+            ]
+        },
+        {
+            "allowRowDelete": "false",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "condition",
+                    "noEdit": true,
+                    "readOnly": true
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "validate": "required,integer,min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "individualCountByCondition",
+            "defaultRows": [
+                {
+                    "condition": "Healthy tree",
+                    "individualCount": ""
+                },
+                {
+                    "condition": "Unhealthy but alive",
+                    "individualCount": ""
+                },
+                {
+                    "condition": "Recently dead (bark on)",
+                    "individualCount": ""
+                },
+                {
+                    "condition": "Long dead (bark off)",
+                    "individualCount": ""
+                },
+                {
+                    "condition": "Recovering",
+                    "individualCount": ""
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseRecentFire",
+            "description": "Do you know if there was a fire recently? Can you see any signs of fire such as blackened bark?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "timeSinceLastFireInYears",
+            "description": "Do you know if there was a fire recently? Can you see any signs of fire such as blackened bark?",
+            "validate": "min[0],integer"
+        },
+        {
+            "scientificName": "Amyema",
+            "dataType": "text",
+            "name": "possibleCauseMistletoe",
+            "description": "Mistletoes are parasitic plants. Look for clumps of slightly different foliage in the tree.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "scientificName": "Manorina melanophrys",
+            "dataType": "text",
+            "name": "possibleCauseBellMiners",
+            "description": "Bellbirds have a musical bell-link 'tink, tink' call.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseMammals",
+            "description": "Browsers may leave clumps of leaves at the very tips of branches where they cannot reach.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseDrought",
+            "description": "Has weather been exceptionally dry recently?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseFrost",
+            "description": "Are you aware of any recent frost events?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseLeafEatingInsects",
+            "description": "Are leaf-eating insects present? Look for these insects and signs of leaf damage.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseLeafSuckingInsects",
+            "description": "Are leaf-sucking insects present? Look for these insects and their sugary secretions.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseBoringInsects",
+            "description": "Are stem or branch boring insects present? Look for these insects and signs of stem damage.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "possibleCauseCankers",
+            "description": "A canker is a dead section of bark, branch or stem, usually associated with a fungal infection.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "previousObservation",
+            "constraints": [
+                "Have not been here before",
+                "Trees appear worse than last time",
+                "Trees appear better than last time",
+                "Trees appear about the same as last time"
+            ]
+        },
+        {
+            "dataType": "date",
+            "name": "previousObservationDate",
+            "description": "Approximate date of previous visit to this location"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "treeDiebackSurvey_WSU",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Dead Tree Observation<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Observation Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Photo",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "observationPhoto",
+                                    "preLabelClass": "span4",
+                                    "type": "image"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Observed by",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "recordedBy",
+                                    "preLabelClass": "span4",
+                                    "type": "text"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Date",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "observationDate",
+                                    "preLabelClass": "span4",
+                                    "type": "date"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Tree species, if known",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "treeSpecies",
+                                    "preLabelClass": "span4",
+                                    "type": "autocomplete"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Landuse",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "landuse",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Topography",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "topography",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "allowRowDelete": "false",
+                                    "columns": [
+                                        {
+                                            "noEdit": "true",
+                                            "readOnly": "true",
+                                            "source": "condition",
+                                            "type": "text",
+                                            "title": "Condition"
+                                        },
+                                        {
+                                            "source": "individualCount",
+                                            "type": "number",
+                                            "title": "Number observed"
+                                        }
+                                    ],
+                                    "userAddedRows": false,
+                                    "source": "individualCountByCondition",
+                                    "type": "table"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Previous observation at this site:",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "previousObservation",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Approximate date of previous observation",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "previousObservationDate",
+                                    "preLabelClass": "span4",
+                                    "type": "date"
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "source": "<font style='color:blue; font-size:0.8em;'><i>Zoom into the map, click on the teardrop pin marker tool and then click on the map to record the location of your observation. Alternatively, select the arrow tool to use your current GPS coordinates (note that location services must be switched on in your browser or device).<\/i><\/font>",
+                                    "type": "literal"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": false,
+                                    "readonly": false,
+                                    "includeSource": false,
+                                    "includeAccuracy": true,
+                                    "hideSiteSelection": true,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "includeLocality": false
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Additional notes or comments",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "notes",
+                                    "preLabelClass": "span4",
+                                    "type": "textarea"
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ]
+        },
+        {
+            "boxed": true,
+            "title": "Possible Causes",
+            "type": "section",
+            "items": [{
+                "type": "row",
+                "items": [
+                    {
+                        "computed": null,
+                        "type": "col",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Could be drought-related?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseDrought",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Could be frost-related?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseFrost",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are leaf-eating insects present? (eg. caterpillars, Christmas beetles, saw flies, stick insects)",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseLeafEatingInsects",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are leaf-sucking insects present? (eg. lerp insects, scale insects, bugs)",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseLeafSuckingInsects",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are stem or branch boring insects present? (eg. termites, wood moths, longicorn beetles)",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseBoringInsects",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        "computed": null,
+                        "type": "col",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are cankers present on trees?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseCankers",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Is mistletoe present?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseMistletoe",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are Bell Miners present at the location?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseBellMiners",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are Koalas/possums present at the location?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseMammals",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Has there been a fire at this location recently?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "possibleCauseRecentFire",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Years since last fire (if known",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "timeSinceLastFireInYears",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            }
+                        ]
+                    }
+                ],
+                "class": ""
+            }]
+        }
+    ]
+}

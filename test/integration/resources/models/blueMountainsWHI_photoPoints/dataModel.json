@@ -1,0 +1,172 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that you visited the boardwalk",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which you took the first photo point photo."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who recorded the images."
+        },
+        {
+            "dataType": "image",
+            "name": "photoPointImage",
+            "dwcAttribute": "",
+            "description": "The name of the person who recorded the images."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about your visit, including any characteristic site features, conditions, etc."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "blueMountainsWHI_photoPoints",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Blue Mountains World Heritage Institute - Photo Point Data Recording<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Photo Point Visit Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Photo Point Image",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "photoPointImage",
+                                    "preLabelClass": "span4",
+                                    "type": "image"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Comments/Observations",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "notes",
+                                    "preLabelClass": "span4",
+                                    "type": "textarea"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Date",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "surveyDate",
+                                    "preLabelClass": "span4",
+                                    "type": "date"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Time",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "surveyStartTime",
+                                    "preLabelClass": "span4",
+                                    "type": "time"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Recorded by",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "recordedBy",
+                                    "preLabelClass": "span4",
+                                    "type": "text"
+                                }]
+                            }
+                        ]
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": true,
+                                "readonly": true,
+                                "includeSource": false,
+                                "includeAccuracy": false,
+                                "hideSiteSelection": false,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                }
+            ]
+        }
+    ]
+}

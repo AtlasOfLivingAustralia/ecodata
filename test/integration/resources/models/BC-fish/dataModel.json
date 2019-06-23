@@ -1,0 +1,252 @@
+{
+    "modelName": "MDBA_fish_sightings",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made. Enter the time as hh:mm"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the fish observed.",
+            "constraints": [
+                "Australian smelt (Retropinna semoni)",
+                "Bony bream (Nematalosa erebi)",
+                "Climbing galaxias (Galaxias brevipinnis)",
+                "Darling River hardyhead (Craterocephalus amniculus)",
+                "Dwarf flathead gudgeon (Philypnodon macrostomus)",
+                "Flathead gudgeon (Philypnodon grandiceps)",
+                "Fly-specked hardyhead (Craterocephalus stercusmuscarum)",
+                "Freshwater catfish (Tandanus tandanus)",
+                "Golden perch (Macquaria ambigua)",
+                "Hyrtl's tandan (Neosilurus hyrtlii)",
+                "Macquarie perch (Macquaria australasica)",
+                "Mountain galaxias (Galaxias olidus)",
+                "Murray-Darling rainbowfish (Melanotaenia fluviatilis)",
+                "Murray cod (Maccullochella peelii)",
+                "Murray hardyhead (Craterocephalus fluviatilis)",
+                "Murray jollytail (Galaxias rostratus)",
+                "Northern purple-spotted gudgeon (Mogurnda mogurnda)",
+                "Olive perchlet (Ambassis agassizii)",
+                "River blackfish (Gadopsis marmoratus)",
+                "Silver perch (Bidyanus bidyanus)",
+                "Southern pygmy perch (Nannoperca australis)",
+                "Southern purple-spotted gudgeon (Mogurnda adspersa)",
+                "Spangled perch (Leiopotherapon unicolor)",
+                "Trout cod (Maccullochella macquariensis)",
+                "Western carp gudgeon (Hypseleotris klunzingeri)",
+                "Brown trout (Salmo trutta)",
+                "Common carp (Cyprinus carpio)",
+                "Gambusia (Gambusia holbrooki)",
+                "Goldfish (Carassius auratus)",
+                "Oriental weatherloach (Misgurnus anguillicaudatus)",
+                "Rainbow trout (Oncorhynchus mykiss)",
+                "Redfin perch (Perca fluviatilis)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals seen.",
+            "validate": "integer,min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "status",
+            "description": "Indicate the health status of the organism sighted.",
+            "constraints": [
+                "Alive",
+                "Dead",
+                "Sick or injured"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "text",
+            "name": "previousSightings",
+            "description": "Indicate whether you have seen this species at this location previously.",
+            "constraints": [
+                "Up to 1 week ago",
+                "1 Week to 1 month ago",
+                "1 Month to 6 months ago",
+                "1 Year or longer ago",
+                "Never seen here before"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Record your individual sightings or catch of fish species in the Murray-Darling Basin",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Event Information<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey start time",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<hr>",
+                            "type": "literal"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Fish Sighting Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Species name",
+                            "computed": null,
+                            "source": "species",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Are you confident of the species identification?",
+                            "computed": null,
+                            "source": "identificationConfidence",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "How many individuals did you see?",
+                            "computed": null,
+                            "source": "individualCount",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Status",
+                            "computed": null,
+                            "source": "status",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "computed": null,
+                            "source": "comments",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Have you seen the species here in the past?",
+                            "computed": null,
+                            "source": "previousSightings",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sighting photo",
+                            "computed": null,
+                            "source": "sightingPhoto",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": false,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

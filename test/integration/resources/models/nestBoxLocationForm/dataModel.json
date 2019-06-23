@@ -1,0 +1,567 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who installed the nest box."
+        },
+        {
+            "dataType": "text",
+            "name": "groupName",
+            "description": "The name of the group responsible for installation of the nest box.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "siteId",
+            "noEdit": true,
+            "description": "Identifier for the specific nest box."
+        },
+        {
+            "defaultAccuracy": 10,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "siteAddress",
+            "description": "Record a street address or name of reserve to help easily locate this site in the future.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "landTenure",
+            "description": "The tenure of the land on which the host tree is located.",
+            "constraints": [
+                "Public",
+                "Private"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "landscapePosition",
+            "description": "",
+            "constraints": [
+                "Hilltop/Ridge",
+                "Upper slopes",
+                "Lower slopes",
+                "Flats"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "locationRemarks",
+            "description": "Description of the location of the host tree.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "installationDate",
+            "dwcAttribute": "occurrenceDate",
+            "description": "The date on which the nest box was installed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "mountingHeightInMetres",
+            "description": "The height in metres that the next box is mounted above the ground to the base of the box.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "mountingAspect",
+            "description": "The direction that the mounted nest box is facing.",
+            "constraints": [
+                "N",
+                "NE",
+                "E",
+                "SE",
+                "S",
+                "SW",
+                "W",
+                "NW"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "installationPhoto",
+            "description": "Photo of the nest box at the time of installation (showing the box on the tree)."
+        },
+        {
+            "dataType": "text",
+            "name": "placementRemarks",
+            "description": "Description of where the nest box is placed in the tree."
+        },
+        {
+            "dataType": "text",
+            "name": "hostTreeStatus",
+            "description": "Indicate whether the species of host tree is alive or dead.",
+            "constraints": [
+                "Live tree - species known",
+                "Live tree - species unknown",
+                "Dead Stag/Dead tree/Dead stump"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "treeSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "Species of host tree that the nest box is installed in."
+        },
+        {
+            "dataType": "text",
+            "name": "treeDbh",
+            "description": "The diameter at breast height is the diameter of the host tree measured 1.3m above ground. For bificated trees, please record multiple diameters separated by /. eg. 45/32"
+        },
+        {
+            "dataType": "stringList",
+            "name": "vegetationType",
+            "description": "Characterise the type of site the host tree is located in.",
+            "constraints": [
+                "Roadside",
+                "Scattered paddock tree",
+                "Remnant patch",
+                "Waterway/creek",
+                "Revegetation site",
+                "Garden/park",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "nearbyVegetation",
+            "description": "Please describe the structure of the vegetation within 50m of the host tree.",
+            "constraints": [
+                "Single age canopy trees",
+                "Mixed age canopy trees",
+                "Shrubs > 2m height",
+                "Shrubs < 2m height",
+                "Exotic woody vegetation (e.g. blackberry, willow)",
+                "Native ground layer (e.g. grasses, rushes, sedges)",
+                "Exotic ground layer (e.g. exotic pasture grasses, herbaceous weeds)",
+                "Fallen timber/logs",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nearbyVegetationOther",
+            "description": "If other, please describe"
+        },
+        {
+            "dataType": "text",
+            "name": "numberOfFloweringSpecies",
+            "description": "Count the number of different plant species that would be expected to flower within a given year within 50m of the host tree.",
+            "constraints": [
+                "< 4 species",
+                "4 or more species",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "naturalHollows",
+            "description": "Are natural hollows present in the nest box tree?",
+            "constraints": [
+                "No hollows",
+                "Small hollows (diameter < 10 cm)",
+                "Large hollows (diameter >=10 cm)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "hostTreeRemarks",
+            "description": "Please provide any additional notes about the host tree on which the nest box is installed."
+        },
+        {
+            "dataType": "text",
+            "name": "targetSpecies",
+            "description": "What species has the nest box been designed to attract?",
+            "constraints": [
+                "Rainbow Lorikeet (Trichoglossus haematodus)",
+                "Australian King Parrot (Alisterus scapularis)",
+                "Eastern Pygmy Possum (Cercartetus nanus)",
+                "Powerful Owl (Ninox (Rhabdoglaux) strenua)",
+                "BATS (any species) (CHIROPTERA)",
+                "Barking Owl (Ninox (Hieracoglaux) connivens)",
+                "Sooty Owl (Tyto (Megastrix) tenebricosa)",
+                "Masked Owl (Tyto (Megastrix) novaehollandiae)",
+                "Brush-Tailed Phascogale (Phascogale tapoatafa)",
+                "Greater Glider (Petauroides volans)",
+                "Squirrel Glider (Petaurus norfolcensis)",
+                "Sugar Glider (Petaurus breviceps)",
+                "Feather-tail Glider (Acrobates pygmaeus)",
+                "Mountain Brush-tailed Possum (Trichosurus caninus)",
+                "Mountain Brush-tailed Possum (Trichosurus cunninghami)",
+                "Brush-tailed Possum (Trichosurus vulpecula)",
+                "Ring-tail Possum (Pseudocheirus peregrinus)",
+                "Crimson/Eastern Rosella (Platycercus (Platycercus) elegans)",
+                "Red-rumped Parrot (Psephotus (Psephotus) haematonotus)",
+                "Turquoise Parrot (Neophema (Neophema) pulchella)",
+                "Treecreeper (Climacteris)",
+                "White-Throated Treecreeper (Cormobates leucophaea)",
+                "Pardalote (Pardalotus)",
+                "Laughing Kookaburra (Dacelo (Dacelo) novaeguineae)",
+                "Perons Tree Frog (Litoria peronii)",
+                "Southern Brown Tree Frog (Litoria ewingii)",
+                "Leseurs Tree Frog (Litoria lesueuri)",
+                "Spiders (ARANEAE)",
+                "Ants (FORMICIDAE)",
+                "Bees (HYMENOPTERA)",
+                "European Wasp (Vespula germanica)",
+                "Indian Myna (Acridotheres tristis)",
+                "Starling (Sturnus (Sturnus) vulgaris)",
+                "Antechinus (Antechinus)",
+                "Geckos (GEKKOTA)",
+                "Parrots (Psittacidae)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "nestBoxDesignSource",
+            "description": "Please indicate where the nest box was obtained and the design style of the nest box."
+        },
+        {
+            "dataType": "number",
+            "name": "openingDiameterInMillimetres",
+            "description": "What is the diameter (in millimetres) of the entrance opening in the nest box?",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "postionOfHole",
+            "description": "Where is the position of the entrance hole located on the nest box?",
+            "constraints": [
+                "Front",
+                "Side",
+                "Rear",
+                "Top",
+                "Bottom"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "constructionMaterial",
+            "description": "What is the material used for construction of the nest box?",
+            "constraints": [
+                "Rough sawn pine",
+                "Dressed pine",
+                "Hardwood",
+                "15mm Ply",
+                "19mm Ply",
+                "Marine Ply",
+                "Natural hollow",
+                "Painted",
+                "Unpainted",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "constructionMaterialOther",
+            "description": "If other, please indicate the material used."
+        },
+        {
+            "dataType": "stringList",
+            "name": "additionalNestBoxFeatures",
+            "description": "Indicate any additional features included in the nest box design.",
+            "constraints": [
+                "Internal baffle",
+                "Rubber curtain",
+                "Mesh on front",
+                "Carpet on lid",
+                "Perspex on lid",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "additionalNestBoxFeaturesOther",
+            "description": "If other, please describe any additional features."
+        },
+        {
+            "dataType": "text",
+            "name": "nestBoxDesignRemarks",
+            "description": "Please provide any addional notes about the design of the nest box."
+        },
+        {
+            "dataType": "image",
+            "name": "sketchMapDrawing",
+            "description": "Please attach an image of a sketched site map drawing of the nest box location showing key features."
+        }
+    ],
+    "modelName": "nestBoxLocation20190403",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<font style='font-size:2em; font-weight:bolder; padding-left:20px;'>Nest Box Location Form<\/font>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "SITE LOCATION",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Recorded by",
+                                    "computed": null,
+                                    "source": "recordedBy",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Name of group",
+                                    "computed": null,
+                                    "source": "groupName",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Nest box ID",
+                                    "noEdit": true,
+                                    "source": "siteId",
+                                    "type": "text"
+                                },
+                                {
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": false,
+                                    "readonly": false,
+                                    "includeSource": false,
+                                    "includeAccuracy": true,
+                                    "hideSiteSelection": false,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "includeLocality": false
+                                },
+                                {
+                                    "preLabel": "Site address",
+                                    "source": "siteAddress",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Land tenure",
+                                    "source": "landTenure",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Landscape position",
+                                    "source": "landscapePosition",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "LOCATION description (eg. 50m from road on large tree left of gate.)",
+                                    "source": "locationRemarks",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "HOST TREE",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Host tree status",
+                                    "source": "hostTreeStatus",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Host tree species",
+                                    "source": "treeSpecies",
+                                    "type": "speciesSelect"
+                                },
+                                {
+                                    "preLabel": "Host tree DBH (cm)",
+                                    "source": "treeDbh",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Vegetation type",
+                                    "source": "vegetationType",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "vegetationTypeOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Structure of nearby vegetation (select all that apply)",
+                                    "source": "nearbyVegetation",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "nearbyVegetationOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Number of flowering species",
+                                    "source": "numberOfFloweringSpecies",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Natural hollows (select all that apply)",
+                                    "source": "naturalHollows",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "TREE comments (eg. tree health, presence of hollows, etc.)",
+                                    "source": "hostTreeRemarks",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "PLACEMENT",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Date box installed",
+                                    "source": "installationDate",
+                                    "type": "date"
+                                },
+                                {
+                                    "preLabel": "Installation height (m)",
+                                    "source": "mountingHeightInMetres",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Installation aspect",
+                                    "source": "mountingAspect",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Installation photos (showing box on tree)",
+                                    "source": "installationPhoto",
+                                    "type": "image"
+                                },
+                                {
+                                    "preLabel": "Describe box placement (eg. located above fork, next to double stem)",
+                                    "source": "placementRemarks",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "PROJECT MAP",
+                            "type": "section",
+                            "items": [{
+                                "preLabel": "Please upload an image of a simple map of the site marking key features to ensure the nest box can be located again in following monitoring activities.",
+                                "source": "sketchMapDrawing",
+                                "type": "image"
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "BOX DESIGN",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Target species",
+                                    "source": "targetSpecies",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Nest box design source",
+                                    "source": "nestBoxDesignSource",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "preLabel": "Opening diameter (mm)",
+                                    "source": "openingDiameterInMillimetres",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Position of hole",
+                                    "source": "postionOfHole",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Material/construction (select all that apply)",
+                                    "source": "constructionMaterial",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "constructionMaterialOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Additional features",
+                                    "source": "additionalNestBoxFeatures",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "additionalNestBoxFeaturesOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "DESIGN comments (eg. magnetic clasp on lid, side opening lid, etc.)",
+                                    "source": "nestBoxDesignRemarks",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<font style='font-size:0.9em; font-style:italic; align:right; padding-left:20px;'>This is a standardised survey protocol and universally reusable form template. It was originally developed for the Nest Box Project Guide for North East Victoria by <a href='http://swampsriversandranges.org/' target='_blank'>Swamps, Rivers and Ranges<\/a>.<\/font>",
+                "type": "literal"
+            }]
+        }
+    ]
+}

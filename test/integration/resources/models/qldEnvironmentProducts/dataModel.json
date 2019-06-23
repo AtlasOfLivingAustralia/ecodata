@@ -1,0 +1,183 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "typeOfProduct",
+                    "description": "",
+                    "constraints": [
+                        "Printed Brochure/flyer (e.g. advertising an event)",
+                        "Case Study",
+                        "Decision Support Tool (e.g. a spatial prioritisation tool)",
+                        "Map (could be a property map or a catchment map)",
+                        "Extension materials/training materials",
+                        "Planning product (eg. Farm Services Plan, or a Systems Repair Plan, a stocktake, MERI Plan, Communication Plan etc.)",
+                        "Media release",
+                        "Published Article (eg. Newsletter article, newspaper article, a radio interview)",
+                        "Fact Sheet",
+                        "Project Display material (eg. Banners or posters that might be used at community events, etc.)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "productTargetAudience",
+                    "description": "",
+                    "constraints": [
+                        "Project Participants",
+                        "Project Partners",
+                        "Project Managers",
+                        "Catchment community",
+                        "Broader community",
+                        "Government",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "productShortTitle",
+                    "description": "Description – short title/ description of the specific product",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfCopiesProduced",
+                    "description": "No. copies produced",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "productAttachedToProject",
+                    "description": "Is the product attached within the project?",
+                    "constraints": [
+                        "Yes as attachment",
+                        "Yes as blog entry",
+                        "No attachment"
+                    ],
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfPeopleReached",
+                    "description": "No. of people reached with products",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "notes",
+                    "description": "Observation notes about the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "productsTable",
+            "defaultRows": "1"
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "description": ""
+        }
+    ],
+    "modelName": "ehpProductssForm",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Products Created<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [
+                    {
+                        "boxed": true,
+                        "title": "Products",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "type": "col",
+                                "items": [{
+                                    "allowHeaderWrap": "true",
+                                    "columns": [
+                                        {
+                                            "computed": null,
+                                            "width": "20%",
+                                            "source": "typeOfProduct",
+                                            "title": "Type of product",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "15%",
+                                            "source": "productTargetAudience",
+                                            "title": "Main target audience",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "20%",
+                                            "source": "productShortTitle",
+                                            "title": "Short title/Description",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "width": "10%",
+                                            "source": "numberOfCopiesProduced",
+                                            "title": "No. of copies produced",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "10%",
+                                            "source": "productAttachedToProject",
+                                            "title": "Product attached to project?",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "10%",
+                                            "source": "numberOfPeopleReached",
+                                            "title": "No. of people reached",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "25%",
+                                            "source": "notes",
+                                            "title": "Notes",
+                                            "type": "textarea"
+                                        }
+                                    ],
+                                    "defaultRows": "1",
+                                    "userAddedRows": "true",
+                                    "source": "productsTable",
+                                    "type": "table"
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    },
+                    {
+                        "boxed": true,
+                        "title": "General Comments",
+                        "type": "section",
+                        "items": [{
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "Comments",
+                                "source": "comments",
+                                "type": "textarea"
+                            }],
+                            "class": ""
+                        }],
+                        "class": ""
+                    }
+                ],
+                "class": ""
+            }],
+            "class": ""
+        }
+    ]
+}

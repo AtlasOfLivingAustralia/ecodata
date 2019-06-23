@@ -1,0 +1,168 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "The type of fence erected",
+            "name": "fenceType",
+            "constraints": [
+                "Cyclone",
+                "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
+                "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
+                "Post & Netting (net or ringlock) - electified",
+                "Post & Netting (net or ringlock) - non-electified",
+                "Post & Rail",
+                "Solid Sheet (pailing, pickets, sheet metal, etc.)",
+                "None",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Length of fence erected in kilometres",
+            "name": "lengthOfFence",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Cost of the erected fence in $ per kilometre",
+            "name": "fenceCostPerKm"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares protected by the erected fence",
+            "name": "fenceAreaProtected",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "The purpose for which the fence has been erected",
+            "name": "purposeOfFence",
+            "constraints": [
+                "Cattle exclusion",
+                "Sheep or goat exclusion",
+                "Kangaroo and wallaby exclusion",
+                "Rabbit and hare exclusion",
+                "Wombat exclusion",
+                "Wild dog exclusion",
+                "Protection of sacred sites",
+                "Protection of ecologically sensitive areas",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Notes",
+            "name": "fenceNotes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "fenceDetails",
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "<h3>Details<\/h3>",
+                        "computed": null,
+                        "type": "literal"
+                    },
+                    {
+                        "source": "fenceType",
+                        "computed": null,
+                        "preLabel": "Fence Type:",
+                        "width": "10%",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "lengthOfFence",
+                        "computed": null,
+                        "preLabel": "Length of fence (Km):",
+                        "width": "20%",
+                        "type": "number"
+                    },
+                    {
+                        "source": "fenceAreaProtected",
+                        "computed": null,
+                        "preLabel": "Area protected by erected fence (Ha):",
+                        "width": "20%",
+                        "type": "number"
+                    },
+                    {
+                        "source": "fenceCostPerKm",
+                        "computed": null,
+                        "preLabel": "Fence cost ($/Km):",
+                        "width": "20%",
+                        "type": "number"
+                    },
+                    {
+                        "source": "purposeOfFence",
+                        "computed": null,
+                        "preLabel": "Purpose of fence:",
+                        "width": "20%",
+                        "type": "selectMany"
+                    },
+                    {
+                        "source": "fenceNotes",
+                        "preLabel": "Comments/Notes:",
+                        "computed": null,
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "<h3>Location<\/h3><font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker, as accurately as possible, at the location of the event.<\/i><\/font>",
+                        "computed": null,
+                        "type": "literal"
+                    },
+                    {
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "computed": null,
+        "class": "output-section",
+        "type": "row"
+    }]
+}

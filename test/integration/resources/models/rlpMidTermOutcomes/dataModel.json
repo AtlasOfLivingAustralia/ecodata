@@ -1,0 +1,119 @@
+{
+  "title": "Mid-term project outcomes",
+  "modelName": "RLP mid-term outcomes",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "description": "",
+      "name": "outcomes",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "SMART outcome being reported against, as per the MERI Plan.",
+          "name": "outcome"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "status",
+          "constraints": [
+            "Achieved",
+            "Not achieved"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "Succinctly identify the reasons the outcome was not achieved, this may include references to identified risks materialising and impacting on the project outcomes. The Lessons learned section should incorporate how the project would be delivered differently next time.",
+          "behaviour": [
+            {
+              "condition": "status == \"Not achieved\"",
+              "type": "enable"
+            }
+          ],
+          "name": "outcomeNotAchievedReason",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "outcomeResult",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "achievements",
+          "validate": "required"
+        }
+      ]
+    }
+  ],
+  "pre-populate": [
+    {
+      "source": {
+        "context-path": "project"
+      },
+      "merge": true,
+      "mapping": [
+        {
+          "target": "outcomes",
+          "mapping": [
+            {
+              "target": "outcome",
+              "source-path": "description"
+            }
+          ],
+          "source-path": "custom.details.outcomes.midTermOutcomes"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "source": "outcomes",
+      "items": [
+        {
+          "items": [
+            {
+              "items": [
+                {
+                  "source": "outcome",
+                  "preLabel": {
+                    "computed": "\\'Outcome \\' || (index + 1)"
+                  },
+                  "type": "text",
+                  "readonly": true
+                },
+                {
+                  "source": "status",
+                  "preLabel": "Status of outcome",
+                  "type": "selectOne"
+                },
+                {
+                  "source": "outcomeNotAchievedReason",
+                  "preLabel": "If the outcome was not achieved, what are the reasons?",
+                  "type": "textarea"
+                },
+                {
+                  "source": "outcomeResult",
+                  "preLabel": "Describe the state of change detected between the baseline established at the commencement and follow-up monitoring",
+                  "type": "textarea"
+                },
+                {
+                  "source": "achievements",
+                  "preLabel": "What was achieved in relation to this outcome?",
+                  "type": "textarea"
+                }
+              ],
+              "type": "col"
+            }
+          ],
+          "class": "output-section",
+          "type": "row"
+        }
+      ],
+      "type":"repeat"
+    }
+  ]
+}

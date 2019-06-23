@@ -1,0 +1,457 @@
+{
+    "dataModel": [
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "readOnly": "true",
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyStartDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made or the start date of the survey (if it is a month-long survey).",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "description": "The time at which the sighting was made or the start time of the survey if it is not an incidental sighting."
+        },
+        {
+            "dataType": "text",
+            "name": "lifeStatus",
+            "dwcAttribute": "basisOfRecord",
+            "description": "Was the goanna alive or dead?",
+            "constraints": [
+                "Alive",
+                "Dead"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "observedBehaviour",
+            "description": "Was the goanna climbing a tree?",
+            "constraints": [
+                "Yes, the goanna climbed a tree",
+                "No, the goanna did not climb a tree",
+                "I’m not sure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "fullLengthInMetresClassRange",
+            "description": "Approximately how long was the goanna (from the tip of its nose to the tip of its tail)?",
+            "constraints": [
+                "Less than 0.5 metres (50 centimetres)",
+                "0.5 – 1.0 metre",
+                "1.0 – 1.5 metres",
+                "Over 1.5. metres",
+                "I’m not sure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "distinguishingTraitsOnTail",
+            "description": "Did the goanna's tail have a noticeable white or pale tip?",
+            "constraints": [
+                "Yes",
+                "No",
+                "I’m not sure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "distinguishingTraitsOnFace",
+            "description": "Did the goanna's face have noticeable stripes on it?",
+            "constraints": [
+                "Yes",
+                "No",
+                "I’m not sure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "distinguishingTraitsOnJaw",
+            "description": "Did the goanna have stripes on its lower jaw (under its mouth)?     ",
+            "constraints": [
+                "Yes",
+                "No",
+                "I’m not sure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "description": "Are you confident with your identification of this goanna?",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the sighing, including any characteristic site features, conditions, etc."
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "comments",
+            "description": "General notes relevant to the sighting event"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "verifiedBy",
+            "description": "The name of the person who verified the record"
+        },
+        {
+            "dataType": "text",
+            "name": "verifiedSpeciesName",
+            "description": "Enter the verified species name",
+            "constraints": [
+                "Varanus varius",
+                "Varanus giganteus",
+                "Varanus gouldii",
+                "Varanus rosenbergi"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "nearestLocationName",
+            "description": "Please write the name of the nearest town or suburb (if known)?"
+        },
+        {
+            "dataType": "text",
+            "name": "landHolderStatus",
+            "description": "Do you own the land where you have seen this goanna?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        }
+    ],
+    "modelName": "discoverCircle_goannaWatch",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Goanna Watch Sighting<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "type": "section",
+                        "title": "Observation Details",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Species name",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "readOnly": true,
+                                    "source": "species",
+                                    "preLabelClass": "span6",
+                                    "type": "autocomplete"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Photo of the goanna",
+                                    "source": "sightingPhoto",
+                                    "title": "Photo of the goanna",
+                                    "type": "image"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Date of the sighting",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "surveyStartDate",
+                                    "preLabelClass": "span6",
+                                    "type": "date"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Time of the sighting",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "surveyStartTime",
+                                    "preLabelClass": "span6",
+                                    "type": "time"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Was it alive or dead?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "lifeStatus",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Did it climb a tree?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "observedBehaviour",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Approximately how long was it?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "fullLengthInMetresClassRange",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Did the tail have a noticeable pale tip?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "distinguishingTraitsOnTail",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Did the face have noticeable stripes on it?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "distinguishingTraitsOnFace",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Did it have stripes under its mouth?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "distinguishingTraitsOnJaw",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are you confident with the identification?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "identificationConfidence",
+                                    "preLabelClass": "span6",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Do you have any other comments that might help to confirm the type of goanna?",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "notes",
+                                    "preLabelClass": "span6",
+                                    "type": "textarea"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "How many individuals did you see?",
+                                    "inline": true,
+                                    "dataClass": "span6",
+                                    "source": "individualCount",
+                                    "preLabelClass": "span6",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Any other comments?",
+                                    "computed": null,
+                                    "source": "comments",
+                                    "type": "textarea"
+                                }]
+                            }
+                        ]
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "type": "section",
+                            "title": "Location Details",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "source": "<font style='font-size:0.9em; color:blue;'><i>Please upload a photo with location data OR zoom in on the map and indicate where you saw the goanna. Click on the marker icon to place a marker.<\/i><\/font>",
+                                        "type": "literal"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "includeNotes": false,
+                                        "orientation": "vertical",
+                                        "computed": null,
+                                        "autoLocalitySearch": false,
+                                        "readonly": false,
+                                        "includeSource": false,
+                                        "includeAccuracy": false,
+                                        "hideSiteSelection": true,
+                                        "source": "location",
+                                        "type": "geoMap",
+                                        "includeLocality": false
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Nearest town or suburb (if known)?",
+                                        "inline": true,
+                                        "dataClass": "span6",
+                                        "source": "nearestLocationName",
+                                        "preLabelClass": "span6",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Do you own the land?",
+                                        "inline": true,
+                                        "dataClass": "span6",
+                                        "source": "landHolderStatus",
+                                        "preLabelClass": "span6",
+                                        "type": "selectOne"
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            "boxed": true,
+                            "type": "section",
+                            "title": "Office use only",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Recorded by",
+                                        "computed": null,
+                                        "inline": true,
+                                        "dataClass": "span6",
+                                        "source": "recordedBy",
+                                        "preLabelClass": "span6",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Verified by",
+                                        "computed": null,
+                                        "inline": true,
+                                        "dataClass": "span6",
+                                        "source": "verifiedBy",
+                                        "preLabelClass": "span6",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Verified as species",
+                                        "computed": null,
+                                        "inline": true,
+                                        "dataClass": "span6",
+                                        "source": "verifiedSpeciesName",
+                                        "preLabelClass": "span6",
+                                        "type": "selectOne"
+                                    }]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

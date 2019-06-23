@@ -1,0 +1,118 @@
+{
+    "modelName": "Infrastructure Details",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "infrastructureInstallations",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of infrastructure being established.",
+                    "name": "infrastructureType",
+                    "constraints": [
+                        "Debris management structures",
+                        "Ecological infrastructure (eg. fish ladders, under/over-traffic passageways, etc.)",
+                        "Injured fauna hospital",
+                        "Injured fauna recovery facility",
+                        "Native plant nursery",
+                        "Visitor facilities (eg. toilets, bins, BBQ, tables & benches, etc.)",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Brief description of the infrastructure implemented.",
+                    "name": "infrastructureDescription"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual installations / facilities established for each type of infrastructure.",
+                    "name": "noInstallations",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of infrastructure installations / facilities established.",
+            "name": "noInstallationsTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "noInstallations",
+                    "fromList": "infrastructureInstallations"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please list the numbers of each different type of infrastructure facility established.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of installations/facilities:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "noInstallationsTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noInstallations\",\"fromList\":\"infrastructureInstallations\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "infrastructureInstallations",
+            "columns": [
+                {
+                    "title": "Type of infrastructure:",
+                    "source": "infrastructureType",
+                    "computed": null,
+                    "width": "30%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Description of infrastructure installed:",
+                    "source": "infrastructureDescription",
+                    "computed": null,
+                    "type": "textarea"
+                },
+                {
+                    "title": "No. of installations:",
+                    "source": "noInstallations",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

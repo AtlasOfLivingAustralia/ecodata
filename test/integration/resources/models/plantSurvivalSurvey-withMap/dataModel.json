@@ -1,0 +1,294 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The type of revegetation method used",
+            "name": "revegetationType",
+            "constraints": [
+                "Direct drill seeding",
+                "Hand broardcast seeding",
+                "Hand planting",
+                "Machine planting",
+                "Natural regeneration from threat exclusion / removal"
+            ],
+            "dwcAttribute": "establishmentMeans"
+        },
+        {
+            "dataType": "text",
+            "description": "The method used to determine the number of surviving plants",
+            "name": "countingMethod",
+            "constraints": [
+                "Direct count",
+                "Estimated count"
+            ],
+            "dwcAttribute": "assessmentMethod",
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "revegetationMonitoring",
+            "columns": [
+                {
+                    "speciesList": "project",
+                    "dataType": "species",
+                    "noTotal": "true",
+                    "description": "Species planted on the revegetation site and/or represented in the survival count",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual plants planted on the site during the revegetation works activity",
+                    "primaryResult": "true",
+                    "name": "numberPlanted",
+                    "validate": "required, min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The quantity in kilograms of seed sown on the site during the revegetation works activity",
+                    "name": "seedSown",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "behaviour": [{
+                        "condition": "survivalRate != '0'",
+                        "value": {
+                            "message": "The number of plants surviving can only be 0 if the survival rate is also zero",
+                            "validate": "required,integer,min[1]"
+                        },
+                        "type": "conditional_validation"
+                    }],
+                    "description": "The number of individual seedlings surviving at the time of this survey",
+                    "name": "numberSurviving",
+                    "dwcAttribute": "individualCount",
+                    "defaultValue": "undefined",
+                    "validate": "required,integer,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The percentage of individual seedlings surviving at the time of this survey as a proportion of numbers planted",
+                    "name": "survivalRate",
+                    "defaultValue": "undefined",
+                    "warning": {"numericality": {
+                        "message": "Are you sure no plants survived?",
+                        "greaterThan": 0
+                    }},
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The expected height class of mature plants of this species in the planted location.",
+                    "name": "matureHeight",
+                    "constraints": [
+                        "> 2 metres",
+                        "< 2 metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "notes",
+                    "dwcAttribute": "occurrenceRemarks"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalNumberPlanted",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberPlanted",
+                    "fromList": "revegetationMonitoring"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalNumberSurviving",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberSurviving",
+                    "fromList": "revegetationMonitoring"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "aveSurvivalRate",
+            "computed": {
+                "operation": "average",
+                "dependents": {
+                    "source": "survivalRate",
+                    "fromList": "revegetationMonitoring"
+                }
+            }
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "Vegetation Monitoring Results",
+    "record": "true",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "recordedBy",
+                            "preLabel": "Assessor:",
+                            "computed": null,
+                            "type": "text"
+                        },
+                        {
+                            "source": "revegetationType",
+                            "computed": null,
+                            "preLabel": "Type of revegetation method:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "countingMethod",
+                            "computed": null,
+                            "preLabel": "Counting Method:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total number planted",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberPlanted",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"revegetationMonitoring\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total number surviving",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberSurviving",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberSurviving\",\"fromList\":\"revegetationMonitoring\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 3,
+                    "source": "",
+                    "type": "literal"
+                }
+            ]}]},
+            "source": "revegetationMonitoring",
+            "columns": [
+                {
+                    "title": "Species",
+                    "source": "species",
+                    "width": "20%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "No. Planted",
+                    "source": "numberPlanted",
+                    "width": "9%",
+                    "type": "number"
+                },
+                {
+                    "title": "Seed Sown (Kg)",
+                    "source": "seedSown",
+                    "width": "9%",
+                    "type": "number"
+                },
+                {
+                    "title": "No. Surviving",
+                    "source": "numberSurviving",
+                    "width": "9%",
+                    "type": "number"
+                },
+                {
+                    "title": "Survival rate (%)",
+                    "source": "survivalRate",
+                    "width": "9%",
+                    "type": "number"
+                },
+                {
+                    "title": "Mature height",
+                    "source": "matureHeight",
+                    "width": "9%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Notes / Comments",
+                    "source": "notes",
+                    "width": "35%",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        }
+    ]
+}
