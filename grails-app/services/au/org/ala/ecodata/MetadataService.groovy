@@ -33,7 +33,7 @@ class MetadataService {
      */
     def activitiesModel() {
         return cacheService.get('activities-model',{
-            buildActivityModel()
+            JSON.parse((buildActivityModel() as JSON).toString())
         })
     }
 
@@ -172,7 +172,7 @@ class MetadataService {
      * @param templateName the template to search for.
      * @deprecated use templates associated with the ActivityForm directly.
      */
-    Map getOutputDataModel(templateName) {
+    def getOutputDataModel(templateName) {
         return cacheService.get(templateName + '-model',{
 
             List forms = ActivityForm.where {
@@ -187,7 +187,7 @@ class MetadataService {
                 log.warn("No template found with name ${templateName}")
             }
 
-            template ?: [:]
+            JSON.parse(((template ?: [:]) as JSON).toString())
         })
     }
 

@@ -36,12 +36,18 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
         activitiesModel
     }
 
-    private Map outputModelTemplate(String templateDir) {
+    private def outputModelTemplate(String templateDir) {
         String filename = "/resources/models/" +templateDir+  '/dataModel.json'
         def templateAsStream = getClass().getResourceAsStream(filename)
 
         // Using JsonSlurper instead of JSON.parse to avoid nulls being stored as the String "null" in the database.
         templateAsStream ? new groovy.json.JsonSlurper().parseText(templateAsStream.text) : [:]
+    }
+
+    private def outputModelTemplateAsJSON(String templateDir) {
+        String filename = "/resources/models/" +templateDir+  '/dataModel.json'
+        def templateAsStream = getClass().getResourceAsStream(filename)
+        templateAsStream ? JSON.parse(templateAsStream.text) : [:]
     }
 
     /** Parses the activities-model.json and moves all of the data into the ActivityForm collection */
@@ -130,17 +136,17 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
 
     def "the migration preserves the existing getOutputDataModel() API"() {
         when:
-        Map originalActivitiesModel = activitiesModel()
+        def originalActivitiesModel = activitiesModel()
 
         then:
-        originalActivitiesModel.outputs.each { Map output ->
-            Map expectedTemplate = outputModelTemplate(output.template)
-            Map template = metadataService.getOutputDataModel(output.template)
+        originalActivitiesModel.outputs.each { def output ->
+            def expectedTemplate = outputModelTemplateAsJSON(output.template)
+            def template = metadataService.getOutputDataModel(output.template)
 
             boolean unmatchedOutput = false
             if (!template) {
                 // Ensure the template wasn't from a missing or deleted activity.
-                Map matchingActivity = originalActivitiesModel.activities.find{ Map activity ->
+                def matchingActivity = originalActivitiesModel.activities.find{ Map activity ->
                     activity.status != Status.DELETED && activity.outputs.find{it == output.name}
                 }
 
@@ -162,7 +168,7 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
         originalActivities.sort {it.name}
 
         activities.eachWithIndex { Map activity, int i ->
-            Map originalActivity = originalActivities[i]
+            def originalActivity = originalActivities[i]
 
             activityEqual(activity, originalActivity)
         }
@@ -176,7 +182,7 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
         assert activity.supportsSites == (originalActivity.supportsSites == null ? true : originalActivity.supportsSites)
         assert activity.supportsPhotoPoints == (originalActivity.supportsPhotoPoints ?: false)
         assert activity.minOptionalSectionsCompleted == originalActivity.minOptionalSectionsCompleted
-        List expectedOutputs = originalActivity.outputs
+        def expectedOutputs = originalActivity.outputs
         // These are outputs that exist in the activities outputs but don't have a corresponding entry in
         // the outputs array.
         ['Photo Points', 'Plant Propagation - Batch Test',  'Indicator 3 - Structural Diversity',
@@ -204,7 +210,7 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
 
     private void outputsEqual(List outputs, List expectedOutputs) {
         outputs.each { Map output ->
-            Map expectedOutput = expectedOutputs.find{it.name == output.name}
+            def expectedOutput = expectedOutputs.find{it.name == output.name}
             outputEqual(output, expectedOutput)
         }
     }
@@ -215,14 +221,14 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
         assert output.title == (expectedOutput.title ?: null)
     }
 
-    private void templatesEqual(Map template, Map expectedTemplate) {
+    private void templatesEqual(def template, def expectedTemplate) {
 
         if (!template && !expectedTemplate) {
             println "No data"
             return
         }
 
-        assert (template as JSON).toString() == (expectedTemplate as JSON).toString()
+        assert template.toString() == expectedTemplate.toString()
     }
 
 }
