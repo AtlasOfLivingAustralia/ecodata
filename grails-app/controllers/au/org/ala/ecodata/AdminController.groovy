@@ -592,11 +592,19 @@ class AdminController {
 
     @AlaSecured("ROLE_ADMIN")
     def rawOutputModels() {
-        def model = [activitiesModel: metadataService.activitiesModel(), availableActivities:activityFormService.activityVersionsByName()]
+        def model = [availableActivities:activityFormService.activityVersionsByName()]
         if (params.open) {
             model.open = params.open
         }
         model
+    }
+
+    /**
+     * Duplicates ActivityFormController.get to implement interactive authorization rules.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    ActivityForm findActivityForm(String name, Integer formVersion) {
+        render activityFormService.findActivityForm(name, formVersion) as JSON
     }
 
     @AlaSecured("ROLE_ADMIN")

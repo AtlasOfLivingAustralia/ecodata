@@ -6,9 +6,8 @@
         <title>Output models | Admin | Data capture | Atlas of Living Australia</title>
         <script>
             var fcConfig = {
-                activityModelUpdateUrl:"${createLink(controller:'activityForm', action:'update')}",
-                outputDataModelUrl: "${createLink(action: 'getOutputDataModel')}",
-                getActivityFormUrl: "${createLink(controller:'activityForm', action:'get')}"
+                activitFormUpdateUrl:"${createLink(controller:'activityForm', action:'update')}",
+                getActivityFormUrl: "${createLink(action:'findActivityForm')}"
             };
         </script>
 

@@ -35,7 +35,7 @@ var EditActivityFormSectionViewModel = function (availableForms, config) {
         formSection.template = template;
 
         $.ajax({
-            url:config.updateFormTemplateUrl,
+            url:config.activitFormUpdateUrl,
             type: 'POST',
             dataType:'json',
             data: JSON.stringify(activityForm),
