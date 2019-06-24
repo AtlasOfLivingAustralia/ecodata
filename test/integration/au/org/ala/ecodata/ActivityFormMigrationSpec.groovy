@@ -64,7 +64,7 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
                     category: activity.category,
                     gmsId: activity.gmsId,
                     minOptionalSectionsCompleted: activity.minOptionalSectionsCompleted,
-                    supportsSites: activity.supportsSites == null ? true : activity.supportsSites,
+                    supportsSites: activity.supportsSites ?: false,
                     supportsPhotoPoints: activity.supportsPhotoPoints ?: false,
                     publicationStatus: PublicationStatus.PUBLISHED
             )
@@ -179,7 +179,7 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
         assert activity.type == originalActivity.type
         assert activity.category == originalActivity.category
         assert (activity.gmsId ?: '') == (originalActivity.gmsId ?: '')
-        assert activity.supportsSites == (originalActivity.supportsSites == null ? true : originalActivity.supportsSites)
+        assert activity.supportsSites == (originalActivity.supportsSites ?: false)
         assert activity.supportsPhotoPoints == (originalActivity.supportsPhotoPoints ?: false)
         assert activity.minOptionalSectionsCompleted == originalActivity.minOptionalSectionsCompleted
         def expectedOutputs = originalActivity.outputs

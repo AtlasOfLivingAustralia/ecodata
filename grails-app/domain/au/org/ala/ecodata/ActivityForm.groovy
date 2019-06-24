@@ -25,6 +25,11 @@ class ActivityForm {
         minOptionalSectionsCompleted nullable: true
     }
 
+    static mapping = {
+        name index:true
+        compoundIndex name:1, formVersion:-1
+    }
+
     ObjectId id
     String status = Status.ACTIVE
 

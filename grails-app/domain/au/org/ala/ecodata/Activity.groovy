@@ -42,9 +42,17 @@ class Activity {
     String projectId
     String projectActivityId
     String description
-    String type
     Date startDate
     Date endDate
+
+    /** The type of activity performed.  This field must match the name of an ActivityForm */
+    String type
+    /**
+     * The formVersion of the ActivityForm used to record the details of this activity. If not-null, the details of this activity should be
+     * displayed using the formVersion here.
+     */
+    Integer formVersion
+
     /**
      * Allows grouping of project activities into stages or milestones for planning and reporting purposes.
      * Biodiversity & CFOC projects plan activities in six monthly groups (Stage 1, Stage 2...)
@@ -101,6 +109,7 @@ class Activity {
         projectActivityId nullable: true
         userId nullable:true
         embargoed nullable:true
+        formVersion nullable: true
     }
 
 }
