@@ -7,6 +7,9 @@ import org.bson.types.ObjectId
  */
 class ActivityForm {
 
+    /** The list of properties to be used when binding request data to an ActivityForm */
+    static bindingProperties = ['name', 'type', 'formVersion', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections']
+
     static mapWith = "mongo"
 
     static embedded = ['sections']
