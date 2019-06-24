@@ -19,7 +19,7 @@ class ActivityFormService {
             form = ActivityForm.findByNameAndFormVersionAndStatusNotEqual(name, formVersion, Status.DELETED)
         }
         else {
-            List forms = ActivityForm.findAllByNameAndStatusNotEqual(name, Status.DELETED)
+            List forms = ActivityForm.findAllByNameAndPublicationStatusAndStatusNotEqual(name, PublicationStatus.PUBLISHED, Status.DELETED)
             form = forms.max{it.formVersion}
         }
         form
@@ -53,11 +53,15 @@ class ActivityFormService {
                 property('name')
                 property('formVersion')
             }
+            order('name', 'asc')
+            order('formVersion', 'desc')
         }.list()
 
         Map grouped = activities.collect{[name:it[0], formVersion:it[1]]}.groupBy{it.name}
         activities = grouped.collect{k, v -> [name:k, formVersions:v.collect{it.formVersion}]}
+        // The criteria query sort doesn't seem to be working, but the list isn't that long anyway.
         activities.sort{it.name}
+        activities.each{ it.formVersions.sort{-it} }
         activities
     }
 
