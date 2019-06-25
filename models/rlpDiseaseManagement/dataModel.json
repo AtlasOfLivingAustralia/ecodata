@@ -21,47 +21,114 @@
                         "expression": "$geom.areaHa(siteTreated)"
                     },
                     "dataType": "number",
+                    "name": "calculatedAreaTreatedHa",
+                    "units": "ha"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.lengthKm(siteTreated)"
+                    },
+                    "dataType": "number",
+                    "name": "calculatedLengthTreatedKm",
+                    "units": "km"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedAreaTreatedHa"
+                    },
+                    "dataType": "number",
                     "name": "areaTreatedHa",
-                    "validate": [
+                    "validate": "required,min[0]",
+                    "units": "ha"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedLengthTreatedKm"
+                    },
+                    "dataType": "number",
+                    "name": "lengthTreatedKm",
+                    "validate": "required,min[0]",
+                    "units": "km"
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
+                    "constraints": [
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(siteTreated)*0.9"
-                            }
-                        },
+                            "condition": "not (within(calculatedAreaTreatedHa, areaTreatedHa, 0.1))",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
+                        }]
+                },
+
+                {
+                    "dataType": "document",
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(calculatedAreaTreatedHa, areaTreatedHa, 0.1)) or roundTo(areaTreatedHa, 2) != roundTo(areaTreatedInvoicedHa, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaTreatedInvoicedHa",
+                    "units": "ha",
+                    "validate": [
+                        {"rule": "min[0]"},
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(siteTreated)*1.1"
+                                "expression": "areaTreatedHa"
                             }
                         }
                     ]
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.lengthKm(siteTreated)"
-                    },
-                    "dataType": "number",
-                    "name": "lengthTreatedKm",
-                    "validate": [
+                    "dataType": "text",
+                    "name": "invoicedNotActualReason",
+                    "constraints": [
+                        "Work was undertaken over a greater area than will be invoiced for",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(siteTreated)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(siteTreated)*1.1"
-                            }
+                            "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaTreatedInvoicedHa, 2)",
+                            "type": "visible"
                         }
                     ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualComments",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == invoicedNotActualReason"
+                        }],
+                    "validate": "required,maxSize[300]"
                 },
                 {
                     "dataType": "text",
@@ -112,22 +179,8 @@
                     },
                     "dataType": "number",
                     "name": "offSiteBenefitAreaHa",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(offSiteBenefitSites)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(offSiteBenefitSites)*1.1"
-                            }
-                        }
-                    ]
+                    "validate": "min[0]",
+                    "units": "ha"
                 },
                 {
                     "defaultValue": {
@@ -136,22 +189,8 @@
                     },
                     "dataType": "number",
                     "name": "offSiteBenefitLengthKm",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(offSiteBenefitSites)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(offSiteBenefitSites)*1.1"
-                            }
-                        }
-                    ]
+                    "validate": "min[0]",
+                    "units": "km"
                 },
                 {
                     "dataType": "text",
@@ -182,21 +221,127 @@
                     },
                     {
                         "width": "5%",
-                        "source": "siteTreated",
-                        "type": "feature",
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "siteTreated",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "calculatedAreaTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "source": "calculatedLengthTreatedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Please attach mapping details",
+                                        "source": "extraMappingDetails",
+                                        "type": "document"
+                                    }
+                                ]
+                            }
+                        ],
                         "title": "Site/s where disease managed"
                     },
                     {
-                        "width": "5%",
-                        "source": "areaTreatedHa",
-                        "type": "number",
-                        "title": "Area (ha) treated for disease"
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "areaTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "lengthTreatedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },{
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for actual being different to mapped amount",
+                                        "source": "mappingNotAlignedReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "mappingNotAlignedComments",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }
+
+                                ]
+                            }
+
+                        ],
+                        "width": "15%",
+                        "title": "Actual area (ha) treated for disease",
+                        "helpText": "Enter the amount you will invoice for during this reporting period."
                     },
                     {
-                        "width": "5%",
-                        "source": "lengthTreatedKm",
-                        "type": "number",
-                        "title": "Length (km) treated for disease"
+                        "width": "15%",
+                        "type": "col",
+                        "title": "Invoiced area (ha) treated for disease",
+                        "helpText": "Enter the amount you will invoice for during this reporting period.",
+                        "items": [
+                            {
+                                "source": "areaTreatedInvoicedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for invoiced amount being different to actual amount",
+                                        "source": "invoicedNotActualReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "invoicedNotActualComments",
+                                        "type": "textarea",
+                                        "rows": 5
+
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "width": "10%",
@@ -205,16 +350,25 @@
                         "type": "text"
                     },
                     {
-                        "width": "10%",
-                        "source": "managementMethod",
-                        "title": "Type of management method / treatment",
-                        "type": "select2"
-                    },
-                    {
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "managementMethod",
+                                        "type": "select2"
+                                    }
+                                ]
+                            },
+                            {
+                                "source": "otherManagementMethod",
+                                "placeholder": "Type of management method / treatment (if other)",
+                                "type": "text"
+                            }
+                        ],
                         "width": "12%",
-                        "source": "otherManagementMethod",
-                        "title": "Type of management method / treatment (if other)",
-                        "type": "text"
+                        "title": "Type of management method / treatment"
                     },
                     {
                         "width": "12%",
@@ -223,29 +377,36 @@
                         "type": "textarea"
                     },
                     {
-                        "width": "5%",
-                        "source": "offSiteBenefitSites",
-                        "title": "Please map any off-site area/s if they have also benefitted from this disease management",
-                        "type": "feature"
-                    },
-                    {
-                        "width": "5%",
-                        "source": "offSiteBenefitAreaHa",
-                        "title": "Area (ha) where disease threat is reduced",
-                        "type": "number"
-                    },
-                    {
-                        "width": "5%",
-                        "source": "offSiteBenefitLengthKm",
-                        "title": "Length (km) where disease threat is reduced",
-                        "type": "number"
-                    },
-                    {
-                        "width": "13%",
-                        "source": "evidenceOfBenefit",
-                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
-                        "type": "textarea"
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "offSiteBenefitSites",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "offSiteBenefitAreaHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "offSiteBenefitLengthKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "evidenceOfBenefit",
+                                "placeholder": "Please provide a description on the evidence available to reflect this benefit",
+                                "type": "textarea"
+                            }
+                        ],
+                        "width": "15%",
+                        "title": "Please map any off-site area/s if they have also benefitted from this disease management"
                     }
+
                 ],
                 "userAddedRows": true,
                 "source": "diseaseManagementDetails",

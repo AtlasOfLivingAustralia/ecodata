@@ -50,48 +50,22 @@
                 "name": "agreementSites"
             },
             {
-                "defaultValue": {
-                    "type": "computed",
+                "computed": {
                     "expression": "$geom.areaHa(agreementSites)"
                 },
                 "dataType": "number",
-                "name": "areaCoveredByAgreementsHa",
-                "units": "ha",
-                "validate": [
-                    {
-                        "rule": "min",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(agreementSites)*0.9"
-                        }
-                    },
-                    {
-                        "rule": "max",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(agreementSites)*1.1"
-                        }
-                    }
-                ]
+                "name": "calculatedAreaCoveredByAgreementsHa",
+                "units": "ha"
             },
             {
                 "defaultValue": {
                     "type": "computed",
-                    "expression": "areaCoveredByAgreementsHa"
+                    "expression": "calculatedAreaCoveredByAgreementsHa"
                 },
                 "dataType": "number",
                 "units": "ha",
-                "name": "actualAreaCoveredByAgreementsHa",
-                "validate": [
-                    {"rule": "min[0]"},
-                    {
-                        "rule": "max",
-                        "param": {
-                            "type": "computed",
-                            "expression": "areaCoveredByAgreementsHa"
-                        }
-                    }
-                ]
+                "name": "areaCoveredByAgreementsHa",
+                "validate": "required,min[0]"
             },
             {
                 "dataType": "text",
@@ -103,7 +77,7 @@
                 "validate": "required",
                 "behaviour": [
                     {
-                        "condition": "not (within(actualAreaCoveredByAgreementsHa, areaCoveredByAgreementsHa, 0.1))",
+                        "condition": "not (within(areaCoveredByAgreementsHa, calculatedAreaCoveredByAgreementsHa, 0.1))",
                         "type": "visible"
                     }
                 ]
@@ -125,12 +99,13 @@
                 "units": "ha",
                 "name": "areaOfCoveredByAgreementsInvoicedHa",
                 "validate": [
+                    {"rule": "required"},
                     {"rule": "min[0]"},
                     {
                         "rule": "max",
                         "param": {
                             "type": "computed",
-                            "expression": "actualAreaCoveredByAgreementsHa"
+                            "expression": "areaCoveredByAgreementsHa"
                         }
                     }
                 ]
@@ -142,7 +117,7 @@
                 "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
                 "behaviour": [
                     {
-                        "condition": "not (within(areaCoveredByAgreementsHa, actualAreaCoveredByAgreementsHa, 0.1)) or roundTo(actualAreaCoveredByAgreementsHa, 2) != roundTo(areaOfCoveredByAgreementsInvoicedHa, 2)",
+                        "condition": "not (within(calculatedAreaCoveredByAgreementsHa, areaCoveredByAgreementsHa, 0.1)) or roundTo(areaCoveredByAgreementsHa, 2) != roundTo(areaOfCoveredByAgreementsInvoicedHa, 2)",
                         "type": "visible"
                     }
                 ]
@@ -158,7 +133,7 @@
                 "validate": "required",
                 "behaviour": [
                     {
-                        "condition": "roundTo(areaOfCoveredByAgreementsInvoicedHa, 2) != roundTo(actualAreaCoveredByAgreementsHa, 2)",
+                        "condition": "roundTo(areaOfCoveredByAgreementsInvoicedHa, 2) != roundTo(areaCoveredByAgreementsHa, 2)",
                         "type": "visible"
                     }
                 ]
@@ -240,7 +215,7 @@
                             "type": "feature"
                         },
                         {
-                            "source": "areaCoveredByAgreementsHa",
+                            "source": "calculatedAreaCoveredByAgreementsHa",
                             "type": "number",
                             "readonly": "readonly",
                             "displayOptions": {
@@ -267,7 +242,7 @@
                     "helpText": "Enter the actual amount during this reporting period.",
                     "items": [
                         {
-                            "source": "actualAreaCoveredByAgreementsHa",
+                            "source": "areaCoveredByAgreementsHa",
                             "type": "number",
                             "displayOptions": {
                                 "displayUnits": true

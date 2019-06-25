@@ -74,7 +74,8 @@
                     "defaultValue": {
                         "type": "computed",
                         "expression": "$geom.lengthKm(sitesManaged)"
-                    }
+                    },
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "number",

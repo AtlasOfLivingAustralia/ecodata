@@ -201,6 +201,7 @@
                 "items": [
                     {
                         "type": "row",
+                        "css": "border-bottom",
                         "items": [
                             {
                                 "preLabel": "Baseline survey or indicator (follow-up) survey?",

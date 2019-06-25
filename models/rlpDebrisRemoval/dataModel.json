@@ -17,73 +17,31 @@
                 },
 
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.areaHa(clearedSites)"
                     },
                     "dataType": "number",
-                    "name": "debrisRemovedHa",
-                    "units": "ha"
-//                    "validate": [
-//                        {
-//                            "rule": "min",
-//                            "param": {
-//                                "type": "computed",
-//                                "expression": "$geom.areaHa(clearedSites)*0.9"
-//                            }
-//                        },
-//                        {
-//                            "rule": "max",
-//                            "param": {
-//                                "type": "computed",
-//                                "expression": "$geom.areaHa(clearedSites)*1.1"
-//                            }
-//                        }
-//                    ]
+                    "name": "calculatedDebrisRemovedHa",
+                    "units": "ha",
+                    "validate": "required,min[0]"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.lengthKm(clearedSites)"
                     },
                     "dataType": "number",
-                    "name": "debrisRemovedKm",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(clearedSites)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(clearedSites)*1.1"
-                            }
-                        }
-                    ]
+                    "name": "calculatedDebrisRemovedKm"
                 },
 
                 {
                     "defaultValue": {
                         "type": "computed",
-                        "expression": "debrisRemovedHa"
+                        "expression": "calculatedDebrisRemovedHa"
                     },
                     "dataType": "number",
                     "units": "ha",
-                    "name": "debrisActualRemovedHa",
-                    "validate": [
-                        {"rule": "min[0]"},
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "debrisRemovedHa"
-                            }
-                        }
-                    ]
+                    "name": "debrisRemovedHa",
+                    "validate": "required,min[0]"
                 },
 
                 {
@@ -93,7 +51,7 @@
                     "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
                     "behaviour": [
                         {
-                            "condition": "not (within(debrisRemovedHa, debrisActualRemovedHa, 0.1)) or roundTo(debrisActualRemovedHa, 2) != roundTo(areaOfRemovedDebrisInvoicedHa, 2) ",
+                            "condition": "not (within(debrisRemovedHa, calculatedDebrisRemovedHa, 0.1)) or roundTo(debrisRemovedHa, 2) != roundTo(areaOfRemovedDebrisInvoicedHa, 2) ",
                             "type": "visible"
                         }
                     ]
@@ -109,7 +67,7 @@
                     "validate": "required",
                     "behaviour": [
                         {
-                            "condition": "not (within(debrisActualRemovedHa, debrisRemovedHa, 0.1))",
+                            "condition": "not (within(calculatedDebrisRemovedHa, debrisRemovedHa, 0.1))",
                             "type": "visible"
                         }
                     ]
@@ -135,7 +93,7 @@
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "debrisActualRemovedHa"
+                                "expression": "debrisRemovedHa"
                             }
                         }
                     ]
@@ -150,7 +108,7 @@
                     "validate": "required",
                     "behaviour": [
                         {
-                            "condition": "roundTo(debrisActualRemovedHa, 2) != roundTo(areaOfRemovedDebrisInvoicedHa, 2)",
+                            "condition": "roundTo(debrisRemovedHa, 2) != roundTo(areaOfRemovedDebrisInvoicedHa, 2)",
                             "type": "visible"
                         }
                     ]
@@ -232,7 +190,7 @@
                                 "source": "clearedSites"
                             },
                             {
-                                "source": "debrisRemovedHa",
+                                "source": "calculatedDebrisRemovedHa",
                                 "readonly": "readonly",
                                 "type": "number",
                                 "displayOptions": {
@@ -259,7 +217,7 @@
                         "helpText": "Enter the amount which were actually removed during this reporting period.",
                         "items": [
                             {
-                                "source": "debrisActualRemovedHa",
+                                "source": "debrisRemovedHa",
                                 "type": "number",
                                 "displayOptions": {
                                     "displayUnits": true
@@ -341,9 +299,13 @@
                         "validate": "required",
                         "items": [
                             {
-                                "source": "debrisType",
-                                "type": "select2"
-
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "debrisType",
+                                        "type": "select2"
+                                    }
+                                ]
                             },
                             {
                                 "source": "otherDebrisType",
@@ -357,10 +319,7 @@
                         "width": "10%",
                         "source": "weightOfDebrisTonnes",
                         "title": "Weight (tonnes) of debris removed",
-                        "type": "number",
-                        "displayOptions": {
-                            "displayUnits": true
-                        }
+                        "type": "number"
                     },
                     {
                         "width": "10%",

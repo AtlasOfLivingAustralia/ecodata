@@ -238,6 +238,7 @@
                 "items": [
                     {
                         "type": "row",
+                        "css": "border-bottom",
                         "items": [{
                             "preLabel": "Initial or follow-up treatment",
                             "css": "span3",
