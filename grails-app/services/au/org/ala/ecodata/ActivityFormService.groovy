@@ -5,6 +5,9 @@ package au.org.ala.ecodata
  */
 class ActivityFormService {
 
+    private String INVALID_INDEX_KEY = 'activityForm.invalidIndex'
+    MetadataService metadataService
+
     /**
      * Returns the activity form identified by name and formVersion.  If formVersion is not supplied, the
      * activity form with the highest version that is also published will be returned.
@@ -39,6 +42,22 @@ class ActivityFormService {
             form.save()
         }
         form
+    }
+
+    /**
+     * Validates and saves an ActivityForm.
+     */
+    ActivityForm save(ActivityForm activityForm) {
+        activityForm.sections.each { FormSection section ->
+            Map validationResult = metadataService.isDataModelValid(section.template)
+            if (!validationResult.valid) {
+                activityForm.errors.reject(INVALID_INDEX_KEY, [section.name, validationResult.errorInIndex.join(',')] as Object[], "Invalid indicies in template ${section.name}")
+            }
+        }
+        if (!activityForm.hasErrors()) {
+            activityForm.save()
+        }
+        activityForm
     }
 
     /**

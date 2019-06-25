@@ -36,7 +36,7 @@ class ActivityFormController {
         ActivityForm form = activityFormService.findActivityForm(formData.name, formData.formVersion)
         if (form) {
             bindData(form, formData, [include:ActivityForm.bindingProperties])
-            form.save()
+            activityFormService.save(form)
         }
 
         respond form
