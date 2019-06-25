@@ -1,8 +1,10 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Shared
 
 /**
  * Dual purpose - actually performs the data migration and also ensures the existing API returns the same
@@ -13,10 +15,14 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
     @Autowired
     MetadataService metadataService
 
+    @Shared
+    ActivityFormMigrator activityFormMigrator
     def setupSpec() {
         ActivityForm.collection.remove(new BasicDBObject())
         // Migrate the activities-model into the database
-        migrateActivitiesModel()
+        String modelsFolder = getClass().getResource("/resources/models").getFile()
+        activityFormMigrator = new ActivityFormMigrator(modelsFolder)
+        activityFormMigrator.migrateActivitiesModel()
     }
 
     def setup() {
@@ -29,90 +35,17 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
         //ActivityForm.collection.remove(new BasicDBObject())
     }
 
-    private Map activitiesModel() {
-        String filename = "/resources/models/activities-model.json"
-        Map activitiesModel = JSON.parse(getClass().getResourceAsStream(filename).text)
-
-        activitiesModel
-    }
-
-    private def outputModelTemplate(String templateDir) {
-        String filename = "/resources/models/" +templateDir+  '/dataModel.json'
-        def templateAsStream = getClass().getResourceAsStream(filename)
-
-        // Using JsonSlurper instead of JSON.parse to avoid nulls being stored as the String "null" in the database.
-        templateAsStream ? new groovy.json.JsonSlurper().parseText(templateAsStream.text) : [:]
-    }
-
     private def outputModelTemplateAsJSON(String templateDir) {
-        String filename = "/resources/models/" +templateDir+  '/dataModel.json'
-        def templateAsStream = getClass().getResourceAsStream(filename)
-        templateAsStream ? JSON.parse(templateAsStream.text) : [:]
-    }
 
-    /** Parses the activities-model.json and moves all of the data into the ActivityForm collection */
-    private void migrateActivitiesModel() {
+        String template = activityFormMigrator.loadOutputModelTemplateToString(templateDir)
 
-        Map activitiesModel = activitiesModel()
-
-        activitiesModel.activities.each { Map activity ->
-
-            ActivityForm form = new ActivityForm(
-                    name:activity.name,
-                    type:activity.type,
-                    status:activity.status == Status.DELETED ? Status.DELETED : Status.ACTIVE,
-                    category: activity.category,
-                    gmsId: activity.gmsId,
-                    minOptionalSectionsCompleted: activity.minOptionalSectionsCompleted,
-                    supportsSites: activity.supportsSites ?: false,
-                    supportsPhotoPoints: activity.supportsPhotoPoints ?: false,
-                    publicationStatus: PublicationStatus.PUBLISHED
-            )
-
-            activity.outputs.each { outputName ->
-
-                Map config = activity.outputConfig.find{it.outputName == outputName}
-                Map outputDef = activitiesModel.outputs.find{it.name == outputName}
-
-
-                if (!outputDef) {
-                    println "Cannot find output ${outputName} for activity ${activity.name}"
-                }
-                else {
-                    Map template = outputModelTemplate(outputDef.template)
-                    if (!template) {
-                        println "No template found: ${activity.name} ${outputName} ${outputDef.template}"
-                    }
-                    FormSection section = new FormSection(
-                        name:outputName,
-                        optional:config.optional,
-                        collapsedByDefault: config.collapsedByDefault,
-                        optionalQuestionText: config.optionalQuestionText,
-                        title: outputDef.title,
-                        template:template,
-                        templateName: outputDef.template
-                    )
-
-                    form.sections << section
-                }
-            }
-
-            form.save()
-
-            if (form.hasErrors()) {
-                println "Error processing: ${activity.name}"
-                println form.errors
-
-                throw new RuntimeException(form.errors as String)
-            }
-        }
-
+        template ? JSON.parse(template) : [:]
     }
 
     def "the migration preserves the existing activitiesModel() API"() {
 
         setup:
-        Map originalActivitiesModel = activitiesModel()
+        Map originalActivitiesModel = activityFormMigrator.loadActivitiesModel()
 
         when:
         Map model = metadataService.activitiesModel()
@@ -136,7 +69,7 @@ class ActivityFormMigrationSpec extends IntegrationTestHelper {
 
     def "the migration preserves the existing getOutputDataModel() API"() {
         when:
-        def originalActivitiesModel = activitiesModel()
+        def originalActivitiesModel = activityFormMigrator.loadActivitiesModel()
 
         then:
         originalActivitiesModel.outputs.each { def output ->
