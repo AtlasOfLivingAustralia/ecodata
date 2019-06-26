@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.data_migration.ActivityFormMigrator
+
 /**
  * Processes requests related to activity forms.
  */
@@ -32,7 +34,7 @@ class ActivityFormService {
      * Publishes an activity form.  This makes it available for selection by the "latest published version"
      * mechanism (findActivityForm with a null formVersion)
      * @param name the name of the form.
-     * @param formVersion (optional) the version of the form.
+     * @param formVersion the version of the form.
      * @return
      */
     ActivityForm publish(String activityFormName, Integer version) {
@@ -40,6 +42,48 @@ class ActivityFormService {
         if (form) {
             form.publish()
             form.save()
+        }
+        form
+    }
+
+    /**
+     * Un-publishes an activity form (returns the publicationStatus to DRAFT).
+     * This makes it unavailable for selection by the "latest published version"
+     * mechanism (findActivityForm with a null formVersion)
+     * @param name the name of the form.
+     * @param formVersion the version of the form.
+     * @return
+     */
+    ActivityForm unpublish(String activityFormName, Integer version) {
+        ActivityForm form = ActivityForm.findByNameAndFormVersion(activityFormName, version)
+        if (form) {
+            form.unpublish()
+            form.save()
+        }
+        form
+    }
+
+    ActivityForm newDraft(String activityFormName) {
+        ActivityForm form = ActivityForm.findAllByNameAndStatusNotEqual(activityFormName, Status.DELETED).max{it.formVersion}
+        if (form) {
+
+            if (form.isPublished()) {
+                ActivityForm newForm = new ActivityForm(
+                        name: form.name,
+                        type: form.type,
+                        supportsSites: form.supportsSites,
+                        supportsPhotoPoints: form.supportsPhotoPoints,
+                        category: form.category,
+                        formVersion: form.formVersion + 1,
+                        gmsId: form.gmsId,
+                        minOptionalSectionsCompleted: form.minOptionalSectionsCompleted,
+                        sections: form.sections
+                )
+                newForm.save()
+                form = newForm
+            } else {
+                form.errors.reject("activityForm.latestVersionIsInDraft")
+            }
         }
         form
     }

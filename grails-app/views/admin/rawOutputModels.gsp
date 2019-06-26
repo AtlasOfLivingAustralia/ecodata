@@ -6,8 +6,11 @@
         <title>Output models | Admin | Data capture | Atlas of Living Australia</title>
         <script>
             var fcConfig = {
-                activitFormUpdateUrl:"${createLink(controller:'activityForm', action:'update')}",
-                getActivityFormUrl: "${createLink(action:'findActivityForm')}"
+                activityFormUpdateUrl:"${createLink(controller:'activityForm', action:'update')}",
+                getActivityFormUrl: "${createLink(action:'findActivityForm')}",
+                newDraftFormUrl:"${createLink(controller:'activityForm', action:'newDraftForm')}",
+                publishActivityFormUrl:"${createLink(controller:'activityForm', action:'publish')}",
+                unpublishActivityFormUrl:"${createLink(controller:'activityForm', action:'unpublish')}"
             };
         </script>
 
@@ -25,6 +28,13 @@
             </div>
             <div class="span6">
                 <label>Version:<br/> <select class="span3" name="versionSelector" data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus == 'published', click:newDraftForm">New draft form</button>
+                <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus != 'published', click:publishForm">Publish form</button>
+                <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus == 'published', click:unpublishForm">Un-publish form</button>
             </div>
         </div>
         <div>

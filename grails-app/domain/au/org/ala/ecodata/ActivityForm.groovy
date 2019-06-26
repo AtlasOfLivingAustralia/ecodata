@@ -83,6 +83,10 @@ class ActivityForm {
     String createdUserId
     String lastUpdatedUserId
 
+    boolean isPublished() {
+        return publicationStatus == PublicationStatus.PUBLISHED
+    }
+
     void publish() {
         publicationStatus = PublicationStatus.PUBLISHED
     }

@@ -8,6 +8,9 @@ var $textarea = $('#outputModelEdit');
  */
 var EditActivityFormSectionViewModel = function (availableForms, config) {
     var self = this;
+
+    var service = new ActivityFormService(config);
+
     this.modelName = ko.observable('No output selected');
 
     this.transients = {};
@@ -34,24 +37,7 @@ var EditActivityFormSectionViewModel = function (availableForms, config) {
         });
         formSection.template = template;
 
-        $.ajax({
-            url:config.activitFormUpdateUrl,
-            type: 'POST',
-            dataType:'json',
-            data: JSON.stringify(activityForm),
-            contentType: 'application/json'
-        }).done(function (data) {
-                if (data.error) {
-                    alert(data.message);
-                } else {
-                    $textarea.html(vkbeautify.json(data, 2));
-                    document.location.reload();
-                }
-
-        }).fail(function() {
-            alert("An error occurred saving your template data.")
-        });
-
+        service.saveActivityForm(activityForm);
     };
 
     this.revert = function () {
@@ -102,17 +88,13 @@ var EditActivityFormSectionViewModel = function (availableForms, config) {
         var version = self.selectedFormVersion();
 
         if (name && version) {
-            $.getJSON(config.getActivityFormUrl, {name:name.name, formVersion:version}).done(function(activityForm) {
+            service.loadActivityForm(name, version).done(function(activityForm) {
                 self.selectedActivityForm(activityForm);
                 if (activityForm.sections.length == 1) {
                     self.selectedFormSection(activityForm.sections[0]);
                 }
-
-            }).fail(function() {
-                alert("An error occurred loading the selected form");
             });
         }
-
     };
 
     this.selectedFormSection.subscribe(function(formSection) {
@@ -125,10 +107,108 @@ var EditActivityFormSectionViewModel = function (availableForms, config) {
         }
     });
 
+    self.newDraftForm = function() {
+        var activityForm = self.selectedActivityForm();
+        if (activityForm && activityForm.publicationStatus == 'published') {
+            service.newDraft(activityForm).done(function(form) {
+                document.location.reload();
+            });
+        }
+    };
+
+    self.publishForm = function() {
+        var activityForm = self.selectedActivityForm();
+        if (activityForm && activityForm.publicationStatus != 'published') {
+            service.publish(activityForm).done(function(form) {
+                document.location.reload();
+            });
+        }
+    };
+
+    self.unpublishForm = function() {
+        var activityForm = self.selectedActivityForm();
+        if (activityForm && activityForm.publicationStatus == 'published') {
+            service.unpublish(activityForm).done(function(form) {
+                document.location.reload();
+            });
+        }
+    };
+
     self.clearTemplate = function() {
         $textarea.val('');
         self.modelName("<No form section selected>");
     }
+};
+
+var ActivityFormService = function(config) {
+    var self = this;
+
+    self.saveActivityForm = function(activityForm) {
+        return $.ajax({
+            url:config.activityFormUpdateUrl,
+            type: 'POST',
+            dataType:'json',
+            data: JSON.stringify(activityForm),
+            contentType: 'application/json'
+        }).done(function (data) {
+            if (data.error) {
+                alert(data.message);
+            } else {
+                $textarea.html(vkbeautify.json(data, 2));
+                document.location.reload();
+            }
+
+        }).fail(function() {
+            alert("An error occurred saving your template data.")
+        });
+    };
+
+    self.loadActivityForm = function(name, version) {
+        return $.getJSON(config.getActivityFormUrl, {name:name.name, formVersion:version}).fail(function() {
+            alert("An error occurred loading the selected form");
+        });
+    };
+
+    self.newDraft = function(activityForm) {
+        var name = activityForm.name;
+        var url = config.newDraftFormUrl+"?name="+encodeURIComponent(name);
+        return $.ajax({
+            url:url,
+            type: 'POST',
+            dataType:'json',
+            contentType: 'application/json'
+        }).fail(function() {
+            alert("Draft creation failed");
+        });
+    };
+
+    self.publish = function(activityForm) {
+        var name = activityForm.name;
+        var formVersion = activityForm.formVersion;
+        var url = config.publishActivityFormUrl+"?name="+encodeURIComponent(name)+"&formVersion="+formVersion;
+        return $.ajax({
+            url:url,
+            type: 'POST',
+            dataType:'json',
+            contentType: 'application/json'
+        }).fail(function() {
+            alert("Draft creation failed");
+        });
+    };
+
+    self.unpublish = function(activityForm) {
+        var name = activityForm.name;
+        var formVersion = activityForm.formVersion;
+        var url = config.unpublishActivityFormUrl+"?name="+encodeURIComponent(name)+"&formVersion="+formVersion;
+        return $.ajax({
+            url:url,
+            type: 'POST',
+            dataType:'json',
+            contentType: 'application/json'
+        }).fail(function() {
+            alert("Draft creation failed");
+        });
+    };
 };
 
 

@@ -41,4 +41,34 @@ class ActivityFormController {
 
         respond form
     }
+
+    /**
+     * Increments the current form version to create a new draft version.
+     * @param name the name of the activity form.
+     * @return the new form.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    def newDraftForm(String name) {
+        respond activityFormService.newDraft(name)
+    }
+
+    /**
+     * Increments the current form version to create a new draft version.
+     * @param name the name of the activity form.
+     * @return the new form.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    def publish(String name, Integer formVersion) {
+        respond activityFormService.publish(name, formVersion)
+    }
+
+    /**
+     * Increments the current form version to create a new draft version.
+     * @param name the name of the activity form.
+     * @return the new form.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    def unpublish(String name, Integer formVersion) {
+        respond activityFormService.unpublish(name, formVersion)
+    }
 }
