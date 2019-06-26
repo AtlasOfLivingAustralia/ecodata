@@ -7,13 +7,7 @@
     </head>
 
     <body>
-        <script type="text/javascript">
 
-            $(document).ready(function() {
-
-            });
-
-        </script>
         <content tag="pageTitle">Metadata</content>
         <table class="table table-bordered">
             <thead>
