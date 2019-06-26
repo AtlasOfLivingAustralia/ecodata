@@ -80,8 +80,8 @@ class MetadataService {
                 ]
             }
 
-            if (!maxVersionsByName[activityForm.name] || maxVersionsByName[activityForm.name].version < activityForm.version) {
-                maxVersionsByName[activityForm.name] = activityForm.version
+            if (!maxVersionsByName[activityForm.name] || (maxVersionsByName[activityForm.name] < activityForm.formVersion)) {
+                maxVersionsByName[activityForm.name] = activityForm.formVersion
                 activitiesByName[activityForm.name] = activityModel
             }
         }
@@ -211,24 +211,6 @@ class MetadataService {
         }
         return null
     }
-    def updateOutputDataModel(Map model, String templateName) {
-        Map isDataModelValid = isDataModelValid(model)
-        if(isDataModelValid.valid){
-            log.debug "updating template name = ${templateName}"
-
-            writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
-            // make sure it gets reloaded
-            clearCacheForTemplate(templateName)
-            String bodyText = "The output data model ${model} has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
-            emailService.emailSupport("Output model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
-            [error: false]
-        } else {
-            [
-                    message: "Error! Model is not valid. The following indexes are at fault - ${isDataModelValid?.errorInIndex?.join(',')}"
-                    , error: true
-            ]
-        }
-    }
 
     def clearCacheForTemplate(String templateName){
         cacheService.clear(templateName + '-model')
@@ -242,10 +224,6 @@ class MetadataService {
     def getModelNameFromType(type) {
         //log.debug "Getting model name for ${type}"
         return activitiesModel().find({it.name == type})?.template
-    }
-
-    def getInstitutionName(uid) {
-        return uid ? institutionList().find({ it.uid == uid })?.name : ''
     }
 
     def institutionList() {
