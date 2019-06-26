@@ -1,0 +1,169 @@
+{
+    "modelName": "Landscape Context Components",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "patchCategory",
+            "constraints": [
+                "< 2 ha",
+                "Between 2 and 5 ha",
+                "Between 5 and 10 ha",
+                "Between 10 and 20 ha",
+                "More than 20 ha, but significantly disturbed",
+                "More than 20 ha but not significantly disturbed"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "patchSignificantlyDisturbed"
+        },
+        {
+            "dataType": "text",
+            "name": "distanceToCoreArea",
+            "constraints": [
+                "> 5 km",
+                "1 to 5 km",
+                "< 1 km",
+                "contiguous"
+            ]
+        },
+        {
+            "dataType": "boolean",
+            "name": "coreAreaSignificantlyDisturbed"
+        },
+        {
+            "defaultRows": [
+                {"radiusFromSite": 0.1},
+                {"radiusFromSite": 1},
+                {"radiusFromSite": 5}
+            ],
+            "dataType": "list",
+            "name": "neighbourhood",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "radiusFromSite"
+                },
+                {
+                    "dataType": "number",
+                    "name": "nativeVegetationPercent"
+                }
+            ]
+        },
+        {
+            "dataType": "boolean",
+            "name": "neighbourhoodSignificantlyDisturbed"
+        },
+        {
+            "dataType": "number",
+            "name": "patchSizeScore"
+        },
+        {
+            "dataType": "number",
+            "name": "distanceToCoreAreaScore"
+        },
+        {
+            "dataType": "number",
+            "name": "neighbourhoodScore"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h2>Landscape Context Score<\/h2>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "title": "Patch Size",
+            "items": [{
+                "items": [
+                    {
+                        "source": "patchCategory",
+                        "computed": null,
+                        "preLabel": "Patch category & description)",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "patchSizeScore",
+                        "computed": null,
+                        "preLabel": "Score",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "title": "Distance to Core Area",
+            "items": [{
+                "items": [
+                    {
+                        "source": "distanceToCoreArea",
+                        "computed": null,
+                        "preLabel": "Distance to core area",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "coreAreaSignificantlyDisturbed",
+                        "computed": null,
+                        "preLabel": "Core area significantly disturbed",
+                        "type": "boolean"
+                    },
+                    {
+                        "source": "distanceToCoreAreaScore",
+                        "computed": null,
+                        "preLabel": "Score",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Neighbourhood<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "footer": {"rows": [{"columns": [
+                    {
+                        "source": "neighbourhoodSignificantlyDisturbed",
+                        "type": "boolean"
+                    },
+                    {
+                        "source": "neighbourhoodScore",
+                        "type": "number"
+                    }
+                ]}]},
+                "source": "neighbourhood",
+                "computed": null,
+                "columns": [
+                    {
+                        "title": "Radius from site",
+                        "source": "radiusFromSite",
+                        "noEdit": true,
+                        "type": "text"
+                    },
+                    {
+                        "title": "% native vegetation",
+                        "source": "nativeVegetationPercent",
+                        "type": "number"
+                    }
+                ],
+                "type": "table"
+            }],
+            "type": "row"
+        }
+    ]
+}

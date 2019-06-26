@@ -1,0 +1,271 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "treatmentMethod",
+                    "description": "The primary method used to treat the patch of the target species",
+                    "constraints": [
+                        "Chemical control - Foliar spraying",
+                        "Chemical control - Basal bark spraying",
+                        "Chemical control - Cut stump",
+                        "Chemical control - Cut and swab",
+                        "Mechanical control - Slashing",
+                        "Mechanical control - Mowing",
+                        "Mechanical control - Felling",
+                        "Manual control - Hand pulling",
+                        "Biological control - Biological agents (specify in notes)",
+                        "Biological control – Grazing",
+                        "Environmental management - Fire",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "weedAreaTreatedHa",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "plantDensity",
+                    "constraints": [
+                        "Dense infestation",
+                        "Isolated plant",
+                        "Scattered plants"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "controlStatus",
+                    "description": "The control status of the patch of the target species being treated",
+                    "constraints": [
+                        "New Infestation",
+                        "Active Infestation",
+                        "Under control",
+                        "Under monitoring",
+                        "Cleared",
+                        "Unknown"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "weedManagement"
+        },
+        {
+            "dataType": "number",
+            "name": "cost",
+            "validate": "integer,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "undertakenNoxiousWeedControl",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "treatmentMethod",
+                    "description": "The primary method used to treat the patch of the target species",
+                    "constraints": [
+                        "Chemical control - Foliar spraying",
+                        "Chemical control - Basal bark spraying",
+                        "Chemical control - Cut stump",
+                        "Chemical control - Cut and swab",
+                        "Mechanical control - Slashing",
+                        "Mechanical control - Mowing",
+                        "Mechanical control - Felling",
+                        "Manual control - Hand pulling",
+                        "Biological control - Biological agents (specify in notes)",
+                        "Biological control – Grazing",
+                        "Environmental management - Fire",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "weedAreaTreatedHa",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "plantDensity",
+                    "constraints": [
+                        "Dense infestation",
+                        "Isolated plant",
+                        "Scattered plants"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "controlStatus",
+                    "description": "The control status of the patch of the target species being treated",
+                    "constraints": [
+                        "New Infestation",
+                        "Active Infestation",
+                        "Under control",
+                        "Under monitoring",
+                        "Cleared",
+                        "Unknown"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "noxiousWeedManagement",
+            "defaultRows": []
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
+    "modelName": "ESP Weed Management",
+    "title": "Weed Management",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities to monitor and/or manage weeds are included under any or all of the following; “Monitor and manage herbaceous exotic plants (aggressive)”, “Monitor and manage herbaceous exotic plants (non-aggressive)”, “Monitor and manage exotic shrubs (aggressive)”, “Monitor and manage exotic plants”, “Monitor and manage aggressive exotic plants” and “Monitor and manage non-aggressive exotic plants”.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "fixedWidth": true,
+                "columns": [
+                    {
+                        "width": "25%",
+                        "source": "species",
+                        "title": "Species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "20%",
+                        "source": "treatmentMethod",
+                        "title": "Treatment Method",
+                        "type": "select2Many"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "weedAreaTreatedHa",
+                        "title": "Approximate area treated (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "plantDensity",
+                        "title": "Density",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "controlStatus",
+                        "title": "Control Status",
+                        "type": "selectOne"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "weedManagement",
+                "title": "Please complete the following:",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Total cost of management actions",
+                "source": "cost",
+                "type": "currency"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Have you undertaken any activities to manage weeds that are; noxious (NSW) or declared (SA)?",
+                "source": "undertakenNoxiousWeedControl",
+                "type": "selectOne"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "To search a list of noxious (NSW) weed species click <a href=\"http://weeds.dpi.nsw.gov.au/\" target=\"_blank\">here<\/a>. To search a list of declared (SA) weeds click <a href=\"http://pir.sa.gov.au/biosecurity/weeds_and_pest_animals/weeds_in_sa\" target=\"_blank\">here<\/a>.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "fixedWidth": true,
+                "columns": [
+                    {
+                        "width": "25%",
+                        "source": "species",
+                        "title": "Species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "20%",
+                        "source": "treatmentMethod",
+                        "title": "Treatment Method",
+                        "type": "select2Many"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "weedAreaTreatedHa",
+                        "title": "Approximate area treated (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "plantDensity",
+                        "title": "Density",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "controlStatus",
+                        "title": "Control Status",
+                        "type": "selectOne"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "noxiousWeedManagement",
+                "title": "If \"Yes\", please complete the following:",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

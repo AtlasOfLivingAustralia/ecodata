@@ -1,0 +1,408 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who observed the sighting.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "allowRowDelete": "false",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "Start typing a scientific or common name, then choose the species or type of pollinator"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationQualifier",
+                    "dwcAttribute": "identificationQualifier",
+                    "description": "How confident are you of the species identification?",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "How many individuals did you see of each species?",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Please upload a photo of the beetle observed. This is essential for verification of the record if you are 'uncertain' of the species. <i>Please note that images will be shared under a Creative Commons Attribution license (you will be credited for the images)<\/i>"
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingTable",
+            "defaultRows": [
+                {
+                    "sightingPhoto": "",
+                    "species": "Geotrupes spiniger (Blue dung beetle)",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Bubas bison",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus australis",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus binodis (Humpbacked dung beetle)",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus vacca",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus pentacanthus",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus pexatus",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus taurus (Bullhorned dung beetle)",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onthophagus victoriensis",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Euoniticellus africanus",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Euoniticellus fulvus",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Euoniticellus intermedius",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Euoniticellus pallipes",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onitis aygulus",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "sightingPhoto": "",
+                    "species": "Onitis alexis (Bronze dung beetle)",
+                    "dataType": "species",
+                    "identificationQualifier": "",
+                    "individualCount": "",
+                    "dwcAttribute": "scientificName"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "Please include any addional comments or notes relevant to this record."
+        },
+        {
+            "dataType": "text",
+            "name": "verifiedBy",
+            "dwcAttribute": "identifiedBy",
+            "description": "The name of the person who verified the species identifications."
+        },
+        {
+            "dataType": "text",
+            "name": "typeOfObservation",
+            "description": "Is the record part of a systematic baited survey or not?",
+            "constraints": [
+                "Systematic survey - baited",
+                "Systematic survey - non-baited",
+                "Opportunistic/Ad-hoc sighting",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "bait",
+            "description": "The animal source of the dung in which beetles were found or that was used as bait in trapping.",
+            "constraints": [
+                "Cow",
+                "Horse",
+                "Sheep",
+                "Other",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "Comments or notes about the observation(s) and/or conditions at the time of the observation."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "allowRowDelete": true,
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "speciesNameVerified",
+                    "dwcAttribute": "scientificName",
+                    "description": "Start typing a scientific or common name."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCountUnknown",
+                    "dwcAttribute": "individualCount",
+                    "description": "How many individuals did you see of the species?",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhotoUnknown",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Please upload a photo of the beetle observed. This is essential for verification of the record. <i>Please note that images will be shared under a Creative Commons Attribution license (you will be credited for the images)<\/i>"
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingTable_unknownSpecies",
+            "defaultRows": [{
+                "sightingPhotoUnknown": "",
+                "speciesNameVerified": "",
+                "individualCountUnknown": ""
+            }]
+        }
+    ],
+    "modelName": "dungBeetleMonitoring",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "type": "col",
+                "items": [
+                    {
+                        "source": "<h2>Beetle Sightings<\/h2><b><i>Enter details for each species of beetle, including 'zero counts' if not seen.<\/i><\/b>",
+                        "type": "literal"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "width": "30%",
+                                "noEdit": true,
+                                "source": "species",
+                                "title": "Species name",
+                                "type": "text"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "identificationQualifier",
+                                "title": "Identification confidence",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "individualCount",
+                                "title": "No. of individuals",
+                                "type": "number"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "sightingPhoto",
+                                "title": "Photo of beetle (Essential for verification if 'uncertain')",
+                                "type": "image"
+                            }
+                        ],
+                        "source": "sightingTable",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "source": "<h2>Location of your observation<\/h2><b><i>Zoom in on the map, then drag and drop the marker at your location.<\/i><\/b>",
+                        "type": "literal"
+                    },
+                    {
+                        "includeNotes": false,
+                        "orientation": "vertical",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "readonly": false,
+                        "includeSource": false,
+                        "includeAccuracy": false,
+                        "hideSiteSelection": false,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": false
+                    },
+                    {
+                        "preLabel": "Observer name",
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Record date",
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Type of observation",
+                        "source": "typeOfObservation",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Type of dung occupied/bait used",
+                        "source": "bait",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Comments",
+                        "source": "notes",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Identifications verified by",
+                        "source": "verifiedBy",
+                        "type": "text"
+                    },
+                    {
+                        "source": "<b><i>See the 'Project Resources' tab for identification help.<\/i><\/b>",
+                        "type": "literal"
+                    },
+                    {
+                        "source": "<h2>Unknown Beetle Species<\/h2><b><i>ONLY USE THIS TABLE IF REQUIRED<br>Add a PHOTO and COUNT for each species of beetle which cannot be identified in the main table. With a good photo an expert may be able to identify the species.<\/i><\/b>",
+                        "type": "literal"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "width": "60%",
+                                "source": "speciesNameVerified",
+                                "title": "Identified species name (expert)",
+                                "type": "autocomplete"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "individualCountUnknown",
+                                "title": "No. of individuals",
+                                "type": "number"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "sightingPhotoUnknown",
+                                "title": "Photo of beetle (Mandatory - Critical for verification)",
+                                "type": "image"
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "sightingTable_unknownSpecies",
+                        "type": "table"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

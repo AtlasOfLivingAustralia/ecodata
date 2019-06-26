@@ -1,0 +1,290 @@
+{
+    "modelName": "Conservation Works for Threatened species",
+    "dataModel": [
+        {
+            "dataType": "species",
+            "name": "targetSpecies",
+            "description": "Species targeted for these conservation works / measures (start typing a  scientific or common name for a species)"
+        },
+        {
+            "dataType": "text",
+            "name": "targetTEC",
+            "description": "Threatened Ecological Community targeted for these conservation works / measures",
+            "constraints": [
+                "Alpine Sphagnum Bogs and Associated Fens",
+                "Aquatic Root Mat Community 1 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community 2 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community 3 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community 4 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community in Caves of the Swan Coastal Plain",
+                "Arnhem Plateau Sandstone Shrubland Complex",
+                "Assemblages of plants and invertebrate animals of tumulus (organic mound) springs of the Swan Coastal Plain",
+                "Blue Gum High Forest of the Sydney Basin Bioregion",
+                "Brigalow (Acacia harpophylla dominant and co-dominant)",
+                "Broad leaf tea-tree (Melaleuca viridiflora) woodlands in high rainfall coastal north Queensland",
+                "Buloke Woodlands of the Riverina and Murray-Darling Depression Bioregions",
+                "Castlereagh Scribbly Gum and Agnes Banks Woodlands of the Sydney Basin Bioregion",
+                "Central Hunter Valley eucalypt forest and woodland",
+                "Claypans of the Swan Coastal Plain",
+                "Coastal Upland Swamps in the Sydney Basin Bioregion",
+                "Cooks River/Castlereagh Ironbark Forest of the Sydney Basin Bioregion",
+                "Coolibah - Black Box Woodlands of the Darling Riverine Plains and the Brigalow Belt South Bioregions",
+                "Corymbia calophylla - Kingia australis woodlands on heavy soils of the Swan Coastal Plain",
+                "Corymbia calophylla - Xanthorrhoea preissii woodlands and shrublands of the Swan Coastal Plain",
+                "Cumberland Plain Shale Woodlands and Shale-Gravel Transition Forest",
+                "Eastern Stirling Range Montane Heath and Thicket",
+                "Eastern Suburbs Banksia Scrub of the Sydney Region",
+                "Eucalypt Woodlands of the Western Australian Wheatbelt",
+                "Eucalyptus ovata - Callitris oblonga Forest",
+                "Eyre Peninsula Blue Gum (Eucalyptus petiolaris) Woodland",
+                "Giant Kelp Marine Forests of South East Australia",
+                "Gippsland Red Gum (Eucalyptus tereticornis subsp. mediana) Grassy Woodland and Associated Native Grassland",
+                "Grassy Eucalypt Woodland of the Victorian Volcanic Plain",
+                "Grey Box (Eucalyptus microcarpa) Grassy Woodlands and Derived Native Grasslands of South-eastern Australia",
+                "Hunter Valley Weeping Myall (Acacia pendula) Woodland",
+                "Iron-grass Natural Temperate Grassland of South Australia",
+                "Kangaroo Island Narrow-leaved Mallee (Eucalyptus cneorifolia) Woodland",
+                "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia",
+                "Lowland Grassy Woodland in the South East Corner Bioregion",
+                "Lowland Native Grasslands of Tasmania",
+                "Lowland Rainforest of Subtropical Australia",
+                "Mabi Forest (Complex Notophyll Vine Forest 5b)",
+                "Monsoon vine thickets on the coastal sand dunes of Dampier Peninsula",
+                "Natural Damp Grassland of the Victorian Coastal Plains",
+                "Natural Grasslands of the Murray Valley Plains",
+                "Natural Grasslands of the Queensland Central Highlands and the northern Fitzroy Basin",
+                "Natural grasslands on basalt and fine-textured alluvial plains of northern New South Wales and southern Queensland",
+                "Natural Temperate Grassland of the South Eastern Highlands",
+                "Natural Temperate Grassland of the Victorian Volcanic Plain",
+                "New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands",
+                "Peppermint Box (Eucalyptus odorata) Grassy Woodland of South Australia",
+                "Perched Wetlands of the Wheatbelt region with extensive stands of living sheoak and paperbark across the lake floor (Toolibin Lake)",
+                "Posidonia australis seagrass meadows of the Manning-Hawkesbury ecoregion",
+                "Proteaceae Dominated Kwongkan Shrublands of the Southeast Coastal Floristic Province of Western Australia",
+                "Scott River Ironstone Association",
+                "Seasonal Herbaceous Wetlands (Freshwater) of the Temperate Lowland Plains",
+                "Sedgelands in Holocene dune swales of the southern Swan Coastal Plain",
+                "Semi-evergreen vine thickets of the Brigalow Belt (North and South) and Nandewar Bioregions",
+                "Shale Sandstone Transition Forest of the Sydney Basin Bioregion",
+                "Shrublands and Woodlands of the eastern Swan Coastal Plain",
+                "Shrublands and Woodlands on Muchea Limestone of the Swan Coastal Plain",
+                "Shrublands and Woodlands on Perth to Gingin ironstone (Perth to Gingin ironstone association) of the Swan Coastal Plain",
+                "Shrublands on southern Swan Coastal Plain ironstones",
+                "Silurian Limestone Pomaderris Shrubland of the South East Corner and Australian Alps Bioregions",
+                "Southern Highlands Shale Forest and Woodland in the Sydney Basin Bioregion",
+                "Subtropical and Temperate Coastal Saltmarsh",
+                "Swamp Tea-tree (Melaleuca irbyana) Forest of South-east Queensland",
+                "Swamps of the Fleurieu Peninsula",
+                "Temperate Highland Peat Swamps on Sandstone",
+                "The community of native species dependent on natural discharge of groundwater from the Great Artesian Basin",
+                "Thrombolite (microbial) community of coastal freshwater lakes of the Swan Coastal Plain (Lake Richmond)",
+                "Thrombolite (microbialite) Community of a Coastal Brackish Lake (Lake Clifton)",
+                "Turpentine-Ironbark Forest in the Sydney Basin Bioregion",
+                "Upland Basalt Eucalypt Forests of the Sydney Basin Bioregion",
+                "Upland Wetlands of the New England Tablelands and the Monaro Plateau",
+                "Warkworth Sands Woodland of the Hunter Valley",
+                "Weeping Myall Woodlands",
+                "Western Sydney Dry Rainforest and Moist Woodland on Shale",
+                "White Box-Yellow Box-Blakely's Red Gum Grassy Woodland and Derived Native Grassland"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "animalBreedingNos",
+            "description": "The number of individual animals in a captive or ex-situ breeding program or plants in a propagation program.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "animalReleaseNumber",
+            "description": "The number of individual animals / plants released back into the wild",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "conservationActionType",
+                    "description": "The type of conservation works implemented",
+                    "constraints": [
+                        "Ecological thinning",
+                        "Installation of nest boxes or other breeding/refuge structures",
+                        "Restoring niche habitats",
+                        "Seed bank establishment",
+                        "Ex-situ breeding / propagation program",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaImpactedByWorks",
+                    "description": "Area in hectares impacted by the conservation works",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "conservationWorks"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "protectionMechanism",
+                    "description": "The type of agreement mechanism implemented to protect threatened species",
+                    "constraints": [
+                        "On title in perpetuity (eg Covenant Agreement)",
+                        "Binding agreement not on title in perpetuity (eg Property Vegetation Plan)",
+                        "Termed agreement not on title - binding (eg Land management agreement)",
+                        "Not on title - non-binding (eg Wildlife Refuge)",
+                        "No protection mechanism applicable",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfProtectionMechanisms",
+                    "description": "The number of agreement mechanisms implemented as a result of the project",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaUnderAgreement",
+                    "description": "Area covered by conservation agreement (Ha):",
+                    "validate": "required,min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "protectionMechanisms"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "computed": null,
+            "type": "row",
+            "items": [
+                {
+                    "preLabel": "Species:",
+                    "computed": null,
+                    "source": "targetSpecies",
+                    "type": "autocomplete"
+                },
+                {
+                    "preLabel": "Threatened Ecological Community:",
+                    "source": "targetTEC",
+                    "type": "selectOne"
+                },
+                {
+                    "preLabel": "No. of animals in captive breeding programs or plants propagated:",
+                    "computed": null,
+                    "source": "animalBreedingNos",
+                    "type": "number"
+                },
+                {
+                    "preLabel": "No. of animals / plants released back into the wild:",
+                    "computed": null,
+                    "source": "animalReleaseNumber",
+                    "type": "number"
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "computed": null,
+            "columns": [
+                {
+                    "width": "80%",
+                    "source": "conservationActionType",
+                    "title": "Conservation Action:",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "18%",
+                    "source": "areaImpactedByWorks",
+                    "title": "Area impacted by works (Ha):",
+                    "type": "number"
+                }
+            ],
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan":2,
+                                "type":"literal",
+                                "source":"<i>If this table is not relevant to the activities you completed, please delete the table row using the <i class='fa fa-cross'></i> icon in the rightmost column</i>"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "userAddedRows": "true",
+            "source": "conservationWorks",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "computed": null,
+            "columns": [
+                {
+                    "width": "65%",
+                    "source": "protectionMechanism",
+                    "title": "Type of Agreement mechanism:",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "18%",
+                    "source": "numberOfProtectionMechanisms",
+                    "title": "No. of Agreement mechanisms:",
+                    "type": "number"
+                },
+                {
+                    "width": "18%",
+                    "source": "areaUnderAgreement",
+                    "title": "Area under Agreement (Ha):",
+                    "type": "number"
+                }
+            ],
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan":3,
+                                "type":"literal",
+                                "source":"<i>If this table is not relevant to the activities you completed, please delete the table row using the <i class='fa fa-cross'></i> icon in the rightmost column</i>"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "userAddedRows": "true",
+            "source": "protectionMechanisms",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Comments / Notes:",
+                "computed": null,
+                "source": "notes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
+                "type": "literal"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

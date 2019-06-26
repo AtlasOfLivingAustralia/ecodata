@@ -1,0 +1,146 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Type(s) of debris removed during the activity",
+            "name": "debrisType",
+            "constraints": [
+                "Building & industrial waste - Mixed organic & inorganic",
+                "Building & industrial waste - Organic only",
+                "Building & industrial waste - Inorganic only",
+                "Domestic waste - Mixed organic & inorganic",
+                "Domestic waste - Organic only",
+                "Domestic waste - Inorganic only",
+                "Other green waste (eg. plant & tree prunings)",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Weight in tonnes of debris removed during the activity",
+            "name": "debrisWeightTonnes",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Volume in cubic metres of debris removed during the activity",
+            "name": "debrisVolumeM3",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares covered by the debris removal activity.",
+            "name": "debrisActivityArea",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Method(s) used to remove debris during the activity",
+            "name": "debrisRemovalMethod",
+            "constraints": [
+                "Trap and screen",
+                "Trap and skim",
+                "Removal by mobile machinery",
+                "Hand removal",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "debrisNotes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "Debris Removal Details",
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "debrisType",
+                        "computed": null,
+                        "preLabel": "Type of material removed:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "debrisRemovalMethod",
+                        "computed": null,
+                        "preLabel": "Method(s) used to remove debris:",
+                        "type": "selectMany"
+                    },
+                    {
+                        "source": "debrisWeightTonnes",
+                        "computed": null,
+                        "preLabel": "Weight of debris removed (Tonnes):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "debrisVolumeM3",
+                        "computed": null,
+                        "preLabel": "Volume of debris removed (m3):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "debrisActivityArea",
+                        "computed": null,
+                        "preLabel": "Area covered by this activity (Ha):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "debrisNotes",
+                        "computed": null,
+                        "preLabel": "Comments / Notes:",
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [{
+                    "includeSource": false,
+                    "orientation": "vertical",
+                    "includeNotes": false,
+                    "hideSiteSelection": true,
+                    "zoomToProjectArea": true,
+                    "source": "location",
+                    "computed": null,
+                    "autoLocalitySearch": true,
+                    "type": "geoMap",
+                    "includeAccuracy": false,
+                    "readonly": false,
+                    "includeLocality": false
+                }],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "computed": null,
+        "class": "output-section",
+        "type": "row"
+    }]
+}

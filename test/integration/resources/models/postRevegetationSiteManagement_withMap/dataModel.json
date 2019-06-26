@@ -1,0 +1,421 @@
+{
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "postRevegManagementActions",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "action",
+                    "constraints": [
+                        "Mulching",
+                        "Watering",
+                        "Weed management",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "",
+                    "name": "areaManagedHa",
+                    "validate": "required, min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "siteManagementNotes"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "infillPlantings",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "speciesList": "project",
+                    "noTotal": "true",
+                    "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Number of plants planted",
+                    "name": "numberPlanted",
+                    "dwcAttribute": "individualCount",
+                    "validate": "required,integer,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Weight of seed direct sown in kilograms",
+                    "name": "seedSownKg",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "noTotal": "true",
+                    "description": "The type of plantstock used for plantings",
+                    "name": "stockType",
+                    "constraints": [
+                        "Seed",
+                        "Tube",
+                        "Advanced",
+                        "Cutting",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "noTotal": "true",
+                    "description": "The structural layer of vegetation that planted plants will occupy when mature",
+                    "name": "structuralLayer",
+                    "constraints": [
+                        "Overstory",
+                        "Midstory",
+                        "Understory",
+                        "Ground stratum"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The expected height class of mature plants of this species in the planted location.",
+                    "name": "matureHeight",
+                    "constraints": [
+                        "> 2 metres",
+                        "< 2 metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The name of the locality from which the seedstock was collected",
+                    "name": "stockProvenance",
+                    "dwcAttribute": "locality"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The average cost per plant or kilogram of seed as applicable",
+                    "name": "stockCostPerUnit"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of plants planted",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberPlanted",
+                    "fromList": "infillPlantings"
+                }
+            },
+            "name": "totalNumberPlanted"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of seed sown",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "seedSownKg",
+                    "fromList": "infillPlantings"
+                }
+            },
+            "name": "totalSeedSownKg"
+        },
+        {
+            "dataType": "text",
+            "name": "infillPlantingNotes",
+            "dwcAttribute": "eventRemarks"
+        },
+        {
+            "dataType": "number",
+            "description": "Total area covered by this treatment event (Ha). This area must not be double counted.",
+            "name": "totalPestAreaTreatedHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+            "name": "pestTreatmentType",
+            "constraints": [
+                "Initial treatment",
+                "Follow-up treatment"
+            ],
+            "dwcAttribute": "treatmentType",
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "pestManagement",
+            "columns": [{
+                "dataType": "species",
+                "description": "The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry.",
+                "name": "pestAnimalsTargetSpecies"
+            }]
+        },
+        {
+            "dataType": "text",
+            "name": "pestManagementNotes",
+            "dwcAttribute": "eventRemarks"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "postRevegetationTotalAreaManagedInHectares",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "postRevegetationSiteManagement_withMap",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Site Management Actions<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "postRevegetationTotalAreaManagedInHectares",
+                            "preLabel": "Total area managed (Ha)",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "title": "Management Actions",
+                            "source": "postRevegManagementActions",
+                            "allowHeaderWrap": "true",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "title": "Activity type",
+                                    "source": "action",
+                                    "width": "40%",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "title": "Area managed (Ha)",
+                                    "source": "areaManagedHa",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Comments / notes",
+                                    "source": "siteManagementNotes",
+                                    "width": "50%",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "class": "output-section",
+                            "type": "table"
+                        },
+                        {
+                            "source": "<h4>Pest Management<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "totalPestAreaTreatedHa",
+                            "preLabel": "Total pest treatment area (Ha)",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "pestTreatmentType",
+                            "preLabel": "Type of pest treatment event",
+                            "computed": null,
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "pestManagementNotes",
+                            "preLabel": "Pest management notes",
+                            "computed": null,
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Pest Animals",
+                            "source": "pestManagement",
+                            "allowHeaderWrap": "true",
+                            "computed": null,
+                            "columns": [{
+                                "title": "Pest species managed\t(name):",
+                                "source": "pestAnimalsTargetSpecies",
+                                "width": "100%",
+                                "type": "autocomplete"
+                            }],
+                            "userAddedRows": true,
+                            "class": "output-section",
+                            "type": "table"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }],
+                    "class": "output-section",
+                    "type": "col"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Infill Plantings & Vegetation Management<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total Seedlings Planted:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberPlanted",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total Seed Sown (Kg):",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalSeedSownKg",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 3,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
+            "title": "Infill plantings",
+            "source": "infillPlantings",
+            "allowHeaderWrap": "true",
+            "computed": null,
+            "columns": [
+                {
+                    "title": "Species:",
+                    "source": "species",
+                    "computed": null,
+                    "width": "20%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "No. Planted:",
+                    "source": "numberPlanted",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Seed Sown (Kg):",
+                    "source": "seedSownKg",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Type of stock",
+                    "source": "stockType",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Structural Layer",
+                    "source": "structuralLayer",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Mature height",
+                    "source": "matureHeight",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Stock Provenance",
+                    "source": "stockProvenance",
+                    "width": "15%",
+                    "type": "text"
+                },
+                {
+                    "title": "Cost / unit ($)",
+                    "source": "stockCostPerUnit",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "infillPlantingNotes",
+                "preLabel": "Infill planting notes:",
+                "computed": null,
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

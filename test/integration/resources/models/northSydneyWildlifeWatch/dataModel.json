@@ -1,0 +1,261 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the sighing, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "habitatZone",
+            "description": "The habitat zone in which the sighting was made. See the 'North Sydney Wildlife Watch Habitat Zones' document under the 'Resources' tab.",
+            "constraints": [
+                "1 - Anderson Park",
+                "2 - Anzac Park",
+                "3 - Badangi Reserve Zone 1",
+                "4 - Badangi Reserve Zone 2",
+                "5 - Badangi Reserve Zone 3 - Bushcare",
+                "6 - Badangi Reserve Zone 4",
+                "7 - Balls Head Reserve Zone 1 - Bushcare",
+                "8 - Balls Head Reserve Zone 2",
+                "9 - Balls Head Reserve Zone 3",
+                "10 - Balls Head Reserve Zone 4",
+                "11 - Balls Head Reserve Zone 5",
+                "12 - Berry Island Zone 1",
+                "13 - Berry Island Zone 2",
+                "14 - Blues Point Reserve",
+                "15 - BP Site",
+                "16 - Bradfield Park",
+                "17 - Brennan Park",
+                "18 - Brightmore Reserve Zone 1",
+                "19 - Brightmore Reserve Zone 2 - Bushcare",
+                "20 - Brightmore Reserve Zone 3",
+                "21 - Brightmore Reserve Zone 4",
+                "22 - Brightmore Reserve Open Space",
+                "23 - Cammeray Golf Course",
+                "24 - Clark Park",
+                "25 - Coal Loader Site",
+                "26 - Cremorne Reserve Open Space 1",
+                "27 - Cremorne Reserve Open Space 2",
+                "28 - Cremorne Reserve Zone 1",
+                "29 - Cremorne Reserve Zone 2 (Robertsons) - Bushcare",
+                "30 - Cremorne Reserve Zone 3 (Bogota) - Bushcare",
+                "31 - Forsyth Park Zone 1",
+                "32 - Forsyth Park Zone 2 - Bushcare",
+                "33 - Forsyth Park Open Space",
+                "34 - Gore Cove Zone 1 (Smoothey) - Bushcare",
+                "35 - Gore Cove Zone 2",
+                "36 - Gore Cove Zone 3",
+                "37 - Gore Cove Zone 4",
+                "38 - Gore Cove Zone 5",
+                "39 - Graythwaite",
+                "40 - Hamilton Reserve",
+                "41 - Harry Howard Reserve",
+                "42 - Kurraba Point Reserve",
+                "43 - Milson Park",
+                "44 - Mortlock Reserve Zone 1 - Bushcare",
+                "45 - Mortlock Reserve Zone 2",
+                "46 - Primrose Park Zone 1",
+                "47 - Primrose Park Zone 2",
+                "48 - Primrose Park Zone 3",
+                "49 - Primrose Park Zone 4 - Bushcare",
+                "50 - Primrose Park Zone 5",
+                "51 - Primrose Park Open Space",
+                "52 - Sawmillers Reserve",
+                "53 - Shellbank Reserve",
+                "54 - St Leonards Park",
+                "55 - St Thomas Rest Park",
+                "56 - Sugar Works Reserve",
+                "57 - Tunks Park Open Space",
+                "58 - Tunks Park Zone 1 (East) - Bushcare",
+                "59 - Tunks Park Zone 2",
+                "60 - Tunks Park Zone 3 (West) - Bushcare",
+                "61 - Watt Park",
+                "62 - Waverton Park",
+                "63 - Wonga Road Reserve Zone 1",
+                "64 - Wonga Road Reserve (Tobruk) Zone 2",
+                "65 - Cammeray Urban",
+                "66 - Cremorne Point Urban",
+                "67 - Cremorne Urban",
+                "68 - Crows Nest Urban",
+                "69 - Kirribilli Urban",
+                "70 - Lavender Bay Urban",
+                "71 - McMahons Point Urban",
+                "72 - Milsons Point Urban",
+                "73 - Neutral Bay Urban",
+                "74 - North Sydney Urban",
+                "75 - Waverton Urban",
+                "76 - Wollstonecraft Urban"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "kingdom",
+            "constraints": [
+                "FA - fauna",
+                "FL - flora"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the plant, animal or fungus observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals or colonies (for certain insects).",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "dwcAttribute": "identificationQualifier",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "dataType": "text",
+            "name": "piSaringAgreement",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        }
+    ],
+    "modelName": "northSydneyWildlifeWatch",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Date of the sighting",
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Plant/animal",
+                        "source": "kingdom",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Species name",
+                        "source": "species",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "source": "<i>Start typing a common or scientific name. Choose 'Unknown' if you don't know.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Are you confident of the species identification?",
+                        "source": "identificationConfidence",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "How many individuals did you see?",
+                        "source": "individualCount",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "North Sydney Wildlife Watch habitat zone",
+                        "source": "habitatZone",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Sighting photo",
+                        "source": "sightingPhoto",
+                        "type": "image"
+                    },
+                    {
+                        "preLabel": "Notes",
+                        "computed": null,
+                        "source": "notes",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Do you agree to ALA sharing your contact details with the project organiser for the purposes of record verification?",
+                        "computed": null,
+                        "source": "piSaringAgreement",
+                        "type": "selectOne"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "source": "<font-size='0.8em'><i>Zoom in on the map, then click on the marker and drop it on the location where you made the sighting. Change the base map to show the satellite image.<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

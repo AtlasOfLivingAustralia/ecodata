@@ -79,6 +79,7 @@ self.transients.calculateSaturation = function(waterTemp, disolvedOxygen){
         }
         else
         {
+            waterTemp = Math.round(waterTemp);
             saturation = Math.round(disolvedOxygen / saturationFactor[waterTemp] * 100);
         }
         self.data.waterDissolvedOxygenInPercentSaturation(saturation);

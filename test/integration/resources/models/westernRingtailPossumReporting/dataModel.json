@@ -1,0 +1,437 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The names of members of the survey team.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who submitted the record. Note, this person will be attributed with creating the observations.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureInDegreesCelsius",
+            "description": "The ambient temperature of the air at the commencement of the survey.",
+            "validate": "min[-10],max[50]"
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureAtFinishInDegreesCelsius",
+            "description": "The ambient temperature of the air at the completion of the survey.",
+            "validate": "min[-10],max[50]"
+        },
+        {
+            "dataType": "text",
+            "name": "windConditions",
+            "description": "What were the wind conditions like at the time of the survey?",
+            "constraints": [
+                "Calm",
+                "Light (leaves rustle)",
+                "Moderate (branches move)",
+                "Strong (tops of trees move)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "moonPhase",
+            "description": "What was the moon phase in at the time of the survey?",
+            "constraints": [
+                "No moon",
+                "Between no moon and 1/4 moon",
+                "Between 1/4 and 1/2 moon",
+                "Between 1/2 and 3/4 moon",
+                "Between 3/4 and full moon",
+                "Full moon"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "atmosphericMoistureConditions",
+            "description": "Was it raining at the time of the survey?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "cloudCover",
+            "description": "The approximate percentage of total cloud cover at the time of the survey.",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the survey commenced.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The time at which the survey finished."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": ""
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individual adults of the species observed.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "sex",
+                    "dwcAttribute": "sex",
+                    "description": "",
+                    "constraints": [
+                        "Male",
+                        "Female",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "juvenileIndividualCount",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "horizontalDistanceInMetres",
+                    "description": "",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "heightInMetres",
+                    "description": "",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "sightingLatitude",
+                    "description": "The GPS Latitude in WGS84 decimal datum",
+                    "validate": "min[-34.4],max[-33.5],required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "sightingLongitude",
+                    "description": "The GPS Longitude in WGS84 decimal datum",
+                    "validate": "min[114.9],max[115.4],required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "position",
+                    "description": "",
+                    "constraints": [
+                        "Ground - bushland",
+                        "Ground - agricultural",
+                        "Rock/Outcrop",
+                        "Log/Stump",
+                        "Small shrub (<1.5m)",
+                        "Tall Shrub (<5m)",
+                        "Sapling (<15cm dbh)",
+                        "Mallee/Multi-stemmed",
+                        "Tree (>15cm dbh)",
+                        "Dead Tree (>2m)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "plantSpeciesOccupied",
+                    "dwcAttribute": "scientificName",
+                    "description": "",
+                    "constraints": [
+                        "Peppy",
+                        "Marri",
+                        "Jarrah",
+                        "Karri",
+                        "Other (see comments)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "vegetationType",
+                    "description": "",
+                    "constraints": [
+                        "Peppy woodland/ Forest",
+                        "Jarrah/Marri with Peppy mid-storey",
+                        "Jarrah/Marri without Peppy mid-storey",
+                        "Karri with Peppy mid-storey",
+                        "Karri without Peppy mid-storey",
+                        "Other (see comments)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "activity",
+                    "dwcAttribute": "behaviour",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "comments",
+                    "description": ""
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
+                    "description": ""
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesObservations"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "westernRingtailPossumReporting",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Western Ringtail Possum<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Observer Names",
+                            "source": "observedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Data Recording by",
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Temperature (deg. C)",
+                            "source": "temperatureInDegreesCelsius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Wind",
+                            "source": "windConditions",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Moon",
+                            "source": "moonPhase",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Cloud cover (%)",
+                            "source": "cloudCover",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Rain",
+                            "source": "atmosphericMoistureConditions",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Finish time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Notes:",
+                            "source": "notes",
+                            "type": "textarea"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "computed": null,
+                        "type": "row",
+                        "items": [{
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": true,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": false,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": false
+                        }]
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "species",
+                        "title": "Species",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "individualCount",
+                        "title": "Number of Adults",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "sex",
+                        "title": "Sex",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "juvenileIndividualCount",
+                        "title": "Juvenile or Pouched Young",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "horizontalDistanceInMetres",
+                        "title": "Horizontal Distance (m)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "heightInMetres",
+                        "title": "Height (m)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "8%",
+                        "source": "sightingLatitude",
+                        "title": "Latitude (GPS)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "8%",
+                        "source": "sightingLongitude",
+                        "title": "Longitude (GPS)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "position",
+                        "title": "Where did you see it?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "plantSpeciesOccupied",
+                        "title": "Plant Species Occupied",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "vegetationType",
+                        "title": "Vegetation Type",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "activity",
+                        "title": "Activity",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "comments",
+                        "title": "Comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "sightingPhoto",
+                        "title": "Photo",
+                        "type": "image"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "speciesObservations",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

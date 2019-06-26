@@ -7,6 +7,7 @@
  *
  *= require bootstrap-datepicker/css/datepicker
  *= require bootstrap-combobox/bootstrap-combobox
+ *= require select2/4.0.3/css/select2.css
  *-
  */
 
@@ -1089,5 +1090,10 @@ textarea.species-settings {
     height: 10em;
 }
 
+/** This allows the select2 dropdown to display more options, which is useful for activity form selection */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 800px;
+    overflow-y: auto;
+}
 
 

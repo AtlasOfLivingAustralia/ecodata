@@ -1,0 +1,135 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "species",
+                    "description": "",
+                    "constraints": [
+                        "Grey Kangaroo",
+                        "Red Kangaroo",
+                        "Wallaby",
+                        "Wombat",
+                        "Euro / Wallaroo"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "season",
+                    "constraints": [
+                        "Spring",
+                        "Summer",
+                        "Autumn",
+                        "Winter",
+                        "Year round"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "managementActions",
+                    "constraints": [
+                        "Exclusion fencing",
+                        "Observed",
+                        "Shooting"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "managementReason",
+                    "constraints": [
+                        "Excessive grazing",
+                        "Excessive population",
+                        "Infrastructure damage",
+                        "Nil"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "noCulled",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "nativeSpeciesMonitoring"
+        },
+        {
+            "dataType": "number",
+            "name": "cost",
+            "validate": "integer,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
+    "modelName": "ESP Native Herbivore Management",
+    "title": "Native Herbivore Management",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities to monitor and/or manage native herbivores are included under any or all of the following; “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "species",
+                        "title": "Species",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "season",
+                        "title": "Season observed / managed",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "managementActions",
+                        "title": "Management Action(s)",
+                        "type": "select2Many"
+                    },
+                    {
+                        "source": "managementReason",
+                        "title": "Reason for management",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "noCulled",
+                        "title": "If applicable, no. culled (if known)",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "nativeSpeciesMonitoring",
+                "title": "Please complete the following:",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Total cost of management actions",
+                "source": "cost",
+                "type": "currency"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

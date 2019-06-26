@@ -1,0 +1,94 @@
+{
+  "name": "RLP - Change Management",
+  "title": "Project change management",
+  "dataModel": [
+    {
+      "name": "variationSubmitted",
+      "dataType": "text",
+      "validate": "required",
+      "description": "eg. Changes to Activities, Extension of Time",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "variationDetails",
+      "dataType": "text",
+      "validate": "required,maxSize[300]",
+      "behaviour": [
+        {
+          "condition": "variationSubmitted == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "meriOrWorkOrderChangesRequired",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "meriOrWorkOrderChangeDetails",
+      "dataType": "text",
+      "validate": "required,maxSize[300]",
+      "description": "eg. Please describe the change you need, why it is required and how you plan to apply it in future",
+      "behaviour": [
+        {
+          "condition": "meriOrWorkOrderChangesRequired == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "variationSubmitted",
+          "preLabel": "Do you have a variation request currently in progress with the Dept?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "variationDetails",
+          "preLabel": "If yes, please provide details of the change required."
+        }
+      ]
+
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "meriOrWorkOrderChangesRequired",
+          "preLabel": "Are further changes to the project MERI Plan or Project Work Order required?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "meriOrWorkOrderChangeDetails",
+          "preLabel": "If yes, please provide a succinct summary of the change required and reasons below."
+        }
+      ]
+
+    }
+  ]
+}

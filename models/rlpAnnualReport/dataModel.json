@@ -39,7 +39,13 @@
                 {
                     "dataType": "text",
                     "name": "reasonTargetNotMet",
-                    "validate": "required,maxSize[500]"
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "result < annualTarget",
+                            "type": "enable"
+                        }
+                    ]
                 }
             ],
             "dataType": "list",
@@ -150,6 +156,7 @@
             "source-path": "targets",
             "target": "minimumAnnualTargetsNotMet"
         }],
+        "merge": true,
         "source": {
             "params": [
                 {
@@ -161,6 +168,10 @@
                     "expression": "activity.plannedEndDate",
                     "name": "financialYearEndDate",
                     "type": "computed"
+                },
+                {
+                    "name": "missedTargetsOnly",
+                    "value": false
                 }
             ],
             "url": "/project/scoresByFinancialYear/"

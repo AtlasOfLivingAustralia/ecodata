@@ -1,0 +1,42 @@
+{
+  "title": "Obtaining relevant approvals",
+  "modelName": "RLP - Obtaining approvals",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberApprovalsObtained",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "text",
+      "name": "approvalsObjective",
+      "validate": "required,maxSize[300]",
+      "description":"Please list why these approvals were required to be obtained for this program"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "source": "numberApprovalsObtained",
+              "preLabel": "Number of relevant approvals obtained",
+              "type": "number",
+              "css": "span3"
+            },
+            {
+              "source": "approvalsObjective",
+              "preLabel": "What were these approvals obtained for?",
+              "type": "textarea",
+              "rows": 3,
+              "css": "span9"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

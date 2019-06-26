@@ -15,53 +15,122 @@
                 "name": "sitesOfAugmentation"
             },
             {
-                "defaultValue": {
-                    "type": "computed",
+                "computed": {
                     "expression": "$geom.areaHa(sitesOfAugmentation)"
                 },
                 "dataType": "number",
-                "name": "areaAugmentedHa",
-                "validate": [
-                    {
-                        "rule": "min",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(sitesOfAugmentation)*0.9"
-                        }
-                    },
-                    {
-                        "rule": "max",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(sitesOfAugmentation)*1.1"
-                        }
-                    }
-                ]
+                "name": "calculatedAreaAugmentedHa",
+                "units": "ha"
+            },
+            {
+                "computed": {
+                    "expression": "$geom.lengthKm(sitesOfAugmentation)"
+                },
+                "dataType": "number",
+                "name": "calculatedLengthAugmentedKm",
+                "units": "km"
             },
             {
                 "defaultValue": {
                     "type": "computed",
-                    "expression": "$geom.lengthKm(sitesOfAugmentation)"
+                    "expression": "calculatedAreaAugmentedHa"
+                },
+                "dataType": "number",
+                "name": "areaAugmentedHa",
+                "units": "ha",
+                "validate": "required,min[0]"
+            },
+            {
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "calculatedLengthAugmentedKm"
                 },
                 "dataType": "number",
                 "name": "lengthAugmentedKm",
-                "validate": [
+                "units": "km",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "document",
+                "name": "extraMappingDetails",
+                "validate": "required",
+                "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
+                "behaviour": [
                     {
-                        "rule": "min",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.lengthKm(sitesOfAugmentation)*0.9"
-                        }
-                    },
+                        "condition": "not (within(calculatedAreaAugmentedHa, areaAugmentedHa, 0.1)) or roundTo(areaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
+                        "type": "visible"
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "mappingNotAlignedReason",
+                "constraints": [
+                    "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                    "Other"
+                ],
+                "validate": "required",
+                "behaviour": [
+                    {
+                        "condition": "not (within(calculatedAreaAugmentedHa, areaAugmentedHa, 0.1))",
+                        "type": "visible"
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "mappingNotAlignedComments",
+                "validate": "required,maxSize[300]",
+                "behaviour": [
+                    {
+                        "type": "visible",
+                        "condition": "\"Other\" == mappingNotAlignedReason"
+                    }]
+            },
+            {
+                "dataType": "number",
+                "name": "areaInvoicedAumentationHa",
+                "units": "ha",
+                "validate": [
+                    {"rule": "required"},
+                    {"rule": "min[0]"},
                     {
                         "rule": "max",
                         "param": {
                             "type": "computed",
-                            "expression": "$geom.lengthKm(sitesOfAugmentation)*1.1"
+                            "expression": "areaAugmentedHa"
                         }
                     }
                 ]
             },
+
+            {
+                "dataType": "text",
+                "name": "invoicedNotActualReason",
+                "constraints": [
+                    "Work was undertaken over a greater area than will be invoiced for",
+                    "Other"
+                ],
+                "validate": "required",
+                "behaviour": [
+                    {
+                        "condition": "roundTo(areaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
+                        "type": "visible"
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "invoicedNotActualComments",
+                "behaviour": [
+                    {
+                        "type": "visible",
+                        "condition": "\"Other\" == invoicedNotActualReason"
+                    }],
+                "validate": "required,maxSize[300]"
+            },
+
+
             {
                 "dataType": "number",
                 "name": "numberOfStructuresInstalled",
@@ -87,7 +156,7 @@
                 "description": "Please specify the habitat augmentation type if Other (specify in notes) was selected in the Type of habitat augmentation column.",
                 "behaviour": [{
                     "condition": "habitatAugmentationType == \"Other\"",
-                    "type": "enable"
+                    "type": "visible"
                 }],
                 "validate": "required,maxSize[100]"
             },
@@ -147,23 +216,134 @@
                     "type": "selectOne"
                 },
                 {
-                    "width": "5%",
-                    "source": "sitesOfAugmentation",
-                    "type": "feature",
-                    "title": "Site/s of habitat augmentation"
+                    "width": "10%",
+                    "title": "Site/s of habitat augmentation",
+                    "type": "col",
+                    "items":[
+                        {
+                            "source": "sitesOfAugmentation",
+                            "type": "feature"
+                        },
+                        {
+                            "source": "calculatedAreaAugmentedHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            },
+                            "readonly": "readonly"
+
+                        },
+                        {
+                            "source": "calculatedLengthAugmentedKm",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            },
+                            "readonly": "readonly"
+
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "preLabel": "Please attach mapping details",
+                                    "source": "extraMappingDetails",
+                                    "type": "document"
+                                }
+                            ]
+                        }
+                    ]
+
                 },
                 {
-                    "width": "5%",
-                    "source": "areaAugmentedHa",
-                    "type": "number",
-                    "title": "Area (ha) of augmentation"
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Actual area (ha) / length (km) of habitat augmentation",
+                    "helpText": "Enter the amount you will invoice for during this reporting period.",
+                    "items": [
+                        {
+                            "source": "areaAugmentedHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+                        {
+                            "source": "lengthAugmentedKm",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "preLabel": "Reason for actual being different to mapped amount",
+                                    "source": "mappingNotAlignedReason",
+                                    "type": "selectOne"
+
+                                }
+                            ]
+                        },
+
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                    "source": "mappingNotAlignedComments",
+                                    "type": "textarea",
+                                    "rows": 5
+                                }
+
+                            ]
+
+
+                        }
+                    ]
                 },
                 {
-                    "width": "5%",
-                    "source": "lengthAugmentedKm",
-                    "type": "number",
-                    "title": "Length (km) of augmentation"
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Invoiced area (ha) habitat augmentation",
+                    "helpText": "Enter the amount you will invoice for during this reporting period.",
+                    "items": [
+                        {
+                            "source": "areaInvoicedAumentationHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "preLabel": "Reason for invoiced amount being different to actual amount",
+                                    "source": "invoicedNotActualReason",
+                                    "type": "selectOne"
+
+                                }
+                            ]
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                    "source": "invoicedNotActualComments",
+                                    "type": "textarea",
+                                    "rows": 5
+
+                                }
+                            ]
+                        }
+                    ]
                 },
+
+
                 {
                     "width": "5%",
                     "source": "numberOfStructuresInstalled",
@@ -172,16 +352,33 @@
                 },
                 {
                     "width": "15%",
-                    "source": "habitatAugmentationType",
                     "title": "Type of habitat augmentation / installed",
-                    "type": "select2"
+                    "type": "col",
+                    "items":[
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "source": "habitatAugmentationType",
+                                    "type": "select2"
+
+                                }
+                            ]
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "source": "otherHabitatAugmentationType",
+                                    "type": "textarea"
+
+                                }
+                            ]
+                        }
+                    ]
+
                 },
-                {
-                    "width": "15%",
-                    "source": "otherHabitatAugmentationType",
-                    "title": "Type of habitat augmentation (if Other)",
-                    "type": "text"
-                },
+
                 {
                     "width": "15%",
                     "source": "habitatAugmentationObjective",
@@ -189,17 +386,27 @@
                     "type": "textarea"
                 },
                 {
-                    "width": "5%",
-                    "source": "sitesBenefittedByHabitatAugmentation",
+                    "width": "10%",
                     "title": "Please map any off-site area/s if they benefitted from this habitat augmentation",
-                    "type": "feature"
+                    "type": "col",
+                    "items":[
+                        {
+                            "source": "sitesBenefittedByHabitatAugmentation",
+                            "type": "feature"
+                        },
+                        {
+                            "source": "areaBenefittedByHabitatAugmentationHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            },
+                            "readonly": "readonly"
+
+                        }
+                    ]
+
                 },
-                {
-                    "width": "5%",
-                    "source": "areaBenefittedByHabitatAugmentationHa",
-                    "title": "Area (ha) benefitted by habitat augmentation",
-                    "type": "number"
-                },
+
                 {
                     "width": "15%",
                     "source": "evidenceOfBenefit",

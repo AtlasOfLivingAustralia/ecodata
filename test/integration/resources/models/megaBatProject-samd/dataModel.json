@@ -1,0 +1,399 @@
+{
+    "dataModel": [
+        {
+            "indexName": "recordedBy",
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The person placing Anabat and making field observations.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date of the night you set up the AnaBat detector in the field.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "detectorId",
+            "description": "Choose the name that matches with your AnaBat's name.",
+            "constraints": [
+                "Mack",
+                "Macy",
+                "Maddison",
+                "Maddy",
+                "Maeve",
+                "Magdalene",
+                "Maggie",
+                "Magnilda",
+                "Magnus",
+                "Mahta",
+                "Malcom",
+                "Maloney",
+                "Manfred",
+                "Manny",
+                "Marcia",
+                "Marco",
+                "Margot",
+                "Marie",
+                "Marilyn",
+                "Marsha",
+                "Martha",
+                "Martin",
+                "Mary",
+                "Matilda",
+                "Maureen",
+                "Megan",
+                "Melanie",
+                "Melissa",
+                "Meredith",
+                "Mia",
+                "Michael",
+                "Michelle",
+                "Mildred",
+                "Millie",
+                "Mimi",
+                "Miranda",
+                "Molly",
+                "Monica",
+                "Murray",
+                "Tabitha",
+                "Tait",
+                "Tamika",
+                "Tamsenv",
+                "Tar",
+                "Tayla",
+                "Ted",
+                "Terrance",
+                "Tess",
+                "Thelma",
+                "Theo",
+                "Thomas",
+                "Thor",
+                "Tiffanie",
+                "Tilly",
+                "Tim",
+                "Toby",
+                "Todd",
+                "Tom",
+                "Tricia"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "mainLandUse",
+            "description": "This related to the spaces and objects that bats fly around in the vicinity of the AnaBat detector.",
+            "constraints": [
+                "OP - Open pasture or parkland with no or sparsely scattered trees",
+                "IS - Windrow/ Shelter Belt or isolated stand of trees",
+                "G - House garden",
+                "SC - Shrubland, vines or orchard (no overstorey above 2 m)",
+                "WL - Woodland and forest (overstorey above 2 m)",
+                "R - Riparian vegetation around watercourse or lake",
+                "DL - Over water body (lake, wide river, dam)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "habitatType",
+            "description": "Choose one of the categories that best describes the majority of the habitat in your survey area.",
+            "constraints": [
+                "MN - Mallee – north of River Murray",
+                "MS - Mallee – south of River Murray",
+                "DM - Dense Mallee, Broombush & Heath shrubland – south of River Murray",
+                "OW - Open woodlands with open understorey – Low rainfall",
+                "TFD - Tall Forests and Woodlands with dense shrub understorey",
+                "TFO - Tall Forests and Woodlands with open shrub understorey",
+                "GZ - Grazing land with scattered gum trees - flanks of eastern hills",
+                "NG - Native grassland, chenopod shrublands",
+                "RMC - River Murray corridor – floodplains & wetlands",
+                "ES - Estuarine habitat – Lower Lakes & Coorong",
+                "CD - Coastal dunes in Coorong region",
+                "WCG - Wheat/cropping/grazing land interspersed with mallee – south & west of River Murray",
+                "I - Irrigated horticulture and dairy farming along the River Murray",
+                "U - Urban areas",
+                "SEW - Artificially constructed and managed Wetlands and Sewerage Ponds"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "typeOfWaterBody",
+            "description": "Select the largest type of water body within 50 m of the Anabat detector",
+            "constraints": [
+                "NWS - No significant water sources within 50 m",
+                "MR - Murray River main channel",
+                "OSF - Other River/Stream with flowing water",
+                "OSP - Other River/Stream with intermittent pools",
+                "W - Wetland",
+                "D - Dam",
+                "L - Lake",
+                "WT - Large open water tank accessible to bats"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "samplingEnvironment",
+            "description": "Indicate the type of environment that the Anabat detector is pointing towards.",
+            "constraints": [
+                "WOS - Into wide open space",
+                "H2O - pointing directly over water",
+                "V - Pointing into vegetation or gaps between vegetation nearby"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identifiedBy",
+            "description": "Who identified the species from the call files or observations. This will be important information for quality assurance of this data."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "Add any other relevant information here."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "sitePhoto",
+            "description": "Take a photo of the site in the direction of mic."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "Select the species name or select 'Unlisted species' and use 'Vagrant sighting' for comments. Click on the 'i' for information about the selected species.",
+                    "validate": "required"
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "For surveys interpreting call files, please allocate a 1 once a species has been clearly identified. For surveys where individuals are visually identified, please allocate an actual number of the individuals observed.",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "notes",
+                    "description": "Add names of vagrant species here where 'Unlisted' was chosen for the species field. Also add comments that help with the detail of the record, eg. roosting, roadkill, heard only, etc."
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "speciesIdMethod",
+                    "description": "Please select how the species were identified. ie. if calls were identified using an Automated Key, or Manual ID if the specimen was recognised visually or the call file recognised visually. Please also determine if there were calls that could not be identified which might be analysed at a later date with improved automated keys.",
+                    "constraints": [
+                        "Manual ID",
+                        "Automated Key",
+                        "Unidentified species may be present in the recording"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "description": "Upload photos of bats observed or a screenshot of the sonogram (call file) used to identify a species. This might be useful if you are unsure of the species and can be used to verify the record. Only image files can be attached."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesObserved"
+        }
+    ],
+    "modelName": "megaBatProject-samd",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "For help to complete this form please contact Sylvia Clarke on (08) 8391 7500 or your local Landcare/ LAP Project Officer.  To notify us regarding technical issues, contact Sylvia Clarke on (08) 8391 7500.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h2>Observation Details<\/h2>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Recorded by (name)",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date set (night of)",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Unit name",
+                            "computed": null,
+                            "source": "detectorId",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Bat Flight Space - Anabat Placement (choose one)",
+                            "computed": null,
+                            "source": "mainLandUse",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Vegetation type/ habitat - of Site (choose one)",
+                            "computed": null,
+                            "source": "habitatType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Water sources (currently holding water)",
+                            "source": "typeOfWaterBody",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Microphone facing….",
+                            "computed": null,
+                            "source": "samplingEnvironment",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Site photo",
+                            "computed": null,
+                            "source": "sitePhoto",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Location<\/h1><font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker, as close as possible to your Anabat survey location.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "autoLocalitySearch": true,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": false
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h2>Species<\/h2>In order to enable your record to be submitted please complete: Species name – Unlisted, Individual count – 1.  This section will be completed by the person who verifies the species in the Anabat recording.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "preLabel": "Name of species identifier",
+                    "computed": null,
+                    "source": "identifiedBy",
+                    "type": "text"
+                },
+                {
+                    "columns": [
+                        {
+                            "computed": null,
+                            "width": "15%",
+                            "source": "species",
+                            "title": "Species name",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "computed": null,
+                            "defaultValue": "1",
+                            "width": "10%",
+                            "source": "individualCount",
+                            "title": "Individual Count",
+                            "type": "number"
+                        },
+                        {
+                            "computed": null,
+                            "width": "20%",
+                            "source": "comments",
+                            "title": "Comments/Vagrant Species",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "width": "15%",
+                            "source": "speciesIdMethod",
+                            "title": "Species ID Method",
+                            "type": "selectMany"
+                        },
+                        {
+                            "computed": null,
+                            "width": "20%",
+                            "source": "sightingPhoto",
+                            "title": "Photo of Bat or Sonogram",
+                            "type": "image"
+                        }
+                    ],
+                    "defaultRows": "1",
+                    "userAddedRows": true,
+                    "source": "speciesObserved",
+                    "type": "table"
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

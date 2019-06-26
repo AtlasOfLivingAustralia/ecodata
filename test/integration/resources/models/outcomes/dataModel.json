@@ -1,0 +1,66 @@
+{
+    "modelName": "Outcomes",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Description of the environmental outcomes achieved by the project",
+            "name": "projectEnvironmentalOutcomes",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the social outcomes achieved by the project",
+            "name": "projectSocialOutcomes",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the economic outcomes achieved by the project",
+            "name": "projectEconomicOutcomes",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Refer to Work, health and safety section of your funding agreement for further information.",
+            "name": "whsIncidents",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "projectEnvironmentalOutcomes",
+                    "computed": null,
+                    "preLabel": "ENVIRONMENTAL OUTCOMES - Describe the environmental outcomes of your project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectSocialOutcomes",
+                    "computed": null,
+                    "preLabel": "SOCIAL OUTCOMES - Describe the social outcomes of your project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectEconomicOutcomes",
+                    "computed": null,
+                    "preLabel": "ECONOMIC OUTCOMES - Describe the economic outcomes of your project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "whsIncidents",
+                    "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?:",
+                    "type": "selectOne"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

@@ -6,7 +6,7 @@ branches:
   only:
   - master
   - dev
-  - grails_2_5_6
+  - /^feature\/.*$/
 
 services:
   - mongodb

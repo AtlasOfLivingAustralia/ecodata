@@ -1,0 +1,383 @@
+{
+    "dataModel": [
+        {
+            "indexName": "recordedBy",
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person or group undertaking the sampling event",
+            "validate": "required"
+        },
+        {
+            "indexName": "waterType",
+            "dataType": "text",
+            "name": "waterType",
+            "description": "Broad class of water body being sampled",
+            "constraints": [
+                "Freshwater stream / channel",
+                "Freshwater lake / dam"
+            ]
+        },
+        {
+            "defaultValue": "null",
+            "dataType": "number",
+            "name": "totalParticipants",
+            "description": "The total number of people participating in the sampling event",
+            "validate": "integer,min[0]"
+        },
+        {
+            "indexName": "surveyDate",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that the survey was undertaken",
+            "validate": "required,past[now]"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time of the day that the survey was undertaken",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "null",
+            "dataType": "number",
+            "name": "surveyDurationInDecimalHours",
+            "description": "The duration of the sampling event in hours",
+            "validate": "min[0]"
+        },
+        {
+            "indexName": "rainfallInLast24Hrs",
+            "dataType": "text",
+            "name": "rainfallInLast24Hrs",
+            "description": "General character of rainfall received at the sampling site over the 7 days prior to sampling.",
+            "constraints": [
+                "Nil",
+                "Light",
+                "Moderate",
+                "Heavy"
+            ]
+        },
+        {
+            "indexName": "waterLevel",
+            "dataType": "text",
+            "name": "waterLevel",
+            "description": "General level of the water surface at the time of sampling, relative to it's normal level.",
+            "constraints": [
+                "Dry",
+                "No flow / Isolated pool",
+                "Low",
+                "Medium",
+                "High",
+                "Flood"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General observations about site conditions at the time of the survey."
+        },
+        {
+            "indexName": "waterTemperatureInDegreesCelcius",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterTemperatureInDegreesCelcius",
+            "description": "The average temperature (in degrees Celsius) of the water taken from a sample in the middle of the water column.",
+            "validate": "min[-15],max[55]"
+        },
+        {
+            "indexName": "waterDoMgl",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterDissolvedOxygenInMilligramsPerLitre",
+            "description": "Measure of the amount of oxygen dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "indexName": "waterDoPcSat",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterDissolvedOxygenInPercentSaturation",
+            "jsMain": "https://dl.dropbox.com/s/55ytuve6qjdi62o/waterDoPcSat.js?dl=0",
+            "description": "Measure of the amount of oxygen dissolved in a water sample expressed as a percentage of the oxygen holding capacity of the water at it's current temperature"
+        },
+        {
+            "indexName": "waterPh",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterPh",
+            "description": "The average pH of the water taken from a sample in the middle of the water column.",
+            "validate": "min[0],max[14]"
+        },
+        {
+            "indexName": "waterTotalP",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterTotalPhosphorusInMilligramsPerLitre",
+            "description": "Measure of the amount of phosphate (reactive and unreactive components) in milligrams per litre of the water at the sampling site"
+        },
+        {
+            "indexName": "waterNitrate",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterNitrateInMilligramsPerLitre",
+            "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre",
+            "validate": "min[0]"
+        },
+        {
+            "indexName": "waterEc",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterEcInMicrosiemensPerCentimetre",
+            "description": "The average electrical conductivity (in microsiemens per centimetre) taken from a sample in the middle of the water column."
+        },
+        {
+            "dataType": "text",
+            "name": "instrumentCalibration",
+            "description": "Indicator as to whether the electrical conductivity meter used had been calibrated prior to sampling",
+            "constraints": [
+                "Yes",
+                "No",
+                "Not applicable"
+            ]
+        },
+        {
+            "indexName": "waterTurbidity",
+            "defaultValue": "",
+            "dataType": "number",
+            "name": "waterTurbidityInNtu",
+            "description": "The average turbidity (in nephelometric turbidity units (NTUs)) of the water column at the sampling site"
+        },
+        {
+            "dataType": "text",
+            "name": "observationRemarks",
+            "description": "General comments and notes about this water quality monitoring event."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": true,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "actWaterwatch_waterQualitySurvey",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Water Quality Monitoring<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Site Visit Details",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "col",
+                            "items": [
+                                {
+                                    "preLabel": "Sampler name",
+                                    "source": "recordedBy",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Number in sampler group",
+                                    "source": "totalParticipants",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Survey date",
+                                    "source": "surveyDate",
+                                    "type": "date"
+                                },
+                                {
+                                    "preLabel": "Survey time",
+                                    "source": "surveyTime",
+                                    "type": "time"
+                                },
+                                {
+                                    "preLabel": "Survey duration (decimal hours)",
+                                    "primaryResult": "false",
+                                    "source": "surveyDurationInDecimalHours",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Rainfall in last 24 hrs",
+                                    "source": "rainfallInLast24Hrs",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Water level or flow",
+                                    "source": "waterLevel",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Site observations (incl. frogs, algae, pollution, feral fish, etc.)",
+                                    "source": "notes",
+                                    "type": "textarea"
+                                }
+                            ]
+                        }],
+                        "class": ""
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [{
+                            "boxed": true,
+                            "title": "Location",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": false,
+                                    "readonly": true,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": false,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "zoomToProjectArea": true,
+                                    "includeLocality": false
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Water Quality Measurements",
+                    "type": "section",
+                    "items": [
+                        {
+                            "computed": null,
+                            "type": "row",
+                            "items": [
+                                {
+                                    "type": "col",
+                                    "items": [{
+                                        "computed": null,
+                                        "type": "col",
+                                        "items": [
+                                            {
+                                                "preLabel": "Water Temperature (deg C)",
+                                                "primaryResult": "false",
+                                                "source": "waterTemperatureInDegreesCelcius",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "preLabel": "Dissolved Oxygen (mg/L)",
+                                                "primaryResult": "false",
+                                                "source": "waterDissolvedOxygenInMilligramsPerLitre",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "preLabel": "Dissolved Oxygen (% sat)",
+                                                "noEdit": true,
+                                                "source": "waterDissolvedOxygenInPercentSaturation",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "preLabel": "pH (pH units)",
+                                                "primaryResult": "false",
+                                                "source": "waterPh",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "preLabel": "Phosphorus (mg/L)",
+                                                "primaryResult": "false",
+                                                "source": "waterTotalPhosphorusInMilligramsPerLitre",
+                                                "type": "number"
+                                            }
+                                        ]
+                                    }]
+                                },
+                                {
+                                    "type": "col",
+                                    "items": [{
+                                        "computed": null,
+                                        "type": "col",
+                                        "items": [
+                                            {
+                                                "preLabel": "Nitrate (mg/L as N)",
+                                                "primaryResult": "false",
+                                                "source": "waterNitrateInMilligramsPerLitre",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "preLabel": "Electrical Conductivity (µS/cm)",
+                                                "primaryResult": "false",
+                                                "source": "waterEcInMicrosiemensPerCentimetre",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "preLabel": "Did you calibrate your EC meter?",
+                                                "source": "instrumentCalibration",
+                                                "type": "selectOne"
+                                            },
+                                            {
+                                                "preLabel": "Turbidity (NTUs)",
+                                                "primaryResult": "false",
+                                                "source": "waterTurbidityInNtu",
+                                                "type": "number"
+                                            }
+                                        ]
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "Water Testing Notes/Issues:",
+                                "computed": null,
+                                "width": "90%",
+                                "source": "observationRemarks",
+                                "type": "textarea"
+                            }]
+                        }
+                    ]
+                }],
+                "class": ""
+            }]
+        }
+    ]
+}

@@ -1,0 +1,1091 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the record was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the record was made."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who created the record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "windDirectionCategorical",
+            "description": "The direction the wind is blowing FROM during the survey.",
+            "constraints": [
+                "N",
+                "NE",
+                "E",
+                "SE",
+                "S",
+                "SW",
+                "W",
+                "NW"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "windSpeedInBeaufortScale",
+            "description": "The speed/strength of the wind according to the Beaufort Scale.",
+            "constraints": [
+                "0 - Calm (< 1 km/h)",
+                "1 - Light air (1 – 5 km/h)",
+                "2 - Light breeze (6 – 11 km/h)",
+                "3 - Gentle breeze (12 – 19 km/h)",
+                "4 - Moderate breeze (20 – 28 km/h)",
+                "5 - Fresh breeze (29 – 38 km/h)",
+                "6 - Strong breeze (39 – 49 km/h)",
+                "7 - High wind, Moderate gale, Near gale (50 – 61 km/h)",
+                "8 - Gale, Fresh gale (62 – 74 km/h)",
+                "9 - Strong gale (75 – 88 km/h)",
+                "10 - Storm, Whole gale (89 – 102 km/h)",
+                "11 - Violent storm (103 – 117 km/h)",
+                "12 - Hurricane (118 km/h)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "airTemperatureInDegreesCelsius",
+            "description": "The ambient temperature of the air at the location. The measurement should ideally be taken at 1.2m above the ground, in the shade and out of the wind.",
+            "validate": "min[-10],max[55]"
+        },
+        {
+            "dataType": "number",
+            "name": "otRainInPercent",
+            "description": "",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "number",
+            "name": "previousRainfall24HoursInMillimetres",
+            "description": "Total rainfall in millimetres over the previous 24 hrs",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "text",
+            "name": "relativeHumidityIndexInPercentCategorical",
+            "description": "",
+            "constraints": [
+                "0 - 14%",
+                "15 - 29%",
+                "30 - 44%",
+                "45 - 59%",
+                "60 - 74%",
+                "75 - 89%",
+                "90 - 100%"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "recentStormEventLastSevenDays",
+            "description": "Has there been a storm event during the past week?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "tideHeightCategorical",
+            "description": "The broad height status of the tide at the time of the survey.",
+            "constraints": [
+                "High",
+                "Mid",
+                "Low"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "tideDirectionCategorical",
+            "description": "In what direction is the tide moving?",
+            "constraints": [
+                "Rising",
+                "Falling"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notableWeatherObservations",
+            "description": "Describe any unique or unusual weather observations."
+        },
+        {
+            "dataType": "stringList",
+            "name": "unusualWeatherConditions",
+            "description": "",
+            "constraints": [
+                "Fog",
+                "Hail",
+                "Lightning",
+                "Thunder",
+                "Smoke",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "unusualWeatherConditionsOther",
+            "description": "Please provide details if you chose 'other' above."
+        },
+        {
+            "dataType": "image",
+            "name": "photoPointImage",
+            "description": "Photo(s) showing the beach profile taken from the specified lookout point."
+        },
+        {
+            "dataType": "number",
+            "name": "maxWaveHeightInMetres",
+            "description": "The maximum height of waves (metres) at the break point.",
+            "validate": "min[0],max[15]"
+        },
+        {
+            "dataType": "number",
+            "name": "minWavePeriodInSeconds",
+            "description": "The minimum time (seconds) between consecutive waves breaking.",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "text",
+            "name": "waveDirectionCategorical",
+            "description": "The direction that waves reaching the beach are coming FROM.",
+            "constraints": [
+                "N",
+                "NE",
+                "E",
+                "SE",
+                "S",
+                "SW",
+                "W",
+                "NW"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "unusualBeachConditions",
+            "description": "",
+            "constraints": [
+                "Algal bloom in water",
+                "Foam on beach",
+                "Lots of seagrass or seaweed on beach",
+                "Marine debris (rubbish) on beach",
+                "Sand covering the promenade",
+                "Other"
+            ]
+        },
+        {
+            "allowRowDelete": false,
+            "allowHeaderWrap": true,
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "sideOfGroyne",
+                    "description": "",
+                    "readOnly": true
+                },
+                {
+                    "dataType": "number",
+                    "name": "measurementPost1InMetres",
+                    "description": "Measurements of sand height on the north and south sides of the groyne at post 1.",
+                    "validate": "min[0],max[5.0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "measurementPost3InMetres",
+                    "description": "Measurements of sand height on the north and south sides of the groyne at post 3.",
+                    "validate": "min[0],max[5.0]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "measurementPhoto",
+                    "description": "Photos of the beach on each side of the groyne."
+                }
+            ],
+            "dataType": "list",
+            "name": "groyneMeasurementsTable",
+            "defaultRows": [
+                {
+                    "measurementSFPost3InMetres": "",
+                    "measurementSFPhoto": "",
+                    "measurementSFPost1InMetres": "",
+                    "sideOfGroyne": "SOUTH GROYNE : Front"
+                },
+                {
+                    "measurementSBPost1InMetres": "",
+                    "measurementSBPost3InMetres": "",
+                    "measurementSBPhoto": "",
+                    "sideOfGroyne": "SOUTH GROYNE : Back"
+                },
+                {
+                    "measurementNFPhoto": "",
+                    "measurementNFPost1InMetres": "",
+                    "measurementNFPost3InMetres": "",
+                    "sideOfGroyne": "NORTH GROYNE : Front"
+                },
+                {
+                    "measurementNBPost3InMetres": "",
+                    "measurementNBPhoto": "",
+                    "measurementNBPost1InMetres": "",
+                    "sideOfGroyne": "NORTH GROYNE  : Back"
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "transectLocation",
+                    "description": "The street location at which the beach profile transect was done.",
+                    "constraints": [
+                        "Albert Street",
+                        "Elizabeth Street",
+                        "Kirk Road",
+                        "Nicholas Court"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "transectBearingInDegrees",
+                    "description": "The bearing of the beach profile transect in degrees.",
+                    "validate": "min[0],max[360]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "beachWidthInMetres",
+                    "description": "The width of the beach in metres from the sea wall to the waterline.",
+                    "validate": "min[0],max[50]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "baselineHeightInMetres",
+                    "description": "",
+                    "validate": "min[0],max[3]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "highWaterMarkInMetres",
+                    "description": "",
+                    "validate": "min[0],max[60]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "sandHeightInMetres",
+                    "description": "",
+                    "validate": "min[-1],max[5]"
+                },
+                {
+                    "allowRowDelete": true,
+                    "allowHeaderWrap": true,
+                    "columns": [
+                        {
+                            "dataType": "number",
+                            "name": "measurementFromSeaWallInMetres",
+                            "description": "Distance of measurement point from the sea wall in metres.",
+                            "validate": "min[0]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "substrate",
+                            "description": "The type of substrate at the point where the measurement was taken.",
+                            "constraints": [
+                                "Fine sand - dry",
+                                "Fine sand - wet",
+                                "Coarse sand - dry",
+                                "Coarse sand - wet",
+                                "Silt",
+                                "Clay",
+                                "Rock",
+                                "seaweed"
+                            ]
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "elevation",
+                            "description": "Indicate whether the substrate is above or below water.",
+                            "constraints": [
+                                "Above waterline",
+                                "Below waterline"
+                            ]
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "opticalReading",
+                            "description": "Measurement for the optical reading at the measurement point.",
+                            "validate": "min[0]"
+                        },
+                        {
+                            "computed": {
+                                "expression": "(baselineHeightInMetres-opticalReading)+baselineHeightInMetres",
+                                "dependents": {"source": [
+                                    "baselineHeightInMetres",
+                                    "opticalReading"
+                                ]}
+                            },
+                            "dataType": "number",
+                            "name": "calculatedProfileValue",
+                            "description": "Calculated profile value [(measurement - optical reading) + measurement]",
+                            "noEdit": true,
+                            "readOnly": true
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "beachProfileMeasurementsTable",
+                    "defaultRows": [
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "0",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        },
+                        {
+                            "elevation": "",
+                            "calculatedProfileValue": "",
+                            "substrate": "",
+                            "measurementFromSeaWallInMetres": "",
+                            "opticalReading": ""
+                        }
+                    ],
+                    "userAddedRows": true
+                }
+            ],
+            "dataType": "list",
+            "name": "beachProfileRepeatSection"
+        },
+        {
+            "defaultAccuracy": 10,
+            "hideMyLocation": true,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "beachSandPhotoPointMonitoring",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Beach Sand Survey - Photo Point Monitoring<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Visit Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Contributor",
+                                    "source": "recordedBy",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Date",
+                                    "source": "surveyDate",
+                                    "type": "date"
+                                },
+                                {
+                                    "preLabel": "Time",
+                                    "source": "surveyStartTime",
+                                    "type": "time"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Location",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "includeNotes": false,
+                                        "orientation": "vertical",
+                                        "computed": null,
+                                        "autoLocalitySearch": false,
+                                        "readonly": true,
+                                        "includeSource": false,
+                                        "includeAccuracy": false,
+                                        "hideSiteSelection": false,
+                                        "source": "location",
+                                        "type": "geoMap",
+                                        "zoomToProjectArea": true,
+                                        "includeLocality": false
+                                    }]
+                                },
+                                {
+                                    "preLabel": "Photo point image",
+                                    "source": "photoPointImage",
+                                    "type": "image"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Sea Conditions",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Tide height during survey",
+                                    "source": "tideHeightCategorical",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Tide direction during survey",
+                                    "source": "tideDirectionCategorical",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Maximum wave height (metres)",
+                                    "source": "maxWaveHeightInMetres",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Minimum wave period (seconds)",
+                                    "source": "minWavePeriodInSeconds",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Wave direction",
+                                    "source": "waveDirectionCategorical",
+                                    "type": "selectOne"
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Weather Conditions",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "source": "Weather forecast information can be found at <a href='https://www.accuweather.com/en/au/australia-weather' target='_blank'>https://www.accuweather.com/en/au/australia-weather<\/a> Search for the nearest local town and select 'see hourly' as a proxy.<br>A useful link to determine previous days rainfall is at <a href='http://www.bom.gov.au/climate/dwo/index.shtml' target='_blank'>http://www.bom.gov.au/climate/dwo/index.shtml<\/a> and navigate to your nearest state and location.",
+                                    "type": "literal"
+                                },
+                                {
+                                    "preLabel": "Wind direction during survey",
+                                    "source": "windDirectionCategorical",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Wind speed",
+                                    "source": "windSpeedInBeaufortScale",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Maximum temperature (degrees celcius)",
+                                    "source": "airTemperatureInDegreesCelsius",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Maximum chance of rain (%)",
+                                    "source": "otRainInPercent",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Total rain for previous day (mm)",
+                                    "source": "previousRainfall24HoursInMillimetres",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Current relative humidity (%)",
+                                    "source": "relativeHumidityIndexInPercentCategorical",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Has there been a storm event during the last week?",
+                                    "source": "recentStormEventLastSevenDays",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Unusual weather conditions",
+                                    "source": "unusualWeatherConditions",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "Unusual weather conditions - Other",
+                                    "source": "unusualWeatherConditionsOther",
+                                    "type": "text"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Groyne Measurements",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Unusual beach conditions",
+                                    "source": "unusualBeachConditions",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "allowRowDelete": false,
+                                    "allowHeaderWrap": true,
+                                    "disableTableUpload": true,
+                                    "columns": [
+                                        {
+                                            "width": "20%",
+                                            "noEdit": true,
+                                            "readOnly": true,
+                                            "source": "sideOfGroyne",
+                                            "title": "",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "width": "10%",
+                                            "source": "measurementPost1InMetres",
+                                            "title": "Post 1 measurement (m)",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "10%",
+                                            "source": "measurementPost3InMetres",
+                                            "title": "Post 3 measurement (m)",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "50%",
+                                            "source": "measurementPhoto",
+                                            "title": "Photo point image",
+                                            "type": "image"
+                                        }
+                                    ],
+                                    "userAddedRows": false,
+                                    "source": "groyneMeasurementsTable",
+                                    "type": "table"
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "boxed": true,
+                "title": "Beach Profile Measurements",
+                "type": "section",
+                "items": [{
+                    "addRowText": "Add a beach profile transect",
+                    "userAddedRows": true,
+                    "source": "beachProfileRepeatSection",
+                    "type": "repeat",
+                    "items": [{
+                        "type": "row",
+                        "items": [
+                            {
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "preLabel": "Transect Location",
+                                        "source": "transectLocation",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "preLabel": "Transect bearing (degrees)",
+                                        "source": "transectBearingInDegrees",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "preLabel": "High water mark (metres)",
+                                        "source": "highWaterMarkInMetres",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "preLabel": "Beach width (metres)",
+                                        "source": "beachWidthInMetres",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "preLabel": "Sand height (metres) - Distance from pin on sea wall to sand",
+                                        "source": "sandHeightInMetres",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "preLabel": "Baseline height (AHD - sand height)",
+                                        "source": "baselineHeightInMetres",
+                                        "type": "number"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "col",
+                                "items": [{
+                                    "allowRowDelete": false,
+                                    "allowHeaderWrap": true,
+                                    "disableTableUpload": true,
+                                    "columns": [
+                                        {
+                                            "width": "15%",
+                                            "source": "measurementFromSeaWallInMetres",
+                                            "title": "Distance (metres)",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "computed": null,
+                                            "width": "27%",
+                                            "source": "substrate",
+                                            "title": "Substrate",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "computed": null,
+                                            "width": "28%",
+                                            "source": "elevation",
+                                            "title": "Above/below waterline",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "15%",
+                                            "source": "opticalReading",
+                                            "title": "Optical reading",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "15%",
+                                            "noEdit": true,
+                                            "readOnly": true,
+                                            "source": "calculatedProfileValue",
+                                            "title": "Calculated profile value",
+                                            "type": "number"
+                                        }
+                                    ],
+                                    "userAddedRows": false,
+                                    "source": "beachProfileMeasurementsTable",
+                                    "type": "table"
+                                }]
+                            }
+                        ]
+                    }],
+                    "class": ""
+                }],
+                "class": ""
+            }]
+        }
+    ]
+}

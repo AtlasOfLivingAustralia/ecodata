@@ -1,0 +1,76 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "coreService1RequirementMet",
+            "constraints": [
+                "Met",
+                "Not met"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "coreService2RequirementMet",
+            "constraints": [
+                "Met",
+                "Not met"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "coreService3RequirementMet",
+            "constraints": [
+                "Met",
+                "Not met"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "coreService4RequirementMet",
+            "constraints": [
+                "Met",
+                "Not met"
+            ],
+            "validate": "required"
+        }
+    ],
+    "name": "NRM2 - Core services monthly report",
+    "title": "Core services monthly report",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "coreService1RequirementMet",
+                "preLabel": "Were the requirements for core service 1 met?",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "coreService2RequirementMet",
+                "preLabel": "Were the requirements for core service 2 met?",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "coreService3RequirementMet",
+                "preLabel": "Were the requirements for core service 3 met?",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "coreService4RequirementMet",
+                "preLabel": "Were the requirements for core service 4 met?",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        }
+    ]
+}

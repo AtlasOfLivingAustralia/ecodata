@@ -1,0 +1,580 @@
+{
+    "dataModel": [
+        {
+            "dataType": "number",
+            "name": "transectBearingInDegrees",
+            "description": "The bearing of the beach profile transect in degrees.",
+            "validate": "min[0],max[360]"
+        },
+        {
+            "dataType": "number",
+            "name": "beachWidthInMetres",
+            "description": "The width of the beach in metres from the sea wall to the waterline.",
+            "validate": "min[0],max[50]"
+        },
+        {
+            "dataType": "number",
+            "name": "baselineHeightInMetres",
+            "description": "",
+            "validate": "min[0],max[3]"
+        },
+        {
+            "dataType": "number",
+            "name": "highWaterMarkInMetres",
+            "description": "",
+            "validate": "min[0],max[60]"
+        },
+        {
+            "dataType": "number",
+            "name": "sandHeightInMetres",
+            "description": "",
+            "validate": "min[-1],max[5]"
+        },
+        {
+            "allowRowDelete": false,
+            "allowHeaderWrap": true,
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "measurementFromSeaWallInMetres",
+                    "description": "Distance of measurement point from the sea wall in metres.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "substrate",
+                    "description": "The type of substrate at the point where the measurement was taken.",
+                    "constraints": [
+                        "Fine sand - dry",
+                        "Fine sand - wet",
+                        "Coarse sand - dry",
+                        "Coarse sand - wet",
+                        "Silt",
+                        "Clay",
+                        "Rock",
+                        "seaweed"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "elevation",
+                    "description": "Indicate whether the substrate is above or below water.",
+                    "constraints": [
+                        "Above waterline",
+                        "Below waterline"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "opticalReading",
+                    "description": "Measurement for the optical reading at the measurement point.",
+                    "validate": "min[0]"
+                },
+                {
+                    "computed": {
+                        "expression": "(baselineHeightInMetres-opticalReading)+baselineHeightInMetres",
+                        "dependents": {"source": [
+                            "baselineHeightInMetres",
+                            "opticalReading"
+                        ]}
+                    },
+                    "dataType": "number",
+                    "name": "calculatedProfileValue",
+                    "description": "Calculated profile value [(measurement - optical reading) + measurement]",
+                    "noEdit": true,
+                    "readOnly": true
+                }
+            ],
+            "dataType": "list",
+            "name": "beachProfileMeasurementsTable",
+            "defaultRows": [
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "0",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                },
+                {
+                    "elevation": "",
+                    "calculatedProfileValue": "",
+                    "substrate": "",
+                    "measurementFromSeaWallInMetres": "",
+                    "opticalReading": ""
+                }
+            ],
+            "userAddedRows": true
+        }
+    ],
+    "modelName": "beachSandPhotoPointMonitoring_t2",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Beach Profile Measurements - Transect 1<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Beach Profile Measurements - Transect 1",
+                    "type": "section",
+                    "items": [
+                        {
+                            "preLabel": "Transect bearing (degrees)",
+                            "source": "transectBearingInDegrees",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Beach width (metres)",
+                            "source": "beachWidthInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Baseline height (AHD - distance to sand)",
+                            "source": "baselineHeightInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "High water mark (metres)",
+                            "source": "highWaterMarkInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Sand height (metres) - Distance from pin on sea wall to sand",
+                            "source": "sandHeightInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "allowRowDelete": false,
+                            "allowHeaderWrap": true,
+                            "disableTableUpload": true,
+                            "columns": [
+                                {
+                                    "width": "15%",
+                                    "source": "measurementFromSeaWallInMetres",
+                                    "title": "Distance (metres)",
+                                    "type": "number"
+                                },
+                                {
+                                    "computed": null,
+                                    "width": "27%",
+                                    "source": "substrate",
+                                    "title": "Substrate",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "computed": null,
+                                    "width": "28%",
+                                    "source": "elevation",
+                                    "title": "Above/below waterline",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "opticalReading",
+                                    "title": "Optical reading",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "15%",
+                                    "noEdit": true,
+                                    "readOnly": true,
+                                    "source": "calculatedProfileValue",
+                                    "title": "Calculated profile value",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": false,
+                            "source": "beachProfileMeasurementsTable",
+                            "type": "table"
+                        }
+                    ],
+                    "class": ""
+                }]
+            }]
+        }
+    ]
+}

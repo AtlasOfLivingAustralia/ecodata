@@ -1,0 +1,73 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "undertakeWaterborneChemicalControl",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "waterborneChemicalControlActions"
+        },
+        {
+            "dataType": "text",
+            "name": "undertakeWindborneChemicalControl",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "windborneChemicalControlActions"
+        }
+    ],
+    "modelName": "ESP Control of Agrochemicals",
+    "title": "Control of Agrochemicals",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities to reduce the impacts of nutrients and agrochemicals are included under any or all of the following; “Nutrient management”, “Reduce wind-borne agrochemicals” and “Reduce water-borne movement of agrochemicals”. ",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Did you undertake actions to reduce the movement of water-borne agrochemicals across your sites this year? (Yes / No)",
+                "source": "undertakeWaterborneChemicalControl",
+                "type": "selectOne"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If 'Yes', please describe the actions taken:",
+                "source": "waterborneChemicalControlActions",
+                "type": "textarea"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Did you undertake actions to reduce the movement of wind-borne agrochemicals across your sites this year? (Yes / No)",
+                "source": "undertakeWindborneChemicalControl",
+                "type": "selectOne"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If 'Yes', please describe the actions taken:",
+                "source": "windborneChemicalControlActions",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

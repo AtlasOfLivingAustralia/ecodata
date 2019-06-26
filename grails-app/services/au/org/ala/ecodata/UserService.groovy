@@ -16,6 +16,14 @@ class UserService {
         return currentUser ? currentUser.displayName : ""
     }
 
+    /**
+     * Static equivalent of getCurrentUserDetails for use by GORM objects when dependency injection
+     * is disabled in grails 3.
+     */
+    static def currentUser() {
+        return _currentUser.get()
+    }
+
     def getCurrentUserDetails() {
         return _currentUser.get();
     }

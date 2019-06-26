@@ -1,0 +1,160 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "parameter",
+                "description": ""
+            },
+            {
+                "dataType": "text",
+                "name": "transectOne",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "Scattered",
+                    "Abundant with grazing damage",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectTwo",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "Scattered",
+                    "Abundant with grazing damage",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectThree",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "Scattered",
+                    "Abundant with grazing damage",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectFour",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "Scattered",
+                    "Abundant with grazing damage",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "number",
+                "name": "featuresAverageScore",
+                "description": ""
+            }
+        ],
+        "dataType": "list",
+        "name": "featuresTable",
+        "defaultRows": [
+            {
+                "nativeCanopyRegen_T3": "",
+                "nativeCanopyRegen_T4": "",
+                "nativeCanopyRegen_averageScore": "",
+                "parameter": "Native canopy species regeneration",
+                "nativeCanopyRegen_T1": "",
+                "nativeCanopyRegen_T2": ""
+            },
+            {
+                "nativeUnderstoreyRegen_averageScore": "",
+                "parameter": "Native understorey regeneration",
+                "nativeUnderstoreyRegen_T1": "",
+                "nativeUnderstoreyRegen_T2": "",
+                "nativeUnderstoreyRegen_T3": "",
+                "nativeUnderstoreyRegen_T4": ""
+            },
+            {
+                "tussockGrasses_averageScore": "",
+                "tussockGrasses_T4": "",
+                "parameter": "Large native tussock grasses",
+                "tussockGrasses_T3": "",
+                "tussockGrasses_T2": "",
+                "tussockGrasses_T1": ""
+            },
+            {
+                "reeds_T1": "",
+                "reeds_T4": "",
+                "reeds_T3": "",
+                "parameter": "Reeds",
+                "reeds_T2": "",
+                "reeds_averageScore": ""
+            }
+        ]
+    }],
+    "modelName": "rarc_features",
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "type": "col",
+            "items": [{
+                "boxed": true,
+                "title": "Features",
+                "type": "section",
+                "items": [{
+                    "computed": null,
+                    "type": "row",
+                    "items": [{
+                        "allowRowDelete": false,
+                        "allowHeaderWrap": true,
+                        "columns": [
+                            {
+                                "width": "25%",
+                                "noEdit": true,
+                                "source": "parameter",
+                                "type": "text",
+                                "title": ""
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectOne",
+                                "type": "selectOne",
+                                "title": "Transect 1"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectTwo",
+                                "type": "selectOne",
+                                "title": "Transect 2"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectThree",
+                                "type": "selectOne",
+                                "title": "Transect 3"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectFour",
+                                "title": "Transect 4",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "15%",
+                                "noEdit": true,
+                                "source": "featuresAverageScore",
+                                "title": "Average Score",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": false,
+                        "source": "featuresTable",
+                        "type": "table"
+                    }]
+                }],
+                "class": ""
+            }]
+        }]
+    }]
+}

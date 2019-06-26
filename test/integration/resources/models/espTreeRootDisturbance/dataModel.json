@@ -1,0 +1,44 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "undertakeTreeRootDisturbanceControl",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "treeRootDisturbanceControlActions"
+        }
+    ],
+    "modelName": "ESP Tree Root Disturbances",
+    "title": "Tree Root Disturbance Control",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> that this includes “Reduce disturbances to tree roots”.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Did you undertake actions to reduce disturbance to tree roots on your sites this year? (Yes / No)",
+                "source": "undertakeTreeRootDisturbanceControl",
+                "type": "selectOne"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If 'Yes', please describe the actions taken:",
+                "source": "treeRootDisturbanceControlActions",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

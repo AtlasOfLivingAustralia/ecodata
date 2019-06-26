@@ -12,47 +12,114 @@
                         "expression": "$geom.areaHa(sitesPrepared)"
                     },
                     "dataType": "number",
+                    "name": "calculatedAreaPreparedHa",
+                    "units": "ha"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.lengthKm(sitesPrepared)"
+                    },
+                    "dataType": "number",
+                    "name": "calculatedLengthPreparedKm",
+                    "units": "km"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedAreaPreparedHa"
+                    },
+                    "dataType": "number",
                     "name": "areaPreparedHa",
-                    "validate": [
+                    "validate": "required,min[0]",
+                    "units": "ha"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedLengthPreparedKm"
+                    },
+                    "dataType": "number",
+                    "name": "lengthPreparedKm",
+                    "validate": "required,min[0]",
+                    "units": "km"
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
+                    "constraints": [
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesPrepared)*0.9"
-                            }
-                        },
+                            "condition": "not (within(calculatedAreaPreparedHa, areaPreparedHa, 0.1))",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
+                        }]
+                },
+
+                {
+                    "dataType": "document",
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(calculatedAreaPreparedHa, areaPreparedHa, 0.1)) or roundTo(areaPreparedHa, 2) != roundTo(areaPreparedInvoicedHa, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaPreparedInvoicedHa",
+                    "units": "ha",
+                    "validate": [
+                        {"rule": "min[0]"},
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(sitesPrepared)*1.1"
+                                "expression": "areaPreparedHa"
                             }
                         }
                     ]
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.lengthKm(sitesPrepared)"
-                    },
-                    "dataType": "number",
-                    "name": "lengthPreparedKm",
-                    "validate": [
+                    "dataType": "text",
+                    "name": "invoicedNotActualReason",
+                    "constraints": [
+                        "Work was undertaken over a greater area than will be invoiced for",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(sitesPrepared)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(sitesPrepared)*1.1"
-                            }
+                            "condition": "roundTo(areaPreparedHa, 2) != roundTo(areaPreparedInvoicedHa, 2)",
+                            "type": "visible"
                         }
                     ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualComments",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == invoicedNotActualReason"
+                        }],
+                    "validate": "required,maxSize[300]"
                 },
                 {
                     "dataType": "number",
@@ -143,22 +210,128 @@
             {
                 "columns": [
                     {
-                        "width": "5%",
-                        "source": "sitesPrepared",
-                        "type": "feature",
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "sitesPrepared",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "calculatedAreaPreparedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "source": "calculatedLengthPreparedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Please attach mapping details",
+                                        "source": "extraMappingDetails",
+                                        "type": "document"
+                                    }
+                                ]
+                            }
+                        ],
+                        "width": "10%",
                         "title": "Site/s where preparation was undertaken"
                     },
                     {
-                        "width": "5%",
-                        "source": "areaPreparedHa",
-                        "type": "number",
-                        "title": "Area (ha) of the site preparation"
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "areaPreparedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "lengthPreparedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },{
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for actual being different to mapped amount",
+                                        "source": "mappingNotAlignedReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "mappingNotAlignedComments",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }
+
+                                ]
+                            }
+
+                        ],
+                        "width": "15%",
+                        "title": "Actual area (ha) / length (km) of site preparation",
+                        "helpText": "Enter the amount you will invoice for during this reporting period."
                     },
                     {
-                        "width": "5%",
-                        "source": "lengthPreparedKm",
-                        "type": "number",
-                        "title": "Length (km) of the site preparation"
+                        "width": "15%",
+                        "type": "col",
+                        "title": "Invoiced area (ha) of site preparation",
+                        "helpText": "Enter the amount you will invoice for during this reporting period.",
+                        "items": [
+                            {
+                                "source": "areaPreparedInvoicedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for invoiced amount being different to actual amount",
+                                        "source": "invoicedNotActualReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "invoicedNotActualComments",
+                                        "type": "textarea",
+                                        "rows": 5
+
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "width": "10%",
@@ -173,19 +346,29 @@
                         "type": "select2"
                     },
                     {
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "actionType",
+                                        "type": "select2"
+                                    }
+                                ]
+                            },
+                            {
+                                "source": "otherActionType",
+                                "placeholder": "Type of action (if Other)",
+                                "type": "text"
+                            }
+                        ],
                         "width": "15%",
-                        "source": "actionType",
-                        "title": "Type of action",
-                        "type": "select2"
+                        "title": "Type of action"
+
                     },
                     {
-                        "width": "17%",
-                        "source": "otherActionType",
-                        "title": "Type of action (if Other)",
-                        "type": "text"
-                    },
-                    {
-                        "width": "23%",
+                        "width": "15%",
                         "source": "purposeOfSitePreparation",
                         "title": "Aim of site preparation",
                         "type": "textarea"

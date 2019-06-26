@@ -1,0 +1,150 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "submittedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "description": "The name(s) of people who participated in the survey. For schools and community groups, provide the names of the school or group only.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "observationTime",
+                    "description": "The time at which the human impact observation was made."
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfHumanImpactsObserved",
+                    "description": "How many disturbances or objects causing disturbance do you see (eg. trampling, dogs, etc.)?.",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "descriptionOfHumanImpactsObserved",
+                    "description": "Please provide additional notes on your observation to clarify what you have seen."
+                },
+                {
+                    "dataType": "image",
+                    "name": "photoOfHumanImpactsObserved",
+                    "description": "If you take a photo of the disturbances or objects causing disturbance, please upload it here."
+                }
+            ],
+            "dataType": "list",
+            "name": "humanImpactsObserved"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "dunewatchHumanImpactAssessment",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Submitted by",
+                        "source": "submittedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Survey worker(s)",
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Date",
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "width": "15%",
+                                "source": "observationTime",
+                                "title": "Time",
+                                "type": "text"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberOfHumanImpactsObserved",
+                                "title": "Number",
+                                "type": "number"
+                            },
+                            {
+                                "width": "40%",
+                                "source": "descriptionOfHumanImpactsObserved",
+                                "title": "Description",
+                                "type": "textarea"
+                            },
+                            {
+                                "width": "34%",
+                                "source": "photoOfHumanImpactsObserved",
+                                "title": "Photo ID",
+                                "type": "image"
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "humanImpactsObserved",
+                        "type": "table",
+                        "class": "output-section"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<i>Zoom in on the map, select the marker, then click on the location of the observations.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": false
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

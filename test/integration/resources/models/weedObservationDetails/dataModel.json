@@ -1,0 +1,138 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "weedSpecies",
+                    "description": "Name(s) of the weed species observed on the subject site (may be entered as scientific or common names)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "weedCoverHa",
+                    "description": "Area in hectares of coverage of particular weed species",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedInfestationDensity",
+                    "description": "Density class for particular weed species over the assessed area",
+                    "constraints": [
+                        "Dense general cover",
+                        "Dense patches",
+                        "Few scattered plants",
+                        "Moderately dense general cover",
+                        "Moderately dense scattered patches",
+                        "Sparse scattered patches",
+                        "Sparse general cover"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedHealth",
+                    "description": "Observed health status of particular weed species as an average across the assessed area",
+                    "constraints": [
+                        "Dead",
+                        "Healthy",
+                        "Stressed"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "reproductiveCondition",
+                    "name": "weedReproductiveStatus",
+                    "description": "Observed reproductive status of particular weed species as an average across the assessed area",
+                    "constraints": [
+                        "Flowering (FLWG)",
+                        "Immature (IMTR)",
+                        "Not recorded (NRRS)",
+                        "Seeding (SEDG)",
+                        "Vegetative & Mature (VGTV)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "occurrenceStatus",
+                    "name": "weedStatus",
+                    "description": "Status of the infestation area for particular weed species",
+                    "constraints": [
+                        "Active Infestation",
+                        "Closed",
+                        "New Infestation",
+                        "Under control",
+                        "Under monitoring",
+                        "Unknown"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "weedObservationMonitoringDetails",
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "dataType": "text",
+            "dwcAttribute": "occurrenceRemarks",
+            "name": "weedInspectionNotes"
+        }
+    ],
+    "modelName": "Weed Observation / Monitoring Details",
+    "viewModel": [
+        {"footer": {"rows": [{"columns": [{
+            "colspan": 6,
+            "source": "",
+            "type": "literal"
+        }]}]}},
+        {
+            "columns": [
+                {
+                    "source": "weedSpecies",
+                    "title": "Weed species",
+                    "type": "autocomplete",
+                    "validate": "required"
+                },
+                {
+                    "source": "weedCoverHa",
+                    "title": "Weed cover (Ha)",
+                    "type": "number",
+                    "validate": "required"
+                },
+                {
+                    "source": "weedInfestationDensity",
+                    "title": "Infestation Density",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedHealth",
+                    "title": "Health",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedReproductiveStatus",
+                    "title": "Reproductive status",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedStatus",
+                    "title": "Weed Status",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": "true",
+            "source": "weedObservationMonitoringDetails",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Notes",
+                "source": "weedInspectionNotes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

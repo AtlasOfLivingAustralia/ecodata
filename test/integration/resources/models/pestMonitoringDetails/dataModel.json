@@ -1,0 +1,153 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "dwcAttribute": "recordedBy",
+            "name": "assessorName",
+            "description": "Name of the person undertaking the assessment of pest species"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "pestSpecies",
+                    "description": "Name(s) of the pest species observed in the sampled area (may be entered as scientific or common names)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pestSampledArea",
+                    "description": "Area in hectares sampled for pest animal population estimate",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "assessmentMethod",
+                    "name": "assessmentMethod",
+                    "description": "Methodology used to assess the population abundance for particular pest species over the sampled area",
+                    "constraints": [
+                        "Anecdotal - 3rd party observations",
+                        "Anecdotal - personal observations",
+                        "Evidence / signs of presence - abundance / density / recency",
+                        "Method-based population survey - food species abundance (specify method in notes)",
+                        "Method-based population survey - target species abundance (specify method in notes)",
+                        "Trapping success rate",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "pestPopulationDensityClass",
+                    "description": "Estimated density class of particular pest species on a number of individuals  or colonies (for insects) on a per hectare basis within a range class. Calculate this value as: (population estimate (from method) / sample area in hectares) x (1 / sample area in hectares)",
+                    "constraints": [
+                        "< 10 individuals or colonies / Ha",
+                        "11 - 100 individuals or colonies / Ha",
+                        "101 - 1000 individuals or colonies / Ha",
+                        "> 1000 individuals / Ha"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "populationEstimateConfidence",
+                    "description": "Confidence level of the accuracy of the estimated density class of particular pest species expressed as an percentage (0 = not at all confident, 100 = fully confident)",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "pestPopulationMobility",
+                    "description": "Estimated density class of particular pest species as an average across the assessed area",
+                    "constraints": [
+                        "Resident",
+                        "Transient",
+                        "Uncertain"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "pestObservationMonitoringDetails"
+        },
+        {
+            "dataType": "text",
+            "dwcAttribute": "eventRemarks",
+            "name": "pestObservationNotes"
+        }
+    ],
+    "modelName": "Pest Animal Observation / Monitoring Details",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "The <a href='http://www.feral.org.au/' target='_blank'>www.feral.org.au<\/a> website is a useful source of information for this activity, and this website (<a href='http://www.cals.ncsu.edu/course/fw353/Estimate.htm' target='_blank'>Estimating Wildlife Populations<\/a>), amongst many others, is a useful resource for population estimation methods and calculations.<br>You may also find the <a href='https://itunes.apple.com/au/app/field-guide-to-pest-animals/id634197149?mt=8' target='_blank'>PestSmart app<\/a> (iOS only) useful as an aid in identifying pest species.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Assessor:",
+                "computed": null,
+                "source": "assessorName",
+                "type": "text"
+            }]
+        },
+        {
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "width": "15%",
+                    "source": "pestSpecies",
+                    "title": "Pest species:",
+                    "type": "autocomplete"
+                },
+                {
+                    "width": "8%",
+                    "source": "pestSampledArea",
+                    "title": "Sampled area (Ha):",
+                    "type": "number"
+                },
+                {
+                    "width": "22%",
+                    "source": "assessmentMethod",
+                    "title": "Population assessment methodology:",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "15%",
+                    "source": "pestPopulationDensityClass",
+                    "title": "Estimated population density",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "9%",
+                    "source": "populationEstimateConfidence",
+                    "title": "Population density confidence",
+                    "type": "number"
+                },
+                {
+                    "width": "8%",
+                    "source": "pestPopulationMobility",
+                    "title": "Population mobility",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": "true",
+            "source": "pestObservationMonitoringDetails",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Notes:",
+                "computed": null,
+                "source": "pestObservationNotes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

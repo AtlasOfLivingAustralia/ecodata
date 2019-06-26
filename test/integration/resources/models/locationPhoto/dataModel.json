@@ -1,0 +1,127 @@
+{
+    "modelName": "locationPhoto",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "visitorOrigin",
+            "description": "",
+            "constraints": [
+                "Local",
+                "NSW",
+                "Interstate",
+                "International"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "photo",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "Notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Record your individual sightings of species in the project region.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h3>WarrumbungleSnap<\/h3><br>Tracking post-fire recovery of the Warrumbungles National Park through photos",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Where do you live?",
+                            "source": "surveyStartTime",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Photo",
+                            "source": "photo",
+                            "type": "image"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "source": "Notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<i>Select your location from the drop-down list.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

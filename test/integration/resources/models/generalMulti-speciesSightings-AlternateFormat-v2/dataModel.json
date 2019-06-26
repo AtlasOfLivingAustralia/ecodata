@@ -1,0 +1,191 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the plant, animal or fungus observed.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals or colonies (for certain insects).",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence",
+                    "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "notes",
+                    "description": "Observation notes about the record."
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "multiSightingTable"
+        }
+    ],
+    "modelName": "generalMulti-speciesSightings-AlternateFormat-v2",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h3>Sighting Event Details<\/h3>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Survey event date",
+                        "computed": null,
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Survey event start time",
+                        "computed": null,
+                        "source": "surveyStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Notes",
+                        "computed": null,
+                        "source": "notes",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<h3>Species Sighting(s)<\/h3><font style='color:blue; font-size:0.9em;'><i>Record all species that you sighted when you visited this site.<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "computed": null,
+                        "columns": [
+                            {
+                                "width": "15%",
+                                "source": "species",
+                                "title": "Species name",
+                                "type": "autocomplete"
+                            },
+                            {
+                                "width": "5%",
+                                "source": "identificationConfidence",
+                                "title": "Id confidence",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "5%",
+                                "source": "individualCount",
+                                "title": "No. of individuals",
+                                "type": "number"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "comments",
+                                "title": "Comments",
+                                "type": "textarea"
+                            },
+                            {
+                                "width": "19%",
+                                "source": "sightingPhoto",
+                                "title": "Species photo",
+                                "type": "imageDialog"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "source": "multiSightingTable",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<font style='color:blue; font-size:0.9em;'><i>Zoom in on the map, select the point marker tool, then drop it on the map at the location of the sighting. Change the base map to satellite if required.<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

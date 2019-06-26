@@ -1,0 +1,204 @@
+{
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "",
+            "name": "firePreventionWorks",
+            "constraints": [
+                "Backburning",
+                "Fire trail construction",
+                "Fire break construction",
+                "Woody vegetation removal",
+                "Grass slashing",
+                "Water point construction",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares being protected by fire prevention works.",
+            "name": "assetAreaProtectedHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "",
+            "name": "fireReason",
+            "constraints": [
+                "Weed management",
+                "Pest animal management",
+                "Ecological management",
+                "Indigenous cultural burn",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares planned to be burnt",
+            "name": "areaOfFireHa"
+        },
+        {
+            "dataType": "text",
+            "description": "The source of fire ignition",
+            "name": "fireIgnitionSource",
+            "constraints": [
+                "Lightning",
+                "Drip torch",
+                "Aerial incendiary",
+                "Accidental human",
+                "Arson",
+                "Other (specify in notes)",
+                "Not applicable",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares of the fire ground actually burnt",
+            "name": "areaBurntHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Generalised indicator of the intensity of the fire event",
+            "name": "fireBurnTemp",
+            "constraints": [
+                "Cool",
+                "Moderately hot",
+                "Very hot",
+                "Extreme"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Approximate time period since the last known fire occurred on the subject fire ground",
+            "name": "fireTimeSinceLastBurn",
+            "constraints": [
+                "1-3 years",
+                "4-6 years",
+                "7-10 years",
+                "> 10 years"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Notes or comments about the fire prevention works, or a description of the type of works if you selected Other above",
+            "name": "notes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "ecologicalFireManagement_withMap",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "firePreventionWorks",
+                            "computed": null,
+                            "preLabel": "Fire prevention works:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "assetAreaProtectedHa",
+                            "preLabel": "Area protected (Ha):",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "fireReason",
+                            "preLabel": "Reason(s) for burn:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "areaOfFireHa",
+                            "preLabel": "Proposed / planned area of burn (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaBurntHa",
+                            "preLabel": "Actual burnt area (Ha)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "fireIgnitionSource",
+                            "preLabel": "Ignition source:",
+                            "computed": null,
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "fireTimeSinceLastBurn",
+                            "preLabel": "Time since last burn:",
+                            "computed": null,
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "fireBurnTemp",
+                            "preLabel": "Temperature of burn:",
+                            "computed": null,
+                            "type": "selectOne"
+                        }
+                    ],
+                    "width": "50%",
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }],
+                    "width": "50%",
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "preLabel": "Comments / notes",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

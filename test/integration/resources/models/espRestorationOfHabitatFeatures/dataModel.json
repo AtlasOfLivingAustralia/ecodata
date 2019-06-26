@@ -1,0 +1,96 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "habitatFeature",
+                    "description": "",
+                    "constraints": [
+                        "Woody debris",
+                        "Corrugated tin",
+                        "Nesting boxes",
+                        "Other"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberAdded",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "cost",
+                    "validate": "integer,min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "habitatRestoration"
+        },
+        {
+            "dataType": "text",
+            "name": "otherHabitatFeature",
+            "description": "Please describe the habitat feature if other was selected"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
+    "modelName": "ESP Restoration of Habitat",
+    "title": "Restoration of Habitat Features",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities to restore habitat features are included under any or all of the following; “Add coarse woody debris” and “Retain fallen timber”.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "habitatFeature",
+                        "title": "Have you placed any of the following habitat features on your site?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "numberAdded",
+                        "title": "Number of habitat features added",
+                        "type": "number"
+                    },
+                    {
+                        "source": "cost",
+                        "title": "Cost of Management Action?",
+                        "type": "currency"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "habitatRestoration",
+                "title": "Please complete the following:",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Habitat Feature (if Other)",
+                "source": "otherHabitatFeature",
+                "type": "textarea"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

@@ -1,0 +1,111 @@
+{
+  "title": "Establishing monitoring regimes",
+  "modelName": "RLP - Establishing monitoring regimes",
+  "dataModel": [
+    {
+      "name":"monitoringRegimes",
+      "dataType":"list",
+      "columns":[
+        {
+          "dataType":"text",
+          "name":"typeOfMonitoringRegime",
+          "validate":"required",
+          "constraints":[
+            "Ramsar",
+            "Threatened Species",
+            "World Heritage",
+            "Threatened Ecological Communities",
+            "Soil, biodiversity & vegetation",
+            "Climate change & market demands"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "establishedOrMaintained",
+          "validate": "required",
+          "constraints":[
+            "Established",
+            "Maintained"
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "numberMonitoringRegimesEstablished",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfDaysMaintainingMonitoringRegimes",
+          "validate": "required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
+        },
+        {
+          "dataType": "text",
+          "name": "monitoringRegimeObjective",
+          "validate": "required,maxSize[500]",
+          "description":"What type of monitoring and reporting is being established/maintained? What information will these monitoring regimes capture?"
+        }
+      ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
+    }
+
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "table",
+          "userAddedRows":true,
+          "source":"monitoringRegimes",
+          "columns": [
+            {
+              "source":"typeOfMonitoringRegime",
+              "type":"selectOne",
+              "title":"Type of monitoring regime",
+              "width":"20%"
+            },
+            {
+              "source":"establishedOrMaintained",
+              "type":"selectOne",
+              "title":"Established or maintained?",
+              "width":"15%"
+            },
+            {
+              "source": "numberMonitoringRegimesEstablished",
+              "title": "Number of monitoring regimes",
+              "type": "number",
+              "width":"10%"
+            },
+            {
+              "source": "numberOfDaysMaintainingMonitoringRegimes",
+              "title": "Number of days maintaining monitoring regimes",
+              "type": "number",
+              "width":"10%"
+            },
+            {
+              "source": "monitoringRegimeObjective",
+              "title": "Monitoring regimes objective",
+              "type": "textarea",
+              "rows": 3,
+              "width":"55%"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}
