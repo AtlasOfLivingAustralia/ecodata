@@ -16,13 +16,20 @@
                     "name": "sitesTreated"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.areaHa(sitesTreated)"
                     },
                     "dataType": "number",
                     "name": "calculatedAreaTreatedHa",
                     "units": "ha"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.lengthKm(sitesTreated)"
+                    },
+                    "dataType": "number",
+                    "name": "calculatedLengthTreatedKm",
+                    "units": "km"
                 },
                 {
                     "defaultValue": {
@@ -32,6 +39,16 @@
                     "dataType": "number",
                     "name": "areaTreatedHa",
                     "units": "ha",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedLengthTreatedKm"
+                    },
+                    "dataType": "number",
+                    "name": "lengthTreatedKm",
+                    "units": "km",
                     "validate": "required,min[0]"
                 },
                 {
@@ -239,6 +256,15 @@
 
                             },
                             {
+                                "source": "calculatedLengthTreatedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
                                 "type": "row",
                                 "items": [
                                     {
@@ -255,11 +281,18 @@
                     {
                         "width": "20%",
                         "type": "col",
-                        "title": "Actual area (ha) treated by managment action",
+                        "title": "Actual area (ha) / length (km) treated by managment action",
                         "helpText": "Enter the amount you will invoice for during this reporting period.",
                         "items": [
                             {
                                 "source": "areaTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "lengthTreatedKm",
                                 "type": "number",
                                 "displayOptions": {
                                     "displayUnits": true

@@ -22,15 +22,15 @@
                     },
                     "dataType": "number",
                     "name": "calculatedDebrisRemovedHa",
-                    "units": "ha",
-                    "validate": "required,min[0]"
+                    "units": "ha"
                 },
                 {
                     "computed": {
                         "expression": "$geom.lengthKm(clearedSites)"
                     },
                     "dataType": "number",
-                    "name": "calculatedDebrisRemovedKm"
+                    "name": "calculatedDebrisRemovedKm",
+                    "units": "km"
                 },
 
                 {
@@ -41,6 +41,16 @@
                     "dataType": "number",
                     "units": "ha",
                     "name": "debrisRemovedHa",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedDebrisRemovedKm"
+                    },
+                    "dataType": "number",
+                    "units": "ha",
+                    "name": "debrisRemovedKm",
                     "validate": "required,min[0]"
                 },
 
@@ -199,6 +209,15 @@
 
                             },
                             {
+                                "source": "calculatedDebrisRemovedKm",
+                                "readonly": "readonly",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+
+                            },
+                            {
                                 "type": "row",
                                 "items": [
                                     {
@@ -213,11 +232,18 @@
                     {
                         "width": "15%",
                         "type": "col",
-                        "title": "Actual area (ha) of debris removed",
+                        "title": "Actual area (ha) / length (km) of debris removed",
                         "helpText": "Enter the amount which were actually removed during this reporting period.",
                         "items": [
                             {
                                 "source": "debrisRemovedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "debrisRemovedKm",
                                 "type": "number",
                                 "displayOptions": {
                                     "displayUnits": true

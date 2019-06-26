@@ -24,14 +24,32 @@
                     "units": "ha"
                 },
                 {
+                    "dataType": "number",
+                    "name": "siteCalculatedLengthKm",
+                    "computed": {
+                        "expression": "$geom.lengthKm(sitesRevegetated)"
+                    },
+                    "units": "km"
+                },
+                {
                     "defaultValue": {
                         "type": "computed",
-                        "expression": "$geom.areaHa(sitesSurveyed)"
+                        "expression": "siteCalculatedAreaHa"
                     },
                     "dataType": "number",
                     "name": "areaRevegetatedHa",
                     "validate": "required,min[0]",
                     "units": "ha"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "siteCalculatedLengthKm"
+                    },
+                    "dataType": "number",
+                    "name": "lengthRevegetatedKm",
+                    "validate": "required,min[0]",
+                    "units": "km"
                 },
                 {
                     "dataType": "number",
@@ -273,6 +291,14 @@
                                         }
                                     },
                                     {
+                                        "source": "siteCalculatedLengthKm",
+                                        "type": "number",
+                                        "readonly": true,
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    },
+                                    {
                                         "type": "row",
                                         "items": [
                                             {
@@ -292,9 +318,21 @@
                                         "type": "row",
                                         "items": [
                                             {
-                                                "preLabel": "Actual area (ha) of habitat revegetated",
+                                                "preLabel": "Actual area (ha) / length (km) of habitat revegetated",
                                                 "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                                                 "source": "areaRevegetatedHa",
+                                                "type": "number",
+                                                "displayOptions": {
+                                                    "displayUnits": true
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "source": "lengthRevegetatedKm",
                                                 "type": "number",
                                                 "displayOptions": {
                                                     "displayUnits": true

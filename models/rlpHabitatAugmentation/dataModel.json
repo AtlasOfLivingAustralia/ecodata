@@ -23,6 +23,14 @@
                 "units": "ha"
             },
             {
+                "computed": {
+                    "expression": "$geom.lengthKm(sitesOfAugmentation)"
+                },
+                "dataType": "number",
+                "name": "calculatedLengthAugmentedKm",
+                "units": "km"
+            },
+            {
                 "defaultValue": {
                     "type": "computed",
                     "expression": "calculatedAreaAugmentedHa"
@@ -30,6 +38,16 @@
                 "dataType": "number",
                 "name": "areaAugmentedHa",
                 "units": "ha",
+                "validate": "required,min[0]"
+            },
+            {
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "calculatedLengthAugmentedKm"
+                },
+                "dataType": "number",
+                "name": "lengthAugmentedKm",
+                "units": "km",
                 "validate": "required,min[0]"
             },
             {
@@ -216,6 +234,15 @@
 
                         },
                         {
+                            "source": "calculatedLengthAugmentedKm",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            },
+                            "readonly": "readonly"
+
+                        },
+                        {
                             "type": "row",
                             "items": [
                                 {
@@ -231,11 +258,18 @@
                 {
                     "width": "10%",
                     "type": "col",
-                    "title": "Actual area (ha) of habitat augmentation",
+                    "title": "Actual area (ha) / length (km) of habitat augmentation",
                     "helpText": "Enter the amount you will invoice for during this reporting period.",
                     "items": [
                         {
                             "source": "areaAugmentedHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+                        {
+                            "source": "lengthAugmentedKm",
                             "type": "number",
                             "displayOptions": {
                                 "displayUnits": true
