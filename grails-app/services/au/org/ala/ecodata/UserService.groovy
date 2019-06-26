@@ -20,7 +20,7 @@ class UserService {
      * Static equivalent of getCurrentUserDetails for use by GORM objects when dependency injection
      * is disabled in grails 3.
      */
-    static UserDetails currentUser() {
+    static def currentUser() {
         return _currentUser.get()
     }
 
