@@ -1,0 +1,250 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the plant, animal or fungus observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "occurrenceDensity",
+            "description": "The number of individual plants observed or relative density of localised population.",
+            "constraints": [
+                "Individual plants (1 - 10)",
+                "Individual plants (> 10)",
+                "Scattered individual plants (1 - 5 m2)",
+                "Scattered individual plants (> 5 m2)",
+                "Thicket (1 - 5 m2)",
+                "Thicket (> 5 m2)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        }
+    ],
+    "modelName": "generalWeedSighting_variant2",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h2>Simple Weed Sighting<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [
+                            {
+                                "boxed": true,
+                                "title": "Photo",
+                                "type": "section",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "computed": null,
+                                            "source": "<h4>Upload the best image of your sighting.<\/h4><i>This is required so that the record can be validated and used in scientific work.<\/i>",
+                                            "type": "literal"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Sighting photo",
+                                            "computed": null,
+                                            "source": "sightingPhoto",
+                                            "type": "image"
+                                        }]
+                                    }
+                                ],
+                                "class": ""
+                            },
+                            {
+                                "boxed": true,
+                                "title": "Sighting Details",
+                                "type": "section",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Species name",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "species",
+                                            "preLabelClass": "span4",
+                                            "type": "autocomplete"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "computed": null,
+                                            "source": "<i>Start typing a common or scientific name.<\/i>",
+                                            "type": "literal"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Are you confident of the species identification?",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "identificationConfidence",
+                                            "preLabelClass": "span4",
+                                            "type": "selectOne"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Density of the infestation",
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "occurrenceDensity",
+                                            "preLabelClass": "span4",
+                                            "type": "selectOne"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Comments",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "comments",
+                                            "preLabelClass": "span4",
+                                            "type": "textarea"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Date",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "surveyDate",
+                                            "preLabelClass": "span4",
+                                            "type": "date"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Recorded by",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "recordedBy",
+                                            "preLabelClass": "span4",
+                                            "type": "text"
+                                        }]
+                                    }
+                                ],
+                                "class": ""
+                            }
+                        ]
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [{
+                            "boxed": true,
+                            "title": "Location",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": false,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": true,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "zoomToProjectArea": true,
+                                    "includeLocality": false
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    }]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,212 @@
+{
+    "modelName": "Five 1 x 1m plots",
+    "dataModel": [
+        {
+            "defaultRows": [
+                {"groundCoverType": "% Native Perennial ('decreaser') grass cover*"},
+                {"groundCoverType": "% Native other grass cover (if relevant)*"},
+                {"groundCoverType": "% Native forbs and other species (non-grass)"},
+                {"groundCoverType": "% Native shrubs (< 1m height)"},
+                {"groundCoverType": "% Non-native grass"},
+                {"groundCoverType": "% Non-native forbs and shrubs"},
+                {"groundCoverType": "% Litter*"},
+                {"groundCoverType": "% Rock"},
+                {"groundCoverType": "% Bare ground"},
+                {"groundCoverType": "% Cryptograms"}
+            ],
+            "dataType": "list",
+            "description": "BioCondition groundcover table",
+            "name": "groundCover",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "groundCoverType"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot1"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot2"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot3"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot4"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot5"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plotsMean",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [
+                            "plot1",
+                            "plot2",
+                            "plot3",
+                            "plot4",
+                            "plot5"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot1",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot1",
+                    "fromList": "groundCover"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot2",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot2",
+                    "fromList": "groundCover"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot3",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot3",
+                    "fromList": "groundCover"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot4",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot4",
+                    "fromList": "groundCover"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot5",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot5",
+                    "fromList": "groundCover"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h2>Five 1x1m plots<\/h2>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "(* attributes are essential to assess as used in scoring, however assessment of all attributes improves your ability to more accurately visualise proportions on each of the attributes)",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total (%)",
+                    "type": "literal"
+                },
+                {
+                    "source": "totalPlot1",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot2",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot3",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot4",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot5",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "groundCover",
+            "columns": [
+                {
+                    "title": "Ground cover",
+                    "source": "groundCoverType",
+                    "noEdit": true,
+                    "type": "text"
+                },
+                {
+                    "title": "1",
+                    "source": "plot1",
+                    "type": "number",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "title": "2",
+                    "source": "plot2",
+                    "type": "number",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "title": "3",
+                    "source": "plot3",
+                    "type": "number",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "title": "4",
+                    "source": "plot4",
+                    "type": "number",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "title": "5",
+                    "source": "plot5",
+                    "type": "number",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "title": "Mean",
+                    "source": "plotsMean",
+                    "type": "number",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "type": "table"
+        }
+    ]
+}

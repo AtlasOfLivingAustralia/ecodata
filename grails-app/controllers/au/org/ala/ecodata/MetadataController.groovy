@@ -57,18 +57,6 @@ class MetadataController {
         }
     }
 
-    @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
-    def updateOutputDataModel(String id) {
-        //log.debug "id=${id}"
-        def model = request.JSON
-        def modelStr = model.model.toString(4);
-        //log.debug "modelStr = ${modelStr}"
-        metadataService.updateOutputDataModel(modelStr, id)
-        def result = [model: metadataService.getOutputDataModel(id)]
-        render result as JSON
-    }
-
     // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
     // large grid files such as the NVIS grids.
     def getNvisClassesForPoint(Double lat, Double lon) {

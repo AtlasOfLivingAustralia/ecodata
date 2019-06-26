@@ -1,0 +1,300 @@
+{
+    "modelName": "nestMonitoring",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who observed the sighting."
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "nestPresent",
+            "dwcAttribute": "",
+            "description": "Did you see a raptor nest during your survey?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestStructure",
+            "dwcAttribute": "",
+            "description": "What type of structure is supporting the nest?",
+            "constraints": [
+                "Tree",
+                "Pole",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "nestTreeSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "If the nest is in a tree, what is the species of tree?"
+        },
+        {
+            "dataType": "text",
+            "name": "nestElevation",
+            "dwcAttribute": "",
+            "description": "What is the estimated height of the nest above the ground?",
+            "constraints": [
+                "5 - 10 m",
+                "10 - 20 m",
+                "20 - 30 m",
+                "Greater than 30 m"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestWidth",
+            "dwcAttribute": "",
+            "description": "What is the estimated width/diameter of the nest?",
+            "constraints": [
+                "1 m",
+                "1.5 m",
+                "2 m",
+                "Greater than 2 m"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "ageOfNest",
+            "dwcAttribute": "",
+            "description": "How old would you estimate the nest to be?",
+            "constraints": [
+                "1 - 2 years",
+                "2 - 5 years",
+                "5 - 10 years",
+                "More than 10 years",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "raptorPresent",
+            "dwcAttribute": "",
+            "description": "Were raptors present or absent at the time when you observed the nest?",
+            "constraints": [
+                "Present",
+                "Absent"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "raptorLastSeen",
+            "dwcAttribute": "",
+            "description": "When did you last observe raptors at the nest?",
+            "constraints": [
+                "Today",
+                "Within last week",
+                "Within last 6 months",
+                "Within last 12 months",
+                "No raptors have been observed in the nest"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the raptor observed.",
+            "constraints": [
+                "Eastern Osprey (Pandion cristatus)",
+                "White-bellied Sea Eagle (Haliaeetus (Pontoaetus) leucogaster)",
+                "Brahminy Kite\t(Haliastur indus)",
+                "Other - list species in comments",
+                "None"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "noOfAdults",
+            "dwcAttribute": "individualCount",
+            "description": "The number of adult individuals observed.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "noOfJuveniles",
+            "dwcAttribute": "",
+            "description": "The number of juvenile individuals observed.",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Observer name",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Record date",
+                        "computed": null,
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Record time",
+                        "computed": null,
+                        "source": "surveyStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Nest observed",
+                        "computed": null,
+                        "source": "nestPresent",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Nest structure",
+                        "computed": null,
+                        "source": "nestStructure",
+                        "type": "selectOne"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<i>Start typing a common or scientific name.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Nest tree species",
+                        "computed": null,
+                        "source": "nestTreeSpecies",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "preLabel": "Estimated width of nest",
+                        "computed": null,
+                        "source": "nestWidth",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Estimated age of nest",
+                        "computed": null,
+                        "source": "ageOfNest",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Raptor(s) observed at nest",
+                        "computed": null,
+                        "source": "raptorPresent",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Raptor(s) last observed at nest",
+                        "computed": null,
+                        "source": "raptorLastSeen",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Species name",
+                        "computed": null,
+                        "source": "species",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Are you confident of the species identification?",
+                        "computed": null,
+                        "source": "identificationConfidence",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Number of adult raptors observed at nest",
+                        "computed": null,
+                        "source": "noOfAdults",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Number of juvenile raptors observed at nest",
+                        "computed": null,
+                        "source": "noOfJuveniles",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Additional Comments",
+                        "computed": null,
+                        "source": "comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Sighting photo",
+                        "computed": null,
+                        "source": "sightingPhoto",
+                        "type": "image"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [{
+                    "orientation": "vertical",
+                    "computed": null,
+                    "readonly": true,
+                    "source": "location",
+                    "type": "geoMap"
+                }]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

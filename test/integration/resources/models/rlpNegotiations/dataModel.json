@@ -1,0 +1,75 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "typeOfGroup",
+                "description": "If 'Other', please include type in 'Objective of negotiations'",
+                "constraints": [
+                    "Community",
+                    "Landholders",
+                    "Farmers",
+                    "Traditional owners",
+                    "Agricultural industry group",
+                    "Other"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "number",
+                "name": "numberOfGroupsNegotiatedWith",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "number",
+                "name": "numberOfIndividualsNegotiatedWith",
+                "validate": "min[0]"
+            },
+            {
+                "dataType": "text",
+                "name": "negotiationObjective",
+                "description": "Please provide a brief description of negotiations. Separate multiple with a ';'",
+                "validate": "required,maxSize[300]"
+            }
+        ],
+        "dataType": "list",
+        "name": "negotiations"
+    }],
+    "modelName": "RLP - Negotiations",
+    "title": "Negotiating with the Community, landholders, Traditional Owner groups etc.",
+    "viewModel": [{
+        "type": "section",
+        "items": [{
+            "columns": [
+                {
+                    "width": "30%",
+                    "source": "typeOfGroup",
+                    "type": "select2",
+                    "title": "Which sector does the group belong to?"
+                },
+                {
+                    "width": "10%",
+                    "source": "numberOfGroupsNegotiatedWith",
+                    "type": "number",
+                    "title": "Groups negotiated with"
+                },
+                {
+                    "width": "10%",
+                    "source": "numberOfIndividualsNegotiatedWith",
+                    "title": "Individuals",
+                    "type": "number"
+                },
+                {
+                    "width": "50%",
+                    "source": "negotiationObjective",
+                    "type": "textarea",
+                    "rows": 3,
+                    "title": "Objective of negotiations"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "negotiations",
+            "type": "table"
+        }]
+    }]
+}

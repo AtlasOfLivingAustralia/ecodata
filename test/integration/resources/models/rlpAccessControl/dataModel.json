@@ -1,0 +1,109 @@
+{
+  "title": "Access control",
+  "modelName": "RLP - Access control",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "areaControlledHa",
+      "units": "ha",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "accessControlDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "accessControlType",
+          "constraints": [
+            "Boardwalks",
+            "Bollards & barriers",
+            "Constructed parking bays",
+            "Fencing, styles, gates & grids",
+            "Formed trafficways",
+            "Signage",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "otherAccessControlType",
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "accessControlType == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "number",
+          "source": "areaControlledHa",
+          "preLabel": "Area (ha) protected by access control",
+          "css": "span3"
+        },
+        {
+          "items": [
+            {
+              "type": "select2Many",
+              "source": "siteIds",
+              "preLabel": "Project sites where access control work has occurred",
+              "css": "span9"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "type": "table",
+          "source": "accessControlDetails",
+          "userAddedRows":true,
+          "columns": [
+            {
+              "type": "select2",
+              "source": "accessControlType",
+              "title": "Type of access control",
+              "width": "50%"
+            },
+            {
+              "type": "text",
+              "source": "otherAccessControlType",
+              "title": "Type of access control (if Other)",
+              "width": "50%"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

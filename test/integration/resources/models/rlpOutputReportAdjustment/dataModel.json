@@ -1,0 +1,150 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "service"
+            },
+            {
+                "dataType": "text",
+                "name": "scoreId"
+            },
+            {
+                "dataType": "text",
+                "name": "targetMeasure",
+                "description": "The output target measure to be adjusted."
+            },
+            {
+                "dataType": "number",
+                "name": "currentContribution",
+                "description": "The quantity the report being adjusted contributed to the target measure"
+            },
+            {
+                "dataType": "number",
+                "name": "correctedValue",
+                "description": "The value the report should have produced for this target measure",
+                "validate": "required,min[-999999999]"
+            },
+            {
+                "computed": {"expression": "correctedValue - currentContribution"},
+                "dataType": "number",
+                "name": "adjustment",
+                "description": "Amount of adjustment required (may be a negative number to reduce the amount reported against a target)",
+                "behaviour": [{
+                    "condition": "adjustment != \"0\"",
+                    "type": "enable"
+                }],
+                "validate": "required,min[-999999999]"
+            },
+            {
+                "dataType": "text",
+                "name": "reason",
+                "description": "The reason this value needs to be adjusted",
+                "behaviour": [{
+                    "condition": "adjustment != \"0\"",
+                    "type": "enable"
+                }],
+                "validate": "required,maxSize[1125]"
+            }
+        ],
+        "dataType": "list",
+        "name": "adjustments",
+        "description": ""
+    }],
+    "modelName": "RLP Output Report Adjustment",
+    "pre-populate": [{
+        "mapping": [{
+            "mapping": [
+                {
+                    "source-path": "name",
+                    "target": "service"
+                },
+                {
+                    "source-path": "targetMeasure",
+                    "target": "targetMeasure"
+                },
+                {
+                    "source-path": "scoreId",
+                    "target": "scoreId"
+                },
+                {
+                    "source-path": "result",
+                    "target": "currentContribution"
+                },
+                {
+                    "source-path": "result",
+                    "target": "correctedValue"
+                }
+            ],
+            "source-path": "targets",
+            "target": "adjustments"
+        }],
+        "merge": true,
+        "source": {
+            "params": [
+                {
+                    "expression": "owner.projectId",
+                    "name": "id",
+                    "type": "computed"
+                },
+                {
+                    "expression": "reportId",
+                    "name": "reportId",
+                    "type": "computed"
+                }
+            ],
+            "url": "/project/getProjectTargetsForAdjustmentsReport/"
+        }
+    }],
+    "title": "Adjustment of target measures",
+    "viewModel": [{
+        "disableTableUpload": true,
+        "columns": [
+            {
+                "readonly": true,
+                "width": "15%",
+                "source": "service",
+                "title": "Project Service",
+                "type": "textarea",
+                "rows": 3
+            },
+            {
+                "readonly": true,
+                "width": "22%",
+                "source": "targetMeasure",
+                "title": "Output Measure",
+                "type": "textarea",
+                "rows": 3
+            },
+            {
+                "readonly": true,
+                "width": "11%",
+                "source": "currentContribution",
+                "title": "Reported measure requiring adjustment",
+                "type": "number"
+            },
+            {
+                "width": "11%",
+                "source": "correctedValue",
+                "title": "Correct value",
+                "type": "number"
+            },
+            {
+                "readonly": true,
+                "width": "11%",
+                "source": "adjustment",
+                "title": "Adjustment",
+                "type": "number"
+            },
+            {
+                "width": "30%",
+                "source": "reason",
+                "title": "Describe why the value requires adjustment",
+                "type": "textarea",
+                "rows": 3
+            }
+        ],
+        "source": "adjustments",
+        "type": "table"
+    }]
+}

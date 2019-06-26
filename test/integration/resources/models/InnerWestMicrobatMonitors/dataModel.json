@@ -1,0 +1,302 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyEndTime",
+            "description": "Survey end time"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "constraints": [
+                "Adam Ward",
+                "Nicole Gallahar",
+                "Other"
+            ]
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "noOfParticipants",
+            "description": "No. participants",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "observationRemarks",
+            "description": "Observation notes about the record."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": "false",
+            "zoomToProjectArea": "true",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "disturbance",
+            "description": "Disturbance"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the plant, animal or fungus observed.",
+                    "validate": "required"
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals or colonies (for certain insects).",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "confidentWithCount",
+                    "description": "Are you confident in your count",
+                    "constraints": [
+                        "Low",
+                        "Moderate",
+                        "High"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "recordCall",
+                    "description": "Did you record the calls",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence",
+                    "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Low",
+                        "Moderate",
+                        "High"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "expertIdentification",
+                    "description": "Expert identification"
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesList"
+        }
+    ],
+    "modelName": "innerWestMicrobatMonitors",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Microbat Monitors<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Site Visit Information",
+                        "type": "section",
+                        "items": [
+                            {
+                                "preLabel": "Survey date",
+                                "computed": null,
+                                "source": "surveyDate",
+                                "type": "date"
+                            },
+                            {
+                                "preLabel": "Survey start time",
+                                "computed": null,
+                                "source": "surveyStartTime",
+                                "type": "time"
+                            },
+                            {
+                                "preLabel": "Survey end time",
+                                "computed": null,
+                                "source": "surveyEndTime",
+                                "type": "time"
+                            },
+                            {
+                                "preLabel": "Weather",
+                                "computed": null,
+                                "source": "notes",
+                                "type": "textarea"
+                            },
+                            {
+                                "preLabel": "Recorded by",
+                                "computed": null,
+                                "source": "recordedBy",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "No. of community volunteers",
+                                "computed": null,
+                                "source": "noOfParticipants",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Comments",
+                                "computed": null,
+                                "source": "comments",
+                                "type": "textarea"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "col",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": true,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": false,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "zoomToProjectArea": "true",
+                                    "includeLocality": false
+                                }]
+                            },
+                            {
+                                "preLabel": "Disturbance",
+                                "computed": null,
+                                "source": "disturbance",
+                                "type": "textarea"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Species Records",
+                    "type": "section",
+                    "items": [{
+                        "allowHeaderWrap": "true",
+                        "disableTableUpload": true,
+                        "columns": [
+                            {
+                                "width": "20",
+                                "source": "species",
+                                "title": "Species name",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "width": "10",
+                                "source": "individualCount",
+                                "title": "How many individuals did you see?",
+                                "type": "number"
+                            },
+                            {
+                                "width": "10",
+                                "source": "identificationConfidence",
+                                "title": "Are you confident of the species identification?",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "10",
+                                "source": "confidentWithCount",
+                                "title": "Are you confident in your count?",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "10",
+                                "source": "recordCall",
+                                "title": "Did you record the calls?",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "40",
+                                "source": "expertIdentification",
+                                "title": "Expert identification",
+                                "type": "textarea"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "source": "speciesList",
+                        "type": "table"
+                    }],
+                    "class": ""
+                }]
+            }]
+        }
+    ]
+}

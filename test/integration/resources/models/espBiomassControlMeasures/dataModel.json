@@ -1,0 +1,100 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "controlType",
+                    "description": "The type of biomass control",
+                    "constraints": [
+                        "Thinning",
+                        "Small scale ecological burns",
+                        "Slashing / mowing",
+                        "Grazing"
+                    ]
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "controlPurpose",
+                    "description": "",
+                    "constraints": [
+                        "Reduction of fire risks",
+                        "Reduction of single species dominance",
+                        "Removal of feral habitat",
+                        "Weed control"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaTreatedHa",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "cost",
+                    "validate": "integer,min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "biomassControl"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
+    "modelName": "ESP Biomass Control Measures",
+    "title": "Biomass Control Measures",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities to control Biomass are included under any or all of the following; “Monitor and manage dominant native species”, “Biomass control to reduce dominance of a single native plant species”, “Biomass Control” and “Thinning”.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "controlType",
+                        "title": "Biomass control activity",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "controlPurpose",
+                        "title": "Purpose",
+                        "type": "select2Many"
+                    },
+                    {
+                        "source": "areaTreatedHa",
+                        "title": "Area treated (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "cost",
+                        "title": "Cost",
+                        "type": "currency"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "biomassControl",
+                "title": "",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

@@ -1,0 +1,187 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "baselineOrIndicator",
+                    "description": "",
+                    "constraints": [
+                        "Baseline",
+                        "Indicator"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfSurveysConducted",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "dateRange",
+                    "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesSurveyed"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesSurveyed)"
+                    },
+                    "dataType": "number",
+                    "name": "areaSurveyedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesSurveyed)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesSurveyed)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "targetWeedSpecies",
+                            "dwcAttribute": "scientificName",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "surveyTechnique",
+                            "description": "What/How will these survey/s capture information",
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "surveyObjective",
+                            "description": "How will the information obtained from the surveys be used",
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "estimatedCoverPercent",
+                            "validate": "required,min[0],max[100]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "weedDistributionSurveyDetails"
+                }
+            ],
+            "dataType": "list",
+            "name": "weedDistributionSurveySites"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Weed distribution survey",
+    "title": "Weed distribution survey",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "addRowText": "Add survey site",
+                "userAddedRows": true,
+                "source": "weedDistributionSurveySites",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Baseline survey or indicator (follow-up) survey?",
+                                "css": "span3",
+                                "source": "baselineOrIndicator",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Number of weed distribution surveys conducted",
+                                "css": "span2",
+                                "source": "numberOfSurveysConducted",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Date range",
+                                "css": "span4",
+                                "source": "dateRange",
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Site/s surveyed for weed distribution",
+                                "css": "span3",
+                                "source": "sitesSurveyed",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) surveyed for weed distribution",
+                                "css": "span2",
+                                "source": "areaSurveyedHa",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "width": "40%",
+                                "source": "targetWeedSpecies",
+                                "type": "speciesSelect",
+                                "title": "Target weed species recorded"
+                            },
+                            {
+                                "width": "25%",
+                                "source": "surveyTechnique",
+                                "title": "Survey technique",
+                                "type": "textarea"
+                            },
+                            {
+                                "width": "25%",
+                                "source": "surveyObjective",
+                                "title": "Survey objective",
+                                "type": "textarea"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "estimatedCoverPercent",
+                                "title": "Estimated weed cover (%)",
+                                "type": "number",
+                                "rows": 3
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "weedDistributionSurveyDetails",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

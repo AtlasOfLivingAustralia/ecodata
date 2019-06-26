@@ -1,0 +1,268 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who registered the asset.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "assetRegistrationDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that the asset was added to the register.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "assetType",
+            "description": "The category type of the asset. Only choose the most applicable.",
+            "constraints": [
+                "Tree",
+                "Bushland reserve",
+                "Urban parkland",
+                "Desert watering point",
+                "Marine reserve",
+                "Reef",
+                "Significant area for seasonal lifestages of biota (eg. breeding)",
+                "Significant biological assemblage/ecological community",
+                "Significant landscape",
+                "Significant place - Indigenous culture"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "ecologicalCommunityType",
+            "description": "Please select the most suitable habitat type.",
+            "constraints": [
+                "Eucalypt Woodland",
+                "Non-Eucalypt Woodland",
+                "Heath",
+                "Mallee",
+                "Grassland",
+                "Other (describe in comments)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "hollowBearingStatus",
+            "description": "If the asset is a tree, are natural tree hollows evident?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "notes",
+            "description": "General comments and notes about the asset and related observations."
+        },
+        {
+            "dataType": "image",
+            "name": "vegetationTypePhoto",
+            "description": "You may attach one or more photos of the vegetation/habitat asset."
+        },
+        {
+            "dataType": "text",
+            "name": "piSaringAgreement",
+            "description": "Your contact information forms part of your registration details on this website. Select 'Yes' if you consent to the Atlas of Living Australia providing your contact details to the project team for the purpose of contacting you to confirm certain aspects of your record.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": false,
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "Please nominate plant/s or animal/s observed."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "defaultvalue": "1",
+                    "description": "The number of individuals observed.",
+                    "validate": "integer,min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "taxonComments",
+                    "description": "You may enter comments about individual plant and animals nominated."
+                },
+                {
+                    "dataType": "image",
+                    "name": "taxonPhoto",
+                    "description": "You may attach a photo of the plant or animal nominated."
+                },
+                {
+                    "dataType": "text",
+                    "name": "animalObservedInHollow",
+                    "description": "Was the animal observed in a tree hollow?.",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "taxonAssets"
+        }
+    ],
+    "modelName": "environmetalAssetsRegister",
+    "record": "true",
+    "viewModel": [
+        {
+            "computed": null,
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Asset registration date",
+                            "computed": null,
+                            "defaultValue": "${now}",
+                            "source": "assetRegistrationDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Vegetation/habitat type",
+                            "computed": null,
+                            "source": "ecologicalCommunityType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "If tree, hollows present?",
+                            "source": "hollowBearingStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments / Notes:",
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Photo of vegetation type",
+                            "computed": null,
+                            "source": "vegetationTypePhoto",
+                            "type": "image"
+                        },
+                        {
+                            "preLabel": "Do you agree to ALA sharing your details with the project organisers for the purpose of record verification and/or the bushfire risk assessment?",
+                            "computed": null,
+                            "source": "piSaringAgreement",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<font style='color:blue; font-size:0.9em;'>Zoom in on the map and draw or place the location marker, as accurately as possible, at the location that this set of records applies to.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "locality": true,
+                            "source": "location",
+                            "type": "geoMap"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h3>Asset<\/h3>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
+                "columns": [
+                    {
+                        "width": "25%",
+                        "source": "species",
+                        "title": "Species:",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "individualCount",
+                        "title": "No. of Individuals",
+                        "type": "number"
+                    },
+                    {
+                        "width": "40%",
+                        "source": "taxonComments",
+                        "title": "Species comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "taxonPhoto",
+                        "title": "Species photo",
+                        "type": "image"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "animalObservedInHollow",
+                        "title": "Observed in hollow?",
+                        "type": "selectOne"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "taxonAssets",
+                "type": "table",
+                "class": "output-section"
+            }]
+        }
+    ]
+}

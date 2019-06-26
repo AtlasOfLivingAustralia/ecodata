@@ -1,0 +1,163 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "externalUserId"
+        },
+        {
+            "dataType": "text",
+            "name": "timeStamp"
+        },
+        {
+            "dataType": "text",
+            "name": "device"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "altitude",
+            "dwcAttribute": "verbatimElevation",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "horizontalAccuracy",
+            "dwcAttribute": "coordinateUncertaintyInMeters",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "verticalAccuracy",
+            "description": "",
+            "validate": "min[0]"
+        }
+    ],
+    "modelName": "echidnaCSI",
+    "record": "false",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Echidna CSI - Sample Collection<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Photo",
+                            "computed": null,
+                            "source": "sightingPhoto",
+                            "type": "image"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Time",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Any other comments? (e.g. health, behaviour or location)",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "<h4>Please place the sample in a sample bag together with a note including the date and place collected and the name of the collector. Then send to the address indicated on the project web site - <a href='http://grutznerlab.weebly.com/echidna-csi.html'>http://grutznerlab.weebly.com/echidna-csi.html<\/a>.<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "<h2>Thank you for your participation in this project<\/h2>",
+                            "type": "literal"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<font style='color:blue; font-size:0.8em;'><i>Zoom into the map, click on the teardrop pin marker tool and then click on the map where you saw the echidna. Alternatively, select the arrow tool to use your current GPS coordinates (note that location services must be switched on in your browser or device).<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": false,
+                            "source": "location",
+                            "type": "geoMap"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

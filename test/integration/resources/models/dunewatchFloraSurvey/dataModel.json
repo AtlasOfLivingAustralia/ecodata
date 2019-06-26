@@ -1,0 +1,198 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "submittedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "description": "The name(s) of people who participated in the survey. For schools and community groups, provide the names of the school or group only.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "description": "The time of the day (local) that the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "transectId",
+                    "description": "What line are you surveying?",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "description": "Enter the appropriate quadrat number.",
+                    "validate": "required, min[0]"
+                },
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "speciesName",
+                    "description": "Use the pocket guide to find the name commonly used for each plant. If you cannot identify the plant, please type in 'Unknown' describe it as much as you can (eg. flower, colour, leaves, etc.) and upload an image of it in the appropriate column."
+                },
+                {
+                    "dataType": "text",
+                    "name": "speciesDescription",
+                    "description": "Please provide additional notes on your observation to clarify what you have seen."
+                },
+                {
+                    "dataType": "number",
+                    "name": "speciesDensityInQuadrat",
+                    "description": "Estimate the density percentage of each species within the quadrat.",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedStatus",
+                    "description": "Is this species a weed?",
+                    "constraints": [
+                        "Yes",
+                        "No",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "speciesPhoto",
+                    "description": "If you take a photo of the plants, please upload it here."
+                }
+            ],
+            "dataType": "list",
+            "name": "plantSpeciesObserved"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "dunewatchfloraSurvey",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Submitted by",
+                            "source": "submittedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey worker(s)",
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<i>Select a site from the drop-down list, click on the marker, then click on the actual survey location on the map.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "columns": [
+                    {
+                        "source": "transectId",
+                        "title": "Transect number",
+                        "type": "text"
+                    },
+                    {
+                        "source": "quadratId",
+                        "title": "Quadrat number",
+                        "type": "number"
+                    },
+                    {
+                        "source": "speciesName",
+                        "title": "Species scientific or common name",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "source": "speciesDescription",
+                        "title": "Species description",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "speciesDensityInQuadrat",
+                        "title": "% Density",
+                        "type": "number"
+                    },
+                    {
+                        "source": "weedStatus",
+                        "title": "Weed (Y/N)",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "speciesPhoto",
+                        "title": "Photo ID",
+                        "type": "image"
+                    }
+                ],
+                "headerWrap": "true",
+                "userAddedRows": true,
+                "source": "plantSpeciesObserved",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

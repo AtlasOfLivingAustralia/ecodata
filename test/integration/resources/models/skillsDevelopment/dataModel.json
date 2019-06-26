@@ -1,0 +1,54 @@
+{
+    "modelName": "Skills Development",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Areas where skills that participants have learnt during this project have been practically applied either within or external to the project.",
+            "name": "skillsApplication",
+            "constraints": [
+                "Higher duties",
+                "Managing teams",
+                "More responsibility",
+                "New employment opportunities",
+                "Able to do tasks requiring licenses",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "General comments and notes about this activity, additional skills not listed, etc.",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "items": [{
+                    "source": "skillsApplication",
+                    "computed": null,
+                    "preLabel": "How have the skills and learning outcomes of participants in this project been applied?:",
+                    "type": "selectMany"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Notes / Comments:",
+                    "type": "textarea"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

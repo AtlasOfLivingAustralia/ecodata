@@ -1,0 +1,301 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person or group undertaking the survey event",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that the survey was undertaken",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time that the survey commenced",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "treeId",
+            "dwcAttribute": "materialSampleID",
+            "description": "The identifier number of the tree being recorded.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "localEnvironment",
+            "description": "Descriptive category which best describes the immediate environment around the subject tree.",
+            "constraints": [
+                "Irrigated lawn or garden",
+                "Non-irrigated lawn or garden",
+                "Impervious surfaces (paving or street)",
+                "I cannot decide"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "locationPhoto",
+            "description": "Attach a photo(s) of the location of the tree."
+        },
+        {
+            "dataType": "text",
+            "name": "canopyDamagePercentageCategory",
+            "description": "Estimate how much of the tree’s crown shows evidence of attack (including holes and skeletisation).",
+            "constraints": [
+                "None",
+                "Less than 10%",
+                "Over 10% and up to a quarter",
+                "Over a quarter and up to three quarters",
+                "Over three quarters"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "canopyDamagePhoto",
+            "description": "Attach a photo(s) of evidence of beetle attack on the leaves of the tree, including holes and skeletonisation."
+        },
+        {
+            "dataType": "text",
+            "name": "beetleLarvaePopulationCategory",
+            "description": "Estimate of the number of beetle larvae on the tree.",
+            "constraints": [
+                "None",
+                "Small (fewer than 50)",
+                "Medium (51 – 500)",
+                "Large (501+)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "beetleLarvaePhoto",
+            "description": "Attach a photo(s) of the beetle larvae."
+        },
+        {
+            "dataType": "text",
+            "name": "adultBeetlePopulationCategory",
+            "description": "Estimate of the number of adult beetles on the tree.",
+            "constraints": [
+                "None",
+                "Small (fewer than 50)",
+                "Medium (51 – 500)",
+                "Large (501+)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "adultBeetlePhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Attach a photo(s) of the adult beetles."
+        },
+        {
+            "dataType": "text",
+            "name": "observationRemarks",
+            "dwcAttribute": "observationRemarks",
+            "description": "Enter any comments or notes about your observation."
+        },
+        {
+            "dataType": "species",
+            "dwcAttribute": "scientificName",
+            "name": "targetSpecies"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount"
+        },
+        {
+            "dataType": "text",
+            "name": "verifiedBy",
+            "dwcAttribute": "verifiedBy"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "elmLeafBeetleSurvey",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Elm Leaf Beetle Survey<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Survey Information",
+                        "type": "section",
+                        "items": [
+                            {
+                                "preLabel": "Recorded by",
+                                "source": "recordedBy",
+                                "type": "text"
+                            },
+                            {
+                                "preLabel": "Survey date",
+                                "source": "surveyDate",
+                                "type": "date"
+                            },
+                            {
+                                "preLabel": "Survey time",
+                                "source": "surveyTime",
+                                "type": "time"
+                            },
+                            {
+                                "preLabel": "Tree ID",
+                                "source": "treeId",
+                                "type": "text"
+                            },
+                            {
+                                "preLabel": "Which best describes most of the environment around the tree?",
+                                "source": "localEnvironment",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Please take a photo of the environment, including the base of the tree",
+                                "showMetadata": false,
+                                "source": "locationPhoto",
+                                "type": "image"
+                            },
+                            {
+                                "preLabel": "Estimate how much of the tree’s crown shows evidence of attack (including holes and skeletisation)",
+                                "source": "canopyDamagePercentageCategory",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Please take a photo of the damage",
+                                "showMetadata": false,
+                                "source": "canopyDamagePhoto",
+                                "type": "image"
+                            },
+                            {
+                                "preLabel": "Estimate the population of larvae on the tree",
+                                "source": "beetleLarvaePopulationCategory",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Please take a photo of the larvae",
+                                "showMetadata": false,
+                                "source": "beetleLarvaePhoto",
+                                "type": "image"
+                            },
+                            {
+                                "preLabel": "Estimate the population of adult beetles on the tree",
+                                "source": "adultBeetlePopulationCategory",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Please take a photo of the adult beetles",
+                                "showMetadata": false,
+                                "source": "adultBeetlePhoto",
+                                "type": "image"
+                            },
+                            {
+                                "preLabel": "Have you got any other comments?",
+                                "defaultRows": 3,
+                                "source": "observationRemarks",
+                                "type": "textarea"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "Location",
+                                "type": "section",
+                                "items": [{
+                                    "type": "row",
+                                    "items": [{
+                                        "includeNotes": false,
+                                        "orientation": "vertical",
+                                        "computed": null,
+                                        "autoLocalitySearch": false,
+                                        "readonly": true,
+                                        "includeSource": false,
+                                        "includeAccuracy": false,
+                                        "hideSiteSelection": true,
+                                        "source": "location",
+                                        "type": "geoMap",
+                                        "zoomToProjectArea": true,
+                                        "includeLocality": false
+                                    }]
+                                }],
+                                "class": ""
+                            }]
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "preLabel": "Scientific name of Elm Leaf Beetle",
+                                        "noEdit": true,
+                                        "source": "targetSpecies",
+                                        "type": "autocomplete"
+                                    },
+                                    {
+                                        "preLabel": "Approximate number of individuals seen",
+                                        "noEdit": true,
+                                        "source": "individualCount",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "preLabel": "Verified by",
+                                        "memberOnlyView": true,
+                                        "source": "verifiedBy",
+                                        "type": "text"
+                                    }
+                                ]
+                            }]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,669 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "Nest to Ocean Marine Turtle Survey",
+            "dataType": "text",
+            "name": "surveyName",
+            "dwcAttribute": "datasetName"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the turtle nest was visited."
+        },
+        {
+            "dataType": "time",
+            "name": "eventTimestamp",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the turtle nest was visited.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "eventGUID",
+            "dwcAttribute": "eventID",
+            "description": "A globally unique identifier for the visit event to the turtle nest."
+        },
+        {
+            "dataType": "text",
+            "name": "type",
+            "description": "The type of observation.",
+            "constraints": [
+                "Nest",
+                "False crawl",
+                "Adult",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventType",
+            "description": "The type of event observed when the turtle nest was visited.",
+            "constraints": [
+                "Hatching",
+                "Innundation",
+                "Baiting",
+                "Predation",
+                "Meshing",
+                "Checking"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestName",
+            "description": "The name given to the particular turtle nest.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "nestGUID",
+            "description": "A globally unique identifier for the particular turtle nest."
+        },
+        {
+            "dataType": "text",
+            "name": "position",
+            "description": "The position of the nest on the beach.",
+            "constraints": [
+                "Lower end of beach",
+                "Close to tide line",
+                "Beach",
+                "Slope of dune",
+                "Above vegetation line"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestAge",
+            "description": "The time at which the turtle nest was visited.",
+            "constraints": [
+                "New",
+                "Old",
+                "Unkown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "vegetation",
+            "description": "Description of vegetation in the vicinity of the turtle nest.",
+            "constraints": [
+                "Bare sand",
+                "Grass area",
+                "Under shrub",
+                "Under tree",
+                "Rubble zone"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "observer",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who recorded the observation  or team leader of the monitoring event.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "",
+            "dataType": "text",
+            "name": "submittedBy",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the turtles in the nest.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingLiveInNest",
+            "dwcAttribute": "individualCount",
+            "description": "The number of turtle hatchlings found alive in the nest at the time of the visit.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingDeadInNest",
+            "description": "The number of turtle hatchlings found dead in the nest at the time of the visit.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingYolkless",
+            "description": "",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingUndeveloped",
+            "description": "",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingShells",
+            "description": "The number of turtle hatching shells found in the nest at the time of the visit.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingUnhatched",
+            "description": "",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hatchingTotal",
+            "description": "The total number of turtle hatchings found in the nest at the time of the visit.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "hAccuracy",
+            "description": "The accuracy of estimates of turtle hatchings found in the nest at the time of the visit.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "bodyPits",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "turtleTagL",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "turtleTagR",
+            "description": ""
+        },
+        {
+            "dataType": "boolean",
+            "name": "flagged",
+            "description": "Flag to indicate that the nest needs to be monitored."
+        },
+        {
+            "dataType": "species",
+            "name": "predatorName",
+            "dwcAttribute": "scientificName",
+            "description": "The name of the species evident as predating the nest at the time of the visit."
+        },
+        {
+            "dataType": "text",
+            "name": "predationType",
+            "description": "The type of predation observed at the nest site at the time of the visit.",
+            "constraints": [
+                "Partial",
+                "Complete",
+                "Failed",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestName",
+            "description": "The name of the nest site."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "marineTurtleMonitoring_nestPresenceAndDepredation",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h3>Nestor Marine Turtle Monitoring<\/h3>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Site Visit Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Date & Time",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "eventTimestamp",
+                                            "preLabelClass": "span4",
+                                            "type": "time"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Observer",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "observer",
+                                            "preLabelClass": "span4",
+                                            "type": "date"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Observation type",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "type",
+                                            "preLabelClass": "span4",
+                                            "type": "selectOne"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Notes",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "eventNotes",
+                                            "preLabelClass": "span4",
+                                            "type": "textarea",
+                                            "rows": 5
+                                        }]
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Site Visit/Observation Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Species name",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "species",
+                                            "preLabelClass": "span4",
+                                            "type": "speciesSearchWithImagePreview"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Monitoring event",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "eventType",
+                                            "preLabelClass": "span4",
+                                            "type": "selectOne"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Body pits",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "bodyPits",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Turtle tag left",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "turtleTagL",
+                                            "preLabelClass": "span4",
+                                            "type": "text"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Turtle tag right",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "turtleTagR",
+                                            "preLabelClass": "span4",
+                                            "type": "text"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event predator",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "predatorName",
+                                            "preLabelClass": "span4",
+                                            "type": "species"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Predation type",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "predationType",
+                                            "preLabelClass": "span4",
+                                            "type": "selectOne"
+                                        }]
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Nest Condition Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching live in nest",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingLiveInNest",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching dead in nest",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingDeadInNest",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching shells",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingShells",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching unhatched",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingUnhatched",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching undeveloped",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingUndeveloped",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching yolkless",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingYolkless",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Event hatching clutch total",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "hatchingTotal",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Nest Site",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Flagged for monitoring",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "flagged",
+                                        "preLabelClass": "span4",
+                                        "type": "boolean"
+                                    }]
+                                }]
+                            },
+                            {
+                                "boxed": true,
+                                "title": "Location",
+                                "type": "section",
+                                "items": [{
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "includeNotes": false,
+                                            "orientation": "vertical",
+                                            "computed": null,
+                                            "autoLocalitySearch": false,
+                                            "readonly": false,
+                                            "includeSource": false,
+                                            "includeAccuracy": false,
+                                            "hideSiteSelection": true,
+                                            "source": "location",
+                                            "type": "geoMap",
+                                            "includeLocality": false
+                                        }]
+                                    }]
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Site name",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "noEdit": true,
+                                        "source": "siteName",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Nest age",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "nestAge",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Position",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "position",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Vegetation",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "vegetation",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ],
+            "class": ""
+        }
+    ]
+}

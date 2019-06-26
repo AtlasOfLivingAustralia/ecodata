@@ -1,0 +1,156 @@
+{
+    "modelName": "Access Control Details",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Generalised method employed to manage access on the subject area",
+            "name": "accessManagementMethod",
+            "constraints": [
+                "Speed management",
+                "Traffic exclusion",
+                "Traffic confinement / containment",
+                "Traffic flow management",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares being protected by installed access control measures.",
+            "name": "accessAreaProtected",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Type of structure(s) installed to manage access on the subject area",
+            "name": "structuresInstalled",
+            "constraints": [
+                "Boardwalks",
+                "Bollards & barriers",
+                "Constructed parking bays",
+                "Fencing, styles, gates & grids",
+                "Formed trafficways",
+                "Signage",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of access management structures installed during this activity",
+            "name": "numberOfInstallations",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Purpose for managing access on the subject area",
+            "name": "accessControlPurpose",
+            "constraints": [
+                "Manage public safety issues",
+                "Protect sensitive species / habitats",
+                "Contain vehicle traffic",
+                "Manage off-road vehicle damage",
+                "Manage pedestrian traffic damage",
+                "Public education",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Length in kilometres of fences and boardwalks installed during this activity",
+            "name": "lengthOfLinealStructures"
+        },
+        {
+            "dataType": "number",
+            "description": "Total number of visitors managed for access during this activity",
+            "name": "visitationNumber"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe the nature and severity of the issues for which access control measures are being implemented to manage.",
+            "name": "accessControlIssues"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "numberOfInstallations",
+                            "computed": null,
+                            "preLabel": "No. of access management structures installed:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "structuresInstalled",
+                            "computed": null,
+                            "preLabel": "Structure(s) installed:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "lengthOfLinealStructures",
+                            "computed": null,
+                            "preLabel": "Length of fences and boardwalks installed (Km):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "accessControlIssues",
+                            "computed": null,
+                            "preLabel": "Description of issue(s) requiring access management:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "visitationNumber",
+                            "computed": null,
+                            "preLabel": "No. of visitors (people managed for access):",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "accessManagementMethod",
+                            "computed": null,
+                            "preLabel": "Access control method used:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "accessAreaProtected",
+                            "computed": null,
+                            "preLabel": "Area (Ha) protected by access management structure(s):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "accessControlPurpose",
+                            "computed": null,
+                            "preLabel": "Purpose of undertaking access management works:",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

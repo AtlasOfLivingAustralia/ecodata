@@ -26,6 +26,7 @@ class AdminController {
     def outputService, activityService, siteService, projectService, authService,
         collectoryService, organisationService, hubService, excelImportService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
+    ActivityFormService activityFormService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
     /**
@@ -591,33 +592,19 @@ class AdminController {
 
     @AlaSecured("ROLE_ADMIN")
     def rawOutputModels() {
-        def model = [activitiesModel: metadataService.activitiesModel()]
+        def model = [availableActivities:activityFormService.activityVersionsByName()]
         if (params.open) {
             model.open = params.open
         }
         model
     }
 
+    /**
+     * Duplicates ActivityFormController.get to implement interactive authorization rules.
+     */
     @AlaSecured("ROLE_ADMIN")
-    def getOutputDataModel(String id) {
-        log.debug(id)
-        def model = metadataService.getOutputDataModel(id)
-        render model as JSON
-    }
-
-    @AlaSecured("ROLE_ADMIN")
-    def updateOutputDataModel(String id) {
-        def model = request.JSON
-        log.debug "template = ${id} model = ${model}"
-        log.debug "model class is ${model.getClass()}"
-        def status = metadataService.updateOutputDataModel(model, id)
-        flash.message = "Output data model updated."
-        if(status?.error){
-            render text: status as JSON, contentType: 'application/json'
-        } else {
-            def result = model
-            render text:  result as JSON, contentType: 'application/json'
-        }
+    ActivityForm findActivityForm(String name, Integer formVersion) {
+        render activityFormService.findActivityForm(name, formVersion) as JSON
     }
 
     @AlaSecured("ROLE_ADMIN")

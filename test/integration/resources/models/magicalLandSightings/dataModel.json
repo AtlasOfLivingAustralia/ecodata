@@ -1,0 +1,239 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "occurrenceRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": ""
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals or colonies (for certain insects).",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": ""
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "MagicalLandSightings",
+    "record": "true",
+    "viewModel": [
+        {
+            "boxed": true,
+            "title": "Species",
+            "type": "section",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "<h4>Species name:<\/h4>",
+                        "inline": true,
+                        "computed": null,
+                        "dataClass": "span8",
+                        "source": "species",
+                        "preLabelClass": "span4",
+                        "type": "speciesSearchWithImagePreview"
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "row",
+                    "items": [{
+                        "source": "<a href='https://support.ala.org.au/support/solutions/articles/6000218181-magical-land-of-oz-how-do-i-identify-a-species-' target='_blank'>Species identification FAQ<\/a>",
+                        "type": "literal"
+                    }]
+                }
+            ],
+            "class": ""
+        },
+        {
+            "boxed": true,
+            "title": "Images",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [{
+                    "preLabel": "<h4>Add one or more images:<\/h4><br> <br>",
+                    "computed": null,
+                    "source": "sightingPhoto",
+                    "type": "image"
+                }]
+            }],
+            "class": ""
+        },
+        {
+            "boxed": true,
+            "title": "Location",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [{
+                    "includeNotes": false,
+                    "orientation": "horizontal",
+                    "computed": null,
+                    "autoLocalitySearch": true,
+                    "readonly": false,
+                    "includeSource": false,
+                    "includeAccuracy": false,
+                    "hideSiteSelection": true,
+                    "source": "location",
+                    "type": "geoMap",
+                    "includeLocality": false
+                }]
+            }],
+            "class": ""
+        },
+        {
+            "boxed": true,
+            "title": "Details",
+            "type": "section",
+            "items": [{
+                "type": "row",
+                "items": [
+                    {
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Recorded By",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "noEdit": true,
+                                        "source": "recordedBy",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Date",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyDate",
+                                        "preLabelClass": "span4",
+                                        "type": "date"
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Time",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyStartTime",
+                                        "preLabelClass": "span4",
+                                        "type": "time"
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [{
+                                        "preLabel": "Individuals",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "individualCount",
+                                        "preLabelClass": "span4",
+                                        "type": "number"
+                                    }]
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "col",
+                        "items": [{
+                            "preLabel": "Notes",
+                            "inline": true,
+                            "computed": null,
+                            "dataClass": "span8",
+                            "source": "notes",
+                            "preLabelClass": "span4",
+                            "type": "textarea",
+                            "rows": 5
+                        }]
+                    }
+                ]
+            }]
+        }
+    ]
+}

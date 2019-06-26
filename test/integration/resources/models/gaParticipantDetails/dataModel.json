@@ -1,0 +1,174 @@
+{
+    "modelName": "Participant Details",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "allowHeaderWrap": "true",
+            "name": "participants",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The name of each participant in the project team.",
+                    "name": "participantName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The name of each participant in the project team.",
+                    "name": "participantStatus",
+                    "constraints": [
+                        "New",
+                        "Continuing"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "description": "The date of birth of each participant in the project team.",
+                    "name": "birthDate",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "A contact number for each participant in the project team.",
+                    "name": "contactNumber",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The Australian government customer reference number of each participant in the project team.",
+                    "name": "participantCrn",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "description": "The date on which each participant commenced work in the project team.",
+                    "name": "commencementDate",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "description": "The date on which each participant completed work in, or left the project team.",
+                    "name": "completionDate"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The hourly rate at which each participant is being paid.",
+                    "name": "hourlyRate",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of hours that each participant has agreed to work in the project team.",
+                    "name": "agreedHours",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of hours agreed to be worked by project participants.",
+            "name": "agreedHoursTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "agreedHours",
+                    "fromList": "participants"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please list the details of each participant on the project during the reporting period.",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 5,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "colspan": 2,
+                    "source": "Total No. of agreed hours:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "agreedHoursTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"agreedHours\",\"fromList\":\"participants\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "hearderWrap": true,
+            "source": "participants",
+            "columns": [
+                {
+                    "title": "Participant name",
+                    "source": "participantName",
+                    "width": "20%",
+                    "type": "text"
+                },
+                {
+                    "title": "Participant status",
+                    "source": "participantStatus",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Date of Birth",
+                    "source": "birthDate",
+                    "width": "10%",
+                    "type": "date"
+                },
+                {
+                    "title": "Contact number",
+                    "source": "contactNumber",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Participant CRN",
+                    "source": "participantCrn",
+                    "width": "10%",
+                    "type": "text"
+                },
+                {
+                    "title": "Date commenced",
+                    "source": "commencementDate",
+                    "width": "10%",
+                    "type": "date"
+                },
+                {
+                    "title": "Date completed",
+                    "source": "completionDate",
+                    "width": "10%",
+                    "type": "date"
+                },
+                {
+                    "title": "Hourly rate",
+                    "source": "hourlyRate",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "No. of hours agreed",
+                    "source": "agreedHours",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        }
+    ]
+}

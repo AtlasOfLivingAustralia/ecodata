@@ -1,0 +1,554 @@
+{
+    "modelName": "2-haTrackPlotMethod",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with creating the record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the survey commenced."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The time at which the survey finished."
+        },
+        {
+            "dataType": "number",
+            "name": "zone",
+            "description": "",
+            "constraints": [
+                "49",
+                "50",
+                "51",
+                "52",
+                "53",
+                "54",
+                "55"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "easting",
+            "description": "The easting of the centroid of the survey area."
+        },
+        {
+            "dataType": "number",
+            "name": "northing",
+            "description": "The northing of the centroid of the survey area."
+        },
+        {
+            "dataType": "text",
+            "name": "mapGrid",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "relativeLocation",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "distanceFromWater",
+            "description": ""
+        },
+        {
+            "dataType": "number",
+            "name": "distanceFromRoad",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "habitatType",
+            "description": "",
+            "constraints": [
+                "Sand dune",
+                "Sand plain",
+                "Creek line",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "habitatTypeOther",
+            "description": ""
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "vegType",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "vegDescription",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "percentCover",
+                    "description": "",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "vegTypeTable",
+            "defaultRows": [
+                {
+                    "vegDescription": "",
+                    "percentCover": "",
+                    "vegType": "Main vegetation overstorey"
+                },
+                {
+                    "vegDescription": "",
+                    "percentCover": "",
+                    "vegType": "Main vegetation understorey"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "ephemeralVegPresent",
+            "description": "",
+            "constraints": [
+                "Present",
+                "Absent"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "timeSinceWeatherEvent",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "timeSinceFire",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "visibility",
+            "description": "",
+            "constraints": [
+                "Distinct shadow",
+                "Slight shadow",
+                "No shadow"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "shadowLength",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "trackingSurface",
+            "description": "",
+            "constraints": [
+                "3 - If present, you would be able to distinguish camel, human, dingo, emu or kangaroo tracks only",
+                "2 - If present, you would be able to distinguish all of 3 plus fox, cat, rabbit, echidna, large reptiles and goannas",
+                "1 - If present, you would be able to distinguish 2 + 3 plus hopping mice, rodent, small bird, insect, etc."
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "trackingSurfaceSuitability",
+            "description": "",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "text",
+            "name": "trackingSurfaceContinuity",
+            "description": "",
+            "constraints": [
+                "3 - Majority of sandy patches less than 1m in width",
+                "2 - Majority of sandy patches 1-3m in width",
+                "1 - Majority of sandy patches more than 3m in width"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the animal (or tracks/evidence of) observed."
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "tracksOnPlot",
+                    "description": ""
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "tracksAdjacent",
+                    "description": ""
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "animalObserved",
+                    "description": ""
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "diggingsObserved",
+                    "description": ""
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "scatsObserved",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "abundanceClass",
+                    "description": "",
+                    "constraints": [
+                        "1 - Signs in all four quarters of plot",
+                        "2 - Signs in half to 3/4 of quarters of plot",
+                        "3 - One individual only or signs only found in 1/4 of plot"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceAgeClass",
+                    "description": "",
+                    "constraints": [
+                        "1 - 1-2 days old",
+                        "2 - 3 days to 1 week",
+                        "3 - Imprinted in mud or hard substrate, older than 1 week"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "notes",
+                    "description": "Observation notes about the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingEvidenceTable"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h3>Event Information<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Observer name",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey event date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey event start time",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Survey event finish time",
+                            "computed": null,
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h3>Datum & Location<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Map zone",
+                            "computed": null,
+                            "source": "zone",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Easting",
+                            "computed": null,
+                            "source": "easting",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Northing",
+                            "computed": null,
+                            "source": "northing",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Map grid",
+                            "computed": null,
+                            "source": "mapGrid",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Distance and direction from nearest named place",
+                            "computed": null,
+                            "source": "relativeLocation",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Distance from watersource (km)",
+                            "computed": null,
+                            "source": "distanceFromWater",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Distance from vehickle track/road (km)",
+                            "computed": null,
+                            "source": "distanceFromRoad",
+                            "type": "number"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h3>Site details<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Habitat",
+                            "computed": null,
+                            "source": "habitatType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Other habitat type (please specify)",
+                            "computed": null,
+                            "source": "habitatTypeOther",
+                            "type": "text"
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "width": "30%",
+                                    "noEdit": true,
+                                    "source": "vegType",
+                                    "title": "Main vegetation type",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "45%",
+                                    "source": "vegDescription",
+                                    "title": "Description",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "percentCover",
+                                    "title": "% Cover",
+                                    "type": "number"
+                                }
+                            ],
+                            "source": "vegTypeTable",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Ephemeral or annual vegetation",
+                            "computed": null,
+                            "source": "ephemeralVegPresent",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<i>Zoom into the map, click on the marker and click on the map at your survey site to place it. Select the 'Worldimagery' base layer for more detail. Alternatively, enter the lat/long coordinates (WGS84 decimal) below the map.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h3>Other information<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Time since strong wind/rain",
+                            "computed": null,
+                            "source": "timeSinceWeatherEvent",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Time since fire (if known)",
+                            "computed": null,
+                            "source": "timeSinceFire",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Visibility",
+                            "computed": null,
+                            "source": "visibility",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Length of shadow as a percentage of your own actual height",
+                            "computed": null,
+                            "source": "shadowLength",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "How good is the tracking surface?",
+                            "computed": null,
+                            "source": "trackingSurface",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "What percentage of the plot is actually suitable for tracking?",
+                            "computed": null,
+                            "source": "trackingSurfaceSuitability",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "How continuous is the best tracking surface?",
+                            "computed": null,
+                            "source": "trackingSurfaceContinuity",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h3>Evidence of species presence<\/h3>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<i>Please add a row for each species for which evidence has been observed.<\/i>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
+                "columns": [
+                    {
+                        "width": "15%",
+                        "source": "species",
+                        "title": "Species (start typing common or scientific name)",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "tracksOnPlot",
+                        "title": "Track imprints on plot",
+                        "type": "boolean"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "tracksAdjacent",
+                        "title": "Track imprints on adjacent road/track",
+                        "type": "boolean"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "animalObserved",
+                        "title": "Animal (or skeletal remains)",
+                        "type": "boolean"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "diggingsObserved",
+                        "title": "Burrows/diggings",
+                        "type": "boolean"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "scatsObserved",
+                        "title": "Scats",
+                        "type": "boolean"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "abundanceClass",
+                        "title": "Abundance of all signs (1,2,3)",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "evidenceAgeClass",
+                        "title": "Age of most recent signs",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "comments",
+                        "title": "Comments, measurements,juvenile signs, etc.",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "sightingEvidenceTable",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

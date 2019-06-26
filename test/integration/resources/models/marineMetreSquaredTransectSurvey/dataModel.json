@@ -1,0 +1,619 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date of the Survey.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time that the survey started.",
+            "validate": "required"
+        },
+        {
+            "indexName": "locationName",
+            "dataType": "text",
+            "name": "locationName",
+            "description": ".",
+            "validate": "required"
+        },
+        {
+            "indexName": "mm2shoreLevel",
+            "dataType": "text",
+            "name": "shoreLevel",
+            "description": ".",
+            "constraints": [
+                "High",
+                "Mid",
+                "Low"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "surveyExtent",
+            "description": ".",
+            "constraints": [
+                "From high to low water mark",
+                "Through three distinct habitats"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": ".",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "groupSize",
+            "description": "The number of people participating in the survey group.",
+            "validate": "min[1],integer"
+        },
+        {
+            "dataType": "number",
+            "name": "distanceBetweenQuadratsInMetres",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "indexName": "surveyorExperience",
+            "dataType": "text",
+            "name": "surveyorExperience",
+            "description": ".",
+            "constraints": [
+                "Scientifically accurate",
+                "Tertiary level",
+                "Secondary School level",
+                "Primary School level"
+            ]
+        },
+        {
+            "indexName": "siteExposure",
+            "dataType": "text",
+            "name": "siteExposure",
+            "description": ".",
+            "constraints": [
+                "Very exposed",
+                "Exposed",
+                "Sheltered"
+            ]
+        },
+        {
+            "indexName": "siteAspect",
+            "dataType": "text",
+            "name": "siteAspect",
+            "description": ".",
+            "constraints": [
+                "North",
+                "North east",
+                "East",
+                "South east",
+                "South",
+                "South west",
+                "West",
+                "North west"
+            ]
+        },
+        {
+            "indexName": "mm2Campaign",
+            "dataType": "text",
+            "name": "projectName",
+            "description": "",
+            "constraints": [
+                "Sediment & Seashores - 2018 (Otago Harbour)",
+                "Sediment & Seashores - 2017 (Otago Harbour)",
+                "Sediment & Seashores - 2016 (Otago Harbour)",
+                "Heritage Week Community Day 2017",
+                "Northland Community Coastal Monitoring (CCM)",
+                "Seaweek",
+                "International Science Festival 2018"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "locationPhoto",
+            "description": "Photo of the survey location"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "notes",
+            "description": ""
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "quadratNumber"
+                },
+                {
+                    "indexName": "mm2Habitat",
+                    "dataType": "text",
+                    "name": "habitat",
+                    "dwcAttribute": "habitat",
+                    "description": ".",
+                    "constraints": [
+                        "Mangrove",
+                        "Eel grass",
+                        "Shelfish bed",
+                        "Estuary"
+                    ]
+                },
+                {
+                    "indexName": "mm2Substrate",
+                    "dataType": "text",
+                    "name": "substrate",
+                    "description": ".",
+                    "constraints": [
+                        "Mud (sink >5cm)",
+                        "Sand (sink <2cm)",
+                        "Mixed (sink 2-5cm)",
+                        "Mixed with rocks"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "rpdInMillimetres",
+                    "description": ".",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "quadratData",
+            "defaultRows": [
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "1",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "2",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "3",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "4",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "5",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "6",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "7",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "8",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "9",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "10",
+                    "substrate": ""
+                },
+                {
+                    "habitat": "",
+                    "rpdInMillimetres": "",
+                    "quadratNumber": "11",
+                    "substrate": ""
+                }
+            ]
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "description": "The quadrat number in which the species was observed.",
+                    "validate": "min[0],max[11],integer"
+                },
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the animal (or tracks/evidence of) observed."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "speciesNotes",
+                    "description": ""
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "description": ""
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingsTable"
+        }
+    ],
+    "modelName": "marineMeterSquaredTransectSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Mm2 Transect Survey<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Survey Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Survey Date",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "noEdit": true,
+                                    "source": "eventDate",
+                                    "preLabelClass": "span4",
+                                    "type": "date"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Survey Time",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "noEdit": true,
+                                    "source": "eventTime",
+                                    "preLabelClass": "span4",
+                                    "type": "time"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Location Name",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "locationName",
+                                    "preLabelClass": "span4",
+                                    "type": "text"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Shore Level",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "shoreLevel",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Surveyor Name",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "recordedBy",
+                                    "preLabelClass": "span4",
+                                    "type": "text"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Group Size",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "groupSize",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Surveyor Experience",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surveyorExperience",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Project Name",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "projectName",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Exposure",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "siteExposure",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Survey Extends",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surveyExtent",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Distance between quadrats in metres",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "distanceBetweenQuadratsInMetres",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "allowRowDelete": false,
+                                "headerRowsWrap": true,
+                                "columns": [
+                                    {
+                                        "noEdit": true,
+                                        "source": "quadratNumber",
+                                        "title": "Quadrat No.",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "source": "substrate",
+                                        "title": "Substrate",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "source": "habitat",
+                                        "title": "Habitat",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "source": "rpdInMillimetres",
+                                        "title": "RPD (mm)",
+                                        "type": "number"
+                                    }
+                                ],
+                                "userAddedRows": false,
+                                "source": "quadratData",
+                                "type": "table"
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Survey Notes",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "notes",
+                                    "preLabelClass": "span4",
+                                    "type": "textarea"
+                                }],
+                                "class": ""
+                            }
+                        ],
+                        "class": ""
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "computed": null,
+                                    "type": "col",
+                                    "items": [{
+                                        "includeNotes": false,
+                                        "orientation": "vertical",
+                                        "computed": null,
+                                        "autoLocalitySearch": true,
+                                        "readonly": false,
+                                        "includeSource": false,
+                                        "includeAccuracy": false,
+                                        "hideSiteSelection": true,
+                                        "source": "location",
+                                        "type": "geoMap",
+                                        "includeLocality": false
+                                    }]
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Aspect",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "siteAspect",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Location Photo",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "locationPhoto",
+                                    "preLabelClass": "span4",
+                                    "type": "image"
+                                }],
+                                "class": ""
+                            }
+                        ],
+                        "class": ""
+                    }],
+                    "class": ""
+                }
+            ],
+            "class": ""
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Species Records",
+                    "type": "section",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "Record a description of any species that you could not identify. You can also make a note of the abundance using one of the temporary 'Unknown Species' types from the lists below. (Remember to also post a picture and description on the blog to see if others can help with the id.)",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "width": "10%",
+                                    "source": "quadratId",
+                                    "title": "Quadrat Number",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "20%",
+                                    "source": "species",
+                                    "title": "Species",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "individualCount",
+                                    "title": "How many individuals counted?",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "speciesNotes",
+                                    "title": "Notes",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "sightingPhoto",
+                                    "title": "Photo",
+                                    "type": "image"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "source": "sightingsTable",
+                            "type": "table"
+                        }
+                    ],
+                    "class": ""
+                }],
+                "class": ""
+            }],
+            "class": ""
+        }
+    ]
+}

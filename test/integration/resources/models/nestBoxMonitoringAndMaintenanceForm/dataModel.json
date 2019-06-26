@@ -1,0 +1,469 @@
+{
+    "dataModel": [
+        {
+            "defaultAccuracy": 10,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "siteId",
+            "noEdit": true,
+            "description": "Identifier for the specific nest box."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The names of the people who are monitoring the nest box."
+        },
+        {
+            "dataType": "text",
+            "name": "groupName",
+            "description": "The name of the group undertaking the monitoring activity."
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the nest box was checked and/or maintained.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "description": "The time at which the nest box was checked and/or maintained."
+        },
+        {
+            "dataType": "stringList",
+            "name": "surveyType",
+            "description": "The type of activity undertaken during this monitoring event.",
+            "constraints": [
+                "Installation/replacement",
+                "Occupation survey",
+                "Maintenance activity"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "inspectionMethod",
+            "description": "The type of method(s) used to inspect the box condition and occupation.",
+            "constraints": [
+                "Pole camera",
+                "Ladder",
+                "Phone attached to pole",
+                "Motion camera mounted outside box",
+                "Motion camera showing inside box",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "inspectionMethodOther",
+            "description": "If other, please indicate the method used."
+        },
+        {
+            "dataType": "stringList",
+            "name": "maintenanceRequiredType",
+            "description": "What type(s) of maintenance are required on the nest box?",
+            "constraints": [
+                "None",
+                "Replace box",
+                "Reattach box",
+                "Fix lid/hinges",
+                "Fix closure fitting/latch",
+                "Fix cracked sides/base",
+                "Pest species erradicated",
+                "Cleaned out",
+                "Painting",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "maintenanceRequiredTypeOther",
+            "description": "Please describe what other maintenance is required."
+        },
+        {
+            "dataType": "text",
+            "name": "maintenanceTiming",
+            "description": "When maintenance is to be done.",
+            "constraints": [
+                "None required",
+                "Fixed onsite",
+                "Plan to repair ASAP",
+                "Plan to repair in future"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "maintenanceRemarks",
+            "description": "Additional details of maintenance required or undertaken on the nest box."
+        },
+        {
+            "dataType": "stringList",
+            "name": "occupancyEvidenceOutsideBox",
+            "description": "Is there any evidence of occupancy outside of the box?",
+            "constraints": [
+                "None",
+                "Entrance or lid scratched",
+                "Entrance chewed or enlarged",
+                "Scats outside box"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestShape",
+            "description": "What is the shape of the nest in the box?",
+            "constraints": [
+                "Box empty",
+                "No obvious formed nest",
+                "Flat",
+                "Bowl",
+                "Enclosed",
+                "Other"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "nestShapeOther",
+            "description": "If other, please indicate any other nesting evidence."
+        },
+        {
+            "dataType": "stringList",
+            "name": "nestMaterials",
+            "description": "Indicate any nesting materials which are evidence in the box.",
+            "constraints": [
+                "Box empty",
+                "Fresh leaves",
+                "Drying leaves",
+                "Old dry leaves",
+                "Shredded bark",
+                "Dry grass",
+                "Fur",
+                "Feathers",
+                "Scats",
+                "Other"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "nestMaterialsOther",
+            "description": "If other, please indicate any other nesting materials."
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfOccupants",
+            "description": "Indicate the number of animals occupying the box.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfEggs",
+            "description": "Indicate the number of eggs in the box, if any.",
+            "validate": "integer,min[0]"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "Species occupying the nest box, deduced from evidence."
+        },
+        {
+            "dataType": "text",
+            "name": "typeOfObservation",
+            "description": "The type of observation method or evidence used to deduce the species occupying the box.",
+            "constraints": [
+                "Species seen",
+                "Species heard",
+                "Observed nesting material",
+                "Other indirect evidence"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationQualifier",
+            "dwcAttribute": "identificationQualifier",
+            "description": "",
+            "constraints": [
+                "Certain",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "breedingEvidence",
+            "description": "Is there evidence of species occupying the box breeding?",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "speciesPhoto",
+            "description": "Photo of the occupant(s) of the box at the time of monitoring."
+        },
+        {
+            "dataType": "stringList",
+            "name": "unwantedOccupantsObserved",
+            "description": "Is there any evidence of undesirable species occupying the box?",
+            "constraints": [
+                "None",
+                "Ants/spiders",
+                "Bees - active hive",
+                "Bees - old hive",
+                "Wasps - European",
+                "Wasps - Mud or other",
+                "Indian Mynas",
+                "Starlings",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "unwantedOccupantsObservedOther",
+            "description": "If other, please indicate any other species."
+        },
+        {
+            "dataType": "text",
+            "name": "observationRemarks",
+            "dwcAttribute": "observationRemarks",
+            "description": "Describe additional details of nest box observations to enable identification of nest or confirmation of species."
+        }
+    ],
+    "modelName": "nestBoxMonitoringAndMaintenanceVictoria20190403",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<font style='font-size:2em; font-weight:bolder; padding-left:20px;'>Nest Box Monitoring & Maintenance Form<\/font>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "SURVEY DETAILS",
+                        "type": "section",
+                        "items": [
+                            {
+                                "preLabel": "Nest box ID",
+                                "noEdit": true,
+                                "source": "siteId",
+                                "type": "text"
+                            },
+                            {
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": false,
+                                "readonly": false,
+                                "includeSource": false,
+                                "includeAccuracy": false,
+                                "hideSiteSelection": false,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            },
+                            {
+                                "preLabel": "Surveyor names",
+                                "computed": null,
+                                "source": "recordedBy",
+                                "type": "text"
+                            },
+                            {
+                                "preLabel": "Group name",
+                                "computed": null,
+                                "source": "groupName",
+                                "type": "text"
+                            },
+                            {
+                                "preLabel": "Survey date",
+                                "source": "eventDate",
+                                "type": "date"
+                            },
+                            {
+                                "preLabel": "Survey time",
+                                "source": "eventTime",
+                                "type": "time"
+                            },
+                            {
+                                "preLabel": "Survey type",
+                                "source": "surveyType",
+                                "type": "selectMany"
+                            },
+                            {
+                                "preLabel": "Inspection method",
+                                "source": "inspectionMethod",
+                                "type": "selectMany"
+                            },
+                            {
+                                "preLabel": "If other, please indicate",
+                                "source": "inspectionMethodType",
+                                "type": "text"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "NEST BOX OCCUPATION",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Signs of occupancy outside box",
+                                    "source": "occupancyEvidenceOutsideBox",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "Nest shape",
+                                    "source": "nestShape",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "nestShapeOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Nest materials (select all that apply)",
+                                    "source": "nestMaterials",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "nestMaterialsOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Number of occupants",
+                                    "source": "numberOfOccupants",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Number of eggs",
+                                    "source": "numberOfEggs",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Deduced species (from evidence)",
+                                    "source": "species",
+                                    "type": "speciesSelect"
+                                },
+                                {
+                                    "preLabel": "Type of observation",
+                                    "source": "typeOfObservation",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Identification qualifier",
+                                    "source": "identificationQualifier",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Breeding evidence",
+                                    "source": "breedingEvidence",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Photo of inside box",
+                                    "source": "speciesPhoto",
+                                    "type": "image"
+                                },
+                                {
+                                    "preLabel": "Unwanted occupants observed",
+                                    "source": "unwantedOccupantsObserved",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "unwantedOccupantsObservedOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "OBSERVATION comments (eg. describe nest, egg, colour, etc.)",
+                                    "source": "observationRemarks",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "MAINTENANCE",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Maintenance required (select all that apply)",
+                                    "source": "maintenanceRequiredType",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "preLabel": "If other, please indicate",
+                                    "source": "maintenanceRequiredTypeOther",
+                                    "type": "text"
+                                },
+                                {
+                                    "preLabel": "Maintenance timing",
+                                    "source": "maintenanceTiming",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "MAINTENANCE comments (eg. will need painting next year, etc.)",
+                                    "source": "maintenanceRemarks",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<font style='font-size:0.9em; font-style:italic; align:left; padding-left:20px;'>This is a standardised survey protocol and universally reusable form template. It was originally developed for the Nest Box Project Guide for North East Victoria by <a href='http://swampsriversandranges.org/' target='_blank'>Swamps, Rivers and Ranges<\/a>.<\/font>",
+                "type": "literal"
+            }]
+        }
+    ]
+}

@@ -1,0 +1,202 @@
+{
+    "dataModel": [
+        {
+            "dataType": "number",
+            "name": "airTemperature",
+            "description": "The temperature of the air (in degrees Celsius) at 1.2 metres above the surface of the water at the time of sampling."
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTemperature",
+            "description": "The average temperature (in degrees Celsius) of the top few centimetres of water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterPh",
+            "description": "The average pH of the top few centimetres of water at the sampling site",
+            "validate": "min[0],max[14]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterEc",
+            "description": "The average electrical conductivity (in microsiemens per centimetre) of the top few centimetres of water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "waterTurbidity",
+            "description": "The average turbidity (in nephelometric turbidity units (NTUs)) of the water column at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterAvailableP",
+            "description": "Measure of the amount of available (soluble reactive component) phosphate in milligrams per litre of the water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTotalP",
+            "description": "Measure of the total amount of phosphate (reactive and unreactive components) in milligrams per litre of the water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterDoMgl",
+            "description": "Measure of the amount of oxygen dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterDoPcSat",
+            "description": "Measure of the amount of oxygen dissolved in a water sample expressed as a percentage of the oxygen holding capacity of the water at it's current temperature"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterColiforms",
+            "description": "Measure of the density of faecal coliforms in a 100 millilitre sample of water"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterEcoli",
+            "description": "Measure of the density of the bacteria E. coli in a 100 millilitre sample of water"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTotalNitrogen",
+            "description": "Measure of the total amount of nitrogen dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterNitrates",
+            "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "dataType": "text",
+            "name": "instrumentCalibration",
+            "description": "Indicator as to whether the electrical conductivity meter used had been calibrated prior to sampling",
+            "constraints": [
+                "Yes",
+                "No",
+                "Not applicable"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General comments and notes about this water quality monitoring event."
+        }
+    ],
+    "modelName": "Water Quality Measurements",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Air Temperature (deg C):",
+                            "computed": null,
+                            "source": "airTemperature",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Water Temperature (deg C):",
+                            "computed": null,
+                            "source": "surfaceWaterTemperature",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "pH (pH units):",
+                            "computed": null,
+                            "source": "surfaceWaterPh",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Turbidity (NTUs):",
+                            "computed": null,
+                            "source": "waterTurbidity",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Electrical Conductivity (µS/cm):",
+                            "computed": null,
+                            "source": "surfaceWaterEc",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Total Nitrogen (mg/L as N):",
+                            "computed": null,
+                            "source": "surfaceWaterTotalNitrogen",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Nitrates (mg/L as N):",
+                            "computed": null,
+                            "source": "surfaceWaterNitrates",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Available Phosphate (mg/L):",
+                            "computed": null,
+                            "source": "surfaceWaterAvailableP",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Total Phosphate (mg/L):",
+                            "computed": null,
+                            "source": "surfaceWaterTotalP",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Dissolved Oxygen (mg/L):",
+                            "computed": null,
+                            "source": "surfaceWaterDoMgl",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Dissolved Oxygen (% sat):",
+                            "computed": null,
+                            "source": "surfaceWaterDoPcSat",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Faecal Coliforms (CFU/100mL):",
+                            "computed": null,
+                            "source": "surfaceWaterColiforms",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "E. coli (CFU/100mL):",
+                            "computed": null,
+                            "source": "surfaceWaterEcoli",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Did you calibrate your EC meter?:",
+                            "computed": null,
+                            "source": "instrumentCalibration",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Water Testing Notes/Issues:",
+                "computed": null,
+                "width": "90%",
+                "source": "notes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

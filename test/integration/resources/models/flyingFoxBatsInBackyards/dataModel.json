@@ -1,0 +1,231 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "description": "The time of the day when the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "seenOrHeard",
+            "description": "Were individual bats seen or heard.",
+            "constraints": [
+                "Seen in backyard",
+                "Heard in backyard",
+                "Heard further away"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species of flying fox that you saw.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "estimatedCount",
+            "description": "Count or estimate of the number of individuals seen or heard."
+        },
+        {
+            "dataType": "species",
+            "name": "foodSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "The type of feed tree that you saw the flying fox in.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "treeFloweringOrFruiting",
+            "dwcAttribute": "reproductiveCondition",
+            "description": "The reproductive status of the feed tree that you saw the flying fox in.",
+            "constraints": [
+                "Flowering",
+                "Fruiting",
+                "Flowering and fruiting",
+                "Neither flowering nor fruiting"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the flying fox at the time of the record. This is essential for verification of the record. NOTE: please ensure that it is a good quality photo of the bat."
+        },
+        {
+            "dataType": "text",
+            "name": "observationRemarks",
+            "dwcAttribute": "observationRemarks",
+            "description": "Comments about the observation."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {
+                    "source": "Source",
+                    "constraints": [
+                        "MAP _ Map (topographic)",
+                        "APD _ Aerial Photographs Digitised",
+                        "GPS _ Single Global Positioning System",
+                        "DGPS _ Differential Global Positioning System",
+                        "GAZ _ Gazetteer",
+                        "SUR _ Surveyed (by Surveyor)",
+                        "WEB _ Web Map application (ie Google earth)",
+                        "KDGP _ Differential Kinematic Global Positioning System",
+                        "? _ Unknown location method"
+                    ],
+                    "validate": "required"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "flyingFoxBatsInBackyards",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Bats in Backyards<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Observation Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "preLabel": "Date",
+                                "computed": null,
+                                "source": "eventDate",
+                                "type": "date"
+                            },
+                            {
+                                "preLabel": "Time",
+                                "computed": null,
+                                "source": "eventTime",
+                                "type": "time"
+                            },
+                            {
+                                "preLabel": "Flying Fox seen or heard?",
+                                "computed": null,
+                                "source": "seenOrHeard",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "If seen, what species of Flying Fox was it?",
+                                "computed": null,
+                                "source": "species",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "preLabel": "How many Flying Foxes did you see?",
+                                "computed": null,
+                                "source": "estimatedCount",
+                                "type": "text"
+                            },
+                            {
+                                "preLabel": "What is the feed tree that you saw them in?",
+                                "computed": null,
+                                "source": "foodSpecies",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "preLabel": "Are the trees flowering/fruiting?",
+                                "computed": null,
+                                "source": "treeFloweringOrFruiting",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Photo",
+                                "computed": null,
+                                "source": "sightingPhoto",
+                                "type": "image"
+                            },
+                            {
+                                "source": "Please provide the name of the tree species if you know it.",
+                                "type": "literal"
+                            },
+                            {
+                                "preLabel": "Comments",
+                                "computed": null,
+                                "source": "observationRemarks",
+                                "type": "textarea"
+                            },
+                            {
+                                "preLabel": "Observer name",
+                                "computed": null,
+                                "source": "recordedBy",
+                                "type": "text"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": true,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": false
+                        }],
+                        "class": ""
+                    }]
+                }
+            ]
+        }
+    ]
+}

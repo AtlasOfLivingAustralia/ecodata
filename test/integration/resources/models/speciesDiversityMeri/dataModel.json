@@ -1,0 +1,64 @@
+{
+    "modelName": "Species Diversity - BF method",
+    "record": "true",
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "species",
+                "dwcAttribute": "scientificName",
+                "name": "species",
+                "description": "The species present at the site.  If not identified, select \"Unknown or unlisted species\" from the list",
+                "validate": "required"
+            },
+            {
+                "dataType": "text",
+                "name": "nativeOrExotic",
+                "description": "Specifies whether the species is native to the site or exotic",
+                "constraints": [
+                    "Native",
+                    "Exotic"
+                ]
+            }
+        ],
+        "dataType": "list",
+        "name": "speciesList",
+        "description": "A list containing the distinct (but not necessarily identified) species present at the site"
+    }],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Please record all species present in the 20m x 20m plot marked out for this assessment.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<p>This sheet differs from the hard copy worksheet - it combines Field Sheet 5 & 6.  Please attempt to identify each species, in particular the exotics.<\/p>",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "width": "80%",
+                    "source": "species",
+                    "title": "Species",
+                    "type": "autocomplete"
+                },
+                {
+                    "width": "20%",
+                    "source": "nativeOrExotic",
+                    "title": "Native/Exotic",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "speciesList",
+            "type": "table"
+        }
+    ]
+}

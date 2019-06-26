@@ -1,0 +1,165 @@
+{
+    "modelName": "saWeedAbundanceAndThreat",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "weedAbundanceAndThreatScore",
+            "todo": "//move to view model",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "isUnknownIfWeed"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaCoveredPercent",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "coverRating",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "invasiveThreatCategory",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "abundanceAndThreatScore",
+                    "computed": {
+                        "operation": "times",
+                        "dependents": [
+                            "coverRating",
+                            "invasiveThreatCategory"
+                        ]
+                    }
+                }
+            ],
+            "userAddedRows": "true"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalCoverPercent",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalAbundanceAndThreatScore",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "abundanceAndThreatScore",
+                    "fromList": "weedAbundanceAndThreatScore"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "",
+                    "type": "literal"
+                },
+                {
+                    "source": "Total weed cover (%)",
+                    "type": "literal"
+                },
+                {
+                    "source": "totalCoverPercent",
+                    "type": "number"
+                },
+                {
+                    "colspan": "2",
+                    "source": "Total Abundance & Threat Score",
+                    "type": "literal"
+                },
+                {
+                    "source": "totalAbundanceAndThreatScore",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"abundanceAndThreatScore\",\"fromList\":\"weedAbundanceAndThreatScore\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "weedAbundanceAndThreatScore",
+            "columns": [
+                {
+                    "title": "Weed name",
+                    "source": "species",
+                    "width": "25%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Unknown if weed or native",
+                    "source": "isUnknownIfWeed",
+                    "width": "8%",
+                    "type": "boolean"
+                },
+                {
+                    "title": "Area covered (%)",
+                    "source": "areaCoveredPercent",
+                    "width": "17%",
+                    "textAlign": "center",
+                    "type": "number"
+                },
+                {
+                    "title": "Cover Rating",
+                    "source": "coverRating",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Invasive Threat Category",
+                    "source": "invasiveThreatCategory",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Abundance & Threat Score",
+                    "source": "abundanceAndThreatScore",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "Your Weed Abundance & Threat Score",
+                    "width": "17%",
+                    "type": "literal",
+                    "css": "heavy-border span5 offset4"
+                },
+                {
+                    "source": "totalAbundanceAndThreatScore",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"abundanceAndThreatScore\",\"fromList\":\"weedAbundanceAndThreatScore\"}}",
+                    "type": "number",
+                    "css": "heavy-border span1"
+                }
+            ],
+            "type": "row"
+        }
+    ]
+}

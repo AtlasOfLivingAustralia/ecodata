@@ -1,0 +1,220 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesRemediated"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesRemediated)"
+                    },
+                    "dataType": "number",
+                    "name": "areaRemediatedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesRemediated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesRemediated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesRemediated)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthRemediatedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesRemediated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesRemediated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfStructuresInstalled",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "remediationType",
+                    "description": "",
+                    "constraints": [
+                        "Access control",
+                        "Bank grooming",
+                        "Flow gauging stations",
+                        "Fords",
+                        "Culverts",
+                        "Revegetation",
+                        "Weirs",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherRemediationType",
+                    "behaviour": [{
+                        "condition": "remediationType == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "offSiteBenefitSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(offSiteBenefitSites)"
+                    },
+                    "dataType": "number",
+                    "name": "offSiteBenefitAreaHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceOfBenefit",
+                    "validate": "maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "remediationDetails"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Remediating riparian and aquatic areas",
+    "title": "Remediating riparian and aquatic areas",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "initialOrFollowup",
+                        "title": "Initial / Followup control",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "sitesRemediated",
+                        "type": "feature",
+                        "title": "Site/s covered by remediation"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "areaRemediatedHa",
+                        "type": "number",
+                        "title": "Area (ha) being remediated"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "lengthRemediatedKm",
+                        "type": "number",
+                        "title": "Length (km) being remediated"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfStructuresInstalled",
+                        "type": "number",
+                        "title": "Number of structures installed"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "remediationType",
+                        "title": "Type of remediation",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "18%",
+                        "source": "otherRemediationType",
+                        "title": "Type of remediation (if Other)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitSites",
+                        "title": "Please identify any area/s that have shown evidence of off-site benefits",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitAreaHa",
+                        "title": "Area (ha) evident of improved remediation",
+                        "type": "number"
+                    },
+                    {
+                        "width": "17%",
+                        "source": "evidenceOfBenefit",
+                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "remediationDetails",
+                "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

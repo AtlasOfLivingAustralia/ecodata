@@ -1,0 +1,64 @@
+{
+    "modelName": "Evaluation",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Description of the effectiveness of the project. Did it deliver what was intended to be delivered? Did it meet, exceed or fall short of expectations? Definition: A measure of the extent to which a program, project or initiative has attained, or is expected to attain, its relevant objectives efficiently and in a sustainable way.",
+            "name": "projectEffectiveness",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the impacts of the project. Definition: A change in the condition of biophysical, social or economic and/or institutional assets. An impact may be positive or negative, primary or secondary, short term or long term, direct or indirect, and/or intended or unintended. Impacts are sometime realised after the formal project is completed. ",
+            "name": "projectImpact",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of how efficient the project was in terms of cost vs. outcomes, time vs. outcomes, etc. Definition: The notion of getting the highest value out of program or project resources.",
+            "name": "projectEfficiency",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the appropriateness of the methodology used for the project. Was it the right methodology? In hindsight, was there a better methodology available that wasn't used for some reason - explain? Definition: A determination made through comparing the program with the needs of the intended beneficiaries using any of the techniques of needs analysis. Alternatively, the program could be evaluated in terms of its compliance with process.",
+            "name": "methodologyAppropriateness",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "projectEffectiveness",
+                    "computed": null,
+                    "preLabel": "EFFECTIVENESS - Describe the effectiveness of the project and whether it delivered what was intended:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectImpact",
+                    "computed": null,
+                    "preLabel": "IMPACT - Describe the impact of the project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectEfficiency",
+                    "computed": null,
+                    "preLabel": "EFFICIENCY - Describe the efficiency of the delivery mechanism(s) for the project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "methodologyAppropriateness",
+                    "computed": null,
+                    "preLabel": "METHODOLOGY - Describe the appropriateness of the methodology(s) used.",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

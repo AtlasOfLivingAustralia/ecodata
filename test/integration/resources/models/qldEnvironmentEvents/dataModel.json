@@ -1,0 +1,401 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "date",
+                    "name": "eventDate",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventTheme",
+                    "description": "",
+                    "constraints": [
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventType",
+                    "description": "The type of event being conducted",
+                    "constraints": [
+                        "Meeting",
+                        "Workshop",
+                        "Field day activity",
+                        "Conference / seminar presentation",
+                        "Site/property visit",
+                        "Other (describe in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventPurpose",
+                    "description": "The purpose for which the event is being conducted",
+                    "constraints": [
+                        "Planning, Monitoring and Evaluation",
+                        "Awareness raising/communication",
+                        "Capacity building (training)",
+                        "Works implementation",
+                        "Technical advice",
+                        "Other (describe in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventTopics",
+                    "description": "The themes or topics covered during the events. Add in notes if more than one.",
+                    "constraints": [
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "Other (describe in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventLocation",
+                    "description": "The location where the event took place."
+                },
+                {
+                    "primaryResult": true,
+                    "dataType": "number",
+                    "name": "eventDurationInHours",
+                    "description": "The duration of the events in whole hours.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "industryType",
+                    "description": "The main industry type that the event is addressing",
+                    "constraints": [
+                        "All",
+                        "Bananas",
+                        "Berries",
+                        "Cropping",
+                        "Cropping & grazing",
+                        "Grazing",
+                        "Sugarcane"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "deliveryPartner",
+                    "description": "Select the type(s) of partners involved in delivering the event",
+                    "constraints": [
+                        "Academic/research institution",
+                        "Consultant",
+                        "Local farmer or community group",
+                        "Peak Primary Industry Group",
+                        "Regional Landcare Facilitator",
+                        "Regional Landcare or farmer network",
+                        "No delivery partners",
+                        "Other (describe in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "groupsSupported",
+                    "description": "The total number of community groups that have been financially supported to undertake local projects during this period.",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": true,
+                    "dataType": "number",
+                    "name": "numberOfEventParticipants",
+                    "description": "The total number of people attending the event.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfEvents"
+                }
+            ],
+            "dataType": "list",
+            "name": "eventsTable",
+            "defaultRows": "1"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "eventsTable",
+                    "source": "eventDurationInHours"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "eventDurationInHoursTotal"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "eventsTable",
+                    "source": "numberOfEventParticipants"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "numberOfEventParticipantsTotal"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "eventsTable",
+                    "source": "groupsSupported"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "numberOfGroupsSupportedTotal"
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "ehpEventsForm",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Events<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "row",
+                "items": [{
+                    "boxed": true,
+                    "title": "Event Details",
+                    "type": "section",
+                    "items": [
+                        {
+                            "allowHeaderWrap": true,
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "colspan": 3,
+                                    "computed": null,
+                                    "source": "",
+                                    "type": "literal"
+                                },
+                                {
+                                    "colspan": 1,
+                                    "computed": null,
+                                    "source": "Total duration of events (hrs):",
+                                    "type": "literal"
+                                },
+                                {
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationInHours\",\"fromList\":\"eventsTable\"}}",
+                                    "readOnly": true,
+                                    "source": "eventDurationInHoursTotal",
+                                    "type": "number"
+                                },
+                                {
+                                    "colspan": 1,
+                                    "computed": null,
+                                    "source": "Total No. of participants:",
+                                    "type": "literal"
+                                },
+                                {
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberOfEventParticipants\",\"fromList\":\"eventsTable\"}}",
+                                    "readOnly": true,
+                                    "source": "numberOfEventParticipantsTotal",
+                                    "type": "number"
+                                },
+                                {
+                                    "colspan": 2,
+                                    "computed": null,
+                                    "source": "Total No. of groups:",
+                                    "type": "literal"
+                                },
+                                {
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"groupsSupported\",\"fromList\":\"eventsTable\"}}",
+                                    "readOnly": true,
+                                    "source": "numberOfGroupsSupportedTotal",
+                                    "type": "number"
+                                },
+                                {
+                                    "colspan": 1,
+                                    "computed": null,
+                                    "source": "",
+                                    "type": "literal"
+                                }
+                            ]}]},
+                            "columns": [
+                                {
+                                    "width": "10%",
+                                    "source": "eventDate",
+                                    "title": "Event date",
+                                    "type": "simpleDate"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "eventTheme",
+                                    "title": "Theme",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "eventType",
+                                    "title": "Type of event",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "eventPurpose",
+                                    "title": "Purpose of event",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "primaryResult": true,
+                                    "width": "5%",
+                                    "source": "eventDurationInHours",
+                                    "title": "Event Duration (Hrs)",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "eventLocation",
+                                    "title": "Location of event",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "industryType",
+                                    "title": "Main industry type",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "primaryResult": true,
+                                    "width": "5%",
+                                    "source": "numberOfEventParticipants",
+                                    "title": "No. of participants",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "deliveryPartner",
+                                    "title": "Delivery partners",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "primaryResult": true,
+                                    "width": "5%",
+                                    "source": "groupsSupported",
+                                    "title": "No. of groups supported financially",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "eventTopics",
+                                    "title": "Topics covered",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "defaultRows": 1,
+                            "userAddedRows": true,
+                            "source": "eventsTable",
+                            "type": "table"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "General comments / notes",
+                                "defaultRows": "5",
+                                "source": "eventNotes",
+                                "type": "textarea"
+                            }]
+                        }
+                    ],
+                    "class": ""
+                }]
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "boxed": true,
+                "title": "Location",
+                "type": "section",
+                "items": [
+                    {
+                        "computed": null,
+                        "type": "row",
+                        "items": [{
+                            "computed": null,
+                            "source": "<font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker, as accurately as possible, at the location of the event.<\/i><\/font>",
+                            "type": "literal"
+                        }],
+                        "class": ""
+                    },
+                    {
+                        "type": "row",
+                        "items": [{
+                            "includeNotes": false,
+                            "orientation": "horizontal",
+                            "computed": null,
+                            "autoLocalitySearch": true,
+                            "readonly": false,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": false,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": false
+                        }],
+                        "class": ""
+                    }
+                ],
+                "class": ""
+            }],
+            "class": ""
+        }
+    ]
+}

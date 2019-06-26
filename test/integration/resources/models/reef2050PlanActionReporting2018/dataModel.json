@@ -1,0 +1,227 @@
+{
+    "dataModel": [
+        {
+            "columns": [{
+                "dataType": "text",
+                "name": "agencyContact",
+                "validate": "max[100]"
+            }],
+            "dataType": "list",
+            "name": "agencyContacts"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "sortOrder"
+                },
+                {
+                    "dataType": "text",
+                    "name": "actionId",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "actionDescription",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "theme",
+                    "constraints": [
+                        "Water quality",
+                        "Biodiversity",
+                        "Ecosystem health",
+                        "Heritage",
+                        "Community benefits",
+                        "Economic benefits",
+                        "Governance"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "status",
+                    "description": "Select the most appropriate progress against an action from the drop-down list",
+                    "constraints": [
+                        "Completed",
+                        "In place",
+                        "On track / Underway",
+                        "Delayed or limited progress",
+                        "Significant delays or no progress",
+                        "Not yet due"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "progress",
+                    "description": "Provide 2-3 sentences outlining progress in implementing the action",
+                    "validate": "required,max[1500]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "reportingAgency"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "deliveryPartners",
+                    "description": "Select organisations that are contributing to implementing the action",
+                    "constraints": [
+                        "DNRME",
+                        "DATSIP",
+                        "DES",
+                        "DOEE",
+                        "DAF",
+                        "DTMR",
+                        "AMSA",
+                        "GBRMPA",
+                        "DSDMIP",
+                        "TMESBCG",
+                        "OGC",
+                        "DSDMIP",
+                        "DIRD",
+                        "QPS",
+                        "DAFF",
+                        "DPC",
+                        "Ports Australia",
+                        "Queensland Ports Association",
+                        "Traditional Owners",
+                        "Local Government",
+                        "DPM&C",
+                        "ACIC",
+                        "James Cook University",
+                        "BHP Billiton",
+                        "DoEE – Reef Trust",
+                        "CSIRO",
+                        "LGAQ",
+                        "AMPTO",
+                        "Q-CAS partners",
+                        "GBRF",
+                        "AIMS",
+                        "CQU",
+                        "UQ",
+                        "RRRC",
+                        "GU",
+                        "NQBP",
+                        "River Improvement Trusts",
+                        "RWQPP Partnership Committee",
+                        "CANEGROWERS",
+                        "FBA",
+                        "NQ Dry Tropics",
+                        "Agforce"
+                    ]
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "webLinks",
+                    "description": "Please supply a comma separated list of URLs providing information about this action",
+                    "validate": "required,custom[url]"
+                }
+            ],
+            "dataType": "list",
+            "name": "actions"
+        }
+    ],
+    "modelName": "Reef 2050 Plan Action Reporting 2018",
+    "title": "Reef 2050 Plan Action Reporting",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "columns": [{
+                        "width": "100%",
+                        "source": "agencyContact",
+                        "title": "Agency Contact(s)",
+                        "type": "text",
+                        "class": "input-xxlarge"
+                    }],
+                    "userAddedRows": true,
+                    "source": "agencyContacts",
+                    "type": "table"
+                }]
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please complete a row for each action you are required to report on.<\/b>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "columns": [
+                    {
+                        "width": "1%",
+                        "readOnly": true,
+                        "source": "sortOrder",
+                        "title": "",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "readOnly": true,
+                        "source": "actionId",
+                        "title": "Action ID",
+                        "type": "text"
+                    },
+                    {
+                        "width": "15%",
+                        "readOnly": true,
+                        "source": "actionDescription",
+                        "title": "Action",
+                        "type": "text"
+                    },
+                    {
+                        "width": "10%",
+                        "readOnly": true,
+                        "source": "theme",
+                        "title": "Theme",
+                        "type": "text"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "status",
+                        "title": "Status",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "25%",
+                        "source": "progress",
+                        "title": "Progress",
+                        "type": "textarea",
+                        "rows": 10
+                    },
+                    {
+                        "width": "15%",
+                        "readOnly": true,
+                        "source": "reportingAgency",
+                        "title": "Reporting agency",
+                        "type": "text"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "deliveryPartners",
+                        "title": "Contributing agencies and partners",
+                        "type": "select2Many"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "webLinks",
+                        "title": "Web links",
+                        "type": "multiInput"
+                    }
+                ],
+                "userAddedRows": false,
+                "source": "actions",
+                "type": "table"
+            }]
+        }
+    ]
+}

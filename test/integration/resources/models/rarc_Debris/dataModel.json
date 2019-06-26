@@ -1,0 +1,189 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "parameter",
+                "description": ""
+            },
+            {
+                "dataType": "text",
+                "name": "transectOne",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "Absent",
+                    "Present",
+                    "None",
+                    "Small quantities",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectTwo",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "Absent",
+                    "Present",
+                    "None",
+                    "Small quantities",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectThree",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "Absent",
+                    "Present",
+                    "None",
+                    "Small quantities",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectFour",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "Absent",
+                    "Present",
+                    "None",
+                    "Small quantities",
+                    "Abundant"
+                ]
+            },
+            {
+                "dataType": "number",
+                "name": "vegetationWidthAverageScore",
+                "description": ""
+            }
+        ],
+        "dataType": "list",
+        "name": "debrisTable",
+        "defaultRows": [
+            {
+                "parameter": "Total leaf litter",
+                "totalLeafLitter_T4": "",
+                "totalLeafLitter_T3": "",
+                "totalLeafLitter_T2": "",
+                "totalLeafLitter_T1": "",
+                "totalLeafLitter_averageScore": ""
+            },
+            {
+                "nativeLeafLitter_T1": "",
+                "nativeLeafLitter_T3": "",
+                "parameter": "Native leaf litter",
+                "nativeLeafLitter_T2": "",
+                "nativeLeafLitter_T4": "",
+                "nativeLeafLitter_averageScore": ""
+            },
+            {
+                "deadTrees_averageScore": "",
+                "parameter": "Standing dead trees",
+                "deadTrees_T3": "",
+                "deadTrees_T2": "",
+                "deadTrees_T4": "",
+                "deadTrees_T1": ""
+            },
+            {
+                "hollowBearingTrees_T1": "",
+                "hollowBearingTrees_averageScore": "",
+                "parameter": "Hollow bearing trees (>20cm DBH)",
+                "hollowBearingTrees_T2": "",
+                "hollowBearingTrees_T3": "",
+                "hollowBearingTrees_T4": ""
+            },
+            {
+                "logs_averageScoreTotal": "",
+                "logs_T3_score": "",
+                "parameter": "Fallen logs (>10cm diameter)",
+                "logs_T1_score": "",
+                "logs_T4_score": "",
+                "noEdit": true,
+                "logs_T2_score": ""
+            }
+        ]
+    }],
+    "modelName": "rarc_debris",
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "type": "col",
+            "items": [{
+                "boxed": true,
+                "title": "Debris",
+                "type": "section",
+                "items": [{
+                    "computed": null,
+                    "type": "row",
+                    "items": [{
+                        "allowRowDelete": "false",
+                        "allowHeaderWrap": true,
+                        "columns": [
+                            {
+                                "width": "25%",
+                                "noEdit": true,
+                                "source": "parameter",
+                                "type": "text",
+                                "title": ""
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectOne",
+                                "type": "selectOne",
+                                "title": "Transect 1"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectTwo",
+                                "type": "selectOne",
+                                "title": "Transect 2"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectThree",
+                                "type": "selectOne",
+                                "title": "Transect 3"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectFour",
+                                "title": "Transect 4",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "15%",
+                                "noEdit": true,
+                                "source": "vegetationWidthAverageScore",
+                                "title": "Average Score",
+                                "type": "text"
+                            }
+                        ],
+                        "userAddedRows": false,
+                        "source": "debrisTable",
+                        "type": "table"
+                    }]
+                }],
+                "class": ""
+            }]
+        }]
+    }]
+}

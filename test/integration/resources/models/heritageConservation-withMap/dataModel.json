@@ -1,0 +1,260 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "The name of the heritage site",
+            "name": "siteName",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Type of heritage conservation work being undertaken",
+            "name": "typeOfHeritage",
+            "constraints": [
+                "Historical",
+                "Indigenous",
+                "Natural",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Level of heritage register that this site is listed on.",
+            "name": "levelOfHeritageListing",
+            "constraints": [
+                "Local",
+                "National",
+                "State",
+                "World",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the site has an current Conservation management plan.",
+            "name": "heritageConservationPlan",
+            "constraints": [
+                "No",
+                "Yes"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the site is included in any other type of management plan.",
+            "name": "otherManagementPlan",
+            "constraints": [
+                "No",
+                "Yes"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Provide the name and approval year of the other type of plan(s) that the site is included in and a description of any relevant activities pertaining to the site..",
+            "name": "otherManagementPlanDetails"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether an ‘Ask First’ guide or the Burra Charter principles were included in planning the activity.",
+            "name": "managementGuide",
+            "constraints": [
+                "No",
+                "Yes"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether any relevant heritage professions were consulted in planning the activity.",
+            "name": "professionalConsultation",
+            "constraints": [
+                "No",
+                "Yes"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether any relevant heritage professions were consulted in planning the activity.",
+            "name": "conservationPurpose",
+            "constraints": [
+                "Adaptation",
+                "Asset conservation",
+                "Asset protection",
+                "Interpretation",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe how your activity will contribute to any and all relevant conservation and / or management plans.",
+            "name": "activityContributionToPlans",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe any heritage outcomes you expect as a result of work undertaken by your team on this project.",
+            "name": "heritageOutcomesExpected",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe any outcomes / impacts you expect on the local community as a result of this project.",
+            "name": "communityOutcomesExpected",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "heritageConservation_withMap",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h2> Heritage Conservation Information<\/h2>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "typeOfHeritage",
+                            "preLabel": "Type of heritage work being undertaken:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "levelOfHeritageListing",
+                            "preLabel": "Level of heritage listing for the site:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "heritageConservationPlan",
+                            "preLabel": "Does the site have a Conservation management plan?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "otherManagementPlan",
+                            "preLabel": "Is the site included in another type of management plan?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "otherManagementPlanDetails",
+                            "preLabel": "Specify the plan that covers the site and activities and the year the plan was approved:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "managementGuide",
+                            "preLabel": "Have you included ‘Ask First’ guide or the Burra Charter principles in planning the activity?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "professionalConsultation",
+                            "preLabel": "Have relevant heritage professions been consulted? :",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "conservationPurpose",
+                            "preLabel": "Purpose of activity being undertaken:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "siteName",
+                            "preLabel": "Name of heritage site:",
+                            "type": "text"
+                        },
+                        {
+                            "includeSource": false,
+                            "orientation": "vertical",
+                            "includeNotes": false,
+                            "hideSiteSelection": true,
+                            "zoomToProjectArea": true,
+                            "source": "location",
+                            "computed": null,
+                            "autoLocalitySearch": true,
+                            "type": "geoMap",
+                            "includeAccuracy": false,
+                            "readonly": false,
+                            "includeLocality": false
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h2>Expected Heritage Outcomes<\/h2>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "activityContributionToPlans",
+                        "preLabel": "How will this activity contribute to existing conservation and / or management plans?:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "heritageOutcomesExpected",
+                        "preLabel": "What heritage outcomes do you expect as a result of the work undertaken?:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "communityOutcomesExpected",
+                        "preLabel": "What are the expected outcomes / impacts on the local community as a result of this project?:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "notes",
+                        "preLabel": "Comments / Notes:",
+                        "type": "textarea"
+                    }
+                ],
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

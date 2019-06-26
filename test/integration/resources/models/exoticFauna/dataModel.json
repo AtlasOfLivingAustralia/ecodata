@@ -1,0 +1,79 @@
+{
+    "modelName": "Exotic Fauna - BF method",
+    "dataModel": [{
+        "defaultRows": [{
+            "sampleLocation": "",
+            "evidence": "",
+            "comment": ""
+        }],
+        "dataType": "list",
+        "name": "evidenceOfExoticFauna",
+        "columns": [
+            {
+                "dataType": "number",
+                "description": "Distance in metres along the transect that a record is made",
+                "name": "sampleLocation"
+            },
+            {
+                "dataType": "text",
+                "description": "The type of evidence of the presence of exotic fauna observed",
+                "name": "evidence",
+                "constraints": [
+                    "",
+                    "Hole",
+                    "Scats",
+                    "Live",
+                    "Tracks",
+                    "Fur or feathers",
+                    "Warren",
+                    "Den",
+                    "Soil",
+                    "Scratchings",
+                    "Damage",
+                    "Other"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "comment"
+            }
+        ]
+    }],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please record any evidence of the presence of exotic fauna that you find along the sampling transect. This is recorded as the type of evidence and distance along the transect, and any noteworthy observations associated with it.",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "evidenceOfExoticFauna",
+            "columns": [
+                {
+                    "title": "Point (m)",
+                    "source": "sampleLocation",
+                    "width": "10%",
+                    "type": "number",
+                    "validate": "required,min[0],max[50]"
+                },
+                {
+                    "title": "Evidence",
+                    "source": "evidence",
+                    "width": "20%",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "title": "Comment",
+                    "source": "comment",
+                    "width": "60%",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        }
+    ]
+}

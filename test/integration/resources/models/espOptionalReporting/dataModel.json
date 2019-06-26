@@ -1,0 +1,297 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "insectSpecies",
+                    "description": "Enter species name below and select from the drop down list."
+                },
+                {
+                    "dataType": "image",
+                    "name": "insectImage"
+                }
+            ],
+            "dataType": "list",
+            "name": "insects"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeBirdSpecies",
+                    "description": "Enter species name below and select from the drop down list."
+                },
+                {
+                    "dataType": "image",
+                    "name": "nativeBirdImage"
+                }
+            ],
+            "dataType": "list",
+            "name": "nativeBirds"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeReptileSpecies",
+                    "description": "Enter species name below and select from the drop down list."
+                },
+                {
+                    "dataType": "image",
+                    "name": "nativeReptileImage"
+                }
+            ],
+            "dataType": "list",
+            "name": "nativeReptiles"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeAmphibianSpecies",
+                    "description": "Enter species name below and select from the drop down list."
+                },
+                {
+                    "dataType": "image",
+                    "name": "nativeAmphibianImage"
+                }
+            ],
+            "dataType": "list",
+            "name": "nativeAmphibians"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeMammalSpecies",
+                    "description": "Enter species name below and select from the drop down list."
+                },
+                {
+                    "dataType": "image",
+                    "name": "nativeMammalImage"
+                }
+            ],
+            "dataType": "list",
+            "name": "nativeMammals"
+        },
+        {
+            "dataType": "text",
+            "name": "faunaNotes"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativePlantSpecies",
+                    "description": "Enter species name below and select from the drop down list."
+                },
+                {
+                    "dataType": "image",
+                    "name": "nativeTreeImage"
+                }
+            ],
+            "dataType": "list",
+            "name": "nativePlants"
+        },
+        {
+            "dataType": "text",
+            "name": "nativePlantsNotes",
+            "description": ""
+        }
+    ],
+    "modelName": "ESP Optional Reporting",
+    "title": "Optional Reporting",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "Please note that the activities below are not mandatory, however they provide a way for you to record native plants and animals as they appear and monitor the long-term health and recovery of your ESP site(s).",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h3>Native fauna observed on your ESP site(s)<\/h3><i>Please records observations of species found below<\/i>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "width": "40%",
+                        "source": "insectSpecies",
+                        "title": "Insect species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "60%",
+                        "source": "insectImage",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {
+                            "disableDragDrop": true,
+                            "titleHelpText": "Title the photograph with the species name (or what you think it may be)."
+                        }
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "insects",
+                "title": "Insects observed",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "width": "40%",
+                        "source": "nativeBirdSpecies",
+                        "title": "Native bird species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "60%",
+                        "source": "nativeBirdImage",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {"disableDragDrop": true}
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "nativeBirds",
+                "title": "Native birds observed",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "width": "40%",
+                        "source": "nativeReptileSpecies",
+                        "title": "Native reptile species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "60%",
+                        "source": "nativeReptileImage",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {"disableDragDrop": true}
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "nativeReptiles",
+                "title": "Native reptiles observed",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "width": "40%",
+                        "source": "nativeAmphibianSpecies",
+                        "title": "Native amphibian species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "60%",
+                        "source": "nativeAmphibianImage",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {"disableDragDrop": true}
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "nativeAmphibians",
+                "title": "Native amphibians observed",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "width": "40%",
+                        "source": "nativeMammalSpecies",
+                        "title": "Native mammal species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "60%",
+                        "source": "nativeMammalImage",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {"disableDragDrop": true}
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "nativeMammals",
+                "title": "Native mammals observed",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Please include any additional notes and details of the species observed (if known)",
+                "source": "faunaNotes",
+                "type": "textarea"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h4>Native plant species observed on your ESP site<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "width": "40%",
+                        "source": "nativePlantSpecies",
+                        "title": "Native plant species",
+                        "type": "speciesSelect"
+                    },
+                    {
+                        "width": "60%",
+                        "source": "nativeTreeImage",
+                        "title": "Photo(s)",
+                        "type": "image",
+                        "displayOptions": {"disableDragDrop": true}
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "nativePlants",
+                "title": "Native plants observed",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Notes: Please include details of the species observed (if known).",
+                "source": "nativePlantsNotes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

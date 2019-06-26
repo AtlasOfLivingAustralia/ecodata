@@ -1,0 +1,324 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "surveyType",
+            "description": "",
+            "constraints": [
+                "S - Survey",
+                "I - Incidental",
+                "M - Sightings over a Month"
+            ]
+        },
+        {
+            "dataType": "date",
+            "name": "surveyStartDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made or the start date of the survey (if it is a month-long survey).",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "description": "The time at which the sighting was made or the start time of the survey if it is not an incidental sighting."
+        },
+        {
+            "dataType": "date",
+            "name": "surveyFinishDate",
+            "dwcAttribute": "eventFinishDate",
+            "description": "The finish date of the survey (if it was a month-long survey)."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The time at which the survey ended (if it is not an incidental sighting)."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the sighing, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "dataType": "boolean",
+            "name": "burnt",
+            "description": "Check the box if the site had been recently burnt"
+        },
+        {
+            "dataType": "text",
+            "name": "wetland",
+            "description": "What was the condition of water in the wetland (if applicable)?",
+            "constraints": [
+                "Not applicable",
+                "Part full",
+                "Full"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cbocObserverCode",
+            "description": "CBOC Observer Code",
+            "constraints": [
+                "S128",
+                "None"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cbocSurveyReferenceNumber",
+            "description": "CBOC survey reference number"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the bird observed. Start typing a common or scientific name. Choose 'Unknown' if you don't know.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals of the species observed.",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "raouNumber",
+                    "description": "The number allocated by the RAOU to represent the species."
+                },
+                {
+                    "dataType": "text",
+                    "name": "abundanceCode",
+                    "description": "Code representing an abundance class for the observes species.",
+                    "constraints": [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                        "E",
+                        "X"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "breedingStatus",
+                    "description": "Code representing the breeding status of the observed species.",
+                    "constraints": [
+                        "NB - nest",
+                        "NY - young",
+                        "DY - juvenile",
+                        "B - breeding"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "habitatCode",
+                    "description": "Code representing the habitat in which the observation was made.",
+                    "constraints": [
+                        "Not provided",
+                        "101 - Tidal Area",
+                        "102 - Mangroves",
+                        "201 - River (width >2m)",
+                        "202 - River (width <2m)",
+                        "210 - Lagoon/Swamp",
+                        "502 - Sandstone Woodland",
+                        "505 - Heathland",
+                        "533 - Tall Smooth Euc. Forest",
+                        "605 - Casuarina Forest",
+                        "906 - Urban Area",
+                        "907 - Parks/Gardens"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "sightingComments",
+                    "dwcAttribute": "comments",
+                    "description": "Notes relevant to a particular sighting."
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesSightings"
+        }
+    ],
+    "modelName": "wolliCk-COBC_observations",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Survey type",
+                            "source": "surveyType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "source": "surveyStartDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "End Date",
+                            "source": "surveyFinishDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "End Time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Burnt",
+                            "source": "burnt",
+                            "type": "boolean"
+                        },
+                        {
+                            "preLabel": "Wetland",
+                            "source": "wetland",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "source": "<h4>CBOC Date Fields<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "CBOC Observer Code",
+                            "source": "cbocObserverCode",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "CBOC Survey Reference Number",
+                            "source": "cbocSurveyReferenceNumber",
+                            "type": "text"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<font-size='0.8em'><i>Select a location (from the drop-down list) where you made the sighting. Change the base map to show the satellite image.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": true
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "columns": [
+                    {
+                        "source": "species",
+                        "title": "Species name",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "source": "individualCount",
+                        "title": "How many individuals did you see?",
+                        "type": "number"
+                    },
+                    {
+                        "source": "raouNumber",
+                        "title": "RAOU No.",
+                        "type": "number"
+                    },
+                    {
+                        "source": "abundanceCode",
+                        "title": "Abundance",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "breedingStatus",
+                        "title": "Breeding",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "habitatCode",
+                        "title": "Habitat Code",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "sightingComments",
+                        "title": "Notes",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "sightingPhoto",
+                        "title": "Sighting photo",
+                        "type": "image"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "speciesSightings",
+                "type": "table",
+                "class": "output-section"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

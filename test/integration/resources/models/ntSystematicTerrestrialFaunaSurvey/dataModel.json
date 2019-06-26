@@ -1,0 +1,416 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "observationCode",
+            "dwcAttribute": "",
+            "description": "",
+            "validate": ""
+        },
+        {
+            "dataType": "date",
+            "name": "surveyStartDate",
+            "dwcAttribute": "",
+            "description": "",
+            "validate": ""
+        },
+        {
+            "dataType": "date",
+            "name": "surveyEndDate",
+            "description": "",
+            "validate": ""
+        },
+        {
+            "dataType": "image",
+            "name": "eventImage",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "eventSamplingProtocol",
+            "description": "",
+            "constraints": [
+                "Small elliot trapping",
+                "Large elliot trapping",
+                "Cage trapping",
+                "Funnel trapping",
+                "Pitfall trapping",
+                "Mist netting",
+                "Turtle trapping",
+                "Sweep netting",
+                "Harp trapping",
+                "Echolocation recorder",
+                "Bird count",
+                "Active (diurnal) search",
+                "Spotlight (nocturnal) search",
+                "Call playback",
+                "Hair tubes",
+                "Scats",
+                "Tracks & Signs",
+                "Incidental"
+            ],
+            "validate": ""
+        },
+        {
+            "dataType": "text",
+            "name": "eventSampleAreaType",
+            "description": "The type of area sampled.",
+            "constraints": [
+                "Quadrat",
+                "Grid",
+                "Transect",
+                "Circle",
+                "Point"
+            ],
+            "validate": ""
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "methodProperty",
+                    "constraints": [
+                        "Site length (m)",
+                        "Site width (m)",
+                        "Site radius (m)",
+                        "Distance between traps (m)",
+                        "Distance between rows (m)",
+                        "Number of devices",
+                        "Number of nights",
+                        "Number of counts",
+                        "Number of searches",
+                        "Observation period (hrs)",
+                        "Device length (m)",
+                        "Device depth (m)",
+                        "Device diameter (cm)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "methodPropertyValue",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "methodPropertyTable"
+        },
+        {
+            "dataType": "text",
+            "name": "deviceType",
+            "description": ""
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "speciesSightingNumber",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "name": "eventDate",
+                    "dwcAttribute": "eventDate",
+                    "description": "The date on which the observation was made.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "recordedBy",
+                    "dwcAttribute": "recordedBy",
+                    "description": "The name of the person who is attributed with making the observation."
+                },
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The name of the bat species observed. Click on the 'i' for information about the selected species.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationQualifier",
+                    "description": "How certain are you that you have correctly identified the species? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "occurrenceRemarks",
+                    "dwcAttribute": "occurrenceRemarks",
+                    "description": "General remarks about the specimen."
+                },
+                {
+                    "dataType": "image",
+                    "name": "specimenImage",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Upload a photo taken of the specimen. This is essential for verification of the record.",
+                    "validate": ""
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesRecordTable"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "sightingNumber",
+                    "dwcAttribute": "",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "sightingProperty",
+                    "description": "",
+                    "constraints": [
+                        "Weight (g)",
+                        "Length (mm)",
+                        "Sex",
+                        "Age",
+                        "Lactating",
+                        "Bait type",
+                        "Trap ID",
+                        "Specimen ID",
+                        "DNA ID",
+                        "Trap death",
+                        "Trap death reason",
+                        "Detection method",
+                        "Search Tag",
+                        "Other (property / value)"
+                    ],
+                    "validate": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "sightingPropertyValue",
+                    "description": "The measured value of the associated property."
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingMeasuresTable"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "terrestrialFaunaSurvey-measuredProperties",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h3>Observation Information<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Observation code",
+                            "source": "observationCode",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Start date",
+                            "source": "surveyStartDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "End date",
+                            "source": "surveyEndDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Location photo",
+                            "source": "eventImage",
+                            "type": "image"
+                        },
+                        {
+                            "preLabel": "Sample method",
+                            "source": "eventSamplingProtocol",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sample type",
+                            "source": "eventSampleAreaType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "<h3>Sample Method & Area<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "width": "60%",
+                                    "source": "methodProperty",
+                                    "title": "Method property",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "40%",
+                                    "source": "methodPropertyValue",
+                                    "title": "Method value",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "source": "methodPropertyTable",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Device type/brand",
+                            "source": "deviceType",
+                            "type": "text"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "includeNotes": true,
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "includeSource": true,
+                        "includeAccuracy": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [
+                {
+                    "source": "<h3>Species Sightings<\/h3>",
+                    "type": "literal"
+                },
+                {
+                    "allowHeaderWrap": "true",
+                    "columns": [
+                        {
+                            "width": "10%",
+                            "source": "speciesSightingNumber",
+                            "title": "Sighting Number",
+                            "type": "number"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "eventDate",
+                            "title": "Date",
+                            "type": "date"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "recordedBy",
+                            "title": "Observer",
+                            "type": "text"
+                        },
+                        {
+                            "width": "15%",
+                            "source": "species",
+                            "title": "Species",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "width": "5%",
+                            "source": "individualCount",
+                            "title": "Count",
+                            "type": "number"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "identificationQualifier",
+                            "title": "ID accuracy",
+                            "type": "selectOne"
+                        },
+                        {
+                            "width": "20%",
+                            "source": "occurrenceRemarks",
+                            "title": "Notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "width": "20%",
+                            "source": "specimenImage",
+                            "title": "Photo",
+                            "type": "image"
+                        }
+                    ],
+                    "userAddedRows": "true",
+                    "source": "speciesRecordTable",
+                    "type": "table"
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [
+                {
+                    "source": "<h3>Sighting Measures<\/h3><i>Select applicable properties and enter measured values as required.<\/i>",
+                    "type": "literal"
+                },
+                {
+                    "allowHeaderWrap": "true",
+                    "columns": [
+                        {
+                            "width": "10%",
+                            "source": "sightingNumber",
+                            "title": "Sighting Number",
+                            "type": "number"
+                        },
+                        {
+                            "width": "40%",
+                            "source": "sightingProperty",
+                            "title": "Property measured/observed",
+                            "type": "selectOne"
+                        },
+                        {
+                            "width": "50%",
+                            "source": "sightingPropertyValue",
+                            "title": "Value of the measured property",
+                            "type": "text"
+                        }
+                    ],
+                    "userAddedRows": "true",
+                    "source": "sightingMeasuresTable",
+                    "type": "table"
+                }
+            ]
+        }
+    ]
+}

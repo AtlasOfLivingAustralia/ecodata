@@ -1,0 +1,42 @@
+{
+  "title": "Collecting or synthesising baseline data",
+  "modelName": "RLP - Baseline data",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberBaselineDataSets",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "text",
+      "name": "comments",
+      "validate": "required,maxSize[500]",
+      "description": "Please list the multiple data sets collected and/or synthesised."
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "source": "numberBaselineDataSets",
+              "preLabel": "Number of baseline data sets collected and/or synthesised",
+              "type": "number",
+              "css":"span4"
+            },
+            {
+              "source": "comments",
+              "preLabel": "Comments",
+              "type": "textarea",
+              "rows": 4,
+              "css":"span8"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}
