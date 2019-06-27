@@ -37,6 +37,11 @@
                 <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus == 'published', click:newDraftForm">New draft form</button>
                 <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus != 'published', click:publishForm">Publish form</button>
                 <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus == 'published', click:unpublishForm">Un-publish form</button>
+                <button type="button" class="btn" data-bind="enable:selectedActivityForm(), click:exportActivity" ><i class="icon-download"></i> Export</button>
+                <span class="upload-btn-wrapper">
+                    <button class="btn" type="button" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus != 'published'"><i class="icon-upload"></i> Import</button>
+                    <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="event: {change:importActivity}"/>
+                </span>
             </div>
         </div>
         <hr/>

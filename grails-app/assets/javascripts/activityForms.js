@@ -144,6 +144,26 @@ var EditActivityFormSectionViewModel = function (availableForms, selectedFormNam
         }
     };
 
+    self.importActivity = function(vm, e) {
+        service.loadFromFile(e).done(function(data) {
+            var selected = self.selectedActivityForm();
+            if (selected.publicationStatus != "unpublished") {
+                alert("You can't import into a published form!");
+                return;
+            }
+            if (selected.name != data.name) {
+                alert("You appear to be importing a different activity form.  Use Edit activity form definitions to create a new form");
+                return;
+            }
+            data.formVersion = selected.formVersion;
+            service.update(data);
+        });
+    };
+
+    self.exportActivity = function() {
+        service.export(self.selectedActivityForm());
+    };
+
     self.clearTemplate = function() {
         $textarea.val('');
         self.modelName("<No form section selected>");
@@ -256,6 +276,26 @@ var ActivityFormService = function(config) {
         }
         download(jsonData, fileName, 'application/json');
     };
+
+    self.loadFromFile = function(e) {
+        if (typeof window.FileReader !== 'function') {
+            alert("The file API isn't supported on this browser yet.");
+            return;
+        };
+        var files = e.target.files;
+        if (!files[0]) {
+            return;
+        }
+        var file = files[0];
+        var fr = new FileReader();
+        var deferred = $.Deferred();
+        fr.onload = function(e) {
+            var data = JSON.parse(e.target.result);
+            deferred.resolve(data);
+        };
+        fr.readAsText(file);
+        return deferred;
+    }
 };
 
 var ActivityFormViewModel = function (act, model) {
@@ -347,9 +387,8 @@ var FormSection = function (formSection, parent) {
     self.optionalQuestionText = ko.observable(formSection.optionalQuestionText);
     self.optional = ko.observable(formSection.optional);
     self.collapsedByDefault = ko.observable(formSection.collapsedByDefault);
-    self.templateName = ko.computed(function() {
-        return formSection.templateName || (parent.name() + ' - ' + self.name());
-    });
+    var templateName = formSection.templateName || (parent.name() + '_' + self.name());
+    self.templateName = ko.observable(templateName);
 
     var defaultTemplate = {
         modelName:self.name,
@@ -389,34 +428,22 @@ var ActivityModelViewModel = function (model, selectedForm, service, config) {
         service.export(self.selectedActivity().toJSON());
     };
 
-    self.importActivity = function() {
+    self.importActivity = function(vm, e) {
+        service.loadFromFile(e).done(function(data) {
+            data.name = "Copy of "+data.name;
+            data.formVersion = 1;
+            _.each(data.sections, function(formSection) {
+                formSection.name = "Copy of "+formSection.name;
+                formSection.templateName = "copyOf"+formSection.templateName;
+            });
 
-        var input, file, fr;
-
-        if (typeof window.FileReader !== 'function') {
-            alert("The file API isn't supported on this browser yet.");
-            return;
-        }
-
-        input = document.getElementById('fileinput');
-        if (!input.files[0]) {
-            alert("Please select a file before clicking 'Import'");
-        }
-        else {
-            file = input.files[0];
-            fr = new FileReader();
-            fr.onload = receivedText;
-            fr.readAsText(file);
-        }
-
-        function receivedText(e) {
-            var data = e.target.result;
-            var activityForm = new ActivityFormViewModel(JSON.parse(data), self);
+            var activityForm = new ActivityFormViewModel(data, self);
 
             self.selectedActivity(activityForm);
-            act.expanded(true);
-            act.editing(true);
-        }
+            activityForm.expanded(true);
+            activityForm.editing(true);
+            self.editingNew = true;
+        });
     };
 
     self.addActivity = function () {

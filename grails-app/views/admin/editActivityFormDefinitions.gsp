@@ -63,11 +63,16 @@
                 </div>
             </li>
         </ul>
-        <span data-bind="click:addActivity, visible:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</span>
-        <span data-bind="click:exportActivity, visible:selectedActivity()" class="clickable"><i class="icon-download"></i> Export</span>
+        <div class="button-bar">
+        <button class="btn" data-bind="click:addActivity, visible:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</button>
 
-%{--        <input type='file' id='fileinput'>--}%
-%{--        <span data-bind="click:importActivity" class="clickable"><i class="icon-upload"></i> Import</span>--}%
+        <span class="upload-btn-wrapper">
+            <button type="button" class="btn" data-bind="visible:!selectedActivity()"><i class="icon-upload"></i> Import</button>
+            <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="event: {change:importActivity}"/>
+        </span>
+        <button type="button" data-bind="click:exportActivity, visible:selectedActivity()" class="btn"><i class="icon-download"></i> Export</button>
+        </div>
+
     </div>
 
 </div>
@@ -171,7 +176,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">Template name (backwards compatibility only): </label>
+                <label class="control-label">Template name (backwards compatibility only - MUST BE UNIQUE): </label>
                 <div class="controls">
                     <input type="text" class="input-xxlarge" data-bind="value:templateName">
                 </div>
@@ -184,29 +189,6 @@
 
 </script>
 
-<script id="viewOutputTmpl" type="text/html">
-<div>Name: <span data-bind="text:name"></span></div>
-
-<div>Title: <span data-bind="text:title"></span></div>
-
-<div>Template: <span data-bind="text:template"></span></div>
-
-<button data-bind="click:edit" type="button" class="btn btn-mini pull-right">Edit</button>
-</script>
-
-<script id="editOutputTmpl" type="text/html">
-
-<div style="margin-top:4px"><span class="span3">Name:</span> <input type="text" class="input pull-right"
-                                                                    data-bind="value:name"></div>
-
-<div style="margin-top:4px"><span class="span3">Title:</span> <input type="text" class="input pull-right"
-                                                                     data-bind="value:title"></div>
-
-<div class="clearfix"><span class="span3">Template:</span> <input type="text" class="input pull-right"
-                                                                  data-bind="value:template"></div>
-</div>
-<button data-bind="click:done" type="button" class="btn btn-mini pull-right">Done</button>
-</script>
 
 <asset:script>
     $(function(){
