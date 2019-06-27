@@ -20,16 +20,6 @@ class MetadataController {
         render metadataService.activitiesList(params.program, params.subprogram) as JSON
     }
 
-    @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
-    def updateActivitiesModel() {
-        def model = request.JSON
-        //log.debug "Model=${model.getClass()}"
-        metadataService.updateActivitiesModel(model.model.toString(4))
-        def result = [model: metadataService.activitiesModel()]
-        render result as JSON
-    }
-
     def programsModel() {
         render metadataService.programsModel()
     }
