@@ -68,7 +68,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":asset-pipeline:2.14.1.1"
+        compile ":asset-pipeline:1.9.9" // 2.13 has issues with java7, possibly there is a middle ground between 1.9.9 and 2.13
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:2.13.1"
