@@ -63,8 +63,11 @@
                 </div>
             </li>
         </ul>
-        <span data-bind="click:addActivity, visible:!selectedActivity()" class="clickable"><i
-                class="icon-plus"></i> Add new</span>
+        <span data-bind="click:addActivity, visible:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</span>
+        <span data-bind="click:exportActivity, visible:selectedActivity()" class="clickable"><i class="icon-download"></i> Export</span>
+
+%{--        <input type='file' id='fileinput'>--}%
+%{--        <span data-bind="click:importActivity" class="clickable"><i class="icon-upload"></i> Import</span>--}%
     </div>
 
 </div>

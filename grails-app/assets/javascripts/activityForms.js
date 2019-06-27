@@ -240,7 +240,22 @@ var ActivityFormService = function(config) {
         return $.getJSON(config.findUsersOfFormUrl, {name:activityForm.name, formVersion:activityForm.formVersion}).fail(function() {
             alert("An error occurred loading the selected form");
         });
-    }
+    };
+
+
+    self.export = function(activityForm) {
+
+        var jsonData = vkbeautify.json(activityForm, 2);
+        var fileName = activityForm.name + " v"+activityForm.formVersion+".json"
+        function download(content, fileName, contentType) {
+            var a = document.createElement("a");
+            var file = new Blob([content], {type: contentType});
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+        }
+        download(jsonData, fileName, 'application/json');
+    };
 };
 
 var ActivityFormViewModel = function (act, model) {
@@ -335,12 +350,14 @@ var FormSection = function (formSection, parent) {
     self.templateName = ko.computed(function() {
         return formSection.templateName || (parent.name() + ' - ' + self.name());
     });
-    self.template = {
+
+    var defaultTemplate = {
         modelName:self.name,
         dataModel:[],
         viewModel:[],
         title:self.name
     };
+    self.template = formSection.template || defaultTemplate;
 
     self.optional.subscribe(function (val) {
         if (!val) {
@@ -367,6 +384,41 @@ var ActivityModelViewModel = function (model, selectedForm, service, config) {
 
     self.selectedActivity = ko.observable();
 
+
+    self.exportActivity = function() {
+        service.export(self.selectedActivity().toJSON());
+    };
+
+    self.importActivity = function() {
+
+        var input, file, fr;
+
+        if (typeof window.FileReader !== 'function') {
+            alert("The file API isn't supported on this browser yet.");
+            return;
+        }
+
+        input = document.getElementById('fileinput');
+        if (!input.files[0]) {
+            alert("Please select a file before clicking 'Import'");
+        }
+        else {
+            file = input.files[0];
+            fr = new FileReader();
+            fr.onload = receivedText;
+            fr.readAsText(file);
+        }
+
+        function receivedText(e) {
+            var data = e.target.result;
+            var activityForm = new ActivityFormViewModel(JSON.parse(data), self);
+
+            self.selectedActivity(activityForm);
+            act.expanded(true);
+            act.editing(true);
+        }
+    };
+
     self.addActivity = function () {
         self.editingNew = true;
         var act = new ActivityFormViewModel({name: 'New activity', type: 'Activity'}, self);
@@ -387,7 +439,6 @@ var ActivityModelViewModel = function (model, selectedForm, service, config) {
         else {
             service.update(activityForm);
         }
-
     };
 
 };
