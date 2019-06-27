@@ -8,7 +8,9 @@
         var fcConfig = {
             activityFormUpdateUrl: "${createLink(controller:'activityForm', action:'update')}",
             activityFormCreateUrl: "${createLink(controller:'activityForm', action:'create')}",
-            getActivityFormUrl: "${createLink(action:'findActivityForm')}"
+            getActivityFormUrl: "${createLink(action:'findActivityForm')}",
+            reloadUrl:"${createLink(controller:'admin', action:'activityModel')}",
+            findUsersOfFormUrl:"${createLink(controller:'activityForm', action:'findUsesOfForm')}"
         };
     </script>
 
@@ -22,17 +24,30 @@
 </content>
 
 <div class="row-fluid form-selection" data-bind="with:selectionModel">
-    <div class="span6">
-        <label>Activity form: <select class="span12" name="formSelector"
-                                      data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select>
-        </label>
+
+    <div class="row-fluid">
+        <div class="alert alert-danger" data-bind="visible:warning()">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> <span data-bind="text:warning"></span>
+        </div>
     </div>
 
-    <div class="span6">
-        <label>Version:<br/> <select class="span3" name="versionSelector"
-                                     data-bind="options:activityFormVersions, value:selectedFormVersion"></select>
-        </label>
+    <div class="row-fluid">
+        <div class="span9">
+            <label>Activity form: <select class="span12" name="formSelector"
+                                          data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select>
+            </label>
+        </div>
+
+        <div class="span3">
+            <label>Version:<br/> <select class="span3" name="versionSelector"
+                                         data-bind="options:activityFormVersions, value:selectedFormVersion"></select>
+            </label>
+        </div>
     </div>
+
+
+
 </div>
 
 <div class="row-fluid clearfix">
@@ -195,7 +210,8 @@
 
         var forms = JSON.parse('${(availableActivities as grails.converters.JSON).toString()}');
         var service = new ActivityFormService(fcConfig);
-        var viewModel = new ActivityModelViewModel(forms, service);
+        var selectedForm = "${params.form}";
+        var viewModel = new ActivityModelViewModel(forms, selectedForm, service, fcConfig);
         ko.applyBindings(viewModel);
         $('.form-selection select').select2();
     });

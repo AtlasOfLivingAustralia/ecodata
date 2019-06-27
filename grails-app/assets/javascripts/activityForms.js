@@ -5,7 +5,7 @@ var $textarea = $('#outputModelEdit');
  * @param availableForms a list of form names and versions for selection.
  * @param service used to communitcate with ecodata
  */
-var EditActivityFormSectionViewModel = function (availableForms, service) {
+var EditActivityFormSectionViewModel = function (availableForms, selectedFormName, service, config) {
     var self = this;
 
     this.modelName = ko.observable('<No form section selected>');
@@ -21,6 +21,7 @@ var EditActivityFormSectionViewModel = function (availableForms, service) {
     this.hasMessage = ko.computed(function () {
         return self.message() !== ''
     });
+    this.warning = ko.observable('');
 
     this.save = function () {
 
@@ -90,7 +91,19 @@ var EditActivityFormSectionViewModel = function (availableForms, service) {
                 if (activityForm.sections.length == 1) {
                     self.selectedFormSection(activityForm.sections[0]);
                 }
+
+                service.findUsersOfForm(activityForm).done(function(result) {
+                    if (result && result.count > 0) {
+                        self.warning("There are "+result.count+" activities with data for this version of the form");
+                    }
+                    else {
+                        self.warning("");
+                    }
+                });
             });
+        }
+        else {
+            self.warning("");
         }
     };
 
@@ -108,7 +121,7 @@ var EditActivityFormSectionViewModel = function (availableForms, service) {
         var activityForm = self.selectedActivityForm();
         if (activityForm && activityForm.publicationStatus == 'published') {
             service.newDraft(activityForm).done(function(form) {
-                document.location.reload();
+                document.location.href = config.reloadUrl+"?form="+encodeURIComponent(activityForm.name);
             });
         }
     };
@@ -117,7 +130,7 @@ var EditActivityFormSectionViewModel = function (availableForms, service) {
         var activityForm = self.selectedActivityForm();
         if (activityForm && activityForm.publicationStatus != 'published') {
             service.publish(activityForm).done(function(form) {
-                document.location.reload();
+                document.location.href = config.reloadUrl+"?form="+encodeURIComponent(activityForm.name);
             });
         }
     };
@@ -126,7 +139,7 @@ var EditActivityFormSectionViewModel = function (availableForms, service) {
         var activityForm = self.selectedActivityForm();
         if (activityForm && activityForm.publicationStatus == 'published') {
             service.unpublish(activityForm).done(function(form) {
-                document.location.reload();
+                document.location.href = config.reloadUrl+"?form="+encodeURIComponent(activityForm.name);
             });
         }
     };
@@ -134,6 +147,15 @@ var EditActivityFormSectionViewModel = function (availableForms, service) {
     self.clearTemplate = function() {
         $textarea.val('');
         self.modelName("<No form section selected>");
+    };
+
+    if (selectedFormName) {
+        var toSelect = _.find(self.activityForms(), function(form) {
+            return form.name == selectedFormName;
+        });
+        if (toSelect) {
+            self.selectedFormName(toSelect);
+        }
     }
 };
 
@@ -152,7 +174,7 @@ var ActivityFormService = function(config) {
                 alert(data.message);
             } else {
                 $textarea.html(vkbeautify.json(data, 2));
-                document.location.reload();
+                document.location.href = config.reloadUrl+"?form="+encodeURIComponent(activityForm.name);
             }
 
         }).fail(function() {
@@ -213,6 +235,12 @@ var ActivityFormService = function(config) {
             alert("Draft creation failed");
         });
     };
+
+    self.findUsersOfForm = function(activityForm) {
+        return $.getJSON(config.findUsersOfFormUrl, {name:activityForm.name, formVersion:activityForm.formVersion}).fail(function() {
+            alert("An error occurred loading the selected form");
+        });
+    }
 };
 
 var ActivityFormViewModel = function (act, model) {
@@ -322,10 +350,10 @@ var FormSection = function (formSection, parent) {
 };
 
 
-var ActivityModelViewModel = function (model, service) {
+var ActivityModelViewModel = function (model, selectedForm, service, config) {
     var self = this;
 
-    self.selectionModel = new EditActivityFormSectionViewModel(model, service);
+    self.selectionModel = new EditActivityFormSectionViewModel(model, selectedForm, service, config);
     self.editingNew = false;
     self.selectionModel.selectedActivityForm.subscribe(function(form) {
         if (form) {

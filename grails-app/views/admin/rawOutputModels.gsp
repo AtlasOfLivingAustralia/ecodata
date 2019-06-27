@@ -10,7 +10,9 @@
                 getActivityFormUrl: "${createLink(action:'findActivityForm')}",
                 newDraftFormUrl:"${createLink(controller:'activityForm', action:'newDraftForm')}",
                 publishActivityFormUrl:"${createLink(controller:'activityForm', action:'publish')}",
-                unpublishActivityFormUrl:"${createLink(controller:'activityForm', action:'unpublish')}"
+                unpublishActivityFormUrl:"${createLink(controller:'activityForm', action:'unpublish')}",
+                findUsersOfFormUrl:"${createLink(controller:'activityForm', action:'findUsesOfForm')}",
+                reloadUrl:"${createLink(controller:'admin', action:'rawOutputModels')}"
             };
         </script>
 
@@ -55,6 +57,12 @@
             </div>
         </div>
         <div class="row-fluid">
+            <div class="alert alert-danger" data-bind="visible:warning()">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Warning!</strong> <span data-bind="text:warning"></span>
+            </div>
+        </div>
+        <div class="row-fluid">
             <div class="span12">
                 <textarea id="outputModelEdit" style="width:97%;min-height:600px;"></textarea>
             </div>
@@ -67,8 +75,9 @@
     $(function(){
 
         var forms = JSON.parse('${(availableActivities as grails.converters.JSON).toString()}');
+        var selectedForm = "${params.form}";
         var service = new ActivityFormService(fcConfig);
-        var viewModel = new EditActivityFormSectionViewModel(forms, service);
+        var viewModel = new EditActivityFormSectionViewModel(forms, selectedForm, service, fcConfig);
         ko.applyBindings(viewModel);
 
         $('select').select2();

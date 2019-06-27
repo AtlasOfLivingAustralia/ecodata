@@ -85,4 +85,11 @@ class ActivityFormController {
     def unpublish(String name, Integer formVersion) {
         respond activityFormService.unpublish(name, formVersion)
     }
+
+    @AlaSecured("ROLE_ADMIN")
+    def findUsesOfForm(String name, Integer formVersion) {
+        int count = Activity.countByTypeAndFormVersionAndStatusNotEqual(name, formVersion, Status.DELETED)
+        Map result = [count:count]
+        respond ([status:200], result)
+    }
 }
