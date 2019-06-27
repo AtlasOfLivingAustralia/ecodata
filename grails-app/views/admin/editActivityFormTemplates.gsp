@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta name="layout" content="adminLayout"/>
-        <title>Output models | Admin | Data capture | Atlas of Living Australia</title>
+        <title>Edit Form Templates</title>
         <script>
             var fcConfig = {
                 activityFormUpdateUrl:"${createLink(controller:'activityForm', action:'update')}",
@@ -12,7 +12,7 @@
                 publishActivityFormUrl:"${createLink(controller:'activityForm', action:'publish')}",
                 unpublishActivityFormUrl:"${createLink(controller:'activityForm', action:'unpublish')}",
                 findUsersOfFormUrl:"${createLink(controller:'activityForm', action:'findUsesOfForm')}",
-                reloadUrl:"${createLink(controller:'admin', action:'rawOutputModels')}"
+                reloadUrl:"${createLink(controller:'admin', action:'editActivityFormTemplates')}"
             };
         </script>
 

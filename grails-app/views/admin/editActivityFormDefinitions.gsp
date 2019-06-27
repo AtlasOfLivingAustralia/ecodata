@@ -3,13 +3,13 @@
 <html>
 <head>
     <meta name="layout" content="adminLayout"/>
-    <title>Activity model - Admin - Data capture - Atlas of Living Australia</title>
+    <title>Edit Activity Forms</title>
     <script>
         var fcConfig = {
             activityFormUpdateUrl: "${createLink(controller:'activityForm', action:'update')}",
             activityFormCreateUrl: "${createLink(controller:'activityForm', action:'create')}",
             getActivityFormUrl: "${createLink(action:'findActivityForm')}",
-            reloadUrl:"${createLink(controller:'admin', action:'activityModel')}",
+            reloadUrl:"${createLink(controller:'admin', action:'editActivityFormDefinitions')}",
             findUsersOfFormUrl:"${createLink(controller:'activityForm', action:'findUsesOfForm')}"
         };
     </script>
