@@ -497,6 +497,7 @@ ul.sortableList {
     border-top: 1px solid grey;
     text-align: left;
     padding-left: 4px;
+    padding-top: 10px;
 }
 
 .sortableList input.name-edit {
@@ -1096,4 +1097,15 @@ textarea.species-settings {
     overflow-y: auto;
 }
 
+.sortableList > li .controls {
+    text-align: start;
+}
+
+.activityList .form-horizontal .control-group {
+    margin-bottom: 10px;
+}
+
+.output-drop-target .form-horizontal {
+    padding-top: 10px;
+}
 

@@ -551,7 +551,7 @@ class AdminController {
 
     @AlaSecured("ROLE_ADMIN")
     def activityModel() {
-        [activitiesModel: metadataService.activitiesModel()]
+        def model = [availableActivities:activityFormService.activityVersionsByName()]
     }
 
     @AlaSecured("ROLE_ADMIN")

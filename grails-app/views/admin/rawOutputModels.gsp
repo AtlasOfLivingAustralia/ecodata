@@ -17,7 +17,7 @@
     </head>
 
     <body>
-        <content tag="pageTitle">Output models</content>
+        <content tag="pageTitle">Edit form templates</content>
         <content tag="adminButtonBar">
             <button type="button" id="btnSave" data-bind="click:save" class="btn btn-success">Save</button>
             <button type="button" data-bind="click:revert" class="btn">Cancel</button>
@@ -37,6 +37,7 @@
                 <button type="button" class="btn" data-bind="enable:selectedActivityForm() && selectedActivityForm().publicationStatus == 'published', click:unpublishForm">Un-publish form</button>
             </div>
         </div>
+        <hr/>
         <div>
             <div class="span6">
                 <label>Form section: <select class="span12" name="outputSelector" data-bind="options:selectedActivityForm()?selectedActivityForm().sections:[], optionsText:'name', optionsCaption:'Select an section to edit', value:selectedFormSection"></select></label>
@@ -66,7 +67,8 @@
     $(function(){
 
         var forms = JSON.parse('${(availableActivities as grails.converters.JSON).toString()}');
-        var viewModel = new EditActivityFormSectionViewModel(forms, fcConfig);
+        var service = new ActivityFormService(fcConfig);
+        var viewModel = new EditActivityFormSectionViewModel(forms, service);
         ko.applyBindings(viewModel);
 
         $('select').select2();
