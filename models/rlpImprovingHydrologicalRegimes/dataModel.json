@@ -22,52 +22,77 @@
                     "name": "improvedSites"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.areaHa(improvedSites)"
                     },
                     "dataType": "number",
-                    "name": "areaCoveringRegimeChangeHa",
-                    "validate": [
+                    "name": "calculatedAreaCoveringRegimeChangeHa",
+                    "units": "ha"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.lengthKm(improvedSites)"
+                    },
+                    "dataType": "number",
+                    "name": "calculatedLengthOfRegimeChangeKm",
+                    "units": "km"
+                },
+                {
+                    "dataType": "document",
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
+                    "behaviour": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(improvedSites)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(improvedSites)*1.1"
-                            }
+                            "condition": "not (within(calculatedAreaCoveringRegimeChangeHa, areaCoveringRegimeChangeHa, 0.1) and within(calculatedLengthOfRegimeChangeKm, lengthOfRegimeChangeKm, 0.1))",
+                            "type": "visible"
                         }
                     ]
                 },
                 {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
+                    "constraints": [
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(calculatedAreaCoveringRegimeChangeHa, areaCoveringRegimeChangeHa, 0.1) and within(calculatedLengthOfRegimeChangeKm, lengthOfRegimeChangeKm, 0.1))",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
+                        }]
+                },
+                {
                     "defaultValue": {
                         "type": "computed",
-                        "expression": "$geom.lengthKm(improvedSites)"
+                        "expression": "calculatedAreaCoveringRegimeChangeHa"
+                    },
+                    "dataType": "number",
+                    "name": "areaCoveringRegimeChangeHa",
+                    "validate": "min[0]",
+                    "units": "ha"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedLengthOfRegimeChangeKm"
                     },
                     "dataType": "number",
                     "name": "lengthOfRegimeChangeKm",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(improvedSites)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(improvedSites)*1.1"
-                            }
-                        }
-                    ]
+                    "validate": "min[0]",
+                    "units": "km"
                 },
                 {
                     "dataType": "text",
@@ -108,22 +133,7 @@
                     "dataType": "number",
                     "name": "areaOfCatchmentManagedHa",
                     "description": "Area improved by hydrological regime change",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesOfCatchmentManaged)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesOfCatchmentManaged)*1.1"
-                            }
-                        }
-                    ]
+                    "validate": "min[0]"
                 }
             ],
             "dataType": "list",
@@ -142,7 +152,7 @@
             {
                 "columns": [
                     {
-                        "width": "10%",
+                        "width": "15%",
                         "source": "installedOrMaintained",
                         "type": "selectOne",
                         "title": "Installed or maintained?"
@@ -154,52 +164,166 @@
                         "type": "number"
                     },
                     {
-                        "width": "5%",
-                        "source": "improvedSites",
-                        "type": "feature",
+                        "width": "10%",
+
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "feature",
+                                "source": "improvedSites"
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "number",
+                                        "source": "calculatedAreaCoveringRegimeChangeHa",
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        },
+                                        "readonly": true
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "number",
+                                        "source": "calculatedLengthOfRegimeChangeKm",
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        },
+                                        "readonly": true
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Please attach mapping details",
+                                        "source": "extraMappingDetails",
+                                        "type": "document"
+                                    }
+                                ]
+                            }
+
+
+                        ],
+
                         "title": "Site/s where hydrological regimes are being improved"
                     },
                     {
-                        "width": "6%",
-                        "source": "areaCoveringRegimeChangeHa",
-                        "type": "number",
-                        "title": "Area (ha) covering the hydrological regime change"
+                        "width": "10%",
+                        "title": "Actual area (ha) / length (km) covering the hydrological regime change",
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "areaCoveringRegimeChangeHa",
+                                        "type": "number",
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "lengthOfRegimeChangeKm",
+                                        "type": "number",
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for actual being different to mapped amount",
+                                        "source": "mappingNotAlignedReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "mappingNotAlignedComments",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }
+
+                                ]
+                            }
+                        ]
                     },
+
                     {
-                        "width": "6%",
-                        "source": "lengthOfRegimeChangeKm",
-                        "type": "number",
-                        "title": "Length (km) covering the hydrological regime change"
-                    },
-                    {
-                        "width": "15%",
-                        "source": "treatmentType",
+                        "width": "25%",
+
                         "title": "Type of treatment implemented to improve water management",
-                        "type": "select2"
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "source": "treatmentType",
+                                    "type": "select2"
+                                }]
+                            },
+                            {
+                                "source": "otherTreatmentType",
+                                "placeholder": "Type of treatment implemented (if Other)",
+                                "type": "text"
+                            }
+                        ]
+
                     },
+
                     {
-                        "width": "20%",
-                        "source": "otherTreatmentType",
-                        "title": "Type of treatment implemented (if Other)",
-                        "type": "text"
-                    },
-                    {
-                        "width": "21%",
+                        "width": "25%",
                         "source": "treatmentObjective",
                         "title": "Hydrological treatment objective",
                         "type": "textarea"
                     },
                     {
-                        "dataType": "feature",
-                        "width": "5%",
-                        "source": "sitesOfCatchmentManaged",
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "feature",
+                                        "source": "sitesOfCatchmentManaged"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "areaOfCatchmentManagedHa",
+                                        "type": "number",
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    }
+                                ]
+                            }
+
+                        ],
+                        "width": "10%",
                         "title": "Site/s of catchment being managed as a result of this management action"
-                    },
-                    {
-                        "width": "6%",
-                        "source": "areaOfCatchmentManagedHa",
-                        "title": "Area (ha) of catchment being managed as a result of this management action",
-                        "type": "number"
                     }
                 ],
                 "userAddedRows": true,
