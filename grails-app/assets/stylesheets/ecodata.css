@@ -8,7 +8,7 @@
  *= require bootstrap-datepicker/css/datepicker
  *= require bootstrap-combobox/bootstrap-combobox
  *= require select2/4.0.3/css/select2.css
- *-
+ *= require jsoneditor/jsoneditor.css
  */
 
 /* CSS for the API documentation */
@@ -1121,4 +1121,8 @@ textarea.species-settings {
     left: 0;
     top: 0;
     opacity: 0;
+}
+
+#jsoneditor {
+    height: 800px;
 }

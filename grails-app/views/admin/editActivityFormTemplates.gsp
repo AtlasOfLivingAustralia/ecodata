@@ -24,13 +24,22 @@
             <button type="button" id="btnSave" data-bind="click:save" class="btn btn-success">Save</button>
             <button type="button" data-bind="click:revert" class="btn">Cancel</button>
         </content>
-        <div class="row-fluid form-selection">
-            <div class="span6">
-                <label>Activity form: <select class="span12" name="formSelector" data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select></label>
+        <div class="form-selection" data-bind="with:selectionModel">
+            <div class="row-fluid">
+                <div class="alert alert-danger" style="display:none" data-bind="visible:warning()">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Warning!</strong> <span data-bind="text:warning"></span>
+                </div>
             </div>
-            <div class="span6">
-                <label>Version:<br/> <select class="span3" name="versionSelector" data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
+            <div class="row-fluid">
+                <div class="span10">
+                    <label>Activity form: <select style="width:100%" name="formSelector" data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select></label>
+                </div>
+                <div class="span2">
+                    <label>Version:<br/> <select style="width:100%" name="versionSelector" data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
+                </div>
             </div>
+
         </div>
         <div class="row-fluid">
             <div class="span12">
@@ -62,14 +71,9 @@
             </div>
         </div>
         <div class="row-fluid">
-            <div class="alert alert-danger" data-bind="visible:warning()">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Warning!</strong> <span data-bind="text:warning"></span>
-            </div>
-        </div>
-        <div class="row-fluid">
             <div class="span12">
-                <textarea id="outputModelEdit" style="width:97%;min-height:600px;"></textarea>
+                <textarea id="outputModelEdit" style="display:none; width:97%;min-height:600px;"></textarea>
+                <div id="jsoneditor"></div>
             </div>
         </div>
 
@@ -82,7 +86,7 @@
         var forms = JSON.parse('${(availableActivities as grails.converters.JSON).toString()}');
         var selectedForm = "${params.form}";
         var service = new ActivityFormService(fcConfig);
-        var viewModel = new EditActivityFormSectionViewModel(forms, selectedForm, service, fcConfig);
+        var viewModel = new EditActivityTemplatesViewModel(forms, selectedForm, service, fcConfig);
         ko.applyBindings(viewModel);
 
         $('select').select2();
