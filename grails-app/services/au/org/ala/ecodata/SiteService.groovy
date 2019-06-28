@@ -736,15 +736,8 @@ class SiteService {
             DBObject site = results.next()
             try {
                 if (site.extent?.geometry) {
-
-                    if (site.extent?.geometry.aream2 == null) {
-                        populateLocationMetadataForSite(site)
-                    }
-                    else {
                         Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site, fids)
                         site.extent.geometry.putAll(geoFacets)
-                    }
-
                 }
                 else {
                     log.warn( "No geometry for site "+site)
