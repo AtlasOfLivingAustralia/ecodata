@@ -1121,6 +1121,8 @@ textarea.species-settings {
     left: 0;
     top: 0;
     opacity: 0;
+    width: 85px;
+
 }
 
 #jsoneditor {

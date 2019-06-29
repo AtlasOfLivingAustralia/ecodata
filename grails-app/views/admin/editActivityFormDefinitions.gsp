@@ -55,13 +55,13 @@
             </li>
         </ul>
         <div class="button-bar">
-        <button class="btn" data-bind="click:addActivity, visible:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</button>
+        <button class="btn" data-bind="click:addActivity, enable:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</button>
 
         <span class="upload-btn-wrapper">
-            <button type="button" class="btn" data-bind="visible:!selectedActivity()"><i class="icon-upload"></i> Import</button>
-            <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="event: {change:importActivity}"/>
+            <button type="button" class="btn" data-bind="enable:!selectedActivity()"><i class="icon-upload"></i> Import</button>
+            <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="enable:!selectedActivity(), event: {change:importActivity}"/>
         </span>
-        <button type="button" data-bind="click:exportActivity, visible:selectedActivity()" class="btn"><i class="icon-download"></i> Export</button>
+        <button type="button" data-bind="click:exportActivity, enable:selectedActivity()" class="btn"><i class="icon-download"></i> Export</button>
         </div>
 
     </div>
