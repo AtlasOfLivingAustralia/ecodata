@@ -6,16 +6,34 @@
  */
 var EditActivityTemplatesViewModel = function(availableForms, selectedForm, service, config) {
     var self = this;
-    var options = {
-        mode: 'code',
-        modes: ['code', 'tree']
-    };
-    var editorPane = document.getElementById("jsoneditor");
 
     var editor = null;
+    function nodeName(path, type, size) {
+        var result = editor.getNodesByRange(path);
+        var value = result[0].value;
+        var resultPath = result[0].path;
+        if (resultPath[0] == "dataModel" && resultPath.length > 1) {
+            return value.name+" ("+value.dataType+")";
+        }
+        else if (resultPath[0] == "viewModel" && resultPath.length > 1) {
+            var name = "("+value.type+")";
+            if (value.source) {
+                name += " source = "+value.source;
+            }
+            return name;
+        }
+    }
+    var editorPane = document.getElementById("jsoneditor");
+
     if (editorPane) {
+        var options = {
+            mode: 'code',
+            modes: ['code', 'tree'],
+            onNodeName: nodeName
+        };
         editor = new JSONEditor(editorPane, options);
     }
+
     this.modelName = ko.observable('<No form section selected>');
 
     self.selectionModel = new EditActivityFormSectionViewModel(availableForms, selectedForm, service, config);
