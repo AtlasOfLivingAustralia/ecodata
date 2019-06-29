@@ -23,30 +23,21 @@
     <button type="button" data-bind="click:revert" class="btn">Cancel</button>
 </content>
 
-<div class="row-fluid form-selection" data-bind="with:selectionModel">
-
+<div class="form-selection" data-bind="with:selectionModel">
     <div class="row-fluid">
-        <div class="alert alert-danger" data-bind="visible:warning()">
+        <div class="alert alert-danger" style="display:none" data-bind="visible:warning()">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong>Warning!</strong> <span data-bind="text:warning"></span>
         </div>
     </div>
-
     <div class="row-fluid">
-        <div class="span9">
-            <label>Activity form: <select class="span12" name="formSelector"
-                                          data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select>
-            </label>
+        <div class="span10">
+            <label>Activity form: <select style="width:100%" name="formSelector" data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select></label>
         </div>
-
-        <div class="span3">
-            <label>Version:<br/> <select class="span3" name="versionSelector"
-                                         data-bind="options:activityFormVersions, value:selectedFormVersion"></select>
-            </label>
+        <div class="span2">
+            <label>Version:<br/> <select style="width:100%" name="versionSelector" data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
         </div>
     </div>
-
-
 
 </div>
 

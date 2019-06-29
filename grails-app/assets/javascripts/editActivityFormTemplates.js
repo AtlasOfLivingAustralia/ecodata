@@ -21,10 +21,19 @@ var EditActivityTemplatesViewModel = function(availableForms, selectedForm, serv
     self.selectionModel = new EditActivityFormSectionViewModel(availableForms, selectedForm, service, config);
     self.selectedActivityForm = self.selectionModel.selectedActivityForm;
 
-    self.selectedActivityForm.subscribe(function(activityForm) {
-        if (activityForm && activityForm.sections.length == 1) {
-            self.selectedFormSection(activityForm.sections[0]);
+    self.availableFormSections = ko.observableArray();
+
+    self.selectionModel.selectedActivityForm.subscribe(function(activityForm) {
+        if (activityForm) {
+            self.availableFormSections(activityForm.sections || []);
+            if (activityForm.sections.length == 1) {
+                self.selectedFormSection(activityForm.sections[0]);
+            }
         }
+        else {
+            self.availableFormSections([]);
+        }
+
     });
 
     this.selectedFormSection = ko.observable();

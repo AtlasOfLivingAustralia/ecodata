@@ -56,7 +56,7 @@
         <hr/>
         <div>
             <div class="span6">
-                <label>Form section: <select class="span12" name="outputSelector" data-bind="options:selectedActivityForm()?selectedActivityForm().sections:[], optionsText:'name', optionsCaption:'Select an section to edit', value:selectedFormSection"></select></label>
+                <label>Form section: <select class="span12" name="outputSelector" data-bind="options:availableFormSections, optionsText:'name', optionsCaption:'Select an section to edit', value:selectedFormSection"></select></label>
             </div>
 
         </div>
