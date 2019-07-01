@@ -1,7 +1,4 @@
 package au.org.ala.ecodata
-
-import au.org.ala.ecodata.data_migration.ActivityFormMigrator
-
 /**
  * Processes requests related to activity forms.
  */
