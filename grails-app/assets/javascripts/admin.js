@@ -8,5 +8,6 @@
 //= require editActivityFormTemplates
 //= require editActivityForms
 //= require programModel
+//= require score
 
 

@@ -1128,3 +1128,8 @@ textarea.species-settings {
 #jsoneditor {
     height: 800px;
 }
+
+#score-configuration {
+    width: 100%;
+    height: 1000px;
+}
