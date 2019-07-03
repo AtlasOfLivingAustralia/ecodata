@@ -550,8 +550,8 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
-    def activityModel() {
-        [activitiesModel: metadataService.activitiesModel()]
+    def editActivityFormDefinitions() {
+        def model = [availableActivities:activityFormService.activityVersionsByName()]
     }
 
     @AlaSecured("ROLE_ADMIN")
@@ -559,16 +559,6 @@ class AdminController {
         List activityTypesList = metadataService.activitiesList().collect {key, value -> [name:key, list:value]}.sort{it.name}
 
         [programsModel: metadataService.programsModel(), activityTypes:activityTypesList]
-    }
-
-    @AlaSecured("ROLE_ADMIN")
-    def updateActivitiesModel() {
-        def model = request.JSON
-        log.debug model
-        metadataService.updateActivitiesModel(model)
-        flash.message = "Activity model updated."
-        def result = model
-        render result
     }
 
     @AlaSecured("ROLE_ADMIN")
@@ -582,16 +572,7 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
-    def outputModels() {
-        def model = [activitiesModel: metadataService.activitiesModel()]
-        if (params.open) {
-            model.open = params.open
-        }
-        model
-    }
-
-    @AlaSecured("ROLE_ADMIN")
-    def rawOutputModels() {
+    def editActivityFormTemplates() {
         def model = [availableActivities:activityFormService.activityVersionsByName()]
         if (params.open) {
             model.open = params.open

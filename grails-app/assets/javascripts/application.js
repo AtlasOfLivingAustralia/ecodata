@@ -1,5 +1,5 @@
-//= require jquery/jquery-1.11.1.min
-//= require jquery-migrate-1.2.1.min
+//= require jquery/3.3.1/jquery-3.3.1.min
+//= require jquery-migrate/1.4.1/jquery-migrate-1.4.1
 //= require jquery.autocomplete
 //= require jquery-ui/jquery-ui-1.9.2.custom.min
 //= require html5

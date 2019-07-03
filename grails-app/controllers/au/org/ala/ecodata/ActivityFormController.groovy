@@ -42,6 +42,20 @@ class ActivityFormController {
         respond form
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def create() {
+        // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
+        // "null" to be saved in templates (it will happen in any embedded Maps).
+        def formData = new JsonSlurper().parse(request.inputStream)
+        ActivityForm form = new ActivityForm(name:formData.name, formVersion: 1)
+        if (form) {
+            bindData(form, formData, [include:ActivityForm.bindingProperties])
+            activityFormService.save(form)
+        }
+
+        respond form
+    }
+
     /**
      * Increments the current form version to create a new draft version.
      * @param name the name of the activity form.
@@ -70,5 +84,12 @@ class ActivityFormController {
     @AlaSecured("ROLE_ADMIN")
     def unpublish(String name, Integer formVersion) {
         respond activityFormService.unpublish(name, formVersion)
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def findUsesOfForm(String name, Integer formVersion) {
+        int count = Activity.countByTypeAndFormVersionAndStatusNotEqual(name, formVersion, Status.DELETED)
+        Map result = [count:count]
+        respond ([status:200], result)
     }
 }

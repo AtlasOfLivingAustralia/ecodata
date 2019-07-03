@@ -8,7 +8,7 @@
  *= require bootstrap-datepicker/css/datepicker
  *= require bootstrap-combobox/bootstrap-combobox
  *= require select2/4.0.3/css/select2.css
- *-
+ *= require jsoneditor/jsoneditor.css
  */
 
 /* CSS for the API documentation */
@@ -497,6 +497,7 @@ ul.sortableList {
     border-top: 1px solid grey;
     text-align: left;
     padding-left: 4px;
+    padding-top: 10px;
 }
 
 .sortableList input.name-edit {
@@ -1096,4 +1097,39 @@ textarea.species-settings {
     overflow-y: auto;
 }
 
+.sortableList > li .controls {
+    text-align: start;
+}
 
+.activityList .form-horizontal .control-group {
+    margin-bottom: 10px;
+}
+
+.output-drop-target .form-horizontal {
+    padding-top: 10px;
+}
+
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 85px;
+
+}
+
+#jsoneditor {
+    height: 800px;
+}
+
+#score-configuration {
+    width: 100%;
+    height: 1000px;
+}

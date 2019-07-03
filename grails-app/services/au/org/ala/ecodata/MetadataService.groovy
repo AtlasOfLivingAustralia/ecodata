@@ -173,22 +173,19 @@ class MetadataService {
      * @deprecated use templates associated with the ActivityForm directly.
      */
     def getOutputDataModel(templateName) {
-        return cacheService.get(templateName + '-model',{
+        List forms = ActivityForm.where {
+            status != Status.DELETED
+            publicationStatus == PublicationStatus.PUBLISHED
+            sections { templateName == templateName}
+        }.list()
 
-            List forms = ActivityForm.where {
-                status != Status.DELETED
-                publicationStatus == PublicationStatus.PUBLISHED
-                sections { templateName == templateName}
-            }.list()
+        ActivityForm form = forms.max{it.version}
+        Map template = form?.sections?.find{it.templateName == templateName}?.template
+        if (!template) {
+            log.warn("No template found with name ${templateName}")
+        }
 
-            ActivityForm form = forms.max{it.version}
-            Map template = form?.sections?.find{it.templateName == templateName}?.template
-            if (!template) {
-                log.warn("No template found with name ${templateName}")
-            }
-
-            JSON.parse(((template ?: [:]) as JSON).toString())
-        })
+        JSON.parse(((template ?: [:]) as JSON).toString())
     }
 
     def getOutputDataModelByName(name) {
@@ -210,11 +207,6 @@ class MetadataService {
             return activitiesModel().outputs.grep { it.name in outputList }?.collectEntries { [(it.name): getOutputDataModel(it.template)] }
         }
         return null
-    }
-
-    def clearCacheForTemplate(String templateName){
-        cacheService.clear(templateName + '-model')
-        cacheService.clear("indices-for-data-models")
     }
 
     def getModelName(output, type) {
@@ -256,14 +248,6 @@ class MetadataService {
                 out.write content as String
             }
         }
-    }
-
-    def updateActivitiesModel(model) {
-        writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'activities-model', 'json')
-        // make sure it gets reloaded
-        cacheService.clear('activities-model')
-        String bodyText = "The activities-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
-        emailService.emailSupport("Activities model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
     }
 
     def updateProgramsModel(model) {
@@ -742,12 +726,11 @@ class MetadataService {
      */
     List getUniqueDataTypes(){
         Set dataTypes = new HashSet()
-        activitiesModel().outputs.each({
-            Map dataModel = getOutputDataModel(it.template)
-            dataModel.dataModel.each({
+        withAllActivityFormTemplates { Map template ->
+            template.dataModel.each{
                 dataTypes.add(it.dataType)
-            })
-        })
+            }
+        }
 
         dataTypes.asList()
     }
@@ -759,14 +742,12 @@ class MetadataService {
     Map getIndicesForDataModels(){
         cacheService.get('indices-for-data-models', {
             Map indices = [:].withDefault { [] }
-            activitiesModel()?.outputs.each({
-                Map dataModel = getOutputDataModel(it.template)
-                Map tempIndices = getIndicesForDataModel(dataModel)
+            withAllActivityFormTemplates { Map template ->
+                Map tempIndices = getIndicesForDataModel(template)
                 tempIndices.each { key, value->
                     indices[key].addAll(value)
                 }
-            })
-
+            }
             indices
         })
     }
@@ -886,5 +867,39 @@ class MetadataService {
         }
 
         [valid : valid, errorInIndex: errorInIndex]
+    }
+
+    /**
+     * Retrieves all undeleted ActivityForms in batches, passing each ActivityForm to the supplied closure for processing.
+     * @param action a Closure that takes a single argument of type ActivityForm
+     */
+    private void withAllActivityForms(Closure action) {
+        int batchSize = 100
+        int offset = 0
+
+        int count = ActivityForm.countByStatusNotEqual(Status.DELETED)
+
+        while (count > offset) {
+            List activities = ActivityForm.findAllByStatusNotEqual(Status.DELETED, [offset:offset, max:batchSize])
+            activities.each { ActivityForm activityForm ->
+                action(activityForm)
+            }
+
+            offset += batchSize
+        }
+    }
+
+    /**
+     * A convenience method for ActivityForm template processing.
+     * Retrieves all undeleted ActivityForms in batches, passing each template of each form to the supplied closure for processing.
+     * @param action a Closure that takes a single argument of type Map which will contain the template from a form section
+     */
+    private void withAllActivityFormTemplates(Closure action) {
+
+        withAllActivityForms { ActivityForm activityForm ->
+            activityForm.sections?.each { FormSection section ->
+                action(section.template)
+            }
+        }
     }
 }
