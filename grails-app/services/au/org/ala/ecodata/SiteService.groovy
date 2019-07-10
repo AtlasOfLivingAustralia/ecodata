@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import com.mongodb.*
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import grails.converters.JSON
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
@@ -10,9 +9,9 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import static grails.async.Promises.task
 
 import static au.org.ala.ecodata.Status.DELETED
+import static grails.async.Promises.task
 
 class SiteService {
 
@@ -153,62 +152,6 @@ class SiteService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
-    }
-
-    def simplify(String siteId) {
-
-        Map site = get(siteId)
-        println getPointCount(site)
-        Map geojson = geometryAsGeoJson(site)
-
-        Geometry siteGeom = GeometryUtils.geoJsonMapToGeometry(geojson)
-
-        TopologyPreservingSimplifier simplifier = new TopologyPreservingSimplifier(siteGeom)
-        simplifier.setDistanceTolerance(0.01)
-
-        Geometry result = simplifier.getResultGeometry()
-
-        Map simplifiedJson = GeometryUtils.geometryToGeoJsonMap(result)
-
-        Map newSite = new HashMap(site)
-        newSite.extent.geometry = simplifiedJson
-        newSite.remove('siteId')
-        newSite.remove('id')
-
-        println getPointCount(newSite)
-        create(newSite)
-
-
-    }
-
-    private int getPointCount(Map site) {
-        Map geom = site.extent.geometry
-
-        int count = 0
-        switch (geom.type) {
-            case 'Point':
-                count = 1
-                break
-            case 'MultiPoint':
-            case 'LineString':
-                count = geom.coordinates?.size() ?: 0
-                break
-            case 'Polygon':
-            case 'MultiLineString':
-                for (List coords: geom.coordinates) {
-                    count += coords?.size() ?: 0
-                }
-                break
-            case 'MultiPolygon':
-                for (List coords : geom.coordinates) {
-                    for (List nestedCoords: coords) {
-                        count += nestedCoords?.size() ?: 0
-                    }
-                }
-                break
-        }
-
-        count
     }
 
     Map toGeoJson(Map site) {
