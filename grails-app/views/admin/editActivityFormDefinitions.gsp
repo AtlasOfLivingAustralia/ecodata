@@ -23,30 +23,21 @@
     <button type="button" data-bind="click:revert" class="btn">Cancel</button>
 </content>
 
-<div class="row-fluid form-selection" data-bind="with:selectionModel">
-
+<div class="form-selection" data-bind="with:selectionModel">
     <div class="row-fluid">
-        <div class="alert alert-danger" data-bind="visible:warning()">
+        <div class="alert alert-danger" style="display:none" data-bind="visible:warning()">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong>Warning!</strong> <span data-bind="text:warning"></span>
         </div>
     </div>
-
     <div class="row-fluid">
-        <div class="span9">
-            <label>Activity form: <select class="span12" name="formSelector"
-                                          data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select>
-            </label>
+        <div class="span10">
+            <label>Activity form: <select style="width:100%" name="formSelector" data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select></label>
         </div>
-
-        <div class="span3">
-            <label>Version:<br/> <select class="span3" name="versionSelector"
-                                         data-bind="options:activityFormVersions, value:selectedFormVersion"></select>
-            </label>
+        <div class="span2">
+            <label>Version:<br/> <select style="width:100%" name="versionSelector" data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
         </div>
     </div>
-
-
 
 </div>
 
@@ -64,13 +55,13 @@
             </li>
         </ul>
         <div class="button-bar">
-        <button class="btn" data-bind="click:addActivity, visible:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</button>
+        <button class="btn" data-bind="click:addActivity, enable:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</button>
 
         <span class="upload-btn-wrapper">
-            <button type="button" class="btn" data-bind="visible:!selectedActivity()"><i class="icon-upload"></i> Import</button>
-            <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="event: {change:importActivity}"/>
+            <button type="button" class="btn" data-bind="enable:!selectedActivity()"><i class="icon-upload"></i> Import</button>
+            <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="enable:!selectedActivity(), event: {change:importActivity}"/>
         </span>
-        <button type="button" data-bind="click:exportActivity, visible:selectedActivity()" class="btn"><i class="icon-download"></i> Export</button>
+        <button type="button" data-bind="click:exportActivity, enable:selectedActivity()" class="btn"><i class="icon-download"></i> Export</button>
         </div>
 
     </div>

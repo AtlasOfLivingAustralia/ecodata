@@ -8,7 +8,7 @@
  *= require bootstrap-datepicker/css/datepicker
  *= require bootstrap-combobox/bootstrap-combobox
  *= require select2/4.0.3/css/select2.css
- *-
+ *= require jsoneditor/jsoneditor.css
  */
 
 /* CSS for the API documentation */
@@ -1112,7 +1112,7 @@ textarea.species-settings {
 .upload-btn-wrapper {
     position: relative;
     overflow: hidden;
-    display: inline-block;
+    display: inline;
 }
 
 .upload-btn-wrapper input[type=file] {
@@ -1121,4 +1121,15 @@ textarea.species-settings {
     left: 0;
     top: 0;
     opacity: 0;
+    width: 85px;
+
+}
+
+#jsoneditor {
+    height: 800px;
+}
+
+#score-configuration {
+    width: 100%;
+    height: 1000px;
 }
