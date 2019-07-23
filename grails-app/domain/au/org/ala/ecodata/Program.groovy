@@ -38,6 +38,9 @@ class Program {
 
     List<AssociatedOrg> associatedOrganisations
 
+    /** (optional) The siteId of a Site that defines the geographic area targeted by this Program */
+    String programSiteId
+
 
     /** Custom rendering for the program */
     Map toMap() {
@@ -125,6 +128,7 @@ class Program {
         config nullable: true
         parent nullable: true
         associatedOrganisations nullable:true
+        programSiteId nullable: true
     }
 
     public String toString() {
