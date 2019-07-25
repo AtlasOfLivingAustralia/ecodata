@@ -9,9 +9,9 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import static grails.async.Promises.task
 
 import static au.org.ala.ecodata.Status.DELETED
+import static grails.async.Promises.task
 
 class SiteService {
 
@@ -92,6 +92,21 @@ class SiteService {
             }
         } else {
             Site.findAllByProjects(id).findAll({ it.status == ACTIVE }).collect { toMap(it, levelOfDetail) }
+        }
+    }
+
+    /**
+     * Returns a list of siteIds associated with a project.  This is used by the AuditService to avoid
+     * querying and mapping a full site as they can be very large sometimes and only the id is needed.
+     * @param projectId the project id of interest
+     * @return a List<String> of sitesIds
+     */
+    List<String> findAllSiteIdsForProject(String projectId) {
+        Site.createCriteria().list {
+            eq ('projects', projectId)
+            projections {
+                property('siteId')
+            }
         }
     }
 
@@ -736,15 +751,8 @@ class SiteService {
             DBObject site = results.next()
             try {
                 if (site.extent?.geometry) {
-
-                    if (site.extent?.geometry.aream2 == null) {
-                        populateLocationMetadataForSite(site)
-                    }
-                    else {
                         Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site, fids)
                         site.extent.geometry.putAll(geoFacets)
-                    }
-
                 }
                 else {
                     log.warn( "No geometry for site "+site)

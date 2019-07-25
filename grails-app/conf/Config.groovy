@@ -484,6 +484,8 @@ homepageIdx {
 // The special facets are gridded facets that are too large for the spatial portal so are managed locally by ecodata.
 // Please note that changes to these facets require that all sites in the system be re-processed - this can be
 // done using the admin tools in fieldcapture.
+
+//TODO update elect field for electorate boundaries update
 app {
     facets {
         geographic {
@@ -493,7 +495,7 @@ app {
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl10874'
+                elect = 'cl10921'
                 cmz = 'cl2112'
             }
             grouped {
