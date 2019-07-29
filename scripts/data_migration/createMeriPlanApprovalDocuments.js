@@ -49,10 +49,16 @@ while (projects.hasNext()) {
             };
 
             print(basePath+filepath+'/'+filename);
-            writeFile(basePath+filepath+'/'+filename, JSON.stringify(content));
 
             //printjson(document);
-            db.document.insert(document);
+            var existing = db.document.find({filename:filename});
+            if (existing.hasNext()) {
+                print("Already migrated "+filename);
+            }
+            else {
+               // writeFile(basePath+filepath+'/'+filename, JSON.stringify(content));
+                db.document.insert(document);
+            }
 
         }
         previousPlanStatus = message.entity.planStatus;
