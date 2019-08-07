@@ -61,6 +61,7 @@ class Program {
         program.config = config
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
+        program.programSiteId = programSiteId
 
         program.associatedOrganisations = associatedOrganisations
 
