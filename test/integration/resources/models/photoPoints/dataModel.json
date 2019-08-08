@@ -1,0 +1,92 @@
+{
+    "modelName": "Photopoints",
+    "record": "true",
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "integer",
+                "name": "photoPointId",
+                "description": "Unique ID for the photo point record"
+            },
+            {
+                "dataType": "text",
+                "name": "name",
+                "description": "Short description of the image uploaded for the photo point."
+            },
+            {
+                "dataType": "embeddedImages",
+                "name": "photo",
+                "description": "Photo point image recorded at the time of the activity"
+            },
+            {
+                "dataType": "text",
+                "dwcAttribute": "locationRemarks",
+                "name": "comment",
+                "description": "Comments or notes about the photo point condition, marker(s), lighting, etc."
+            }
+        ],
+        "dataType": "photoPoints",
+        "name": "photoPoints",
+        "dwcAttribute": "associatedMedia",
+        "userAddedRows": "false"
+    }],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<strong>Note:<\/strong> Photo points are created and managed as a part of the site definition.  In order to record a photo point you first need to add a 'point of interest' to the site with a type of 'photo point'. When the site is selected for this activity, a row for each defined photo point will then appear in the table below, allowing you to upload your image taken at the time of the survey.",
+                "type": "literal"
+            }]
+        },
+        {
+            "visibility": "transients.site.siteId && !data.photoPoints().length",
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<span><h4>Note: There are no photo points defined for this site.<\/h4><\/span>",
+                "type": "literal"
+            }]
+        },
+        {
+            "visibility": "!transients.site.siteId",
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<span><h4>Note: A site has not yet been selected for this activity. In order to upload a photo point image you must select the site at which this activity is being undertaken, and the site must have the photo point location recorded as a 'point of interest'.<\/h4><\/span>",
+                "type": "literal"
+            }]
+        },
+        {
+            "preLabel": "<h4>Images of photo points on the selected site at the time of this activity.<\/h4>",
+            "columns": [
+                {
+                    "computed": null,
+                    "width": "25%",
+                    "readOnly": "true",
+                    "source": "name",
+                    "title": "Photo point",
+                    "type": "photopoint"
+                },
+                {
+                    "computed": null,
+                    "width": "40%",
+                    "source": "photo",
+                    "title": "Photo(s)",
+                    "type": "embeddedImages"
+                },
+                {
+                    "computed": null,
+                    "width": "20%",
+                    "source": "comment",
+                    "title": "Comment",
+                    "type": "text"
+                }
+            ],
+            "editableRows": "true",
+            "userAddedRows": false,
+            "source": "photoPoints",
+            "type": "photoPoints"
+        }
+    ]
+}

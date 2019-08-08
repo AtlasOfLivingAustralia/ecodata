@@ -1,0 +1,287 @@
+{
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Type of evidence visible on treated target animals",
+            "name": "evidenceOfPreviousPestTreatment",
+            "constraints": [
+                "Diseased animals present",
+                "Evidence of harbour destruction activity",
+                "Habitat regeneration evident (describe in notes)",
+                "Harbours, burrows or nests present but empty",
+                "Re-appearance / increased populations of food species present",
+                "Reduced / eradicated population of pest species present",
+                "Treatment signage present",
+                "No evidence",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The effectiveness of the last treatment activity as a proportion of the area and density of the infestation that existed before the previous treatment activity, expressed as the number of individuals killed / removed from the population",
+            "name": "effectivenessOfPreviousWeedTreatment"
+        },
+        {
+            "dataType": "stringList",
+            "description": "The method used to assess the effectiveness of previous pest animal treatment. <font color='blue'>'<b>NB.:<\/b> This pertains to evidence of previous treatments only.<\/font>'",
+            "name": "previousPestTreatmentAssessmentMethod",
+            "constraints": [
+                "Anecdotal - 3rd party observations",
+                "Anecdotal - personal observations",
+                "Measurable change in evidence / signs of presence",
+                "Measurable change in trapping success rate",
+                "Method-based population survey - food species abundance (specify method in notes)",
+                "Method-based population survey - target species abundance (specify method in notes)",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "The type of treatment method recommended for initial or follow up treatment",
+            "name": "recommendedPestTreatment",
+            "constraints": [
+                "Animal pest disease management - quarantine",
+                "Animal pest disease management - treatment",
+                "Bait & trap",
+                "Bait only",
+                "Biological control agents",
+                "Exclusion fencing (please specify fence details in a separate 'Fencing' activity)",
+                "Fumigation",
+                "Harbour destruction",
+                "Positive competition",
+                "Spotlight / daylight cull",
+                "Trap & destroy",
+                "Trap & remove",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Name of the person undertaking the assessment of pest species",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy"
+        },
+        {
+            "dataType": "list",
+            "name": "pestObservationMonitoringDetails",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "Name(s) of the pest species observed in the sampled area (may be entered as scientific or common names)",
+                    "name": "pestSpecies",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Area in hectares sampled for pest animal population estimate",
+                    "name": "pestSampledArea",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Methodology used to assess the population abundance for particular pest species over the sampled area",
+                    "name": "assessmentMethod",
+                    "constraints": [
+                        "Anecdotal - 3rd party observations",
+                        "Anecdotal - personal observations",
+                        "Evidence / signs of presence - abundance / density / recency",
+                        "Method-based population survey - food species abundance (specify method in notes)",
+                        "Method-based population survey - target species abundance (specify method in notes)",
+                        "Trapping success rate",
+                        "Other (specify in notes)"
+                    ],
+                    "dwcAttribute": "assessmentMethod",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Estimated density class of particular pest species on a number of individuals  or colonies (for insects) on a per hectare basis within a range class. Calculate this value as: (population estimate (from method) / sample area in hectares) x (1 / sample area in hectares)",
+                    "name": "pestPopulationDensityClass",
+                    "constraints": [
+                        "< 10 individuals or colonies / Ha",
+                        "11 - 100 individuals or colonies / Ha",
+                        "101 - 1000 individuals or colonies / Ha",
+                        "> 1000 individuals / Ha"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Confidence level of the accuracy of the estimated density class of particular pest species expressed as an percentage (0 = not at all confident, 100 = fully confident)",
+                    "name": "populationEstimateConfidence",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Estimated density class of particular pest species as an average across the assessed area",
+                    "name": "pestPopulationMobility",
+                    "constraints": [
+                        "Resident",
+                        "Transient",
+                        "Uncertain"
+                    ]
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "General observational notes applicable to the site, treatment, conditions, etc.",
+            "name": "notes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "pestAnimalSurvey_withMap",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "recordedBy",
+                            "preLabel": "Assessor:",
+                            "computed": null,
+                            "type": "text"
+                        },
+                        {
+                            "source": "evidenceOfPreviousPestTreatment",
+                            "computed": null,
+                            "preLabel": "Evidence of Previous Treatment:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "effectivenessOfPreviousWeedTreatment",
+                            "computed": null,
+                            "preLabel": "Effectiveness of Previous Treatment (No. killed):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "<font color='blue'>'<b>NB.:<\/b> The following methods pertain only to how evidence of previous treatments was obtained.<\/font>'",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "previousPestTreatmentAssessmentMethod",
+                            "computed": null,
+                            "preLabel": "Previous treatment effectiveness assessment method:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "recommendedPestTreatment",
+                            "computed": null,
+                            "preLabel": "Recommended initial or follow-up treatment method:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "includeSource": false,
+                            "orientation": "vertical",
+                            "includeNotes": false,
+                            "hideSiteSelection": true,
+                            "zoomToProjectArea": true,
+                            "source": "location",
+                            "computed": null,
+                            "autoLocalitySearch": true,
+                            "type": "geoMap",
+                            "includeAccuracy": false,
+                            "readonly": false,
+                            "includeLocality": false
+                        },
+                        {
+                            "source": "The <a href='http://www.feral.org.au/' target='_blank'>www.feral.org.au<\/a> website is a useful source of information for this activity, and this website (<a href='http://www.cals.ncsu.edu/course/fw353/Estimate.htm' target='_blank'>Estimating Wildlife Populations<\/a>), amongst many others, is a useful resource for population estimation methods and calculations.<br>You may also find the <a href='https://itunes.apple.com/au/app/field-guide-to-pest-animals/id634197149?mt=8' target='_blank'>PestSmart app<\/a> (iOS only) useful as an aid in identifying pest species.",
+                            "computed": null,
+                            "type": "literal"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "source": "pestObservationMonitoringDetails",
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "Pest species:",
+                    "source": "pestSpecies",
+                    "width": "15%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Sampled area (Ha):",
+                    "source": "pestSampledArea",
+                    "width": "8%",
+                    "type": "number"
+                },
+                {
+                    "title": "Population assessment methodology:",
+                    "source": "assessmentMethod",
+                    "width": "22%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Estimated population density",
+                    "source": "pestPopulationDensityClass",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Population density confidence",
+                    "source": "populationEstimateConfidence",
+                    "width": "9%",
+                    "type": "number"
+                },
+                {
+                    "title": "Population mobility",
+                    "source": "pestPopulationMobility",
+                    "width": "8%",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Notes:",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

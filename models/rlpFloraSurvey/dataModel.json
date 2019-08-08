@@ -28,26 +28,102 @@
                     "name": "sitesSurveyed"
                 },
                 {
+                    "dataType": "number",
+                    "name": "siteCalculatedAreaHa",
+                    "computed": {
+                        "expression": "$geom.areaHa(sitesSurveyed)"
+                    },
+                    "units": "ha"
+                },
+                {
                     "defaultValue": {
                         "type": "computed",
                         "expression": "$geom.areaHa(sitesSurveyed)"
                     },
                     "dataType": "number",
                     "name": "areaSurveyedHa",
+                    "validate": "required,min[0]",
+                    "units": "ha"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaInvoicedHa",
+                    "units": "ha",
                     "validate": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesSurveyed)*0.9"
-                            }
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
                         },
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(sitesSurveyed)*1.1"
+                                "expression": "areaSurveyedHa"
                             }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
+                    "constraints": [
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "not within(areaSurveyedHa, siteCalculatedAreaHa, 0.1)",
+                            "type": "if"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
+                    "behaviour": [
+                        {
+                            "type": "if",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
+                        }]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualReason",
+                    "constraints": [
+                        "Work was undertaken over a greater area than will be invoiced for",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualComments",
+                    "behaviour": [
+                        {
+                            "type": "if",
+                            "condition": "\"Other\" == invoicedNotActualReason"
+                        }],
+                    "validate": "required,maxSize[300]"
+                },
+                {
+                    "dataType": "document",
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
+                    "behaviour": [
+                        {
+                            "condition": "not within(areaSurveyedHa, siteCalculatedAreaHa, 0.1) or roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
+                            "type": "if"
                         }
                     ]
                 },
@@ -110,6 +186,7 @@
                 "items": [
                     {
                         "type": "row",
+                        "css": "border-bottom",
                         "items": [
                             {
                                 "preLabel": "Baseline survey or indicator (follow-up) survey?",
@@ -135,17 +212,129 @@
                         "type": "row",
                         "items": [
                             {
-                                "preLabel": "Site/s covered by flora surveys",
-                                "css": "span3",
-                                "source": "sitesSurveyed",
-                                "type": "feature"
+                                "type": "col",
+                                "css": "span3 col-border-right",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Site/s covered by flora surveys",
+                                                "source": "sitesSurveyed",
+                                                "type": "feature"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "source": "siteCalculatedAreaHa",
+                                        "type": "number",
+                                        "readonly": true,
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Please attach mapping details",
+                                                "source": "extraMappingDetails",
+                                                "type": "document"
+                                            }
+                                        ]
+                                    }
+                                ]
                             },
                             {
-                                "preLabel": "Area (ha) covered by flora surveys",
-                                "css": "span3",
-                                "source": "areaSurveyedHa",
-                                "type": "number"
+                                "type": "col",
+                                "css": "span4 col-border-right",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Actual area (ha) covered by flora surveys",
+                                                "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
+                                                "source": "areaSurveyedHa",
+                                                "type": "number",
+                                                "displayOptions": {
+                                                    "displayUnits": true
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Reason for actual being different to mapped amount",
+                                                "source": "mappingNotAlignedReason",
+                                                "type": "selectOne"
+
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                                "source": "mappingNotAlignedComments",
+                                                "type": "textarea",
+                                                "rows": 5
+                                            }
+
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "col",
+                                "css": "span4",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Invoiced area (ha) covered by flora surveys",
+                                                "helpText": "Enter the amount you will invoice for during this reporting period.",
+                                                "source": "areaInvoicedHa",
+                                                "type": "number",
+                                                "validate": "required",
+                                                "displayOptions": {
+                                                    "displayUnits": true
+                                                }
+                                            }
+                                        ]
+
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Reason for invoiced amount being different to actual amount",
+                                                "source": "invoicedNotActualReason",
+                                                "type": "selectOne"
+
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                                "source": "invoicedNotActualComments",
+                                                "type": "textarea",
+                                                "rows": 5
+
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
+
+
                         ]
                     },
                     {

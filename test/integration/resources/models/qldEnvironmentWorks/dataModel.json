@@ -1,0 +1,197 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "typeOfActivity",
+                    "description": "",
+                    "constraints": [
+                        "Gully remediation",
+                        "Wetland restoration (natural/existing)",
+                        "Artificial wetland installation",
+                        "Installation of water quality monitoring",
+                        "Riparian restoration",
+                        "Nutrient treatment intervention (e.g. bioreactor)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "activityPurpose",
+                    "description": "",
+                    "constraints": [
+                        "Sediment reduction",
+                        "Nutrient reduction",
+                        "Pesticide reduction",
+                        "Monitoring",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "locationOfWorks",
+                    "description": "Area (location) of works (catchment/ sub-catchment name)"
+                },
+                {
+                    "dataType": "date",
+                    "name": "date"
+                },
+                {
+                    "dataType": "number",
+                    "name": "sizeOfActivityAreaInHectares",
+                    "description": "Size of area – (number field) e.g. number of hectares",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventRemarks",
+                    "description": "General comments (at bottom of form for a narrative synopsis, if required)"
+                }
+            ],
+            "dataType": "list",
+            "name": "worksActions"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "ehpWorksForm",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Works<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "computed": null,
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Activity Details",
+                        "type": "section",
+                        "items": [{
+                            "type": "row",
+                            "items": [{
+                                "allowHeaderWrap": "true",
+                                "columns": [
+                                    {
+                                        "width": "30%",
+                                        "source": "typeOfActivity",
+                                        "title": "Type of works",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "width": "20%",
+                                        "source": "activityPurpose",
+                                        "title": "Purpose of works",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "width": "15%",
+                                        "source": "locationOfWorks",
+                                        "title": "Location of works",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "source": "date",
+                                        "title": "Date",
+                                        "type": "simpleDate"
+                                    },
+                                    {
+                                        "width": "5%",
+                                        "source": "sizeOfActivityAreaInHectares",
+                                        "title": "Size of area (Ha)",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "width": "30%",
+                                        "source": "eventRemarks",
+                                        "title": "Comments / Notes:",
+                                        "type": "textarea"
+                                    }
+                                ],
+                                "defaultRows": 1,
+                                "userAddedRows": true,
+                                "source": "worksActions",
+                                "type": "table",
+                                "class": ""
+                            }],
+                            "class": ""
+                        }],
+                        "class": ""
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location of Works Activities",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "computed": null,
+                                    "source": "<font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker, as accurately as possible, at the location of the event.<\/i><\/font>",
+                                    "type": "literal"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": false,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": false,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "zoomToProjectArea": true,
+                                    "includeLocality": false
+                                }],
+                                "class": ""
+                            }
+                        ],
+                        "class": ""
+                    }],
+                    "class": ""
+                }
+            ],
+            "class": ""
+        }
+    ]
+}

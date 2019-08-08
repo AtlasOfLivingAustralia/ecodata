@@ -1,0 +1,644 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "description": "The date that the survey was undertaken"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyTime",
+            "description": "The time of the day that the survey was undertaken"
+        },
+        {
+            "dataType": "number",
+            "name": "surveyDuration",
+            "description": "The duration of the sampling event in hours"
+        },
+        {
+            "dataType": "number",
+            "name": "totalParticipants",
+            "description": "The total number of people participating in the sampling event"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "description": "The name of the person or group undertaking the sampling event",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "waterbodyName",
+            "description": "The name of the water body being sampled.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfVolunteerParticipants",
+            "description": "The number of volunteers participating in the sampling event"
+        },
+        {
+            "dataType": "text",
+            "name": "waterType",
+            "description": "Broad class of water body being sampled",
+            "constraints": [
+                "Estuary",
+                "Freshwater stream / channel",
+                "Freshwater lake / dam",
+                "Saline stream / channel",
+                "Saline lake / dam"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "rainfall7Days",
+            "description": "General character of rainfall received at the sampling site over the 7 days prior to sampling.",
+            "constraints": [
+                "Heavy",
+                "Moderate",
+                "Light",
+                "Nil"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "rainfallMm",
+            "description": "Rainfall in millimetres received at the sampling site over the 7 days prior to sampling",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "waterLevel",
+            "description": "General level of the water surface at the time of sampling, relative to it's normal level.",
+            "constraints": [
+                "Low",
+                "Medium",
+                "High",
+                "Flood",
+                "No flow",
+                "Dry / Isolated pool"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "waterFlowRate",
+            "description": "Description of the rate of flow of the water at the time of sampling."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General comments and notes about the site conditions at the time of the water quality monitoring event."
+        },
+        {
+            "dataType": "number",
+            "name": "airTemperature",
+            "description": "The temperature of the air (in degrees Celsius) at 1.2 metres above the surface of the water at the time of sampling."
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTemperature",
+            "description": "The average temperature (in degrees Celsius) of the top few centimetres of water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterPh",
+            "description": "The average pH of the top few centimetres of water at the sampling site",
+            "validate": "min[0],max[14]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterEc",
+            "description": "The average electrical conductivity (in microsiemens per centimetre) of the top few centimetres of water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "waterTurbidity",
+            "description": "The average turbidity (in nephelometric turbidity units (NTUs)) of the water column at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterAvailableP",
+            "description": "Measure of the amount of available (soluble reactive component) phosphate in milligrams per litre of the water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTotalP",
+            "description": "Measure of the total amount of phosphate (reactive and unreactive components) in milligrams per litre of the water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterDoMgl",
+            "description": "Measure of the amount of oxygen dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterDoPcSat",
+            "description": "Measure of the amount of oxygen dissolved in a water sample expressed as a percentage of the oxygen holding capacity of the water at it's current temperature"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterColiforms",
+            "description": "Measure of the density of faecal coliforms in a 100 millilitre sample of water"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterEcoli",
+            "description": "Measure of the density of the bacteria E. coli in a 100 millilitre sample of water"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTotalNitrogen",
+            "description": "Measure of the total amount of nitrogen dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterNitrates",
+            "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre"
+        },
+        {
+            "dataType": "text",
+            "name": "instrumentCalibration",
+            "description": "Indicator as to whether the electrical conductivity meter used had been calibrated prior to sampling",
+            "constraints": [
+                "Yes",
+                "No",
+                "Not applicable"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General comments and notes about this water quality monitoring event."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "waterQualitySurvey_withMap",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Water Quality Monitoring<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Site Visit Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Sampler name:",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "recordedBy",
+                                    "type": "text",
+                                    "preLabelClass": "span4"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Name of water body:",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "waterbodyName",
+                                    "type": "text",
+                                    "preLabelClass": "span4"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Type of water body:",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "waterType",
+                                    "type": "selectOne",
+                                    "preLabelClass": "span4"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Number in sampler group:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "totalParticipants",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "No. of volunteer participants:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "numberOfVolunteerParticipants",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Date:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surveyDate",
+                                    "preLabelClass": "span4",
+                                    "type": "date"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Survey time:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surveyTime",
+                                    "preLabelClass": "span4",
+                                    "type": "time"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Survey duration (hrs):",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surveyDuration",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Rainfall in last 7 days:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "rainfall7Days",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Rainfall (mm):",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surfaceWaterTemperature",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Water level or flow:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "waterLevel",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Rate of Flow:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "waterFlowRate",
+                                    "preLabelClass": "span4",
+                                    "type": "text"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Site observations:",
+                                    "computed": null,
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "notes",
+                                    "preLabelClass": "span4",
+                                    "type": "textarea"
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [{
+                            "boxed": true,
+                            "title": "Site",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": false,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": true,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "zoomToProjectArea": true,
+                                    "includeLocality": false
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Water Quality Measurements",
+                    "type": "section",
+                    "items": [{
+                        "computed": null,
+                        "type": "row",
+                        "items": [
+                            {
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Air Temperature (deg C):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "airTemperature",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Water Temperature (deg C):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterTemperature",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "pH (pH units):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterPh",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Turbidity (NTUs):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "waterTurbidity",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Electrical Conductivity (µS/cm):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterEc",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Total Nitrogen (mg/L as N):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterTotalNitrogen",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Nitrates (mg/L as N):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterNitrates",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Available Phosphate (mg/L):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterAvailableP",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Total Phosphate (mg/L):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterTotalP",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Dissolved Oxygen (mg/L):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterDoMgl",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Dissolved Oxygen (% sat):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "noEdit": true,
+                                            "source": "surfaceWaterDoPcSat",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Faecal Coliforms (CFU/100mL):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterColiforms",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "E. coli (CFU/100mL):",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "surfaceWaterEcoli",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "computed": null,
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Did you calibrate your EC meter?:",
+                                            "computed": null,
+                                            "inline": true,
+                                            "dataClass": "span8",
+                                            "source": "instrumentCalibration",
+                                            "preLabelClass": "span4",
+                                            "type": "selectOne"
+                                        }]
+                                    }
+                                ]
+                            }
+                        ]
+                    }]
+                }],
+                "class": ""
+            }],
+            "class": ""
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Water Testing Notes/Issues:",
+                "computed": null,
+                "width": "90%",
+                "source": "notes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

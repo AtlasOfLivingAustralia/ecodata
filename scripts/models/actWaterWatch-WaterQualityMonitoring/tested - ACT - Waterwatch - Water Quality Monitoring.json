@@ -10,12 +10,6 @@
       "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "siteName",
-      "description": "The name of the site being sampled.",
-      "validate": "required"
-    },
-    {
       "indexName": "waterType",
       "dataType": "text",
       "name": "waterType",
@@ -26,6 +20,7 @@
       ]
     },
     {
+      "defaultValue": "null",
       "dataType": "number",
       "name": "totalParticipants",
       "description": "The total number of people participating in the sampling event",
@@ -47,6 +42,7 @@
       "validate": "required"
     },
     {
+      "defaultValue": "null",
       "dataType": "number",
       "name": "surveyDurationInDecimalHours",
       "description": "The duration of the sampling event in hours",
@@ -86,6 +82,7 @@
     },
     {
       "indexName": "waterTemperatureInDegreesCelcius",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterTemperatureInDegreesCelcius",
       "description": "The average temperature (in degrees Celsius) of the water taken from a sample in the middle of the water column.",
@@ -93,12 +90,14 @@
     },
     {
       "indexName": "waterDoMgl",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterDissolvedOxygenInMilligramsPerLitre",
       "description": "Measure of the amount of oxygen dissolved in a water sample in milligrams per litre"
     },
     {
       "indexName": "waterDoPcSat",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterDissolvedOxygenInPercentSaturation",
       "jsMain": "https://dl.dropbox.com/s/55ytuve6qjdi62o/waterDoPcSat.js?dl=0",
@@ -106,6 +105,7 @@
     },
     {
       "indexName": "waterPh",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterPh",
       "description": "The average pH of the water taken from a sample in the middle of the water column.",
@@ -113,12 +113,14 @@
     },
     {
       "indexName": "waterTotalP",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterTotalPhosphorusInMilligramsPerLitre",
       "description": "Measure of the amount of phosphate (reactive and unreactive components) in milligrams per litre of the water at the sampling site"
     },
     {
       "indexName": "waterNitrate",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterNitrateInMilligramsPerLitre",
       "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre",
@@ -126,6 +128,7 @@
     },
     {
       "indexName": "waterEc",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterEcInMicrosiemensPerCentimetre",
       "description": "The average electrical conductivity (in microsiemens per centimetre) taken from a sample in the middle of the water column."
@@ -142,13 +145,14 @@
     },
     {
       "indexName": "waterTurbidity",
+      "defaultValue": "",
       "dataType": "number",
       "name": "waterTurbidityInNtu",
       "description": "The average turbidity (in nephelometric turbidity units (NTUs)) of the water column at the sampling site"
     },
     {
       "dataType": "text",
-      "name": "notes",
+      "name": "observationRemarks",
       "description": "General comments and notes about this water quality monitoring event."
     },
     {
@@ -215,16 +219,6 @@
                       "type": "text"
                     },
                     {
-                      "preLabel": "Site name",
-                      "source": "siteName",
-                      "type": "text"
-                    },
-                    {
-                      "preLabel": "Type of water body",
-                      "source": "waterType",
-                      "type": "selectOne"
-                    },
-                    {
                       "preLabel": "Number in sampler group",
                       "source": "totalParticipants",
                       "type": "number"
@@ -241,6 +235,7 @@
                     },
                     {
                       "preLabel": "Survey duration (decimal hours)",
+                      "primaryResult": "false",
                       "source": "surveyDurationInDecimalHours",
                       "type": "number"
                     },
@@ -329,11 +324,13 @@
                           "items": [
                             {
                               "preLabel": "Water Temperature (deg C)",
+                              "primaryResult": "false",
                               "source": "waterTemperatureInDegreesCelcius",
                               "type": "number"
                             },
                             {
                               "preLabel": "Dissolved Oxygen (mg/L)",
+                              "primaryResult": "false",
                               "source": "waterDissolvedOxygenInMilligramsPerLitre",
                               "type": "number"
                             },
@@ -345,11 +342,13 @@
                             },
                             {
                               "preLabel": "pH (pH units)",
+                              "primaryResult": "false",
                               "source": "waterPh",
                               "type": "number"
                             },
                             {
                               "preLabel": "Phosphorus (mg/L)",
+                              "primaryResult": "false",
                               "source": "waterTotalPhosphorusInMilligramsPerLitre",
                               "type": "number"
                             }
@@ -366,11 +365,13 @@
                           "items": [
                             {
                               "preLabel": "Nitrate (mg/L as N)",
+                              "primaryResult": "false",
                               "source": "waterNitrateInMilligramsPerLitre",
                               "type": "number"
                             },
                             {
                               "preLabel": "Electrical Conductivity (µS/cm)",
+                              "primaryResult": "false",
                               "source": "waterEcInMicrosiemensPerCentimetre",
                               "type": "number"
                             },
@@ -381,6 +382,7 @@
                             },
                             {
                               "preLabel": "Turbidity (NTUs)",
+                              "primaryResult": "false",
                               "source": "waterTurbidityInNtu",
                               "type": "number"
                             }
@@ -397,7 +399,7 @@
                       "preLabel": "Water Testing Notes/Issues:",
                       "computed": null,
                       "width": "90%",
-                      "source": "notes",
+                      "source": "observationRemarks",
                       "type": "textarea"
                     }
                   ]

@@ -1,0 +1,88 @@
+{
+  "title": "Plant propagation",
+  "modelName": "RLP - Plant propagation",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"plants",
+      "columns":[
+        {
+          "dataType": "species",
+          "name": "species",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "germinationMethod",
+          "validate": "required",
+          "constraints": [
+            "Direct Seeding",
+            "Mycorrhizal inoculation",
+            "Cutting",
+            "Layering",
+            "Tissue culture",
+            "Other"
+
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherGerminationMethod",
+          "description":"Please specify the method  used if Other was selected in the Germination Method column.",
+          "behaviour":[
+            {
+              "condition": "germinationMethod == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberReadyForPlanting",
+          "validate": "required"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "species",
+              "title": "Species",
+              "type": "speciesSelect",
+              "width":"30%"
+            },
+            {
+              "source": "germinationMethod",
+              "title": "Germination method",
+              "type": "select2",
+              "width":"25%"
+            },
+            {
+              "source": "otherGerminationMethod",
+              "title": "Germination method (if other)",
+              "type": "text",
+              "width":"25%"
+            },
+            {
+              "source": "numberReadyForPlanting",
+              "title": "Number of plants germinated and ready for planting",
+              "type": "number",
+              "width":"20%"
+            }
+          ],
+          "source":"plants",
+          "userAddedRows":true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

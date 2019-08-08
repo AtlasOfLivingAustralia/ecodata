@@ -1,0 +1,199 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "parameter",
+                "description": ""
+            },
+            {
+                "dataType": "text",
+                "name": "transectOne",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "1 - 5%",
+                    "6 - 30%",
+                    "> 30%"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectTwo",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "1 - 5%",
+                    "6 - 30%",
+                    "> 30%"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectThree",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "1 - 5%",
+                    "6 - 30%",
+                    "> 30%"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "transectFour",
+                "description": "",
+                "constraints": [
+                    "None",
+                    "1 - 30%",
+                    "31 - 60%",
+                    "> 60%",
+                    "1 - 5%",
+                    "6 - 30%",
+                    "> 30%"
+                ]
+            },
+            {
+                "dataType": "number",
+                "name": "vegetationCoverAverageScore",
+                "description": ""
+            }
+        ],
+        "dataType": "list",
+        "name": "vegetationCoverTable",
+        "defaultRows": [
+            {
+                "totalCanopy_T3": "",
+                "totalCanopy_T4": "",
+                "totalCanopy_T1": "",
+                "parameter": "Total canopy %",
+                "totalCanopy_T2": "",
+                "totalCanopy_averageScore": ""
+            },
+            {
+                "nativeCanopy_T4": "",
+                "parameter": "Native canopy %",
+                "nativeCanopy_T2": "",
+                "nativeCanopy_averageScore": "",
+                "nativeCanopy_T3": "",
+                "nativeCanopy_T1": ""
+            },
+            {
+                "totalUnderstorey_T3": "",
+                "totalUnderstorey_T4": "",
+                "totalUnderstorey_T1": "",
+                "totalUnderstorey_T2": "",
+                "parameter": "Total understorey %",
+                "totalUnderstorey_averageScore": ""
+            },
+            {
+                "parameter": "Native understorey %",
+                "nativeUnderstorey_T1": "",
+                "nativeUnderstorey_T4": "",
+                "nativeUnderstorey_T3": "",
+                "nativeUnderstorey_T2": "",
+                "nativeUnderstorey_averageScore": ""
+            },
+            {
+                "totalGroundCover_T3_score": "",
+                "totalGroundCover_T2_score": "",
+                "parameter": "Total ground cover %",
+                "totalGroundCover_T1_score": "",
+                "totalGroundCover_averageScoreTotal": "",
+                "noEdit": true,
+                "totalGroundCover_T4_score": ""
+            },
+            {
+                "nativeGroundCover_T1_score": "",
+                "nativeGroundCover_T4_score": "",
+                "nativeGroundCover_averageScoreTotal": "",
+                "parameter": "Native ground cover %",
+                "noEdit": true,
+                "nativeGroundCover_T3_score": "",
+                "nativeGroundCover_T2_score": ""
+            },
+            {
+                "numberOfLayers_T1_score": "",
+                "parameter": "No. of structural layers",
+                "numberOfLayers_T3_score": "",
+                "noEdit": true,
+                "numberOfLayers_T4_score": "",
+                "numberOfLayers_averageScoreTotal": "",
+                "numberOfLayers_T2_score": ""
+            }
+        ]
+    }],
+    "modelName": "rarc_debris",
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "type": "col",
+            "items": [{
+                "boxed": true,
+                "title": "Vegetation Cover",
+                "type": "section",
+                "items": [{
+                    "computed": null,
+                    "type": "row",
+                    "items": [{
+                        "allowRowDelete": "false",
+                        "allowHeaderWrap": true,
+                        "columns": [
+                            {
+                                "width": "25%",
+                                "noEdit": true,
+                                "source": "parameter",
+                                "type": "text",
+                                "title": ""
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectOne",
+                                "type": "selectOne",
+                                "title": "Transect 1"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectTwo",
+                                "type": "selectOne",
+                                "title": "Transect 2"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectThree",
+                                "type": "selectOne",
+                                "title": "Transect 3"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "transectFour",
+                                "title": "Transect 4",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "15%",
+                                "noEdit": true,
+                                "source": "vegetationCoverAverageScore",
+                                "title": "Average Score",
+                                "type": "text"
+                            }
+                        ],
+                        "userAddedRows": false,
+                        "source": "vegetationCoverTable",
+                        "type": "table"
+                    }]
+                }],
+                "class": ""
+            }]
+        }]
+    }]
+}

@@ -1,0 +1,349 @@
+{
+    "modelName": "Site Visit Checklist",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Enter the name of the Departmental Contract Manager undertaking this review/audit.",
+            "name": "contractManager",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "description": "Enter the date on which the site visit was undertaken.",
+            "name": "siteVisitDate",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditDocsToBeObtained",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "auditDoco",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "auditDocTitle"
+                },
+                {
+                    "dataType": "text",
+                    "name": "auditDocAdequacy",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "auditCommentsDocuments"
+        },
+        {
+            "dataType": "list",
+            "name": "auditPrePreparedQuestions",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "prePreparedQuestions"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "auditCommentsPrePrepQuestions"
+        },
+        {
+            "dataType": "text",
+            "name": "auditParticipantRepresentation",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditCommsEquipment",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditPPE",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditProjectEquipment",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditFirstAidKits",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditVehicleSafety",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditTeamRatio",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "auditCommentsObservations"
+        },
+        {
+            "dataType": "text",
+            "name": "auditDocsInSpire",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "contractManager",
+                            "preLabel": "Contract Manager:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "siteVisitDate",
+                            "preLabel": "Site visit date:",
+                            "type": "date"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "source": "The table below outlines all of the documents you must obtain and assess, plus any other checks required, in conducting your Site Visit. Where required, use the comments box to outline any issues associated with any document or check, including the relevant reference number. Where required, use the comments box to outline any issues associated with any document or check, including the relevant reference number. When you finish a step below you can mark the step as complete by selecting 'Completed' or 'Not completed'.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h3>Site Visit Documents and Checks for Site Visit</h3>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Follow-up documentation</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "auditDocsToBeObtained",
+                    "preLabel": "Are there any documents listed in the Desktop Audit, or other documents you have identified, which are to be obtained from the Service Provider during this Site Visit?:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "If yes, please record the titles of these documents and if they are satisfactory:",
+                    "type": "literal"
+                },
+                {
+                    "source": "auditDoco",
+                    "columns": [
+                        {
+                            "source": "auditDocTitle",
+                            "title": "Document title",
+                            "width": "70%",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditDocAdequacy",
+                            "title": "Satisfactory?",
+                            "width": "20%",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "type": "table",
+                    "userAddedRows": "true"
+                },
+                {
+                    "source": "auditCommentsDocuments",
+                    "preLabel": "Comments:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Pre-prepared questions</h4>Please insert any significant pre-prepared evaluation questions you intend to ask during the Site Visit. Please use the comments section to reflect on the responses you are able to obtain.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "auditPrePreparedQuestions",
+                    "columns": [
+                        {
+                            "source": "prePreparedQuestions",
+                            "title": "Pre-prepared Questions",
+                            "width": "90%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "table",
+                    "userAddedRows": "true"
+                },
+                {
+                    "source": "auditCommentsPrePrepQuestions",
+                    "preLabel": "Comments:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Observations on site</h4>Ensure that you see and inspect the relevant on-ground works and activities, and get the opportunity to discuss the Project activities and your observations with the Service Provider or Project Sponsor’s and all relevant stakeholders.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "auditParticipantRepresentation",
+                            "preLabel": "Is there an adequate number of Participants in attendance at the time of the site visit?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditCommsEquipment",
+                            "preLabel": "Is there communications equipment available and being used on site?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditPPE",
+                            "preLabel": "Has personal protective equipment for each Participant (such as steel-capped work boots, board-brimmed hat, heavy duty long trousers, work gloves and long sleeved shirt) been supplied and is it being worn?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditProjectEquipment",
+                            "preLabel": "Has other equipment, including Project Specific Materials (such as hard hats, hearing protection, eye protection, sun protection, insect repellent , wet weather protection, warm jumpers and/or jackets for cold climates) been supplied and are they visible (or being worn appropriately) on site?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditFirstAidKits",
+                            "preLabel": "Are First Aid kits accessible?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditVehicleSafety",
+                            "preLabel": "Do vehicles appear to be safe and in good working order?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditTeamRatio",
+                            "preLabel": "Is the Participant and Team Supervisor ratio correct (max 9:1)?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "auditCommentsObservations",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Post Site Visit</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "auditDocsInSpire",
+                            "preLabel": "Have you saved all documents in the relevant Service Provider record in SPIRE?:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "Please note that, upon completion of the Site Visit, you must complete the Project Audit Report and arrange for Director sign off and contact the Service Provider (by email) to advise of the Audit outcomes and any actions required.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        }
+    ]
+}

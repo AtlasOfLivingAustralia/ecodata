@@ -1,0 +1,79 @@
+{
+  "title": "Farm management surveys",
+  "modelName": "RLP - Farm Management Survey",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "farmManagementSurveys",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfFarmManagementSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfDaysConductingSurveys",
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
+        },
+        {
+          "dataType":"text",
+          "name":"surveyPurpose",
+          "validate":"required,maxSize[500]",
+          "description": "What will the survey aim to capture?"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "farmManagementSurveys",
+          "columns": [
+            {
+              "title": "Baseline survey or indicator (follow-up) survey?",
+              "source": "baselineOrIndicatorSurvey",
+              "type": "selectOne",
+              "width":"25%"
+            },
+            {
+              "title":"Number of farm management surveys conducted",
+              "source":"numberOfFarmManagementSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Number of days spent on these farm management surveys",
+              "source":"numberOfDaysConductingSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Survey purpose",
+              "type":"textarea",
+              "rows":3,
+              "source":"surveyPurpose",
+              "width":"55%"
+            }
+
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

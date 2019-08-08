@@ -1,0 +1,475 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The local time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "vineSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "individualCountVines",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individual vine plants counted at this location.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidenceVines",
+            "description": "How certain are you that you have correctly identified the vine plants? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "plantingYear",
+            "description": "The year the vine was planted or established.",
+            "constraints": [
+                "2019",
+                "2018",
+                "2017",
+                "2016",
+                "2015",
+                "2014",
+                "2013",
+                "2012",
+                "2011",
+                "2010",
+                "2009",
+                "2008",
+                "2007",
+                "2006",
+                "2005",
+                "2004",
+                "2003",
+                "2002",
+                "2001",
+                "2000",
+                "Older than 2000"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "heightOfVinesInMetres",
+            "description": "The averave height of the vines above ground level.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "basalDiameterOfVinesInMillimetres",
+            "description": "The average diameter of vine stems at ground level (This is an indicator of maturity).",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "species",
+            "name": "butterflySpecies",
+            "dwcAttribute": "scientificName",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "0",
+            "dataType": "number",
+            "name": "individualCountButterfly",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individual butterflies (adults and larvae) counted at this location.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidenceButterfly",
+            "description": "How certain are you that you have correctly identified the butterfly species? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "maturity",
+            "description": "The life stage of the butterfly species observed.",
+            "constraints": [
+                "Adult",
+                "Larvae",
+                "Adults and larvae",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "sex",
+            "dwcAttribute": "sex",
+            "description": "The sex of the butterfly species observed.",
+            "constraints": [
+                "Male",
+                "Female",
+                "Males and females",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "image",
+            "name": "photo",
+            "description": "Upload photo(s) taken of vine and butterflies at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "mappingButterfliesAndHostVines",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Vine Information",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Vine species",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "noEdit": "true",
+                                    "source": "vineSpecies",
+                                    "preLabelClass": "span4",
+                                    "type": "autocomplete"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are you confident of the identification?",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "identificationConfidenceVines",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Number of vines",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "individualCountVines",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Planting year",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "plantingYear",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Height of vines (m)",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "heightOfVinesInMetres",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Diameter of stem at ground level (mm)",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "basalDiameterOfVinesInMillimetres",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Butterfly Information",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Butterfly species",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "noEdit": "true",
+                                    "source": "butterflySpecies",
+                                    "preLabelClass": "span4",
+                                    "type": "autocomplete"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Are you confident of the identification?",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "identificationConfidenceButterfly",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Number of butterflies and/or larvae observed",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "individualCountButterfly",
+                                    "preLabelClass": "span4",
+                                    "type": "number"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Life stage",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "maturity",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Sex",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "sex",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": true,
+                                "readonly": false,
+                                "includeSource": false,
+                                "includeAccuracy": true,
+                                "hideSiteSelection": true,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "Details",
+                                "type": "section",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Recorded by",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "recordedBy",
+                                            "preLabelClass": "span4",
+                                            "type": "text"
+                                        }],
+                                        "class": ""
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Date",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "surveyDate",
+                                            "preLabelClass": "span4",
+                                            "type": "date"
+                                        }],
+                                        "class": ""
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Time",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "surveyStartTime",
+                                            "preLabelClass": "span4",
+                                            "type": "time"
+                                        }],
+                                        "class": ""
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Notes",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "source": "notes",
+                                            "preLabelClass": "span4",
+                                            "type": "textarea",
+                                            "rows": 5
+                                        }],
+                                        "class": ""
+                                    }
+                                ],
+                                "class": ""
+                            }]
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "Images",
+                                "type": "section",
+                                "items": [{
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
+                                        "computed": null,
+                                        "source": "sightingPhoto",
+                                        "type": "image"
+                                    }]
+                                }],
+                                "class": ""
+                            }],
+                            "class": ""
+                        }
+                    ],
+                    "class": ""
+                }
+            ],
+            "class": ""
+        }
+    ]
+}

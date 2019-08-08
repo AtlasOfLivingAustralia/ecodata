@@ -1,0 +1,583 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "readOnly": true,
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "samplingProtocol",
+            "dwcAttribute": "samplingProtocol",
+            "description": "The systematic sampling method used.",
+            "constraints": [
+                "Fixed-area",
+                "Fixed-time",
+                "Fixed-time & Fixed-area",
+                "Distance sample (along transect)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "samplingDurationInMinutes",
+            "description": "The duration of time spent sampling.",
+            "validate": "required,min[0]"
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "samplingNumberOfObservers",
+            "description": "The number of observers sampling for this event record.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "samplingAreaInHectares",
+            "description": "The area sampled for the method used.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "samplingLengthOfTransectInMetres",
+            "description": "The length of transect sampled in metres.",
+            "validate": "required,min[0]"
+        },
+        {
+            "computed": {
+                "expression": "",
+                "dependents": {"source": [
+                    "samplingDurationInMinutes",
+                    "samplingNumberOfObservers"
+                ]}
+            },
+            "dataType": "number",
+            "name": "samplingEffortInPersonHours",
+            "description": "The total amount of observation time spent on this activity in person hours."
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "",
+                    "source": ""
+                },
+                "operation": "sum"
+            },
+            "dataType": "number",
+            "name": "totalCount",
+            "description": "The total number of juvenile and adult birds seen during this activity."
+        },
+        {
+            "computed": {
+                "expression": "",
+                "dependents": {"source": [
+                    "totalCount",
+                    "samplingAreaInHectares"
+                ]}
+            },
+            "dataType": "number",
+            "name": "totalCountPerHectare",
+            "description": "The total number of juvenile and adult birds seen per hectare during this activity."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "distanceAlongTransectInMetres",
+                    "description": "",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "distanceFromTransectInMetres",
+                    "description": "",
+                    "validate": "min[0]"
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individual birds seen.",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "ageClass",
+                    "description": "",
+                    "constraints": [
+                        "Juvenile",
+                        "Adult",
+                        "Juveniles and adults",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "sex",
+                    "description": "",
+                    "constraints": [
+                        "Male",
+                        "Female",
+                        "Male and female",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "behaviour",
+                    "description": "",
+                    "constraints": [
+                        "Flying over",
+                        "Roosting/sleeping",
+                        "Feeding",
+                        "Social"
+                    ]
+                },
+                {
+                    "dataType": "species",
+                    "name": "treeSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": "The tree species in which the bird was feeding or roosting."
+                }
+            ],
+            "name": "sightings",
+            "type": "list"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "databaseStatus",
+            "description": "Please indicate whether this record has been entered into another database. This is to help identify potential duplicate records.",
+            "constraints": [
+                "No",
+                "Yes"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who made the sighting."
+        },
+        {
+            "dataType": "image",
+            "name": "samplingAreaPhoto",
+            "description": "Upload a photo of the area sampled for this activity."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "urbanBirdMovementsResearch_systematic",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Urban Bird Movements Research - Systematic Survey<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Sampling Event",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Date",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span7",
+                                            "source": "surveyDate",
+                                            "preLabelClass": "span5",
+                                            "type": "date"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Time",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span7",
+                                            "source": "surveyStartTime",
+                                            "preLabelClass": "span5",
+                                            "type": "time"
+                                        }]
+                                    }],
+                                    "class": ""
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Notes",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span7",
+                                            "source": "notes",
+                                            "preLabelClass": "span5",
+                                            "type": "textarea",
+                                            "rows": 5
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Recorded by",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span7",
+                                            "source": "recordedBy",
+                                            "preLabelClass": "span5",
+                                            "type": "text"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Have you entered this record into another database?",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span7",
+                                            "source": "databaseStatus",
+                                            "preLabelClass": "span5",
+                                            "type": "selectOne"
+                                        }]
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Sampling Method",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "Method used",
+                                                "inline": true,
+                                                "computed": null,
+                                                "dataClass": "span5",
+                                                "source": "samplingProtocol",
+                                                "preLabelClass": "span7",
+                                                "type": "selectOne"
+                                            }]
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "How long did the sampling activity last (in minutes)?",
+                                                "inline": true,
+                                                "computed": null,
+                                                "dataClass": "span5",
+                                                "source": "samplingDurationInMinutes",
+                                                "preLabelClass": "span7",
+                                                "type": "number"
+                                            }]
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "How many observers in this activity?",
+                                                "inline": true,
+                                                "computed": null,
+                                                "dataClass": "span5",
+                                                "source": "samplingNumberOfObservers",
+                                                "preLabelClass": "span7",
+                                                "type": "number"
+                                            }]
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "Area sampled in this activity (in hectares)",
+                                                "inline": true,
+                                                "computed": null,
+                                                "dataClass": "span5",
+                                                "source": "samplingAreaInHectares",
+                                                "preLabelClass": "span7",
+                                                "type": "number"
+                                            }]
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "Length of sampling transect (in metres) if applicable",
+                                                "inline": true,
+                                                "computed": null,
+                                                "dataClass": "span5",
+                                                "source": "samplingLengthOfTransectInMetres",
+                                                "preLabelClass": "span7",
+                                                "type": "number"
+                                            }]
+                                        }]
+                                    }
+                                ],
+                                "class": ""
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Summary Data",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Total sampling effort (in person hours)",
+                                            "inline": true,
+                                            "dataClass": "span5",
+                                            "readOnly": true,
+                                            "source": "samplingEffortInPersonHours",
+                                            "preLabelClass": "span7",
+                                            "type": "number"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Total number of birds seen",
+                                            "inline": true,
+                                            "dataClass": "span5",
+                                            "readOnly": true,
+                                            "source": "totalCount",
+                                            "preLabelClass": "span7",
+                                            "type": "number"
+                                        }]
+                                    }],
+                                    "class": ""
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Total number of birds seen per Ha",
+                                            "inline": true,
+                                            "dataClass": "span5",
+                                            "readOnly": true,
+                                            "source": "totalCountPerHectare",
+                                            "preLabelClass": "span7",
+                                            "type": "number"
+                                        }]
+                                    }],
+                                    "class": ""
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": false,
+                                    "includeSource": false,
+                                    "includeAccuracy": true,
+                                    "hideSiteSelection": true,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "includeLocality": false
+                                }]
+                            },
+                            {
+                                "boxed": true,
+                                "title": "Image of Sampling Area",
+                                "type": "section",
+                                "items": [{
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
+                                        "computed": null,
+                                        "source": "samplingAreaPhoto",
+                                        "type": "image"
+                                    }]
+                                }],
+                                "class": ""
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ],
+            "class": ""
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Observation Records",
+                    "type": "section",
+                    "items": [{
+                        "computed": null,
+                        "type": "row",
+                        "items": [{
+                            "allowHeaderWrap": true,
+                            "columns": [
+                                {
+                                    "width": "20%",
+                                    "source": "species",
+                                    "title": "Species",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "distanceAlongTransectInMetres",
+                                    "title": "Distance along transect (m)",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "distanceFromTransectInMetres",
+                                    "title": "Distance from transect (m)",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "individualCount",
+                                    "title": "Number of birds seen",
+                                    "type": "number"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "ageClass",
+                                    "title": "Age of bird(s)",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "sex",
+                                    "title": "Sex of bird(s)",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "behaviour",
+                                    "title": "Behaviour",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "20%",
+                                    "source": "treeSpecies",
+                                    "title": "Tree species if feeding or roosting",
+                                    "type": "autocomplete"
+                                }
+                            ],
+                            "defaultRows": "1",
+                            "userAddedRows": true,
+                            "source": "sightings",
+                            "type": "table",
+                            "class": "output-section"
+                        }]
+                    }],
+                    "class": ""
+                }]
+            }]
+        }
+    ]
+}

@@ -1,0 +1,124 @@
+{
+    "modelName": "Evidence of Previous Pest Management",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Type of evidence visible on treated target animals",
+            "name": "evidenceOfPreviousPestTreatment",
+            "constraints": [
+                "Diseased animals present",
+                "Evidence of harbour destruction activity",
+                "Habitat regeneration evident (describe in notes)",
+                "Harbours, burrows or nests present but empty",
+                "Re-appearance / increased populations of food species present",
+                "Reduced / eradicated population of pest species present",
+                "Treatment signage present",
+                "No evidence",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The effectiveness of the last treatment activity as a proportion of the area and density of the infestation that existed before the previous treatment activity, expressed as the number of individuals killed / removed from the population",
+            "name": "effectivenessOfPreviousWeedTreatment"
+        },
+        {
+            "dataType": "stringList",
+            "description": "The method used to assess the effectiveness of previous pest animal treatment. <font color='blue'>'<b>NB.:<\/b> This pertains to evidence of previous treatments only.<\/font>'",
+            "name": "previousPestTreatmentAssessmentMethod",
+            "constraints": [
+                "Anecdotal - 3rd party observations",
+                "Anecdotal - personal observations",
+                "Measurable change in evidence / signs of presence",
+                "Measurable change in trapping success rate",
+                "Method-based population survey - food species abundance (specify method in notes)",
+                "Method-based population survey - target species abundance (specify method in notes)",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "The type of treatment method recommended for initial or follow up treatment",
+            "name": "recommendedPestTreatment",
+            "constraints": [
+                "Animal pest disease management - quarantine",
+                "Animal pest disease management - treatment",
+                "Bait & trap",
+                "Bait only",
+                "Biological control agents",
+                "Exclusion fencing (please specify fence details in a separate 'Fencing' activity)",
+                "Fumigation",
+                "Harbour destruction",
+                "Positive competition",
+                "Spotlight / daylight cull",
+                "Trap & destroy",
+                "Trap & remove",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "General observational notes applicable to the site, treatment, conditions, etc.",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "evidenceOfPreviousPestTreatment",
+                            "computed": null,
+                            "preLabel": "Evidence of Previous Treatment:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "recommendedPestTreatment",
+                            "computed": null,
+                            "preLabel": "Recommended initial or follow-up treatment method:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "effectivenessOfPreviousWeedTreatment",
+                            "computed": null,
+                            "preLabel": "Effectiveness of Previous Treatment (No. killed):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "<font color='blue'>'<b>NB.:<\/b> The following methods pertain only to how evidence of previous treatments was obtained.<\/font>'",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "previousPestTreatmentAssessmentMethod",
+                            "computed": null,
+                            "preLabel": "Previous treatment effectiveness assessment method:",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Notes:",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

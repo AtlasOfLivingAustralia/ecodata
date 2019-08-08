@@ -1,0 +1,52 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "progressUpdate",
+            "description": "Consider discussing the environmental, social and economic achievements in the stage.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "deliveredToMeriPlan",
+            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.  Please contact your grant manager if the MERI plan or project activities require updating in MERIT.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "workplaceHeathAndSafetyIncidents",
+            "description": "Refer to the Work, Health and Safety section of your funding agreement for further information.",
+            "constraints": [
+                "Y",
+                "N"
+            ],
+            "validate": "required"
+        }
+    ],
+    "modelName": "Overview of Project Progress",
+    "title": "Overview of Project Progress",
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "type": "col",
+            "items": [
+                {
+                    "preLabel": "Provide an update on progress towards achievement of the MERI plan’s outcomes for the stage.",
+                    "source": "progressUpdate",
+                    "type": "textarea"
+                },
+                {
+                    "preLabel": "Outline any deviations from the MERI plan which have affected delivery of activities.",
+                    "source": "deliveredToMeriPlan",
+                    "type": "textarea"
+                },
+                {
+                    "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+                    "source": "workplaceHeathAndSafetyIncidents",
+                    "type": "selectOne"
+                }
+            ]
+        }],
+        "class": "output-section"
+    }]
+}

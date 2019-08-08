@@ -1,0 +1,385 @@
+{
+    "modelName": "MDBA_iconic_species_sightings",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species1",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the plant, animal or fungus observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount1",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals or colonies (for certain insects).",
+            "validate": "integer,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence1",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "sex1",
+            "dwcAttribute": "sex",
+            "description": "Select appropriate category if the sighting is an animal and it is possible to identify gender.",
+            "constraints": [
+                "Male",
+                "Female",
+                "Male and female",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "status1",
+            "description": "Indicate the health status of the organism sighted.",
+            "constraints": [
+                "Alive",
+                "Dead",
+                "Sick or injured"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "comments1",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "text",
+            "name": "previousSightings1",
+            "description": "Indicate whether you have seen this species at this location previously.",
+            "constraints": [
+                "Up to 1 week ago",
+                "1 Week to 1 month ago",
+                "1 Month to 6 months ago",
+                "1 Year or longer ago",
+                "Never seen here before"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto1",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species2",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the plant, animal or fungus observed."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount2",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals or colonies (for certain insects).",
+                    "validate": "integer,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence2",
+                    "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "sex2",
+                    "dwcAttribute": "sex",
+                    "description": "Select appropriate category if the sighting is an animal and it is possible to identify gender.",
+                    "constraints": [
+                        "Male",
+                        "Female",
+                        "Male and female",
+                        "Unknown"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "status2",
+                    "description": "Indicate the health status of the organism sighted.",
+                    "constraints": [
+                        "Alive",
+                        "Dead",
+                        "Sick or injured"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments2",
+                    "dwcAttribute": "notes",
+                    "description": "Observation notes about the record."
+                },
+                {
+                    "dataType": "text",
+                    "name": "previousSightings2",
+                    "description": "Indicate whether you have seen this species at this location previously.",
+                    "constraints": [
+                        "Up to 1 week ago",
+                        "1 Week to 1 month ago",
+                        "1 Month to 6 months ago",
+                        "1 Year or longer ago",
+                        "Never seen here before"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto2",
+                    "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "multiSightingTable"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Record your individual sightings of iconic species in the Murray-Darling Basin",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Survey Information<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey start time",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Single Species Sighting<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Species name",
+                            "computed": null,
+                            "source": "species1",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "source": "<i>Start typing a common or scientific name. <br>Note that only iconic species can be selected.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Are you confident of the species identification?",
+                            "computed": null,
+                            "source": "identificationConfidence1",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "How many individuals did you see?",
+                            "computed": null,
+                            "source": "individualCount1",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Sex (if applicable)",
+                            "computed": null,
+                            "source": "sex1",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Status",
+                            "computed": null,
+                            "source": "status1",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "computed": null,
+                            "source": "comments1",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Have you seen the species here in the past?",
+                            "computed": null,
+                            "source": "previousSightings1",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sighting photo",
+                            "computed": null,
+                            "source": "sightingPhoto1",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": false,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>More Species Sightings?<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "If you saw more than one iconic species on this day at this location, please add a row for each below. Species seen on different days or at different locations should be logged as separate records.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
+                "columns": [
+                    {
+                        "width": "15%",
+                        "source": "species2",
+                        "title": "Species name",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "identificationConfidence2",
+                        "title": "Id confidence",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "individualCount2",
+                        "title": "No. of individuals",
+                        "type": "number"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "sex2",
+                        "title": "Sex",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "status2",
+                        "title": "Status",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "30%",
+                        "source": "comments2",
+                        "title": "Comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "19%",
+                        "source": "sightingPhoto2",
+                        "title": "Species photo",
+                        "type": "imageDialog"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "previousSightings2",
+                        "title": "Species seen here before?",
+                        "type": "selectOne"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "multiSightingTable",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

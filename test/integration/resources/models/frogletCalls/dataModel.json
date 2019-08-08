@@ -1,0 +1,341 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the observation was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the observation was made."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the observation."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species1",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the plant, animal or fungus observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence1",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Very confident",
+                "Moderately confident",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "wind",
+            "description": "Wind conditions at the time of the survey",
+            "constraints": [
+                "Still",
+                "Breeze",
+                "Strong wind"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cloud",
+            "description": "Cloud cover at the time of the survey",
+            "constraints": [
+                "Clear",
+                "Some cover",
+                "Complete cover"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "rain",
+            "description": "Rain conditions at the time of the survey",
+            "constraints": [
+                "No rain",
+                "Spitting or drizzle",
+                "Some rain",
+                "Heavy rain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "wetlandDescription",
+            "dwcAttribute": "notes",
+            "description": "A brief description of the wetlands in which the survey was undertaken."
+        },
+        {
+            "dataType": "text",
+            "name": "sloanesFrogletPresenceAbsence",
+            "description": "Indicate whether Sloane's froglet was seen or heard during this visit.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "individualsHeard",
+            "description": "The approximate number of individuals heard.",
+            "constraints": [
+                "0",
+                "1-5",
+                "6-10",
+                "11-20",
+                "21-50",
+                "51+"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "audioCaptured",
+            "description": "Was audio of the frog calls captured?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto1",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species2",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the plant, animal or fungus observed."
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence2",
+                    "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Very confident",
+                        "Moderately confident",
+                        "Unsure"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments2",
+                    "dwcAttribute": "notes",
+                    "description": "Observation notes about the record."
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto2",
+                    "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "multiSightingTable"
+        }
+    ],
+    "modelName": "Froglet Calls",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Record all species that you sighted when you visited this site.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Survey Information<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Survey event date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey event start time",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Wetland description",
+                            "computed": null,
+                            "source": "wetlandDescription",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Weather conditions<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Wind",
+                            "computed": null,
+                            "source": "wind",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Cloud",
+                            "computed": null,
+                            "source": "cloud",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Rain",
+                            "computed": null,
+                            "source": "rain",
+                            "type": "selectOne"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Did you hear Sloane’s froglet?<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Species name",
+                            "computed": null,
+                            "noEdit": "true",
+                            "source": "species1",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "preLabel": "Presence/absence of Sloane's froglet",
+                            "computed": null,
+                            "source": "sloanesFrogletPresenceAbsence",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Are you confident of the species identification?",
+                            "computed": null,
+                            "source": "identificationConfidence1",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "How many individuals did you hear?",
+                            "computed": null,
+                            "source": "individualsHeard",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Did you record audio of the frog calls?",
+                            "computed": null,
+                            "source": "audioCaptured",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>More Frog Sightings?<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": " If you heard more than one frog species on this day at this location, please add a row for each below. Frogs heard on different days or at different locations should be logged as separate records.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
+                "columns": [
+                    {
+                        "width": "15%",
+                        "source": "species2",
+                        "title": "Species name",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "identificationConfidence2",
+                        "title": "Id confidence",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "50%",
+                        "source": "comments2",
+                        "title": "Comments",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "19%",
+                        "source": "sightingPhoto2",
+                        "title": "Species photo",
+                        "type": "imageDialog"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "multiSightingTable",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

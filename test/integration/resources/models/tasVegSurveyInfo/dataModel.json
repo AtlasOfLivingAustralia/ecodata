@@ -1,0 +1,107 @@
+{
+    "modelName": "Survey Information",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "assessor"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "property"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "habitatZone"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "zoneAreaHa"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "plotId"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "gps20mPlot"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "gps40mPlot"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "assessor",
+                        "computed": null,
+                        "preLabel": "Assessor:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "property",
+                        "computed": null,
+                        "preLabel": "Property:",
+                        "type": "text"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "habitatZone",
+                        "computed": null,
+                        "preLabel": "Habitat zone Id:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "zoneAreaHa",
+                        "computed": null,
+                        "preLabel": "Habitat zone area (Ha):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "plotId",
+                        "computed": null,
+                        "preLabel": "Plot No.:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "gps20mPlot",
+                        "computed": null,
+                        "preLabel": "GPS ref. (NW 20m Plot):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "gps40mPlot",
+                        "computed": null,
+                        "preLabel": "GPS ref. (NW 40m Plot):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "width": "30%",
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

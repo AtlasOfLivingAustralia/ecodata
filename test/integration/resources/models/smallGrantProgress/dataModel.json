@@ -1,0 +1,338 @@
+{
+    "modelName": "Small Grants - Progress Report",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Indicate whether there has been a change in the details of your organisation or key project personnel since the application or previous report. (e.g. Organisation name, ABN, Trust Deed;  Name, position, role, email, telephone or address of key contacts)",
+            "name": "orgDetailsChange",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Provide a summary of what has been achieved to date against each Activity and the Outcomes identified in your Funding Agreement. ",
+            "name": "achievementsSummary",
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "issues",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "description": "A sequential reference number for the issue. Please do not duplicate reference numbers.",
+                    "name": "issueReference",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Describe the nature of the issue.",
+                    "name": "issueDescription",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Indicate how you are intending to manage, or are currently managing this issue.",
+                    "name": "issueManagement",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Indicate how this issue will impact on the project if left un-managed (include impacts on timeframes, feasibility, costs, ability to meet contracted deliverables).",
+                    "name": "issuesImpacts",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Provide a summary of a) what project monitoring and/or evaluation activities have been undertaken to date; b) any key findings and/or learnings gained from the project; and c) any changes you are making in response to these.(Detailed information, such as survey data, can be submitted as an attachment to the report).",
+            "name": "monitoringEvaluationLearning",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Please provide any further comments you may wish to make on the project and/or programme here.",
+            "name": "notes"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the the project's expenditure proceeding in accordance with the budget, the expected rate of expenditure and within the total project budget.",
+            "name": "budgetTracking",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether all 'Recipient' or 'Other' cash contributions, have they been received and/or been contracted to be received, if such receipts are included in your project budget.",
+            "name": "budgetReceiptsReceived",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "budgetIssues",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "A sequential reference number for the issue. Please do not duplicate reference numbers.",
+                    "name": "budgetIssueReference",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Describe the nature of the issue.",
+                    "name": "budgetIssueDescription",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Indicate how you are intending to manage, or are currently managing this issue.",
+                    "name": "budgetIssueManagement",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Indicate how this issue will impact on the project if left un-managed (include impacts on timeframes, feasibility, costs, ability to meet contracted deliverables).",
+                    "name": "budgetIssueImpacts",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Please provide any additional comments on the project's income, expenditure or budget.",
+            "name": "budgetNotes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<h4>1. Organisation and contact Details</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                        "source": "orgDetailsChange",
+                        "preLabel": "1.1 Has there been a change in the details of your organisation or key project personnel?",
+                        "width": "95%",
+                        "type": "selectOne"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>2. Summary of Project Progress for the Period</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "achievementsSummary",
+                            "preLabel": "2.1 Provide a summary of what has been achieved to date against each Activity and the Outcomes identified in your Funding Agreement.",
+                            "width": "95%",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "<h5>2.2 If you have encountered any issues or delays in delivering the project's Activities and / or Outcomes, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.</h5>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "<h5>2.2 If you have encountered any issues or delays in delivering the project's Activities and / or Outcomes, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.</h5>",
+                            "source": "issues",
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "title": "Issue No.",
+                                    "source": "issueReference",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Nature of the Issue",
+                                    "source": "issueDescription",
+                                    "width": "25%",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "title": "How you are managing, or proposing to manage, the issue?",
+                                    "source": "issueManagement",
+                                    "width": "25%",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "title": "Implications for the project",
+                                    "source": "issuesImpacts",
+                                    "width": "25%",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "class": "output-section",
+                            "type": "table"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>3. Monitoring, Evaluation and Project Learnings</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "achievementsSummary",
+                            "preLabel": "3.1 Provide a summary of a) what project monitoring and/or evaluation activities have been undertaken to date; b) any key findings and / or learnings gained from the project; and c) any changes you are making in response to these.",
+                            "width": "100%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>4. Other Comments</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "(Please provide any further comments you may wish to make on the project and / or programme here)",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "notes",
+                            "preLabel": "",
+                            "width": "100%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>5. Project Income and Expenditure</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "budgetTracking",
+                            "preLabel": "5.1 Is the project's expenditure proceeding in accordance with the budget, the expected rate of expenditure and within the total project budget?",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "budgetReceiptsReceived",
+                            "preLabel": "5.2 If your project budget includes 'Recipient' or 'Other' cash contributions, have they been received and / or been contracted to be received?",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "<h5>5.3 If you answered 'No' to question 5.1 or 5.2, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.</h5>",
+                            "type": "literal"
+                        },
+                        {
+                            "title": "5.3 If you answered 'No' to question 5.1 or 5.2, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.",
+                            "source": "budgetIssues",
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "title": "Issue No.",
+                                    "source": "budgetIssueReference",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Nature of the budget issue",
+                                    "source": "budgetIssueDescription",
+                                    "width": "30%",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "title": "How you are managing, or proposing to manage, the issue?",
+                                    "source": "budgetIssueManagement",
+                                    "width": "30%",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "title": "Implications for the project",
+                                    "source": "budgetIssueImpacts",
+                                    "width": "30%",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "class": "output-section",
+                            "type": "table"
+                        },
+                        {
+                            "source": "budgetNotes",
+                            "preLabel": "5.4 If you have additional comments on the project's income, expenditure or budget, please provide them here.",
+                            "width": "95%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

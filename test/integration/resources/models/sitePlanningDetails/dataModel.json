@@ -1,0 +1,167 @@
+{
+    "modelName": "Site Planning Details",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "The amount of time in hours spent on planning the works and other activities to be undertaken on the selected site under this project.",
+            "name": "sitePlanningTimeSpent"
+        },
+        {
+            "dataType": "list",
+            "name": "plannedActions",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Short title for the works/activity area (point of interest) to enable it to be easily identified and referred to.",
+                    "name": "worksAreaTitle"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of activity(s) to be undertaken on this site.",
+                    "name": "plannedActivityType",
+                    "constraints": [
+                        "Community Participation and Engagement",
+                        "Conservation Grazing Management",
+                        "Debris Removal",
+                        "Disease Management",
+                        "Erosion Management",
+                        "Fauna survey - general",
+                        "Fencing",
+                        "Fire Management",
+                        "Flora survey - general",
+                        "Management Practice Change",
+                        "Conservation Works for Threatened Species",
+                        "Pest Animal Survey",
+                        "Pest Management",
+                        "Public Access and Infrastructure",
+                        "Research",
+                        "Revegetation",
+                        "Seed Collection",
+                        "Site Assessment",
+                        "Site Preparation",
+                        "Water Management",
+                        "Weed Treatment",
+                        "Weed Mapping & Monitoring"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "Brief description of the activity / works to be implemented.",
+                    "name": "plannedActivityDescription"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual works and/or activity ares (points of interest) within the specified site for each selected activity type.",
+                    "name": "noOfWorksAreas"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate number of works and/or activity ares (points of interest) within the specified site for all selected activity types.",
+            "name": "noOfWorksAreasTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "noOfWorksAreas",
+                    "fromList": "plannedActions"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<h5>The section is for recording information about activities that you are planning to carry out on a site for this project. It may include one or several activities and is essentially an aid to your project planning as well as a way to record your effort spent in planning and preparing for actual works-based activities for project accounting.<\/h5>",
+                    "type": "literal"
+                },
+                {
+                    "title": "Wow much time did you spend planning works for this site?:",
+                    "source": "sitePlanningTimeSpent",
+                    "computed": null,
+                    "type": "number"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        },
+        {
+            "items": [{
+                "source": "Please indicate what you are planning to do on each works area within your selected site.",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of activity areas:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "noOfWorksAreasTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noOfWorksAreas\",\"fromList\":\"plannedActions\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "plannedActions",
+            "columns": [
+                {
+                    "title": "Name of works area:",
+                    "source": "worksAreaTitle",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "text"
+                },
+                {
+                    "title": "Type of activity planned:",
+                    "source": "plannedActivityType",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Description of planned activities:",
+                    "source": "plannedActivityDescription",
+                    "computed": null,
+                    "width": "35%",
+                    "type": "textarea"
+                },
+                {
+                    "title": "No. of works areas within the site:",
+                    "source": "noOfWorksAreas",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

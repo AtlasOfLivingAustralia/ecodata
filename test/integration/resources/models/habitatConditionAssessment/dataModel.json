@@ -1,0 +1,513 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "validate": "required"
+        },
+        {
+            "primaryResult": "true",
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "submissionDate",
+            "description": "The date on which the record was entered into the Habitat Condition Assessment Tool.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date the condition assessment was undertaken as accurately as possible. Use the following formats. Accurate to day: dd/mm/yyyy. Accurate to month: 01/mm/yyyy. Accurate to year: 01/01/yyyy.",
+            "validate": "required,past[now]"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyDateAccuracy",
+            "description": "Indicate the accuracy of the date that the assessment was undertaken.",
+            "constraints": [
+                "Accurate to day",
+                "Accurate to month",
+                "Accurate to year"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "assessmentPeriodStartDate",
+            "description": "The beginning date of the assessment period. Enter 1st Jan. if only the year is known (but not month & day), and 1st of the month if only the year and month is known (but not day).",
+            "validate": "past[now]"
+        },
+        {
+            "dataType": "text",
+            "name": "assessmentPeriodStartDateAccuracy",
+            "description": "Indicate the accuracy of the start date of the assessment period.",
+            "constraints": [
+                "Accurate to day",
+                "Accurate to month",
+                "Accurate to year"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "assessmentPeriodEndDate",
+            "description": "The last date to which the assessment period applies, as accurately as possible. Use the following formats. Accurate to day: dd/mm/yyyy. Accurate to month: 01/mm/yyyy. Accurate to year: 01/01/yyyy."
+        },
+        {
+            "dataType": "text",
+            "name": "assessmentPeriodEndDateAccuracy",
+            "description": "Indicate the accuracy of the end date of the assessment period.",
+            "constraints": [
+                "Accurate to day",
+                "Accurate to month",
+                "Accurate to year"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "overallConditionRating",
+            "description": "On a 0-1 scale (with best condition = 1) how would you rate the overall condition of the vegetation within the drawn polygon? The condition score must reflect the site’s current condition relative to reference states of 1 and 0. A score of ‘1’ applies when the ecosystem at the site is in its most natural form (or for highly dynamic systems, one of its natural forms), as might have existed prior to European settlement. A score of ‘0’ applies for a completely transformed site with all original indigenous biodiversity completely removed.",
+            "constraints": [
+                "0",
+                "0.05",
+                "0.1",
+                "0.2",
+                "0.3",
+                "0.4",
+                "0.5",
+                "0.6",
+                "0.7",
+                "0.8",
+                "0.9",
+                "0.95",
+                "1.0"
+            ],
+            "validate": "required"
+        },
+        {
+            "allowRowDelete": "false",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "overallConditionBoundCategory",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "overallConditionBoundRating",
+                    "description": "",
+                    "constraints": [
+                        "0",
+                        "0.05",
+                        "0.1",
+                        "0.2",
+                        "0.3",
+                        "0.4",
+                        "0.5",
+                        "0.6",
+                        "0.7",
+                        "0.8",
+                        "0.9",
+                        "0.95",
+                        "1.0"
+                    ],
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "overallConditionTable",
+            "defaultRows": [
+                {
+                    "overallConditionBoundCategory": "Upper",
+                    "overallConditionBoundRating": ""
+                },
+                {
+                    "overallConditionBoundCategory": "Lower",
+                    "overallConditionBoundRating": ""
+                }
+            ]
+        },
+        {
+            "allowRowDelete": "false",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "conditionElement"
+                },
+                {
+                    "dataType": "text",
+                    "name": "conditionElementRating",
+                    "description": "",
+                    "constraints": [
+                        "0",
+                        "0.5",
+                        "0.1",
+                        "0.2",
+                        "0.3",
+                        "0.4",
+                        "0.5",
+                        "0.6",
+                        "0.7",
+                        "0.8",
+                        "0.9",
+                        "0.95",
+                        "1.0"
+                    ],
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "conditionElementsTable",
+            "defaultRows": [
+                {
+                    "conditionElementRating": "",
+                    "conditionElement": "Native species diversity and composition"
+                },
+                {
+                    "conditionElementRating": "",
+                    "conditionElement": "Life form diversity"
+                },
+                {
+                    "conditionElementRating": "",
+                    "conditionElement": "Vegetation age and structure"
+                },
+                {
+                    "conditionElementRating": "",
+                    "conditionElement": "Nativeness"
+                },
+                {
+                    "conditionElementRating": "",
+                    "conditionElement": "Groundcover"
+                }
+            ]
+        },
+        {
+            "allowRowDelete": "false",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "anthropogenicDisturbanceType"
+                },
+                {
+                    "dataType": "number",
+                    "name": "disturbancePercent",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "disturbancesTable",
+            "defaultRows": [
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Invasive flora"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Invasive fauna"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Native fauna browsing / grazing"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Feral / livestock browsing / grazing"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Disease"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Vegetation clearance and fragmentation"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Fire regime change"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Climate change (flood/drought/storm/temperature)"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Nutrient enrichment"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Soil degradation or deposition/sedimentation"
+                },
+                {
+                    "disturbancePercent": "",
+                    "anthropogenicDisturbanceType": "Hydrological change"
+                }
+            ],
+            "description": "What percentage of direct or indirect anthropogenic disturbances have had an impact on the condition of the site? (choose all that apply)"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "disturbancesTable",
+                    "source": "disturbancePercent"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "disturbancePercentTotal",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "description": "If you would like to provide any more detailed information on the condition of this site, and the drivers of condition at this site please do so here."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": true,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "habitatConditionAssessment",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Site Assessment<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h1>Record Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Assessor name",
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date record entered",
+                            "primaryResult": "true",
+                            "source": "submissionDate",
+                            "type": "date"
+                        },
+                        {
+                            "source": "<h1>Condition Assessment Date<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<font style='color:blue; font-size:0.8em;'><i>Complete as precisely as possible. If a precise assessment date cannot be given, please enter a date accurate to either month (01/mm/yyyy) or year (01/01/yyyy).<\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "preLabel": "Assessment date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Assessment date accuracy",
+                            "source": "surveyDateAccuracy",
+                            "type": "selectOne"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<font style='color:blue; font-size:0.8em;'><i>Complete this section if the assessment applies across a known period of time.<\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "preLabel": "Assessment end date",
+                            "source": "assessmentPeriodEndDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Assessment end date accuracy",
+                            "source": "assessmentPeriodEndDateAccuracy",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "<h1>Site Location<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<font style='color:blue; font-size:0.8em;'><i>Zoom into the map, click on the shape drawing tool and then click on the map at your survey site to start drawing the site area. Click a point for each vertex of the shape and double-click the last one to close the polygon. Alternatively, enter the lat/long coordinates (WGS84 decimal) below the map.<\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": false,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": false
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<font style='color:blue; font-size:0.8em;'><i>If you would like to provide any more detailed information about this site or it's condition please do so here.<\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "source": "comments",
+                            "type": "textarea"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h1>Overall Condition Rating<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<h3>Site Condition Score<\/h3><font style='color:blue; font-size:0.8em;'><i>Provide your best estimate of the overall condition of this site. It does not apply to the best condition available within the site, condition within the site must be homogenous. To indicate the degree of certainty you have in the overall condition score you have given, provide the lowest and highest overall condition scores you would give to the site as upper and lower condition bounds. If you are completely certain of the condition score you've given, enter that score for the lower and upper bounds here. Note that this does not refer to variability in condition within the site (condition must be homogeneous within the whole site), rather to the degree of certainty you have around the overall condition score you have given.<\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "preLabel": "Overall Condition Rating",
+                            "source": "overallConditionRating",
+                            "type": "selectOne"
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "disableTableUpload": true,
+                            "columns": [
+                                {
+                                    "width": "30%",
+                                    "noEdit": true,
+                                    "source": "overallConditionBoundCategory",
+                                    "title": "Condition bounds",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "overallConditionBoundRating",
+                                    "title": "Score",
+                                    "type": "selectOne"
+                                }
+                            ],
+                            "source": "overallConditionTable",
+                            "type": "table"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<h4>Elements of condition rating and capacity to recover<\/h4><font style='color:blue; font-size:0.8em;'><i>On a scale of 0-1 (with best condition = 1) how would you rate the overall condition of each of the following elements within the drawn polygon?<\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "disableTableUpload": true,
+                            "columns": [
+                                {
+                                    "width": "30%",
+                                    "noEdit": true,
+                                    "source": "conditionElement",
+                                    "title": "Condition Element",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "conditionElementRating",
+                                    "title": "Condition Element Score",
+                                    "type": "selectOne"
+                                }
+                            ],
+                            "source": "conditionElementsTable",
+                            "type": "table"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "<b><h1>Disturbances impacting condition<\/h1><\/b><font style='color:blue; font-size:0.8em;'><i>If your condition score is <1 and you want to record what has influenced this score, please enter a % relative contribution for each disturbance type that applies. Total should sum to 100%. E.g. If the condition score is 0.7 due to invasive plants, enter 100 against invasive plants. If condition score is 0.7 due to vegetation clearing and invasive plants, enter the relative contributions of each disturbance type, such as 75 and 25. <\/i><\/font>",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "disableTableUpload": true,
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "computed": null,
+                                    "source": "<b>Percent total:<\/b>",
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "disturbancePercentTotal",
+                                    "type": "number"
+                                }
+                            ]}]},
+                            "columns": [
+                                {
+                                    "width": "40%",
+                                    "noEdit": true,
+                                    "source": "anthropogenicDisturbanceType",
+                                    "title": "Disturbance type",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "disturbancePercent",
+                                    "title": "% relative contribution",
+                                    "type": "number"
+                                }
+                            ],
+                            "source": "disturbancesTable",
+                            "type": "table"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

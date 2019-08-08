@@ -1,0 +1,125 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "outcome",
+                    "description": "SMART outcome being reported against, as per the MERI Plan."
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "assets",
+                    "description": "Assets addressed by this outcome, as per the MERI Plan."
+                },
+                {
+                    "dataType": "text",
+                    "name": "progressAgainstOutcome",
+                    "description": "Please briefly describe progress made against this outcome since the project commenced.",
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "outcomes",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "deliveredToMeriPlan",
+            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.  Please contact your grant manager if the MERI plan or project activities require updating in MERIT.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "workplaceHeathAndSafetyIncidents",
+            "description": "Refer to the Work, Health and Safety section of your funding agreement for further information.",
+            "constraints": [
+                "Y",
+                "N"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "lessonsLearned",
+            "description": "Description of lessons learnt from the project and how they may be applied in the future.",
+            "validate": "required"
+        }
+    ],
+    "modelName": "Overview of Project Progress",
+    "pre-populate": [{
+        "mapping": [{
+            "mapping": [
+                {
+                    "source-path": "description",
+                    "target": "outcome"
+                },
+                {
+                    "source-path": "assets",
+                    "target": "assets"
+                }
+            ],
+            "source-path": "custom.details.objectives.rows1",
+            "target": "outcomes"
+        }],
+        "merge": true,
+        "source": {"context-path": "project"}
+    }],
+    "title": "Overview of Project Progress",
+    "viewModel": [
+        {
+            "source": "outcomes",
+            "type": "repeat",
+            "items": [{
+                "type": "row",
+                "items": [{
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": {"computed": "\\'Outcome \\' || (index + 1)"},
+                            "readonly": true,
+                            "source": "outcome",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Assets addressed",
+                            "readonly": true,
+                            "source": "assets",
+                            "type": "selectMany"
+                        },
+                        {
+                            "preLabel": "Progress against the outcome",
+                            "source": "progressAgainstOutcome",
+                            "type": "textarea"
+                        }
+                    ]
+                }],
+                "class": "output-section"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Outline any deviations from the MERI plan which have affected delivery of activities.",
+                        "source": "deliveredToMeriPlan",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "What lessons have you or your organisation learnt while undertaking this project?",
+                        "source": "lessonsLearned",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+                        "source": "workplaceHeathAndSafetyIncidents",
+                        "type": "selectOne"
+                    }
+                ]
+            }],
+            "class": "output-section"
+        }
+    ]
+}

@@ -1,0 +1,410 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "siteId",
+            "description": "Performance monitoring sites can be assigned a Site ID by an administrator."
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date of the observation (defaults to today).",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyType",
+            "description": "The survey methodology used. If the options provided are not relevant, please provide details in the notes field.",
+            "constraints": [
+                "2-ha 20m survey",
+                "5-ha 30m survey",
+                "Area Search",
+                "Opportunistic sighting"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "Time started",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyEndTime",
+            "description": "Time finished.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "habitatType",
+            "description": "Select a habitat type that best describes the general location of your survey.",
+            "constraints": [
+                "1 - Mallee - north of River Murray",
+                "2 - Mallee - south of River Murray",
+                "3 - Mallee; Broombush & Heath shrubland - south of River Murray",
+                "4 - Open woodlands with open understorey",
+                "5 - Tall southern gum woodlands with open understorey",
+                "6 - Grazing land with scattered gum trees - flanks of eastern hills",
+                "7 - Native grassland; samphire; chenopod scrublands",
+                "8 - River Murray corridor - floodplains & wetlands",
+                "9 - Estuarine habitat - Lower Lakes & Coorong",
+                "10 - Coastal dunes in Coorong region",
+                "11 - Irrigated horticulture and dairy farming along River Murray",
+                "12 - Wheat/cropping/grazing land interspersed with mallee - south & west of River Murray",
+                "13 - Urban areas."
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "areaSurveyedInHectares",
+            "description": "For Area Search estimate the area surveyed in hectares where 1ha=100m x 100m. For opportunistic sighting enter '1'",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureInDegreesCelcius",
+            "description": "Estimate the temperature during the survey period.",
+            "validate": "min[-20],max[55]"
+        },
+        {
+            "dataType": "text",
+            "name": "windSpeed",
+            "description": "Estimated wind speed (Beaufort scale).",
+            "constraints": [
+                "Calm",
+                "Light to Moderate",
+                "Fresh to strong",
+                "Near gale and stronger"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cloudCover",
+            "description": "Estimate the percentage of sky covered in cloud during the survey.",
+            "constraints": [
+                "Clear",
+                "1/8",
+                "2/8",
+                "3/8",
+                "4/8",
+                "5/8",
+                "6/8",
+                "7/8",
+                "Full cover"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "Include any additional contextual data that may be relevant such as recent occurrence of fire, flood, revegetation or pest control work, etc"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "Please type the name of the person who actually sighted/heard the bird.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observerExpertise",
+            "description": "What is your level of bird ID expertise at this site? This is important information for us to quality assure our data. A Beginner is someone who has perhaps done less than 2 years of regular bird watching, is self taught, or perhaps recently done a community Bird ID course. An Intermediate bird watcher has probably done at least one course and identified birds regularly for between 2 and 10 years. An Expert has either had significant training and/or has at least 10 years of experience.",
+            "constraints": [
+                "Beginner (< 2 years experience)",
+                "Intermediate (2-10 years experience)",
+                "Expert (> 10 years experience)"
+            ],
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {
+                    "description": "Estimate the distance from your location coordinates (i.e., Latitude & Longitude) to the location of your actual bird sighting(s). For an Area Search this may be several hundred metres or more. For an Opportunistic Sighting it may be only 5-50m.",
+                    "source": "Accuracy"
+                },
+                {
+                    "description": "Describe the location. E.g. approximately 200m south of currency creek settlement at Lions Park walking trail entrance",
+                    "source": "Notes"
+                },
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationAccuracy",
+            "description": "Estimate the distance from your location coordinates (i.e., Latitude & Longitude) to the location of your actual bird sighting(s). For an Area Search this may be several hundred metres or more. For an Opportunistic Sighting it may be only 5-50m.",
+            "constraints": [
+                "0-5m",
+                "5-50m",
+                "51-100m",
+                "101-250m",
+                "251-500m",
+                "501-1000m",
+                "1-10km"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "sitePhoto",
+            "description": "Attach a photo of the site that captures important habitat features. If you would like to capture photos over time, make sure your photo is taken from the same position each time, and that the time and date correspond with the actual survey of species."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "Select the species name or select 'Unlisted species' and use 'Vagrant sighting' for comments. Click on the 'i' for information about the selected species.",
+                    "validate": "required"
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "For surveys interpreting call files, please allocate a 1 once a species has been clearly identified. For surveys where individuals are visually identified, please allocate an actual number of the individuals observed.",
+                    "validate": "required,min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "notes",
+                    "description": "Add names of vagrant species here where 'Unlisted' was chosen for the species field. Also add comments that help with the detail of the record, eg. roosting, nesting, roadkill, beach-washed, heard only, etc."
+                },
+                {
+                    "dataType": "text",
+                    "name": "nesting",
+                    "description": "Please select how the species were identified. ie. if calls were identified using an Automated Key, or Manual ID if the specimen was recognised visually or the call file recognised visually. Please also determine if there were calls that could not be identified which might be analysed at a later date with improved automated keys.",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "description": "A photo of the bird. Not necessary for common species, but useful for rare/unconfirmed sightings. Only image files can be attached."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesObserved"
+        }
+    ],
+    "modelName": "birdSurvey-SAMD",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "For help to complete this form or notify us regarding technical issues, contact Sylvia Clarke on (08) 8391 7500. For help identifying species, contact Southern Birding Services, or phone 1800 BIRDING,",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Observation Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Site ID",
+                            "computed": null,
+                            "source": "siteId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey type",
+                            "computed": null,
+                            "source": "surveyType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Time started",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Time finished",
+                            "computed": null,
+                            "source": "surveyEndTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Area surveyed (Ha)",
+                            "computed": null,
+                            "source": "areaSurveyedInHectares",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Observation accuracy",
+                            "computed": null,
+                            "source": "locationAccuracy",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Habitat type",
+                            "computed": null,
+                            "source": "habitatType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Environmental Conditions<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Temperature",
+                            "computed": null,
+                            "source": "temperatureInDegreesCelcius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Wind speed",
+                            "computed": null,
+                            "source": "windSpeed",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Cloud cover",
+                            "computed": null,
+                            "source": "cloudCover",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Additional notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "What is your level of bird ID expertise at this site?",
+                            "computed": null,
+                            "source": "observerExpertise",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Location<\/h1><font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker <img src='http://www.ala.org.au/wp-content/uploads/2017/03/geoMap-point-marker.png'>, as accurately as possible, at the location that record applies to. If you conducted an area search please locate the approximate central point on the map.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Site photo",
+                            "computed": null,
+                            "source": "sitePhoto",
+                            "type": "image"
+                        },
+                        {
+                            "includeNotes": true,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "autoLocalitySearch": true,
+                            "includeSource": false,
+                            "includeAccuracy": true,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": true
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "source": "<h1>Species Observed<\/h1>",
+                    "type": "literal"
+                },
+                {
+                    "columns": [
+                        {
+                            "computed": null,
+                            "source": "species",
+                            "title": "Species name",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "computed": null,
+                            "source": "individualCount",
+                            "title": "No. Recorded",
+                            "type": "number"
+                        },
+                        {
+                            "computed": null,
+                            "source": "comments",
+                            "title": "Comments/Vagrant Species",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "nesting",
+                            "title": "Nesting",
+                            "type": "selectOne"
+                        },
+                        {
+                            "computed": null,
+                            "source": "sightingPhoto",
+                            "title": "Photo",
+                            "type": "image"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "source": "speciesObserved",
+                    "type": "table",
+                    "class": "output-section"
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

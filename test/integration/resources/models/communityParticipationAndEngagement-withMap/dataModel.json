@@ -1,0 +1,224 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "The type of event being conducted",
+            "name": "eventType",
+            "constraints": [
+                "Conference / seminar presentation",
+                "Field day activity",
+                "Film / documentary production",
+                "Media release (including publication to social media)",
+                "Meeting",
+                "Mentoring",
+                "Planning session",
+                "Project feedback / debrief",
+                "Training session",
+                "Working bee",
+                "Workshop",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The purpose for which the event is being conducted",
+            "name": "eventPurpose",
+            "constraints": [
+                "Awareness raising event (eg. demonstration, field day, or study tour)",
+                "Training session, workshop or other skills / training event",
+                "Knowledge evaluation event",
+                "Works implementation",
+                "Planning",
+                "Other (describe in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The themes or topics covered during the events. Add in notes if more than one.",
+            "name": "eventTopics"
+        },
+        {
+            "dataType": "number",
+            "description": "The duration of the events in whole hours.",
+            "name": "eventDurationHrs",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "description": "The main industry type that the event is addressing",
+            "name": "industryType",
+            "constraints": [
+                "Aquaculture",
+                "Bananas",
+                "Berries",
+                "Cotton",
+                "Dairy",
+                "Environmental management",
+                "Fishing",
+                "Forestry",
+                "Fruit trees",
+                "Grains",
+                "Grapes",
+                "Grazing",
+                "Sugarcane",
+                "Vegetables",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "eventNotes"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Select the type(s) of partners involved in delivering the event",
+            "name": "deliveryPartner",
+            "constraints": [
+                "Academic/research institution",
+                "Consultant",
+                "Local farmer or community group",
+                "Peak Primary Industry Group",
+                "Regional Landcare Facilitator",
+                "Regional Landcare or farmer network",
+                "No delivery partners",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of community groups that have been financially supported to undertake local projects during this period.",
+            "name": "groupsSupported",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfEvents"
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "Community Event Details",
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "items": [{
+                            "source": "<h3>Details of Event<\/h3>",
+                            "type": "literal"
+                        }],
+                        "type": "row"
+                    },
+                    {
+                        "source": "eventType",
+                        "computed": null,
+                        "preLabel": "Type of event:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "eventPurpose",
+                        "computed": null,
+                        "preLabel": "Purpose of event:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "industryType",
+                        "computed": null,
+                        "preLabel": "Main industry type addressed:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "eventTopics",
+                        "computed": null,
+                        "preLabel": "Topics covered:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "eventDurationHrs",
+                        "computed": null,
+                        "preLabel": "Event Duration (Hrs):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "deliveryPartner",
+                        "preLabel": "Delivery partners:",
+                        "computed": null,
+                        "type": "selectMany"
+                    },
+                    {
+                        "source": "groupsSupported",
+                        "preLabel": "No. of groups supported financially:",
+                        "computed": null,
+                        "type": "number"
+                    },
+                    {
+                        "source": "eventNotes",
+                        "preLabel": "Comments / Notes:",
+                        "computed": null,
+                        "type": "textarea"
+                    }
+                ],
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "<h3>Event Location<\/h3><font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker, as accurately as possible, at the location of the event.<\/i><\/font>",
+                        "computed": null,
+                        "type": "literal"
+                    },
+                    {
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "computed": null,
+        "class": "output-section",
+        "type": "row"
+    }]
+}

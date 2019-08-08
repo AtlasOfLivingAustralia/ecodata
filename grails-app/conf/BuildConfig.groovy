@@ -68,7 +68,6 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        runtime ":jquery:1.11.1"
         compile ":asset-pipeline:1.9.9" // 2.13 has issues with java7, possibly there is a middle ground between 1.9.9 and 2.13
 
         // Uncomment these to enable additional asset-pipeline capabilities
@@ -77,6 +76,9 @@ grails.project.dependency.resolution = {
         //compile ":coffee-asset-pipeline:2.13.1"
         //compile ":handlebars-asset-pipeline:2.13.1"
         runtime ":csv:0.3.1"
+
+        // This version of ala-auth plugin pulls in dependencies we are implicitly relying on - updating to 2.x
+        // results in compile time errors.
         runtime ":ala-auth:1.3.1"
         runtime ":ala-bootstrap2:1.2"
         runtime ":cors:1.1.8"

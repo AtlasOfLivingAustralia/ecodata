@@ -7,25 +7,12 @@
     </head>
 
     <body>
-        <script type="text/javascript">
 
-            $(document).ready(function() {
-
-            });
-
-        </script>
         <content tag="pageTitle">Metadata</content>
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th><span style="font-size: large">Activities model</span>
-                        <span id="viewModeBtns" class="pull-right">
-                            <button title="Temporarily disabled" id="btnEdit" data-target="activitiesMetadata" class="btn btn-small btn-info">Edit</button>
-                        </span>
-                        <span id="editModeBtns" style="display:none;" class="pull-right">
-                            <button id="btnSave" class="btn btn-small btn-success">Save</button>
-                            <button id="btnCancel" class="btn btn-small">Cancel</button>
-                        </span>
                     </th>
                 </tr>
             </thead>

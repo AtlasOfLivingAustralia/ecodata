@@ -1,0 +1,272 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that you visited the boardwalk",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which you took the first photo point photo."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who recorded the images."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about your visit, including any characteristic site features, conditions, etc."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The name of the species seen If known). Please select 'Unknown' from the list if you can't identify the species and attach a photo of it."
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals seen of the species.",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "speciesPhoto",
+                    "description": "Please attach photos of species (or evidence of species presence such as scats, audible callls, etc.) seen during your visit to the boardwalk."
+                },
+                {
+                    "dataType": "text",
+                    "name": "identifiedFromPhoto",
+                    "description": "Indicate whether species identification was made from the photo or in the field.",
+                    "constraints": [
+                        "In-field identification",
+                        "Photo analysis"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "audioRecordingMade",
+                    "description": "Was an audio recording made of the species? Please send it to us for analysis.",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "observationRemarks",
+                    "description": "Please provide any relevant general comments about the observation - eg. actual location, behaviour, juvenile/adult, identification confidence, etc."
+                }
+            ],
+            "dataType": "list",
+            "name": "boardwalkTransectRecords"
+        }
+    ],
+    "modelName": "blueMountainsWHI_boardwalkTransect",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Blue Mountains World Heritage Institute - Boardwalk Species Observations Recording<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Visit Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Date",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "surveyDate",
+                                    "preLabelClass": "span4",
+                                    "type": "date"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Time",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "surveyStartTime",
+                                    "preLabelClass": "span4",
+                                    "type": "time"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Recorded by",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "recordedBy",
+                                    "preLabelClass": "span4",
+                                    "type": "text"
+                                }]
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Notes",
+                                    "inline": true,
+                                    "computed": null,
+                                    "dataClass": "span8",
+                                    "source": "notes",
+                                    "preLabelClass": "span4",
+                                    "type": "textarea"
+                                }]
+                            }
+                        ]
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": true,
+                                "readonly": true,
+                                "includeSource": false,
+                                "includeAccuracy": false,
+                                "hideSiteSelection": false,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Species Observations",
+                    "type": "section",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [{
+                                "source": "Please include any species observed during your boardwalk in the table below.",
+                                "type": "literal"
+                            }]
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "allowHeaderWrap": "true",
+                                "columns": [
+                                    {
+                                        "width": "35%",
+                                        "source": "species",
+                                        "title": "species",
+                                        "type": "speciesSearchWithImagePreview"
+                                    },
+                                    {
+                                        "width": "10%",
+                                        "source": "individualCount",
+                                        "title": "Count",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "width": "10%",
+                                        "source": "speciesPhoto",
+                                        "title": "Photo(s) of species and/or evidence",
+                                        "type": "image"
+                                    },
+                                    {
+                                        "width": "10%",
+                                        "source": "identifiedFromPhoto",
+                                        "title": "Photo ID?",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "width": "5%",
+                                        "source": "audioRecordingMade",
+                                        "title": "Audio recorded?",
+                                        "type": "selectOne"
+                                    },
+                                    {
+                                        "width": "30%",
+                                        "source": "observationRemarks",
+                                        "title": "Comments/Observations",
+                                        "type": "textarea"
+                                    }
+                                ],
+                                "userAddedRows": "true",
+                                "source": "boardwalkTransectRecords",
+                                "type": "table"
+                            }]
+                        }
+                    ],
+                    "class": ""
+                }],
+                "class": ""
+            }]
+        }
+    ]
+}

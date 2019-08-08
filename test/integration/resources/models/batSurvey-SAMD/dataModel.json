@@ -1,0 +1,482 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "contactForRecord",
+            "description": "The person/group/organisation responsible for collecting the raw data (ie. who put the equipment in place, which group is gathering the data and coordinating the field work)."
+        },
+        {
+            "dataType": "number",
+            "name": "observationDistanceInMetres",
+            "description": "Estimate the distance from your location to the location of your actual bat sighting/recording(s). For an Anabat recording this may be up to 50m. For an opportunistic sighting it may be only 0-5m.",
+            "constraints": [
+                "0-5m",
+                "5-50m",
+                "51-100m",
+                "101-250m",
+                "251-500m",
+                "501-1000m",
+                "1-10km"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "propertyName",
+            "description": "Often properties are locally identified by the owners name, a paddock name or a reserve name. This might be a more generic descriptor than Location name which will be specific to a single GPS point on a property."
+        },
+        {
+            "dataType": "number",
+            "name": "propertySizeInHectares",
+            "description": "Estimate the size of the property where the survey has been conducted. For opportunistic sightings, enter '1'."
+        },
+        {
+            "dataType": "text",
+            "name": "mainLandUse",
+            "description": "This is contextual information about the broader use of the land where the survey was conducted. (ie. sheep grazing, mixed farming, vineyards, conservation, etc.)"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date of the observation or when recordings were collected. Each nights recordings will need a separate survey completed - ie. If an Anabat was left in-situ for 1 week, the species recorded will need to be identified for each separate day.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "Who identified the species from the call files or observations. This will be important information for quality assurance of this data.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "detectorId",
+            "description": "Each detector has a unique serial number which is visible when using Analook software (appears as SN... in the top left box in the header file). This enables us to track the equipment used, make sure we have copies of all of the data and undertake any required maintenance."
+        },
+        {
+            "dataType": "text",
+            "name": "surveyType",
+            "description": "The survey methodology used. If the options provided are not relevant, please provide details in the notes field.",
+            "constraints": [
+                "Acoustic detectors",
+                "Trapping (harp)",
+                "Trapping (mist)",
+                "Bat Box Survey",
+                "Roosting Site",
+                "Opportunistic",
+                "Transect"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "Record what time the survey began. If using call files, what time were calls first observed. If trapping methods were used, what trapps were installed. This information is important for determining survey effort and analysing data in the future.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyEndTime",
+            "description": "Record what time the survey ended. If using call files, what time were calls first observed. If trapping methods were used, what trapps were installed. This information is important for determining survey effort and analysing data in the future.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "Add any other relevant information here."
+        },
+        {
+            "dataType": "text",
+            "name": "habitatType",
+            "description": "Select a habitat type that best describes the location of your survey.",
+            "constraints": [
+                "1 - Mallee - north of River Murray",
+                "2 - Mallee - south of River Murray",
+                "3 - Mallee; Broombush & Heath shrubland - south of River Murray",
+                "4 - Open woodlands with open understorey",
+                "5 - Tall southern gum woodlands with open understorey",
+                "6 - Grazing land with scattered gum trees - flanks of eastern hills",
+                "7 - Native grassland; samphire; chenopod scrublands",
+                "8 - River Murray corridor - floodplains & wetlands",
+                "9 - Estuarine habitat - Lower Lakes & Coorong",
+                "10 - Coastal dunes in Coorong region",
+                "11 - Irrigated horticulture and dairy farming along River Murray",
+                "12 - Wheat/cropping/grazing land interspersed with mallee - south & west of River Murray",
+                "13 - Urban areas."
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "windSpeed",
+            "description": "Estimated wind conditions.",
+            "constraints": [
+                "Calm",
+                "Light to Moderate",
+                "Fresh to strong",
+                "Near gale and stronger"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cloudCover",
+            "description": "This is useful context for bat monitoring.",
+            "constraints": [
+                "Clear",
+                "Patchy",
+                "Overcast"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "moonPhase",
+            "description": "This is useful context for bat monitoring. If you don't know what the moon phase was, you can review historical records on the link below.",
+            "constraints": [
+                "New Moon",
+                "First Quarter",
+                "Full Moon",
+                "Third/Last Quarter"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureMaxInDegreesCelcius",
+            "description": "If you don't have any field collected data, please use the temperature records web link below.",
+            "validate": "min[-20],max[55]"
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureMinInDegreesCelcius",
+            "description": "If you don't have any field collected data, please use the temperature records web link below.",
+            "validate": "min[-20],max[55]"
+        },
+        {
+            "dataType": "number",
+            "name": "humidityMaxInPercent",
+            "description": "If you don't have any field collected data, please ignore this field.",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "number",
+            "name": "humidityMinInPercent",
+            "description": "If you don't have any field collected data, please ignore this field.",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "sitePhoto",
+            "description": "If you have any site photos that provide context to the location description, please include them here (please check the date after uploading). This can also be used as a photopoint record over time."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "Select the species name or select 'Unlisted species' and use 'Vagrant sighting' for comments. Click on the 'i' for information about the selected species.",
+                    "validate": "required"
+                },
+                {
+                    "defaultValue": "1",
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "For surveys interpreting call files, please allocate a 1 once a species has been clearly identified. For surveys where individuals are visually identified, please allocate an actual number of the individuals observed.",
+                    "validate": "required,min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "notes",
+                    "description": "Add names of vagrant species here where 'Unlisted' was chosen for the species field. Also add comments that help with the detail of the record, eg. roosting, roadkill, heard only, etc."
+                },
+                {
+                    "dataType": "text",
+                    "name": "speciesIdMethod",
+                    "description": "Please select how the species were identified. ie. if calls were identified using an Automated Key, or Manual ID if the specimen was recognised visually or the call file recognised visually. Please also determine if there were calls that could not be identified which might be analysed at a later date with improved automated keys.",
+                    "constraints": [
+                        "Manual ID",
+                        "Automated Key",
+                        "Unidentified species may be present in the recording"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "description": "Upload photos of bats observed or a screenshot of the sonogram (call file) used to identify a species. This might be useful if you are unsure of the species and can be used to verify the record. Only image files can be attached.",
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesObserved"
+        }
+    ],
+    "modelName": "batSurvey_SAMD",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "For help to complete this form or notify us regarding technical issues, contact Sylvia Clarke on (08) 8391 7500. For help identifying species, contact Aimie Linke on 0427 590 344,",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Observation Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Contact person or group",
+                            "computed": null,
+                            "source": "contactForRecord",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observation accuracy",
+                            "computed": null,
+                            "source": "observationDistanceInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Property name/Owner",
+                            "computed": null,
+                            "source": "propertyName",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Property size (Ha)",
+                            "computed": null,
+                            "source": "propertySizeInHectares",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Principal land use",
+                            "computed": null,
+                            "source": "mainLandUse",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date of recording/Observation",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Name of species identifier",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Detector ID",
+                            "computed": null,
+                            "source": "detectorId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey type",
+                            "computed": null,
+                            "source": "surveyType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Recording time start",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Recording time finished",
+                            "computed": null,
+                            "source": "surveyEndTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Environmental Conditions<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Habitat type",
+                            "computed": null,
+                            "source": "habitatType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Wind speed",
+                            "computed": null,
+                            "source": "windSpeed",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Cloud cover",
+                            "computed": null,
+                            "source": "cloudCover",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Moon phase",
+                            "computed": null,
+                            "source": "moonPhase",
+                            "type": "selectOne"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<font style='font-size:0.8em; color:blue;'><a href='https://www.weatherforyou.com/reports/index.php?forecast=solunar&zipcode=&pands=&place=adelaide&state=&country=au&smon=1&syear=2015&submit=Go' target='_blank'><i>Check moon phase records<\/i><\/a><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Max. temperature",
+                            "computed": null,
+                            "source": "temperatureMaxInDegreesCelcius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Min. temperature",
+                            "computed": null,
+                            "source": "temperatureMinInDegreesCelcius",
+                            "type": "number"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<font style='font-size:0.8em; color:blue;'><a href='http://www.bom.gov.au/climate/data/' target='_blank'><i>Check temperature records<\/i><\/a><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Max. humidity (%)",
+                            "computed": null,
+                            "source": "humidityMaxInPercent",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Min. humidity",
+                            "computed": null,
+                            "source": "humidityMinInPercent",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Location<\/h1><font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and place the location marker, as accurately as possible, at the location that record applies to.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "autoLocalitySearch": true,
+                            "includeSource": false,
+                            "includeAccuracy": true,
+                            "hideSiteSelection": false,
+                            "source": "location",
+                            "type": "geoMap",
+                            "zoomToProjectArea": true,
+                            "includeLocality": false
+                        },
+                        {
+                            "preLabel": "Site photo",
+                            "computed": null,
+                            "source": "sitePhoto",
+                            "type": "image"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "source": "<h1>Species<\/h1>",
+                    "type": "literal"
+                },
+                {
+                    "columns": [
+                        {
+                            "computed": null,
+                            "source": "species",
+                            "title": "Species name",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "computed": null,
+                            "defaultValue": "1",
+                            "source": "individualCount",
+                            "title": "Individual Count",
+                            "type": "number"
+                        },
+                        {
+                            "computed": null,
+                            "source": "comments",
+                            "title": "Comments/Vagrant Species",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "speciesIdMethod",
+                            "title": "Species ID Method",
+                            "type": "selectOne"
+                        },
+                        {
+                            "computed": null,
+                            "source": "sightingPhoto",
+                            "title": "Photo of Bat or Sonogram",
+                            "type": "image"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "source": "speciesObserved",
+                    "type": "table",
+                    "class": "output-section"
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

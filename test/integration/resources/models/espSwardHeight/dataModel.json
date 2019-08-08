@@ -1,0 +1,51 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "number",
+                "name": "swardHeightCm",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "date",
+                "name": "dateMeasured",
+                "validate": "required"
+            }
+        ],
+        "dataType": "list",
+        "name": "swardHeight"
+    }],
+    "description": "To measure sward height, find a spot on your site that is representative of the site. Use either a ruler or eyeball a measurement of the sward height. If using a ruler, place the base on the surface of the soil. Slide your thumb down until you touch the top of the leaf blade. Do not measure the stems or flower heads.",
+    "modelName": "ESP Sward Height",
+    "title": "Sward Height",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "If you undertake grazing, please record sward height at the end of your grazing periods (in the table under “Livestock Grazing Management). If you do not undertake grazing, then record sward height at the same time that you take the photo-point photograph for this site. Please ensure that this is done at the same time each year.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "swardHeightCm",
+                        "title": "Sward Height (cm)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "dateMeasured",
+                        "title": "Date measured",
+                        "type": "date"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "swardHeight",
+                "type": "table"
+            }]
+        }
+    ]
+}

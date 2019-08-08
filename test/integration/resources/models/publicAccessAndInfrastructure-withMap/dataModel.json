@@ -1,0 +1,294 @@
+{
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "infrastructureInstallations",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of infrastructure being established.",
+                    "name": "infrastructureType",
+                    "constraints": [
+                        "Debris management structures",
+                        "Ecological infrastructure (eg. fish ladders, under/over-traffic passageways, etc.)",
+                        "Injured fauna hospital",
+                        "Injured fauna recovery facility",
+                        "Native plant nursery",
+                        "Visitor facilities (eg. toilets, bins, BBQ, tables & benches, etc.)",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Brief description of the infrastructure implemented.",
+                    "name": "infrastructureDescription"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual installations / facilities established for each type of infrastructure.",
+                    "name": "noInstallations",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of infrastructure installations / facilities established.",
+            "name": "noInstallationsTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "noInstallations",
+                    "fromList": "infrastructureInstallations"
+                }
+            }
+        },
+        {
+            "dataType": "stringList",
+            "description": "Generalised method employed to manage access on the subject area",
+            "name": "accessManagementMethod",
+            "constraints": [
+                "Speed management",
+                "Traffic exclusion",
+                "Traffic confinement / containment",
+                "Traffic flow management",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares being protected by installed access control measures.",
+            "name": "accessAreaProtected",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Type of structure(s) installed to manage access on the subject area",
+            "name": "structuresInstalled",
+            "constraints": [
+                "Boardwalks",
+                "Bollards & barriers",
+                "Constructed parking bays",
+                "Fencing, styles, gates & grids",
+                "Formed trafficways",
+                "Signage",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of access management structures installed during this activity",
+            "name": "numberOfInstallations",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Purpose for managing access on the subject area",
+            "name": "accessControlPurpose",
+            "constraints": [
+                "Manage public safety issues",
+                "Protect sensitive species / habitats",
+                "Contain vehicle traffic",
+                "Manage off-road vehicle damage",
+                "Manage pedestrian traffic damage",
+                "Public education",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Length in kilometres of fences and boardwalks installed during this activity",
+            "name": "lengthOfLinealStructures"
+        },
+        {
+            "dataType": "number",
+            "description": "Total number of visitors managed for access during this activity",
+            "name": "visitationNumber"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe the nature and severity of the issues for which access control measures are being implemented to manage.",
+            "name": "accessControlIssues"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "publicAccessAndInfrastructure_withMap",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Access Details<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "accessControlIssues",
+                            "computed": null,
+                            "preLabel": "Description of issue(s) requiring access management:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "accessManagementMethod",
+                            "computed": null,
+                            "preLabel": "Access control method used:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "structuresInstalled",
+                            "computed": null,
+                            "preLabel": "Structure(s) installed:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "accessControlPurpose",
+                            "computed": null,
+                            "preLabel": "Purpose of undertaking access management works:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "numberOfInstallations",
+                            "computed": null,
+                            "preLabel": "No. of access management structures installed:",
+                            "type": "number"
+                        }
+                    ],
+                    "class": "output-section",
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "includeSource": false,
+                            "orientation": "vertical",
+                            "includeNotes": false,
+                            "hideSiteSelection": true,
+                            "zoomToProjectArea": true,
+                            "source": "location",
+                            "computed": null,
+                            "autoLocalitySearch": true,
+                            "type": "geoMap",
+                            "includeAccuracy": false,
+                            "readonly": false,
+                            "includeLocality": false
+                        },
+                        {
+                            "source": "accessAreaProtected",
+                            "computed": null,
+                            "preLabel": "Area (Ha) protected by access management structure(s):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "lengthOfLinealStructures",
+                            "computed": null,
+                            "preLabel": "Length of fences and boardwalks installed (Km):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "visitationNumber",
+                            "computed": null,
+                            "preLabel": "No. of visitors (people managed for access):",
+                            "type": "number"
+                        }
+                    ],
+                    "class": "output-section",
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Infrastructure Details<\/h4>Please list the numbers of each different type of infrastructure facility established.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of installations/facilities:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "noInstallationsTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noInstallations\",\"fromList\":\"infrastructureInstallations\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "infrastructureInstallations",
+            "columns": [
+                {
+                    "title": "Type of infrastructure:",
+                    "source": "infrastructureType",
+                    "computed": null,
+                    "width": "30%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Description of infrastructure installed:",
+                    "source": "infrastructureDescription",
+                    "computed": null,
+                    "type": "textarea"
+                },
+                {
+                    "title": "No. of installations:",
+                    "source": "noInstallations",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

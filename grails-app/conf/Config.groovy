@@ -484,6 +484,8 @@ homepageIdx {
 // The special facets are gridded facets that are too large for the spatial portal so are managed locally by ecodata.
 // Please note that changes to these facets require that all sites in the system be re-processed - this can be
 // done using the admin tools in fieldcapture.
+
+//TODO update elect field for electorate boundaries update
 app {
     facets {
         geographic {
@@ -493,7 +495,7 @@ app {
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl10874'
+                elect = 'cl10921'
                 cmz = 'cl2112'
             }
             grouped {
@@ -1099,3 +1101,13 @@ license.default = "https://creativecommons.org/licenses/by-nc/3.0/au/"
 projectActivity.notifyOnChange=true
 biocollect.baseURL="https://biocollect.ala.org.au"
 biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
+
+security {
+    cas {
+        appServerName = 'http://devt.ala.org.au:8087' // or similar, up to the request path part
+        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+        uriFilterPattern = '/admin.*,/activityForm/(?!get).*'
+        uriExclusionFilterPattern = '/assets/.*,/images/.*,/css/.*,/js/.*,/less/.*' // this is the default value
+        authenticateOnlyIfLoggedInPattern =  ''
+    }
+}

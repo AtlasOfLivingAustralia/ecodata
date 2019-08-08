@@ -1,0 +1,34 @@
+{
+  "title": "Social survey",
+  "modelName": "RLP - Social survey",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfSurveys",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberOfSurveys",
+                  "preLabel": "Number of social surveys conducted",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

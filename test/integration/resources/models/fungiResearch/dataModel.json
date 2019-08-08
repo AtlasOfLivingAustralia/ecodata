@@ -1,0 +1,596 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The person who created the record or the leader of the search team.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfObservers",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "surveyDurationInMinutes",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "computed": {
+                "expression": "numberOfObservers*surveyDurationInMinutes/60",
+                "dependents": {"source": [
+                    "numberOfObservers",
+                    "surveyDurationInMinutes"
+                ]}
+            },
+            "dataType": "number",
+            "name": "surveyEffortInTotalPersonHours",
+            "dwcAttribute": "surveyEffort",
+            "description": "Total survey effort in decimal person hours (= no. of observers x survey duration converted to hours)"
+        },
+        {
+            "dataType": "text",
+            "name": "habitatType",
+            "dwcAttribute": "habitat",
+            "description": "",
+            "constraints": [
+                "Rainforests and Vine Thickets",
+                "Eucalypt Tall Open Forests",
+                "Eucalypt Open Forests",
+                "Eucalypt Low Open Forests",
+                "Eucalypt Woodlands",
+                "Acacia Forests and Woodlands",
+                "Callitris Forests and Woodlands",
+                "Casuarina Forests and Woodlands",
+                "Melaleuca Forests and Woodlands",
+                "Other Forests and Woodlands",
+                "Tropical Eucalypt Woodlands/Grasslands",
+                "Mallee Woodlands and Shrublands",
+                "Unclassified Forest",
+                "Eucalypt Open Woodlands",
+                "Acacia Open Woodlands",
+                "Mallee Open Woodlands and Sparse Mallee Shrublands",
+                "Other Open Woodlands",
+                "Low Closed Forests and Tall Closed Shrublands",
+                "Acacia Shrublands",
+                "Other Shrublands",
+                "Heathlands",
+                "Tussock Grasslands",
+                "Hummock Grasslands",
+                "Other Grasslands, Herblands, Sedgelands and Rushlands",
+                "Chenopod Shrublands, Samphire Shrublands and Forblands",
+                "Mangroves",
+                "Inland Aquatic - freshwater, salt lakes, lagoons",
+                "Cleared, Non-Native Vegetation, Buildings",
+                "Unclassified native vegetation",
+                "Naturally Bare - sand, rock, claypan, mudflat",
+                "Sea and Estuaries",
+                "Regrowth, Modified Native Vegetation",
+                "Unknown/No Data"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "habitatCondition",
+            "description": "",
+            "constraints": [
+                "Healthy",
+                "Senescing",
+                "Drought stressed",
+                "Weedy"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "disturbanceType",
+            "description": "The type(s) of site disturbance evident at the surveyed location.",
+            "constraints": [
+                "Fire",
+                "Wind damage",
+                "Flood",
+                "Mechanical clearing",
+                "Grazing"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "timeSinceDisturbanceInDecimalYears",
+            "description": "Provide an estimate of the time since disturbance events evident at the surveyed location.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "disturbanceRemarks",
+            "description": "Provide a description, source of information or more details of observed evidence of site disturbance at the surveyed location. Type 'no change since' and the date the disturbance history and/or Environmental Information were recorded for repeated surveys."
+        },
+        {
+            "dataType": "species",
+            "name": "dominantHabitatSpecies",
+            "dwcAttribute": "scientificName",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "canopyCoverPercentEstimate",
+            "description": "Canopy cover of the dominant species using the Domin scale.",
+            "constraints": [
+                "< 1% - Rare",
+                "< 1% - Occasional",
+                "1-4% - Frequent",
+                "5-9%",
+                "10-24%",
+                "25-32%",
+                "33-49%",
+                "50-74%",
+                "75-94%",
+                "95-100%"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "dominantHabitatSpecies",
+            "dwcAttribute": "scientificName",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including people (ideally names or initials), group associations and any other notes not yet recorded."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "idOfFruitingBody",
+                    "description": "A unique identifier for each patch of fruiting bodies observed"
+                },
+                {
+                    "dataType": "text",
+                    "name": "typeOfFungi",
+                    "description": "Select the type of fungi, if known",
+                    "constraints": [
+                        "Fungi",
+                        "Fungi - Asco's",
+                        "Fungi - Basidio's",
+                        "Fungi - Chytrids",
+                        "Fungi - Glomeromycota",
+                        "Fungi - Zygomycetes"
+                    ]
+                },
+                {
+                    "dataType": "species",
+                    "name": "targetSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": "The name of the fungi species of interest being searched for.",
+                    "validate": "required"
+                },
+                {
+                    "defaultValue": "0",
+                    "dataType": "number",
+                    "name": "fruitingBodyNumberOfIndividuals",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individual fruiting bodies observed. Please enter zero (0) against the relevant fruiting body id if no fruiting bodies were observed.",
+                    "validate": "min[0],required"
+                },
+                {
+                    "dataType": "image",
+                    "name": "photo",
+                    "description": "Upload one or more photos taken of the fruiting body at the time of the record. This is essential for verification of the record."
+                },
+                {
+                    "dataType": "text",
+                    "name": "substrateType",
+                    "description": "The type of substrate in which the fungi is growing. Please describe the size (diam.) and length; living or dead; with or without bark, standing or propped or laying on ground (within < 10 cm); For example 85-8 cm diam up to 2.5 m long, dead wood, propped on other trees."
+                },
+                {
+                    "dataType": "species",
+                    "name": "hostSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments",
+                    "dwcAttribute": "notes",
+                    "description": "Please describe details of the fruit bodies including developmental stage. Examples 'old fruit bodies as surface is dark with pores', 'has invertebrate damage' &/or 'immature specimen no sign of pores'.  Please note if DNA &/or collections were made. Also record if other species are associated like host fungi or invertebrate."
+                }
+            ],
+            "dataType": "list",
+            "name": "fungalFruitingBodies"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "fungiResearch",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Site Visit Information",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Date",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "surveyDate",
+                                                    "preLabelClass": "span6",
+                                                    "type": "date"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Start Time",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "surveyStartTime",
+                                                    "preLabelClass": "span6",
+                                                    "type": "time"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Number of people in the search team",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "numberOfObservers",
+                                                    "preLabelClass": "span6",
+                                                    "type": "number"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Recorded by",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "recordedBy",
+                                                    "preLabelClass": "span6",
+                                                    "type": "text"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Time spent searching (in minutes)",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "surveyDurationInMinutes",
+                                                    "preLabelClass": "span6",
+                                                    "type": "number"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Survey effort (total person hours - decimal )",
+                                                    "inline": true,
+                                                    "dataClass": "span6",
+                                                    "noEdit": true,
+                                                    "source": "surveyEffortInTotalPersonHours",
+                                                    "preLabelClass": "span6",
+                                                    "type": "number"
+                                                }]
+                                            }]
+                                        }
+                                    ]
+                                }]
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Environmental Information",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Habitat type",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span6",
+                                            "source": "habitatType",
+                                            "preLabelClass": "span6",
+                                            "type": "selectOne"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Habitat condition",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span6",
+                                            "source": "habitatCondition",
+                                            "preLabelClass": "span6",
+                                            "type": "selectMany"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Dominant habitat species (if known)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span6",
+                                            "source": "dominantHabitatSpecies",
+                                            "preLabelClass": "span6",
+                                            "type": "autocomplete"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Estimate of canopy cover (%)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span6",
+                                            "source": "canopyCoverPercentEstimate",
+                                            "preLabelClass": "span6",
+                                            "type": "selectOne"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "boxed": true,
+                                    "title": "Evidence of Site Disturbance",
+                                    "type": "section",
+                                    "items": [
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Type of disturbance",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "disturbanceType",
+                                                    "preLabelClass": "span6",
+                                                    "type": "selectMany"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Time since disturbance (decimal years)",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "timeSinceDisturbanceInDecimalYears",
+                                                    "preLabelClass": "span6",
+                                                    "type": "number"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Disturbance notes",
+                                                    "inline": true,
+                                                    "computed": null,
+                                                    "dataClass": "span6",
+                                                    "source": "disturbanceRemarks",
+                                                    "preLabelClass": "span6",
+                                                    "type": "textarea"
+                                                }]
+                                            }]
+                                        }
+                                    ],
+                                    "class": ""
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "General observations & comments",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span6",
+                                            "source": "notes",
+                                            "preLabelClass": "span6",
+                                            "type": "textarea"
+                                        }]
+                                    }]
+                                }
+                            ]
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [{
+                            "boxed": true,
+                            "title": "Location",
+                            "type": "section",
+                            "items": [{
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": true,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": false,
+                                    "includeSource": true,
+                                    "includeAccuracy": true,
+                                    "hideSiteSelection": true,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "includeLocality": true
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Fungal Fruiting Bodies",
+                    "type": "section",
+                    "items": [{
+                        "computed": null,
+                        "type": "row",
+                        "items": [{
+                            "allowHeaderWrap": true,
+                            "columns": [
+                                {
+                                    "computed": null,
+                                    "source": "targetSpecies",
+                                    "title": "Species of interest",
+                                    "type": "speciesSelect"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "idOfFruitingBody",
+                                    "type": "text",
+                                    "title": "Unique identifier of fruiting body"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "fruitingBodyNumberOfIndividuals",
+                                    "type": "number",
+                                    "title": "Number of individual fruiting bodies"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "photo",
+                                    "type": "image",
+                                    "title": "Photo"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "substrateType",
+                                    "title": "Substrate",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "hostSpecies",
+                                    "title": "Host species",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "width": "20%",
+                                    "source": "comments",
+                                    "type": "textarea",
+                                    "title": "Specific Notes"
+                                }
+                            ],
+                            "defaultRows": "1",
+                            "userAddedRows": true,
+                            "source": "fungalFruitingBodies",
+                            "type": "table"
+                        }]
+                    }],
+                    "class": ""
+                }]
+            }]
+        }
+    ]
+}

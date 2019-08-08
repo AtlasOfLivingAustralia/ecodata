@@ -1,0 +1,409 @@
+{
+    "modelName": "Site Condition - TasVeg",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "name": "surveyArea"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfLargeTrees"
+        },
+        {
+            "dataType": "number",
+            "name": "largeTreeCanopyHealthPercent"
+        },
+        {
+            "dataType": "number",
+            "name": "canopyCoverPercent"
+        },
+        {
+            "dataType": "number",
+            "name": "canopyHealthPercent"
+        },
+        {
+            "dataType": "number",
+            "name": "totalWeedCoverPercent"
+        },
+        {
+            "dataType": "number",
+            "name": "highThreatWeedCoverPercent"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "lifeform"
+                },
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "species"
+                },
+                {
+                    "dataType": "number",
+                    "name": "number"
+                },
+                {
+                    "dataType": "number",
+                    "name": "coverPercent"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "present"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "modified"
+                }
+            ],
+            "dataType": "list",
+            "name": "underStoreyLifeforms"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "species"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "adequateRecruitment"
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesRecruitment"
+        },
+        {
+            "dataType": "text",
+            "name": "recruitmentDiversity",
+            "constraints": [
+                "No evidence of recruitment",
+                "< 30% adequate",
+                "30% - 70% adequate",
+                ">= 70% adequate"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "organicLitterCoverPercent"
+        },
+        {
+            "dataType": "number",
+            "name": "averageLogLength"
+        },
+        {
+            "dataType": "boolean",
+            "name": "largeLogsPresent"
+        },
+        {
+            "dataType": "number",
+            "name": "largeTreesScore"
+        },
+        {
+            "dataType": "number",
+            "name": "canopyCoverScore"
+        },
+        {
+            "dataType": "number",
+            "name": "weedScore"
+        },
+        {
+            "dataType": "number",
+            "name": "understoreyScore"
+        },
+        {
+            "dataType": "number",
+            "name": "recruitmentScore"
+        },
+        {
+            "dataType": "number",
+            "name": "organicLitterScore"
+        },
+        {
+            "dataType": "number",
+            "name": "logScore"
+        },
+        {
+            "dataType": "number",
+            "name": "benchmarkTreesPerHa",
+            "value": 40
+        },
+        {
+            "dataType": "lookupRange",
+            "name": "largeTreesCategoryLookup",
+            "map": [
+                {
+                    "output": "None present",
+                    "inputMax": "0"
+                },
+                {
+                    "output": "0 to 20% of the benchmark number of trees/ha",
+                    "inputMax": "20",
+                    "inputMin": "0"
+                },
+                {
+                    "output": "20 to 40% of the benchmark number of trees/ha",
+                    "inputMax": "40",
+                    "inputMin": "20"
+                },
+                {
+                    "output": "40 to 70% of the benchmark number of trees/ha",
+                    "inputMax": "70",
+                    "inputMin": "40"
+                },
+                {
+                    "output": "70 to 100% of the benchmark number of trees/ha",
+                    "inputMax": "100",
+                    "inputMin": "70"
+                },
+                {
+                    "output": ">= the benchmark number of trees/ha",
+                    "inputMin": "100"
+                }
+            ]
+        },
+        {
+            "dataType": "lookupByDiscreteValues",
+            "name": "frequencyScoreLookup",
+            "map": [
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
+                }
+            ]
+        }
+    ],
+    "viewModel": [
+        {
+            "title": "Large Trees",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Number of trees >= benchmark DBH",
+                        "computed": null,
+                        "source": "numberOfLargeTrees",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Large tree canopy health (%)",
+                        "computed": null,
+                        "source": "largeTreeCanopyHealthPercent",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Large Trees Score",
+                        "computed": null,
+                        "source": "largeTreesScore",
+                        "type": "number"
+                    }
+                ]
+            }]
+        },
+        {
+            "title": "Tree Canopy Cover",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Tree canopy cover (%)",
+                        "computed": null,
+                        "source": "canopyCoverPercent",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Tree canopy health (%)",
+                        "computed": null,
+                        "source": "canopyHealthPercent",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Canopy Cover Score",
+                        "computed": null,
+                        "source": "canopyCoverScore",
+                        "type": "number"
+                    }
+                ]
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Understory life forms<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": "3",
+                    "computed": null,
+                    "source": "",
+                    "type": "literal"
+                },
+                {
+                    "computed": null,
+                    "source": "<b>Understorey Score<\/b>",
+                    "type": "literal"
+                },
+                {
+                    "computed": null,
+                    "source": "understoreyScore",
+                    "type": "number"
+                }
+            ]}]},
+            "columns": [
+                {
+                    "source": "lifeform",
+                    "title": "Lifeform",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "species",
+                    "title": "Species",
+                    "type": "species"
+                },
+                {
+                    "source": "number",
+                    "title": "#spp observed",
+                    "type": "number"
+                },
+                {
+                    "source": "coverPercent",
+                    "title": "% cover observed",
+                    "type": "number"
+                },
+                {
+                    "source": "present",
+                    "title": "Present",
+                    "type": "boolean"
+                },
+                {
+                    "source": "modified",
+                    "title": "Modified",
+                    "type": "boolean"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "underStoreyLifeforms",
+            "type": "table"
+        },
+        {
+            "title": "Lack of Weeds",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Total weed cover %",
+                        "computed": null,
+                        "source": "totalWeedCoverPercent",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "High threat weed cover %",
+                        "computed": null,
+                        "source": "highThreatWeedCoverPercent",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Score",
+                        "computed": null,
+                        "source": "weedScore",
+                        "type": "number"
+                    }
+                ]
+            }]
+        },
+        {
+            "title": "Organic Litter",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Organic litter cover %",
+                        "computed": null,
+                        "source": "organicLitterCoverPercent",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Score",
+                        "computed": null,
+                        "source": "organicLitterScore",
+                        "type": "number"
+                    }
+                ]
+            }]
+        },
+        {
+            "title": "Logs",
+            "type": "section",
+            "items": [{
+                "computed": null,
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Average log length (m)",
+                        "computed": null,
+                        "source": "averageLogLength",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Large logs present?",
+                        "computed": null,
+                        "source": "largeLogsPresent",
+                        "type": "boolean"
+                    },
+                    {
+                        "preLabel": "Score",
+                        "computed": null,
+                        "source": "logScore",
+                        "type": "number"
+                    }
+                ]
+            }]
+        }
+    ]
+}

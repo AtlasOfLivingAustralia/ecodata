@@ -1,0 +1,316 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrMaintenance",
+                    "constraints": [
+                        "Initial",
+                        "Maintenance"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesRevegetated"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesRevegetated)"
+                    },
+                    "dataType": "number",
+                    "name": "areaRevegetatedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesRevegetated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesRevegetated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesRevegetated)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthRevegetatedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesRevegetated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesRevegetated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "feature",
+                    "name": "offSiteBenefitSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(offSiteBenefitSites)"
+                    },
+                    "dataType": "number",
+                    "name": "offSiteBenefitAreaHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceOfBenefit",
+                    "validate": "maxSize[300]"
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "species",
+                            "dwcAttribute": "scientificName",
+                            "description": "",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "typeOfRevegetationActivity",
+                            "validate": "required,maxSize[100]"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfDaysCollectingSeed",
+                            "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfDaysPropagatingPlants",
+                            "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "revegetationMethod",
+                            "dwcAttribute": "establishmentMeans",
+                            "description": "If 'Other', please identify in 'Type of revegetation activity' field",
+                            "constraints": [
+                                "Direct seeding",
+                                "Tubestock planting",
+                                "Both",
+                                "Other"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "threatenedEcologicalCommunity",
+                            "description": "This free text field allows multiple TECs to be entered. They should be written as listed in EPBC, and separated by ';'",
+                            "validate": "maxSize[100]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "individualsOrKilogramsOfSeed",
+                            "constraints": [
+                                "Individuals",
+                                "Kilograms of seed"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberPlanted",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "revegetationObjective",
+                            "validate": "required,maxSize[300]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "revegetationDetails"
+                }
+            ],
+            "dataType": "list",
+            "name": "revegetationArea"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Revegetating habitat",
+    "title": "Revegetating habitat",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "addRowText": "New area of revegetation",
+                "userAddedRows": true,
+                "source": "revegetationArea",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [{
+                            "preLabel": "Initial or maintenance activity?",
+                            "css": "span3",
+                            "source": "initialOrMaintenance",
+                            "type": "selectOne"
+                        }]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Site/s being revegetated",
+                                "css": "span3",
+                                "source": "sitesRevegetated",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) of habitat revegetated",
+                                "css": "span3",
+                                "source": "areaRevegetatedHa",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Length (km) of habitat revegetated",
+                                "css": "span3",
+                                "source": "lengthRevegetatedKm",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Please map any off-site area/s if they benefitted from this  revegetation activity",
+                                "css": "span3",
+                                "source": "offSiteBenefitSites",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) benefitting from revegetation activity",
+                                "css": "span2",
+                                "source": "offSiteBenefitAreaHa",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit.",
+                                "css": "span6",
+                                "source": "evidenceOfBenefit",
+                                "type": "textarea"
+                            }
+                        ]
+                    },
+                    {
+                        "addRowText": "Add a species",
+                        "columns": [
+                            {
+                                "width": "20%",
+                                "source": "species",
+                                "title": "Species",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "width": "5%",
+                                "source": "numberOfDaysCollectingSeed",
+                                "title": "Number of days collecting seed",
+                                "type": "number"
+                            },
+                            {
+                                "width": "5%",
+                                "source": "numberOfDaysPropagatingPlants",
+                                "title": "Number of days propagating plants",
+                                "type": "number"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "revegetationMethod",
+                                "title": "Planting method",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "typeOfRevegetationActivity",
+                                "title": "Type of revegetation activity",
+                                "type": "text"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "threatenedEcologicalCommunity",
+                                "title": "Threatened ecological community (if applicable)",
+                                "type": "text"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "individualsOrKilogramsOfSeed",
+                                "title": "Individuals / kilograms",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberPlanted",
+                                "title": "Number planted",
+                                "type": "number"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "revegetationObjective",
+                                "title": "Objective of revegetation activity",
+                                "type": "textarea"
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "revegetationDetails",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

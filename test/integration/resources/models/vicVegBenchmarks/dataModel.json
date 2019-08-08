@@ -1,0 +1,651 @@
+{
+    "modelName": "vicVegBenchmarks",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "evcName",
+            "validate": "required",
+            "constraints": [
+                "2 - Coast Banksia Woodland",
+                "3 - Damp Sands Herb-rich Woodland",
+                "4 - Coastal Vine-rich Forest",
+                "5 - Coastal Sand Heathland",
+                "6 - Sand Heathland",
+                "7 - Clay Heathland",
+                "8 - Wet Heathland",
+                "9 - Coastal Saltmarsh",
+                "10 - Estuarine Wetland",
+                "11 - Coastal Lagoon Wetland",
+                "12 - Wet Swale Herbland",
+                "13 - Brackish Sedgeland",
+                "14 - Banksia Woodland",
+                "15 - Limestone Box Forest",
+                "16 - Lowland Forest",
+                "18 - Riparian Forest",
+                "19 - Riparian Shrubland",
+                "20 - Heathy Dry Forest",
+                "21 - Shrubby Dry Forest",
+                "22 - Grassy Dry Forest",
+                "23 - Herb-rich Foothill Forest",
+                "24 - Foothill Box Ironbark Forest",
+                "27 - Blackthorn Scrub",
+                "28 - Rocky Outcrop Shrubland",
+                "29 - Damp Forest",
+                "30 - Wet Forest",
+                "31 - Cool Temperate Rainforest",
+                "32 - Warm Temperate Rainforest",
+                "33 - Cool Temperate Rainforest/Warm Temperate Rainforest Overlap",
+                "34 - Dry Rainforest",
+                "35 - Tableland Damp Forest",
+                "36 - Montane Dry Woodland",
+                "37 - Montane Grassy Woodland",
+                "38 - Montane Damp Forest",
+                "39 - Montane Wet Forest",
+                "40 - Montane Riparian Woodland",
+                "41 - Montane Riparian Thicket",
+                "42 - Sub-alpine Shrubland",
+                "43 - Sub-alpine Woodland",
+                "44 - Sub-alpine Treeless Vegetation",
+                "45 - Shrubby Foothill Forest",
+                "47 - Valley Grassy Forest",
+                "48 - Heathy Woodland",
+                "53 - Swamp Scrub",
+                "55 - Plains Grassy Woodland",
+                "56 - Floodplain Riparian Woodland",
+                "59 - Riparian Thicket",
+                "61 - Box Ironbark Forest",
+                "64 - Rocky Chenopod Woodland",
+                "65 - Sedge-rich Woodland",
+                "66 - Low Rises Woodland",
+                "67 - Alluvial Terraces Herb-rich Woodland",
+                "68 - Creekline Grassy Woodland",
+                "69 - Metamorphic Slopes Shrubby Woodland",
+                "70 - Hillcrest Herb-rich Woodland",
+                "71 - Hills Herb-rich Woodland",
+                "72 - Granitic Hills Woodland",
+                "80 - Spring Soak Woodland",
+                "82 - Riverine Escarpment Scrub",
+                "83 - Swampy Riparian Woodland",
+                "86 - Woorinen Sands Mallee",
+                "87 - Lowan Sands Mallee",
+                "88 - Heathy Mallee",
+                "89 - Dunefield Heathland",
+                "90 - Tea-tree Scrub",
+                "91 - Loamy Sands Mallee",
+                "92 - Scrub-pine Woodland",
+                "93 - Sandstone Ridge Shrubland",
+                "95 - Red Swale Mallee",
+                "96 - Ridged Plains Mallee",
+                "97 - Semi-arid Woodland",
+                "98 - Semi-arid Chenopod Woodland",
+                "101 - Samphire Shrubland",
+                "102 - Low Chenopod Shrubland",
+                "103 - Riverine Chenopod Woodland",
+                "104 - Lignum Swamp",
+                "106 - Grassy Riverine Forest",
+                "107 - Lake Bed Herbland",
+                "125 - Plains Grassy Wetland",
+                "127 - Valley Heathy Forest",
+                "128 - Grassy Forest",
+                "132 - Plains Grassland",
+                "133 - Limestone Pomaderris Shrubland",
+                "134 - Sand Forest",
+                "135 - Gallery Rainforest",
+                "136 - Sedge Wetland",
+                "140 - Mangrove Shrubland",
+                "141 - Sandy Flood Scrub",
+                "151 - Plains Grassy Forest",
+                "154 - Bird Colony Shrubland",
+                "155 - Bird Colony Succulent Herbland",
+                "156 - Alpine Coniferous Shrubland",
+                "158 - Chenopod Mallee",
+                "160 - Coastal Dune Scrub",
+                "161 - Coastal Headland Scrub",
+                "163 - Coastal Tussock Grassland",
+                "164 - Creekline Herb-rich Woodland",
+                "165 - Damp Heath Scrub",
+                "169 - Dry Valley Forest",
+                "171 - Alpine Fen",
+                "175 - Grassy Woodland",
+                "177 - Valley Slopes Dry Forest",
+                "179 - Heathy Herb-rich Woodland",
+                "181 - Coast Gully Thicket",
+                "184 - Montane Wet Heathland",
+                "185 - Perched Boggy Shrubland",
+                "191 - Riparian Scrub",
+                "192 - Montane Rocky Shrubland",
+                "193 - Rocky Outcrop Herbland",
+                "195 - Seasonally Inundated Shrubby Woodland",
+                "196 - Seasonally Inundated Sub-saline Herbland",
+                "198 - Sedgy Riparian Woodland",
+                "200 - Shallow Freshwater Marsh",
+                "201 - Shrubby Wet Forest",
+                "203 - Stony Rises Woodland",
+                "206 - Sub-alpine Grassland",
+                "207 - Montane Grassy Shrubland",
+                "208 - Sub-alpine Riparian Shrubland",
+                "210 - Sub-alpine Wet Heathland",
+                "233 - Wet Sands Thicket",
+                "264 - Sand Ridge Woodland",
+                "278 - Herb-rich Heathy Forest",
+                "279 - Heathland Thicket",
+                "280 - Floodplain Thicket",
+                "282 - Shrubby Woodland",
+                "283 - Plains Sedgy Woodland",
+                "284 - Claypan Ephemeral Wetland",
+                "285 - Dry Creekline Woodland",
+                "288 - Alpine Valley Peatland",
+                "291 - Cane Grass Wetland",
+                "292 - Red Gum Swamp",
+                "295 - Riverine Grassy Woodland",
+                "300 - Reed Swamp",
+                "309 - Calcareous Swale Grassland",
+                "310 - Wet Rocky Outcrop Scrub",
+                "311 - Berm Grassy Shrubland",
+                "316 - Shrubby Damp Forest",
+                "318 - Montane Swamp",
+                "319 - Montane Herb-rich Woodland",
+                "640 - Creekline Sedgy Woodland",
+                "641 - Riparian Woodland",
+                "642 - Basalt Shrubby Woodland",
+                "644 - Cinder Cone Woodland",
+                "647 - Plains Sedgy Wetland",
+                "649 - Stony Knoll Shrubland",
+                "651 - Plains Swampy Woodland",
+                "652 - Lunette Woodland",
+                "653 - Aquatic Herbland",
+                "654 - Creekline Tussock Grassland",
+                "655 - Lignum-Cane Grass Swamp",
+                "656 - Brackish Wetland",
+                "657 - Freshwater Lignum Shrubland",
+                "659 - Plains Riparian Shrubby Woodland",
+                "663 - Black Box Lignum Woodland",
+                "664 - Limestone Ridge Woodland",
+                "665 - Coastal Mallee Scrub",
+                "670 - Limestone Woodland",
+                "673 - Dune Soak Woodland",
+                "674 - Sandy Stream Woodland",
+                "676 - Salt Paperbark Woodland",
+                "677 - Inland Saltmarsh",
+                "679 - Drainage-line Woodland",
+                "680 - Freshwater Meadow",
+                "681 - Deep Freshwater Marsh",
+                "702 - Montane Grassland",
+                "704 - Lateritic Woodland",
+                "705 - Basalt Creekline Shrubby Woodland",
+                "707 - Sedgy Swamp Woodland",
+                "709 - Scree-slope Woodland",
+                "710 - Damp Heathland",
+                "793 - Damp Heathy Woodland",
+                "803 - Plains Woodland",
+                "804 - Rushy Riverine Swamp",
+                "806 - Alluvial Plains Semi-arid Grassland",
+                "807 - Disused Floodway Shrubby Herbland",
+                "808 - Lignum Shrubland",
+                "809 - Floodplain Grassy Wetland",
+                "810 - Floodway Pond Herbland",
+                "813 - Intermittent Swampy Woodland",
+                "814 - Riverine Swamp Forest",
+                "815 - Riverine Swampy Woodland",
+                "816 - Sedgy Riverine Forest",
+                "818 - Shrubby Riverine Woodland",
+                "819 - Spike-sedge Wetland",
+                "820 - Sub-saline Depression Shrubland",
+                "821 - Tall Marsh",
+                "823 - Lignum Swampy Woodland",
+                "824 - Woorinen Mallee",
+                "826 - Plains Savannah",
+                "828 - Semi-arid Parilla Woodland",
+                "829 - Chenopod Grassland",
+                "851 - Stream Bank Shrubland",
+                "858 - Coastal Alkaline Scrub",
+                "863 - Floodplain Reedbed",
+                "875 - Blocked Coastal Stream Swamp",
+                "876 - Spray-zone Coastal Shrubland",
+                "877 - Lowland Herb-rich Forest",
+                "879 - Coastal Dune Grassland",
+                "882 - Shallow Sands Woodland",
+                "888 - Plains Saltmarsh",
+                "891 - Plains Brackish Sedge Wetland",
+                "894 - Scoria Cone Woodland",
+                "895 - Escarpment Shrubland",
+                "898 - Cane Grass-Lignum Halophytic Herbland",
+                "899 - Plains Freshwater Sedge Wetland",
+                "902 - Gully Woodland",
+                "914 - Estuarine Flats Grassland",
+                "932 - Wet Verge Sedgeland",
+                "934 - Brackish Grassland",
+                "937 - Swampy Woodland",
+                "975 - Riverine Ephemeral Wetland",
+                "981 - Parilla Mallee",
+                "1001 - Alpine Grassland",
+                "1002 - Alpine Damp Grassland",
+                "1003 - Sub-alpine Dry Shrubland",
+                "1004 - Alpine Grassy Heathland",
+                "1012 - Snowpatch Grassland",
+                "1014 - Late-lying Snowpatch Herbland",
+                "1085 - Mountain Valley Riparian Woodland",
+                "1088 - Riverine Grassland"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "bioregion",
+            "validate": "required",
+            "constraints": [
+                "Bridgewater",
+                "Central Victorian Uplands",
+                "Dundas Tablelands",
+                "East Gippsland Lowlands",
+                "East Gippsland Uplands",
+                "Gippsland Plain",
+                "Glenelg Plain",
+                "Goldfields",
+                "Greater Grampians",
+                "Highlands – Far East",
+                "Highlands – Northern Fall",
+                "Highlands – Southern Fall",
+                "Lowan Mallee",
+                "Monaro Tablelands",
+                "Murray Fans",
+                "Murray Mallee",
+                "Murray Scroll Belt",
+                "Northern Inland Slopes",
+                "Otway Plain",
+                "Otway Ranges",
+                "Robinvale Plain",
+                "Strzelecki Ranges",
+                "Victorian Alps",
+                "Victorian Riverina",
+                "Victorian Volcanic Plain",
+                "Warrnambool Plain",
+                "Wilsons Promontory",
+                "Wimmera"
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "largeTreeBenchmark",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "largeTreeSpecies"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "canopyCharacterSpecies"
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTreeDbh",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "largeTreesPerHa",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeCanopyCoverPercent",
+                    "validate": "min[0],max[100]"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "lifeForms",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "lfCanopyCoverPercent",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "lifeFormType",
+                    "constraints": [
+                        "BL - Bryophytes/Lichens",
+                        "GF - Ground Fern",
+                        "IT - Immature Canopy Tree",
+                        "LH - Large Herb",
+                        "LNG - Large Non-tufted Graminoid",
+                        "LTG - Large Tufted Graminoid",
+                        "MH - Medium Herb",
+                        "MNG - Medium to Tiny Non-tufted Graminoid",
+                        "MS - Medium Shrub",
+                        "MTG - Medium to Small Tufted Graminoid",
+                        "PS - Prostrate Shrub",
+                        "SC - Scrambler or Climber",
+                        "SH - Small or Prostrate Herb",
+                        "SS - Small Shrub",
+                        "T - Understorey Tree or Large Shrub"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormNoOfSpecies"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "typicalEvcSpecies",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "lifeFormType",
+                    "constraints": [
+                        "BL - Bryophytes/Lichens",
+                        "GF - Ground Fern",
+                        "IT - Immature Canopy Tree",
+                        "LH - Large Herb",
+                        "LNG - Large Non-tufted Graminoid",
+                        "LTG - Large Tufted Graminoid",
+                        "MH - Medium Herb",
+                        "MNG - Medium to Tiny Non-tufted Graminoid",
+                        "MS - Medium Shrub",
+                        "MTG - Medium to Small Tufted Graminoid",
+                        "PS - Prostrate Shrub",
+                        "SC - Scrambler or Climber",
+                        "SH - Small or Prostrate Herb",
+                        "SS - Small Shrub",
+                        "T - Understorey Tree or Large Shrub"
+                    ]
+                },
+                {
+                    "dataType": "species",
+                    "name": "species"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "recruitmentClass",
+            "constraints": [
+                "Continuous",
+                "Episodic / fire",
+                ""
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "recruitmentDisturbancePeriod"
+        },
+        {
+            "dataType": "number",
+            "name": "organicLitterCover",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "dataType": "number",
+            "name": "logsLength",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "list",
+            "name": "weediness",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "lifeFormType",
+                    "constraints": [
+                        "BL - Bryophytes/Lichens",
+                        "GF - Ground Fern",
+                        "IT - Immature Canopy Tree",
+                        "LH - Large Herb",
+                        "LNG - Large Non-tufted Graminoid",
+                        "LTG - Large Tufted Graminoid",
+                        "MH - Medium Herb",
+                        "MNG - Medium to Tiny Non-tufted Graminoid",
+                        "MS - Medium Shrub",
+                        "MTG - Medium to Small Tufted Graminoid",
+                        "PS - Prostrate Shrub",
+                        "SC - Scrambler or Climber",
+                        "SH - Small or Prostrate Herb",
+                        "SS - Small Shrub",
+                        "T - Understorey Tree or Large Shrub"
+                    ]
+                },
+                {
+                    "dataType": "species",
+                    "name": "weedSpecies"
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedInvasiveness",
+                    "constraints": [
+                        "High",
+                        "Medium",
+                        "Low"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedImpact",
+                    "constraints": [
+                        "High",
+                        "Medium",
+                        "Low"
+                    ]
+                }
+            ]
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<b>Please note: Until EVC benchmark data can be obtained in an electronic format, you will need to manually complete the benchmark data below. This is then used to calculate benchmark based values in the assessment form.</b><br>If the EVC is a 'non-tree' type, please ignore the large tree section.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "bioregion",
+                    "preLabel": "Bioregion:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "evcName",
+                    "preLabel": "EVC Name:",
+                    "type": "selectOne"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Large Trees and Character species</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Large Trees",
+            "dataType": "list",
+            "source": "largeTreeBenchmark",
+            "columns": [
+                {
+                    "source": "largeTreeSpecies",
+                    "title": "Tree species:",
+                    "width": "50%",
+                    "type": "autocomplete"
+                },
+                {
+                    "source": "canopyCharacterSpecies",
+                    "title": "Is character species:",
+                    "width": "10%",
+                    "type": "boolean"
+                },
+                {
+                    "source": "largeTreeDbh",
+                    "title": "Large tree DBH (cm):",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTreesPerHa",
+                    "title": "No. of large trees/Ha:",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "source": "treeCanopyCoverPercent",
+                    "title": "% Canopy cover:",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Understorey Life Forms</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Tree Canopy Cover",
+            "dataType": "list",
+            "source": "lifeForms",
+            "columns": [
+                {
+                    "source": "lfCanopyCoverPercent",
+                    "title": "Life form canopy cover (%):",
+                    "width": "20%",
+                    "type": "number"
+                },
+                {
+                    "source": "lifeFormType",
+                    "title": "Life form:",
+                    "width": "60%",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "lifeFormNoOfSpecies",
+                    "title": "No. of species",
+                    "width": "20%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Species typical of at least part of the EVC range</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Species typical of at least part of the EVC range",
+            "dataType": "list",
+            "source": "typicalEvcSpecies",
+            "columns": [
+                {
+                    "source": "lifeFormType",
+                    "title": "Life form:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "species",
+                    "title": "Species:",
+                    "type": "autocomplete"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Weediness</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Weediness",
+            "dataType": "list",
+            "source": "weediness",
+            "columns": [
+                {
+                    "source": "lifeFormType",
+                    "title": "Life form:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedSpecies",
+                    "title": "Weed species:",
+                    "type": "autocomplete"
+                },
+                {
+                    "source": "weedInvasiveness",
+                    "title": "Weed invasiveness:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedImpact",
+                    "title": "Weed impact:",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Other Benchmark Values</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Other Benchmark Values",
+            "items": [
+                {
+                    "source": "recruitmentClass",
+                    "preLabel": "Recruitment:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "recruitmentDisturbancePeriod",
+                    "preLabel": "Desirable period between disturbances:",
+                    "postLabel": "(years)",
+                    "type": "number"
+                },
+                {
+                    "source": "organicLitterCoverPercent",
+                    "preLabel": "Organic litter:",
+                    "postLabel": "(% cover)",
+                    "type": "number"
+                },
+                {
+                    "source": "lengthOfLogs",
+                    "preLabel": "Length of logs:",
+                    "postLabel": "(m / 0.1 Ha)",
+                    "type": "number"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        }
+    ]
+}

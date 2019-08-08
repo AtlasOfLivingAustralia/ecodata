@@ -1,0 +1,227 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesTreated"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesTreated)"
+                    },
+                    "dataType": "number",
+                    "name": "areaTreatedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesTreated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesTreated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesTreated)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthTreatedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesTreated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesTreated)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "weedTargetSpecies",
+                            "dwcAttribute": "scientificName",
+                            "description": "Weed species targeted for treatment (start typing a  scientific or common name for a species)",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "threatenedEcologicalCommunity",
+                            "validate": "maxSize[100]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "treatmentMethod",
+                            "description": "The primary method used to treat the patch of the target species",
+                            "constraints": [
+                                "Basal bark spraying",
+                                "Biological agents",
+                                "Cut stump",
+                                "Cut and swab",
+                                "Dozing",
+                                "Felling",
+                                "Fire",
+                                "Foliar spraying",
+                                "Grubbing / chipping",
+                                "Hand pulling",
+                                "Moisture and nutrient control",
+                                "Mowing",
+                                "Overplanting",
+                                "Pushing",
+                                "Slashing",
+                                "Spot spraying",
+                                "Splatter gun",
+                                "Stem injection",
+                                "Stem scraper",
+                                "Wick applicators",
+                                "Other"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "otherTreatmentMethod",
+                            "description": "Please specify the method of treatment used if Other was selected in the Type of treatment column.",
+                            "behaviour": [{
+                                "condition": "treatmentMethod == \"Other\"",
+                                "type": "enable"
+                            }],
+                            "validate": "required,maxSize[100]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "treatmentObjective",
+                            "description": "How will the work contribute to protecting the area",
+                            "validate": "required,maxSize[300]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "weedSpeciesTreated"
+                }
+            ],
+            "dataType": "list",
+            "name": "weedTreatmentSites"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Weed treatment",
+    "title": "Removing weeds",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "addRowText": "New weed removal site",
+                "userAddedRows": true,
+                "source": "weedTreatmentSites",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [{
+                            "preLabel": "Initial or follow-up treatment",
+                            "css": "span3",
+                            "source": "initialOrFollowup",
+                            "type": "selectOne"
+                        }]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Site where control was undertaken",
+                                "source": "sitesTreated",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) treated for weed removal",
+                                "source": "areaTreatedHa",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Length (km) treated for weed removal",
+                                "source": "lengthTreatedKm",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "width": "20%",
+                                "source": "weedTargetSpecies",
+                                "title": "Target weed species",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "width": "22%",
+                                "source": "threatenedEcologicalCommunity",
+                                "title": "Threatened Ecological Community (if applicable)",
+                                "type": "text"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "treatmentMethod",
+                                "title": "Type of treatment",
+                                "type": "select2"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "otherTreatmentMethod",
+                                "title": "Type of treatment (if other)",
+                                "type": "text"
+                            },
+                            {
+                                "width": "23%",
+                                "source": "treatmentObjective",
+                                "title": "Treatment objective",
+                                "type": "textarea"
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "weedSpeciesTreated",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

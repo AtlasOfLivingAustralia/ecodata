@@ -1,0 +1,148 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Category of research being undertaken",
+            "name": "typeOfResearch",
+            "constraints": [
+                "Cropping regime impacts",
+                "Crown of Thorns Starfish studies",
+                "Eco-economic studies",
+                "Environmental resilience",
+                "Farm productivity",
+                "Fire management studies",
+                "Grazing regime impacts",
+                "Research associated with project outcomes",
+                "Socio-environmental studies",
+                "Species and population studies",
+                "Soils studies",
+                "Water management studies",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Name of the research project",
+            "name": "nameOfResearchProject"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the objectives of the research project",
+            "name": "researchObjectives"
+        },
+        {
+            "dataType": "text",
+            "description": "List of the collaborators involved in the research project",
+            "name": "researchCollaborators"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "text",
+            "description": "Insert the Document Object Identifier (DOI) URL to the research paper",
+            "name": "researchArtefactUrl"
+        },
+        {
+            "dataType": "document",
+            "description": "Please attach a copy of the research paper",
+            "name": "researchArtefactDocument"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "researchDetails_withMap",
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "typeOfResearch",
+                        "computed": null,
+                        "preLabel": "Type of research being undertaken:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "nameOfResearchProject",
+                        "computed": null,
+                        "preLabel": "Name of the research project:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "researchObjectives",
+                        "computed": null,
+                        "preLabel": "Research objectives:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "researchCollaborators",
+                        "computed": null,
+                        "preLabel": "List the project collaborators:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "researchArtefactUrl",
+                        "preLabel": "DOI to online paper",
+                        "type": "text"
+                    },
+                    {
+                        "source": "researchArtefactDocument",
+                        "preLabel": "Attach a copy of the research paper",
+                        "type": "document"
+                    },
+                    {
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Comments / Notes:",
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [{
+                    "includeSource": false,
+                    "orientation": "vertical",
+                    "includeNotes": false,
+                    "hideSiteSelection": true,
+                    "zoomToProjectArea": true,
+                    "source": "location",
+                    "computed": null,
+                    "autoLocalitySearch": true,
+                    "type": "geoMap",
+                    "includeAccuracy": false,
+                    "readonly": false,
+                    "includeLocality": false
+                }],
+                "class": "output-section",
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

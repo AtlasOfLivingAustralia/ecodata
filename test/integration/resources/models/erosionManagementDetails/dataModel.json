@@ -1,0 +1,167 @@
+{
+    "modelName": "Erosion Management Details",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "The type of method used in this management action to manage erosion on the subject area",
+            "name": "erosionTreatmentMethod",
+            "constraints": [
+                "Erosion control structures (engineering works - see structures installed)",
+                "Farming practice change - improved crop management (contour plowing / bunding)",
+                "Farming practice change - improved crop management (cover crops & mulching)",
+                "Farming practice change - improved stock management (grazing regime)",
+                "Farming practice change - improved crop management (perennial crops)",
+                "Farming practice change - improved crop management (rotation)",
+                "Farming practice change - improved stock management (stock movement)",
+                "Farming practice change - improved stock management (stock watering)",
+                "Farming practice change - improved crop management (tillage systems)",
+                "Farming practice change - reduced stocking",
+                "Farming practice change - riparian buffer strips",
+                "Farming practice change - stock exclusion",
+                "Farming practice change - strip farming",
+                "Revegetation",
+                "Terracing",
+                "Vegetated waterway (bioswale)",
+                "Windbreaks",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "description": "The type of erosion evident on the site",
+            "name": "erosionType",
+            "constraints": [
+                "Dune erosion - direct human traffic",
+                "Dune erosion - wind blown movement",
+                "Gully erosion",
+                "Mass movement - earthfllow",
+                "Mass movement - landslide / landslip",
+                "Mass movement - slumping",
+                "Sheetwash & rill erosion",
+                "Stream bank erosion",
+                "Stream bed erosion",
+                "Tunnel erosion",
+                "Wave action",
+                "Wind scalding",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "description": "The type(s) of structure installed during this activity to control erosion on the subject site",
+            "name": "erosionControlStructures",
+            "constraints": [
+                "Channel / bank lining - cellular confinement systems",
+                "Channel / bank lining - solid barrier",
+                "Dams & spillways (flood mitigation)",
+                "Drift fence",
+                "Flumes & Chutes",
+                "Gabions",
+                "Reventment structures (bank protection)",
+                "Sea wall",
+                "Sediment traps & groynes",
+                "Slope reduction - flow interception structures (eg. contour banks & swales)",
+                "Slope reduction - Weirs & connected weir pools",
+                "Stilling ponds & retention basins",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares affected by erosion",
+            "name": "erosionAffectedArea",
+            "validate": "digits"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares of erosion treated by this activity",
+            "name": "erosionAreaTreated",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Length in lineal kilometres of the longest axis of the treatment area",
+            "name": "erosionLength",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of individual erosion management structures installed during this activity",
+            "name": "erosionStructuresInstalled",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "erosionNotes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "erosionAffectedArea",
+                    "computed": null,
+                    "preLabel": "Area of erosion on this site (Ha.):",
+                    "type": "number"
+                },
+                {
+                    "source": "erosionAreaTreated",
+                    "computed": null,
+                    "preLabel": "Area of erosion being treated:",
+                    "type": "number"
+                },
+                {
+                    "source": "erosionLength",
+                    "computed": null,
+                    "preLabel": "Length of stream/coastline treated (Km):",
+                    "type": "number"
+                },
+                {
+                    "source": "erosionStructuresInstalled",
+                    "computed": null,
+                    "preLabel": "No. of erosion control structures installed:",
+                    "type": "number"
+                }
+            ],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "erosionType",
+                    "computed": null,
+                    "preLabel": "Type(s) of erosion treated:",
+                    "type": "selectMany"
+                },
+                {
+                    "source": "erosionTreatmentMethod",
+                    "computed": null,
+                    "preLabel": "Erosion management method(s) used:",
+                    "type": "selectMany"
+                },
+                {
+                    "source": "erosionControlStructures",
+                    "computed": null,
+                    "preLabel": "Erosion control structure(s) installed:",
+                    "type": "selectMany"
+                }
+            ],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "erosionNotes",
+                "computed": null,
+                "preLabel": "Notes:",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

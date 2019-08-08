@@ -1,0 +1,68 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "action",
+                "description": "",
+                "constraints": [
+                    "Mulching",
+                    "Watering",
+                    "Weed management",
+                    "Other"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "number",
+                "name": "areaManagedHa",
+                "description": "",
+                "validate": "required, min[0]"
+            },
+            {
+                "dataType": "text",
+                "name": "siteManagementNotes",
+                "description": ""
+            }
+        ],
+        "dataType": "list",
+        "name": "postRevegManagementActions"
+    }],
+    "modelName": "Post revegetation site management",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Site Management Actions<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "allowHeaderWrap": "true",
+            "computed": null,
+            "columns": [
+                {
+                    "source": "action",
+                    "type": "selectOne",
+                    "title": "Activity type"
+                },
+                {
+                    "source": "areaManagedHa",
+                    "type": "number",
+                    "title": "Area managed (Ha)"
+                },
+                {
+                    "source": "siteManagementNotes",
+                    "type": "textarea",
+                    "title": "Comments / notes"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "postRevegManagementActions",
+            "title": "Management Actions",
+            "type": "table",
+            "class": "output-section"
+        }
+    ]
+}

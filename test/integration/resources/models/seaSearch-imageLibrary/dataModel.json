@@ -1,0 +1,394 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The name of the person or party that undertook the survey visit."
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the plant or animal observed."
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "set",
+            "name": "tags",
+            "description": "Tag this sighting with species group and/or sub-group",
+            "constraints": [
+                "Fish",
+                "Mobile invertebrate",
+                "Sessile invertebrate",
+                "Seaweed",
+                "Seagrass",
+                "Bird",
+                "Marine mammal",
+                "Fungus (including lichens)",
+                "Other"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "commonName",
+                    "description": ""
+                },
+                {
+                    "dataType": "species",
+                    "name": "pestSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": ""
+                },
+                {
+                    "dataType": "image",
+                    "name": "pestSpeciesPhoto",
+                    "description": "Attach a photo of the species observed.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "pestObservedStatus",
+                    "description": "Did you actually see the pest species?",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "rangerNotifiedStatus",
+                    "description": "Has the Park Ranger been notified about the pest species?",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "pestSpeciesList",
+            "defaultRows": "0",
+            "userAddedRows": "true"
+        }
+    ],
+    "modelName": "seaSearch-speciesImageLibrary",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Sea Search - Species Image Library<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Visit Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "source": "<h2>Visit Details<\/h2>",
+                                        "type": "literal"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Recorded by",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "recordedBy",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Observed by",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "observedBy",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Date",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyDate",
+                                        "preLabelClass": "span4",
+                                        "type": "date"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Time",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyStartTime",
+                                        "preLabelClass": "span4",
+                                        "type": "time"
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Native Species Observed",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "source": "<h2>Native Species Observed<\/h2>",
+                                        "type": "literal"
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Add one or more images. Image metadata will be used to automatically set date and location fields (where available). PLEASE NOTE: A photo is required for the record to be validated and retained.",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "sightingPhoto",
+                                        "preLabelClass": "span4",
+                                        "type": "image"
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Species name",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "species",
+                                        "preLabelClass": "span4",
+                                        "type": "speciesSearchWithImagePreview"
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Identification tags",
+                                        "inline": false,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "tags",
+                                        "preLabelClass": "span4",
+                                        "type": "wordCloud"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Notes",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "notes",
+                                        "preLabelClass": "span4",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }],
+                                    "class": ""
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "source": "<h2>Location<\/h2>",
+                                    "type": "literal"
+                                }]
+                            },
+                            {
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "includeNotes": false,
+                                    "orientation": "vertical",
+                                    "computed": null,
+                                    "autoLocalitySearch": true,
+                                    "readonly": true,
+                                    "includeSource": false,
+                                    "includeAccuracy": false,
+                                    "hideSiteSelection": false,
+                                    "source": "location",
+                                    "type": "geoMap",
+                                    "includeLocality": false
+                                }]
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "boxed": true,
+                "title": "Pest Species Observed",
+                "type": "section",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [{
+                            "source": "<h2>Pest Species Observed<\/h2>",
+                            "type": "literal"
+                        }]
+                    },
+                    {
+                        "type": "row",
+                        "items": [{
+                            "source": "<b>Please include any pest species observed in the table below.<\/b>",
+                            "type": "literal"
+                        }]
+                    },
+                    {
+                        "type": "row",
+                        "items": [{
+                            "source": "<font style='font-color:red;'>PLEASE NOTE: An image is required for the record to be validated and retained.<\/font>",
+                            "type": "literal"
+                        }]
+                    },
+                    {
+                        "type": "row",
+                        "items": [{
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "width": "40%",
+                                    "source": "pestSpecies",
+                                    "title": "Pest species name + Reference image",
+                                    "type": "speciesSearchWithImagePreview"
+                                },
+                                {
+                                    "width": "30%",
+                                    "source": "pestSpeciesPhoto",
+                                    "title": "Upload your photo",
+                                    "type": "image"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "pestObservedStatus",
+                                    "title": "Seen (Y/N)",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "rangerNotifiedStatus",
+                                    "title": "Ranger notified (Y/N)",
+                                    "type": "selectOne"
+                                }
+                            ],
+                            "defaultRows": "0",
+                            "userAddedRows": "true",
+                            "source": "pestSpeciesList",
+                            "type": "table"
+                        }]
+                    }
+                ],
+                "class": ""
+            }],
+            "class": ""
+        }
+    ]
+}

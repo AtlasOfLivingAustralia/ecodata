@@ -1,0 +1,56 @@
+{
+    "modelName": "heritageExpectedOutcomes",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Describe how your activity will contribute to any and all relevant conservation and / or management plans.",
+            "name": "activityContributionToPlans",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe any heritage outcomes you expect as a result of work undertaken by your team on this project.",
+            "name": "heritageOutcomesExpected",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe any outcomes / impacts you expect on the local community as a result of this project.",
+            "name": "communityOutcomesExpected",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "activityContributionToPlans",
+                    "preLabel": "How will this activity contribute to existing conservation and / or management plans?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "heritageOutcomesExpected",
+                    "preLabel": "What heritage outcomes do you expect as a result of the work undertaken?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "communityOutcomesExpected",
+                    "preLabel": "What are the expected outcomes / impacts on the local community as a result of this project?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "notes",
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

@@ -1,0 +1,353 @@
+{
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "riskTable",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "riskType",
+                    "constraints": [
+                        "Climate change",
+                        "Cropping & root zone disturbance",
+                        "Defoliation - birds",
+                        "Defoliation - insects",
+                        "Defoliation - other",
+                        "Disease - animals",
+                        "Disease - plants",
+                        "Drainage - prolonged soil profile drying",
+                        "Fishing / aquaculture impacts - commercial over-fishing",
+                        "Fishing / aquaculture impacts - recreational over-fishing",
+                        "Fishing / aquaculture impacts - fishing bycatch",
+                        "Fishing / aquaculture impacts - drifting nets / debris",
+                        "Fishing / aquaculture impacts - escaped stock",
+                        "Fishing / aquaculture impacts - nutrification",
+                        "Fire - managed fire frequency",
+                        "Fire - managed fire intensity",
+                        "Fire - wildfire",
+                        "Flood - frequency",
+                        "Flood - intensity",
+                        "Flood - prolonged inundation",
+                        "Grazing pressure - domestic stock",
+                        "Grazing pressure - pest animals",
+                        "Grazing pressure - native wildlife",
+                        "Impacts from public access / visitation - pedestrian",
+                        "Impacts from public access / visitation - vehicular",
+                        "Invasive and pest animals",
+                        "Invasive weeds",
+                        "Mistletoe or other parasite / fungal infestations",
+                        "Soil acidification or acid-sulphate soils",
+                        "Soil compaction - animal / human / machinery",
+                        "Soil erosion",
+                        "Soil nutrient enrichment / eutrophication",
+                        "Soil salinity",
+                        "Urbanisation / subdivision",
+                        "Weedicides / pesticides or chemical contamination",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "riskDescription"
+                },
+                {
+                    "dataType": "text",
+                    "name": "riskLikelihood",
+                    "constraints": [
+                        "Almost certain",
+                        "Likely",
+                        "Possible",
+                        "Unlikely",
+                        "Remote"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "riskConsequence",
+                    "constraints": [
+                        "Insignificant",
+                        "Minor",
+                        "Moderate",
+                        "Major",
+                        "Extreme"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "riskRating",
+                    "constraints": [
+                        "High",
+                        "Significant",
+                        "Medium",
+                        "Low"
+                    ]
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The amount of time in hours spent on planning the works and other activities to be undertaken on the selected site under this project.",
+            "name": "sitePlanningTimeSpent"
+        },
+        {
+            "dataType": "list",
+            "name": "plannedActions",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Short title for the works/activity area (point of interest) to enable it to be easily identified and referred to.",
+                    "name": "worksAreaTitle"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of activity(s) to be undertaken on this site.",
+                    "name": "plannedActivityType",
+                    "constraints": [
+                        "Community Participation and Engagement",
+                        "Conservation Grazing Management",
+                        "Debris Removal",
+                        "Disease Management",
+                        "Erosion Management",
+                        "Fauna survey - general",
+                        "Fencing",
+                        "Fire Management",
+                        "Flora survey - general",
+                        "Management Practice Change",
+                        "Conservation Works for Threatened Species",
+                        "Pest Animal Survey",
+                        "Pest Management",
+                        "Public Access and Infrastructure",
+                        "Research",
+                        "Revegetation",
+                        "Seed Collection",
+                        "Site Assessment",
+                        "Site Preparation",
+                        "Water Management",
+                        "Weed Treatment",
+                        "Weed Mapping & Monitoring"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "Brief description of the activity / works to be implemented.",
+                    "name": "plannedActivityDescription"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual works and/or activity ares (points of interest) within the specified site for each selected activity type.",
+                    "name": "noOfWorksAreas"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate number of works and/or activity ares (points of interest) within the specified site for all selected activity types.",
+            "name": "noOfWorksAreasTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "noOfWorksAreas",
+                    "fromList": "plannedActions"
+                }
+            }
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "worksPlanningAndRisk_withMap",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Site Planning Details<\/h4><b>This section is for recording information about activities that you are planning to carry out on a site for this project. It may include one or several activities and is essentially an aid to your project planning as well as a way to record your effort spent in planning and preparing for actual works-based activities for project accounting.<\/b>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "sitePlanningTimeSpent",
+                            "computed": null,
+                            "preLabel": "How much time did you spend planning works for this site?:",
+                            "type": "number"
+                        },
+                        {
+                            "items": [{
+                                "source": "Please indicate what you are planning to do on each works area within your selected site.",
+                                "computed": null,
+                                "type": "literal"
+                            }],
+                            "type": "row"
+                        },
+                        {
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "colspan": 2,
+                                    "source": "",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "Total No. of activity areas:",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "noOfWorksAreasTotal",
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noOfWorksAreas\",\"fromList\":\"plannedActions\"}}",
+                                    "type": "number"
+                                }
+                            ]}]},
+                            "source": "plannedActions",
+                            "columns": [
+                                {
+                                    "title": "Name of works area:",
+                                    "source": "worksAreaTitle",
+                                    "computed": null,
+                                    "width": "25%",
+                                    "type": "text"
+                                },
+                                {
+                                    "title": "Type of activity planned:",
+                                    "source": "plannedActivityType",
+                                    "computed": null,
+                                    "width": "25%",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "title": "Description of planned activities:",
+                                    "source": "plannedActivityDescription",
+                                    "computed": null,
+                                    "width": "35%",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "title": "No. of works areas within the site:",
+                                    "source": "noOfWorksAreas",
+                                    "computed": null,
+                                    "width": "15%",
+                                    "type": "number"
+                                }
+                            ],
+                            "class": "output-section",
+                            "userAddedRows": true,
+                            "type": "table"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }],
+                    "class": "output-section",
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Site Risk Assessment<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "userEditableRows": true,
+                "source": "riskTable",
+                "columns": [
+                    {
+                        "title": "Type of threat/risk",
+                        "source": "riskType",
+                        "computed": null,
+                        "width": "30%",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Description",
+                        "source": "riskDescription",
+                        "computed": null,
+                        "width": "40%",
+                        "type": "textarea"
+                    },
+                    {
+                        "title": "Likelihood",
+                        "source": "riskLikelihood",
+                        "computed": null,
+                        "width": "10%",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Consequence",
+                        "source": "riskConsequence",
+                        "computed": null,
+                        "width": "10%",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Risk rating",
+                        "source": "riskRating",
+                        "computed": null,
+                        "width": "10%",
+                        "type": "selectOne"
+                    }
+                ],
+                "userAddedRows": true,
+                "class": "output-section",
+                "type": "table"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

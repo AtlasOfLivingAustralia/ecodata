@@ -1,0 +1,484 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The name of the person or party that undertook the survey event."
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The start time at which the survey was made."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The finish time at which the survey was made."
+        },
+        {
+            "dataType": "text",
+            "name": "intertidalZone",
+            "description": "The intertidal zone sampled",
+            "constraints": [
+                "Low intertidal zone",
+                "Mid intertidal zone"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "seaSearchMethod",
+            "dwcAttribute": "samplingProtocol",
+            "description": "The sampling method used",
+            "constraints": [
+                "Method 1 Cover quadrats - algae and invertebrates",
+                "Method 2 Counting snails and other mobile creatures",
+                "Both Method 1 and Method 2"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes",
+            "dwcAttribute": "notes",
+            "description": "Enter any comments for the survey event - eg. trampling, marine pests, other ..."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                        "9",
+                        "10",
+                        "11",
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18",
+                        "19",
+                        "20"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "scientificName": "Hormosira banksii",
+                    "dataType": "number",
+                    "name": "pointInterceptCountHormosiraBanksii",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Galeolaria caespitosa",
+                    "dataType": "number",
+                    "name": "pointInterceptCountGaleolariaCaespitosa",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Ulva",
+                    "dataType": "number",
+                    "name": "pointInterceptCountUlva",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Limnoperna pulex",
+                    "dataType": "number",
+                    "name": "pointInterceptCountLimnopernaPulex",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountEncrustingCoralline",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountCorallineTurf",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountSand",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountBareReef",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountOther",
+                    "validate": "min[0]"
+                },
+                {
+                    "computed": {
+                        "fromList": "pointInterceptCount",
+                        "dependents": [
+                            "pointInterceptCountHormosiraBanksii",
+                            "pointInterceptCountGaleolariaCaespitosa",
+                            "pointInterceptCountUlva",
+                            "pointInterceptCountLimnopernaPulex",
+                            "pointInterceptCountEncrustingCoralline",
+                            "pointInterceptCountCorallineTurf",
+                            "pointInterceptCountSand",
+                            "pointInterceptCountBareReef",
+                            "pointInterceptCountOther"
+                        ],
+                        "operation": "sum"
+                    },
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "pointInterceptCountTotalRapidMethod",
+                    "description": "Note that the total count should not exceed 49",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherSpeciesName",
+                    "description": "Record the name(s) of species observed which don't have a dedicated column in this table."
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountOtherSpecies",
+                    "description": "The total number individuals counted in the 'Other species' category.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "image",
+                    "description": "Upload images of sampled quadrats."
+                },
+                {
+                    "scientificName": "Cellana tramoserica",
+                    "dataType": "number",
+                    "name": "invertebrateCountCellanaTramoserica",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Bembicium nanum",
+                    "dataType": "number",
+                    "name": "invertebrateCountBembiciumNanum",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Bembicium melanastromum",
+                    "dataType": "number",
+                    "name": "invertebrateCountBembiciumMelanastromum",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Nerita atramentosa",
+                    "dataType": "number",
+                    "name": "invertebrateCountNeritaAtramentosa",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Siphonaria zelandica",
+                    "dataType": "number",
+                    "name": "invertebrateCountSiphonariaZelandica",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Siphonaria diminensis",
+                    "dataType": "number",
+                    "name": "invertebrateCountSiphonariaDiminensis",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Austrocochlea constricta",
+                    "dataType": "number",
+                    "name": "invertebrateCountAustrocochleaConstricta",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                },
+                {
+                    "scientificName": "Austrocochlea porcata",
+                    "dataType": "number",
+                    "name": "invertebrateCountAustrocochleaPorcata",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "pointInterceptCount"
+        }
+    ],
+    "modelName": "intertidalReefSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Intertidal Reef Survey<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h4 class='text-default text-left'><b>Survey Event Details<\/b><\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Record submitted by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observers (full names)",
+                            "computed": null,
+                            "source": "observedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "End time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Intertidal zone sampled",
+                            "source": "intertidalZone",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sea Search method",
+                            "source": "seaSearchMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "source": "eventNotes",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Mapping Notes:<\/h4><i>Select a Marine Protected Area location from the drop-down list. Zoom in on the map, select the marker, then click on the actual site.<p><b>Give the site a name in the 'Matched locality' field, then save<\/b> the location to store it for future use.<\/i><p><b>If you are using a GPS device for coordinates<\/b> you can move the marker around to get the displayed coordinates to match your device or you can enter the coordinates after dropping the marker on the map. <b>Please ensure that your device is set to the WGS84 decimal coordinate reference system<\/b> and that you enter latitude/longitude to 7 decimal places to ensure accuracy and compatibility with the mapping facility being used in the form. Don't forget to use 'minus' for southern hemisphere latitude.<\/i>",
+                            "type": "literal"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": false
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h4 class='text-default text-left'><b>Point Intercept and Invertebrate Counts<\/b><\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<font style='color:red;'>Please record any pest species observed in the Species Image Library form.<\/font>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "columns": [
+                    {
+                        "source": "quadratId",
+                        "title": "Quadrat No.",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "image",
+                        "title": "Photo",
+                        "type": "image"
+                    },
+                    {
+                        "source": "pointInterceptCountHormosiraBanksii",
+                        "title": "Hormosira banksii - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountGaleolariaCaespitosa",
+                        "title": "Galeolaria caespitosa - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountUlva",
+                        "title": "Ulva spp. - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountLimnopernaPulex",
+                        "title": "Limnoperna pulex - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountEncrustingCoralline",
+                        "title": "Encrusting Coralline - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountCorallineTurf",
+                        "title": "Coralline Turf - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountSand",
+                        "title": "Sand - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountBareReef",
+                        "title": "Bare Reef - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountOther",
+                        "title": "Other - R",
+                        "type": "number"
+                    },
+                    {
+                        "noEdit": "true",
+                        "source": "pointInterceptCountTotalRapidMethod",
+                        "title": "Total Count - R",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountCellanaTramoserica",
+                        "title": "Cellana tramoserica - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountBembiciumNanum",
+                        "title": "Bembicium nanum (open coast) - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountBembiciumMelanastromum",
+                        "title": "Bembicium melanastromum (bays) - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountNeritaAtramentosa",
+                        "title": "Nerita atramentosa - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountSiphonariaZelandica",
+                        "title": "Siphonaria zelandica - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountSiphonariaDiminensis",
+                        "title": "Siphonaria diminensis - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountAustrocochleaConstricta",
+                        "title": "Austrocochlea constricta - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountAustrocochleaPorcata",
+                        "title": "Austrocochlea porcata - D",
+                        "type": "number"
+                    },
+                    {
+                        "source": "otherSpeciesName",
+                        "title": "Other species name(s) - D",
+                        "type": "text"
+                    },
+                    {
+                        "source": "pointInterceptCountOtherSpecies",
+                        "title": "Other species (count)",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "pointInterceptCount",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

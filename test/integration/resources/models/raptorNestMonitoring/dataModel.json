@@ -1,0 +1,326 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who observed the sighting.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "startDayOfYear",
+            "description": "The time at which your survey commenced."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "dwcAttribute": "endDayOfYear",
+            "description": "The time at which you stopped looking for raptors."
+        },
+        {
+            "dataType": "text",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the raptor observed.",
+            "constraints": [
+                "Eastern Osprey (Pandion cristatus)",
+                "White-bellied Sea Eagle (Haliaeetus (Pontoaetus) leucogaster)",
+                "Brahminy Kite(Haliastur indus)",
+                "Other - list species in comments",
+                "None"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nestStructure",
+            "dwcAttribute": "",
+            "description": "What type of structure is supporting the nest?",
+            "constraints": [
+                "Telecommunication tower",
+                "Tree",
+                "Pole",
+                "Other"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "noOfAdults",
+            "dwcAttribute": "individualCount",
+            "description": "The number of adult individuals observed at the nest.",
+            "constraints": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4"
+            ],
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "noOfJuveniles",
+            "dwcAttribute": "",
+            "description": "The number of juvenile offspring observed at the nest.",
+            "constraints": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "Unknown"
+            ],
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "stringList",
+            "name": "adultActivity",
+            "dwcAttribute": "behaviour",
+            "description": "What were the adult birds doing when you saw them?",
+            "constraints": [
+                "Courting",
+                "Nest building",
+                "Nest defence",
+                "Copulation",
+                "Incubating",
+                "Changeover of incubation",
+                "Feeding adult",
+                "Feeding juvenile"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "foodType",
+            "description": "If the adult bird(s) had food, what type of food was it?",
+            "constraints": [
+                "Fish",
+                "Bird",
+                "Mammal",
+                "Reptile",
+                "Other",
+                "Unknown",
+                "Not applicable"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "offspringActivity",
+            "dwcAttribute": "",
+            "description": "What were the juvenile birds doing when you saw them?",
+            "constraints": [
+                "Chicks seen",
+                "Chicks heard",
+                "Juvenile perching on nest",
+                "Juvenile short flight",
+                "Juvenile leaving nest"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo of the species taken at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "Notes and comments applicable to the recording event."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "contactConsent",
+            "description": "Please indicate whether you consent to being contacted by the project team about this record.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "piConsent",
+            "description": "Please indicate whether you consent to the ALA providing your email address to the project team so that they can contact you about this record.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        }
+    ],
+    "modelName": "raptorNestMonitoring_ver_2_0",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Observer name",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Record date",
+                        "computed": null,
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Start time",
+                        "computed": null,
+                        "source": "surveyStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Finish time",
+                        "computed": null,
+                        "source": "surveyFinishTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Species name",
+                        "computed": null,
+                        "source": "species",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Are you confident of the species identification?",
+                        "computed": null,
+                        "source": "identificationConfidence",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Nest type",
+                        "computed": null,
+                        "source": "nestStructure",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Number of adult raptors observed at nest",
+                        "computed": null,
+                        "source": "noOfAdults",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Number of juvenile raptors observed at nest",
+                        "computed": null,
+                        "source": "noOfJuveniles",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Adult activity",
+                        "computed": null,
+                        "source": "adultActivity",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Food type",
+                        "computed": null,
+                        "source": "foodType",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Offspring activity",
+                        "computed": null,
+                        "source": "offspringActivity",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Photo",
+                        "source": "sightingPhoto",
+                        "type": "image"
+                    },
+                    {
+                        "preLabel": "Notes",
+                        "computed": null,
+                        "source": "eventRemarks",
+                        "type": "textarea"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "includeNotes": false,
+                        "orientation": "vertical",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "readonly": true,
+                        "includeSource": false,
+                        "includeAccuracy": false,
+                        "hideSiteSelection": false,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    },
+                    {
+                        "source": "<h3>Contact Consent<\/h3>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Do you give permission to be contacted?",
+                        "computed": null,
+                        "source": "contactConsent",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Do you consent for the ALA to provide your contact details to project organisers?",
+                        "computed": null,
+                        "source": "piConsent",
+                        "type": "selectOne"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

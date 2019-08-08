@@ -1,0 +1,51 @@
+{
+    "modelName": "Activity Outcomes",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "activityEnvironmentalOutcomes"
+        },
+        {
+            "dataType": "text",
+            "name": "activitySocialOutcomes"
+        },
+        {
+            "dataType": "text",
+            "name": "activityEconomicOutcomes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "What notable outcomes were achieved through implementing this activity? <i>(These may be positive or negative, and can include observable changes in environmental, social and/or economic factors).<\/i>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "activityEnvironmentalOutcomes",
+                    "computed": null,
+                    "preLabel": "Environmental outcomes:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "activitySocialOutcomes",
+                    "computed": null,
+                    "preLabel": "Social outcomes:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "activityEconomicOutcomes",
+                    "computed": null,
+                    "preLabel": "Economic outcomes",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

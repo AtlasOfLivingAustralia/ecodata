@@ -1,0 +1,1025 @@
+{
+    "dataModel": [
+        {
+            "indexName": "taxaRichness",
+            "dataType": "number",
+            "name": "taxaRichness",
+            "description": "Taxa richness"
+        },
+        {
+            "dataType": "number",
+            "name": "spiValue",
+            "description": "Calculated stream pollution index (SPI)"
+        },
+        {
+            "indexName": "overallSiteQuality",
+            "dataType": "text",
+            "name": "streamQualityRating",
+            "description": "Stream quality rating"
+        },
+        {
+            "dataType": "text",
+            "name": "samplingProtocol",
+            "dwcAttribute": "samplingProtocol",
+            "value": "SIGNAL2 aquatic macroinvertebrates"
+        },
+        {
+            "indexName": "surveyDate",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken",
+            "validate": "required,past[now]"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time of the day that the survey was undertaken",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "surveyDuration",
+            "description": "The duration of the sampling event in decimal hours"
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions such as cloudy, sunny or raining, whether the sampling was done in a shady place or in the open, etc."
+        },
+        {
+            "indexName": "recordedBy",
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person or group undertaking the sampling event.",
+            "validate": "required"
+        },
+        {
+            "indexName": "samplingMethod",
+            "dataType": "stringList",
+            "name": "samplingMethod",
+            "description": "The method used to sample the waterbody for macroinvertebrates.",
+            "constraints": [
+                "Kick",
+                "Sweep"
+            ],
+            "validate": "required"
+        },
+        {
+            "disableTableUpload": true,
+            "columns": [
+                {
+                    "indexName": "habitatType",
+                    "dataType": "text",
+                    "name": "habitatType",
+                    "description": "Select the type of habitat sampled",
+                    "constraints": [
+                        "Silt and sand",
+                        "Stones",
+                        "Water plants",
+                        "Leaves and twigs",
+                        "Logs branches and tree roots"
+                    ]
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "edge"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "pool"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "riffle"
+                }
+            ],
+            "dataType": "list",
+            "name": "habitatSampled"
+        },
+        {
+            "dataType": "text",
+            "name": "idConfirmedBy",
+            "description": "Verification of this record by a qualified person will help to make it more useful in scientific analysis of the data.",
+            "constraints": [
+                "Waterwatch coordinator",
+                "Professional staff of council or agency",
+                "Experienced teacher",
+                "Community member",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "indexName": "gambusiaPresent",
+            "dataType": "text",
+            "name": "gambusiaPresent",
+            "description": "Gambusia is an introduced freshwater pest species which damages the aquatic environment.",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "wqFactors",
+            "description": "Please note any factors apparent during your sampling which may affect water quality. (eg. muddy or very clear water, the amount of algae present, etc.."
+        },
+        {
+            "dataType": "text",
+            "name": "observationRemarks",
+            "dwcAttribute": "observationRemarks",
+            "description": "Observation notes about the record."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": true,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "readonly": true,
+            "indexName": "siteName",
+            "dataType": "text",
+            "name": "siteName",
+            "noEdit": true
+        },
+        {
+            "allowRowDelete": false,
+            "disableTableUpload": true,
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "taxonName"
+                },
+                {
+                    "dataType": "text",
+                    "name": "taxonSensitivityClass",
+                    "description": "Different macroinvertebrate species/taxa have different degrees of sensitivity to water quality conditions and can be an indicator of changes. Grouping them into broad categories makes it easier to relate the species that you see with the calculated water quality."
+                },
+                {
+                    "dataType": "number",
+                    "name": "taxonSensitivityRating",
+                    "description": "A rating between 1 and 10 which reflects the relative sensitivity of different species/taxa of macroinvertebrates to water quality factors."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "description": "Enter the actual number of each species/taxon that you count in your sample.",
+                    "validate": "integer,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "taxonWeightFactor"
+                },
+                {
+                    "dataType": "number",
+                    "name": "taxonIndexValue"
+                }
+            ],
+            "dataType": "list",
+            "name": "taxaObservations",
+            "jsMain": "https://dl.dropbox.com/s/qdv5zznw7grsuy1/taxaObservations.js?dl=0",
+            "defaultRows": [
+                {
+                    "scientificName": "Mecoptera",
+                    "taxonSensitivityClass": "Very Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Scorpion flies",
+                        "scientificName": "Mecoptera",
+                        "name": "Scorpion flies (Mecoptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:67c46151-7449-407a-a8b3-a283ba3f0771"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "10"
+                },
+                {
+                    "scientificName": "Plecoptera",
+                    "taxonSensitivityClass": "Very Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Stone flies",
+                        "scientificName": "Plecoptera",
+                        "name": "Stone flies (Plecoptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:4fbe14c4-2efb-4874-8842-f29e05a93f92"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "10"
+                },
+                {
+                    "scientificName": "Ephemeroptera",
+                    "taxonSensitivityClass": "Very Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "May flies",
+                        "scientificName": "Ephemeroptera",
+                        "name": "May flies (Ephemeroptera)",
+                        "guid": "NZOR-4-1707"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "9"
+                },
+                {
+                    "scientificName": "Megaloptera",
+                    "taxonSensitivityClass": "Very Sensitive",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Alder flies",
+                        "scientificName": "Megaloptera",
+                        "name": "Alder flies (Megaloptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:1764aba8-641d-4eb8-ade5-ff33efafb054"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "8"
+                },
+                {
+                    "scientificName": "Trichoptera",
+                    "taxonSensitivityClass": "Very Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Caddis flies",
+                        "scientificName": "Trichoptera",
+                        "name": "Caddis flies (Trichoptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:0964bf51-f620-4a71-9ab3-ff631f2099bb"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "8"
+                },
+                {
+                    "scientificName": "Nematomorpha",
+                    "taxonSensitivityClass": "Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Horsehair worms; gordian worms",
+                        "scientificName": "Nematomorpha",
+                        "name": "Horsehair worms; gordian worms (Nematomorpha)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:4b1dd080-6a02-48c4-9f6c-94680f7651dd"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "6"
+                },
+                {
+                    "scientificName": "Acari",
+                    "taxonSensitivityClass": "Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Mites",
+                        "scientificName": "Acarina",
+                        "name": "Mites (Acarina)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:c731c9bb-6292-4071-873d-2e8543dd120f"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "6"
+                },
+                {
+                    "scientificName": "Anaspidacea",
+                    "taxonSensitivityClass": "Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Cave shrimp",
+                        "scientificName": "Anaspidacea",
+                        "name": "Cave shrimp (Anaspidacea)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:5b4de720-d042-47b3-824a-542b12e7c771"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "6"
+                },
+                {
+                    "scientificName": "Neuroptera",
+                    "taxonSensitivityClass": "Sensitive",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Lacewings",
+                        "scientificName": "Neuroptera",
+                        "name": "Lacewings (Neuroptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:db09c273-56ae-4ef9-a5ed-53027aa7c63e"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "6"
+                },
+                {
+                    "scientificName": "Coleoptera",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Beetles - Riffle beetles, Whirligigs",
+                        "scientificName": "Coleoptera",
+                        "name": "Beetles - Riffle beetles, Whirligigs (Coleoptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:5c387616-0cb4-42f0-936e-7ec22d576939"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "5"
+                },
+                {
+                    "scientificName": "Porifera",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Freshwater sponges",
+                        "scientificName": "Porifera",
+                        "name": "Freshwater sponges (Porifera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:ed334702-b153-41b0-ac93-e6aa4964331c"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "4"
+                },
+                {
+                    "scientificName": "Bryozoa",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Pipe-mosses",
+                        "scientificName": "Bryozoa",
+                        "name": "Pipe-mosses (Bryozoa)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:a1f069f9-eaa8-487c-889a-d3cfb3dd936e"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "4"
+                },
+                {
+                    "scientificName": "Decapoda",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Yabbies; crayfish, shrimp",
+                        "scientificName": "Decapoda",
+                        "name": "Yabbies; crayfish, shrimp (Decapoda)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:2f12112b-d593-4392-a9db-4b026b8805a3"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "4"
+                },
+                {
+                    "scientificName": "Diplopoda",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Aquatic millipedes",
+                        "scientificName": "Diplopoda",
+                        "name": "Aquatic millipedes (Diplopoda)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:0a08c6cb-7990-4124-ac83-9d44274d6a84"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "4"
+                },
+                {
+                    "scientificName": "Nemertea",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Proboscis worms",
+                        "scientificName": "Nemertea",
+                        "name": "Proboscis worms (Nemertea)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:89e92ab7-7ffc-4cc4-9149-19c8f8079940"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Nematoda",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Nematodes, roundworms",
+                        "scientificName": "Nematoda",
+                        "name": "Nematodes, roundworms (Nematoda)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:0e7e0f7d-4456-495b-b762-2d11f78b9368"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Bivalvia",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Freshwater mussels; clams",
+                        "scientificName": "Bivalvia",
+                        "name": "Freshwater mussels; clams (Bivalvia)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:8c3070f6-9475-4b6a-95cb-8afb944ad3d5"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Amphipoda",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Side-swimmers; scuds",
+                        "scientificName": "Amphipoda",
+                        "name": "Side-swimmers; scuds (Amphipoda)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:c799e373-f43a-446d-b2d0-836e6be97b84"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Diptera",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Fly larva - mosquito larvae, bloodworms",
+                        "scientificName": "Diptera",
+                        "name": "Fly larva - mosquito larvae, bloodworms (Diptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:933b2bf6-deee-4fd9-b669-4bf8cf7cc9ce"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Odonata",
+                    "taxonSensitivityClass": "Moderately Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Dragonfly; damselflies",
+                        "scientificName": "Odonata",
+                        "name": "Dragonfly; damselflies (Odonata)",
+                        "guid": "NZOR-4-24409"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Turbellaria",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Flatworms",
+                        "scientificName": "Turbellaria",
+                        "name": "Flatworms (Turbellaria)",
+                        "guid": "13010000"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "2"
+                },
+                {
+                    "scientificName": "Oligochaeta",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Segmented worms",
+                        "scientificName": "Oligochaeta",
+                        "name": "Segmented worms (Oligochaeta)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:406916d5-9058-4d72-9dbf-d3f689e8f3b2"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "2"
+                },
+                {
+                    "scientificName": "Isopoda",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Freshwater Slaters",
+                        "scientificName": "Isopoda",
+                        "name": "Freshwater Slaters (Isopoda)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:e4720a22-d642-44c7-abc6-fb5b34d5e057"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "2"
+                },
+                {
+                    "scientificName": "Hemiptera",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "True bugs - backswimmers, water boatman, needle bugs",
+                        "scientificName": "Hemiptera",
+                        "name": "True bugs - backswimmers, water boatman, needle bugs (Hemiptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:7630fe33-a00e-4743-80da-4fa6a36cd8b2"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "6"
+                },
+                {
+                    "scientificName": "Lepidoptera",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Moth larvae",
+                        "scientificName": "Lepidoptera",
+                        "name": "Moth larvae (Lepidoptera)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:7cb6c81c-a7c4-4dd5-8578-fcfd2de847d6"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "3"
+                },
+                {
+                    "scientificName": "Hydrozoa",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Hydras",
+                        "scientificName": "Hydrozoa",
+                        "name": "Hydras (Hydrozoa)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:40e34a43-accb-48e3-9492-09c39ac5f756"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Gastropoda",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Freshwater Snails",
+                        "scientificName": "Gastropoda",
+                        "name": "Freshwater Snails (Gastropoda)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:ab81c7fc-3fc3-4e54-b277-a12a1a9cd0d8"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Hirudinea",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Leechs",
+                        "scientificName": "Hirudinea",
+                        "name": "Leechs (Hirudinea)",
+                        "guid": "22300000"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Polychaeta",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Bristleworms",
+                        "scientificName": "Polychaeta",
+                        "name": "Bristleworms (Polychaeta)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:d1251470-e6f7-4f43-b97d-276dab41b06b"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Anostraca",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Brine shrimps; fairy shrimps",
+                        "scientificName": "Anostraca",
+                        "name": "Brine shrimps; fairy shrimps (Anostraca)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:dbc4f4ad-0ad5-4813-9275-95b00b448832"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Branchiura",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Fish lice",
+                        "scientificName": "Branchiura",
+                        "name": "Fish lice (Branchiura)",
+                        "guid": "NZOR-4-111042"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Cyclestheriidae",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Clam shrimps",
+                        "scientificName": "Cyclestheriidae",
+                        "name": "Clam shrimps (Cyclestheriidae)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:925a4c2a-19fe-43c9-af4c-9b420b85b13a"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Notostraca",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Tadpole shrimp",
+                        "scientificName": "Notostraca",
+                        "name": "Tadpole shrimp (Notostraca)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:7d0c7db7-6e86-4c63-bb4c-ca80c1b84a06"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                },
+                {
+                    "scientificName": "Collembola",
+                    "taxonSensitivityClass": "Very Tolerant",
+                    "taxonIndexValue": "",
+                    "dataType": "species",
+                    "taxonWeightFactor": "",
+                    "individualCount": "",
+                    "taxonName": {
+                        "commonName": "Springtails",
+                        "scientificName": "Collembola",
+                        "name": "Springtails (Collembola)",
+                        "guid": "urn:lsid:biodiversity.org.au:afd.taxon:53e5e456-0d08-4cff-ac1f-d453b2c07e3b"
+                    },
+                    "dwcAttribute": "scientificName",
+                    "taxonSensitivityRating": "1"
+                }
+            ]
+        }
+    ],
+    "modelName": "ACT_Waterwatch_Modified_SIGNAL2_macroinvertebrates",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Water Bug Survey<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Site Visit Details",
+                            "type": "section",
+                            "items": [{
+                                "computed": null,
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "preLabel": "Date",
+                                        "source": "surveyDate",
+                                        "type": "date"
+                                    },
+                                    {
+                                        "preLabel": "Time",
+                                        "source": "eventTime",
+                                        "type": "time"
+                                    },
+                                    {
+                                        "preLabel": "Survey duration (decimal hours)",
+                                        "source": "surveyDuration",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "preLabel": "Notes",
+                                        "source": "eventRemarks",
+                                        "type": "textarea"
+                                    },
+                                    {
+                                        "preLabel": "Recorded by",
+                                        "source": "recordedBy",
+                                        "type": "text"
+                                    }
+                                ]
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Site Habitat & Sampling Method",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [
+                                        {
+                                            "disableTableUpload": true,
+                                            "computed": null,
+                                            "columns": [
+                                                {
+                                                    "width": "50%",
+                                                    "source": "habitatType",
+                                                    "title": "Habitat",
+                                                    "type": "selectOne"
+                                                },
+                                                {
+                                                    "width": "16%",
+                                                    "source": "edge",
+                                                    "title": "Edge",
+                                                    "type": "boolean"
+                                                },
+                                                {
+                                                    "width": "16%",
+                                                    "source": "pool",
+                                                    "title": "Pool",
+                                                    "type": "boolean"
+                                                },
+                                                {
+                                                    "width": "16%",
+                                                    "source": "riffle",
+                                                    "title": "Riffle",
+                                                    "type": "boolean"
+                                                }
+                                            ],
+                                            "userAddedRows": "true",
+                                            "source": "habitatSampled",
+                                            "type": "table"
+                                        },
+                                        {
+                                            "computed": null,
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "Sampling methods:",
+                                                "source": "samplingMethod",
+                                                "type": "selectMany"
+                                            }]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "preLabel": "Bug identification confirmed by:",
+                                    "source": "idConfirmedBy",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Did you catch Gambusia during this sampling event?",
+                                    "source": "gambusiaPresent",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "What other factors may be influencing water quality for this sampling event?",
+                                    "source": "wqFactors",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "preLabel": "Notes:",
+                                    "defaultRows": 5,
+                                    "source": "observationRemarks",
+                                    "type": "textarea"
+                                }
+                            ]
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "Site",
+                                "type": "section",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "includeNotes": false,
+                                            "orientation": "vertical",
+                                            "computed": null,
+                                            "autoLocalitySearch": false,
+                                            "readonly": false,
+                                            "includeSource": false,
+                                            "includeAccuracy": false,
+                                            "hideSiteSelection": false,
+                                            "source": "location",
+                                            "type": "geoMap",
+                                            "zoomToProjectArea": true,
+                                            "includeLocality": false
+                                        }]
+                                    },
+                                    {
+                                        "preLabel": "Site name:",
+                                        "noEdit": true,
+                                        "source": "siteName",
+                                        "type": "text"
+                                    }
+                                ],
+                                "class": ""
+                            }]
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "How healthy is this site?",
+                                "type": "section",
+                                "items": [{
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [
+                                        {
+                                            "preLabel": "Number of different types of bugs (taxa richness):",
+                                            "noEdit": "true",
+                                            "source": "taxaRichness",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "preLabel": "Calculated stream pollution index (SPI):",
+                                            "noEdit": "true",
+                                            "source": "spiValue",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "preLabel": "Stream quality rating:",
+                                            "noEdit": "true",
+                                            "source": "streamQualityRating",
+                                            "type": "text"
+                                        }
+                                    ]
+                                }],
+                                "class": ""
+                            }],
+                            "class": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Water Bug Count",
+                    "type": "section",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "Record all of the bug species in your sample and the number of each that you count.",
+                            "type": "literal"
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "allowRowDelete": false,
+                                "disableTableUpload": true,
+                                "columns": [
+                                    {
+                                        "noEdit": "true",
+                                        "source": "taxonName",
+                                        "title": "Type of bug",
+                                        "type": "speciesSearchWithImagePreview"
+                                    },
+                                    {
+                                        "noEdit": "true",
+                                        "source": "taxonSensitivityClass",
+                                        "title": "Sensitivity",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "noEdit": "true",
+                                        "source": "taxonSensitivityRating",
+                                        "title": "Sensitivity rating",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "source": "individualCount",
+                                        "title": "Number of bugs",
+                                        "type": "number",
+                                        "validate": "min[0]"
+                                    },
+                                    {
+                                        "noEdit": "true",
+                                        "source": "taxonWeightFactor",
+                                        "title": "Weight factor",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "noEdit": "true",
+                                        "source": "taxonIndexValue",
+                                        "title": "Index value",
+                                        "type": "number"
+                                    }
+                                ],
+                                "source": "taxaObservations",
+                                "userAdedRows": false,
+                                "type": "table"
+                            }]
+                        }
+                    ],
+                    "class": ""
+                }]
+            }]
+        }
+    ]
+}

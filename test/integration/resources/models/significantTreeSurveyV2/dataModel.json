@@ -1,0 +1,533 @@
+{
+    "dataModel": [
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "contactConsent",
+            "description": "Please indicate whether you consent for the Atlas of Living Australia to pass your contact details to the survey organiser on their request so that they can contact you to discuss this record if necessary.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "dwcAttribute": "identificationConfidence",
+            "description": "",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the tree observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "landStatus",
+            "description": "Indicate whether the tree is located on public or private land",
+            "constraints": [
+                "Public",
+                "Private",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "landOwnerStatus",
+            "description": "Idicate whether the submitter of this record is the owner of the land on which the observed tree is located.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "landOwnerConsultation",
+            "description": "Note: If the tree is located on private land which is not owned by the record contributor, permission from the land owner should be obtained before submitting the record.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "lifeStatus",
+            "description": "Idicate the life status of the observed tree.",
+            "constraints": [
+                "Alive",
+                "Dead",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "speciesIdentificationSource",
+            "dwcAttribute": "identificationRemarks",
+            "description": "Idicate the method and sources used to identify the species of the observed tree.",
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "establishmentMeans",
+            "dwcAttribute": "establishmentMeans",
+            "description": "How did the observed individual become established at the location?",
+            "constraints": [
+                "Naturally occurring",
+                "Planted",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "number",
+            "name": "estimatedAgeInYears",
+            "description": "What is the estimated age of the tree in years?",
+            "validate": "min[0],max[999]"
+        },
+        {
+            "dataType": "text",
+            "name": "establishmentDateStatus",
+            "description": "",
+            "constraints": [
+                "Known",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "number",
+            "name": "establishmentYear",
+            "description": "If known, when did the tree become established (ie. planted) at the location?",
+            "validate": "min[1788]"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationNotes",
+            "dwcAttribute": "locationRemarks",
+            "description": "",
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "treeHealth",
+            "description": "What is the health status of the observed tree?",
+            "constraints": [
+                "Excellent",
+                "Good",
+                "Average",
+                "Fair",
+                "Poor",
+                "Dying",
+                "Dead"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "significanceLevel",
+            "description": "Does the tree have a recognised or listed significance status?",
+            "constraints": [
+                "National",
+                "State",
+                "Regional",
+                "Local",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "landmarkTree",
+            "description": "Does the tree have aesthetic value or act as a landmark?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "heightClassInMetres",
+            "description": "Select a category for the estimated height of the tree.",
+            "constraints": [
+                "2m",
+                ">2-5m",
+                ">5-10m",
+                ">10-15m",
+                ">15-20m",
+                ">20-25m",
+                ">25m"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "number",
+            "name": "measuredHeightInMetres",
+            "description": "The actual height of the tree in metres using an appropriate published methodology.  ",
+            "validate": "min[0],max[30]"
+        },
+        {
+            "dataType": "number",
+            "name": "measuredGirthInMetres",
+            "description": "The actual girth measurement of the tree in metres at 1.4 m above the ground, using using the methodology detailed for this survey.  ",
+            "validate": "min[0],max[10]"
+        },
+        {
+            "dataType": "text",
+            "name": "geneticValue",
+            "description": "Does the tree have genetic value that could be important for future species propagation/spread? ",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "historicValue",
+            "description": "Does the tree any have historic association?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "growthFormCharacter",
+            "description": "Does the tree have an outstanding or abnormal growth form? ",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "preEuSettlement",
+            "description": "Does the tree pre-date white settlement of the area?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "habitatValueDetails",
+            "description": "Does the tree have outstanding value as habitat for native flora and fauna?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "indigenousCulturalAssociation",
+            "description": "Does the tree have known associations with Aboriginal culture?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "",
+            "validate": null
+        }
+    ],
+    "modelName": "significantTreeSurveyV2",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h2>Step 1: Upload one or more of the best images of your macadamia tree<\/h2><i>This is required so that we can confirm species identification and the record can be used in scientific work.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Photo of tree",
+                            "source": "sightingPhoto",
+                            "type": "image"
+                        },
+                        {
+                            "source": "<h2>Step 2: Record the details of your sighting<\/h2",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Observer/Submitter Name",
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Can the survey organiser contact you if they have questions about this record?",
+                            "source": "contactConsent",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Record date",
+                            "defaultValue": "${now}",
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Do you know which species of macadamia the tree is?",
+                            "source": "identificationConfidence",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "If so, which species?",
+                            "source": "species",
+                            "type": "species"
+                        },
+                        {
+                            "source": "<i>(for help with identification, visit http://www.wildmacadamias.org.au/the-four-macadamias)<\/i",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Is the macadamia tree on public or private land?",
+                            "source": "landStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Are you the property owner?",
+                            "source": "landOwnerStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "If not, is the tree owner aware of this survey record being submitted?",
+                            "source": "landOwnerConsultation",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Is the tree alive or dead?",
+                            "source": "lifeStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Persons or references used to identify specimen  text description",
+                            "source": "speciesIdentificationSource",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Is the tree naturally occurring or was it planted?",
+                            "source": "establishmentMeans",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Estimated age of the tree in years number",
+                            "source": "estimatedAgeInYears",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "If planted, is the planting date known or unknown?",
+                            "source": "establishmentDateStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Year planted (if applicable)",
+                            "source": "establishmentYear",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": false,
+                            "includeSource": false,
+                            "includeAccuracy": true,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": false
+                        },
+                        {
+                            "preLabel": null,
+                            "source": "locationNotes",
+                            "type": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "source": "<h3>Attributes of the Tree please refer to the survey instructions in the resources tab to assist in completing this section.<\/h3",
+                    "type": "literal"
+                }]
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Health",
+                            "source": "treeHealth",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Significance Level",
+                            "source": "significanceLevel",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Is it a 'Landmark' tree?",
+                            "source": "landmarkTree",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Size - Is the size outstanding in height, girth or canopy cover?",
+                            "source": "treeSize",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Height estimate (m)",
+                            "source": "heightClassInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Actual height measurement (m) if known",
+                            "source": "measuredHeightInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Girth measurement at 1.4m from ground refer to factsheet in Resources for how to do this figure",
+                            "source": "measuredGirthInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Horticulture - Does the tree have genetic value that could be important for future species propagation/spread?",
+                            "source": "geneticValue",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "History - Does the tree any have historic association?",
+                            "source": "historicValue",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Form - Does the tree have an outstanding or abnormal growth form?",
+                            "source": "growthFormCharacter",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Remnant - Does the tree pre-date white settlement of the area?",
+                            "source": "preEuSettlement",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Habitat - Does the tree have outstanding value as habitat for native flora and fauna?",
+                            "source": "habitatValueDetails",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Aboriginal Culture - Does the tree have known associations with Aboriginal culture?",
+                            "source": "indigenousCulturalAssociation",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [{
+                    "preLabel": "If yes to any of the above, please provide further information",
+                    "source": "notes",
+                    "type": "textarea"
+                }]
+            }]
+        }
+    ]
+}

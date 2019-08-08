@@ -1,0 +1,164 @@
+{
+    "dataModel": [
+        {
+            "dataType": "number",
+            "name": "habitatScoreTotal"
+        },
+        {
+            "dataType": "number",
+            "name": "coverScoreTotal"
+        },
+        {
+            "dataType": "number",
+            "name": "nativesScoreTotal"
+        },
+        {
+            "dataType": "number",
+            "name": "debrisScoreTotal"
+        },
+        {
+            "dataType": "number",
+            "name": "featuresScoreTotal"
+        },
+        {
+            "dataType": "number",
+            "name": "totalScoreAggregate"
+        },
+        {
+            "dataType": "text",
+            "name": "overallQuality"
+        }
+    ],
+    "modelName": "rarc_totalScores",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Component Scores",
+                    "type": "section",
+                    "items": [{
+                        "type": "row",
+                        "items": [
+                            {
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Habitat score (/11)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "noEdit": true,
+                                            "source": "habitatScoreTotal",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Cover score (/12)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "noEdit": true,
+                                            "source": "coverScoreTotal",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Natives score (/9)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "noEdit": true,
+                                            "source": "nativesScoreTotal",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Debris score (/10)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "noEdit": true,
+                                            "source": "debrisScoreTotal",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "preLabel": "Features score (/8)",
+                                            "inline": true,
+                                            "computed": null,
+                                            "dataClass": "span8",
+                                            "noEdit": true,
+                                            "source": "featuresScoreTotal",
+                                            "preLabelClass": "span4",
+                                            "type": "number"
+                                        }]
+                                    }
+                                ]
+                            }
+                        ]
+                    }],
+                    "class": ""
+                }]
+            },
+            {
+                "type": "col",
+                "items": [{
+                    "boxed": true,
+                    "title": "Overall Quality",
+                    "type": "section",
+                    "items": [
+                        {
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "TOTAL SCORE (/50)",
+                                "inline": true,
+                                "dataClass": "span8",
+                                "noEdit": true,
+                                "source": "totalScoreAggregate",
+                                "preLabelClass": "span4",
+                                "type": "number"
+                            }]
+                        },
+                        {
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "Overall Quality",
+                                "inline": true,
+                                "dataClass": "span8",
+                                "noEdit": true,
+                                "source": "overallQuality",
+                                "preLabelClass": "span4",
+                                "type": "number"
+                            }]
+                        }
+                    ],
+                    "class": ""
+                }]
+            }
+        ]
+    }]
+}

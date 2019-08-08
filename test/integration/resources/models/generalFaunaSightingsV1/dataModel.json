@@ -1,0 +1,341 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "noEdit": "true",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observerName",
+            "description": "The name of the person who made the observation, if different from the person who made the record."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the animal at the time of your sighting. This is essential for verification of the record."
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The scientific name of the animal",
+            "noEdit": "true",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individual animals observed at this place and time.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "basisOfRecord",
+            "dwcAttribute": "basisOfRecord",
+            "description": "The basis of record is the evidence used to make the sighting?",
+            "constraints": [
+                "Observation",
+                "Heard",
+                "Scat",
+                "Tracks or scratchings",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "lifeState",
+            "description": "Was the animal alive or dead when it was observed?",
+            "constraints": [
+                "Alive",
+                "Dead"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "roadStrike",
+            "description": "Is there evidence that the animal was struck by a vehicle?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "gender",
+            "dwcAttribute": "sex",
+            "description": "Indicate the sex of the animal if observable.",
+            "constraints": [
+                "Male",
+                "Female",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "lifeStage",
+            "dwcAttribute": "lifeStage",
+            "description": "",
+            "constraints": [
+                "Baby",
+                "Juvenile",
+                "Young adult",
+                "Adult",
+                "Breeding (eg. plumage, glands, etc.)",
+                "Adult with young",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "behavior",
+            "dwcAttribute": "behavior",
+            "description": "Please indicate what the animal was doing when you saw it.",
+            "constraints": [
+                "Breeding",
+                "Dead on road",
+                "Drinking",
+                "Feeding",
+                "Flying",
+                "In a tree",
+                "Nesting",
+                "Roosing",
+                "Sleeping",
+                "Walking - crossing road",
+                "Walking - other",
+                "Other",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "reportedToOtherParties",
+            "description": "Please indicate if this record has been reported to other agencies. Indicate in the comments what agency.",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "General notes about the observation event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "piSaringAgreement",
+            "description": "Your contact information forms part of your registration details on this website. Select 'Yes' if you consent to the Atlas of Living Australia providing your contact details to KAG.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "contactAgreement",
+            "description": "A member of the project organising team may need to contact you to confirm certain aspects of your sighting. Select 'Yes' if you agree to be contacted by KAG for this purpose.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationAddress",
+            "description": "Please provide the street address of the location where you made the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationRemarks",
+            "description": "Please provide any additional information about the sighting location which might be useful."
+        }
+    ],
+    "modelName": "generalFaunaSightingsV1",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h3>Details of my <b>Animal<\/b> sighting<\/h3>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Date sighted",
+                        "computed": null,
+                        "source": "eventDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Your name (optional)",
+                        "computed": null,
+                        "source": "observerName",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Species name",
+                        "computed": null,
+                        "source": "species",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "preLabel": "How many individuals did you see here?",
+                        "computed": null,
+                        "source": "individualCount",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "What is the basis of your sighting?",
+                        "computed": null,
+                        "source": "basisOfRecord",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Was it alive?",
+                        "computed": null,
+                        "source": "lifeState",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "If on/near a road, had it been hit by a vehicle?",
+                        "computed": null,
+                        "source": "roadStrike",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Could you tell the gender/status of the animal?",
+                        "computed": null,
+                        "source": "gender",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "What was the life stage of the animal?",
+                        "computed": null,
+                        "source": "lifeStage",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "What was the animal doing when you saw it?",
+                        "computed": null,
+                        "source": "behavior",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Have you reported this sighting elsewhere?",
+                        "computed": null,
+                        "source": "reportedToOtherParties",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Do you have any other comments?",
+                        "computed": null,
+                        "source": "eventRemarks",
+                        "type": "textarea"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<font style='color:blue; font-size:0.8em;'><b>Please upload one or more of the best images of your sighting.<\/b><i>This is strongly recommended so that the record can be validated and used in scientific work.<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Sighting photo",
+                        "computed": null,
+                        "source": "sightingPhoto",
+                        "type": "image"
+                    },
+                    {
+                        "preLabel": "Do you agree to ALA sharing your contact details with the project organiser for the purpose of record verification?",
+                        "computed": null,
+                        "source": "piSaringAgreement",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Do you agree to the project organiser contacting you for the purpose of record verification?",
+                        "computed": null,
+                        "source": "contactAgreement",
+                        "type": "selectOne"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<font style='color:blue; font-size:0.8em;'><i>Logan City Council is collecting your contact details and sighting information to develop a biodiversity database of threatened or locally significant wildlife in Logan. If necessary, Council may contact you to follow up on the sighting information provided. Your contact information will only be accessed by employees and/or councillors of Logan City Council. Your contact information will not be given to any other person or agency unless you have given us permission or we are required by law.<\/i><\/font>",
+                        "type": "literal"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h4>Sighting location details<\/h4><font style='color:blue; font-size:0.8em;'><i>Please zoom in on the map, then select and place the marker on location where you saw the animal and record what details you can below (* details are essential).<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    },
+                    {
+                        "preLabel": "Street address of sighting",
+                        "computed": null,
+                        "source": "locationAddress",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Any additional location comments (eg. park/reserve name)?",
+                        "computed": null,
+                        "source": "locationRemarks",
+                        "type": "textarea"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}
