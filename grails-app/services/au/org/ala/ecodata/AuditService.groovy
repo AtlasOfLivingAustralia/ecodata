@@ -164,19 +164,13 @@ class AuditService {
         }
 
         // Sites have a collection of projects to which they belong
-        def sites = siteService.findAllForProjectId(projectId)
-        sites.each { site ->
-            def siteMessages = AuditMessage.findAllByEntityId(site.siteId)
-            results.addAll(siteMessages)
-        }
+        List siteIds = siteService.findAllSiteIdsForProject(projectId)
+        results.addAll(AuditMessage.findAllByEntityIdInList(siteIds))
 
         // Documents are funny. They have multiple foreign key ids (siteId, outputId, projectId and activityId), although usually only one
         // will be populated at any time.
         // Project documents will already in the list as a direct association. We already have lists of associated sites, outputs and activities,
         // so we can use those to query for associated documents
-        def siteIds = sites*.siteId
-
-        println siteIds
         def c = Document.createCriteria()
         def documentIds = c {
             or {
@@ -250,14 +244,13 @@ class AuditService {
         }
 
         // Sites have a collection of projects to which they belong
-        List sites = siteService.findAllForProjectId(projectId)
+        List siteIds = siteService.findAllSiteIdsForProject(projectId)
+        entityIds.addAll(siteIds)
 
         // Documents are funny. They have multiple foreign key ids (siteId, outputId, projectId and activityId), although usually only one
         // will be populated at any time.
         // Project documents will already in the list as a direct association. We already have lists of associated sites, outputs and activities,
         // so we can use those to query for associated documents
-        List siteIds = sites*.siteId
-        entityIds.addAll(siteIds)
 
         BuildableCriteria c = Document.createCriteria()
         List documentIds = c {
