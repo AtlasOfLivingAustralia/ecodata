@@ -13,7 +13,7 @@ class Program {
     String description
     String status = Status.ACTIVE
     String url
-    String siteId
+    String programSiteId
     Date dateCreated
     Date lastUpdated
 
@@ -51,7 +51,7 @@ class Program {
         program.dateCreated = dateCreated
         program.lastUpdated = lastUpdated
         program.url = url
-        program.siteId = siteId
+        program.programSiteId = programSiteId
         program.themes = themes
         program.assets = assets
         program.outcomes = outcomes
