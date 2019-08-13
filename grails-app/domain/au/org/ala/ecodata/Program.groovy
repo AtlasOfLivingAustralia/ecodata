@@ -24,6 +24,8 @@ class Program {
     List assets
     /** Outcomes to be achieved by this program */
     List outcomes
+    /** Blogs to be achieved by this program */
+    List blog
 
     /** Priorities for program outcomes */
     List priorities
@@ -60,6 +62,7 @@ class Program {
         program.config = config
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
+        program.blog = blog
 
         program.associatedOrganisations = associatedOrganisations
 
