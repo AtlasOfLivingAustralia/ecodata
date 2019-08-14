@@ -130,6 +130,7 @@ class Program {
         config nullable: true
         parent nullable: true
         associatedOrganisations nullable:true
+        programSiteId nullable: true
     }
 
     public String toString() {
