@@ -13,7 +13,6 @@ class Program {
     String description
     String status = Status.ACTIVE
     String url
-    String programSiteId
     Date dateCreated
     Date lastUpdated
 
@@ -24,7 +23,10 @@ class Program {
     List assets
     /** Outcomes to be achieved by this program */
     List outcomes
-    /** Blogs to be achieved by this program */
+    /** (optional) The siteId of a Site that defines the geographic area targeted or managed by this Program */
+    String programSiteId
+
+    /** Allows program administrators to publicise and communicate about the program */
     List blog
 
     /** Priorities for program outcomes */
