@@ -1,0 +1,124 @@
+{
+  "title": "Community/stakeholder engagement (ag)",
+  "modelName": "RLP - Community engagement (ag)",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"agricultureEvents",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "eventType",
+          "constraints":[
+            "On-farm trials",
+            "On-farm inspections",
+            "Field day activity",
+            "Conference/Seminar",
+            "Meeting",
+            "Training session",
+            "Planning session",
+            "Working bee",
+            "Workshop",
+            "Project feedback / debrief session",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "otherEventType",
+          "validate": "required",
+          "behaviour":[
+
+            {
+              "condition": "eventType == \"Other\"",
+              "type": "enable"
+            }
+
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfParticipants",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfFarmers",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "stringList",
+          "name": "industryType",
+          "constraints":[
+            "Broad acre cropping",
+            "Dairy",
+            "Horticulture",
+            "Grazing",
+            "Fisheries",
+            "Aquaculture"
+          ],
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "eventPurpose",
+          "validate": "required,max[80]"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "eventType",
+              "title": "Community engagement activity type",
+              "type": "select2",
+              "width":"20%"
+            },
+            {
+              "source": "otherEventType",
+              "title": "Type of activity (if other)",
+              "type": "text",
+              "width":"20%"
+            },
+            {
+              "source": "eventPurpose",
+              "title": "Aim of activity",
+              "type": "textarea",
+              "width":"20%"
+            },
+            {
+              "source": "numberOfParticipants",
+              "title": "Total number of attendees / participants",
+              "type": "number",
+              "width":"10%"
+            },
+            {
+              "source": "numberOfFarmers",
+              "title": "Total number of farmers attending / participating",
+              "type": "number",
+              "width":"10%"
+            },
+            {
+              "source": "industryType",
+              "title": "Industry type engaged",
+              "type": "select2Many",
+              "width":"20%"
+            }
+
+          ],
+          "source":"agricultureEvents",
+          "userAddedRows":true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

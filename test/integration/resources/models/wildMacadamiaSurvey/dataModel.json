@@ -1,0 +1,980 @@
+{
+    "dataModel": [
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "contactConsent",
+            "description": "Please indicate whether you consent for the Atlas of Living Australia to pass your contact details to the survey organiser on their request so that they can contact you to discuss this record if necessary.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "dwcAttribute": "identificationConfidence",
+            "description": "",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "stringList",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the tree observed.",
+            "constraints": [
+                "Macadamia integrifolia (Queensland Nut, Bauple Nut, Smooth-shelled Bushnut)",
+                "Macadamia ternifolia (Gympie Nut)",
+                "Macadamia tetraphylla (Rough-shelled Bushnut)",
+                "Macadamia jansenii (Bulberin Nut)",
+                "Cultivar (please provide details)",
+                "Other  (please provide details)",
+                "Unknown"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "speciesNotes",
+            "description": "Description of cultivars and other hybrids of Macadamia species."
+        },
+        {
+            "dataType": "text",
+            "name": "landStatus",
+            "description": "Indicate whether the tree is located on public or private land",
+            "constraints": [
+                "Public",
+                "Private",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "landOwnerStatus",
+            "description": "Idicate whether the submitter of this record is the owner of the land on which the observed tree is located.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "landOwnerConsultation",
+            "description": "Note: If the tree is located on private land which is not owned by the record contributor, permission from the land owner should be obtained before submitting the record.",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "lifeStatus",
+            "description": "Indicate the life status of the observed tree.",
+            "constraints": [
+                "Alive",
+                "Dead",
+                "Mix",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "speciesIdentificationSource",
+            "dwcAttribute": "identificationRemarks",
+            "description": "Indicate the method and sources used to identify the species of the observed tree.",
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "establishmentMeans",
+            "dwcAttribute": "establishmentMeans",
+            "description": "How did the observed individual become established at the location?",
+            "constraints": [
+                "Naturally occurring",
+                "Planted",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "description": "How many individual macadamia trees are there at this location.",
+            "validate": "required,min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "treeSpacing",
+            "description": "Describe the arrangement of macadamia trees at this location.",
+            "constraints": [
+                "Clumped",
+                "Scattered - medium density",
+                "Scattered - sparse",
+                "In rows"
+            ]
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationNotes",
+            "dwcAttribute": "locationRemarks",
+            "description": "",
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "generalEnvironment",
+            "description": "",
+            "constraints": [
+                "Acreage / modified bushland",
+                "Natural bushland",
+                "Farm / rural property",
+                "Plantation",
+                "Other - please describe"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "generalEnvironmentOther",
+            "description": ""
+        },
+        {
+            "dataType": "number",
+            "name": "estimatedAgeInYears",
+            "description": "What is the estimated age of the tree in years?",
+            "validate": "min[0],max[999]"
+        },
+        {
+            "dataType": "number",
+            "name": "establishmentYear",
+            "description": "If known, what year was the tree planted at the location?"
+        },
+        {
+            "dataType": "text",
+            "name": "cohortOrigin",
+            "description": "If known, where did the tree/s come from?"
+        },
+        {
+            "dataType": "text",
+            "name": "treeHealth",
+            "description": "What is the health status of the observed tree?",
+            "constraints": [
+                "Excellent",
+                "Good",
+                "Average",
+                "Fair",
+                "Poor",
+                "Dying",
+                "Dead"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "treeHealthComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "floweringFrequency",
+            "description": "Indicate the frequency that the tree/s produce flowers.",
+            "constraints": [
+                "Every year",
+                "Every 2 years",
+                "Every 3 -5 years",
+                "Rarely",
+                "Not seen nuts"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "treeSize",
+            "description": "",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "heightClassInMetres",
+            "description": "Select a category for the estimated height of the tree.",
+            "constraints": [
+                "2m",
+                ">2-5m",
+                ">5-10m",
+                ">10-15m",
+                ">15-20m",
+                ">20-25m",
+                ">25m"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "number",
+            "name": "measuredHeightInMetres",
+            "description": "The actual height of the tree in metres (from the ground to the top of the tree) using an appropriate published methodology.  ",
+            "validate": "min[0],max[30]"
+        },
+        {
+            "dataType": "number",
+            "name": "measuredGirthInCentimetres",
+            "description": "The actual girth measurement of the tree in centimetres at 1.4 m above the ground, using using the methodology detailed for this survey.  ",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "geneticValue",
+            "description": "Does the tree have genetic value that could be important for future species propagation/spread? ",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "geneticValueComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "historicValue",
+            "description": "Does the tree any have historic association?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "historicValueComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "growthFormCharacter",
+            "description": "Does the tree have an outstanding or abnormal growth form? ",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "growthFormCharacterComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "preEuSettlement",
+            "description": "Does the tree pre-date white settlement of the area?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "preEuSettlementComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "habitatValueDetails",
+            "description": "Does the tree have outstanding value as habitat for native flora and fauna?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "habitatValueComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "indigenousCulturalAssociation",
+            "description": "Does the tree have known associations with Aboriginal culture?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": null
+        },
+        {
+            "dataType": "text",
+            "name": "indigenousCulturalAssociationComments",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "",
+            "validate": null
+        }
+    ],
+    "modelName": "wildMacadamiaSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Wild Macadamia Survey<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Photo of the macadamia tree/s",
+                            "type": "section",
+                            "items": [{
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Photo of tree/s",
+                                        "inline": false,
+                                        "dataClass": "span8",
+                                        "source": "sightingPhoto",
+                                        "preLabelClass": "span4",
+                                        "type": "image"
+                                    },
+                                    {
+                                        "source": "Upload one or more of the best images of your macadamia tree.<br><i>This is required so that we can confirm species identification and the record can be used in scientific work.<\/i>",
+                                        "type": "literal"
+                                    }
+                                ]
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Details of the Tree/s",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "source": "<h3>Record your sighting details<\/h3>",
+                                        "type": "literal"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How many macadamia trees are present on this site?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "individualCount",
+                                        "preLabelClass": "span7",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "If there are more than one macadamia tree, how are the trees spaced?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "treeSpacing",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Do you know which species of macadamia are present? Tick all species known to be present",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "identificationConfidence",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "source": "<i>(for help with identification, please review the Macadamia Identification fact sheets available in <a href='https://biocollect.ala.org.au/acsa/project/index/365c9fde-7648-4e17-974f-0fc9b3f0cfd7#resources' target='_blank'>Project Resources<\/a>)<\/i>",
+                                        "type": "literal"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "If so, which species?",
+                                        "inline": true,
+                                        "dataClass": "span9",
+                                        "source": "species",
+                                        "preLabelClass": "span3",
+                                        "type": "selectMany"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Please provide any comments about the tree/s, e.g., describe the tree’s leaf size and shape, colour of flowers and/or new growth, nut size and shape. Did you notice anything unusual?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "defaultRows": 5,
+                                        "source": "speciesNotes",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Is the macadamia tree on public or private land?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "landStatus",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Are you the property owner?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "landOwnerStatus",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "If not, is the tree owner aware of this survey record being submitted?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "landOwnerConsultation",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Is the tree/s alive or dead?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "lifeStatus",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Who were the people or references used to help you with identification",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "speciesIdentificationSource",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "type": "row",
+                            "items": [{
+                                "type": "col",
+                                "items": [
+                                    {
+                                        "source": "<style='font-size:0.8em; color:blue;'><i>Use the map below to mark the location of the macadamia tree/s. Either zoom and scroll to the tree/s location or type the address into the search field. Once in close proximity to the tree/s location, zoom in as far as possible and then place the marker on top of the tree . If you are recording the location of a clump/s of macadamia trees, use the polygon shape to draw a boundary around the macadamia clump/s.<\/i><\/style>",
+                                        "type": "literal"
+                                    },
+                                    {
+                                        "includeNotes": false,
+                                        "orientation": "vertical",
+                                        "computed": null,
+                                        "autoLocalitySearch": false,
+                                        "readonly": false,
+                                        "includeSource": false,
+                                        "includeAccuracy": true,
+                                        "hideSiteSelection": true,
+                                        "source": "location",
+                                        "type": "geoMap",
+                                        "includeLocality": false
+                                    },
+                                    {
+                                        "preLabel": "Describe where the tree/s is situated on the site",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "defaultRows": 5,
+                                        "source": "locationNotes",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    },
+                                    {
+                                        "boxed": true,
+                                        "title": "Other Details",
+                                        "type": "section",
+                                        "items": [
+                                            {
+                                                "type": "row",
+                                                "items": [{
+                                                    "preLabel": "Observer/Submitter Name",
+                                                    "inline": true,
+                                                    "dataClass": "span5",
+                                                    "source": "recordedBy",
+                                                    "preLabelClass": "span7",
+                                                    "type": "text"
+                                                }]
+                                            },
+                                            {
+                                                "type": "row",
+                                                "items": [{
+                                                    "preLabel": "Record date",
+                                                    "inline": true,
+                                                    "dataClass": "span5",
+                                                    "source": "eventDate",
+                                                    "preLabelClass": "span7",
+                                                    "type": "date"
+                                                }]
+                                            },
+                                            {
+                                                "type": "row",
+                                                "items": [{
+                                                    "preLabel": "Can the survey organiser contact you if they have questions about this record?",
+                                                    "inline": true,
+                                                    "dataClass": "span5",
+                                                    "source": "contactConsent",
+                                                    "preLabelClass": "span7",
+                                                    "type": "selectOne"
+                                                }]
+                                            }
+                                        ],
+                                        "class": ""
+                                    }
+                                ]
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                }
+            ]
+        },
+        {
+            "boxed": true,
+            "title": "Attributes of the Tree/s",
+            "type": "section",
+            "items": [
+                {
+                    "type": "row",
+                    "items": [{
+                        "type": "col",
+                        "items": [{
+                            "source": "<h4>Please refer to the survey instructions in the resources tab to assist in completing this section.<\/h4>",
+                            "type": "literal"
+                        }]
+                    }]
+                },
+                {
+                    "type": "row",
+                    "items": [
+                        {
+                            "type": "col",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Is the tree/s growing in a natural or modified environment?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "generalEnvironment",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "If 'Other', describe the environment?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "defaultRows": 1,
+                                        "source": "generalEnvironmentOther",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Is the tree/s naturally occurring or was it planted?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "establishmentMeans",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Estimated age of the tree/s in years",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "estimatedAgeInYears",
+                                        "preLabelClass": "span7",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "If planted, what year was it planted? (if known)",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "establishmentYear",
+                                        "preLabelClass": "span7",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "If planted, where did the tree/s come from?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "cohortOrigin",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How healthy is the tree/s?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "treeHealth",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Tree Health - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "treeHealthComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How often does the tree/s flower?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "floweringFrequency",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Size - Is the tree/s outstanding in height, girth or canopy cover?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "treeSize",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Height estimate (m)",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "heightClassInMetres",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Actual tree height, measured from the ground to the top of the tree in metres (if known)",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "measuredHeightInMetres",
+                                        "preLabelClass": "span7",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "What is the girth/circumference measurement at 1.4m from ground, in centimetres. The factsheet in Resources provides help on how to measure this.",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "measuredGirthInCentimetres",
+                                        "preLabelClass": "span7",
+                                        "type": "number"
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "col",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Horticulture - Does the tree/s have genetic value that could be important for future species propagation/spread?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "geneticValue",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Horticultural Value - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "geneticValueComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "History - Does the tree/s any have historic association?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "historicValue",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Historic Value - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "historicValueComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Form - Does the tree/s have an outstanding or abnormal growth form?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "growthFormCharacter",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Growth Form - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "growthFormCharacterComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Remnant - Does the tree/s pre-date white settlement of the area?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "preEuSettlement",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Remnants - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "preEuSettlementComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Habitat - Does the tree/s have outstanding value as habitat for native flora and fauna?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "habitatValueDetails",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Habitat - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "habitatValueDetailsComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Aboriginal Culture - Does the tree/s have known associations with Aboriginal culture?",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "indigenousCulturalAssociation",
+                                        "preLabelClass": "span7",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Aboriginal Culture - Additional Comments",
+                                        "inline": true,
+                                        "dataClass": "span5",
+                                        "source": "indigenousCulturalAssociationComments",
+                                        "preLabelClass": "span7",
+                                        "type": "textarea"
+                                    }]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "type": "col",
+                        "items": [{
+                            "inline": false,
+                            "source": "",
+                            "type": "literal"
+                        }]
+                    }]
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "type": "col",
+                        "items": [{
+                            "preLabel": "Is there anything else you would like to let us know about the tree/s?",
+                            "inline": false,
+                            "source": "notes",
+                            "type": "textarea"
+                        }]
+                    }]
+                }
+            ],
+            "class": ""
+        }
+    ]
+}

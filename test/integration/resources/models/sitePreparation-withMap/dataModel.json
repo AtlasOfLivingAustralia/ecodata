@@ -1,0 +1,183 @@
+{
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "actionsList",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Type of ground preparation works undertaken",
+                    "name": "groundPreparationWorks",
+                    "constraints": [
+                        "Fire - remove overgrowth",
+                        "Fire - prepare ash bed for regeneration",
+                        "Herbicide broadscale only",
+                        "Herbicide broadscale and rip",
+                        "Herbicide spot spray",
+                        "Mound and swale",
+                        "No preparation",
+                        "Physical clearing",
+                        "Ring levy",
+                        "Rip only",
+                        "Scalping",
+                        "Scarifying",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Area in hectares subject to the associated site preparation works",
+                    "name": "preparationArea",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of activity for which the preparation action is being undertaken",
+                    "name": "associatedActivity",
+                    "constraints": [
+                        "Conservation Grazing Management",
+                        "Debris Removal",
+                        "Disease Management",
+                        "Erosion Management",
+                        "Fencing",
+                        "Pest Management",
+                        "Public Access and Infrastructure",
+                        "Revegetation",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "notes"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Aggregate area in hectares of site preparation works. (Note that there is no way of identifying overlapping works areas and hence there is a risk of double-counting)",
+            "primaryResult": "true",
+            "name": "preparationAreaTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "preparationArea",
+                    "fromList": "actionsList"
+                }
+            }
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "Site Preparation Actions",
+    "viewModel": [
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "<h3>Location<\/h3><font style='color:blue; font-size:0.8em;'><i>Zoom in on the map and draw, as accurately as possible, the boundary of the area prepared as accurately as possible.<\/i><\/font>",
+                        "computed": null,
+                        "type": "literal"
+                    },
+                    {
+                        "includeSource": false,
+                        "orientation": "horizontal",
+                        "includeNotes": false,
+                        "hideSiteSelection": false,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }
+                ],
+                "type": "col"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Site Preparation Actions Undertaken<\/h3>Please indicate the area and nature of works carried out on the site to prepare it for undertaking another activity.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "footer": {"rows": [{"columns": [
+                    {
+                        "source": "Total area of site preparation works (Ha):",
+                        "type": "literal"
+                    },
+                    {
+                        "source": "preparationAreaTotal",
+                        "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noWorksAreasTotal\",\"fromList\":\"actionsList\"}}",
+                        "type": "number"
+                    },
+                    {
+                        "colspan": 2,
+                        "source": "",
+                        "type": "literal"
+                    }
+                ]}]},
+                "defaultRows": 1,
+                "source": "actionsList",
+                "columns": [
+                    {
+                        "title": "Ground preparation works:",
+                        "source": "groundPreparationWorks",
+                        "width": "25%",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Area prepared (Ha):",
+                        "source": "preparationArea",
+                        "width": "5%",
+                        "type": "number"
+                    },
+                    {
+                        "title": "Associated follow-up activity:",
+                        "source": "associatedActivity",
+                        "width": "15%",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Comments / Notes:",
+                        "source": "notes",
+                        "width": "55%",
+                        "type": "textarea"
+                    }
+                ],
+                "class": "output-section",
+                "userAddedRows": "true",
+                "type": "table"
+            }],
+            "type": "row"
+        }
+    ]
+}

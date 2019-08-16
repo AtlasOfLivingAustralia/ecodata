@@ -1,0 +1,222 @@
+{
+    "dataModel": [
+        {
+            "indexName": "recordedBy",
+            "dataType": "text",
+            "name": "recordedBy",
+            "validate": "required"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "date",
+            "name": "submissionDate",
+            "description": "The date the assessment of this record was completed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "overallConditionBestEstimate",
+            "description": "On a 0-1 scale (with best condition = 1) how would you rate the overall condition of the vegetation shown in this image? The condition score must reflect the site's condition relative to reference states of 1 and 0. A score of '1' applies when the ecosystem is in its most natural form (or for highly dynamic systems, one of its natural forms), as might have existed prior to European settlement. A score of '0' applies for a completely transformed site with all original indigenous biodiversity completely removed.",
+            "constraints": [
+                "0",
+                "0.05",
+                "0.1",
+                "0.2",
+                "0.3",
+                "0.4",
+                "0.5",
+                "0.6",
+                "0.7",
+                "0.8",
+                "0.9",
+                "0.95",
+                "1.0"
+            ],
+            "validate": "required"
+        },
+        {
+            "allowRowDelete": "false",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "overallConditionCategory"
+                },
+                {
+                    "dataType": "text",
+                    "name": "overallConditionRating",
+                    "description": "",
+                    "constraints": [
+                        "0",
+                        "0.05",
+                        "0.1",
+                        "0.2",
+                        "0.3",
+                        "0.4",
+                        "0.5",
+                        "0.6",
+                        "0.7",
+                        "0.8",
+                        "0.9",
+                        "0.95",
+                        "1.0"
+                    ],
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "overallConditionTable",
+            "defaultRows": [
+                {
+                    "overallConditionCategory": "Upper",
+                    "conditionElementRating": "",
+                    "validate": "required"
+                },
+                {
+                    "overallConditionCategory": "Lower",
+                    "conditionElementRating": "",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "description": "If you would like to provide any more detailed information on the condition of this site, and the drivers of condition at this site please do so here."
+        },
+        {
+            "dataType": "image",
+            "name": "sitePhoto",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "mvgGroup",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "huchinsonGroup",
+            "description": ""
+        },
+        {
+            "indexName": "completionStatus",
+            "dataType": "text",
+            "name": "completionStatus",
+            "description": "Please indicate whether you have completed this assessment record.",
+            "constraints": ["Yes"],
+            "validate": "required"
+        }
+    ],
+    "modelName": "ecologicalConditionScoreModeration",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Image Assessment<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h1>Record Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Assessor name",
+                            "noEdit": true,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date image assessment completed",
+                            "primaryResult": "true",
+                            "source": "submissionDate",
+                            "type": "date"
+                        },
+                        {
+                            "source": "<h1>Overall Condition Score<\/h1><font style='color:blue; font-size:0.8em;'><i>Provide your best estimate of the overall condition of the vegetation in this image. To indicate the degree of certainty you have in the overall condition score you have given, provide the lowest and highest overall condition scores you would give to the image as upper and lower condition bounds. If you are completely certain of the condition score you've given, enter that score for the lower and upper bounds here. Note that this does not refer to variability in condition within the site, rather to the degree of certainty you have around the overall condition score you have given.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Overall condition score",
+                            "source": "overallConditionBestEstimate",
+                            "type": "selectOne"
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "disableTableUpload": true,
+                            "columns": [
+                                {
+                                    "width": "30%",
+                                    "noEdit": true,
+                                    "source": "overallConditionCategory",
+                                    "title": "Condition bounds",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "15%",
+                                    "source": "overallConditionRating",
+                                    "title": "Score",
+                                    "type": "selectOne"
+                                }
+                            ],
+                            "source": "overallConditionTable",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "source": "comments",
+                            "type": "textarea"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h3>Photo of the ecosystem<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Ecosystem image(s)",
+                            "css": "img-responsive",
+                            "allowImageAdd": "false",
+                            "showMetadata": "false",
+                            "source": "sitePhoto",
+                            "type": "image"
+                        },
+                        {
+                            "source": "<font style='color:blue;'><i>Click to view detail - The hi-res image will open in a new tab<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "MVG Group",
+                            "readonly": true,
+                            "source": "mvgGroup",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Huchinson Group",
+                            "readonly": true,
+                            "source": "huchinsonGroup",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Indicate whether you have completed this assessment",
+                            "source": "completionStatus",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

@@ -1,0 +1,59 @@
+{
+  "title": "Identifying the location of potential sites",
+  "modelName": "RLP - Identifying sites",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberSitesIdentified",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType":"text",
+      "name":"sitesPurpose",
+      "description":"Please start with the '[RLP Service name]:' for which the site has been identified for. Then a brief description of what work/s are required to fix the area.",
+      "validate":"required,maxSize[500]"
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
+    }
+
+
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "source": "numberSitesIdentified",
+              "preLabel": "Number of potential sites identified",
+              "type": "number",
+              "css":"span3"
+
+            },
+            {
+              "source":"sitesPurpose",
+              "preLabel":"What have these sites been identified for?",
+              "type":"textarea",
+              "rows":5,
+              "css":"span9"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

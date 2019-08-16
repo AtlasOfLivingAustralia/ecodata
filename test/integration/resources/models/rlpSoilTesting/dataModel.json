@@ -1,0 +1,168 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfSoilTests",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "dateRange",
+                    "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesTested"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesTested)"
+                    },
+                    "dataType": "number",
+                    "name": "areaTestedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesTested)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesTested)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesTested)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthTestedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesTested)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesTested)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "testingTechnique",
+                    "description": "What/How will these tests capture information",
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "testingObjective",
+                    "description": "How will the infromation obtained from the tests be used",
+                    "validate": "required,maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "soilTestingDetails"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Soil testing",
+    "title": "Soil testing",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "columns": [
+                    {
+                        "width": "15%",
+                        "source": "initialOrFollowup",
+                        "title": "Initial or follow-up activity?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfSoilTests",
+                        "type": "number",
+                        "title": "Number of soil tests conducted in targeted areas"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "dateRange",
+                        "title": "Date range",
+                        "type": "text"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "sitesTested",
+                        "type": "feature",
+                        "title": "Project site/s where soil tests were conducted"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "areaTestedHa",
+                        "type": "number",
+                        "title": "Area (ha) where soil tests were conducted"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "lengthTestedKm",
+                        "type": "number",
+                        "title": "Length (km) where soil tests were conducted"
+                    },
+                    {
+                        "width": "18%",
+                        "source": "testingTechnique",
+                        "title": "Testing technique",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "22%",
+                        "source": "testingObjective",
+                        "title": "Testing objective",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "soilTestingDetails",
+                "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

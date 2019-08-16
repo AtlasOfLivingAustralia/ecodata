@@ -1,0 +1,97 @@
+{
+    "modelName": "Miscellaneous Information",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "vegetationDescription"
+        },
+        {
+            "dataType": "text",
+            "name": "currentCondition"
+        },
+        {
+            "dataType": "text",
+            "name": "intendedCondition"
+        },
+        {
+            "dataType": "text",
+            "name": "assessmentMethod",
+            "constraints": [
+                "QLD - BioCondition",
+                "NSW - BioMetric",
+                "VIC - Vegetation Quality Assessment",
+                "TAS - TASVEG",
+                "SA - Bushland Condition Monitoring",
+                "WA - NV Condition Assessment & Monitoring",
+                "NT - Vegetation Survey & Mapping",
+                "SEWPaC Biodiversity Fund - Ecological Monitoring",
+                "Lake Eyre Basin - Rivers Assessment"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "otherData"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Miscellaneous Information from the MERI Plan<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "vegetationDescription",
+                        "computed": null,
+                        "preLabel": "Vegetation Description:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "currentCondition",
+                        "computed": null,
+                        "preLabel": "Current Condition:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "intendedCondition",
+                        "computed": null,
+                        "preLabel": "Intended Condition:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "assessmentMethod",
+                        "computed": null,
+                        "preLabel": "Assessment Method:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "otherData",
+                        "computed": null,
+                        "preLabel": "Other Data",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Notes:",
+                        "width": "40%",
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

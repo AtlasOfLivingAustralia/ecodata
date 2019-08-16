@@ -1,0 +1,105 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "undertakeFencingPaddockTrees",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "name": "fencingPaddockTreesActions",
+            "type": "text"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "fenceActivityType",
+                    "description": "The type of fencing activity",
+                    "constraints": [
+                        "Extension of existing fence line",
+                        "Repairs to existing fence line",
+                        "New fencing"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaFenced",
+                    "description": "Approximate area fenced in m2",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "cost",
+                    "validate": "integer,min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "fencing"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
+    "modelName": "ESP Fencing Paddock Trees",
+    "title": "Fencing Paddock Trees",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> Activities to Fence paddock trees are included under any or all of the following; “Activities to reduce isolation” and “Activities to improve connectivity”.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Did you undertake any activities relating to the fencing of Paddock trees on this site this year? (Yes / No)",
+                "source": "undertakeFencingPaddockTrees",
+                "type": "selectOne"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "fenceActivityType",
+                        "title": "Type of Fencing Activity",
+                        "type": "selectOne"
+                    },
+                    {
+                        "computed": null,
+                        "source": "areaFenced",
+                        "title": "Area fenced (approximate m2):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "cost",
+                        "title": "Cost",
+                        "type": "currency"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "fencing",
+                "title": "<i>Please note that this section also applies to repairs made to existing fencing.<\/i>",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

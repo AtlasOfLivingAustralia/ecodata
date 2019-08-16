@@ -1,0 +1,638 @@
+{
+    "dataModel": [
+        {
+            "dataType": "number",
+            "name": "areaRevegHa",
+            "description": "Area revegetated, e.g. hectares of planting and direct seed sowing.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalNumberPlanted",
+            "description": "The number plants planted, excludes direct seeding and natural regeneration.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalSeedCollectedKg",
+            "description": "The kg weight of seed collected.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalNumberGrown",
+            "description": "Number of individual plants propagated.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "erosionAreaTreated",
+            "description": "The area of erosion works undertaken.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "erosionLength",
+            "description": "The km of stream/coastline over which erosion works have been undertaken.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfFireHa",
+            "description": "Area over which a controlled burn has been undertaken, e.g. Ecological burn, hazard reduction burn.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "debrisVolumeM3",
+            "description": "Number of cubic metres of rubbish/debris removed from the project area.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalSeedSownKg",
+            "description": "Weight (in kilograms) of seed sown in the project area. Species can be listed in the 'Comments field'.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalAreaTreatedHa",
+            "description": "The total area where all pest animal control has been undertaken. For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line. Do not double count the same area for; (1) work on different species, e.g. 20ha of treatment that targeted foxes and rabbits at a single site is reported as 20ha, not 40ha, or (2)  for follow up treatment. If the initial 20ha is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of 20ha initial treatment and the 20ha follow up treatment.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalPestAnimalsTreatedNo",
+            "description": "The total number of all animals and/or insect colonies killed and/or removed from the project area.",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [{
+                "dataType": "species",
+                "name": "pestAnimalsTargetSpecies",
+                "description": "The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry."
+            }],
+            "dataType": "list",
+            "name": "pestManagement"
+        },
+        {
+            "dataType": "number",
+            "name": "weedAreaTreatedHa",
+            "description": "The total area where weed control has been undertaken. Do not double count (1) the same area for different species or retreatment, e.g 20ha of treatment that targeted Lantana and Camphor laurel at a single site is be reported as 20ha, not 40ha. or (2) follow up treatment. Eg. If the initial 20ha site is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of the 20ha initial treatment and the 20ha follow up treatment.",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [{
+                "dataType": "species",
+                "name": "weedsTargetSpecies",
+                "description": "The species targeted for control. Start typing a scientific or a common name and autofill will complete the entry)."
+            }],
+            "dataType": "list",
+            "name": "weedManagement"
+        },
+        {
+            "dataType": "number",
+            "name": "totalChangePracticeTreatedArea",
+            "description": "The  hectares of agricultural land where improved management practices have been adopted.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfEvents",
+            "description": "Number of events held to increase community engagement, such as, training, workshops, planting days, field days, knowledge sharing.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfPublications",
+            "description": "Number of different publications produced (NOT the number of copies of a publication produced).",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfCommunityGroups",
+            "description": "The number of different community groups participating in the project.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "entitiesAdoptingChange",
+            "description": "The number of farming/fisher entities that adopted management practice change during the project.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfFarmingEntitiesNew",
+            "description": "The total number of unique farming/fisher entities participating in the project.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfIndigenousParticipants",
+            "description": "The number of separate/unique Indigenous persons participating in delivery of the project in a voluntary, non-employed capacity.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalEmployees",
+            "description": "The number of Indigenous persons employed/sub-contracted during the project (measured in persons, not FTE). Includes ongoing, non-ongoing, casual, and contracted persons.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "indigenousPlansCompleted",
+            "description": "The total number of Indigenous Land and Sea Plans developed by the project.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "indigenousProductsDeveloped",
+            "description": "The total number of publications and other products developed that share Indigenous Ecological Knowledge.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "datasetsShared",
+            "description": "Number of Indigenous ecological knowledge datasets shared or collected.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "indigenousKnowledgeTransferActionsNo",
+            "description": "Number of discrete activities where Indigenous knowledge transfer occurs. E.g. Number of indigenous on-country visits, cultural training sessions. It excludes datasets collected or shared.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "conservationGrazingActionsArea",
+            "description": "The hectare area over which the grazing management regime is changed to obtain primarily ecological benefits. E.g. crash grazing to reduce weeds, use of temporary/limiting grazing and/or a set level of ground cover/sward height to promote seeding/regeneration of native grass or other native species.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "managementPlansNo",
+            "description": "The number of new management plan documents completed and/or the number of existing plans where revisions/updates have been completed. Names and types of plans can be included in your 'project summary' or 'comments on outputs'.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "lengthOfFence",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceAreaProtected",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "otherOutputs",
+            "description": "Include here any additional comments you have on your Community Grant projects that do not sit more appropriately elsewhere."
+        },
+        {
+            "dataType": "number",
+            "name": "debrisWeightTonnes",
+            "description": "Weight in tonnes of debris removed during the activity",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "stringList",
+            "name": "diseaseManagementMethod",
+            "description": "The method used in this activity to manage disease",
+            "constraints": [
+                "Biological control agents",
+                "Fumigation",
+                "Host destruction",
+                "Plant disease management - quarantine",
+                "Plant disease management - treatment",
+                "Plant disease management – hygiene",
+                "Positive competition",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "quarantineAreaTreatedHa",
+            "description": "Area in hectares covered by quarantine protocols and / or treatment:"
+        },
+        {
+            "columns": [{
+                "dataType": "species",
+                "name": "diseaseTargetSpecies",
+                "description": "Disease species targeted for treatment (start typing a  scientific or common name for a species)."
+            }],
+            "dataType": "list",
+            "name": "diseaseManagement"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfInstallations",
+            "description": "The number of access management structures installed during this activity"
+        },
+        {
+            "dataType": "number",
+            "name": "accessAreaProtected",
+            "description": "The area in hectares being protected by installed access control measures."
+        },
+        {
+            "dataType": "stringList",
+            "name": "structuresInstalled",
+            "description": "Type of structure(s) installed to manage access on the subject area",
+            "constraints": [
+                "Boardwalks",
+                "Bollards & barriers",
+                "Constructed parking bays",
+                "Fencing, styles, gates & grids",
+                "Formed trafficways",
+                "Signage",
+                "Other (specify in notes)"
+            ]
+        }
+    ],
+    "modelName": "Community Grants Reporting",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Total Output Details<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Complete only the outputs achieved by projects for this reporting period",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h5><strong>Community Participation<\/strong><\/h5>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Community participation and engagement (events):",
+                            "computed": null,
+                            "source": "numberOfEvents",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Community participation and engagement (publications):",
+                            "computed": null,
+                            "source": "numberOfPublications",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "No. of community groups that participated in delivery of the project:",
+                            "computed": null,
+                            "source": "numberOfCommunityGroups",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Indigenous people engaged as volunteers [not employed] (no. of people):",
+                            "computed": null,
+                            "source": "numberOfIndigenousParticipants",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "No. of Indigenous Land and Sea Plans completed:",
+                            "computed": null,
+                            "source": "indigenousPlansCompleted",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Indigenous knowledge transfer (no. of activities):",
+                            "computed": null,
+                            "source": "indigenousKnowledgeTransferActionsNo",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Indigenous knowledge transfer (datasets shared/collected):",
+                            "computed": null,
+                            "source": "datasetsShared",
+                            "type": "number"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h5><strong>Practice Change<\/strong><\/h5>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "No. of farming/fisher entities involved in delivery of project activities:",
+                            "computed": null,
+                            "source": "numberOfFarmingEntitiesNew",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "No. of farming/fisher entities implementing management practice change:",
+                            "computed": null,
+                            "source": "entitiesAdoptingChange",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Management practice change (area benefiting from practice change, Ha):",
+                            "computed": null,
+                            "source": "totalChangePracticeTreatedArea",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Conservation grazing management (Ha.):",
+                            "computed": null,
+                            "source": "conservationGrazingActionsArea",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Management plan development (No. of reports/plans):",
+                            "computed": null,
+                            "source": "managementPlansNo",
+                            "type": "number"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h5><strong>Actual Achievements - Biophysical and Other Outputs<\/strong><\/h5>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Area of Revegetation (Ha):",
+                            "computed": null,
+                            "source": "areaRevegHa",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Plants planted (No.):",
+                            "computed": null,
+                            "source": "totalNumberPlanted",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Revegetation (seed sown Kg):",
+                            "computed": null,
+                            "source": "totalSeedSownKg",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Seed collected\t(Kg):",
+                            "computed": null,
+                            "source": "totalSeedCollectedKg",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Plant propagation (No.):",
+                            "computed": null,
+                            "source": "totalNumberGrown",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Pest management (area treated Ha):",
+                            "computed": null,
+                            "source": "totalAreaTreatedHa",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Total number of individuals/colonies treated:",
+                            "computed": null,
+                            "source": "totalPestAnimalsTreatedNo",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Fire management (area Ha):",
+                            "computed": null,
+                            "source": "areaOfFireHa",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Weight of debris removed (Tonnes):",
+                            "computed": null,
+                            "source": "debrisWeightTonnes",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Debris removal (volume m3):",
+                            "computed": null,
+                            "source": "debrisVolumeM3",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Erosion management (Ha):",
+                            "computed": null,
+                            "source": "erosionAreaTreated",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Erosion management (length):",
+                            "computed": null,
+                            "source": "erosionLength",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Length of fence erected (Km):",
+                            "computed": null,
+                            "source": "lengthOfFence",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Area protected by fencing (Ha):",
+                            "computed": null,
+                            "source": "fenceAreaProtected",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Weed treatment (total new area treated Ha):",
+                            "computed": null,
+                            "source": "weedAreaTreatedHa",
+                            "type": "number"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "allowHeaderWrap": "true",
+            "computed": null,
+            "columns": [{
+                "source": "pestAnimalsTargetSpecies",
+                "title": "Pest species managed\t(name):",
+                "type": "autocomplete"
+            }],
+            "userAddedRows": true,
+            "source": "pestManagement",
+            "title": "Pest Animals",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "allowHeaderWrap": "true",
+            "computed": null,
+            "columns": [{
+                "source": "weedsTargetSpecies",
+                "title": "Weed species managed\t(name):",
+                "type": "autocomplete"
+            }],
+            "userAddedRows": true,
+            "source": "weedManagement",
+            "title": "Weeds",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h5><strong>Disease Management<\/strong><\/h5>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Disease management method:",
+                        "computed": null,
+                        "source": "diseaseManagementMethod",
+                        "type": "selectMany"
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Area quarantined / treated (Ha):",
+                        "computed": null,
+                        "source": "quarantineAreaTreatedHa",
+                        "type": "number"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "allowHeaderWrap": "true",
+            "computed": null,
+            "columns": [{
+                "computed": null,
+                "source": "diseaseTargetSpecies",
+                "title": "Target species:",
+                "type": "autocomplete"
+            }],
+            "userAddedRows": true,
+            "source": "diseaseManagement",
+            "title": "Target species",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h5><strong>Public access and infrastructure<\/strong><\/h5>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "No. of access management structures installed:",
+                            "computed": null,
+                            "source": "numberOfInstallations",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Area (Ha) protected by access management structure(s):",
+                            "computed": null,
+                            "source": "accessAreaProtected",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Structure(s) installed:",
+                        "computed": null,
+                        "source": "structuresInstalled",
+                        "type": "selectMany"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Details of other outputs not listed:",
+                "computed": null,
+                "source": "otherOutputs",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

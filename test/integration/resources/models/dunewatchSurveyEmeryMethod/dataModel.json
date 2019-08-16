@@ -1,0 +1,209 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name(s) of people who participated in the survey. For schools and community groups, provide the names of the school or group only.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "submittedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the survey started."
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the sighing, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "piSaringAgreement",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "transectId",
+                    "description": "What transect line are you surveying?",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "transectLengthInMetres",
+                    "description": "The length in metres of the transect (ie. between the 2m and 3m poles)",
+                    "validate": "min[-100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "rulerPoleHeightInCentimetres",
+                    "description": "The measured height in centimetres of the 2m 'Ruler' pole (closest to the dune).",
+                    "validate": "min[-1000]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "surfPoleHeightInCentimetres",
+                    "description": "The measured height in centimetres of the 3m 'Surf' pole (closest to the ocean).",
+                    "validate": "min[-1000]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "elevationDifferenceInMetres",
+                    "description": "The calculated elevation difference in metres between the two poles.",
+                    "validate": "min[-1000]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "slopeOfBeachInPercent",
+                    "description": "The calculated slope of the beach profile segment in percent.",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "beachTransectMeasurements"
+        }
+    ],
+    "modelName": "dunewatchSurveyEmeryMethod",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "submittedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Survey worker(s)",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Date of the survey",
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Time",
+                        "source": "surveyStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Comments",
+                        "computed": null,
+                        "source": "eventRemarks",
+                        "type": "textarea"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "source": "transectId",
+                                "title": "Transect nr",
+                                "type": "text"
+                            },
+                            {
+                                "source": "transectLengthInMetres",
+                                "title": "Distance (m)",
+                                "type": "number"
+                            },
+                            {
+                                "source": "rulerPoleHeightInCentimetres",
+                                "title": "Ruler - 2 metre pole (cm)",
+                                "type": "number"
+                            },
+                            {
+                                "source": "surfPoleHeightInCentimetres",
+                                "title": "Surf - 3 metre pole (cm)",
+                                "type": "number"
+                            },
+                            {
+                                "source": "elevationDifferenceInMetres",
+                                "title": "Elevation difference (m)",
+                                "type": "number"
+                            },
+                            {
+                                "source": "slopeOfBeachInPercent",
+                                "title": "Slope (%)",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "source": "beachTransectMeasurements",
+                        "type": "table",
+                        "class": "output-section"
+                    },
+                    {
+                        "preLabel": "Do you agree to ALA sharing your contact details with the project organiser for the purposes of record verification?",
+                        "computed": null,
+                        "source": "piSaringAgreement",
+                        "type": "selectOne"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "source": "<font-size='0.8em'><i>Zoom in on the map, then click on the marker and drop it on the location where you made the sighting. Change the base map to show the satellite image.<\/i><\/font>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

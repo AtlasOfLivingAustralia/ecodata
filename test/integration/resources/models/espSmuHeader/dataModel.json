@@ -1,0 +1,11 @@
+{
+    "dataModel": [],
+    "title": "ESP SMU Reporting",
+    "viewModel": [{
+        "type": "row",
+        "items": [{
+            "source": "Please note that SMU reporting includes management actions relating to \"Buffering\" and \"Connectivity under the Multiple Ecological Communities Project (MEC) Rounds\"",
+            "type": "literal"
+        }]
+    }]
+}

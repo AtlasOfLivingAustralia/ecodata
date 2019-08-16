@@ -1,8 +1,11 @@
 package au.org.ala.ecodata
 
+@RequireApiKey
 class ProgramController {
 
     static responseFormats = ['json', 'xml']
+    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE']
+
     ProgramService programService
     ElasticSearchService elasticSearchService
 
@@ -14,7 +17,6 @@ class ProgramController {
         respond programService.findByName(name)
     }
 
-    @RequireApiKey
     def update(String id) {
         if (!id) {
             respond programService.create(request.JSON)
@@ -24,7 +26,6 @@ class ProgramController {
         }
     }
 
-    @RequireApiKey
     def delete(String id) {
         respond programService.delete(id, params.getBoolean('destroy', false))
     }
@@ -33,7 +34,6 @@ class ProgramController {
         elasticSearchService.search(params.query,[:], ElasticIndex.DEFAULT_INDEX)
     }
 
-    @RequireApiKey
     def findAllForUser(String id) {
         respond programService.findAllProgramsForUser(id)
     }

@@ -143,6 +143,7 @@ class ReportingService {
         Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, programId:report.programId]
         Map syncResult
         if (report.activityId) {
+            activity.activityId = report.activityId
             syncResult = activityService.update(activity, report.activityId)
         }
         else {

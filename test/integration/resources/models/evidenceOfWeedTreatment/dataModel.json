@@ -1,0 +1,99 @@
+{
+    "modelName": "Evidence of Weed Treatment",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Type of evidence visible on treated target plants",
+            "name": "evidenceOfPreviousWeedTreatment",
+            "constraints": [
+                "Bio-control agents active",
+                "Dead plants",
+                "Death of growing tips",
+                "Foliar reduction",
+                "Leaf yellowing",
+                "Reduced seed production",
+                "Root / stem rot present",
+                "No evidence",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The effectiveness of the last treatment activity as a proportion of the area and density of the infestation that existed before the previous treatment activity, expressed as the percentage killed",
+            "name": "effectivenessOfPreviousWeedTreatment",
+            "validate": "required,min[0],max[100]"
+        },
+        {
+            "dataType": "text",
+            "description": "The type of treatment method recommended for follow up treatment",
+            "name": "recommendedWeedTreatment",
+            "constraints": [
+                "Biological control - Biological agents (indicate in notes)",
+                "Chemical control - Basal bark spraying",
+                "Chemical control - Cut and swab",
+                "Chemical control - Cut stump",
+                "Chemical control - Foliar spraying",
+                "Chemical control - Splatter gun",
+                "Chemical control - Stem injection",
+                "Chemical control - Stem scraper",
+                "Chemical control - Wick applicators",
+                "Environmental management - Fire",
+                "Environmental management - moisture & nutrient control",
+                "Environmental management - over-planting",
+                "Manual control - Grubbing / chipping",
+                "Manual control - Hand pulling",
+                "Mechanical control - Dozing",
+                "Mechanical control - Felling",
+                "Mechanical control - Mowing",
+                "Mechanical control - Pushing",
+                "Mechanical control - Slashing",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "General observational notes applicable to the site, treatment, conditions, etc.",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [{
+                    "source": "evidenceOfPreviousWeedTreatment",
+                    "computed": null,
+                    "preLabel": "Evidence of Previous Treatment:",
+                    "type": "selectMany"
+                }],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "effectivenessOfPreviousWeedTreatment",
+                        "computed": null,
+                        "preLabel": "Effectiveness of Previous Treatment (% killed):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "recommendedWeedTreatment",
+                        "computed": null,
+                        "preLabel": "Recommended treatment:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Notes:",
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

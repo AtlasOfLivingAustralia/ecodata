@@ -20,16 +20,6 @@ class MetadataController {
         render metadataService.activitiesList(params.program, params.subprogram) as JSON
     }
 
-    @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
-    def updateActivitiesModel() {
-        def model = request.JSON
-        //log.debug "Model=${model.getClass()}"
-        metadataService.updateActivitiesModel(model.model.toString(4))
-        def result = [model: metadataService.activitiesModel()]
-        render result as JSON
-    }
-
     def programsModel() {
         render metadataService.programsModel()
     }
@@ -55,18 +45,6 @@ class MetadataController {
         } else {
             render result
         }
-    }
-
-    @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
-    def updateOutputDataModel(String id) {
-        //log.debug "id=${id}"
-        def model = request.JSON
-        def modelStr = model.model.toString(4);
-        //log.debug "modelStr = ${modelStr}"
-        metadataService.updateOutputDataModel(modelStr, id)
-        def result = [model: metadataService.getOutputDataModel(id)]
-        render result as JSON
     }
 
     // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle

@@ -1,0 +1,261 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "existingErosionSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(existingErosionSites)"
+                    },
+                    "dataType": "number",
+                    "name": "existingErosionAreaHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(existingErosionSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(existingErosionSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesManaged"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesManaged)"
+                    },
+                    "dataType": "number",
+                    "name": "areaOfErosionControlHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesManaged)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesManaged)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesManaged)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthOfErosionControlKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesManaged)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesManaged)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberInstalled",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "erosionManagementMethod",
+                    "constraints": [
+                        "Alternative watering point",
+                        "Erosion control structures",
+                        "Farming practice change",
+                        "Fencing",
+                        "Revegetation",
+                        "Terracing",
+                        "Vegetated waterway (bioswale)",
+                        "Windbreaks",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherErosionManagementMethod",
+                    "behaviour": [{
+                        "condition": "erosionManagementMethod == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required,max[300]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesBenefittingFromErosionControl"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)"
+                    },
+                    "dataType": "number",
+                    "name": "areaBenefitingHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceOfBenefit",
+                    "validate": "maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "erosionManagementDetails",
+            "minSize": 0
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Erosion Management",
+    "title": "Erosion management",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "initialOrFollowup",
+                        "title": "Initial or follow-up activity?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "existingErosionSites",
+                        "title": "Site/s where erosion is evident",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "existingErosionAreaHa",
+                        "title": "Area (ha) of erosion",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "sitesManaged",
+                        "title": "Site/s of erosion control",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "areaOfErosionControlHa",
+                        "title": "Area (ha) of erosion control",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "lengthOfErosionControlKm",
+                        "title": "Length (km) of stream / coastline treated for erosion",
+                        "type": "number"
+                    },
+                    {
+                        "width": "8%",
+                        "source": "numberInstalled",
+                        "title": "Number of erosion control structures installed",
+                        "type": "number"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "erosionManagementMethod",
+                        "title": "Type of treatment method",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "otherErosionManagementMethod",
+                        "title": "Type of treatment method (if Other)",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "sitesBenefittingFromErosionControl",
+                        "title": "Please map any off-site area/s if they benefitted from this erosion management activity",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "areaBenefitingHa",
+                        "title": "Area (ha) benefiting from erosion management",
+                        "type": "number"
+                    },
+                    {
+                        "width": "16%",
+                        "source": "evidenceOfBenefit",
+                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect his benefit.",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "erosionManagementDetails",
+                "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

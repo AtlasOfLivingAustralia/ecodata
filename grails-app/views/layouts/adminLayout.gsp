@@ -94,10 +94,10 @@
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'audit')}" title="Audit"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}"
                                        title="Raw activity model"/>
-                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'activityModel')}"
-                                       title="Activity model"/>
-                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'rawOutputModels')}"
-                                       title="Raw output models"/>
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'editActivityFormDefinitions')}"
+                                       title="Edit activity form definitions"/>
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'editActivityFormTemplates')}"
+                                       title="Edit activity form templates"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'programsModel')}"
                                        title="Programs model"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'searchScores')}"

@@ -1,0 +1,206 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "siteCode",
+            "description": "",
+            "constraints": ["Codes to be provided"],
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "description": "The local time that the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the bird observed. Start typing a common or scientific name. Choose 'Unknown' if you don't know."
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCountSeen",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals of the species observed.",
+                    "validate": "integer,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCountHeard",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals of the species observed.",
+                    "validate": "integer,min[0]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesSightings"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "birdSightingsNt",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Northern Territory Bird Sightings<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Observation Information",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "preLabel": "Site Code",
+                                    "source": "siteCode",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "preLabel": "Date",
+                                    "source": "eventDate",
+                                    "type": "date"
+                                },
+                                {
+                                    "preLabel": "Time",
+                                    "source": "eventTime",
+                                    "type": "time"
+                                },
+                                {
+                                    "preLabel": "Recorded by",
+                                    "computed": null,
+                                    "source": "recordedBy",
+                                    "type": "text"
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Species Sightings",
+                            "type": "section",
+                            "items": [{
+                                "allowHeaderWrap": true,
+                                "columns": [
+                                    {
+                                        "width": "35%",
+                                        "source": "species",
+                                        "title": "Species name",
+                                        "type": "speciesSelect"
+                                    },
+                                    {
+                                        "width": "15%",
+                                        "source": "individualCountSeen",
+                                        "title": "Count - seen",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "width": "15%",
+                                        "source": "individualCountHeard",
+                                        "title": "Count - heard",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "width": "35%",
+                                        "source": "sightingPhoto",
+                                        "title": "Photo",
+                                        "type": "image"
+                                    }
+                                ],
+                                "userAddedRows": true,
+                                "source": "speciesSightings",
+                                "type": "table"
+                            }],
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "source": "<font color='blue'><i>Zoom in on the map, then select and place the marker <img src='http://www.ala.org.au/wp-content/uploads/2017/03/geoMap-point-marker.png'> on the location where you made your observation.<\/i><\/font>",
+                                "type": "literal"
+                            },
+                            {
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "readonly": true,
+                                "autoLocalitySearch": false,
+                                "includeSource": false,
+                                "includeAccuracy": false,
+                                "hideSiteSelection": true,
+                                "source": "location",
+                                "type": "geoMap",
+                                "zoomToProjectArea": true,
+                                "includeLocality": false
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ]
+        }
+    ]
+}

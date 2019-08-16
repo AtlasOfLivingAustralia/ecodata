@@ -1,0 +1,338 @@
+{
+    "modelName": "faunaSurvey_distanceSamplerMethod",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date of the survey event.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "day",
+            "description": "The day of the week that the survey was undertaken",
+            "constraints": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the observation."
+        },
+        {
+            "dataType": "stringList",
+            "name": "observerSide",
+            "description": "What side of the aircraft was the observer sitting on?",
+            "constraints": [
+                "Right",
+                "Left"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "transectNumber",
+            "description": "The identification label used for the transect."
+        },
+        {
+            "dataType": "text",
+            "name": "transectStart",
+            "description": "The start point label for the transect."
+        },
+        {
+            "dataType": "number",
+            "name": "proposedAltitude",
+            "description": "The altitude at which the transect was planned to be flown.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "proposedSpeed",
+            "description": "The airspeed in knots at which the transect was planned to be flown.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "actualAltitude",
+            "description": "The actual altitude at which the transect was flown.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "horizontalAccuracy",
+            "description": "The accuracy of the actual transect path relative to the planned path.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the animal observed. Click on the 'i' for information about the selected species.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals observed for the record.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "distance",
+            "description": "A graduated unit on the observation sighting pole mounted to the aircraft.",
+            "constraints": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "appId",
+            "description": "The unique identifier of the app and version used to make the record."
+        },
+        {
+            "dataType": "text",
+            "name": "deviceId",
+            "description": "The unique identifier for the device used to make the record."
+        },
+        {
+            "dataType": "text",
+            "name": "deviceType",
+            "description": "The type of device used to make the record."
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Observation notes about the record."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "A single observation record from an aerial survey event.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h2>Survey Information<\/h2>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey start time",
+                            "computed": null,
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Day of week",
+                            "computed": null,
+                            "source": "day",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Observer name",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observer side",
+                            "computed": null,
+                            "source": "observerSide",
+                            "type": "text"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h2>Transect Information<\/h2>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Transect number",
+                            "computed": null,
+                            "source": "transectNumber",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Transect start",
+                            "computed": null,
+                            "source": "transectStart",
+                            "type": "selectOne",
+                            "constraints": [
+                                "",
+                                ""
+                            ]
+                        },
+                        {
+                            "preLabel": "Proposed altitude (ft)",
+                            "computed": null,
+                            "source": "proposedAltitude",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Proposed speed (knts)",
+                            "computed": null,
+                            "source": "proposedSpeed",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Actual altitude (ft)",
+                            "computed": null,
+                            "source": "actualAltitude",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Horizontal accuracy (metres)",
+                            "computed": null,
+                            "source": "horizontalAccuracy",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h2>Observation Details<\/h2>",
+                            "type": "literal"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<i>Start typing a common or scientific name.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Animal",
+                            "computed": null,
+                            "source": "species",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "preLabel": "Number seen",
+                            "computed": null,
+                            "source": "individualCount",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Distance",
+                            "computed": null,
+                            "source": "distance",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Application id",
+                            "computed": null,
+                            "source": "appId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Device id",
+                            "computed": null,
+                            "source": "deviceId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Type of device used for record",
+                            "computed": null,
+                            "source": "deviceType",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "computed": null,
+                            "source": "comments",
+                            "type": "textarea"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "includeNotes": false,
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "includeSource": false,
+                        "includeAccuracy": false,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": false
+                    }]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

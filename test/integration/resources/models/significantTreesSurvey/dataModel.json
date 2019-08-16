@@ -1,0 +1,746 @@
+{
+    "dataModel": [
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "contactConsent",
+            "description": "Please indicate whether you consent for the Atlas of Living Australia to pass your contact details to the survey organiser on their request so that they can contact you to discuss this record if necessary.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "landStatus",
+            "description": "Indicate whether the tree is located on public or private land",
+            "constraints": [
+                "Public",
+                "Private",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "landOwnerConsent",
+            "description": "Has the land owner where this tree is located aware that you are making this record and given consent to do so?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "lifeStatus",
+            "description": "",
+            "constraints": [
+                "Alive",
+                "Dead"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "endemicity",
+            "description": "",
+            "constraints": [
+                "Native",
+                "Exotic",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the tree observed.",
+            "constraints": [
+                "Unknown",
+                "Abrophyllum ornans",
+                "Acacia bakeri",
+                "Acacia concurrens",
+                "Acacia disparrima",
+                "Acacia falcata",
+                "Acacia fimbriata",
+                "Acacia fimbriata var. perangusta",
+                "Acacia flavescens",
+                "Acacia leiocalyx",
+                "Acacia maidenii",
+                "Acacia melanoxylon",
+                "Acmena hemilampra",
+                "Acmena smithii",
+                "Acronychia imperforata",
+                "Acronychia laevis",
+                "Acronychia pauciflora",
+                "Acronychia wilcoxiana",
+                "Alectryon connatus",
+                "Alectryon coriaceus",
+                "Alectryon tomentosus",
+                "Allocasuarina littoralis",
+                "Allocasuarina torulosa",
+                "Alphitonia excelsa",
+                "Amorphospermum whitei",
+                "Angophora leiocarpa",
+                "Angophora subvelutina",
+                "Angophora woodsiana",
+                "Aphananthe philippinensis",
+                "Araucaria cunninghamii",
+                "Archontophoenix cunninghamiana",
+                "Arytera divaricata",
+                "Arytera foveolata",
+                "Astrotricha latifolia",
+                "Auranticarpa rhombifolium",
+                "Backhousia myrtifolia",
+                "Baloghia inophylla",
+                "Baloghia lucida",
+                "Banksia aemula",
+                "Banksia integrifolia",
+                "Banksia serrata",
+                "Beilschmiedia eliptica",
+                "Beilschmiedia obtusifolia",
+                "Callitris columellaris",
+                "Callitris rhomboidea",
+                "Calophyllum inophyllum",
+                "Capparis arborea",
+                "Castanospermum australe",
+                "Casuarina cunninghamiana",
+                "Casuarina equisetifolia",
+                "Casuarina glauca",
+                "Celtis paniculata",
+                "Claoxylon australe",
+                "Codonocarpus attenuatus",
+                "Commersonia bartramia",
+                "Commersonia fraseri",
+                "Corymbia citriodora",
+                "Corymbia gummifera",
+                "Corymbia henryi",
+                "Corymbia intermedia",
+                "Corymbia trachyphloia",
+                "Croton acronychioides",
+                "Croton insularis",
+                "Cryptocarya glaucescens",
+                "Cryptocarya macdonaldii",
+                "Cryptocarya microneura",
+                "Cryptocarya obovata",
+                "Cryptocarya sclerophylla",
+                "Cryptocarya triplinervis",
+                "Cupaniopsis anarcardioides",
+                "Cupaniopsis parvifolia",
+                "Cyclophyllum coprosmoides",
+                "Cyclophyllum longipetalum",
+                "Decaspermum humile",
+                "Dendrocnide photinophylla",
+                "Denhamia celastroides",
+                "Denhamia pittosporoides",
+                "Diospyros australis",
+                "Diospyros fasciculosa",
+                "Diospyros ferrea",
+                "Diospyros geminata",
+                "Diospyros pentamera",
+                "Diploglottis australis",
+                "Drypetes deplanchei",
+                "Duboisia myoporoides",
+                "Dysoxylum rufum",
+                "Elaeocarpus eumundii",
+                "Elaeocarpus grandis",
+                "Elaeocarpus obovatus",
+                "Elaeocarpus reticulatus",
+                "Elattostachys nervosa",
+                "Endiandra discolor",
+                "Endiandra sieberi",
+                "Eucalyptus acmenoides",
+                "Eucalyptus bancroftii",
+                "Eucalyptus carnea",
+                "Eucalyptus crebra",
+                "Eucalyptus curtisii",
+                "Eucalyptus fibrosa",
+                "Eucalyptus major",
+                "Eucalyptus microcorys",
+                "Eucalyptus moluccana",
+                "Eucalyptus pilularis",
+                "Eucalyptus planchoniana",
+                "Eucalyptus propinqua",
+                "Eucalyptus racemosa",
+                "Eucalyptus resinifera",
+                "Eucalyptus robusta",
+                "Eucalyptus seena",
+                "Eucalyptus siderophloia",
+                "Eucalyptus tereticornis",
+                "Eucalyptus tindaleae",
+                "Euroschinus falcata",
+                "Exocarpos cupressiformis",
+                "Exocarpos latifolius",
+                "Ficus coronata",
+                "Ficus fraseri",
+                "Ficus macrophylla",
+                "Ficus obliqua",
+                "Ficus rubiginosa",
+                "Ficus virens",
+                "Ficus watkinsiana",
+                "Flindersia australis",
+                "Flindersia bennettiana",
+                "Flindersia schottiana",
+                "Flindersia xanthoxyla",
+                "Geijera salicifolia",
+                "Glochidion ferdinandi",
+                "Glochidion sumatranum",
+                "Gmelina leichhardtii",
+                "Gossia bidwillii",
+                "Gossia gonoclada",
+                "Gossia hilli",
+                "Gossia punctata",
+                "Grevillea robusta",
+                "Guoia semiglauca",
+                "Harpullia hillii",
+                "Harpullia pendula",
+                "Heritiera trifoliata",
+                "Hibiscus tiliaceus",
+                "Homolanthus nutans",
+                "Hymenosporum flavum",
+                "Jagera pseudorhus",
+                "Litsea leefeana",
+                "Litsea reticulata",
+                "Livistona australis",
+                "Lophostemon confertus",
+                "Lophostemon suaveolens",
+                "Macadamia integrifolia",
+                "Macadamia tetraphylla",
+                "Macaranga tanarius",
+                "Mallotus claoxyloides",
+                "Mallotus discolor",
+                "Mallotus philippensis",
+                "Maytenus disperma",
+                "Melaleuca quinquenervia",
+                "Melaleuca saligna",
+                "Melaleuca viminalia",
+                "Melicope elleryana",
+                "Melicope vitiflora",
+                "Mischocarpus pyriformis",
+                "Myrsine howittiana",
+                "Myrsine variabilis",
+                "Neolitsea dealbata",
+                "Notelaea longifolia",
+                "Olea paniculata",
+                "Pandanus tectorius var. stradbrokensis",
+                "Pararchidendron pruinosum",
+                "Pentacera australis",
+                "Petalostigma pubescens",
+                "Petalostigma triloculare",
+                "Pipturus argenteus",
+                "Pittosporum undulatum",
+                "Planchonella australis",
+                "Planchonella chartacea",
+                "Planchonella myrsinifolia",
+                "Planchonella pohlmaniana",
+                "Pleogyne australis",
+                "Podocarpus elatus",
+                "Polyalthia nitidissima",
+                "Polyscias elegans",
+                "Polyscias murrayi",
+                "Rhodamnia rubescens",
+                "Rhodomyrtus psidioides",
+                "Sarcomelicope simplicifolia",
+                "Schizomeria ovata",
+                "Sloanea woollsii",
+                "Stenocarpus sinuatus",
+                "Sterculia quadrifida",
+                "Streblus brunonianus",
+                "Syncarpia hillii",
+                "Synoum glandulosum",
+                "Syzygium australe",
+                "Syzygium leuhmanii",
+                "Syzygium oleosum",
+                "Timonius timon",
+                "Toechima tenax",
+                "Tristaniopsis laurina",
+                "Vitex lignum-vitae",
+                "Wilkiea austroqueenslandica"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "localName",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "identifiedBy",
+            "description": "The name of the person who identified the tree and/or the resource used for identification"
+        },
+        {
+            "dataType": "text",
+            "name": "establishmentMeans",
+            "dwcAttribute": "establishmentMeans",
+            "description": "How did the observed individual become established at the location?",
+            "constraints": [
+                "Wild",
+                "Cultivated",
+                "Don't know"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "estimatedAgeInYears",
+            "description": "What is the estimated age of the tree in years?"
+        },
+        {
+            "dataType": "number",
+            "name": "establishmentYear",
+            "description": "If known, when did the tree become established (ie. planted) at the location?",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "boolean",
+            "name": "establishmentDateUnknown",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "treeHealth",
+            "description": "What is the health status of the observed tree?",
+            "constraints": [
+                "Excellent",
+                "Good",
+                "Average",
+                "Fair",
+                "Poor",
+                "Dying",
+                "Dead"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "significanceLevel",
+            "description": "Does the tree have a recognised or listed significance status?",
+            "constraints": [
+                "National",
+                "State",
+                "Regional",
+                "Local",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "landmarkTree",
+            "description": "Does the tree have aesthetic value or act as a landmark?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "treeSize",
+            "description": "Is the size outstanding in height, girth or canopy cover?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "heightClassInMetres",
+            "description": "Select a category for the estimated height of the tree.",
+            "constraints": [
+                "5-10 m",
+                "10-20 m",
+                "20-30 m",
+                "> 30 m"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "girthClassInMetres",
+            "description": "",
+            "constraints": [
+                "0.5-1 m",
+                "1-2 m",
+                "2-3 m",
+                "> 3 m"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "scarcity",
+            "description": "",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "geneticValue",
+            "description": "Does the tree have genetic value that could be important for future species propagation/spread? ",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "historicValue",
+            "description": "Does the tree any have historic association?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "growthFormCharacter",
+            "description": "Does the tree have an outstanding or abnormal growth form?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "preEuSettlement",
+            "description": "Does the tree pre-date European settlement of the area?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "habitatValue",
+            "description": "Does the tree have outstanding value as habitat for native flora and fauna?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "habitatValueDetails",
+            "description": "Please provide details of the habitat values of the tree for native flora and fauna?"
+        },
+        {
+            "dataType": "text",
+            "name": "indigenousCulturalAssociation",
+            "description": "Does the tree have known associations with Aboriginal culture?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationNotes",
+            "description": "Describe where the tree is situated on the site."
+        }
+    ],
+    "modelName": "significantTreeSightings",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h4>Step 1: Upload one or more of the best images of your sighting.<\/h4><i>This is strongly recommended so that the record can be validated and used in scientific work.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Photo of tree",
+                            "computed": null,
+                            "source": "sightingPhoto",
+                            "type": "image"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Step 2: Record the details of your sighting.<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Observer/Submitter Name",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Can the survey organiser contact you if they have questions about this record?",
+                            "computed": null,
+                            "source": "contactConsent",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Record date",
+                            "computed": null,
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Is the tree on public or private land?",
+                            "computed": null,
+                            "source": "landStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Is tree owner aware of this survey record being submitted?",
+                            "computed": null,
+                            "source": "landOwnerConsent",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Is the tree alive or dead?",
+                            "computed": null,
+                            "source": "lifeStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Native or Exotic?",
+                            "computed": null,
+                            "source": "endemicity",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Species name",
+                            "computed": null,
+                            "source": "species",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Any other known popular name?",
+                            "computed": null,
+                            "source": "localName",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Person(s) or reference(s) used to identify specimen",
+                            "computed": null,
+                            "source": "identifiedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Status",
+                            "computed": null,
+                            "source": "establishmentMeans",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Estimated Age (years)",
+                            "computed": null,
+                            "source": "estimatedAgeInYears",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Year planted",
+                            "computed": null,
+                            "source": "establishmentYear",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Planting date unknown",
+                            "computed": null,
+                            "source": "establishmentDateUnknown",
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<i>Zoom into the location of the sighting, then drag'n'drop the marker onto the map.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap"
+                        },
+                        {
+                            "preLabel": "Describe where the specimen is situated on the subject site",
+                            "computed": null,
+                            "source": "locationNotes",
+                            "type": "textarea"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4><b>Attributes of the Tree<\/b> <i>(please refer to the survey instructions in the resources tab to assist in completing this section.)<\/i><\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Health",
+                            "computed": null,
+                            "source": "treeHealth",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Significance Level",
+                            "computed": null,
+                            "source": "significanceLevel",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Landmark – Does the tree have aesthetic value or act as a landmark?",
+                            "computed": null,
+                            "source": "landmarkTree",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Size – Is the size outstanding in height, girth or canopy cover?",
+                            "computed": null,
+                            "source": "treeSize",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Estimate Height",
+                            "computed": null,
+                            "source": "heightClassInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Estimate Girth",
+                            "computed": null,
+                            "source": "girthClassInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Botanical – Is the tree rarely found in the wild or cultivation?",
+                            "computed": null,
+                            "source": "scarcity",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Horticulture – Does the tree have genetic value that could be important for future species propagation/spread?",
+                            "computed": null,
+                            "source": "geneticValue",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "History – Does the tree any have historic association?",
+                            "computed": null,
+                            "source": "historicValue",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Form – Does the tree have an outstanding or abnormal growth form?",
+                            "computed": null,
+                            "source": "growthFormCharacter",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Remnant – Does the tree pre-date white settlement?",
+                            "computed": null,
+                            "source": "preEuSettlement",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Habitat – Does the tree have outstanding value as habitat for native flora and fauna?",
+                            "computed": null,
+                            "source": "habitatValue",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Habitat Values – Please provide information on the habitat values",
+                            "computed": null,
+                            "source": "habitatValueDetails",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Aboriginal Culture – Does the tree have known associations with Aboriginal culture?",
+                            "computed": null,
+                            "source": "indigenousCulturalAssociation",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Additional Information and Comments",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

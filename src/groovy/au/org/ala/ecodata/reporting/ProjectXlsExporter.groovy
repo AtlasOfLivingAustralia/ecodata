@@ -46,8 +46,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteElectorateHeaders = (1..40).collect{'Electorate '+it}
     List<String> siteElectorateProperties = (0..39).collect{'elect'+it+'-site'}
 
-    List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
-    List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
+    List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
+    List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
@@ -292,7 +292,8 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.sites) {
                 def sites = project.sites.collect {
                     def centre = it.extent?.geometry?.centre
-                    Map data = [siteId: it.siteId, siteName: it.name, siteDescription: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", lastUpdated: it.lastUpdated] + project
+                    def aream2 = it.extent?.geometry?.aream2
+                    Map data = [siteId: it.siteId, siteName: it.name, siteDescription: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", aream2: aream2, lastUpdated: it.lastUpdated] + project
                     Map props = it.extent?.geometry ?: [:]
                     props?.each { key, value ->
                         if (value instanceof List) {

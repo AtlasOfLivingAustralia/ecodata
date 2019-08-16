@@ -1,0 +1,93 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "fenceActivityType",
+                    "description": "The type of fencing activity",
+                    "constraints": [
+                        "Extension of existing fence line",
+                        "Repairs to existing fence line",
+                        "New fencing"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "lengthOfFence",
+                    "description": "Length of fence erected in kilometres",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "fencePurpose",
+                    "description": "",
+                    "constraints": [
+                        "Exclusion of feral herbivores",
+                        "Exclusion of livestock",
+                        "Exclusion of native herbivores",
+                        "Marking a boundary",
+                        "Protection of paddock tree"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "cost",
+                    "validate": "integer,min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "fencing"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "modelName": "ESP Fencing",
+    "title": "Fencing",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "disableTableUpload": true,
+                "columns": [
+                    {
+                        "source": "fenceActivityType",
+                        "title": "Type of Fencing Activity",
+                        "type": "selectOne"
+                    },
+                    {
+                        "computed": null,
+                        "source": "lengthOfFence",
+                        "title": "Length of fence (Km):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "fencePurpose",
+                        "title": "Reason for Fencing",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "cost",
+                        "title": "Cost",
+                        "type": "currency"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "fencing",
+                "title": "<i>Please note that this section also applies to repairs made to existing fencing.<\/i>",
+                "type": "table"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

@@ -1,0 +1,175 @@
+{
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Purpose for which grazing is being used as a management tool",
+            "name": "stockManagementReason",
+            "constraints": [
+                "Reduce competition & shading for revegetation areas",
+                "Promote woody plant growth",
+                "Reduce wildfire risk & intensity",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares where grazing is used as a management tool under this activity",
+            "name": "areaOfStockManagementHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the grazing strategy / methodology being used to achieve the purpose",
+            "name": "stockingStrategy"
+        },
+        {
+            "dataType": "list",
+            "name": "stockingDetails",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Type of stock species being used to achieve the purpose of the activity",
+                    "name": "stockingManagementSpecies",
+                    "constraints": [
+                        "Cattle",
+                        "Sheep",
+                        "Horses",
+                        "Goats",
+                        "Llama / Alpaca",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
+                    "name": "stockingDensity"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The duration in whole hours that stock are kept on-site.",
+                    "name": "stockingDuration",
+                    "constraints": [
+                        "1 day or less",
+                        "2 - 3 days",
+                        "4 - 7 days",
+                        "< 2 weeks",
+                        "> 2 weeks",
+                        "> 4 weeks",
+                        "Ongoing"
+                    ]
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "Stock Management",
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "stockManagementReason",
+                        "computed": null,
+                        "preLabel": "What land management issue(s) are you using stock grazing to manage?",
+                        "type": "selectMany"
+                    },
+                    {
+                        "source": "areaOfStockManagementHa",
+                        "computed": null,
+                        "preLabel": "Area managed (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "stockingStrategy",
+                        "computed": null,
+                        "preLabel": "Stocking strategy",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "stockingDetails",
+                        "columns": [
+                            {
+                                "title": "Type of stock used",
+                                "source": "stockingManagementSpecies",
+                                "width": "50%",
+                                "type": "selectOne"
+                            },
+                            {
+                                "title": "Stocking density (DSE / Ha)",
+                                "source": "stockingDensity",
+                                "width": "15%",
+                                "type": "number"
+                            },
+                            {
+                                "title": "Stocking duration (Hrs)",
+                                "source": "stockingDuration",
+                                "width": "35%",
+                                "type": "selectOne"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "class": "output-section",
+                        "type": "table"
+                    },
+                    {
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Comments / Notes",
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [{
+                    "includeSource": false,
+                    "orientation": "vertical",
+                    "includeNotes": false,
+                    "hideSiteSelection": true,
+                    "zoomToProjectArea": true,
+                    "source": "location",
+                    "computed": null,
+                    "autoLocalitySearch": true,
+                    "type": "geoMap",
+                    "includeAccuracy": false,
+                    "readonly": false,
+                    "includeLocality": false
+                }],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

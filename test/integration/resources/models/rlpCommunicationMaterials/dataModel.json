@@ -1,0 +1,90 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "communicationMaterialType",
+                "constraints": [
+                    "Advertising",
+                    "Book",
+                    "Brochures",
+                    "Extension materials",
+                    "Fliers",
+                    "Media release",
+                    "Report",
+                    "Social media posts",
+                    "Videos",
+                    "Other"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "text",
+                "name": "otherCommunicationMaterialType",
+                "behaviour": [{
+                    "condition": "communicationMaterialType == \"Other\"",
+                    "type": "enable"
+                }],
+                "validate": "required,maxSize[100]"
+            },
+            {
+                "dataType": "number",
+                "name": "numberOfCommunicationMaterialsPublished",
+                "description": "Refers to unique publications not number printed",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "text",
+                "name": "communicationMaterialPurpose",
+                "validate": "required,maxSize[300]"
+            }
+        ],
+        "dataType": "list",
+        "name": "communicationMaterials"
+    }],
+    "modelName": "RLP - Communication Materials",
+    "title": "Communication Materials",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "columns": [
+                    {
+                        "width": "25%",
+                        "source": "communicationMaterialType",
+                        "title": "Type of communication material published",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "25%",
+                        "source": "otherCommunicationMaterialType",
+                        "title": "Type of communication material published (if Other)",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "numberOfCommunicationMaterialsPublished",
+                        "title": "Number of communication materials published",
+                        "type": "number"
+                    },
+                    {
+                        "width": "35%",
+                        "source": "communicationMaterialPurpose",
+                        "title": "Purpose of communication material",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "communicationMaterials",
+                "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "source": "<i>Note: to upload a communication material refer to the documents tab.<\/i>",
+                    "type": "literal"
+                }]
+            }
+        ]
+    }]
+}

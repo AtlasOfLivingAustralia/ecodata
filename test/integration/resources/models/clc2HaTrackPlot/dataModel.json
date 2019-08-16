@@ -1,0 +1,618 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "organisationName",
+            "description": "The name of the ranger group (optional).",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the ranger group leader (mandatory).",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "additionalTrackers",
+            "description": "The names of other members of the tracker group (optional)."
+        },
+        {
+            "dataType": "text",
+            "name": "eventComments",
+            "dwcAttribute": "eventRemarks",
+            "description": "General comments about the tracking event."
+        },
+        {
+            "indexName": "surveyType",
+            "dataType": "text",
+            "name": "surveyType",
+            "description": "",
+            "constraints": [
+                "Trackplot 2ha 100m x 200m",
+                "Incidental",
+                "Road",
+                "KJ Mankarr Survey"
+            ]
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date of the tracking event.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time that the tracking started.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The time that the tracking finished."
+        },
+        {
+            "indexName": "habitatType",
+            "dataType": "text",
+            "name": "habitatType",
+            "description": "",
+            "constraints": [
+                "Sand dune",
+                "Sand plain",
+                "Laterite (red rocks)",
+                "Calcrete/Limestone rise",
+                "Rocky range",
+                "Creek line",
+                "Drainage line",
+                "Salt lake",
+                "Waterhole",
+                "Claypan",
+                "Other"
+            ]
+        },
+        {
+            "indexName": "siteChoice",
+            "dataType": "text",
+            "name": "siteChoice",
+            "description": "",
+            "constraints": [
+                "Targeted",
+                "Anywhere"
+            ]
+        },
+        {
+            "indexName": "disturbanceType",
+            "dataType": "text",
+            "name": "disturbance",
+            "description": "",
+            "constraints": [
+                "Wind",
+                "Rain",
+                "Car",
+                "No recent disturbance"
+            ]
+        },
+        {
+            "indexName": "fireHistory",
+            "dataType": "text",
+            "name": "fireHistory",
+            "description": "",
+            "constraints": [
+                "Recent fire",
+                "Fresh shoots and plants growing",
+                "Mature herbs with small grasses",
+                "Old enough to burn",
+                "Long unburnt"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "visibility",
+            "description": "",
+            "constraints": [
+                "Cloudy",
+                "Bright sun",
+                "Windy",
+                "Calm"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "surfaceTrackability",
+            "description": "",
+            "constraints": [
+                "Soft (lots of little tracks)",
+                "Bit hard for little animal tracks",
+                "Hard (only tracks of big animals)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "trackingSurfaceContinuity",
+            "description": "",
+            "constraints": [
+                "Lots of clear ground",
+                "Some clear ground",
+                "Little or no clear ground"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "locationImage",
+            "description": ""
+        },
+        {
+            "indexName": "countryName",
+            "dataType": "text",
+            "name": "countryName",
+            "description": ""
+        },
+        {
+            "indexName": "vegetationType",
+            "dataType": "text",
+            "name": "vegetationType",
+            "description": "",
+            "constraints": [
+                "Spinifex grassland",
+                "Open grassland",
+                "Buffel grassland",
+                "Shrubland",
+                "Open woodland",
+                "Dense woodland",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "foodPlants",
+            "description": "",
+            "constraints": [
+                "Grass seeds",
+                "Yakirra grass",
+                "Witchetty grub shrubs",
+                "Bush fruits",
+                "Bush onions",
+                "Yams and potatoes"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the animal (or tracks/evidence of) observed."
+                },
+                {
+                    "dataType": "text",
+                    "name": "typeOfSign",
+                    "description": "",
+                    "constraints": [
+                        "Animal",
+                        "Track",
+                        "Scat",
+                        "Burrow/Nest/Cave/Resting place",
+                        "Body part",
+                        "Digging",
+                        "Digging into roots for grubs",
+                        "Digging for ants/termites"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceAgeClass",
+                    "description": "",
+                    "constraints": [
+                        "Fresh (1-2days)",
+                        "Older (3 days to 1 week)",
+                        "Really old (> 1 week)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "ageClassOfAnimal",
+                    "description": "If it was a live animal, how old was it?",
+                    "constraints": [
+                        "Big adult",
+                        "Small adult",
+                        "Young"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "imageOfSign",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "observationLatitude",
+                    "description": "Location of sign - Latitude."
+                },
+                {
+                    "dataType": "number",
+                    "name": "observationLongitude",
+                    "description": "Location of sign - Longitude."
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingEvidenceTable"
+        }
+    ],
+    "modelName": "CLC_2-haTrackPlot",
+    "record": "true",
+    "viewModel": [
+        {
+            "boxed": true,
+            "title": "Trackers",
+            "type": "section",
+            "items": [
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Organisation name",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "organisationName",
+                        "preLabelClass": "span4",
+                        "type": "text"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Lead Tracker",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "recordedBy",
+                        "preLabelClass": "span4",
+                        "type": "text"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Other tracker names",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "additionalTrackers",
+                        "preLabelClass": "span4",
+                        "type": "textarea"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Comments",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "eventComments",
+                        "preLabelClass": "span4",
+                        "type": "textarea"
+                    }],
+                    "class": ""
+                }
+            ],
+            "class": ""
+        },
+        {
+            "boxed": true,
+            "title": "Map",
+            "type": "section",
+            "items": [
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Survey type",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "surveyType",
+                        "preLabelClass": "span4",
+                        "type": "selectOne"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Site choice",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "siteChoice",
+                        "preLabelClass": "span4",
+                        "type": "selectOne"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "computed": null,
+                        "type": "row",
+                        "items": [{
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": false,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": false
+                        }]
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Tracking event date",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "surveyDate",
+                        "preLabelClass": "span4",
+                        "type": "date"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Tracking event start time",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "surveyStartTime",
+                        "preLabelClass": "span4",
+                        "type": "time"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Tracking event finish time",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "surveyFinishTime",
+                        "preLabelClass": "span4",
+                        "type": "time"
+                    }],
+                    "class": ""
+                }
+            ],
+            "class": ""
+        },
+        {
+            "boxed": true,
+            "title": "Country",
+            "type": "section",
+            "items": [
+                {
+                    "type": "row",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "Country name",
+                                "inline": true,
+                                "dataClass": "span8",
+                                "source": "countryName",
+                                "preLabelClass": "span4",
+                                "type": "text"
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "preLabel": "Country type",
+                            "inline": true,
+                            "dataClass": "span8",
+                            "source": "habitatType",
+                            "preLabelClass": "span4",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Country photo ",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "locationImage",
+                        "preLabelClass": "span4",
+                        "type": "image"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Vegetation type",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "vegetationType",
+                        "preLabelClass": "span4",
+                        "type": "selectOne"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "Food plants",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "foodPlants",
+                        "type": "selectMany"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "preLabel": "How long since fire?",
+                        "inline": true,
+                        "dataClass": "span8",
+                        "source": "fireHistory",
+                        "preLabelClass": "span4",
+                        "type": "selectOne"
+                    }],
+                    "class": ""
+                },
+                {
+                    "type": "row",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Trackability",
+                        "type": "section",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "How much clear ground for tracking?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "trackingSurfaceContinuity",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Have tracks been disturbed?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "disturbance",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "How soft is the ground for leaving tracks?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "surfaceTrackability",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            },
+                            {
+                                "type": "row",
+                                "items": [{
+                                    "preLabel": "Weather?",
+                                    "inline": true,
+                                    "dataClass": "span8",
+                                    "source": "visibility",
+                                    "preLabelClass": "span4",
+                                    "type": "selectOne"
+                                }],
+                                "class": ""
+                            }
+                        ],
+                        "class": ""
+                    }],
+                    "class": ""
+                }
+            ],
+            "class": ""
+        },
+        {
+            "boxed": true,
+            "title": "Animals",
+            "type": "section",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
+                "columns": [
+                    {
+                        "width": "20%",
+                        "source": "species",
+                        "title": "What animal did you see?",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "typeOfSign",
+                        "title": "What sign did you see?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "evidenceAgeClass",
+                        "title": "How old is the sign?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "ageClassOfAnimal",
+                        "title": "How old is the animal?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "imageOfSign",
+                        "title": "Photo of sign/animal",
+                        "type": "image"
+                    },
+                    {
+                        "width": "10%",
+                        "noEdit": "true",
+                        "source": "observationLatitude",
+                        "title": "Latitude of sign",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "noEdit": "true",
+                        "source": "observationLongitude",
+                        "title": "Longitude of sign",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "sightingEvidenceTable",
+                "type": "table"
+            }],
+            "class": ""
+        }
+    ]
+}

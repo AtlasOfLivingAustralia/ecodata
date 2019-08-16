@@ -1,14 +1,17 @@
 package au.org.ala.ecodata
 
+import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.web.ControllerUnitTestMixin
 import org.junit.Before
+
 /**
  * Tests the ElasticSearchService
  */
 @TestFor(ElasticSearchService)
 @TestMixin(ControllerUnitTestMixin) // Used to register JSON converters.
+@Mock(ActivityForm)
 class ElasticSearchServiceTests{
 
     private static final String PROGRAM_1 = "Program1"

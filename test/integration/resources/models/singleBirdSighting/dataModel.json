@@ -1,0 +1,436 @@
+{
+    "class": "",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who lead the survey event.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the transect survey was done.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the transect survey was done."
+        },
+        {
+            "dataType": "text",
+            "name": "airTemperatureInRelativeQuadScaleClasses",
+            "description": "",
+            "constraints": [
+                "1 (cold)",
+                "2",
+                "3",
+                "4 (hot)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cloudCoverInRelativeQuadScaleClasses",
+            "description": "",
+            "constraints": [
+                "1 (clear)",
+                "2",
+                "3",
+                "4 (overcast)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "windSpeedInRelativeQuadScaleClasses",
+            "description": "",
+            "constraints": [
+                "1 (none)",
+                "2",
+                "3",
+                "4 (strong)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "dwcAttribute": "notes",
+            "description": "Moderator comments about the record."
+        },
+        {
+            "dataType": "text",
+            "name": "transectName",
+            "description": "A unique local name or identifier for the transect. Allows for different transects to be differentiated from each other.",
+            "validate": "required"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "scientificName",
+            "dwcAttribute": "scientificName",
+            "description": ""
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "description": "Count of the total number of superb parrots seen in the quadrant.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationQualifier",
+            "description": "",
+            "constraints": [
+                "Confident",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "countMales",
+            "description": ""
+        },
+        {
+            "dataType": "number",
+            "name": "countFemales",
+            "description": ""
+        },
+        {
+            "dataType": "number",
+            "name": "countJuveniles",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "behaviour",
+            "description": "What were the birds doing when you saw them?",
+            "constraints": [
+                "Flying,On the ground",
+                "In low bushes",
+                "In a patch of trees",
+                "In a living isolated tree",
+                "In a dead isolated tree"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "flightHeightInCategory",
+            "description": "The height at which observed birds were flying",
+            "constraints": [
+                "Lower than the tallest trees",
+                "Just above the tallest trees",
+                "More than twice the height of the tallest trees"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+        }
+    ],
+    "modelName": "1000m_transect_8_quadrat_BirdSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Add a Single Sighting<\/h1>Use this form to record incidental sightings of the target bird species.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "What did you see?",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Species",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "noEdit": true,
+                                        "source": "species",
+                                        "preLabelClass": "span4",
+                                        "type": "autocomplete"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Are you confident they were superb parrots?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "identificationQualifier",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How many birds did you see?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "individualCount",
+                                        "preLabelClass": "span4",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How many males?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "countMales",
+                                        "preLabelClass": "span4",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How many females?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "countFemales",
+                                        "preLabelClass": "span4",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "How many juveniles?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "countJuveniles",
+                                        "preLabelClass": "span4",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Where did you see them?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "behaviour",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "(If seen flying) How high were they flying?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "flightHeightInCategory",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Photo",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "sightingPhoto",
+                                        "preLabelClass": "span4",
+                                        "type": "image"
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Other Information",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Survey leader name",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "recordedBy",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Date",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyDate",
+                                        "preLabelClass": "span4",
+                                        "type": "date"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Time",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyStartTime",
+                                        "preLabelClass": "span4",
+                                        "type": "time"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Temperature",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "airTemperatureInRelativeQuadScaleClasses",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Cloud",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "cloudCoverInRelativeQuadScaleClasses",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Wind",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "windSpeedInRelativeQuadScaleClasses",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Notes",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "eventRemarks",
+                                        "preLabelClass": "span4",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Moderator comments",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "comments",
+                                        "preLabelClass": "span4",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ],
+                    "class": ""
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": true,
+                                "readonly": true,
+                                "includeSource": false,
+                                "includeAccuracy": false,
+                                "hideSiteSelection": false,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                }
+            ]
+        }
+    ]
+}

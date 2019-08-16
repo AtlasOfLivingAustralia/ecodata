@@ -39,7 +39,7 @@
                 "description": "",
                 "behaviour": [{
                     "condition": "managementPlanType == \"Other\"",
-                    "type": "enable"
+                    "type": "visible"
                 }],
                 "validate": "required,maxSize[300]"
             },
@@ -53,29 +53,102 @@
                 "name": "sitesCoveredByPlan"
             },
             {
-                "unit": "ha",
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "$geom.areaHa(sitesCoveredByPlan)"
+                },
+                "units": "ha",
+                "dataType": "number",
+                "name": "calculatedAreaHa"
+            },
+            {
+                "dataType": "document",
+                "name": "extraMappingDetails",
+                "validate": "required",
+                "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
+                "behaviour": [
+                    {
+                        "condition": "not within(areaCoveredByPlanHa, calculatedAreaHa, 0.1) or (roundTo(areaCoveredByPlanHa, 2) != roundTo(areaInvoicedHa, 2))",
+                        "type": "visible"
+                    }
+                ]
+            },
+            {
+                "units": "ha",
                 "defaultValue": {
                     "type": "computed",
                     "expression": "$geom.areaHa(sitesCoveredByPlan)"
                 },
                 "dataType": "number",
                 "name": "areaCoveredByPlanHa",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "text",
+                "name": "mappingNotAlignedReason",
+                "constraints": [
+                    "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                    "Other"
+                ],
+                "validate": "required",
+                "behaviour": [
+                    {
+                        "condition": "not within(areaCoveredByPlanHa, calculatedAreaHa, 0.1)",
+                        "type": "visible"
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "mappingNotAlignedComments",
+                "validate": "required,maxSize[300]",
+                "behaviour": [
+                    {
+                        "type": "visible",
+                        "condition": "\"Other\" == mappingNotAlignedReason"
+                    }]
+            },
+            {
+                "dataType": "number",
+                "units": "ha",
+                "name": "areaInvoicedHa",
                 "validate": [
                     {
-                        "rule": "min",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(sitesCoveredByPlan)*0.9"
-                        }
+                        "rule": "min[0]"
                     },
                     {
                         "rule": "max",
                         "param": {
                             "type": "computed",
-                            "expression": "$geom.areaHa(sitesCoveredByPlan)*1.1"
+                            "expression": "areaCoveredByPlanHa"
                         }
                     }
                 ]
+            },
+            {
+                "dataType": "text",
+                "name": "invoicedNotActualReason",
+                "constraints": [
+                    "Work was undertaken over a greater area than will be invoiced for",
+                    "Other"
+                ],
+                "validate": "required",
+                "behaviour": [
+                    {
+                        "condition": "roundTo(areaCoveredByPlanHa, 2) != roundTo(areaInvoicedHa, 2)",
+                        "type": "visible"
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "invoicedNotActualComments",
+                "behaviour": [
+                    {
+                        "type": "visible",
+                        "condition": "\"Other\" == invoicedNotActualReason"
+                    }],
+                "validate": "required,maxSize[300]"
             },
             {
                 "dataType": "text",
@@ -100,37 +173,145 @@
                     "type": "selectOne"
                 },
                 {
-                    "width": "18%",
-                    "source": "managementPlanType",
+                    "type": "col",
+                    "items": [
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "source": "managementPlanType",
+                                    "type": "select2"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "source": "otherManagementPlanType",
+                                    "placeholder": "Type of plan (if Other)",
+                                    "type": "textarea"
+                                }
+                            ]
+
+                        }
+                    ],
                     "title": "Type of plan",
-                    "type": "select2"
+                    "width": "20%"
+
                 },
                 {
-                    "width": "15%",
-                    "source": "otherManagementPlanType",
-                    "title": "Type of plan (if Other)",
-                    "type": "textarea"
-                },
-                {
-                    "width": "8%",
+                    "width": "6%",
                     "source": "numberOfPlansDeveloped",
                     "title": "Number of plans developed",
                     "type": "number"
                 },
                 {
-                    "width": "8%",
-                    "source": "sitesCoveredByPlan",
-                    "title": "Sites/s covered by plan/s",
-                    "type": "feature"
+                    "type": "col",
+                    "items": [
+                        {
+                            "type": "feature",
+                            "source": "sitesCoveredByPlan"
+                        },
+                        {
+                            "source": "calculatedAreaHa",
+                            "type": "number",
+                            "readonly": "readonly",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "preLabel": "Please attach mapping details",
+                                    "source": "extraMappingDetails",
+                                    "type": "document"
+                                }
+                            ]
+                        }
+                    ],
+                    "width": "10%",
+                    "title": "Sites/s covered by plan/s"
                 },
                 {
-                    "width": "8%",
-                    "source": "areaCoveredByPlanHa",
-                    "title": "Area (ha) covered by plan/s",
-                    "type": "number"
+                    "width": "17%",
+                    "title": "Actual area (ha) covered by plan/s",
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "areaCoveredByPlanHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "preLabel": "Reason for actual being different to mapped amount",
+                                    "source": "mappingNotAlignedReason",
+                                    "type": "selectOne"
+
+                                }
+                            ]
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                    "source": "mappingNotAlignedComments",
+                                    "type": "textarea",
+                                    "rows": 5
+                                }
+
+                            ]
+                        }
+                    ]
                 },
                 {
-                    "width": "33%",
+                    "width": "17%",
+                    "type": "col",
+                    "title": "Invoiced area (ha) covered by the plan",
+                    "helpText": "Enter the amount you will invoice for during this reporting period.",
+                    "items": [
+                        {
+                            "source": "areaInvoicedHa",
+                            "type": "number",
+                            "displayOptions": {
+                                "displayUnits": true
+                            }
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "preLabel": "Reason for invoiced amount being different to actual amount",
+                                    "source": "invoicedNotActualReason",
+                                    "type": "selectOne"
+
+                                }
+                            ]
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                    "source": "invoicedNotActualComments",
+                                    "type": "textarea",
+                                    "rows": 5
+
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "width": "20%",
                     "source": "speciesOrTECCoveredByPlan",
                     "type": "textarea",
                     "title": "Species and/or Threatened ecological communities covered in plan"

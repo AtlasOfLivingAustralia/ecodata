@@ -1,0 +1,261 @@
+{
+    "dataModel": [
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "description": "The name of the person who made the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species of animal, if you can identify it.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individual animals killed at this location."
+        },
+        {
+            "dataType": "text",
+            "name": "lifeStatus",
+            "dwcAttribute": "",
+            "description": "",
+            "constraints": [
+                "Alive",
+                "Dead",
+                "Not sure"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "strikeByVehicle",
+            "description": "Was the animal struck by a vehicle?",
+            "constraints": [
+                "Yes",
+                "No",
+                "Not sure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "observationType",
+            "description": "Please indicate if you witnessed the incident.",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "behaviour",
+            "description": "If it was alive, what was the injured animal doing when you saw it?",
+            "constraints": [
+                "Attempting to flee - active/mobile",
+                "Stunned or dazed - standing or sitting",
+                "Unable to move - lying prone",
+                "Not applicable"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "lifeStage",
+            "description": "How old was the animal that was struck by a vehicle?.",
+            "constraints": [
+                "Adult",
+                "Juvenile",
+                "Adult with young"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "sex",
+            "description": "If it is possible to determine the sex of the animal, please indicate.",
+            "constraints": [
+                "Male",
+                "Female",
+                "Not sure"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "image",
+            "description": "Please attach an image of the animal.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observationRemarks",
+            "dwcAttribute": "observationRemarks",
+            "description": "General notes and comments about the observation, including any obvious injuries, local conditions, etc. If it is dead, what condition is it in?"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "streetAddress",
+            "description": "The street address at which the animal was found or the incident occurred.",
+            "validate": "required"
+        }
+    ],
+    "modelName": "genericFaunaRoadStrikeSurvey",
+    "record": true,
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Fauna Road Strike Survey<\/h1>This form is intended to be used to record sightings of animals which have been killed or injured as a result of road vehicle strikes.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Observation Details",
+                        "type": "section",
+                        "items": [
+                            {
+                                "preLabel": "Photo of animal",
+                                "computed": null,
+                                "source": "image",
+                                "type": "image"
+                            },
+                            {
+                                "preLabel": "Date sighted",
+                                "computed": null,
+                                "source": "eventDate",
+                                "type": "date"
+                            },
+                            {
+                                "preLabel": "Observer name",
+                                "computed": null,
+                                "source": "recordedBy",
+                                "type": "text"
+                            },
+                            {
+                                "preLabel": "Please indicate the species if you can identify it",
+                                "computed": null,
+                                "source": "species",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "preLabel": "Number of individuals",
+                                "computed": null,
+                                "source": "individualCount",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "What was the life stage of the animal?",
+                                "computed": null,
+                                "source": "lifeStage",
+                                "type": "selectMany"
+                            },
+                            {
+                                "preLabel": "Was the animal dead or injured?",
+                                "computed": null,
+                                "source": "lifeStatus",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "If it is possible to identify, what was the sex of the animal?",
+                                "computed": null,
+                                "source": "sex",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "If on/near a road, did it appear to have been hit by a vehicle?",
+                                "computed": null,
+                                "source": "strikeByVehicle",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "If the animal was alive when you saw it, what was it doing?",
+                                "computed": null,
+                                "source": "behaviour",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Comments",
+                                "computed": null,
+                                "source": "observationRemarks",
+                                "type": "textarea"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [
+                            {
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": false,
+                                "readonly": true,
+                                "includeSource": false,
+                                "includeAccuracy": false,
+                                "hideSiteSelection": true,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            },
+                            {
+                                "preLabel": "Street address of observation",
+                                "computed": null,
+                                "source": "streetAddress",
+                                "type": "text"
+                            }
+                        ],
+                        "class": ""
+                    }]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,179 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "clearedSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(clearedSites)"
+                    },
+                    "dataType": "number",
+                    "name": "debrisRemovedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(clearedSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(clearedSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(clearedSites)"
+                    },
+                    "dataType": "number",
+                    "name": "debrisRemovedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(clearedSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(clearedSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "debrisType",
+                    "description": "",
+                    "constraints": [
+                        "Building & Industrial waste",
+                        "Domestic waste",
+                        "Green waste",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherDebrisType",
+                    "description": "",
+                    "behaviour": [{
+                        "condition": "debrisType == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required,maxSize[300]"
+                },
+                {
+                    "validated": "required,min[0]",
+                    "dataType": "number",
+                    "name": "weightOfDebrisTonnes",
+                    "units": "tonnes"
+                },
+                {
+                    "validated": "required,min[0]",
+                    "dataType": "number",
+                    "name": "volumeRemovedM3",
+                    "units": "m3"
+                }
+            ],
+            "dataType": "list",
+            "name": "debrisRemovalDetails"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
+        }
+    ],
+    "modelName": "RLP - Debris removal",
+    "title": "Debris removal",
+    "viewModel": [{
+        "type": "section",
+        "items": [
+            {
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "initialOrFollowup",
+                        "title": "Initial or follow-up activity?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "clearedSites",
+                        "title": "Site/s where debris removal was implemented",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "debrisRemovedHa",
+                        "title": "Area (ha) covered by debris removal",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "debrisRemovedKm",
+                        "title": "Length (km) covered by debris removal",
+                        "type": "number"
+                    },
+                    {
+                        "width": "25%",
+                        "source": "debrisType",
+                        "title": "Type of debris removed",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "25%",
+                        "source": "otherDebrisType",
+                        "title": "Type of debris removed (if Other)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "weightOfDebrisTonnes",
+                        "title": "Weight (tonnes) of debris removed",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "volumeRemovedM3",
+                        "title": "Volume (m3) of debris removed",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "debrisRemovalDetails",
+                "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
+            }
+        ]
+    }]
+}

@@ -1,0 +1,276 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who made the sighting.",
+            "readOnly": "true",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyNumber",
+            "description": "The title or number allocated for the survey event (if applicable)."
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The species name of the plant, animal or fungus observed. Click on the 'i' for information about the selected species.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "1",
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individuals or colonies (for certain insects).",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationConfidence",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "observationType",
+            "description": "The type of observation.",
+            "constraints": [
+                "SE - Seen",
+                "RK - Road Kill",
+                "OB - Observed",
+                "HA - Harp Trap",
+                "HE - Heard",
+                "INC - Incidental",
+                "AS - Active Search",
+                "CA - Cage Trap",
+                "CT - Camera Trap",
+                "EL - Elliot Trap",
+                "FU - Funnel Trap",
+                "PI - Pitfall Trap"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "capeYorkIncidentalSightings",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Cape York Incidental Sightings<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Observation Details",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Species name",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "species",
+                                        "preLabelClass": "span4",
+                                        "type": "speciesSearchWithImagePreview"
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Are you confident of the species identification?",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "identificationConfidence",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "No. of individuals",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "individualCount",
+                                        "preLabelClass": "span4",
+                                        "type": "number"
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Observation type",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "observationType",
+                                        "preLabelClass": "span4",
+                                        "type": "selectOne"
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
+                                        "computed": null,
+                                        "source": "sightingPhoto",
+                                        "type": "image"
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Other Information",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Survey Number",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyNumber",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Date",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "surveyDate",
+                                        "preLabelClass": "span4",
+                                        "type": "date"
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Comments",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "source": "notes",
+                                        "preLabelClass": "span4",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }]
+                                },
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "preLabel": "Recorded by",
+                                        "inline": true,
+                                        "computed": null,
+                                        "dataClass": "span8",
+                                        "readOnly": true,
+                                        "source": "recordedBy",
+                                        "preLabelClass": "span4",
+                                        "type": "text"
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "boxed": true,
+                        "title": "Location",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "includeNotes": false,
+                                "orientation": "vertical",
+                                "computed": null,
+                                "autoLocalitySearch": false,
+                                "readonly": false,
+                                "includeSource": false,
+                                "includeAccuracy": true,
+                                "hideSiteSelection": true,
+                                "source": "location",
+                                "type": "geoMap",
+                                "includeLocality": false
+                            }]
+                        }],
+                        "class": ""
+                    }]
+                }
+            ]
+        }
+    ]
+}

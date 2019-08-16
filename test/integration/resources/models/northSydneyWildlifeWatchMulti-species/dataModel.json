@@ -1,0 +1,204 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the sighing, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Locality"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "habitatZone",
+            "description": "The habitat zone in which the sighting was made. See the 'North Sydney Wildlife Watch Habitat Zones' document under the 'Resources' tab.",
+            "constraints": [
+                "** Need a list of zones **",
+                ""
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "kingdom",
+                    "constraints": [
+                        "FA - fauna",
+                        "FL - flora"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species name of the plant, animal or fungus observed. Start typing a common or scientific name. Choose 'Unknown' if you don't know.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals or colonies (for certain insects).",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence",
+                    "dwcAttribute": "identificationQualifier",
+                    "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesSightings"
+        },
+        {
+            "dataType": "text",
+            "name": "piSaringAgreement",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        }
+    ],
+    "modelName": "northSydneyWildlifeWatch_multiSpecies",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Date of the survey",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "North Sydney Wildlife Watch habitat zone",
+                            "source": "habitatZone",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "computed": null,
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Do you agree to ALA sharing your contact details with the project organiser for the purposes of record verification?",
+                            "computed": null,
+                            "source": "piSaringAgreement",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<font-size='0.8em'><i>Zoom in on the map, then click on the marker and drop it on the location where you made the sighting. Change the base map to show the satellite image.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": true
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "columns": [
+                    {
+                        "source": "species",
+                        "title": "Species name",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "source": "kingdom",
+                        "title": "Plant/animal",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "identificationConfidence",
+                        "title": "Are you confident of the species identification?",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "individualCount",
+                        "title": "How many individuals did you see?",
+                        "type": "number"
+                    },
+                    {
+                        "source": "sightingPhoto",
+                        "title": "Sighting photo",
+                        "type": "image"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "speciesSightings",
+                "type": "table",
+                "class": "output-section"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

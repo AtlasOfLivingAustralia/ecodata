@@ -1,0 +1,215 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "initialOrFollowup",
+                "constraints": [
+                    "Initial",
+                    "Follow-up"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "feature",
+                "name": "sitesOfAugmentation"
+            },
+            {
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "$geom.areaHa(sitesOfAugmentation)"
+                },
+                "dataType": "number",
+                "name": "areaAugmentedHa",
+                "validate": [
+                    {
+                        "rule": "min",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesOfAugmentation)*0.9"
+                        }
+                    },
+                    {
+                        "rule": "max",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesOfAugmentation)*1.1"
+                        }
+                    }
+                ]
+            },
+            {
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "$geom.lengthKm(sitesOfAugmentation)"
+                },
+                "dataType": "number",
+                "name": "lengthAugmentedKm",
+                "validate": [
+                    {
+                        "rule": "min",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.lengthKm(sitesOfAugmentation)*0.9"
+                        }
+                    },
+                    {
+                        "rule": "max",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.lengthKm(sitesOfAugmentation)*1.1"
+                        }
+                    }
+                ]
+            },
+            {
+                "dataType": "number",
+                "name": "numberOfStructuresInstalled",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "text",
+                "name": "habitatAugmentationType",
+                "description": "",
+                "constraints": [
+                    "Artificial fauna movement devices",
+                    "Artificial nesting or roosting habitat (incl. tiles, fence posts)",
+                    "Environmental thinning",
+                    "Improving fish passage",
+                    "Natural features (rocks, logs)",
+                    "Other"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "text",
+                "name": "otherHabitatAugmentationType",
+                "description": "Please specify the habitat augmentation type if Other (specify in notes) was selected in the Type of habitat augmentation column.",
+                "behaviour": [{
+                    "condition": "habitatAugmentationType == \"Other\"",
+                    "type": "enable"
+                }],
+                "validate": "required,maxSize[100]"
+            },
+            {
+                "dataType": "text",
+                "name": "habitatAugmentationObjective",
+                "description": "",
+                "validate": "required,maxSize[300]"
+            },
+            {
+                "dataType": "feature",
+                "name": "sitesBenefittedByHabitatAugmentation"
+            },
+            {
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "$geom.areaHa(sitesBenefittedByHabitatAugmentation)"
+                },
+                "dataType": "number",
+                "name": "areaBenefittedByHabitatAugmentationHa",
+                "validate": [
+                    {
+                        "rule": "min",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesBenefittedByHabitatAugmentation)*0.9"
+                        }
+                    },
+                    {
+                        "rule": "max",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesBenefittedByHabitatAugmentation)*1.1"
+                        }
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "evidenceOfBenefit",
+                "validate": "maxSize[300]"
+            }
+        ],
+        "dataType": "list",
+        "name": "habitatAugmentationDetails"
+    }],
+    "modelName": "RLP - Habitat augmentation",
+    "title": "Habitat augmentation",
+    "viewModel": [{
+        "type": "section",
+        "items": [{
+            "columns": [
+                {
+                    "width": "10%",
+                    "source": "initialOrFollowup",
+                    "title": "Initial or follow-up control?",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "5%",
+                    "source": "sitesOfAugmentation",
+                    "type": "feature",
+                    "title": "Site/s of habitat augmentation"
+                },
+                {
+                    "width": "5%",
+                    "source": "areaAugmentedHa",
+                    "type": "number",
+                    "title": "Area (ha) of augmentation"
+                },
+                {
+                    "width": "5%",
+                    "source": "lengthAugmentedKm",
+                    "type": "number",
+                    "title": "Length (km) of augmentation"
+                },
+                {
+                    "width": "5%",
+                    "source": "numberOfStructuresInstalled",
+                    "type": "number",
+                    "title": "Number of structures installed"
+                },
+                {
+                    "width": "15%",
+                    "source": "habitatAugmentationType",
+                    "title": "Type of habitat augmentation / installed",
+                    "type": "select2"
+                },
+                {
+                    "width": "15%",
+                    "source": "otherHabitatAugmentationType",
+                    "title": "Type of habitat augmentation (if Other)",
+                    "type": "text"
+                },
+                {
+                    "width": "15%",
+                    "source": "habitatAugmentationObjective",
+                    "title": "Purpose of habitat augmentation",
+                    "type": "textarea"
+                },
+                {
+                    "width": "5%",
+                    "source": "sitesBenefittedByHabitatAugmentation",
+                    "title": "Please map any off-site area/s if they benefitted from this habitat augmentation",
+                    "type": "feature"
+                },
+                {
+                    "width": "5%",
+                    "source": "areaBenefittedByHabitatAugmentationHa",
+                    "title": "Area (ha) benefitted by habitat augmentation",
+                    "type": "number"
+                },
+                {
+                    "width": "15%",
+                    "source": "evidenceOfBenefit",
+                    "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "habitatAugmentationDetails",
+            "type": "table"
+        }]
+    }]
+}

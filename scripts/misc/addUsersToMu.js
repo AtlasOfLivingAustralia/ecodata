@@ -1,6 +1,6 @@
-var userIds = ['6065', '6360', '29926', '7420', '6942', '8138'];
+var userIds = ['1493'];
 
-var rlp = db.program.find({name:'Regional Landcare Program'}).next();
+var rlp = db.program.find({name:'Regional Land Partnerships'}).next();
 var mus = db.program.find({parent:rlp._id});
 while (mus.hasNext()) {
     var mu = mus.next();

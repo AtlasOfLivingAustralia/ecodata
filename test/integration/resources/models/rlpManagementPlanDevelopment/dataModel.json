@@ -1,0 +1,144 @@
+{
+    "dataModel": [{
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "newOrRevised",
+                "description": "",
+                "constraints": [
+                    "New plan",
+                    "Revised plan"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "text",
+                "name": "managementPlanType",
+                "description": "",
+                "constraints": [
+                    "Fire management plan",
+                    "Catchment plan",
+                    "Farm management plan",
+                    "Implementation works design",
+                    "Marine protection plan",
+                    "Project arrangements and governance",
+                    "Project plan",
+                    "Ramsar management plan",
+                    "Recovery plan",
+                    "Regional plan",
+                    "Resource management plan",
+                    "Site development plan",
+                    "Site management plan",
+                    "Other"
+                ],
+                "validate": "required"
+            },
+            {
+                "dataType": "text",
+                "name": "otherManagementPlanType",
+                "description": "",
+                "behaviour": [{
+                    "condition": "managementPlanType == \"Other\"",
+                    "type": "enable"
+                }],
+                "validate": "required,maxSize[300]"
+            },
+            {
+                "dataType": "number",
+                "name": "numberOfPlansDeveloped",
+                "validate": "required,min[0]"
+            },
+            {
+                "dataType": "feature",
+                "name": "sitesCoveredByPlan"
+            },
+            {
+                "unit": "ha",
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "$geom.areaHa(sitesCoveredByPlan)"
+                },
+                "dataType": "number",
+                "name": "areaCoveredByPlanHa",
+                "validate": [
+                    {
+                        "rule": "min",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesCoveredByPlan)*0.9"
+                        }
+                    },
+                    {
+                        "rule": "max",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesCoveredByPlan)*1.1"
+                        }
+                    }
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "speciesOrTECCoveredByPlan",
+                "description": "This free text field allows multiple species and/or TECs to be entered. For Species: Use Scientific names with (common name in brackets), TECs should be written as listed in EPBC. Species or TECs should be separated by commas.",
+                "validate": "required,maxSize[300]"
+            }
+        ],
+        "dataType": "list",
+        "name": "managementPlans"
+    }],
+    "modelName": "RLP - Management plan development",
+    "title": "Developing farm / project / site management plan",
+    "viewModel": [{
+        "type": "section",
+        "items": [{
+            "columns": [
+                {
+                    "width": "10%",
+                    "source": "newOrRevised",
+                    "title": "Are these plans new or revised?",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "18%",
+                    "source": "managementPlanType",
+                    "title": "Type of plan",
+                    "type": "select2"
+                },
+                {
+                    "width": "15%",
+                    "source": "otherManagementPlanType",
+                    "title": "Type of plan (if Other)",
+                    "type": "textarea"
+                },
+                {
+                    "width": "8%",
+                    "source": "numberOfPlansDeveloped",
+                    "title": "Number of plans developed",
+                    "type": "number"
+                },
+                {
+                    "width": "8%",
+                    "source": "sitesCoveredByPlan",
+                    "title": "Sites/s covered by plan/s",
+                    "type": "feature"
+                },
+                {
+                    "width": "8%",
+                    "source": "areaCoveredByPlanHa",
+                    "title": "Area (ha) covered by plan/s",
+                    "type": "number"
+                },
+                {
+                    "width": "33%",
+                    "source": "speciesOrTECCoveredByPlan",
+                    "type": "textarea",
+                    "title": "Species and/or Threatened ecological communities covered in plan"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "managementPlans",
+            "type": "table"
+        }]
+    }]
+}

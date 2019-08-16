@@ -1,0 +1,361 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that the survey was undertaken",
+            "validate": "required,past[now]"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time of the day that the survey was undertaken",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person or group undertaking the sampling event",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The name of the turtle species observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "identificationQualifier",
+            "dwcAttribute": "identificationQualifier",
+            "description": "",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "name": "observationEvidence",
+            "description": "",
+            "constraints": [
+                "Adult present",
+                "Tracks",
+                "Nest",
+                "Hatchlings",
+                "No evidence"
+            ],
+            "validate": "required"
+        },
+        {
+            "defaultValue": null,
+            "dataType": "number",
+            "name": "individualCount",
+            "description": "Count of the number of individual turtles seen. Please enter a zero if there was no evidence of turtles on this survey.",
+            "validate": "required,integer,min[0]"
+        },
+        {
+            "indexName": "typeOfThreat",
+            "dataType": "stringList",
+            "name": "typeOfThreat",
+            "description": "The threat(s) observed near the evidence of turtles.",
+            "constraints": [
+                "Human impacts - 4WD",
+                "Human impacts - campfires",
+                "Human impacts - rubbish",
+                "Human impacts - light impacts",
+                "Predation - fox",
+                "Predation - pigs",
+                "Predation - wild dog",
+                "Predation - goanna",
+                "Natural impacts - wave innundation",
+                "Natural impacts - extreme weather"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "fieldNotes",
+            "dwcAttribute": "fieldNotes",
+            "description": "General comments."
+        },
+        {
+            "dataType": "image",
+            "name": "observationPhoto",
+            "description": "Attach a photo(s) of the turtle(s), predator(s) and/or threats observed.",
+            "validate": "required"
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        }
+    ],
+    "modelName": "fitzroyTurtleMonitoring",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h2>Turtle Monitoring Survey<\/h2>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "boxed": true,
+                            "title": "Survey Information",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [
+                                        {
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "Survey date",
+                                                "source": "surveyDate",
+                                                "type": "date"
+                                            }]
+                                        },
+                                        {
+                                            "type": "col",
+                                            "items": [{
+                                                "preLabel": "Survey time",
+                                                "source": "surveyTime",
+                                                "type": "time"
+                                            }]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "Recorded by",
+                                            "source": "recordedBy",
+                                            "type": "text"
+                                        }]
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        },
+                        {
+                            "boxed": true,
+                            "title": "Marine Turtle Sighting",
+                            "type": "section",
+                            "items": [{
+                                "computed": null,
+                                "type": "row",
+                                "items": [{
+                                    "type": "col",
+                                    "items": [
+                                        {
+                                            "computed": null,
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Species",
+                                                    "source": "species",
+                                                    "type": "speciesSelect"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "computed": null,
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Confidence in species identification",
+                                                    "source": "identificationQualifier",
+                                                    "type": "selectOne"
+                                                }]
+                                            }]
+                                        },
+                                        {
+                                            "computed": null,
+                                            "type": "row",
+                                            "items": [
+                                                {
+                                                    "type": "col",
+                                                    "items": [{
+                                                        "preLabel": "Evidence of sighting",
+                                                        "source": "observationEvidence",
+                                                        "type": "selectMany"
+                                                    }]
+                                                },
+                                                {
+                                                    "type": "col",
+                                                    "items": [{
+                                                        "preLabel": "How many did you see?",
+                                                        "source": "individualCount",
+                                                        "type": "number"
+                                                    }]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }]
+                            }],
+                            "class": ""
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "Threats",
+                                "type": "section",
+                                "items": [{
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "computed": null,
+                                            "type": "row",
+                                            "items": [{
+                                                "type": "col",
+                                                "items": [{
+                                                    "preLabel": "Threats observed",
+                                                    "source": "typeOfThreat",
+                                                    "type": "selectMany"
+                                                }]
+                                            }]
+                                        }]
+                                    }]
+                                }],
+                                "class": ""
+                            }]
+                        },
+                        {
+                            "type": "row",
+                            "items": [{
+                                "boxed": true,
+                                "title": "Photographic Evidence",
+                                "type": "section",
+                                "items": [{
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [
+                                            {
+                                                "computed": null,
+                                                "type": "row",
+                                                "items": [{
+                                                    "type": "col",
+                                                    "items": [{
+                                                        "source": "<font style='color:blue; font-size:1em;'>Please attach photographic evidence of your observations. <b>Include both species and threats evidence.<\/b> For a species absence record, please attach a photo of the location, such as beach access number (eg. EP15)<\/font>",
+                                                        "type": "literal"
+                                                    }]
+                                                }]
+                                            },
+                                            {
+                                                "computed": null,
+                                                "type": "row",
+                                                "items": [{
+                                                    "type": "col",
+                                                    "items": [{
+                                                        "preLabel": "Observation photo(s)",
+                                                        "source": "observationPhoto",
+                                                        "type": "image"
+                                                    }]
+                                                }]
+                                            }
+                                        ]
+                                    }]
+                                }],
+                                "class": ""
+                            }]
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "type": "row",
+                        "items": [{
+                            "boxed": true,
+                            "title": "Location",
+                            "type": "section",
+                            "items": [
+                                {
+                                    "type": "row",
+                                    "items": [{
+                                        "includeNotes": false,
+                                        "orientation": "vertical",
+                                        "computed": null,
+                                        "autoLocalitySearch": false,
+                                        "readonly": true,
+                                        "includeSource": false,
+                                        "includeAccuracy": false,
+                                        "hideSiteSelection": true,
+                                        "source": "location",
+                                        "type": "geoMap",
+                                        "zoomToProjectArea": true,
+                                        "includeLocality": false
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "source": "<font style='color:blue; font-size:1em;'>Please enter notes about your observations. <b>Include the conditions at the location and weather, as well as species and threats evidence.<\/b><\/font>",
+                                            "type": "literal"
+                                        }]
+                                    }]
+                                },
+                                {
+                                    "computed": null,
+                                    "type": "row",
+                                    "items": [{
+                                        "type": "col",
+                                        "items": [{
+                                            "preLabel": "General comments",
+                                            "source": "fieldNotes",
+                                            "rows": 7,
+                                            "type": "textarea"
+                                        }]
+                                    }]
+                                }
+                            ],
+                            "class": ""
+                        }]
+                    }]
+                }
+            ]
+        }
+    ]
+}

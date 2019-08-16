@@ -1,0 +1,608 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the record.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the nest box was placed, checked or replaced.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time of the day that the monitoring activity commenced."
+        },
+        {
+            "dataType": "number",
+            "name": "eventDurationInMinutes",
+            "description": "The duration of the monitoring activity in minutes."
+        },
+        {
+            "dataType": "stringList",
+            "name": "surveyType",
+            "description": "The type of activity undertaken during this monitoring event.",
+            "constraints": [
+                "Nest box placement/re-placement",
+                "Nest box occupation survey",
+                "Nest box maintenance activity"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "treeSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "Species of host tree that the nest box is mounted in."
+        },
+        {
+            "dataType": "text",
+            "name": "identificationQualifier",
+            "dwcAttribute": "identificationQualifier",
+            "description": "How confident are you that this species name is correct?",
+            "constraints": [
+                "Certain",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "barkType",
+            "description": "What is the texture of the bark on the host tree?",
+            "constraints": [
+                "Smooth",
+                "Flakey",
+                "Rough",
+                "Ribbon",
+                "Ironbark",
+                "Stringy"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "treeOrigin",
+            "description": "What is the source of origin of the host tree?",
+            "constraints": [
+                "Remnant",
+                "Regeneration",
+                "Planted",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "Notes about the monitoring event, the condition of the nest box or the host tree, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "siteId",
+            "description": "Identifier for the specific nest box.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "mountingHeightInMetres",
+            "description": "The height in metres that the next box is mounted above the ground."
+        },
+        {
+            "dataType": "text",
+            "name": "mountingAspect",
+            "description": "The direction that the mounted nest box is facing.",
+            "constraints": [
+                "N",
+                "S",
+                "E",
+                "W",
+                "NE",
+                "NW",
+                "SE",
+                "SW"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "bafflePresent",
+            "description": "Is a baffle installed on the nest box?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "entranceSizeInMillimetres",
+            "description": "The size of the nest box entrance hole in millimetres.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "entranceChewed",
+            "description": "Has the nest box entrance been chewed by an animal?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "entranceScratches",
+            "description": "Has the nest box entrance been scratched by an animal?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "distanceToNearestHollowInMetres",
+            "description": "What is the distance in metres to the nearest hollow bearing tree?",
+            "constraints": [
+                "0-50",
+                "50 -100",
+                ">100",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "distanceToBarbwireFenceInMetres",
+            "description": "What is the distance in metres to the nearest barbed wire fence?",
+            "constraints": [
+                "0-50",
+                "50 -100",
+                ">100",
+                "Unsure"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "outsideImage",
+            "description": "Photo of the outside of the nest box."
+        },
+        {
+            "dataType": "text",
+            "name": "nestBoxContentsChecked",
+            "description": "Indicate whether the contents of the nest box were checked in this monitoring event.",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "inspectionMethod",
+            "description": "What method was used to inspect the nest box?",
+            "constraints": [
+                "Ladder",
+                "Extension camera"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "occupantSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": "Species observed occupying the nest box. Start typing a common or scientific name. Choose 'Unknown' if you don't know. Add rows if more than one species were occupying the nest box."
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationQualifier",
+                    "dwcAttribute": "identificationQualifier",
+                    "description": "How confident are you that this species name is correct?",
+                    "constraints": [
+                        "Certain",
+                        "Unsure"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfOccupants",
+                    "dwcAttribute": "individualCount",
+                    "description": "The number of individuals of the the species recorded as occupying the nest box."
+                }
+            ],
+            "dataType": "list",
+            "name": "occupantSpeciesTable"
+        },
+        {
+            "dataType": "text",
+            "name": "beehivePresence",
+            "description": "Indicate whether bees or a beehive were present in or around the nest box.",
+            "constraints": [
+                "Not present",
+                "Active hive",
+                "Inactive hive"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "evidenceOfNesting",
+            "description": "If applicable, what evidence of nesting was observed?"
+        },
+        {
+            "dataType": "text",
+            "name": "presenceOfEggs",
+            "description": "If applicable, what evidence of the presence of eggs was observed?"
+        },
+        {
+            "dataType": "text",
+            "name": "observationComments",
+            "dwcAttribute": "occurrenceRemarks",
+            "description": "Please provide any relevant addional observation notes."
+        },
+        {
+            "dataType": "image",
+            "name": "insideImage",
+            "description": "Photo of the interior of the nest box at the time of the observation."
+        },
+        {
+            "dataType": "stringList",
+            "name": "maintenanceRequiredType",
+            "description": "What type(s) of maintenance are required on the nest box?",
+            "constraints": [
+                "None",
+                "Full replacement",
+                "Re-attach box to tree",
+                "Re-attach lid",
+                "Fix cracked or broken sides or base",
+                "Remove bee hive",
+                "Re-attach baffle",
+                "Other (describe in notes)"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "maintenanceUndertakenDescription",
+            "description": "Indicate which maintenance tasks have been undertaken.",
+            "constraints": [
+                "None",
+                "Full replacement",
+                "Re-attach box to tree",
+                "Re-attach lid",
+                "Fix cracked or broken sides or base",
+                "Remove bee hive",
+                "Re-attach baffle",
+                "Other (describe in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "maintenanceComments",
+            "description": "Please provide any additional notes or comments about the maintenance or condition of the nest box."
+        },
+        {
+            "dataType": "image",
+            "name": "maintenanceImage",
+            "description": "Please attach a photo of any maintenance done on the nest box."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": false,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "landscapePosition",
+            "description": "",
+            "constraints": [
+                "Creekline",
+                "Flats",
+                "Lower slopes",
+                "Upper slopes",
+                "Hilltop/Ridge"
+            ]
+        }
+    ],
+    "modelName": "nestBoxSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<font style='color:blue;'><h3>Survey Event Details<\/h3>Record information about the monitoring/installation event.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "eventTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Duration of activity (mins)",
+                            "source": "eventDurationInMinutes",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Survey type",
+                            "source": "surveyType",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "<font style='color:blue;'><hr><h3>Host Tree Information<\/h3>Record information about the tree in which the nest box is located.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Host tree species",
+                            "source": "treeSpecies",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "preLabel": "Identification qualifier",
+                            "source": "identificationQualifier",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Bark type",
+                            "source": "barkType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Tree origin",
+                            "source": "treeOrigin",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Notes",
+                            "source": "eventRemarks",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "<font style='color:blue;'><hr><h3>Nest Box Information<\/h3>Record information about the nest box itself.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Nest box ID",
+                            "source": "siteId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Nest box height (m)",
+                            "source": "mountingHeightInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Nest box Aspect",
+                            "source": "mountingAspect",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Baffle present?",
+                            "source": "bafflePresent",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Entrance hole size (mm)",
+                            "source": "entranceSizeInMillimetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Entrance chewed?",
+                            "source": "entranceChewed",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Scratch marks?",
+                            "source": "entranceScratches",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Photo - exterior of nest box",
+                            "source": "outsideImage",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<font style='color:blue;'><h3>Location Information<\/h3>Record information about where the nest box tree is located.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "<font style='font-size:0.8em; color:brown;'><i>Zoom in on the map, then click on the marker and drop it on the location where you made the sighting. Change the base map to show the satellite image.<\/i><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "includeNotes": false,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "autoLocalitySearch": false,
+                            "readonly": true,
+                            "includeSource": false,
+                            "includeAccuracy": false,
+                            "hideSiteSelection": false,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": false
+                        },
+                        {
+                            "preLabel": "Landscape position",
+                            "source": "landscapePosition",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Distance to nearest hollow bearing tree (m)",
+                            "source": "distanceToNearestHollowInMetres",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Distance to barbed wire fencing (m)",
+                            "source": "distanceToBarbwireFenceInMetres",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<font style='color:blue;'><hr><h3>Nest Box Occupation<\/h3>Record any species found in the nest box at the time of the maintenance inspection.<\/font>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Contents checked?",
+                            "source": "nestBoxContentsChecked",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Method used",
+                            "source": "inspectionMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Bees present?",
+                            "source": "beehivePresence",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Evidence of nesting",
+                            "source": "evidenceOfNesting",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Eggs present?",
+                            "source": "presenceOfEggs",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Notes (including additional species observed)",
+                            "source": "observationComments",
+                            "type": "textarea"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "columns": [
+                                {
+                                    "source": "occupantSpecies",
+                                    "title": "Species name",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "source": "identificationQualifier",
+                                    "title": "Identification qualifier",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "source": "numberOfOccupants",
+                                    "title": "Individual count",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "source": "occupantSpeciesTable",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Photo - nest box contents",
+                            "source": "insideImage",
+                            "type": "image"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<font style='color:blue;'><hr><h3>Nest Box Maintenance Requirements<\/h3>Record information about any maintenance of the nest box that is required.<\/font>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Maintenance required",
+                        "source": "maintenanceRequiredType",
+                        "type": "selectMany"
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Maintenance undertaken",
+                        "source": "maintenanceUndertakenDescription",
+                        "type": "selectMany"
+                    }]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Notes",
+                            "source": "maintenanceComments",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Photo - maintenance",
+                            "source": "maintenanceImage",
+                            "type": "image"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

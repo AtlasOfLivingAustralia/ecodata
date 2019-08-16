@@ -1,0 +1,320 @@
+{
+    "class": "output-section",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The name of the person or party that undertook the survey event."
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The start time at which the survey was made."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The finish time at which the survey was made."
+        },
+        {
+            "dataType": "text",
+            "name": "surveyMethod",
+            "description": "How were you patrolling to collect the survey data.",
+            "constraints": [
+                "Snorkel",
+                "Walk"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "windSpeedInBeaufortScale",
+            "description": "",
+            "constraints": [
+                "Calm (0 km)",
+                "Light winds (19 km/h or less)",
+                "Moderate winds (20 - 29 km/h)",
+                "Fresh winds (30 - 39 km/h)",
+                "Strong winds (40 - 50 km/h)",
+                "Near gale (51 - 62 km/h)",
+                "Gale (63 - 75 km/h)",
+                "Strong gale (76 - 87 km/h)",
+                "Storm (88 - 102 km/h)",
+                "Violent storm (103 -117 km/h)",
+                "Hurricane (118 km/h or more)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "cloudCover",
+            "description": "The amount of cloud cover at the time of the survey.",
+            "constraints": [
+                "None",
+                "Low",
+                "Medium",
+                "High"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "recentRain",
+            "description": "",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "Please provide any other relevant notes about the conditions at the time of the survey."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "activityObservationDurationInMinutes",
+            "description": "The duration of time in minutes spent implementing the Sea Search Patrol at the survey site.",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "activityOrDisturbanceType",
+                    "description": "",
+                    "constraints": [
+                        "Collecting",
+                        "Disturbance of wildlife",
+                        "Dive/Snorkel",
+                        "Dog walking - off lead",
+                        "Dog walking - on lead",
+                        "Fossicking/exploring",
+                        "Kayak/Surf ski",
+                        "Line fishing",
+                        "Litter",
+                        "Motor boats",
+                        "Overturning rocks",
+                        "Marine pest species",
+                        "Pollution",
+                        "Range expanding species",
+                        "Sail boats",
+                        "Spear fishing",
+                        "Stationary",
+                        "Surfing",
+                        "Swimming",
+                        "Wading",
+                        "Walking",
+                        "Other (describe)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfPeopleOrDisturbancesObserved",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "observationDescription"
+                }
+            ],
+            "dataType": "list",
+            "name": "humanActivitiesOrDisturbances"
+        },
+        {
+            "dataType": "text",
+            "name": "biologicalNotes",
+            "description": "Please provide notes about biological observations made at the survey site."
+        }
+    ],
+    "modelName": "seaSearch_seaSearchPatrol",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Sea Search Patrol<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h4 class='text-default text-left'><b>Survey Event Details<\/b><\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Record submitted by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observers (full names)",
+                            "computed": null,
+                            "source": "observedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "End time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Survey method",
+                            "source": "surveyMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Wind speed (Beaufort scale)",
+                            "source": "windSpeedInBeaufortScale",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Cloud cover",
+                            "source": "cloudCover",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Rain",
+                            "source": "recentRain",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Other notes",
+                            "source": "eventRemarks",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Total duration of observations (minutes)",
+                            "source": "activityObservationDurationInMinutes",
+                            "type": "number"
+                        },
+                        {
+                            "source": "<font style='color:red; font-weight:bold;'>If you observe illegal fishing, please call 13FISH.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "<font style='color:red; font-weight:bold;'>Please do not include any people in any photographs, unless Fisheries asks you to photograph someone suspected of illegal fishing.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "<font style='color:red; font-weight:bold;'>Please record observations of pest species in the Species Image Library form.<\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "type": "row",
+                            "items": [
+                                {
+                                    "source": "<h4 class='text-default text-left'><b>Human Activities & Disturbances<\/b><\/h4>",
+                                    "type": "literal"
+                                },
+                                {
+                                    "allowHeaderWrap": "true",
+                                    "columns": [
+                                        {
+                                            "width": "35%",
+                                            "source": "activityOrDisturbanceType",
+                                            "title": "Observed activity or disturbance",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "15%",
+                                            "source": "numberOfPeopleOrDisturbancesObserved",
+                                            "title": "Number of people or disturbances",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "50%",
+                                            "source": "observationDescription",
+                                            "title": "Description",
+                                            "type": "textarea"
+                                        }
+                                    ],
+                                    "userAddedRows": "true",
+                                    "source": "humanActivitiesOrDisturbances",
+                                    "type": "table"
+                                },
+                                {
+                                    "preLabel": "Biological notes",
+                                    "width": "100%",
+                                    "source": "biologicalNotes",
+                                    "type": "textarea"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": true
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Mapping Notes:<\/h4><i>Select a Marine Protected Area location from the drop-down list. Zoom in on the map, select the marker, then click on the actual site.<p><b>Give the site a name in the 'Matched locality' field, then save<\/b> the location to store it for future use.<\/i><p><b>If you are using a GPS device for coordinates<\/b> you can move the marker around to get the displayed coordinates to match your device or you can enter the coordinates after dropping the marker on the map. <b>Please ensure that your device is set to the WGS84 decimal coordinate reference system<\/b> and that you enter latitude/longitude to 7 decimal places to ensure accuracy and compatibility with the mapping facility being used in the form. Don't forget to use 'minus' for southern hemisphere latitude.",
+                            "type": "literal"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

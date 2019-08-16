@@ -1,0 +1,401 @@
+{
+    "modelName": "Crown Cover - BF method",
+    "dataModel": [
+        {
+            "defaultRows": [],
+            "dataType": "list",
+            "name": "nativeOverstoreyCoverSamples",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant begins to project over the path of the transect. Each individual plant with projecting foliage should be recorded separately.",
+                    "name": "start"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant ceases to project over the path of the transect.",
+                    "name": "end"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The difference in metres between the start and end positions along the transect where foliage from an individual plant projecting over the path of the transect. This represents the width of the canopy.",
+                    "name": "width",
+                    "computed": {
+                        "operation": "difference",
+                        "dependents": [
+                            "end",
+                            "start"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalNativeOverstoreyCover",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "width",
+                    "fromList": "nativeOverstoreyCoverSamples"
+                }
+            }
+        },
+        {
+            "defaultRows": [],
+            "dataType": "list",
+            "name": "exoticOverstoreyCoverSamples",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant begins to project over the path of the transect. Each individual plant with projecting foliage should be recorded separately.",
+                    "name": "start"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant ceases to project over the path of the transect.",
+                    "name": "end"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The difference in metres between the start and end positions along the transect where foliage from an individual plant projecting over the path of the transect. This represents the width of the canopy.",
+                    "name": "width",
+                    "computed": {
+                        "operation": "difference",
+                        "dependents": [
+                            "end",
+                            "start"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalExoticOverstoreyCover",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "width",
+                    "fromList": "exoticOverstoreyCoverSamples"
+                }
+            }
+        },
+        {
+            "defaultRows": [],
+            "dataType": "list",
+            "name": "nativeMidstoreyCoverSamples",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant begins to project over the path of the transect. Each individual plant with projecting foliage should be recorded separately.",
+                    "name": "start"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant ceases to project over the path of the transect.",
+                    "name": "end"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The difference in metres between the start and end positions along the transect where foliage from an individual plant projecting over the path of the transect. This represents the width of the canopy.",
+                    "name": "width",
+                    "computed": {
+                        "operation": "difference",
+                        "dependents": [
+                            "end",
+                            "start"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalNativeMidstoreyCover",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "width",
+                    "fromList": "nativeMidstoreyCoverSamples"
+                }
+            }
+        },
+        {
+            "defaultRows": [],
+            "dataType": "list",
+            "name": "exoticMidstoreyCoverSamples",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant begins to project over the path of the transect. Each individual plant with projecting foliage should be recorded separately.",
+                    "name": "start"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The distance in metres along the transect from the origin where foliage from an individual plant ceases to project over the path of the transect.",
+                    "name": "end"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The difference in metres between the start and end positions along the transect where foliage from an individual plant projecting over the path of the transect. This represents the width of the canopy.",
+                    "name": "width",
+                    "computed": {
+                        "operation": "difference",
+                        "dependents": [
+                            "end",
+                            "start"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalExoticMidstoreyCover",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "width",
+                    "fromList": "exoticMidstoreyCoverSamples"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please enter information about the structure of the canopy and midstorey layers by recording the start and finish distances along the transect for each plant with projecting foliage. <br><strong>NB.: Only complete this section if the vegetation type has distinctive canopy and/or midstorey layers.<\/strong>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Transect (projected crown cover - overstorey species)<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Native overstorey<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "colspan": "2",
+                                    "source": "Total native overstorey width (m)",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "totalNativeOverstoreyCover",
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"width\",\"fromList\":\"nativeOverstoreyCoverSamples\"}}",
+                                    "type": "text"
+                                }
+                            ]}]},
+                            "source": "nativeOverstoreyCoverSamples",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "title": "Start (m)",
+                                    "source": "start",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "End (m)",
+                                    "source": "end",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Width (m)",
+                                    "source": "width",
+                                    "noEdit": true,
+                                    "type": "number",
+                                    "validate": "min[0]"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "type": "table"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Exotic overstorey<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "colspan": "2",
+                                    "source": "Total exotic overstorey width (m)",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "totalExoticOverstoreyCover",
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"width\",\"fromList\":\"exoticOverstoreyCoverSamples\"}}",
+                                    "type": "text"
+                                }
+                            ]}]},
+                            "source": "exoticOverstoreyCoverSamples",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "title": "Start (m)",
+                                    "source": "start",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "End (m)",
+                                    "source": "end",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Width (m)",
+                                    "source": "width",
+                                    "noEdit": true,
+                                    "type": "number",
+                                    "validate": "min[0]"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "type": "table"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Transect (projected crown cover - midstorey species)<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Native midstorey<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "colspan": "2",
+                                    "source": "Total native midstorey width (m)",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "totalNativeMidstoreyCover",
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"width\",\"fromList\":\"nativeMidstoreyCoverSamples\"}}",
+                                    "type": "text"
+                                }
+                            ]}]},
+                            "source": "nativeMidstoreyCoverSamples",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "title": "Start (m)",
+                                    "source": "start",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "End (m)",
+                                    "source": "end",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Width (m)",
+                                    "source": "width",
+                                    "noEdit": true,
+                                    "type": "number",
+                                    "validate": "min[0]"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "type": "table"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Exotic midstorey<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "footer": {"rows": [{"columns": [
+                                {
+                                    "colspan": "2",
+                                    "source": "Total exotic midstorey width (m)",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "totalExoticMidstoreyCover",
+                                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"width\",\"fromList\":\"exoticMidstoreyCoverSamples\"}}",
+                                    "type": "text"
+                                }
+                            ]}]},
+                            "source": "exoticMidstoreyCoverSamples",
+                            "computed": null,
+                            "columns": [
+                                {
+                                    "title": "Start (m)",
+                                    "source": "start",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "End (m)",
+                                    "source": "end",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Width (m)",
+                                    "source": "width",
+                                    "noEdit": true,
+                                    "type": "number",
+                                    "validate": "min[0]"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "type": "table"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "type": "row"
+        }
+    ]
+}

@@ -1,0 +1,406 @@
+{
+    "class": "output-section",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "siteName",
+            "description": "The name of the site where the observation and sampling took place",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "siteId",
+            "description": "The identifier of the site where the observation and sampling took place"
+        },
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "description": "The date on which the observation was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "description": "The time of the day that the observation was made. Enter time as hh:mm"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person(s) or group who made the observations and measurements for this event."
+        },
+        {
+            "dataType": "stringList",
+            "name": "weatherConditions",
+            "description": "The weather conditions on-site at the time of the sampling event (tick all that apply).",
+            "constraints": [
+                "Sunny",
+                "Cloudy",
+                "Overcast",
+                "Rainy",
+                "Windy"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "lastRainfall",
+            "description": "How long ago was the most recent rainfall event?",
+            "constraints": [
+                "More than a week ago",
+                "During the last week",
+                "During the last 24 hours",
+                "Raining at the time of sampling"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "waterFlow",
+            "description": "The water flow conditions at the time of the sampling event.",
+            "constraints": [
+                "Overbank",
+                "High",
+                "Medium",
+                "Low",
+                "Dry",
+                "Discontinuous pools",
+                "Continuous but stagnant"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "illegalDumping",
+            "description": "Was there any evidence of illegal dumping at the time of sampling?",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "dumpingStatus",
+            "description": "Is this illegal dumping 'new'? Or was it present during your last monitoring visit?",
+            "constraints": [
+                "New",
+                "Old"
+            ]
+        },
+        {
+            "dataType": "image",
+            "name": "dumpingEvidencePhoto",
+            "description": "If there is evidence of illegal dumping, please attach a photo of the evidence."
+        },
+        {
+            "dataType": "number",
+            "name": "airTemperatureInDegreesCelcius",
+            "description": "The temperature (in degrees celcius) of the air above the site at the time of sampling.",
+            "validate": "min[-10],max[50]"
+        },
+        {
+            "dataType": "number",
+            "name": "waterTemperatureInDegreesCelcius",
+            "description": "The temperature (in degrees celcius) of the top few centimetres of water at the sampling site.",
+            "validate": "min[-5],max[30]"
+        },
+        {
+            "dataType": "number",
+            "name": "waterTurbidityInNtu",
+            "description": "The turbidity of the water at the site at the time of sampling using the Nephelometric Turbidity Unit (NTU) method.",
+            "validate": "min[0],max[2000]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterPhUnits",
+            "description": "The average pH of the top few centimetres of water at the sampling site.",
+            "validate": "min[0],max[14]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterEcInMicrosiemensPerCentimetre",
+            "description": "The average electrical conductivity (in microsiemens per centimetre) of the top few centimetres of water at the sampling site.",
+            "validate": "min[0],max[50000]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterPhosphatesInMilligramsPerLitre",
+            "description": "Measure of the soluble phosphates in milligrams per litre of the water at the sampling site.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterAmmoniumInMilligramsPerLitre",
+            "description": "Measure of the amount of ammonium (NH4) in parts per million (milligrams per litre) of the water at the sampling site",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterNitritesInMilligramsPerLitre",
+            "description": "Measure of the amount of nitrite Nitrogen dissolved in a water sample in parts per million (milligrams per litre).",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterNitratesInMilligramsPerLitre",
+            "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "speciesObserved",
+                    "dwcAttribute": "scientificName",
+                    "description": "Start typing the scientific or common name of the observed species. Add more rows for more species as required."
+                },
+                {
+                    "dataType": "text",
+                    "name": "speciesSamplingProtocol",
+                    "description": "The method used to identify the species.",
+                    "constraints": [
+                        "Seen",
+                        "Heard"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "speciesImage",
+                    "description": "Please attach an image of each species which was seen during the survey."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesObservations"
+        },
+        {
+            "dataType": "text",
+            "name": "instrumentCalibration",
+            "description": "Indicator as to whether the electrical conductivity meter used had been calibrated prior to sampling",
+            "constraints": [
+                "Yes",
+                "No",
+                "Not applicable"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "additionalDataCollectedNotes",
+            "description": "Please provide the details of any other data which was collected during this sampling/observation event."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General comments and notes about this water quality monitoring event."
+        },
+        {
+            "columns": [
+                {"source": "locationLatitude"},
+                {"source": "locationLongitude"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "validate": "required"
+        }
+    ],
+    "modelName": "epaWaterQualityAndIllegalDumping",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Activity Information<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Site name:",
+                            "computed": null,
+                            "source": "siteName",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Site number:",
+                            "computed": null,
+                            "source": "siteId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Sample date:",
+                            "computed": null,
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Sample time:",
+                            "computed": null,
+                            "source": "eventTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Monitor name(s):",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h1>Observations & Measurements<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Weather conditions:",
+                            "source": "weatherConditions",
+                            "type": "selectMany"
+                        },
+                        {
+                            "preLabel": "Last Rainfall:",
+                            "source": "lastRainfall",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Water Flow:",
+                            "source": "waterFlow",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Evidence of illegal dumping:",
+                            "source": "illegalDumping",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Dumping status:",
+                            "source": "dumpingStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Photo(s):",
+                            "source": "dumpingEvidencePhoto",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<i>Click on the map pin and drop it on the map at the sampling/observation site.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": false,
+                            "source": "location",
+                            "type": "geoMap"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Air temperature(deg C):",
+                            "source": "airTemperatureInDegreesCelcius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Water temperature(deg C):",
+                            "source": "waterTemperatureInDegreesCelcius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Turbidity (N.T.U.):",
+                            "source": "waterTurbidityInNtu",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "pH (pH units):",
+                            "source": "surfaceWaterPhUnits",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Conductivity (EC units):",
+                            "source": "surfaceWaterEcInMicrosiemensPerCentimetre",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Phosphate (mg/L):",
+                            "source": "surfaceWaterPhosphatesInMilligramsPerLitre",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Ammonium (mg/L):",
+                            "source": "surfaceWaterAmmoniumInMilligramsPerLitre",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Nitrates (mg/L as N):",
+                            "computed": null,
+                            "source": "surfaceWaterNitratesInMilligramsPerLitre",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Nitrite Nitrogen (mg/L as N):",
+                            "computed": null,
+                            "source": "surfaceWaterNitritesInMilligramsPerLitre",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "columns": [
+                                {
+                                    "dwcAttribute": "scientificName",
+                                    "source": "speciesObserved",
+                                    "title": "Species",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "source": "speciesSamplingProtocol",
+                                    "title": "Seen/Heard?",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "source": "speciesImage",
+                                    "title": "Photo(s)",
+                                    "type": "image"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "source": "speciesObservations",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Additional Data Collected?:",
+                            "source": "additionalDataCollectedNotes",
+                            "type": "textarea"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Overall Notes and Comments:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

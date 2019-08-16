@@ -1,0 +1,154 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "grantRecipient",
+                    "description": "",
+                    "constraints": [
+                        "Community group",
+                        "Farmer",
+                        "Industry organisation",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "industry",
+                    "description": "",
+                    "constraints": [
+                        "All",
+                        "Bananas",
+                        "Cropping",
+                        "Cropping & Grazing",
+                        "Grazing",
+                        "Sugarcane",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "purposeOfIncentive",
+                    "description": "",
+                    "constraints": [
+                        "Implementing Practice change",
+                        "Systems repair/ non-faming works",
+                        "Farm planning",
+                        "Training",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "totalValuePfIncentiveInWholeDollars",
+                    "description": "",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "notes",
+                    "description": "Observation notes about the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "incentivesTable",
+            "defaultRows": "1"
+        },
+        {
+            "dataType": "text",
+            "name": "comments",
+            "description": ""
+        }
+    ],
+    "modelName": "qldEnvironmentIncentives",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h1>Incentives<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "type": "col",
+                "items": [
+                    {
+                        "boxed": true,
+                        "title": "Incentives",
+                        "type": "section",
+                        "items": [{
+                            "computed": null,
+                            "type": "row",
+                            "items": [{
+                                "type": "col",
+                                "items": [{
+                                    "columns": [
+                                        {
+                                            "computed": null,
+                                            "width": "10%",
+                                            "source": "grantRecipient",
+                                            "title": "Grant recipient",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "15%",
+                                            "source": "industry",
+                                            "title": "Industry",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "15%",
+                                            "source": "purposeOfIncentive",
+                                            "title": "Purpose of incentive",
+                                            "type": "selectOne"
+                                        },
+                                        {
+                                            "width": "10%",
+                                            "source": "totalValuePfIncentiveInWholeDollars",
+                                            "title": "Total value of incentive",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "width": "50%",
+                                            "source": "notes",
+                                            "title": "Notes",
+                                            "type": "textarea"
+                                        }
+                                    ],
+                                    "defaultRows": "1",
+                                    "userAddedRows": "true",
+                                    "source": "incentivesTable",
+                                    "type": "table"
+                                }]
+                            }],
+                            "class": ""
+                        }]
+                    },
+                    {
+                        "boxed": true,
+                        "title": "General Comments",
+                        "type": "section",
+                        "items": [{
+                            "type": "row",
+                            "items": [{
+                                "preLabel": "Comments",
+                                "source": "comments",
+                                "type": "textarea"
+                            }],
+                            "class": ""
+                        }],
+                        "class": ""
+                    }
+                ],
+                "class": ""
+            }],
+            "class": ""
+        }
+    ]
+}

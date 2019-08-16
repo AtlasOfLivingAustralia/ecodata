@@ -1,0 +1,177 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "revegetationMethod",
+                    "dwcAttribute": "establishmentMeans",
+                    "description": "The method used for planting",
+                    "constraints": [
+                        "Direct drill seeding",
+                        "Hand broadcast seeding",
+                        "Hand planting",
+                        "Machine planting",
+                        "Natural regeneration from threat exclusion / removal",
+                        "Infill plantings",
+                        "Combination of methods"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "species",
+                    "speciesList": "project",
+                    "noTotal": "true",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberPlanted",
+                    "description": "The number of plants planted",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "cost",
+                    "description": "The average cost per plant or kilogram of seed as applicable"
+                }
+            ],
+            "dataType": "list",
+            "name": "planting"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "date",
+                    "name": "yearPlanted",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "species",
+                    "speciesList": "project",
+                    "noTotal": "true",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberPlanted",
+                    "description": "The number of plants originally planted",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "estimatedSurvivalPercent",
+                    "description": "Estimated survival %",
+                    "validate": "required,min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "survival"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
+    "modelName": "ESP Revegetation",
+    "title": "Revegetation",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "source": "<b>Please note<\/b> that revegetation activities are included under any or all of the following; “Re-establish perennial native species”, “Plants overstorey tree species of target community”, “Re-establish understorey shrubs”, “Plant perennial species” and “Planting/direct seeding”. ",
+                "type": "literal"
+            }]
+        },
+        {
+            "disableTableUpload": true,
+            "columns": [
+                {
+                    "computed": null,
+                    "width": "30%",
+                    "source": "revegetationMethod",
+                    "title": "Revegetation Activity",
+                    "type": "selectOne"
+                },
+                {
+                    "computed": null,
+                    "width": "40%",
+                    "source": "species",
+                    "title": "Species planted",
+                    "type": "speciesSelect"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "numberPlanted",
+                    "title": "Number planted (if applicable)",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "cost",
+                    "title": "Cost ($)",
+                    "type": "currency"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "planting",
+            "title": "Please list each species planted during this activity and any additional information that you can that is relevant:",
+            "type": "table"
+        },
+        {
+            "disableTableUpload": true,
+            "columns": [
+                {
+                    "width": "30%",
+                    "source": "yearPlanted",
+                    "title": "Year planted",
+                    "type": "date",
+                    "displayOptions": {"minViewMode": "years"}
+                },
+                {
+                    "computed": null,
+                    "width": "40%",
+                    "source": "species",
+                    "title": "Species planted",
+                    "type": "speciesSelect"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "numberPlanted",
+                    "title": "Number planted (if applicable)",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "estimatedSurvivalPercent",
+                    "title": "Estimated survival rate (%)",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "survival",
+            "title": "Survival rates of previous revegetation activities <br/>Please note that this is voluntary and can be recorded as often as you like.",
+            "type": "table"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
+}

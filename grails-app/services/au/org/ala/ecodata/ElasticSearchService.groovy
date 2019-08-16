@@ -941,11 +941,6 @@ class ElasticSearchService {
                     projectActivity.surveyImage = true;
                     activity.thumbnailUrl = image?.thumbnailUrl
                 }
-
-                if(!activity.thumbnailUrl) {
-                    Document doc = Document.findByProjectActivityIdAndFilenameIsNotNullAndStatus(activity.projectActivityId, ACTIVE)
-                    activity.thumbnailUrl = doc?.thumbnailUrl
-                }
             }
             catch (Exception e) {
                 log.error("unable to index images for projectActivity: " + projectActivity?.projectActivityId, e)

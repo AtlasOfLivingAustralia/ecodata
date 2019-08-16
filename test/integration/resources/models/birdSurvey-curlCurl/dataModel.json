@@ -1,0 +1,317 @@
+{
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "teamNumber",
+            "description": "The identifying number allocated to the survey team for the survey event."
+        },
+        {
+            "dataType": "text",
+            "name": "teamLeader",
+            "description": "The name of the leader of the survey team.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who submitted the record. Note, this person will be attributed with creating the observations.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the survey commenced.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The time at which the survey finished."
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureAtStartInDegreesCelsius",
+            "description": "The ambient temperature of the air at the commencement of the survey.",
+            "validate": "min[-10],max[50]"
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureAtFinishInDegreesCelsius",
+            "description": "The ambient temperature of the air at the completion of the survey.",
+            "validate": "min[-10],max[50]"
+        },
+        {
+            "dataType": "text",
+            "name": "lagoonStatus",
+            "description": "",
+            "constraints": [
+                "Open",
+                "Closed"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "elevationInMetres",
+            "dwcAttribute": "verbatimElevation",
+            "description": "The height above sea level (in metres) of the survey site.",
+            "validate": "min[0],max[2300]"
+        },
+        {
+            "dataType": "text",
+            "name": "windConditions",
+            "description": "What were the wind conditions like at the time of the survey?",
+            "constraints": [
+                "Calm",
+                "Light (leaves rustle)",
+                "Moderate (branches move)",
+                "Strong (tops of trees move)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "moonPhase",
+            "description": "What was the moon phase in at the time of the survey?",
+            "constraints": [
+                "No moon",
+                "Between no moon and 1/4 moon",
+                "Between 1/4 and 1/2 moon",
+                "Between 1/2 and 3/4 moon",
+                "Between 3/4 and full moon",
+                "Full moon"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "atmosphericMoistureConditions",
+            "description": "What were the atmospheric moisture conditions at the time of the survey?",
+            "constraints": [
+                "Dry",
+                "Light drizzle",
+                "Constant drizzle",
+                "Heavy rain",
+                "Mist, fog or heavy haze"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "cloudCover",
+            "description": "The approximate percentage of total cloud cover at the time of the survey.",
+            "validate": "min[0],max[100]"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "description": "The number of individuals of the species observed.",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "observationCode",
+                    "description": "What was the basis of the observation?",
+                    "constraints": [
+                        "O - Observed",
+                        "K - Dead",
+                        "W - Heard call",
+                        "E - Nest/roost"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "habitatZone",
+                    "description": "What habitat was the observation made in?",
+                    "constraints": [
+                        "W - Water (on the water or in the lagoon)",
+                        "R - Riparian (in emergent aquatic vegetation extending to terrestrial woodland)",
+                        "G - Grassland (recreational parks and playingfields)",
+                        "F - Fly over)"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "sightingPhoto",
+                    "description": "Upload a photo taken at the time of the record. This is essential for verification of the record."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesObservations"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "siteNumber",
+            "description": "The permanent identifier allocated to the site."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "birdSurvey-curlCurl",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Team leader",
+                            "source": "teamLeader",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Temperature at start (deg. C)",
+                            "source": "temperatureAtStartInDegreesCelsius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Finish time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Temperature at finish (deg. C)",
+                            "source": "temperatureAtFinishInDegreesCelsius",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Was the lagoon open or closed?",
+                            "source": "lagoonStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "What is the elevation of the survey area (m)?",
+                            "source": "elevationInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Wind",
+                            "source": "windConditions",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Moon",
+                            "source": "moonPhase",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Rain",
+                            "source": "atmosphericMoistureConditions",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Cloud cover (%)",
+                            "source": "cloudCover",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Any other comments, site description/notes, etc.?",
+                            "source": "notes",
+                            "type": "textarea"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "columns": [
+                    {
+                        "width": "20%",
+                        "source": "species",
+                        "title": "Bird species",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "individualCount",
+                        "title": "Number of individuals",
+                        "type": "number"
+                    },
+                    {
+                        "width": "25%",
+                        "source": "observationCode",
+                        "title": "Observation Code",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "25%",
+                        "source": "habitatZone",
+                        "title": "Habitat Zone",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "20%",
+                        "source": "sightingPhoto",
+                        "title": "Photo",
+                        "type": "image"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "speciesObservations",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

@@ -1,0 +1,148 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "sampleName"
+                },
+                {
+                    "dataType": "number",
+                    "name": "distanceAlongTransect",
+                    "description": "The distance from the origin along the sampling transect in metres at which canopy type percentage is recorded.",
+                    "validate": "min[0],max[50]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "crownType",
+                    "description": "The canopy foliage cover estimated using the Vegetation Assessment - commonwealth methodology, expressed as a percentage.",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "crownTypeSamples",
+            "defaultRows": [
+                {
+                    "sampleName": "Tree canopy 1",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 2",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 3",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 4",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 5",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 6",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 7",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 8",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 9",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                },
+                {
+                    "sampleName": "Tree canopy 10",
+                    "distanceAlongTransect": "",
+                    "crownType": ""
+                }
+            ]
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "crownTypeSamples",
+                    "source": "crownType"
+                },
+                "operation": "average"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "averageCrownType",
+            "description": ""
+        }
+    ],
+    "modelName": "Crown Type - BF method",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Locate up to 10 points along the transect that are each at least 3m apart and where the <strong>native overstorey canopy<\/strong> is directly overhead and other conditions specified in the Biodiversity Fund Ecological Monitoring Guide are met. Record the distance along the transect and the type of canopy (looking vertically) as a percentage - see Appendix B in the monitoring guide.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<b>Only complete this part if the vegetation type has a distinctive overstorey<\/b>",
+                "type": "literal"
+            }]
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": "2",
+                    "computed": null,
+                    "source": "Average crown type (%)",
+                    "type": "literal"
+                },
+                {
+                    "computed": "{\"operation\":\"average\",\"dependents\":{\"source\":\"crownType\",\"fromList\":\"crownTypeSamples\"}}",
+                    "source": "averageCrownType",
+                    "type": "text"
+                }
+            ]}]},
+            "columns": [
+                {
+                    "width": "33%",
+                    "noEdit": true,
+                    "source": "sampleName",
+                    "title": "",
+                    "type": "text"
+                },
+                {
+                    "width": "33%",
+                    "source": "distanceAlongTransect",
+                    "title": "Distance along transect (m)",
+                    "type": "number"
+                },
+                {
+                    "width": "33%",
+                    "source": "crownType",
+                    "title": "Crown Type (%)",
+                    "type": "number"
+                }
+            ],
+            "source": "crownTypeSamples",
+            "type": "table"
+        }
+    ]
+}

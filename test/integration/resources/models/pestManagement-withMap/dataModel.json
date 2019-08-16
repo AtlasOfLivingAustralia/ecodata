@@ -1,0 +1,322 @@
+{
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "Cost of this treatment on a per hectare basis",
+            "name": "treatmentCostPerHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "description": "Total area covered by this treatment event (Ha). This area must not be double counted.",
+            "name": "totalAreaTreatedHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+            "name": "treatmentType",
+            "constraints": [
+                "Initial treatment",
+                "Follow-up treatment"
+            ],
+            "dwcAttribute": "treatmentType",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "The main objective that you are aiming to achieve with this activity.",
+            "name": "treatmentObjective",
+            "constraints": [
+                "Co-ordinated control to protect agriculture production",
+                "Local / regional eradication",
+                "Localised control",
+                "Manage threats to priority environmental assets",
+                "Planning and prioritisation",
+                "Regional / catchment scale control",
+                "Research",
+                "Trialing of experimental methods",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe the partner contributions, including lead, and contributions to cover any private benefits. Also, how will gains be maintained after the project period?",
+            "name": "treatmentObjectiveBenefits",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "The type of partner(s) that you are working with to deliver this activity.",
+            "name": "partnerType",
+            "constraints": [
+                "Local government authority",
+                "Local Landcare, 'Friends of', community, or farmer group",
+                "National Primary Industry Association",
+                "Regional Primary Industry group or community / Landcare Network",
+                "State government agency",
+                "Other (specify in notes)",
+                "No delivery partner"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "description": "Pest management table",
+            "name": "pestManagement",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The method used in this activity to manage pests",
+                    "name": "pestManagementMethod",
+                    "constraints": [
+                        "Crown of Thorns Starfish injection",
+                        "Bait & trap",
+                        "Bait only",
+                        "Biological control agents",
+                        "Exclusion fencing",
+                        "Fumigation",
+                        "Harbour destruction",
+                        "Positive competition",
+                        "Spotlight cull",
+                        "Trap & cull",
+                        "Trap & remove",
+                        "Other (specify in notes)"
+                    ],
+                    "dwcAttribute": "treatmentMethod",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The incentive program applicable to this activity",
+                    "name": "treatmentIncentiveMethod",
+                    "constraints": [
+                        "Bounty-based cull",
+                        "Non-bounty-based cull",
+                        "No incentive program applicable",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "species",
+                    "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
+                    "name": "targetSpecies",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The priority status for treatment of the pest species.",
+                    "name": "pestPriorityStatus",
+                    "constraints": [
+                        "Pest identified as a priority in regional / protected area plan",
+                        "Priority local pest",
+                        "Proactive control of a new pest species to region",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Number of target pest animals or colonies of insects removed during this activity",
+                    "name": "pestAnimalsTreatedNo",
+                    "dwcAttribute": "individualCount",
+                    "validate": "required,integer,min[0]"
+                },
+                {
+                    "dataType": "boolean",
+                    "description": "Unknown number of individual pest animals removed during this activity. THIS BOX SHOULD NOT BE CHECKED IF THE NUMBER IS KNOWN.",
+                    "name": "noUnknown"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Area in hectares covered by treatment for selected species.",
+                    "name": "areaTreatedHa"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Estimated density of pest animals per hectare prior to treatment action",
+                    "name": "pestDensityPerHa"
+                }
+            ]
+        },
+        {
+            "record": "true",
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks"
+        },
+        {
+            "dataType": "geoMap",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required",
+            "hideMyLocation": false
+        }
+    ],
+    "modelName": "Pest Management Details - Multi",
+    "record": "true",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "partnerType",
+                            "preLabel": "Activity partner(s):",
+                            "computed": null,
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "treatmentObjective",
+                            "preLabel": "Treatment objective(s):",
+                            "computed": null,
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "treatmentCostPerHa",
+                            "preLabel": "Cost of treatment / Ha.:",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalAreaTreatedHa",
+                            "preLabel": "Total treatment area (Ha):",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "treatmentType",
+                            "preLabel": "Type of treatment event:",
+                            "computed": null,
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "includeSource": false,
+                        "orientation": "vertical",
+                        "includeNotes": false,
+                        "hideSiteSelection": true,
+                        "zoomToProjectArea": true,
+                        "source": "location",
+                        "computed": null,
+                        "autoLocalitySearch": true,
+                        "type": "geoMap",
+                        "includeAccuracy": false,
+                        "readonly": false,
+                        "includeLocality": false
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "treatmentObjectiveBenefits",
+                "preLabel": "Describe how partner contributions will offset private gains and how achieved public benefits will be maintained:",
+                "computed": null,
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "title": "Please :",
+            "source": "pestManagement",
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "Target species:",
+                    "source": "targetSpecies",
+                    "width": "15%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Priority status:",
+                    "source": "pestPriorityStatus",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Pest management method:",
+                    "source": "pestManagementMethod",
+                    "width": "12%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Treatment incentive method:",
+                    "source": "treatmentIncentiveMethod",
+                    "width": "12%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of individuals OR colonies killed / removed:",
+                    "source": "pestAnimalsTreatedNo",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "No. unknown:",
+                    "source": "noUnknown",
+                    "computed": null,
+                    "width": "5%",
+                    "type": "boolean"
+                },
+                {
+                    "title": "Area covered by treatment (Ha):",
+                    "source": "areaTreatedHa",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Estimated pest density before treatment (No./Ha):",
+                    "source": "pestDensityPerHa",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "preLabel": "Comments / Notes:",
+                "computed": null,
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

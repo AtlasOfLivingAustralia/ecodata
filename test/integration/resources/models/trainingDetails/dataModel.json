@@ -1,0 +1,151 @@
+{
+    "modelName": "Training Details",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "courseAttendance",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Type of course",
+                    "name": "typeOfCourse",
+                    "constraints": [
+                        "Vocational - Occupational Health & Safety",
+                        "Vocational - First aid",
+                        "Other vocational skills - short course (specify)",
+                        "Cultural awareness",
+                        "Personal development",
+                        "Science degree or higher",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Title of the course attended",
+                    "name": "courseTitle"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The standard Australian Qualification level applicable for the course undertaken. All accredited training courses in Australia have an AQF level",
+                    "name": "qualificationLevel",
+                    "constraints": [
+                        "Senior Secondary Certificate of Education",
+                        "Non-accredited training event/course",
+                        "AQF Level 1 – Certificate I",
+                        "AQF Level 2 – Certificate II",
+                        "AQF Level 3 – Certificate III",
+                        "AQF Level 4 – Certificate IV",
+                        "AQF Level 5 – Diploma",
+                        "AQF Level 6 – Advanced Diploma, Associate Degree",
+                        "AQF Level 7 – Bachelor Degree",
+                        "AQF Level 8 – Bachelor Honours Degree",
+                        "Graduate Certificate, Graduate Diploma",
+                        "AQF Level 9 – Masters Degree",
+                        "AQF Level 10 – Doctoral Degree",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of people who completed the course and received the qualification",
+                    "primaryResult": "true",
+                    "name": "numberCompleted",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The aggregate total number of people who completed the course and received qualifications",
+            "primaryResult": "true",
+            "name": "totalCompletingCourses",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberCompleted",
+                    "fromList": "courseAttendance"
+                }
+            }
+        },
+        {
+            "dataType": "text",
+            "description": "General notes about this activity",
+            "primaryResult": "true",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please enter details of formal training courses attended by project participants.",
+                "computed": null,
+                "type": "literal"
+            }],
+            "computed": null,
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of attendees completing courses:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalCompletingCourses",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberCompleted\",\"fromList\":\"courseAttendance\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "courseAttendance",
+            "columns": [
+                {
+                    "title": "Type of course attended:",
+                    "source": "typeOfCourse",
+                    "width": "35%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Course title:",
+                    "source": "courseTitle",
+                    "width": "25%",
+                    "type": "text"
+                },
+                {
+                    "title": "Course qualification level:",
+                    "source": "qualificationLevel",
+                    "width": "25%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of people who completed the course:",
+                    "source": "numberCompleted",
+                    "width": "15%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ],
+    "class": "output-section",
+    "type": "row"
+}

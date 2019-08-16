@@ -1,0 +1,323 @@
+{
+    "dataModel": [
+        {
+            "indexName": "recordedBy",
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who found the agent species.",
+            "validate": "required"
+        },
+        {
+            "defaultValue": "${now}",
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date that the agent was found on the target weed species.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventTime",
+            "description": "The local time that the observation was made and the sample taken."
+        },
+        {
+            "dataType": "text",
+            "name": "observationId",
+            "description": "A field identifier or reference id for the observation"
+        },
+        {
+            "indexName": "recordType",
+            "dataType": "text",
+            "name": "recordType",
+            "description": "Is this record of a new release or a field observation?",
+            "constraints": [
+                "New release",
+                "Field observation"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "targetSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "Name of the target plant species on which the agent was observed",
+            "validate": "required"
+        },
+        {
+            "dataType": "species",
+            "name": "agentSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "Name of the agent species observed on the target plant",
+            "validate": "required"
+        },
+        {
+            "indexName": "numberOfTargetPlantsExamined",
+            "dataType": "text",
+            "name": "numberOfTargetPlantsExamined",
+            "description": "Enter the number of plants examined.",
+            "constraints": [
+                "0",
+                "1 - 5",
+                "6 - 20",
+                "21 - 50",
+                "> 50",
+                "Not specified"
+            ],
+            "validate": "required"
+        },
+        {
+            "indexName": "numberOfCanesExamined",
+            "dataType": "text",
+            "name": "numberOfCanesExamined",
+            "description": "Enter the number of canes examined.",
+            "constraints": [
+                "0",
+                "1 - 5",
+                "6 - 20",
+                "21 - 50",
+                "> 50",
+                "Not specified"
+            ],
+            "validate": "required"
+        },
+        {
+            "indexName": "numberOfAffectedPlants",
+            "dataType": "text",
+            "name": "numberOfInfectedCanes",
+            "description": "Enter the number of canes examined which were exhibiting signs of blackberry rust.",
+            "constraints": [
+                "None",
+                "Few canes",
+                "Several canes  - scattered over sample area",
+                "Several canes – localised on few plants",
+                "Numerous canes  - scattered on many plants over sample area",
+                "Numerous canes – localised on few plants",
+                "Many canes densely distributed over sample area",
+                "Not specified"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "collectedBy",
+            "description": "Name of the person who collected samples"
+        },
+        {
+            "indexName": "verifiedBy",
+            "dataType": "text",
+            "name": "verifiedBy",
+            "description": "Name of the person who verified collected samples"
+        },
+        {
+            "dataType": "text",
+            "name": "observationNotes",
+            "dwcAttribute": "eventRemarks",
+            "description": "Please record any field notes/comments relevant to this observation."
+        },
+        {
+            "dataType": "text",
+            "name": "observationNotes",
+            "description": "General observational notes applicable to the site, extent of agents and target species, conditions, etc."
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload photo(s) taken of the species at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "defaultAccuracy": 50,
+            "hideMyLocation": false,
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "hideSiteSelection": true,
+            "zoomToProjectArea": true,
+            "validate": "required"
+        },
+        {
+            "indexName": "state",
+            "dataType": "text",
+            "name": "state",
+            "description": "State jurisdiction in which the observation was made.",
+            "constraints": [
+                "ACT",
+                "NSW",
+                "SA",
+                "TAS",
+                "VIC",
+                "WA"
+            ]
+        },
+        {
+            "indexName": "nearestTown",
+            "dataType": "text",
+            "name": "nearestTown"
+        },
+        {
+            "dataType": "text",
+            "name": "weedInspectionNotes",
+            "dwcAttribute": "occurrenceRemarks"
+        }
+    ],
+    "modelName": "weedBiocontrol-agentRecord-canes",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h3>Observation Details<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observation date",
+                            "computed": null,
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Observation time",
+                            "computed": null,
+                            "source": "eventTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Observation Id",
+                            "computed": null,
+                            "source": "observationId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "What type of record is this?",
+                            "source": "recordType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Target species",
+                            "source": "targetSpecies",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "preLabel": "Bio-control agent species",
+                            "source": "agentSpecies",
+                            "type": "autocomplete",
+                            "validate": "required"
+                        },
+                        {
+                            "preLabel": "Number of plants examined",
+                            "source": "numberOfTargetPlantsExamined",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Number of canes examined",
+                            "source": "numberOfCanesExamined",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Number of canes with rust",
+                            "source": "numberOfInfectedCanes",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sample collected by",
+                            "source": "collectedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Sample assessed by",
+                            "source": "verifiedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observation notes",
+                            "computed": null,
+                            "source": "observationNotes",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h3>Please attach pictures to help your observation be validated<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Sighting photo(s)",
+                            "computed": null,
+                            "source": "sightingPhoto",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h3>Record your observation location here<\/h3><font style='color:blue; font-size:0.8em;'><i><b>Zoom in<\/b> to where you made the sighting and <b>click on the exact point on the map<\/b>.<p>The coordinates are inserted into the latitude and longitude fields on the form.<\/p><p>It is important to get the location as accurate as possible - record your confidence in the <i>accuracy<\/i> of your location marker in the field provided.<\/p><p>You can fine tune the location by zooming in further, clicking on the marker spot on the map, and dragging it to the correct place.<\/p><font color='#BD1101'>(<b>NB<\/b>: The co-ordinate projection is in WGS84 decimal lat/long.)<\/i><\/font><\/font>",
+                            "type": "literal"
+                        },
+                        {
+                            "includeNotes": true,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "includeSource": true,
+                            "includeAccuracy": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": true
+                        },
+                        {
+                            "preLabel": "Nearest town",
+                            "computed": null,
+                            "source": "nearestTown",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "State",
+                            "computed": null,
+                            "source": "state",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Moderator comments",
+                "computed": null,
+                "source": "moderatorComments",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}
