@@ -145,7 +145,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
-        //exportActivities(project, activitiesModel)
+        exportActivities(project, activitiesModel)
         exportOutputs(project, activitiesModel)
         exportRisks(project)
         exportMeriPlan(project)
@@ -643,8 +643,10 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-
-
+/***
+ * Deprecated
+ * @param project
+ */
     private  void exportRLPBaselinesIndicators(Map project){
         List<String> rlpBaseLineHeaders =commonProjectHeaders + ["Baseline/Indicator","Project baseline",	"Baseline method"]
         List<String> rlpBaseLineProperties = commonProjectProperties + ["biType","baseline",	"baselineMethod"]
