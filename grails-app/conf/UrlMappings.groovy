@@ -152,7 +152,7 @@ class UrlMappings {
             action = 'findByAssociation'
         }
 
-        "/ws/mu/$id"(controller: "MU"){ action = [GET:"get"] }
+        "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get"] }
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
 

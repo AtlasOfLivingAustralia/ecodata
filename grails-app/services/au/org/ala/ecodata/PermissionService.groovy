@@ -295,6 +295,18 @@ class PermissionService {
     }
 
     /**
+     * Returns a list of all users who have permissions configured for the specified ManagementUnit.
+     * @param managementUnitId the programId of the ManagementUnit to get permissions for.
+     * @return a List of the users that have roles configured for the ManagementUnit.
+     */
+    Map getMembersOfManagementUnit(String managementUnitId, Integer max = 100, Integer offset = 0, String order = "asc", String sort = "accessLevel") {
+        List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(
+                managementUnitId, ManagementUnit.name, DELETED, [max:max, offset:offset, sort:sort, order:order])
+        List members = permissions.collect{toMap(it)}
+        [managementUnitId:managementUnitId, members:members]
+    }
+
+    /**
      * Converts a UserPermission into a Map, looking up the user display name from the user details service.
      */
     private Map toMap(UserPermission userPermission) {

@@ -1,12 +1,12 @@
 package au.org.ala.ecodata
 
 @RequireApiKey
-class MUController {
+class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
     static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE']
 
-    MUService muService
+    ManagementUnitService muService
     ElasticSearchService elasticSearchService
 
     def get(String id) {
