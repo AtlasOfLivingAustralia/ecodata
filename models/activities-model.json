@@ -516,10 +516,7 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": [
-                "Plant Propagation Details",
-                "Participant Information"
-            ],
+            "outputs": ["Plant Propagation - Batch Test"],
             "outputConfig": [
                 {
                     "outputName": "Plant Propagation Details",
@@ -528,6 +525,11 @@
                 },
                 {
                     "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Plant Propagation - Batch Test",
                     "optional": false,
                     "collapsedByDefault": false
                 }
@@ -1014,7 +1016,7 @@
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
+            "status": "active"
         },
         {
             "outputs": ["Floristic Composition"],
@@ -1425,18 +1427,11 @@
         },
         {
             "outputs": ["Single Sighting"],
-            "outputConfig": [
-                {
-                    "outputName": "Single Sighting",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Environmental Assets Register",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Single Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Single Sighting",
             "type": "Activity",
             "category": "Assessment & monitoring",
@@ -1501,7 +1496,7 @@
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Aquatic Macro-invertebrate Assessment - SIGNAL2",
+            "name": "Basin Champions - Aquatic insects",
             "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring",
@@ -1849,581 +1844,15 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Aerial fauna survey - distance sampler method"],
+            "outputs": ["Lessons Learned and Improvements"],
             "outputConfig": [{
-                "outputName": "Aerial fauna survey - distance sampler method",
+                "outputName": "Lessons Learned and Improvements",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Aerial fauna survey - distance sampler method",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Pollinator Sighting"],
-            "outputConfig": [{
-                "outputName": "Pollinator Sighting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Pollinator Sighting",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Great Victorian Fish Count"],
-            "outputConfig": [{
-                "outputName": "Great Victorian Fish Count",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "VNPA ReefWatch Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Post Biodiversity-works Site Monitoring Methodology"],
-            "outputConfig": [{
-                "outputName": "Post Biodiversity-works Site Monitoring Methodology",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Post Biodiversity-works Site Monitoring Methodology",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": [
-                "Post revegetation area managed",
-                "Post revegetation site management",
-                "Post revegetation infill plantings",
-                "Post revegetation pest management"
-            ],
-            "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "Post revegetation site management",
-                    "optional": true,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Post revegetation infill plantings",
-                    "optional": true,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Post revegetation pest management",
-                    "optional": true,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Post revegetation area managed",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "gmsId": "",
-            "name": "Post revegetation site management",
-            "supportsSites": true,
-            "type": "Activity",
-            "category": "Implementation actions",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Location Photo"],
-            "outputConfig": [{
-                "outputName": "Location Photo",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "WarrumbungleSnap",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Steaming to Success"],
-            "outputConfig": [{
-                "outputName": "Steaming to Success",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Steaming to Success",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Koala Count - South Australia"],
-            "outputConfig": [{
-                "outputName": "Koala Count - South Australia",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Koala Count - South Australia",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["General Seed Collection Recording Form"],
-            "outputConfig": [{
-                "outputName": "General Seed Collection Recording Form",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "General Seed Collection Activity",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["General Fauna Sightings v1"],
-            "outputConfig": [{
-                "outputName": "General Fauna Sightings v1",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "General Fauna Sightings v1",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["General Flora Sightings v1"],
-            "outputConfig": [{
-                "outputName": "General Flora Sightings v1",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "General Flora Sightings v1",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["NT Systematic Terrestrial Fauna Survey"],
-            "outputConfig": [{
-                "outputName": "NT Systematic Terrestrial Fauna Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "NT Systematic Terrestrial Fauna Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["North Sydney Wildlife Watch"],
-            "outputConfig": [{
-                "outputName": "North Sydney Wildlife Watch",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "North Sydney Wildlife Watch",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["North Sydney Wildlife Watch - Multi-species"],
-            "outputConfig": [{
-                "outputName": "North Sydney Wildlife Watch - Multi-species",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "North Sydney Wildlife Watch - Multi-species",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dunewatch Activity Summary"],
-            "outputConfig": [{
-                "outputName": "Dunewatch Activity Summary",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dunewatch Activity Summary",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dunewatch Survey - Emery Method"],
-            "outputConfig": [{
-                "outputName": "Dunewatch Survey - Emery Method",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dunewatch Survey - Emery Method",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dunewatch Survey - Human Impact Assessment"],
-            "outputConfig": [{
-                "outputName": "Dunewatch Survey - Human Impact Assessment",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dunewatch - Human Impact Assessment",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dunewatch Flora Survey"],
-            "outputConfig": [{
-                "outputName": "Dunewatch Flora Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dunewatch Flora Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dunewatch Fauna Survey"],
-            "outputConfig": [{
-                "outputName": "Dunewatch Fauna Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dunewatch Fauna Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Overview of Project Progress - new"],
-            "outputConfig": [{
-                "outputName": "Overview of Project Progress - new",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Stage Report",
+            "name": "Outcomes, Evaluation and Learning - General",
             "type": "Activity",
             "category": "Administration, management & reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "active"
-        },
-        {
-            "outputs": ["Nest Box Monitoring Survey"],
-            "outputConfig": [{
-                "outputName": "Nest Box Monitoring Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Nest Box Monitoring",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["EPA Water Quality and Illegal Dumping"],
-            "outputConfig": [{
-                "outputName": "EPA Water Quality and Illegal Dumping",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "EPA Water Quality and Illegal Dumping",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Local Species Inventory"],
-            "outputConfig": [{
-                "outputName": "Local Species Inventory",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Local Species Inventory",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["General Multi-species Sightings - Alternate format v2"],
-            "outputConfig": [{
-                "outputName": "General Multi-species Sightings - Alternate format v2",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "General Multi-species Sightings - Alternate format v2",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Bird Survey - Curl Curl"],
-            "outputConfig": [{
-                "outputName": "Bird Survey - Curl Curl",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Bird Survey - Curl Curl",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Martu Wangka Sightings"],
-            "outputConfig": [{
-                "outputName": "Martu Wangka Sightings",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Martu Wangka Sightings",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Wolli Ck - Current surveys"],
-            "outputConfig": [{
-                "outputName": "Wolli Ck - Current surveys",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Wolli Creek Birdos - Current Surveys",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Wolli Ck - CBOC observations"],
-            "outputConfig": [{
-                "outputName": "Wolli Ck - CBOC observations",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Wolli Creek Birdos - CBOC Observations",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Wolli Ck - Rankin observations"],
-            "outputConfig": [{
-                "outputName": "Wolli Ck - Rankin observations",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Wolli Creek Birdos - Neil Rankin observations",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Environmental Assets Register"],
-            "outputConfig": [{
-                "outputName": "Environmental Assets Register",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Environmental Assets Register",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Single Species Weed Monitoring"],
-            "outputConfig": [{
-                "outputName": "Single Species Weed Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Single Species Weed Monitoring Form",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Annual stage report"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Annual stage report",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Annual Stage Report",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Administration, management & reporting",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Reef 2050 Plan Action Reporting"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Reef 2050 Plan Action Reporting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Reef 2050 Plan Action Reporting",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Reports",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Weed Biological Control - Agent Record for target species with canes"],
-            "outputConfig": [{
-                "outputName": "Weed Biological Control - Agent Record for target species with canes",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Weed Biological Control - Agent Record - Target species with canes",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Weed Biological Control - Agent Record for target species - Insect agents"],
-            "outputConfig": [{
-                "outputName": "Weed Biological Control - Agent Record for target species - Insect agents",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Weed Biological Control - Agent Record - Insect agents",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Weed Biological Control - Agent Record - Non cane rust and fungi agents"],
-            "outputConfig": [{
-                "outputName": "Weed Biological Control - Agent Record - Non cane rust and fungi agents",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Weed Biological Control - Agent Record - Non cane rust and fungi agents",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Cape York Incidental Sightings"],
-            "outputConfig": [{
-                "outputName": "Cape York Incidental Sightings",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Cape York Incidental Sightings",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Cape York Terrestrial Fauna Survey"],
-            "outputConfig": [{
-                "outputName": "Cape York Terrestrial Fauna Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Cape York Terrestrial Fauna Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Mapping Butterflies and Host Vines"],
-            "outputConfig": [
-                {
-                    "outputName": "Tropical Butterfly Sightings",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Mapping Butterflies and Host Vines",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Mapping Butterflies and Host Vines",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Froglet calls"],
-            "outputConfig": [{
-                "outputName": "Froglet calls",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Froglet calls",
-            "supportsSites": false,
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Echidna CSI"],
-            "outputConfig": [{
-                "outputName": "Echidna CSI",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Echidna CSI",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Bat Survey - SAMD"],
-            "outputConfig": [{
-                "outputName": "Bat Survey - SAMD",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Bat Survey - SAMD",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Bird Survey - SAMD"],
-            "outputConfig": [{
-                "outputName": "Bird Survey - SAMD",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Bird Survey - SAMD",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Redlands Weed Spotter"],
-            "outputConfig": [{
-                "outputName": "Redlands Weed Spotter",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Redlands Weed Spotter",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dieback Observation"],
-            "outputConfig": [{
-                "outputName": "Dieback Observation",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dieback Observation",
-            "type": "Activity",
-            "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
@@ -2649,7 +2078,10 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Seed Collection - with map"],
+            "outputs": [
+                "Seed collection - with map",
+                "Seed Collection - with map"
+            ],
             "outputConfig": [
                 {
                     "outputName": "Seed collection - with map",
@@ -2769,13 +2201,113 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Sea Search Patrol"],
+            "outputs": ["Aerial fauna survey - distance sampler method"],
             "outputConfig": [{
-                "outputName": "Sea Search Patrol",
+                "outputName": "Aerial fauna survey - distance sampler method",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Sea Search - Sea Search Patrol",
+            "name": "Aerial fauna survey - distance sampler method",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": [],
+            "outputConfig": [],
+            "name": "Pollinator Sighting",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Great Victorian Fish Count"],
+            "outputConfig": [{
+                "outputName": "Great Victorian Fish Count",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "VNPA ReefWatch Survey",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": [
+                "Post revegetation area managed",
+                "Post revegetation site management",
+                "Post revegetation infill plantings",
+                "Post revegetation pest management"
+            ],
+            "supportsPhotoPoints": false,
+            "outputConfig": [
+                {
+                    "outputName": "Post revegetation site management",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Post revegetation infill plantings",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Post revegetation pest management",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Post revegetation area managed",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "gmsId": "",
+            "name": "Post revegetation site management",
+            "supportsSites": true,
+            "type": "Activity",
+            "category": "Implementation actions",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Post Biodiversity-works Site Monitoring Methodology"],
+            "outputConfig": [{
+                "outputName": "Post Biodiversity-works Site Monitoring Methodology",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Post Biodiversity-works Site Monitoring Methodology",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Koala Count - South Australia"],
+            "outputConfig": [{
+                "outputName": "Koala Count - South Australia",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Koala Count - South Australia",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Seagrass Bed Monitoring"],
+            "outputConfig": [
+                {
+                    "outputName": "Seagrass Bed Monitoring",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Sea Search - Seagrass Boundary Monitoring",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Sea Search - Seagrass Bed Monitoring",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
@@ -2793,32 +2325,8 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Echidna CSI - Sample collection"],
-            "outputConfig": [{
-                "outputName": "Echidna CSI - Sample collection",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Echidna CSI - Sample collection",
-            "type": "Activity",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Seagrass Bed Monitoring"],
-            "outputConfig": [{
-                "outputName": "Seagrass Bed Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Sea Search - Seagrass Bed Monitoring",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
             "outputs": ["Sea Search - Fixed Photo Points"],
-            "supportsPhotoPoints": false,
+            "supportsPhotoPoints": true,
             "outputConfig": [{
                 "outputName": "Sea Search - Fixed Photo Points",
                 "optional": false,
@@ -2830,132 +2338,141 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Sea Search - Seagrass Boundary Mapping"],
+            "outputs": ["General Seed Collection Recording Form"],
             "outputConfig": [{
-                "outputName": "Sea Search - Seagrass Boundary Mapping",
+                "outputName": "General Seed Collection Recording Form",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Sea Search - Seagrass Boundary Mapping",
+            "name": "General Seed Collection Activity",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Sea Search - Image Library"],
-            "outputConfig": [{
-                "outputName": "Sea Search - Image Library",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Sea Search - Image Library",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["MEGA Bat project - SAMD"],
-            "outputConfig": [{
-                "outputName": "MEGA Bat project - SAMD",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "MEGA Bat project - SAMD",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Goanna Watch - Discovery Circle"],
-            "outputConfig": [{
-                "outputName": "Goanna Watch - Discovery Circle",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Goanna Watch - Discovery Circle",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Bird Survey - Western Sydney"],
-            "outputConfig": [{
-                "outputName": "Bird Survey - Western Sydney",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Bird Survey - Western Sydney",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["CLC 2Ha Track Plot"],
-            "outputConfig": [{
-                "outputName": "CLC 2Ha Track Plot",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "CLC 2Ha Track Plot",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Echidna CSI - Other evidence"],
-            "outputConfig": [{
-                "outputName": "Echidna CSI - Other evidence",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Echidna CSI - Other evidence",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Urban Bird Movements Research - Incidental"],
+            "outputs": ["General Fauna Sightings v1"],
             "outputConfig": [
                 {
-                    "outputName": "Urban Bird Movements Research",
+                    "outputName": "Logan Fauna Sightings",
                     "optional": false,
                     "collapsedByDefault": false
                 },
                 {
-                    "outputName": "Urban Bird Movements Research - Incidental",
+                    "outputName": "General Fauna Sightings v1",
                     "optional": false,
                     "collapsedByDefault": false
                 }
             ],
-            "name": "Urban Bird Movements Research - Incidental Sighting",
+            "name": "General Fauna Sightings v1",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Urban Bird Movements Research - Systematic Survey"],
+            "outputs": ["Habitat Condition Assessment"],
             "outputConfig": [{
-                "outputName": "Urban Bird Movements Research - Systematic Survey",
+                "outputName": "Habitat Condition Assessment",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Urban Bird Movements Research - Systematic Survey",
+            "name": "Habitat Condition Assessment Tool",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Regional Funding Final Report"],
+            "outputs": ["Overview of Project Progress - new"],
+            "outputConfig": [
+                {
+                    "outputName": "Progress against outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Overview of Project Progress",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Overview of Project Progress - new",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Stage Report",
+            "type": "Activity",
+            "category": "Administration, management & reporting",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Annual stage report"],
             "supportsPhotoPoints": false,
             "outputConfig": [{
-                "outputName": "Regional Funding Final Report",
+                "outputName": "Annual stage report",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Regional Funding Final Report",
+            "name": "Annual Stage Report",
             "supportsSites": false,
             "type": "Report",
-            "category": "Administration",
+            "category": "Administration, management & reporting",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Local Species Inventory"],
+            "outputConfig": [{
+                "outputName": "Local Species Inventory",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Local Species Inventory",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": [
+                "CRISP - Project Assessment - Step 1. Pre-screen",
+                "CRISP - Project Assessment - Step 2. Determine Exposure",
+                "CRISP - Audit - First Pass Scan"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "CRISP - Project Assessment - Pre-screen",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "CRISP - Project Assessment - Step 2. Determine Exposure",
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "CRISP - Project Assessment - Step 1. Pre-screen",
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "CRISP - Audit - First Pass Scan",
+                    "optional": true,
+                    "collapsedByDefault": true
+                }
+            ],
+            "name": "CRISP - Project Assessment",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["CRISP - Audit - First Pass Scan"],
+            "outputConfig": [{
+                "outputName": "CRISP - Audit - First Pass Scan",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "CRISP - Audit",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
@@ -3045,7 +2562,7 @@
                     "outputName": "ESP Restoration of Habitat Features",
                     "optional": true,
                     "collapsedByDefault": false,
-                    "optionalQuestionText": "Not applicable, as this is not a contracted (approved) management action for this site/management unit."
+                    "optionalQuestionText": "Not applicable"
                 },
                 {
                     "outputName": "ESP Optional Reporting",
@@ -3161,7 +2678,8 @@
                 {
                     "outputName": "ESP Feral animal management",
                     "optional": true,
-                    "collapsedByDefault": false
+                    "collapsedByDefault": false,
+                    "optionalQuestionText": "Not applicable"
                 },
                 {
                     "outputName": "ESP Biomass control measures",
@@ -3195,46 +2713,138 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["ESP Optional Reporting"],
+            "outputs": ["Reef 2050 Plan Action Reporting"],
             "supportsPhotoPoints": false,
             "outputConfig": [{
-                "outputName": "ESP Optional Reporting",
-                "optional": true,
+                "outputName": "Reef 2050 Plan Action Reporting",
+                "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "ESP Species",
+            "name": "Reef 2050 Plan Action Reporting",
             "supportsSites": false,
             "type": "Report",
-            "category": "Environmental Stewardship Programme",
+            "category": "Reports",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Wild Macadamia Survey"],
+            "outputs": ["Seedbank - Accession of new stock"],
+            "outputConfig": [{
+                "outputName": "Seedbank - Accession of new stock",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Seedbank - Accession of new stock",
+            "type": "Activity",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": [
+                "Prescreen - 1. Identify hazards",
+                "Assess Initiative",
+                "First Pass Scan"
+            ],
+            "supportsPhotoPoints": false,
             "outputConfig": [
                 {
-                    "outputName": "Significant Tree Survey v2",
+                    "outputName": "Prescreen - 1. Identify hazards",
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "Assess Initiative",
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "First Pass Scan",
+                    "optional": true,
+                    "collapsedByDefault": true
+                }
+            ],
+            "name": "CRISP Case Assessment",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Reporting",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Weed Biological Control - Agent Record for target species with canes"],
+            "outputConfig": [
+                {
+                    "outputName": "Weed Biological Control - Record of Agent",
                     "optional": false,
                     "collapsedByDefault": false
                 },
                 {
-                    "outputName": "Wild Macadamia Survey",
+                    "outputName": "Weed Biological Control - Agent Record",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Biological Control - Agent Record for target species with canes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Biological Control - Agent Record for target species - Herbs",
                     "optional": false,
                     "collapsedByDefault": false
                 }
             ],
-            "name": "Wild Macadamia Survey",
+            "name": "Weed Biological Control - Agent Record - Target species with canes",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Habitat Condition Assessment"],
+            "outputs": ["Weed Biological Control - Agent Record for target species - Insect agents"],
+            "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Weed Biological Control - Agent Record for target species - Herbs",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Biological Control - Agent Record for target species - Insect agents",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Weed Biological Control - Agent Record - Insect agents",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Weed Biological Control - Agent Record - Non cane rust and fungi agents"],
             "outputConfig": [{
-                "outputName": "Habitat Condition Assessment",
+                "outputName": "Weed Biological Control - Agent Record - Non cane rust and fungi agents",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Habitat Condition Assessment Tool",
+            "name": "Weed Biological Control - Agent Record - Non cane rust and fungi agents",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Froglet calls"],
+            "outputConfig": [
+                {
+                    "outputName": "Frog Test",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Froglet calls",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Froglet Calls",
+            "supportsSites": true,
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
@@ -3252,51 +2862,201 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Incentives"],
+            "outputs": ["Mapping Butterflies and Host Vines"],
             "outputConfig": [{
-                "outputName": "Incentives",
+                "outputName": "Mapping Butterflies and Host Vines",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Incentives",
-            "type": "Activity",
-            "category": "QLD MIPS Projects",
+            "name": "Mapping Butterflies and Host Vines",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Products"],
+            "outputs": ["Echidna CSI"],
             "outputConfig": [{
-                "outputName": "Products",
+                "outputName": "Echidna CSI",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Products",
-            "type": "Activity",
-            "category": "QLD MIPS Projects",
+            "name": "Echidna CSI",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Works Activities"],
+            "outputs": ["Bird Survey - SAMD"],
             "outputConfig": [{
-                "outputName": "Works Activities",
+                "outputName": "Bird Survey - SAMD",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Works",
-            "type": "Activity",
-            "category": "QLD MIPS Projects",
+            "name": "Bird Survey - SAMD",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Events"],
+            "outputs": ["Bat Survey - SAMD"],
             "outputConfig": [{
-                "outputName": "Events",
+                "outputName": "Bat Survey - SAMD",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Events",
+            "name": "Bat Survey - SAMD",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["ESP Optional Reporting"],
+            "outputConfig": [{
+                "outputName": "ESP Optional Reporting",
+                "optional": true,
+                "collapsedByDefault": false
+            }],
+            "name": "ESP Species",
+            "supportsSites": true,
             "type": "Activity",
-            "category": "QLD MIPS Projects",
+            "category": "Environmental Stewardship Programme",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["CLC 2Ha Track Plot"],
+            "outputConfig": [{
+                "outputName": "CLC 2Ha Track Plot",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "CLC 2Ha Track Plot",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Echidna CSI - Sample collection"],
+            "outputConfig": [{
+                "outputName": "Echidna CSI - Sample collection",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Echidna CSI - Sample collection",
+            "type": "Activity",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["EHP - Incentives"],
+            "outputConfig": [{
+                "outputName": "EHP - Incentives",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "EHP Incentives",
+            "type": "Activity",
+            "category": "EHP MIPS Projects",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["EHP - Products"],
+            "outputConfig": [{
+                "outputName": "EHP - Products",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "EHP Products",
+            "type": "Activity",
+            "category": "EHP MIPS Projects",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["EHP - Works"],
+            "outputConfig": [{
+                "outputName": "EHP - Works",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "EHP - Works",
+            "type": "Activity",
+            "category": "EHP MIPS Projects",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["EHP - Events"],
+            "outputConfig": [{
+                "outputName": "EHP - Events",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "EHP - Events",
+            "type": "Activity",
+            "category": "EHP MIPS Projects",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Regional Funding Final Report"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Regional Funding Final Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Regional Funding Final Report",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Administration and Reporting",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Recovery Team Annual Progress Report"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Recovery Team Annual Progress Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Recovery Team Annual Progress Report",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Reporting",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Sea Search - Seagrass Boundary Monitoring"],
+            "outputConfig": [{
+                "outputName": "Sea Search - Seagrass Boundary Monitoring",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Sea Search - Seagrass Boundary Monitoring",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Climate Adaption"],
+            "outputConfig": [{
+                "outputName": "Climate Adaption",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Climate Adaption",
+            "type": "Activity",
+            "category": "Works",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Regional Funding Final Report KEQ"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Regional Funding Final Report KEQ",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Regional Funding Final Report KEQ",
+            "supportsSites": false,
+            "type": "Report",
             "minOptionalSectionsCompleted": 1
         },
         {
@@ -3314,402 +3074,77 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Leonora DHS Biodiversity Surveys"],
+            "outputs": ["Nest Box Establishment"],
             "outputConfig": [{
-                "outputName": "Leonora DHS Biodiversity Surveys",
+                "outputName": "Nest Box Establishment",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Leonora DHS Biodiversity Surveys",
+            "name": "Nest Box Establishment",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Fungi Research"],
+            "outputs": ["nestBoxSurvey"],
             "outputConfig": [{
-                "outputName": "Fungi Research",
+                "outputName": "nestBoxSurvey",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Fungi Research",
+            "name": "Nest Box Survey",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Western Ringtail Possum Reporting"],
+            "outputs": ["nestBoxMaintenance"],
             "outputConfig": [{
-                "outputName": "Western Ringtail Possum Reporting",
+                "outputName": "nestBoxMaintenance",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Western Ringtail Possum Reporting",
+            "name": "Nest Box Maintenance",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Blue Mountains WHI - Boardwalk Transect"],
+            "outputs": ["Wild Macadamia Survey"],
             "outputConfig": [{
-                "outputName": "Blue Mountains WHI - Boardwalk Transect",
+                "outputName": "Wild Macadamia Survey",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Blue Mountains WHI - Boardwalk Transect",
+            "name": "Wild Macadamia Survey",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Blue Mountains WHI - Photo Points"],
+            "outputs": ["Sea Search - Image Library"],
             "outputConfig": [{
-                "outputName": "Blue Mountains WHI - Photo Points",
+                "outputName": "Sea Search - Image Library",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Blue Mountains WHI - Photo Points",
+            "name": "Sea Search - Image Library",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Blue Mountains WHI - Camera Traps"],
-            "outputConfig": [{
-                "outputName": "Blue Mountains WHI - Camera Traps",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Blue Mountains WHI - Camera Traps",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Single Sighting - verification - optional photo"],
-            "outputConfig": [
-                {
-                    "outputName": "Single Sighting - verification + optional photo ",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Single Sighting - verification - optional photo ",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Single Sighting - verification + optional photo",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Single Sighting - verification - optional photo",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Single Sighting - verification - optional photo",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Single Sighting - verification + mandatory photo"],
-            "outputConfig": [{
-                "outputName": "Single Sighting - verification + mandatory photo",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Single Sighting - verification + mandatory photo",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Single Sighting - optional photo"],
-            "outputConfig": [{
-                "outputName": "Single Sighting - optional photo",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Single Sighting - optional photo",
-            "type": "Activity",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Marine Turtle Monitoring Nest Presence and Depredation Survey"],
-            "outputConfig": [{
-                "outputName": "Marine Turtle Monitoring Nest Presence and Depredation Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Marine Turtle Monitoring Nest Presence and Depredation Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Ray and Shark Monitoring Survey"],
-            "outputConfig": [{
-                "outputName": "Ray and Shark Monitoring Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Ray and Shark Monitoring Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["1000m transect x 8 quadrat bird survey"],
-            "outputConfig": [{
-                "outputName": "1000m transect x 8 quadrat bird survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "1000m transect x 8 quadrat bird survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Single Bird Sighting"],
-            "outputConfig": [{
-                "outputName": "Single Bird Sighting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Single Bird Sighting with additional information",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Dung Beetle Monitoring"],
-            "outputConfig": [{
-                "outputName": "Dung Beetle Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Dung Beetle Monitoring",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Raptor Nest Monitoring"],
-            "outputConfig": [{
-                "outputName": "Raptor Nest Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Raptor Nest Monitoring (ver. 2.0)",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["BDBSA Flora observations"],
-            "outputConfig": [{
-                "outputName": "BDBSA Flora observations",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "BDBSA Flora observations",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["BDBSA Fauna observations"],
-            "outputConfig": [{
-                "outputName": "BDBSA Fauna observations",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "BDBSA Fauna observations",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Simple Weed Sighting"],
-            "outputConfig": [{
-                "outputName": "Simple Weed Sighting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Simple Weed Sighting",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Aquatic Macro-invertebrate Assessment - ALT method"],
-            "outputConfig": [{
-                "outputName": "Aquatic Macro-invertebrate Assessment - ALT method",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Aquatic Macro-invertebrate Assessment - ALT method",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["RARC - Site & Event Details"],
-            "outputConfig": [
-                {
-                    "outputName": "RARC - Site & Event Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "RARC - Vegetation Width",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "RARC - Vegetation Cover",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "RARC - Debris",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "RARC - Features",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "RARC - Total Scores",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Rapid Appraisal of Riparian Condition (RARC)",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["ACT Waterwatch - Water Quality Monitoring"],
-            "outputConfig": [{
-                "outputName": "ACT Waterwatch - Water Quality Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "ACT Waterwatch - Water Quality Monitoring",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["ACT Waterwatch - Water Bug Survey"],
-            "outputConfig": [{
-                "outputName": "ACT Waterwatch - Water Bug Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "ACT Waterwatch - Water Bug Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["RLP Annual Report"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "RLP Annual Report",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "In Development",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "RLP Annual Report",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "RLP",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["In Development"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "RLP Short-term outcomes",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "In Development",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "RLP Short term project outcomes",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "RLP",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["In Development"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "RLP Mid-term outcomes",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "In Development",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "RLP Medium term project outcomes",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "RLP",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["RLP Core Services report"],
+            "outputs": ["Prototype 1"],
             "supportsPhotoPoints": false,
             "outputConfig": [{
-                "outputName": "RLP Core Services report",
+                "outputName": "Prototype 1",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "RLP Core Services report",
+            "name": "Prototype 1",
             "supportsSites": false,
             "type": "Report",
-            "category": "RLP",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["RLP - Core services annual report"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "RLP - Core services annual report",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "RLP Core Services annual report",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "RLP",
+            "category": "Prototypes",
             "minOptionalSectionsCompleted": 1
         },
         {
@@ -3941,125 +3376,140 @@
             "name": "RLP Output Report",
             "supportsSites": true,
             "type": "Report",
-            "category": "RLP",
+            "category": "Report",
             "minOptionalSectionsCompleted": "0"
         },
         {
-            "outputs": ["Tree Dieback Survey - WSU"],
-            "outputConfig": [{
-                "outputName": "Tree Dieback Survey - WSU",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Tree Dieback Survey - WSU",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Quadrat Sampling - Presence Only"],
-            "outputConfig": [{
-                "outputName": "Quadrat Sampling - Presence Only",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Quadrat Sampling - Presence Only",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Marine Metre Squared Transect Survey"],
-            "outputConfig": [{
-                "outputName": "Marine Metre Squared Transect Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Marine Metre Squared Transect Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Marine Metre Squared Shore Survey"],
-            "outputConfig": [{
-                "outputName": "Marine Metre Squared Shore Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Marine Metre Squared Shore Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Koala Survey - Whitsundays"],
-            "outputConfig": [{
-                "outputName": "Koala Survey - Whitsundays",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Koala Survey - Whitsundays",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Beach Sand Photo Point Monitoring"],
-            "outputConfig": [{
-                "outputName": "Beach Sand Photo Point Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Beach Sand Photo Point Monitoring",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Fitzroy Turtle Monitoring"],
-            "outputConfig": [{
-                "outputName": "Fitzroy Turtle Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Fitzroy Turtle Monitoring",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Outback Waterholes"],
-            "outputConfig": [{
-                "outputName": "Outback Waterholes",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Outback Waterholes",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Elm Leaf Beetle Survey"],
-            "outputConfig": [{
-                "outputName": "Elm Leaf Beetle Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Elm Leaf Beetle Survey",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Reef 2050 Plan Action Reporting 2018"],
+            "outputs": ["NRM2 - Pest Animals and Weeds"],
             "supportsPhotoPoints": false,
             "outputConfig": [{
-                "outputName": "Reef 2050 Plan Action Reporting 2018",
+                "outputName": "NRM2 - Pest Animals and Weeds",
                 "optional": false,
                 "collapsedByDefault": false
             }],
+            "name": "Prototype 3",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Prototypes",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Ray and Sharks"],
+            "outputConfig": [{
+                "outputName": "Ray and Sharks",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Ray and Sharks Survey",
+            "type": "Activity",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["RLP Annual Report"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "RLP Annual Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "RLP Annual Report",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Reports",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["RLP Short-term outcomes"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "RLP Short-term outcomes",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "RLP Short term project outcomes",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Reports",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["RLP Mid-term outcomes"],
+            "outputConfig": [{
+                "outputName": "RLP Mid-term outcomes",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "RLP Medium term project outcomes",
+            "type": "Activity",
+            "category": "Reports",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["RLP Core Services report"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [
+                {
+                    "outputName": "RLP Core services monthly report",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "RLP Core Services report",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "RLP Core Services report",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Administration",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["RLP - Core services annual report"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "RLP - Core services annual report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "RLP Core Services annual report",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Adminstration",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["APN Feral Pig Shooting"],
+            "outputConfig": [{
+                "outputName": "APN Feral Pig Shooting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "APN Feral Pig Shooting",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": [
+                "Reef 2050 Action Reporting 2018",
+                "Reef 2050 Plan Action Reporting 2018"
+            ],
+            "supportsPhotoPoints": false,
+            "outputConfig": [
+                {
+                    "outputName": "Reef 2050 Action Reporting 2018",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Reef 2050 Plan Action Reporting 2018",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "name": "Reef 2050 Plan Action Reporting 2018",
             "supportsSites": false,
             "type": "Report",
@@ -4079,49 +3529,6 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["Koala Survey - General - Victorian"],
-            "outputConfig": [
-                {
-                    "outputName": "Koala Survey - General",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Koala Survey - General - Victorian",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Koala Survey - General - Victorian",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Bird Sightings - NT"],
-            "outputConfig": [{
-                "outputName": "Bird Sightings - NT",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Bird Sightings - NT",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Inner West Microbat Monitors"],
-            "outputConfig": [{
-                "outputName": "Inner West Microbat Monitors",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Inner West Microbat Monitors",
-            "type": "Activity",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
             "outputs": ["RLP - Output Report Adjustment"],
             "supportsPhotoPoints": false,
             "outputConfig": [{
@@ -4132,57 +3539,7 @@
             "name": "RLP Output Report Adjustment",
             "supportsSites": false,
             "type": "Report",
-            "category": "RLP",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Flying Fox - Bats in Backyards"],
-            "outputConfig": [{
-                "outputName": "Flying Fox - Bats in Backyards",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Flying Fox - Bats in Backyards",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Nest Box Location Form - Victoria"],
-            "outputConfig": [
-                {
-                    "outputName": "Nest Box Location Form",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Nest Box Location Form - Victoria",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Nest Box Location Form - Victoria",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": ["Nest Box Monitoring & Maintenance Form - Victoria"],
-            "outputConfig": [
-                {
-                    "outputName": "Nest Box Monitoring & Maintenance Form",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Nest Box Monitoring & Maintenance Form - Victoria",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Nest Box Monitoring & Maintenance Form - Victoria",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
+            "category": "Reporting",
             "minOptionalSectionsCompleted": 1
         }
     ],
@@ -4414,7 +3771,7 @@
                     "aggregationType": "COUNT",
                     "displayType": "piechart",
                     "name": "groundPreparationWorks",
-                    "description": "Count of the number of actions of each type associated with the site preparation activity.",
+                    "description": "Count of the number of actions of each type associated with the site preparation activity. ",
                     "label": "Proportion of actions contributing to the preparation of land for subsequent actions by the type of subsequent action",
                     "groupBy": "output:associatedActivity",
                     "listName": "actionsList",
@@ -4465,6 +3822,16 @@
                     "label": "Total No. of unique farming entities engaged",
                     "units": "",
                     "category": "Farm Management Practices",
+                    "isOutputTarget": false
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "name": "numberOfCommunityGroups",
+                    "description": "The total number of community groups who are not delivery partners that are participating in activities and events.",
+                    "label": "Total No. of community groups (non delivery partners) participating",
+                    "units": "",
+                    "category": "Community Engagement and Capacity Building",
                     "isOutputTarget": false
                 }
             ],
@@ -5323,7 +4690,7 @@
                     "displayType": "",
                     "gmsId": "MPC",
                     "name": "totalChangePracticeTreatedArea",
-                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects.",
+                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects. ",
                     "label": "Area of land (Ha) changed to sustainable practices",
                     "units": "Ha",
                     "category": "Farm Management Practices",
@@ -5513,7 +4880,7 @@
                     "aggregationType": "COUNT",
                     "displayType": "piechart",
                     "name": "conservationActionType",
-                    "description": "Breakdown of the number of conservation actions undertaken by species being protected.",
+                    "description": "Breakdown of the number of conservation actions undertaken by species being protected. ",
                     "label": "No. of conservation actions undertaken by species protected.",
                     "groupBy": "output:targetSpecies.name",
                     "listName": "conservationWorks",
@@ -5532,7 +4899,7 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "animalReleaseNumber",
-                    "description": "The total number of plants and animals returned to the wild from",
+                    "description": "The total number of plants and animals returned to the wild from ",
                     "label": "No. of individual animals released back into the wild from breeding and propagation programmes.",
                     "listName": "",
                     "category": "Biodiversity Management"
@@ -6844,7 +6211,7 @@
                     "displayType": "",
                     "gmsId": "MPCA25ALG",
                     "name": "totalChangePracticeTreatedArea",
-                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects.",
+                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects. ",
                     "label": "Area of land (Ha) on which improved management practices have been implemented",
                     "listName": "",
                     "category": "Farm Management Practices",
@@ -7070,7 +6437,7 @@
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
                     "category": "Natural Resources Management",
-                    "filterBy": "Burnt area (Ha) - may be different to the total area managed"
+                    "filterBy": "Burnt area (Ha)"
                 },
                 {
                     "aggregationType": "SUM",
@@ -7410,7 +6777,7 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "gmsId": "WDT25ALG",
-                    "name": "areaTreatedHa",
+                    "name": "weedAreaTreatedHa",
                     "description": "The total area of weeds for which an initial treatment was undertaken.",
                     "label": "Total new area treated for weeds (Ha)",
                     "units": "Ha",
@@ -7423,7 +6790,7 @@
                     "displayType": "",
                     "gmsId": "MPCA25ALG",
                     "name": "totalChangePracticeTreatedArea",
-                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects.",
+                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects. ",
                     "label": "Area of land (Ha) on which improved management practices have been implemented",
                     "listName": "",
                     "category": "Farm Management Practices",
@@ -7521,7 +6888,7 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "gmsId": "IKTA25ALG",
-                    "name": "indigenousProductsDeveloped",
+                    "name": "indigenousKnowledgeTransferActionsNo",
                     "description": "The total number of publications and other products (eg. videos) developed by the project to facilitate the sharing of Indigenous Ecological Knowledge.",
                     "label": "Indigenous knowledge transfer (no. of activities)",
                     "listName": "",
@@ -7583,6 +6950,49 @@
                     "units": "kilometres",
                     "listName": "",
                     "category": "Biodiversity Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "APC",
+                    "name": "accessAreaProtected",
+                    "description": "Area in hectares that is being protected as a direct result of installing access control structures.",
+                    "label": "Area protected by access control installations (Ha)",
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "name": "numberOfInstallations",
+                    "description": "Sum of the total number of structures installed for access management.",
+                    "label": "Total No. of structures installed for access management",
+                    "category": "Natural Resources Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "DRW",
+                    "name": "debrisWeightTonnes",
+                    "description": "The total mass of debris removed.",
+                    "label": "Weight of debris removed (Tonnes)",
+                    "units": "Tonnes",
+                    "category": "Natural Resources Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "DMA",
+                    "name": "quarantineAreaTreatedHa",
+                    "description": "Total area treated / quarantined",
+                    "label": "Total area (Ha) treated / quarantined",
+                    "groupBy": "",
+                    "listName": "",
+                    "category": "Invasive Species Management - Pests & Diseases",
                     "isOutputTarget": true
                 }
             ],
@@ -7679,14 +7089,19 @@
             "name": "Great Victorian Fish Count"
         },
         {
+            "template": "postRevegetationSiteManagement",
+            "scores": [],
+            "name": "Post revegetation site management"
+        },
+        {
             "template": "postBiodiversity-worksSiteMonitoringMethodology",
             "scores": [],
             "name": "Post Biodiversity-works Site Monitoring Methodology"
         },
         {
-            "template": "postRevegetationSiteManagement",
+            "template": "seagrassBedMonitoring",
             "scores": [],
-            "name": "Post revegetation site management"
+            "name": "Seagrass Bed Monitoring"
         },
         {
             "template": "postRevegetationInfillPlantings",
@@ -7804,21 +7219,6 @@
             "name": "Post revegetation area managed"
         },
         {
-            "template": "locationPhoto",
-            "scores": [],
-            "name": "Location Photo"
-        },
-        {
-            "template": "steaming2Success",
-            "scores": [],
-            "name": "Steaming to Success"
-        },
-        {
-            "template": "seagrassBedMonitoring",
-            "scores": [],
-            "name": "Seagrass Bed Monitoring"
-        },
-        {
             "template": "koalaCount-SouthAustralia",
             "scores": [],
             "name": "Koala Count - South Australia"
@@ -7827,6 +7227,11 @@
             "template": "intertidalReefSurvey",
             "scores": [],
             "name": "Intertidal Reef Survey"
+        },
+        {
+            "template": "seaSearch-FixedPhotoPoints-Header",
+            "scores": [],
+            "name": "Sea Search - Fixed Photo Points"
         },
         {
             "template": "generalSeedCollectionEvent",
@@ -7839,115 +7244,14 @@
             "name": "General Fauna Sightings v1"
         },
         {
-            "template": "generalFloraSightingsV1",
+            "template": "habitatConditionAssessment",
             "scores": [],
-            "name": "General Flora Sightings v1"
-        },
-        {
-            "template": "ntSystematicTerrestrialFaunaSurvey",
-            "scores": [],
-            "name": "NT Systematic Terrestrial Fauna Survey"
-        },
-        {
-            "template": "northSydneyWildlifeWatch",
-            "scores": [],
-            "name": "North Sydney Wildlife Watch"
-        },
-        {
-            "template": "northSydneyWildlifeWatchMulti-species",
-            "scores": [],
-            "name": "North Sydney Wildlife Watch - Multi-species"
-        },
-        {
-            "template": "dunewatchActivitySummary",
-            "scores": [],
-            "name": "Dunewatch Activity Summary"
-        },
-        {
-            "template": "dunewatchSurveyEmeryMethod",
-            "scores": [],
-            "name": "Dunewatch Survey - Emery Method"
-        },
-        {
-            "template": "dunewatchSurveyHumanImpactAssessment",
-            "scores": [],
-            "name": "Dunewatch Survey - Human Impact Assessment"
-        },
-        {
-            "template": "dunewatchFloraSurvey",
-            "scores": [],
-            "name": "Dunewatch Flora Survey"
-        },
-        {
-            "template": "dunewatchFaunaSurvey",
-            "scores": [],
-            "name": "Dunewatch Fauna Survey"
+            "name": "Habitat Condition Assessment"
         },
         {
             "template": "stageReport",
             "scores": [],
             "name": "Overview of Project Progress - new"
-        },
-        {
-            "template": "nestBoxMonitoringSurvey",
-            "scores": [],
-            "name": "Nest Box Monitoring Survey"
-        },
-        {
-            "template": "epaWaterQualityAndIllegalDumping",
-            "scores": [],
-            "name": "EPA Water Quality and Illegal Dumping",
-            "title": ""
-        },
-        {
-            "template": "seaSearchPatrol",
-            "scores": [],
-            "name": "Sea Search Patrol"
-        },
-        {
-            "template": "localSpeciesInventory",
-            "scores": [],
-            "name": "Local Species Inventory"
-        },
-        {
-            "template": "generalMulti-speciesSightings-AlternateFormat-v2",
-            "scores": [],
-            "name": "General Multi-species Sightings - Alternate format v2"
-        },
-        {
-            "template": "birdSurvey-curlCurl",
-            "scores": [],
-            "name": "Bird Survey - Curl Curl"
-        },
-        {
-            "template": "martuWangkaSightings",
-            "scores": [],
-            "name": "Martu Wangka Sightings"
-        },
-        {
-            "template": "wolliCkCurrentSurveys",
-            "scores": [],
-            "name": "Wolli Ck - Current surveys"
-        },
-        {
-            "template": "wolliCk-COBC_observations",
-            "scores": [],
-            "name": "Wolli Ck - CBOC observations"
-        },
-        {
-            "template": "wolliCk-Rankin_observations",
-            "scores": [],
-            "name": "Wolli Ck - Rankin observations"
-        },
-        {
-            "template": "environmentalAssetsRegister",
-            "scores": [],
-            "name": "Environmental Assets Register"
-        },
-        {
-            "template": "singleSpeciesWeedMonitoring",
-            "scores": [],
-            "name": "Single Species Weed Monitoring"
         },
         {
             "template": "annualStageReport",
@@ -7956,10 +7260,153 @@
             "title": "Progress Against Outcomes"
         },
         {
+            "template": "localSpeciesInventory",
+            "scores": [],
+            "name": "Local Species Inventory"
+        },
+        {
+            "template": "CRISP-ProjectAssessment-Step1Pre-screen",
+            "scores": [],
+            "name": "CRISP - Project Assessment - Step 1. Pre-screen"
+        },
+        {
+            "template": "CRISP-ProjectAssessment-Step2DetermineExposure",
+            "scores": [],
+            "name": "CRISP - Project Assessment - Step 2. Determine Exposure"
+        },
+        {
+            "template": "CRISP-Audit-FirstPassScan",
+            "scores": [],
+            "name": "CRISP - Audit - First Pass Scan"
+        },
+        {
+            "template": "espOverview",
+            "scores": [],
+            "name": "ESP Overview",
+            "title": "ESP Overview"
+        },
+        {
+            "template": "espPmuZoneReporting",
+            "scores": [],
+            "name": "ESP PMU or Zone reporting",
+            "title": "ESP PMU or Zone reporting"
+        },
+        {
+            "template": "espLivestockGrazingManagement",
+            "scores": [],
+            "name": "ESP Livestock Grazing Management",
+            "title": "Livestock Grazing Management"
+        },
+        {
+            "template": "espNativeHerbivoreManagement",
+            "scores": [],
+            "name": "ESP Native herbivore management",
+            "title": "Native herbivore management"
+        },
+        {
+            "template": "espFeralAnimalManagement",
+            "scores": [],
+            "name": "ESP Feral animal management",
+            "title": "Feral animal management"
+        },
+        {
+            "template": "espWeedManagement",
+            "scores": [],
+            "name": "ESP Weed management",
+            "title": "Weed management"
+        },
+        {
+            "template": "espFencingActivities",
+            "scores": [],
+            "name": "ESP Fencing activities",
+            "title": "Fencing activities"
+        },
+        {
+            "template": "espBiomassControlMeasures",
+            "scores": [],
+            "name": "ESP Biomass control measures",
+            "title": "Biomass control measures"
+        },
+        {
+            "template": "espRevegetation",
+            "scores": [],
+            "name": "ESP Revegetation",
+            "title": "Revegetation"
+        },
+        {
+            "template": "espRegeneration",
+            "scores": [],
+            "name": "ESP Regeneration",
+            "title": "Regeneration"
+        },
+        {
+            "template": "espRestorationOfHabitatFeatures",
+            "scores": [],
+            "name": "ESP Restoration of Habitat Features",
+            "title": "Restoration of Habitat Features"
+        },
+        {
+            "template": "espOptionalReporting",
+            "scores": [],
+            "name": "ESP Optional Reporting",
+            "title": "Optional Reporting"
+        },
+        {
+            "template": "espControlOfAgroChemicals",
+            "scores": [],
+            "name": "ESP Control of Agrochemicals",
+            "title": "Control of Agrochemicals"
+        },
+        {
+            "template": "espTreeRootDisturbance",
+            "scores": [],
+            "name": "ESP Tree Root Disturbance",
+            "title": "Tree Root Disturbance"
+        },
+        {
+            "template": "seedCollection-withMap",
+            "scores": [],
+            "name": "Seed collection - with map"
+        },
+        {
+            "template": "espPlantSurvival",
+            "scores": [],
+            "name": "ESP Plant Survival",
+            "title": "Plant Survival Survey"
+        },
+        {
             "template": "reef2050PlanActionReporting",
             "scores": [],
             "name": "Reef 2050 Plan Action Reporting",
             "title": "Reef 2050 Plan Action Reporting"
+        },
+        {
+            "template": "plantPropagation-BatchTest",
+            "scores": [],
+            "name": "Plant Propagation - Batch Test"
+        },
+        {
+            "template": "seedbank-AccessionOfNewStock",
+            "scores": [],
+            "name": "Seedbank - Accession of new stock"
+        },
+        {
+            "template": "crispPrescreen",
+            "scores": [],
+            "name": "Prescreen - 1. Identify hazards",
+            "title": "Prescreen - 1. Identify hazards"
+        },
+        {
+            "template": "crispAssessInitiative",
+            "scores": [],
+            "name": "Assess Initiative",
+            "title": "Assess Initiative"
+        },
+        {
+            "template": "crispFirstPassScan",
+            "scores": [],
+            "name": "First Pass Scan",
+            "title": "First Pass Scan"
         },
         {
             "template": "weedBiologicalControlAgentRecord-TargetWithCanes",
@@ -7975,54 +7422,6 @@
             "template": "weedBiologicalControl-agentRecord-nonCaneRustAndFungiAgents",
             "scores": [],
             "name": "Weed Biological Control - Agent Record - Non cane rust and fungi agents"
-        },
-        {
-            "template": "capeYorkIncidentalSightings",
-            "scores": [],
-            "name": "Cape York Incidental Sightings"
-        },
-        {
-            "template": "capeYorkTerrestrialFaunaSurvey",
-            "scores": [],
-            "name": "Cape York Terrestrial Fauna Survey"
-        },
-        {
-            "template": "mappingButterfliesAndHostVines",
-            "scores": [],
-            "name": "Mapping Butterflies and Host Vines"
-        },
-        {
-            "template": "frogletCalls",
-            "scores": [],
-            "name": "Froglet calls",
-            "title": "Froglet calls"
-        },
-        {
-            "template": "echidnaCSI",
-            "scores": [],
-            "name": "Echidna CSI",
-            "title": "Echidna CSI"
-        },
-        {
-            "template": "batSurvey-SAMD",
-            "scores": [],
-            "name": "Bat Survey - SAMD"
-        },
-        {
-            "template": "birdSurvey-SAMD",
-            "scores": [],
-            "name": "Bird Survey - SAMD"
-        },
-        {
-            "template": "redlandsWeedSpotter",
-            "scores": [],
-            "name": "Redlands Weed Spotter"
-        },
-        {
-            "template": "diebackObservation",
-            "scores": [],
-            "name": "Dieback Observation",
-            "title": "Dieback Observation"
         },
         {
             "template": "communityParticipationAndEngagement-withMap",
@@ -8155,155 +7554,36 @@
             "name": "Post Revegetation Site Management - with map"
         },
         {
-            "template": "echidnaCSI-sampleCollection",
+            "template": "frogletCalls",
             "scores": [],
-            "name": "Echidna CSI - Sample collection"
+            "name": "Froglet calls",
+            "title": "Froglet calls"
         },
         {
-            "template": "seaSearch-fixedPhotoPoints",
+            "template": "ecologicalConditionScoreModeration",
             "scores": [],
-            "name": "Sea Search - Fixed Photo Points"
+            "name": "Ecological Condition Score Moderation"
         },
         {
-            "template": "seaSearch-seagrassBoundaryMapping",
+            "template": "mappingButterfliesAndHostVines",
             "scores": [],
-            "name": "Sea Search - Seagrass Boundary Mapping"
+            "name": "Mapping Butterflies and Host Vines"
         },
         {
-            "template": "seaSearch-imageLibrary",
+            "template": "echidnaCSI",
             "scores": [],
-            "name": "Sea Search - Image Library"
+            "name": "Echidna CSI",
+            "title": "Echidna CSI"
         },
         {
-            "template": "megaBatProject-samd",
+            "template": "batSurvey-SAMD",
             "scores": [],
-            "name": "MEGA Bat project - SAMD"
+            "name": "Bat Survey - SAMD"
         },
         {
-            "template": "goannaWatch-discoveryCircle",
+            "template": "birdSurvey-SAMD",
             "scores": [],
-            "name": "Goanna Watch - Discovery Circle"
-        },
-        {
-            "template": "birdSurvey-westernSydney",
-            "scores": [],
-            "name": "Bird Survey - Western Sydney"
-        },
-        {
-            "template": "clc2HaTrackPlot",
-            "scores": [],
-            "name": "CLC 2Ha Track Plot"
-        },
-        {
-            "template": "echidnaCsi-otherEvidence",
-            "scores": [],
-            "name": "Echidna CSI - Other evidence"
-        },
-        {
-            "template": "urbanBirdMovementsResearch_incidental",
-            "scores": [],
-            "name": "Urban Bird Movements Research - Incidental"
-        },
-        {
-            "template": "urbanBirdMovementsResearch_systematicSurvey",
-            "scores": [],
-            "name": "Urban Bird Movements Research - Systematic Survey"
-        },
-        {
-            "template": "regionalFundingFinalReport",
-            "scores": [],
-            "name": "Regional Funding Final Report",
-            "title": "Regional Funding Final Report"
-        },
-        {
-            "template": "espOverview",
-            "scores": [],
-            "name": "ESP Overview",
-            "title": "ESP Overview"
-        },
-        {
-            "template": "espPmuZoneReporting",
-            "scores": [],
-            "name": "ESP PMU or Zone reporting",
-            "title": "ESP PMU or Zone reporting"
-        },
-        {
-            "template": "espLivestockGrazingManagement",
-            "scores": [],
-            "name": "ESP Livestock Grazing Management",
-            "title": "Livestock Grazing Management"
-        },
-        {
-            "template": "espNativeHerbivoreManagement",
-            "scores": [],
-            "name": "ESP Native herbivore management",
-            "title": "Native herbivore management"
-        },
-        {
-            "template": "espFeralAnimalManagement",
-            "scores": [],
-            "name": "ESP Feral animal management",
-            "title": "Feral animal management"
-        },
-        {
-            "template": "espWeedManagement",
-            "scores": [],
-            "name": "ESP Weed management",
-            "title": "Weed management"
-        },
-        {
-            "template": "espFencingActivities",
-            "scores": [],
-            "name": "ESP Fencing activities",
-            "title": "Fencing activities"
-        },
-        {
-            "template": "espBiomassControlMeasures",
-            "scores": [],
-            "name": "ESP Biomass control measures",
-            "title": "Biomass control measures"
-        },
-        {
-            "template": "espRevegetation",
-            "scores": [],
-            "name": "ESP Revegetation",
-            "title": "Revegetation"
-        },
-        {
-            "template": "espRegeneration",
-            "scores": [],
-            "name": "ESP Regeneration",
-            "title": "Regeneration"
-        },
-        {
-            "template": "espRestorationOfHabitatFeatures",
-            "scores": [],
-            "name": "ESP Restoration of Habitat Features",
-            "title": "Restoration of Habitat Features"
-        },
-        {
-            "template": "espOptionalReporting",
-            "scores": [],
-            "name": "ESP Optional Reporting",
-            "title": "Optional Reporting"
-        },
-        {
-            "template": "espControlOfAgroChemicals",
-            "scores": [],
-            "name": "ESP Control of Agrochemicals",
-            "title": "Control of Agrochemicals"
-        },
-        {
-            "template": "espTreeRootDisturbance",
-            "scores": [],
-            "name": "ESP Tree Root Disturbance",
-            "title": "Tree Root Disturbance"
-        },
-        {
-            "template": "espPlantSurvival",
-            "scores": [],
-            "name": "ESP Plant Survival",
-            "title": "Plant Survival Survey"
+            "name": "Bird Survey - SAMD"
         },
         {
             "template": "espGroundCover",
@@ -8312,28 +7592,20 @@
             "title": "Ground Cover %"
         },
         {
+            "template": "clc2HaTrackPlot",
+            "scores": [],
+            "name": "CLC 2Ha Track Plot"
+        },
+        {
+            "template": "echidnaCSI-sampleCollection",
+            "scores": [],
+            "name": "Echidna CSI - Sample collection"
+        },
+        {
             "template": "espFencingPaddockTrees",
             "scores": [],
             "name": "ESP Fencing Paddock Trees",
             "title": "ESP Fencing Paddock Trees"
-        },
-        {
-            "template": "espSwardHeight",
-            "scores": [],
-            "name": "ESP Sward Height",
-            "title": "ESP Sward Height"
-        },
-        {
-            "template": "espOptionalReporting",
-            "scores": [],
-            "name": "ESP Optional Reporting",
-            "title": "Optional Reporting"
-        },
-        {
-            "template": "espPmuHeader",
-            "scores": [],
-            "name": "ESP PMU Header",
-            "title": "ESP PMU Header"
         },
         {
             "template": "espSmuHeader",
@@ -8342,175 +7614,180 @@
             "title": "ESP SMU Header"
         },
         {
+            "template": "espPmuHeader",
+            "scores": [],
+            "name": "ESP PMU Header",
+            "title": "ESP PMU Header"
+        },
+        {
+            "template": "ehpIncentives",
+            "scores": [],
+            "name": "EHP - Incentives"
+        },
+        {
+            "template": "ehpProducts",
+            "scores": [],
+            "name": "EHP - Products"
+        },
+        {
+            "template": "ehpWorks",
+            "scores": [],
+            "name": "EHP - Works"
+        },
+        {
+            "template": "ehpEvents",
+            "scores": [],
+            "name": "EHP - Events"
+        },
+        {
+            "template": "regionalFundingFinalReport",
+            "scores": [],
+            "name": "Regional Funding Final Report",
+            "title": "Final Report"
+        },
+        {
+            "template": "threatenedSpeciesRecoveryTeamReporting",
+            "scores": [],
+            "name": "Recovery Team Annual Progress Report",
+            "title": "Recovery Team Annual Progress Report"
+        },
+        {
+            "template": "seaSearch-seagrassBoundaryMonitoring",
+            "scores": [],
+            "name": "Sea Search - Seagrass Boundary Monitoring"
+        },
+        {
+            "template": "climateAdaption",
+            "scores": [],
+            "name": "Climate Adaption",
+            "title": "Climate Adaption"
+        },
+        {
+            "template": "espSwardHeight",
+            "scores": [],
+            "name": "ESP Sward Height",
+            "title": "ESP Sward Height"
+        },
+        {
+            "template": "regionalFundingFinalReportKEQ",
+            "scores": [],
+            "name": "Regional Funding Final Report KEQ",
+            "title": "Regional Funding Final Report KEQ"
+        },
+        {
+            "template": "nestBoxEstablishment",
+            "scores": [],
+            "name": "Nest Box Establishment"
+        },
+        {
+            "template": "nestBoxSurvey",
+            "scores": [],
+            "name": "nestBoxSurvey"
+        },
+        {
+            "template": "nestBoxMaintenance",
+            "scores": [],
+            "name": "nestBoxMaintenance"
+        },
+        {
             "template": "wildMacadamiaSurvey",
             "scores": [],
             "name": "Wild Macadamia Survey"
         },
         {
-            "template": "habitatConditionAssessment",
+            "template": "seaSearch_ImageLibrary",
             "scores": [],
-            "name": "Habitat Condition Assessment"
+            "name": "Sea Search - Image Library"
         },
         {
-            "template": "ecologicalConditionScoreModeration",
+            "template": "reportPrototype",
             "scores": [],
-            "name": "Ecological Condition Score Moderation"
+            "name": "Prototype 1",
+            "title": "Prototype 1"
         },
         {
-            "template": "qldEnvironmentIncentives",
+            "template": "nrm2ControllingPestAnimals",
             "scores": [],
-            "name": "Incentives"
+            "name": "NRM2 - Controlling Pest Animals",
+            "title": "Controlling Pest Animals"
         },
         {
-            "template": "qldEnvironmentProducts",
+            "template": "nrm2EstablishingExSituBreedingSites",
             "scores": [],
-            "name": "Products"
+            "name": "NRM2 - Establishing ex-situ breeding sites",
+            "title": "Establishing ex-situ breeding sites"
         },
         {
-            "template": "qldEnvironmentWorks",
+            "template": "nrm2EstablishingFeralFreeEnclosures",
             "scores": [],
-            "name": "Works Activities"
+            "name": "NRM2 - Establishing Feral Free Enclosures",
+            "title": "Establishing Feral Free Enclosures"
         },
         {
-            "template": "qldEnvironmentEvents",
+            "template": "nrm2Fencing",
             "scores": [],
-            "name": "Events"
+            "name": "NRM2 - Fencing",
+            "title": "Fencing"
         },
         {
-            "template": "leonoraDhsBiodiversitySurveys",
+            "template": "nrm2HabitatAugmentation",
             "scores": [],
-            "name": "Leonora DHS Biodiversity Surveys"
+            "name": "NRM2 - Habitat Augmentation",
+            "title": "Habitat Augmentation"
         },
         {
-            "template": "fungiResearch",
+            "template": "nrm2ImprovingHydrologicalRegimes",
             "scores": [],
-            "name": "Fungi Research"
+            "name": "NRM2 - Improving Hydrological Regimes",
+            "title": "Improving Hydrological Regimes"
         },
         {
-            "template": "westernRingtailPossumReporting",
+            "template": "nrm2ManagingDiseases",
             "scores": [],
-            "name": "Western Ringtail Possum Reporting"
+            "name": "NRM2 - Managing Diseases",
+            "title": "Managing Diseases"
         },
         {
-            "template": "blueMountainsWHI_boardwalkTransect",
+            "template": "nrm2ManagingFireRegimes",
             "scores": [],
-            "name": "Blue Mountains WHI - Boardwalk Transect"
+            "name": "NRM2 - Managing Fire Regimes",
+            "title": "Managing Fire Regimes"
         },
         {
-            "template": "blueMountainsWHI_photoPoints",
+            "template": "nrm2ProtectingHabitatByControllingAccess",
             "scores": [],
-            "name": "Blue Mountains WHI - Photo Points"
+            "name": "NRM2 - Protecting Habitat by Controlling Access",
+            "title": "Protecting Habitat by Controlling Access"
         },
         {
-            "template": "blueMountainsWHI_cameraTraps",
+            "template": "nrm2RemediatingRiparianAndAquaticAreas",
             "scores": [],
-            "name": "Blue Mountains WHI - Camera Traps"
+            "name": "NRM2 - Remediating Riparian and Aquatic Areas",
+            "title": "Remediating Riparian and Aquatic Areas"
         },
         {
-            "template": "singleSighting_verificationOptionalPhoto",
+            "template": "nrm2RemovingPestWeeds",
             "scores": [],
-            "name": "Single Sighting - verification - optional photo"
+            "name": "NRM2 - Removing Pest Weeds",
+            "title": "Removing Pest Weeds"
         },
         {
-            "template": "singleSightingOptionalPhoto",
+            "template": "nrm2RevegetatingHabitat",
             "scores": [],
-            "name": "Single Sighting - optional photo",
-            "title": "Single Sighting"
+            "name": "NRM2 - Revegetating Habitat",
+            "title": "Revegetating Habitat"
         },
         {
-            "template": "marineTurtleMonitoring_nestPresenceAndDepredation",
+            "template": "nrm2PestAnimalsAndWeeds",
             "scores": [],
-            "name": "Marine Turtle Monitoring Nest Presence and Depredation Survey"
+            "name": "NRM2 - Pest Animals and Weeds",
+            "title": "Pest Animals and Weeds"
         },
         {
-            "template": "rayAndSharkMonitoringSurvey",
+            "template": "rayAndSharks",
             "scores": [],
-            "name": "Ray and Shark Monitoring Survey"
-        },
-        {
-            "template": "1000m_transect_8_quadratBirdSurvey",
-            "scores": [],
-            "name": "1000m transect x 8 quadrat bird survey"
-        },
-        {
-            "template": "singleBirdSighting",
-            "scores": [],
-            "name": "Single Bird Sighting"
-        },
-        {
-            "template": "dungBeetleMonitoring",
-            "scores": [],
-            "name": "Dung Beetle Monitoring"
-        },
-        {
-            "template": "raptorNestMonitoring",
-            "scores": [],
-            "name": "Raptor Nest Monitoring"
-        },
-        {
-            "template": "bdbsaFloraObservations",
-            "scores": [],
-            "name": "BDBSA Flora observations"
-        },
-        {
-            "template": "bdbsaFaunaObservations",
-            "scores": [],
-            "name": "BDBSA Fauna observations"
-        },
-        {
-            "template": "singleSighting_verification_mandatoryPhoto",
-            "scores": [],
-            "name": "Single Sighting - verification + mandatory photo"
-        },
-        {
-            "template": "rarc_Site_Event_Details",
-            "scores": [],
-            "name": "RARC - Site & Event Details"
-        },
-        {
-            "template": "rarc_Vegetation_Width",
-            "scores": [],
-            "name": "RARC - Vegetation Width"
-        },
-        {
-            "template": "rarc_Vegetation_Cover",
-            "scores": [],
-            "name": "RARC - Vegetation Cover"
-        },
-        {
-            "template": "rarc_Debris",
-            "scores": [],
-            "name": "RARC - Debris"
-        },
-        {
-            "template": "rarc_Features",
-            "scores": [],
-            "name": "RARC - Features"
-        },
-        {
-            "template": "rarc_Total_Scores",
-            "scores": [],
-            "name": "RARC - Total Scores"
-        },
-        {
-            "template": "aquaticMacro_invertebrateAssessment_Alt_Method",
-            "scores": [],
-            "name": "Aquatic Macro-invertebrate Assessment - ALT method"
-        },
-        {
-            "template": "weedSightingForm_variant2",
-            "scores": [],
-            "name": "Simple Weed Sighting"
-        },
-        {
-            "template": "actWaterwatch-waterQualityMonitoring",
-            "scores": [],
-            "name": "ACT Waterwatch - Water Quality Monitoring"
-        },
-        {
-            "template": "actWaterwatch-waterBugSurvey",
-            "scores": [],
-            "name": "ACT Waterwatch - Water Bug Survey"
+            "name": "Ray and Sharks",
+            "title": "Ray and Sharks"
         },
         {
             "template": "rlpBaselineData",
@@ -8717,18 +7994,6 @@
             "title": "Debris removal"
         },
         {
-            "template": "rlpSitePreparation",
-            "scores": [],
-            "name": "RLP - Site preparation",
-            "title": "Site preparation"
-        },
-        {
-            "template": "rlpOutputWHS",
-            "scores": [],
-            "name": "RLP - Output WHS",
-            "title": "WHS Requirements"
-        },
-        {
             "template": "rlpCoreServicesReport",
             "scores": [],
             "name": "RLP Core Services report",
@@ -8759,61 +8024,21 @@
             "title": "Annual report"
         },
         {
-            "template": "treeDiebackSurvey_WSU",
+            "template": "apnFeralPigShooting",
             "scores": [],
-            "name": "Tree Dieback Survey - WSU"
+            "name": "APN Feral Pig Shooting"
         },
         {
-            "template": "quadratSamplingPresenceOnly",
+            "template": "rlpSitePreparation",
             "scores": [],
-            "name": "Quadrat Sampling - Presence Only"
+            "name": "RLP - Site preparation",
+            "title": "Site preparation"
         },
         {
-            "template": "marineMetreSquaredTransectSurvey",
+            "template": "rlpOutputWHS",
             "scores": [],
-            "name": "Marine Metre Squared Transect Survey"
-        },
-        {
-            "template": "marineMetreSquaredShoreSurvey",
-            "scores": [],
-            "name": "Marine Metre Squared Shore Survey"
-        },
-        {
-            "template": "inDevelopment",
-            "scores": [],
-            "name": "In Development",
-            "title": "In Development"
-        },
-        {
-            "template": "koalaSurveyWhitsundays",
-            "scores": [],
-            "name": "Koala Survey - Whitsundays"
-        },
-        {
-            "template": "beachSandPhotoPointMonitoring",
-            "scores": [],
-            "name": "Beach Sand Photo Point Monitoring"
-        },
-        {
-            "template": "fitzroyTurtleMonitoring",
-            "scores": [],
-            "name": "Fitzroy Turtle Monitoring"
-        },
-        {
-            "template": "outbackWaterholes",
-            "scores": [],
-            "name": "Outback Waterholes"
-        },
-        {
-            "template": "elmLeafBeetleSurvey",
-            "scores": [],
-            "name": "Elm Leaf Beetle Survey"
-        },
-        {
-            "template": "reef2050PlanActionReporting2018",
-            "scores": [],
-            "name": "Reef 2050 Plan Action Reporting 2018",
-            "title": "Reef 2050 Plan Action Reporting 2018"
+            "name": "RLP - Output WHS",
+            "title": "WHS Requirements"
         },
         {
             "template": "magicalLandSightings",
@@ -8822,60 +8047,41 @@
             "title": "MagicalLandSightings"
         },
         {
-            "template": "koalaSurveyGeneralVictorian",
+            "template": "reef2050PlanActionReporting2018",
             "scores": [],
-            "name": "Koala Survey - General - Victorian"
-        },
-        {
-            "template": "birdSightingsNt",
-            "scores": [],
-            "name": "Bird Sightings - NT"
-        },
-        {
-            "template": "InnerWestMicrobatMonitors",
-            "scores": [],
-            "name": "Inner West Microbat Monitors",
-            "title": "Inner West Microbat Monitors"
+            "name": "Reef 2050 Plan Action Reporting 2018",
+            "title": "Reef 2050 Plan Action Reporting 2018"
         },
         {
             "template": "rlpOutputReportAdjustment",
             "scores": [],
             "name": "RLP - Output Report Adjustment",
             "title": "Output Report Adjustment"
-        },
-        {
-            "template": "flyingFoxBatsInBackyards",
-            "scores": [],
-            "name": "Flying Fox - Bats in Backyards"
-        },
-        {
-            "template": "nestBoxLocationForm",
-            "scores": [],
-            "name": "Nest Box Location Form - Victoria"
-        },
-        {
-            "template": "nestBoxMonitoringAndMaintenanceForm",
-            "scores": [],
-            "name": "Nest Box Monitoring & Maintenance Form - Victoria"
         }
     ],
     "selectedActivity": {
-        "outputs": ["Nest Box Location Form - Victoria"],
+        "outputs": ["Plant Propagation - Batch Test"],
         "outputConfig": [
             {
-                "outputName": "Nest Box Location Form",
+                "outputName": "Plant Propagation Details",
                 "optional": false,
                 "collapsedByDefault": false
             },
             {
-                "outputName": "Nest Box Location Form - Victoria",
+                "outputName": "Participant Information",
+                "optional": false,
+                "collapsedByDefault": false
+            },
+            {
+                "outputName": "Plant Propagation - Batch Test",
                 "optional": false,
                 "collapsedByDefault": false
             }
         ],
-        "name": "Nest Box Location Form - Victoria",
-        "type": "Assessment",
-        "category": "Assessment & monitoring",
+        "gmsId": "PPRP",
+        "name": "Plant Propagation",
+        "type": "Activity",
+        "category": "Implementation actions",
         "minOptionalSectionsCompleted": 1
     }
 }
