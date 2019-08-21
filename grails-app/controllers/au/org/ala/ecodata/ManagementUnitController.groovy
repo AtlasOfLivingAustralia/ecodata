@@ -6,28 +6,29 @@ class ManagementUnitController {
     static responseFormats = ['json', 'xml']
     static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE']
 
-    ManagementUnitService muService
+    ManagementUnitService managementUnitService
     ElasticSearchService elasticSearchService
 
     def get(String id) {
-        respond muService.get(id, false)
+        ManagementUnit mu = managementUnitService.get(id, false)
+        respond mu
     }
 
     def findByName(String name) {
-        respond muService.findByName(name)
+        respond managementUnitService.findByName(name)
     }
 
     def update(String id) {
         if (!id) {
-            respond muService.create(request.JSON)
+            respond managementUnitService.create(request.JSON)
         }
         else {
-            respond muService.update(id, request.JSON)
+            respond managementUnitService.update(id, request.JSON)
         }
     }
 
     def delete(String id) {
-        respond muService.delete(id, params.getBoolean('destroy', false))
+        respond managementUnitService.delete(id, params.getBoolean('destroy', false))
     }
 
     def search() {
@@ -35,6 +36,6 @@ class ManagementUnitController {
     }
 
     def findAllForUser(String id) {
-        respond muService.findAllMUsForUser(id)
+        respond managementUnitService.findAllMUsForUser(id)
     }
 }

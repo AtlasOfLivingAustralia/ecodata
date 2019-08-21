@@ -8,11 +8,11 @@ class ManagementUnitService {
     
     def commonService
 
-    ManagementUnit get(String programId, includeDeleted = false) {
+    ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {
-            return ManagementUnit.findByMUId(programId)
+            return ManagementUnit.findByManagementUnitId(muId)
         }
-        ManagementUnit.findByMUIdAndStatusNotEqual(programId, DELETED)
+        return ManagementUnit.findByManagementUnitIdAndStatusNotEqual(muId, DELETED)
     }
 
     ManagementUnit findByName(String name) {
