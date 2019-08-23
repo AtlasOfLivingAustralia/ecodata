@@ -257,6 +257,24 @@ class PermissionsController {
         render permissionService.getMembersOfProgram(id, max, offset, order, sort) as JSON
     }
 
+    /**
+     * Returns the users and their roles for a hub.
+     * @param id the hubId of the hub.
+     * @return
+     */
+    def getMembersOfManagementUnit(String id) {
+        if (!id) {
+            render status:400, text:'The id parameter must be supplied'
+        }
+        Integer max = params.max as Integer
+        Integer offset = params.offset as Integer
+        String sort = params.sort
+        String order = params.order
+        render permissionService.getMembersOfManagementUnit(id, max, offset, order, sort) as JSON
+    }
+
+
+
     private Map validateAndUpdatePermission(entity, String entityId, String role, String userId, Closure serviceCall) {
         Map result = validate(entity, entityId, role, userId)
 
