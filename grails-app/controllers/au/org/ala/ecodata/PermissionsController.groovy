@@ -225,6 +225,23 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
+    def removeUserWithRoleFromManagementUnit(String userId, String managementUnitId, String role) {
+        ManagementUnit mu = ManagementUnit.findByManagementUnitId(managementUnitId)
+        Closure removeFromManagementUnit = { String userId2, String role2, String managementUnitId2 ->
+            permissionService.removeUserAsRoleFromManagementUnit(userId2, AccessLevel.valueOf(role2), managementUnitId2)}
+        Map result = validateAndUpdatePermission(mu, managementUnitId, role, userId, removeFromManagementUnit)
+        render status:result.status, text:result.text
+    }
+
+    def addUserWithRoleToManagementUnit(String userId, String managementUnitId, String role) {
+        ManagementUnit mu = ManagementUnit.findByManagementUnitId(managementUnitId)
+        Closure addToManagementUnit = { String userId2, String role2, String managementUnitId2 ->
+            permissionService.addUserAsRoleToManagementUnit(userId2, AccessLevel.valueOf(role2), managementUnitId2)}
+        Map result = validateAndUpdatePermission(mu, managementUnitId, role, userId, addToManagementUnit)
+        render status:result.status, text:result.text
+    }
+
+
     def addUserWithRoleToHub(String userId, String hubId, String role) {
         Hub hub = Hub.findByHubId(hubId)
         Closure addToHub= { String userId2, String role2, String hubId2 ->

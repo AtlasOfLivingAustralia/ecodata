@@ -434,6 +434,14 @@ class PermissionService {
         return removeUserAsRoleToEntity(userId, accessLevel, Program, programId)
     }
 
+    Map addUserAsRoleToManagementUnit(String userId, AccessLevel accessLevel, String managementUnitId) {
+        return addUserAsRoleToEntity(userId, accessLevel, ManagementUnit, managementUnitId)
+    }
+
+    Map removeUserAsRoleFromManagementUnit(String userId, AccessLevel accessLevel, String managementUnitId) {
+        return removeUserAsRoleToEntity(userId, accessLevel, ManagementUnit, managementUnitId)
+    }
+
     Map addUserAsRoleToHub(String userId, AccessLevel accessLevel, String hubId) {
         return addUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
     }
