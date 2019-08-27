@@ -38,6 +38,8 @@ class Report {
     String organisationId
     /** If this report is for a program, this identifies which program */
     String programId
+    /** If this report is for a management unit, this identifies which program */
+    String managementUnitId
     String name
     String description
     String type // "Activity" for stage/activity progress reporting, "Performance", "Administrative" for organisation performance self assessments
@@ -219,6 +221,7 @@ class Report {
         dueDate nullable:true
         organisationId nullable:true
         programId nullable:true
+        managementUnitId nullable: true
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
         activityCount nullable: true
