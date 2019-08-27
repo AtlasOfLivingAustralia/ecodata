@@ -23,6 +23,11 @@ class Program {
     List assets
     /** Outcomes to be achieved by this program */
     List outcomes
+    /** (optional) The siteId of a Site that defines the geographic area targeted or managed by this Program */
+    String programSiteId
+
+    /** Allows program administrators to publicise and communicate about the program */
+    List blog
 
     /** Priorities for program outcomes */
     List priorities
@@ -38,9 +43,6 @@ class Program {
 
     List<AssociatedOrg> associatedOrganisations
 
-    /** (optional) The siteId of a Site that defines the geographic area targeted by this Program */
-    String programSiteId
-
 
     /** Custom rendering for the program */
     Map toMap() {
@@ -53,6 +55,7 @@ class Program {
         program.dateCreated = dateCreated
         program.lastUpdated = lastUpdated
         program.url = url
+        program.programSiteId = programSiteId
         program.themes = themes
         program.assets = assets
         program.outcomes = outcomes
@@ -61,7 +64,7 @@ class Program {
         program.config = config
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
-        program.programSiteId = programSiteId
+        program.blog = blog
 
         program.associatedOrganisations = associatedOrganisations
 
