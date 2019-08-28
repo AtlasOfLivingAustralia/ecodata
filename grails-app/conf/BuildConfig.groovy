@@ -2,8 +2,7 @@ grails.servlet.version = "2.5" // Change depending on target container complianc
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
-grails.project.target.level = 1.6
-grails.project.source.level = 1.6
+
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 //grails.server.port.http = 8079
 
@@ -12,6 +11,32 @@ grails.project.fork = [
    run: false,
    test: false // [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true] // configure settings for the test-app JVM
 ]
+
+clover {
+    on = false // Slows down testing individual classes too much.  Override by passing -clover.on to test-app e.g. grails test-app -clover.on unit:
+    reports.dir = "target/clover/report"
+    // One of these is a very large 3rd party timezone list and instrumenting the AuditService causes tests to fail.
+    excludes = ['**/TimezoneMapper.java', '**/AuditService.groovy']
+    reporttask = { ant, binding, self ->
+        ant.mkdir(dir: "${clover.reports.dir}")
+        ant.'clover-report' {
+
+            ant.current(outfile: "${clover.reports.dir}") {
+                format(type: "html")
+                ant.columns {
+                    lineCount()
+                    complexity()
+                    filteredElements(format: "bar")
+                    uncoveredElements(format: "raw")
+                    totalElements(format: "raw")
+                    totalPercentageCovered()
+                }
+            }
+        }
+        ant.'clover-check'(target: "26%", haltOnFailure: true) { }
+    }
+}
+
 grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -64,6 +89,7 @@ grails.project.dependency.resolution = {
 
         test 'org.grails:grails-datastore-test-support:1.0.2-grails-2.4'
         test 'com.github.fakemongo:fongo:1.5.4'
+        test 'org.openclover:clover:4.3.0'
 
     }
 
@@ -93,6 +119,10 @@ grails.project.dependency.resolution = {
         build ":release:3.0.1"
         compile ':cache:1.1.8'
         compile ":cache-ehcache:1.0.5"
+
+        test 'org.grails.plugins:clover:4.3.0'
         
     }
+
+
 }
