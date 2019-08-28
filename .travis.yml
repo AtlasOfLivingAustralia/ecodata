@@ -1,6 +1,5 @@
-dist: xenial
+dist: trusty
 language: groovy
-sudo: false
 jdk:
 - openjdk8
 branches:
