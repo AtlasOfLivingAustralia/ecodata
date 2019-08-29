@@ -17,7 +17,7 @@ clover {
     on = false // Slows down testing individual classes too much.  Override by passing -clover.on to test-app e.g. grails test-app -clover.on unit:
     reports.dir = "target/clover/report"
     // One of these is a very large 3rd party timezone list and instrumenting the AuditService causes tests to fail.
-    excludes = ['**/TimezoneMapper.java', '**/AuditService.groovy']
+    excludes = ['**/TimezoneMapper.java', '**/AuditService.groovy', '**/PermissionsController.groovy']
     reporttask = { ant, binding, self ->
         ant.mkdir(dir: "${clover.reports.dir}")
         ant.'clover-report' {
