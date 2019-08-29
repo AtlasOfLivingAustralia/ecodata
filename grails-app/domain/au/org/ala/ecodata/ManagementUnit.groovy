@@ -37,6 +37,8 @@ class ManagementUnit {
 
     /** (optional) The siteId of a Site that defines the geographic area targeted by this mu */
     String managementUnitSiteId
+    /** Allows management unit administrators to publicise and communicate about the management unit */
+    List blog
 
 
     /** Custom rendering for the mu */
@@ -60,6 +62,7 @@ class ManagementUnit {
         mu.status = status
 
         mu.associatedOrganisations = associatedOrganisations
+        mu.blog = blog
 
         mu
     }
