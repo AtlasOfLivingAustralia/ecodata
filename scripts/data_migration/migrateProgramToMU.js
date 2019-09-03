@@ -22,6 +22,11 @@ if (erf_program){
     db.project.updateMany({'grantId':{$regex:/^ERF/}},{$set:{'programId':erf_program.programId}})
 }else{
     load('uuid.js');
+    var now = ISODate();
+    var programStart = ISODate('2019-06-30T14:00:00Z');
+    var programEnd = ISODate('2023-06-30T13:59:59Z');
+    var parentId = db.program.find({name: "National Landcare Programme"}).next()._id;
+
     var erf_program = {
         name: "Environmental Restoration Fund",
         programId: UUID.generate(),
