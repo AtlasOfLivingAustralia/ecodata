@@ -463,7 +463,11 @@ class SearchController {
             int batchSize = 50
             List projects = new ArrayList(batchSize)
             for (int i = 0; i < projectIds.size(); i++) {
-                projects << projectService.get(projectIds[i], ProjectService.ALL)
+                Map project =  projectService.get(projectIds[i], ProjectService.ALL)
+                if (project)
+                    projects << project
+                else
+                    log.warn(projectIds[i] + ' cannot be found!')
 
                 if (i % batchSize == batchSize - 1 || i == projectIds.size() - 1) {
                     projectExporter.exportAllProjects(projects)
