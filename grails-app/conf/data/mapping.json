@@ -119,6 +119,14 @@
             "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
           }
         },
+
+        "managementUnitName": {
+          "type" : "string",
+          "fields" : {
+            "muFacet" : {"type" : "string", "index" : "not_analyzed"}
+          }
+        },
+
         "associatedSubProgram": {
           "type" : "string",
           "fields" : {
