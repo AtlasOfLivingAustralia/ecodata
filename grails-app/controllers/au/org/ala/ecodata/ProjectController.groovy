@@ -77,6 +77,16 @@ class ProjectController {
             }
         }
     }
+    /**
+     * Returns a the List of services being delivered by this project with target information for each score.
+     * @param projectId the projectId of the project
+     * @return
+     */
+
+    def getProjectServicesWithTargets(String id){
+        def result = projectService.getProjectServicesWithTargets(id)
+        render result as JSON
+    }
 
     def asXlsx(project) {
 
@@ -231,7 +241,7 @@ class ProjectController {
                     ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
-                    projectExporter.exportAll(projects)
+                    projectExporter.exportAllProjects(projects)
                     exporter.sizeColumns()
 
                     exporter.save(response.outputStream)

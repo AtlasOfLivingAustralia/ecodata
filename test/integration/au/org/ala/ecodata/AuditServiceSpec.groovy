@@ -28,11 +28,10 @@ class AuditServiceSpec extends IntegrationTestHelper {
         setup:
         def userId = '1234'
         def project = TestDataHelper.buildProject()
-        def event = new PostInsertEvent(datastore, project)
         userServiceStub.getCurrentUserDetails() >> {[userId:userId]}
 
         when: "a new project is created"
-        auditService.logGormEvent(event)
+        project.save(flush:true, failOnError: true)
         auditService.flushMessageQueue()
 
         then: "the details of the create operation should be audited correctly"
@@ -50,10 +49,9 @@ class AuditServiceSpec extends IntegrationTestHelper {
         setup:
         userServiceStub.getCurrentUserDetails() >> null
         def project = TestDataHelper.buildProject()
-        def event = new PostInsertEvent(datastore, project)
 
         when: "a new project is created without the user being identifiable"
-        auditService.logGormEvent(event)
+        project.save(flush:true, failOnError: true)
         auditService.flushMessageQueue()
 
         then: "the event should be audited against an anonymous userId"
@@ -73,11 +71,10 @@ class AuditServiceSpec extends IntegrationTestHelper {
         def userToAddToProject = '2345'
         def projectId = 'project1'
         def projectPermission = new UserPermission(entityType:Project.class.name, entityId:projectId, userId:userToAddToProject, accessLevel:AccessLevel.admin)
-        def event = new PostInsertEvent(datastore, projectPermission)
         userServiceStub.getCurrentUserDetails() >> {[userId:operatingUser]}
 
         when:
-        auditService.logGormEvent(event)
+        projectPermission.save(flush:true, failOnError: true)
         auditService.flushMessageQueue()
 
         then:

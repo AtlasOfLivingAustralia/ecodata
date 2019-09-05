@@ -23,6 +23,11 @@ class Program {
     List assets
     /** Outcomes to be achieved by this program */
     List outcomes
+    /** (optional) The siteId of a Site that defines the geographic area targeted or managed by this Program */
+    String programSiteId
+
+    /** Allows program administrators to publicise and communicate about the program */
+    List blog
 
     /** Priorities for program outcomes */
     List priorities
@@ -50,6 +55,7 @@ class Program {
         program.dateCreated = dateCreated
         program.lastUpdated = lastUpdated
         program.url = url
+        program.programSiteId = programSiteId
         program.themes = themes
         program.assets = assets
         program.outcomes = outcomes
@@ -58,6 +64,7 @@ class Program {
         program.config = config
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
+        program.blog = blog
 
         program.associatedOrganisations = associatedOrganisations
 
@@ -125,6 +132,7 @@ class Program {
         config nullable: true
         parent nullable: true
         associatedOrganisations nullable:true
+        programSiteId nullable: true
     }
 
     public String toString() {

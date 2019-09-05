@@ -655,6 +655,15 @@ environments {
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
         app.file.upload.path = "./target/archive"
+        String casBaseUrl = "http://locahost:8018"
+        userDetailsSingleUrl = "${casBaseUrl}/userdetails/userDetails/getUserDetails"
+        userDetailsUrl = "${casBaseUrl}/userdetails/userDetails/getUserListFull"
+        userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
+        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
+        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+
+
+
     }
     production {
         grails.logging.jul.usebridge = false
