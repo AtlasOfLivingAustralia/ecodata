@@ -662,13 +662,12 @@ environments {
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
     }
-    functionaltest {
+    meritfunctionaltest {
         grails.cache.config = {
             diskStore {
                 path '/tmp'
             }
         }
-        app.elasticsearch.location = "/tmp"
         security.cas.bypass = true
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
