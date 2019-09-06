@@ -29,7 +29,7 @@ environments {
             }
         }
     }
-    functionaltest {
+    meritfunctionaltest {
         grails {
             mongo {
                 host = "localhost"

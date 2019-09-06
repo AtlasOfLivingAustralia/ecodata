@@ -668,6 +668,7 @@ environments {
                 path '/tmp'
             }
         }
+        security.cas.bypass = true
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
