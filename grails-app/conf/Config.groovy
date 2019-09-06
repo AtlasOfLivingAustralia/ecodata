@@ -668,6 +668,7 @@ environments {
                 path '/tmp'
             }
         }
+        app.elasticsearch.location = "/tmp"
         security.cas.bypass = true
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
