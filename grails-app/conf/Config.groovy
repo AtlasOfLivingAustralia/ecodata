@@ -679,13 +679,16 @@ environments {
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
-        app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
+        app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
         app.file.upload.path = "./target/archive"
         String casBaseUrl = "http://locahost:8018"
-        userDetailsSingleUrl = "${casBaseUrl}/userdetails/userDetails/getUserDetails"
-        userDetailsUrl = "${casBaseUrl}/userdetails/userDetails/getUserListFull"
+        userDetails {
+            url = "${casBaseUrl}/userdetails/userDetails"
+        }
+        userDetailsSingleUrl = "${userDetailsUrl}/getUserDetails"
+        userDetailsUrl = "${userDetails.url}/getUserListFull"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
