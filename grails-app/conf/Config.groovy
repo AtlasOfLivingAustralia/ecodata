@@ -661,9 +661,34 @@ environments {
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+    }
+    functionaltest {
+        grails.cache.config = {
+            diskStore {
+                path '/tmp'
+            }
+        }
+        grails.logging.jul.usebridge = true
+        ecodata.use.uuids = false
+        app.external.model.dir = "./models/"
+        grails.hostname = "localhost"
+        // Only for travis CI, they must be overriden by ecodata-config.properties
+        serverName = "http://${grails.hostname}:8080"
+        grails.app.context = "ecodata"
+        grails.serverURL = serverName + "/" + grails.app.context
+        app.uploads.url = "${grails.serverURL}/document/download?filename="
 
-
-
+        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
+        app.elasticsearch.location = "./target/elasticsearch/"
+        app.file.upload.path = "./target/uploads"
+        app.file.upload.path = "./target/archive"
+        String casBaseUrl = "http://locahost:8018"
+        userDetailsSingleUrl = "${casBaseUrl}/userdetails/userDetails/getUserDetails"
+        userDetailsUrl = "${casBaseUrl}/userdetails/userDetails/getUserListFull"
+        userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
+        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
+        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
     }
     production {
         grails.logging.jul.usebridge = false
