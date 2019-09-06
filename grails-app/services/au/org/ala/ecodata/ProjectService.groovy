@@ -73,7 +73,6 @@ class ProjectService {
         def p = version ?
                 AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(version as Long), [sort: 'date', order: 'desc', max: 1])[0].entity :
                 Project.findByProjectId(id)
-
         return p ? toMap(p, levelOfDetail, version) : null
     }
 
@@ -219,6 +218,13 @@ class ProjectService {
             }
 
             result = mapOfProperties.findAll { k, v -> v != null }
+
+            //Fetch name of MU
+            if(result?.managementUnitId){
+                ManagementUnit mu =  ManagementUnit.findByManagementUnitId(result.managementUnitId)
+                result['managementUnitName'] =mu?.name
+            }
+
 
             // look up current associated organisation details
             result.associatedOrgs?.each {

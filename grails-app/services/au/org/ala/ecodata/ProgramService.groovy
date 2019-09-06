@@ -14,6 +14,15 @@ class ProgramService {
         }
         Program.findByProgramIdAndStatusNotEqual(programId, DELETED)
     }
+    /**
+     *
+     * @param ids
+     * @return a list of programs
+     */
+    Program[] get(String[] ids){
+        Program[] programs = Program.findAllByProgramIdInList(ids.toList()) //convert to list
+        return programs
+    }
 
     Program findByName(String name) {
         return Program.findByNameAndStatusNotEqual(name, DELETED)

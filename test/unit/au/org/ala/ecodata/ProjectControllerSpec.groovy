@@ -6,7 +6,7 @@ import spock.lang.Specification
 
 @TestFor(ProjectController)
 @Mock(Project)
-class ProjectControllerSpec extends Specification {
+class ProjectControllerSpec1 extends Specification {
 
     ProjectService projectService
 

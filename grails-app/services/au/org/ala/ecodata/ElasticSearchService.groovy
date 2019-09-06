@@ -39,6 +39,7 @@ import org.grails.datastore.mapping.engine.event.EventType
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
+import java.lang.management.ManagementFactory
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
@@ -82,6 +83,7 @@ class ElasticSearchService {
     HubService hubService
     CacheService cacheService
     ProgramService programService
+    ManagementUnitService managementUnitService
 
 
     Node node;
@@ -818,6 +820,8 @@ class ElasticSearchService {
         }?.unique(false)
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
+        //Test purpose
+        projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
 
         // Populate program facets from the project program, if available
         if (project.programId) {

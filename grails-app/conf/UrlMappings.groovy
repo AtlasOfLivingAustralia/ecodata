@@ -1,8 +1,6 @@
 class UrlMappings {
 
 	static mappings = {
-
-
         "/ws/record"(controller: "record"){ action = [GET:"list", POST:"create"] }
         "/ws/record/"(controller: "record"){ action = [GET:"list", POST:"create"] }
 
@@ -151,6 +149,13 @@ class UrlMappings {
             controller = 'project'
             action = 'findByAssociation'
         }
+
+        "/ws/programs" {
+            controller = 'program'
+            action = 'getPrograms'
+        }
+
+        "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
 
