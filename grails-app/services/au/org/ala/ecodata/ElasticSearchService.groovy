@@ -793,6 +793,15 @@ class ElasticSearchService {
                 projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
             }
 
+            // If we don't flatten these values into the root of the project, they are not currently usable by
+            // the colour points by type function on the map.
+            if (projectMap.custom?.details?.outcomes?.primaryOutcome?.description) {
+                projectMap.primaryOutcome = projectMap.custom.details.outcomes.primaryOutcome.description
+            }
+            if (projectMap.custom?.details?.outcomes?.secondaryOutcomes?.size()) {
+                projectMap.secondaryOutcomes = projectMap.custom.details.outcomes.secondaryOutcomes.collect({it.description})
+            }
+
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)

@@ -126,7 +126,18 @@
             "muFacet" : {"type" : "string", "index" : "not_analyzed"}
           }
         },
-
+        "primaryOutcome": {
+          "type": "string",
+          "fields": {
+            "primaryOutcomeFacet": {"type": "string", "index": "not_analyzed"}
+          }
+        },
+        "secondaryOutcomes": {
+          "type": "string",
+          "fields": {
+            "secondaryOutcomesFacet": {"type": "string", "index": "not_analyzed"}
+          }
+        },
         "associatedSubProgram": {
           "type" : "string",
           "fields" : {
