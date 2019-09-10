@@ -155,6 +155,11 @@ class UrlMappings {
             action = 'getPrograms'
         }
 
+        "/ws/managementUnits" {
+            controller = 'managementUnit'
+            action = 'getManagementUnits'
+        }
+
         "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
 
         "/ws/report/runReport"(controller:"report", action:"runReport")

@@ -7,12 +7,40 @@ import static au.org.ala.ecodata.Status.DELETED
 class ManagementUnitService {
     
     def commonService
+    def siteService
 
     ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {
             return ManagementUnit.findByManagementUnitId(muId)
         }
         return ManagementUnit.findByManagementUnitIdAndStatusNotEqual(muId, DELETED)
+    }
+
+    /**
+     * Get a list of management units with limited info of sites
+     * @param ids
+     * @return a list of management units
+     */
+    List get(String[] ids){
+        ManagementUnit[] mues = ManagementUnit.findAllByManagementUnitIdInList(ids.toList()) //convert to list
+        // Retrieve site
+        //todo ? add relations between MU and Site
+        List results = []
+        for(ManagementUnit mu in mues){
+            Map muInfo = mu.toMap()
+            if (mu.managementUnitSiteId){
+                //Not work
+                //Map site = siteService.getSiteWithLimitedFields(mu.managementUnitSiteId,["siteId","name","extent.geometry.state"])
+                Site site = Site.findBySiteId(mu.managementUnitSiteId)
+
+                muInfo['site'] = ["siteId":site.siteId,
+                                  "name": site.name,
+                                  "state": site.extent?.geometry?.state
+                                  ]
+            }
+            results << muInfo
+        }
+        return results
     }
 
     ManagementUnit findByName(String name) {
