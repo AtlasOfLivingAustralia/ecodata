@@ -81,5 +81,5 @@ if (erf_program){
 // Update permissions associated with programs
 db.userPermission.update({entityType:'au.org.ala.ecodata.Program'}, {$set:{entityType:'au.org.ala.ecodata.ManagementUnit'}}, {multi:true});
 
-
+db.report.update({programId:{$exists:true}}, {$rename:{'programId':'managementUnitId'}}, {multi:true});
 
