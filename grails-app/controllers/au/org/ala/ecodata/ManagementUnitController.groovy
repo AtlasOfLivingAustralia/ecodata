@@ -50,6 +50,6 @@ class ManagementUnitController {
     }
 
     def findAllForUser(String id) {
-        respond managementUnitService.findAllMUsForUser(id)
+        respond managementUnitService.findAllManagementUnitsForUser(id)
     }
 }
