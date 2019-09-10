@@ -88,8 +88,7 @@ class ManagementUnitService {
 
     List<ManagementUnit> findAllManagementUnitsForUser(String userId) {
         List userMUs = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, ManagementUnit.class.name, DELETED)
-
-        List result = ManagementUnit.findAllByMUIdInList(userMUs?.collect{it.entityId})
+        List result = ManagementUnit.findAllByManagementUnitIdInList(userMUs?.collect{it.entityId})
         result
     }
 
