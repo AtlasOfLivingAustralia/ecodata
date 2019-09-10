@@ -1,6 +1,7 @@
 //copy none nlp and elp programs to management unit
 db.program.find({$nor:[{"name": "National Landcare Programme"},{name:"Regional Land Partnerships"}]}).forEach(function(program){
     db.getCollection("managementUnit").insert(program)
+    db.program.remove({programId:program.programId});
 })
 //rename Ids
 db.managementUnit.updateMany({},{$rename:{'programId':'managementUnitId','programSiteId':'managementUnitSiteId','config.programReports':'config.managementUnitReports'}})
@@ -57,6 +58,9 @@ if (erf_program){
     db.program.insert(erf_program)
     db.project.updateMany({'grantId':{$regex:/^ERF/}},{$set:{'programId':erf_program.programId}})
 }
+
+// Update permissions associated with programs
+db.userPermission.update({entityType:'au.org.ala.ecodata.Program'}, {$set:{entityType:'au.org.ala.ecodata.ManagementUnit'}}, {multi:true});
 
 
 
