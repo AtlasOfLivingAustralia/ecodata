@@ -829,8 +829,9 @@ class ElasticSearchService {
         }?.unique(false)
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
-        //Test purpose
-        projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
+
+        if(projectMap.managementUnitId)
+            projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
 
         // Populate program facets from the project program, if available
         if (project.programId) {
