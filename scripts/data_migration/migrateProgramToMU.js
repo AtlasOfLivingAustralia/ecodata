@@ -24,7 +24,7 @@ var rlp_programId = db.program.findOne({name:"Regional Land Partnerships"}).prog
 
 //db.project.updateMany({'grantId':{$regex:/^RLP/}},{$set:{'programId':rlp_programId}})
 
-db.project.find({'grantId':{$regex:/^RLP/}}).forEach(function(project){
+db.project.find({programId:{$exists:true}}).forEach(function(project){
     db.project.update( {"projectId":project.projectId}, {$set:{'programId':rlp_programId}})
 })
 
@@ -35,7 +35,7 @@ var erf_program = db.program.findOne({name:"Environmental Restoration Fund"})
 if (erf_program){
     //db.project.updateMany({'grantId':{$regex:/^ERF/}},{$set:{'programId':erf_program.programId}})
     db.project.find({'grantId':{$regex:/^ERF/}}).forEach(function(project){
-        db.project.update( {"projectId":project.projectId}, {$set:{'programId':erf_program}})
+        db.project.update( {"projectId":project.projectId}, {$set:{'programId':erf_program.programId}})
     })
 }else{
     load('uuid.js');
