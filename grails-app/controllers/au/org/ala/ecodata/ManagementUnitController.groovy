@@ -4,7 +4,7 @@ package au.org.ala.ecodata
 class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE',getManagementUnits: ['POST']]
+    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE',getManagementUnits: ['POST'],findAllForUser:'GET']
 
     ManagementUnitService managementUnitService
     ElasticSearchService elasticSearchService
@@ -24,8 +24,10 @@ class ManagementUnitController {
             List mues =  managementUnitService.get(ids)
             respond mues
         }
-        else
+        else{
             respond []
+        }
+
     }
 
     def findByName(String name) {

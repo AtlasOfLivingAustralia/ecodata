@@ -2,9 +2,11 @@ package au.org.ala.ecodata
 
 import grails.test.mixin.TestFor
 import org.apache.http.HttpStatus
+import org.springframework.http.HttpMethod
+
 import spock.lang.Specification
 
-@TestFor(ProgramController)
+
 class ProgramControllerSpec extends Specification {
 
     ProgramService programService = Mock(ProgramService)
@@ -52,7 +54,7 @@ class ProgramControllerSpec extends Specification {
     }
 
 
-    def "A user can retrieve a list of programs they have a role assigned to"() {
+    void "A user can retrieve a list of programs they have a role assigned to"() {
         setup:
         String id = 'p1'
         List programs = [new Program(programId:'p1', name:'test 1'), new Program(programId:'p2', name:'test 2')]

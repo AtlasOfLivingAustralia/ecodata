@@ -145,8 +145,6 @@ class SiteService {
      }
 
 
-
-
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
     }

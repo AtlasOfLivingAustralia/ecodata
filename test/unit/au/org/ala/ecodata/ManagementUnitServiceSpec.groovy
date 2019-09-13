@@ -40,4 +40,5 @@ class ManagementUnitServiceSpec extends Specification {
         mu.name == 'test 1'
 
     }
+
 }
