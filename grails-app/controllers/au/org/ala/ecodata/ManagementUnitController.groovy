@@ -4,7 +4,7 @@ package au.org.ala.ecodata
 class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE',getManagementUnits: ['POST'],findAllForUser:'GET']
+    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE',getManagementUnits: ['POST'], findAllForUser:'GET', managementUnitSiteMap: ['GET', 'POST']]
 
     ManagementUnitService managementUnitService
     ElasticSearchService elasticSearchService
@@ -53,5 +53,21 @@ class ManagementUnitController {
 
     def findAllForUser(String id) {
         respond managementUnitService.findAllManagementUnitsForUser(id)
+    }
+
+    /**
+     *
+     * The POST body can optionally contain a JSON formatted attribute "managementUnitIds" which supplies a list
+     * of management unit ids to query.  Otherwise all ManagementUnit sites will be returned.
+     * @return a geojson FeatureCollection containing the management unit boundaries including a geojson property
+     * "type" which can be used to colour a map produced from the collection.
+     */
+    def managementUnitSiteMap() {
+        List ids = null
+        if (request.method == 'POST') {
+            ids = request.JSON?.managementUnitIds
+        }
+
+        respond managementUnitService.managementUnitSiteMap(ids)
     }
 }

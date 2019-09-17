@@ -1,6 +1,9 @@
 //copy none nlp and elp programs to management unit
 db.program.find({$nor:[{"name": "National Landcare Programme"},{name:"Regional Land Partnerships"}]}).forEach(function(program){
-    db.getCollection("managementUnit").insert(program)
+    if (program.name != 'Marine Natural Resource Management') {
+        db.getCollection("managementUnit").insert(program);
+    }
+
     db.program.remove({programId:program.programId});
 })
 //rename Ids

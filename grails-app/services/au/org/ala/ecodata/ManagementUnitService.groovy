@@ -92,4 +92,53 @@ class ManagementUnitService {
         result
     }
 
+    /**
+     * @param ids a list of management unit ids to query.  If null or empty, all ManagementUnit sites will be returned.
+     * @return a geojson FeatureCollection containing the management unit boundaries including a geojson property
+     * "type" which can be used to colour a map produced from the collection.
+     */
+    Map managementUnitSiteMap(List ids) {
+
+        // An empirically determined tolerance to produce a small enough result with valid geometry.
+        final double MANAGEMENT_UNIT_SITE_TOLERANCE = 0.2
+        List managementUnits
+        if (ids) {
+            managementUnits = ManagementUnit.findAllByManagementUnitIdInListAndStatusNotEqual(ids, Status.DELETED)
+        }
+        else {
+            managementUnits = ManagementUnit.findAllByStatusNotEqual(Status.DELETED)
+        }
+
+        Map featureCollection = [type: "FeatureCollection", features: []]
+
+        managementUnits.each { ManagementUnit managementUnit ->
+            if (managementUnit.managementUnitSiteId) {
+                Map site = siteService.get(managementUnit.managementUnitSiteId)
+
+                if (site) {
+                    Map json = siteService.toGeoJson(site)
+
+                    if (json && json.geometry) {
+                        // The program sites are very high resolution which would result in very large response to the
+                        // client, so we are simplifying them for this map.
+                        json.geometry = GeometryUtils.simplify(json.geometry, MANAGEMENT_UNIT_SITE_TOLERANCE)
+                        json.properties.name = managementUnit.name
+                        json.properties.managementUnitId = managementUnit.managementUnitId
+                        featureCollection.features << json
+                    }
+                    else {
+                        log.warn("No geometry for management unit site ${managementUnit.managementUnitSiteId}")
+                    }
+                }
+                else {
+                    log.warn("No site for management unit site ${managementUnit.managementUnitSiteId}")
+                }
+
+            }
+        }
+
+        GeometryUtils.assignDistinctValuesToNeighbouringFeatures(featureCollection.features, "type")
+        featureCollection
+    }
+
 }

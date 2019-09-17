@@ -161,6 +161,8 @@ class UrlMappings {
         }
 
         "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
+        "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
+
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
 

@@ -1,9 +1,12 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.gorm.Domain
 import grails.test.mixin.mongodb.MongoDbTestMixin
+import org.codehaus.groovy.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
 import org.springframework.context.MessageSource
 import spock.lang.Specification
 
@@ -13,11 +16,16 @@ import spock.lang.Specification
 class ManagementUnitServiceSpec extends Specification {
 
     CommonService commonService = new CommonService()
+    SiteService siteService = Mock(SiteService)
 
     def setup() {
+        JSON.registerObjectMarshaller(new MapMarshaller())
+        JSON.registerObjectMarshaller(new CollectionMarshaller())
+
         commonService.grailsApplication = grailsApplication
         commonService.messageSource = Mock(MessageSource)
         service.commonService = commonService
+        service.siteService = siteService
 
         ManagementUnit.findAll().each { it.delete(flush:true) }
     }
@@ -41,4 +49,42 @@ class ManagementUnitServiceSpec extends Specification {
 
     }
 
+    def "The service can produce a FeatureCollection containing the management unit sites"() {
+
+        setup:
+        (1..10).each {setupMu(it)}
+
+        when:
+        Map featureCollection = service.managementUnitSiteMap()
+
+        then:
+        10 * siteService.get({it.startsWith('muSite')}) >> [siteId:'1']
+        10 * siteService.toGeoJson(_) >> squareFeature("1", 0, 0)
+
+        and:
+        featureCollection.features.size() == 10
+    }
+
+
+    private void setupMu(int count) {
+        ManagementUnit mu = new ManagementUnit(
+                managementUnitId: 'm'+count,
+                name: 'Management unit '+count,
+                description: 'description '+count,
+                status:Status.ACTIVE,
+                managementUnitSiteId:'muSite'+count)
+        mu.save(flush:true)
+    }
+
+    private Map squareFeature(String id, int x, int y) {
+        Map feature = [
+                type:'Feature',
+                geometry:[
+                        type:'Polygon',
+                        coordinates: [[[x, y], [x, y+1], [x+1, y+1], [x+1, y], [x, y]]]
+                ],
+                properties:[id:id]
+        ]
+        feature
+    }
 }

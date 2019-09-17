@@ -50,5 +50,37 @@ class ManagementUnitControllerSpec extends Specification {
         responseData[0].managementUnitId == 'p1'
     }
 
+    def "The management unit controller can request a geojson FeatureCollection containing the management unit sites"() {
+
+        setup:
+        Map geojson = [type:"FeatureCollection", features:[]]
+        List muIds = ['mu1', 'mu2']
+
+        when:
+        request.method = 'POST'
+        controller.managementUnitSiteMap()
+
+        then:
+        1 * managementUnitService.managementUnitSiteMap(null) >> geojson
+
+        and:
+        response.status == HttpStatus.SC_OK
+        response.json == geojson
+
+
+        when:
+        request.JSON = [managementUnitIds:muIds]
+        controller.managementUnitSiteMap()
+
+        then:
+        1 * managementUnitService.managementUnitSiteMap(muIds) >> geojson
+
+        and:
+        response.status == HttpStatus.SC_OK
+        response.json == geojson
+
+    }
+
+
 }
 
