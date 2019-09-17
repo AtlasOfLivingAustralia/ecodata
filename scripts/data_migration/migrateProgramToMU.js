@@ -86,3 +86,12 @@ db.userPermission.update({entityType:'au.org.ala.ecodata.Program'}, {$set:{entit
 
 db.report.update({programId:{$exists:true}}, {$rename:{'programId':'managementUnitId'}}, {multi:true});
 
+// Update the MERIT hub to add new facets
+var hub = db.hub.find({urlPath:'merit'}).next();
+hub.availableFacets.push("primaryOutcomeFacet");
+hub.availableFacets.push("secondaryOutcomesFacet");
+hub.availableFacets.push("muFacet");
+hub.availableMapFacets.push("primaryOutcomeFacet");
+hub.availableMapFacets.push("muFacet");
+
+db.hub.save(hub);
