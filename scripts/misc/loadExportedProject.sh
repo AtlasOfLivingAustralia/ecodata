@@ -15,6 +15,7 @@ mongoimport --db $DATABASE_NAME $UPSERT --collection document --file document.js
 mongoimport --db $DATABASE_NAME $UPSERT --collection userPermission --file userPermission.json
 mongoimport --db $DATABASE_NAME $UPSERT --collection projectActivity --file projectActivity.json
 mongoimport --db $DATABASE_NAME $UPSERT --collection record --file record.json
+mongoimport --db $DATABASE_NAME $UPSERT --collection report --file report.json
 
 cp -R documents/* $DOCUMENT_BASE_PATH
 
