@@ -100,7 +100,7 @@ class ManagementUnitService {
     Map managementUnitSiteMap(List ids) {
 
         // An empirically determined tolerance to produce a small enough result with valid geometry.
-        final double MANAGEMENT_UNIT_SITE_TOLERANCE = 0.2
+        final double MANAGEMENT_UNIT_SITE_TOLERANCE = 0.1
         List managementUnits
         if (ids) {
             managementUnits = ManagementUnit.findAllByManagementUnitIdInListAndStatusNotEqual(ids, Status.DELETED)

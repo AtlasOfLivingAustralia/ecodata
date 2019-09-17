@@ -252,6 +252,12 @@ class GeometryUtils {
         Map featureMap = [:]
         features.each { Map feature ->
             Geometry geom = geoJsonMapToGeometry(feature.geometry)
+            // Buffer the polygon to force intersections where polygons are very close but aren't actually touching
+            // or intersecting.
+            if (geom && geom.area) {
+                geom = geom.buffer(Math.sqrt(geom.area)*0.02)
+            }
+
             featureMap[feature] = geom
         }
 
