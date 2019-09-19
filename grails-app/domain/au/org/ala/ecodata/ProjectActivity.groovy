@@ -21,6 +21,7 @@ class ProjectActivity {
     boolean allowAdditionalSurveySites
     boolean selectFromSitesOnly
     String baseLayersName
+    String excludeProjectSite // Exclude projectsite from site selection dropdown
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
     VisibilityConstraint visibility = new VisibilityConstraint(embargoOption: EmbargoOption.NONE)
     List<SubmissionRecord> submissionRecords
@@ -73,6 +74,7 @@ class ProjectActivity {
         dataManagementPolicyDescription nullable: true
         dataManagementPolicyURL nullable: true
         dataManagementPolicyDocument nullable: true
+        excludeProjectSite nullable: true
     }
 
     static mapping = {
