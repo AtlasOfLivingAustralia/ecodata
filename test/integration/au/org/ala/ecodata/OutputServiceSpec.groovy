@@ -70,6 +70,75 @@ class OutputServiceSpec extends IntegrationSpec {
         }
     }
 
+    def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is 0"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: 0]]
+        def totalRecords = 0
+        when:
+        totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
+
+        then:
+        totalRecords == 0
+    }
+
+    def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is '0'"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: "0"]]
+        def totalRecords = 0
+        when:
+        totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
+
+        then:
+        totalRecords == 0
+    }
+
+    def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is null"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: null]]
+        def totalRecords = 0
+        when:
+        totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
+
+        then:
+        totalRecords == 0
+    }
+
+    def "createOrUpdateRecordsForOutput should  create associated Record objects when excludeAbsenceRecord is true and individualCount is gt 1"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: 2.0]]
+        def totalRecords = 0
+        when:
+        totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
+
+        then:
+        totalRecords == 1
+    }
+
+
     def "createOrUpdateRecordsForOutput should create associated Record objects when they contain species information"() {
         setup:
         metadataService.getOutputDataModelByName(_) >> [record: true, dataModel: [[dataType: "doesNotMatter"], [

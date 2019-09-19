@@ -1,4 +1,5 @@
 package au.org.ala.ecodata
+
 import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.ecodata.metadata.OutputMetadata
 
@@ -37,14 +38,14 @@ class OutputService {
         if (version) {
             def sourceOutputs = Output.findAllByActivityId(id).collect { it.outputId }
             def all = AuditMessage.findAllByEntityIdInListAndEntityTypeAndDateLessThanEquals(sourceOutputs, Output.class.name,
-                    new Date(version as Long), [sort:'date', order:'desc'])
+                    new Date(version as Long), [sort: 'date', order: 'desc'])
             def outputs = []
             def found = []
             all?.each {
                 if (!found.contains(it.entityId)) {
                     found << it.entityId
                     if (it.entity.activityId == id && it.entity.status == ACTIVE &&
-                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
                         outputs << toMap(it.entity, levelOfDetail)
                     }
                 }
@@ -105,7 +106,7 @@ class OutputService {
      * @return map of properties
      */
     def toMap(output, levelOfDetail = []) {
-        def mapOfProperties = output instanceof Output ?  output.getProperty("dbo").toMap() : output
+        def mapOfProperties = output instanceof Output ? output.getProperty("dbo").toMap() : output
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
@@ -179,11 +180,11 @@ class OutputService {
      * @param output
      * @param props
      */
-    void createOrUpdateRecordsForOutput(Activity activity, Output output, Map props) {
+    def createOrUpdateRecordsForOutput(Activity activity, Output output, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
         boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
-
+        int totalRecords = 0
         if (createRecord) {
             Project project = Project.findByProjectId(activity.projectId)
             Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
@@ -192,25 +193,35 @@ class OutputService {
             List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
 
             records.each { record ->
-                //Create or update record?
-                Record existingRecord = Record.findByOutputSpeciesId(record.outputSpeciesId)
-                if (existingRecord) {
-                    existingRecord.status = Status.ACTIVE
-                    try {
-                        recordService.updateRecord(existingRecord, record)
-                    } catch (e) { // Never hide an exception, chain it instead
-                        //No need to log here if it is chained, the catcher should do the right thing
-                        throw new IllegalArgumentException("Failed to update record: ${record},\n Original Error: ${e.message}", e)
-                    }
+                boolean excludeAbsenceRecord = outputMetadata && outputMetadata["excludeAbsenceRecord"]?.toBoolean()
+                if (excludeAbsenceRecord && (!record.individualCount || record.individualCount?.toInteger() == 0)) {
+                    // Scenario: Species absence + No individualCount = Exclude record generation.
                 } else {
-                    try {
-                        recordService.createRecord(record)
-                    } catch (e) {
-                        throw new IllegalArgumentException("Failed to create record: ${record},\n Original Error: ${e.message}", e)
+                    //Create or update record?
+                    Record existingRecord = Record.findByOutputSpeciesId(record.outputSpeciesId)
+                    if (existingRecord) {
+                        existingRecord.status = Status.ACTIVE
+                        try {
+                            recordService.updateRecord(existingRecord, record)
+                            totalRecords++
+                        } catch (e) { // Never hide an exception, chain it instead
+                            //No need to log here if it is chained, the catcher should do the right thing
+                            throw new IllegalArgumentException("Failed to update record: ${record},\n Original Error: ${e.message}", e)
+                        }
+                    } else {
+                        try {
+                            recordService.createRecord(record)
+                            totalRecords++
+                        } catch (e) {
+                            throw new IllegalArgumentException("Failed to create record: ${record},\n Original Error: ${e.message}", e)
+                        }
                     }
                 }
+
             }
         }
+
+        totalRecords
     }
 
     def update(Map props, String outputId) {
@@ -265,10 +276,10 @@ class OutputService {
      * @param activityId
      * @return
      */
-    List listAllForActivityId(String activityId){
-       Output.findAllByActivityIdAndStatus(activityId, ACTIVE)?.collect{
-           toMap(it)
-       }
+    List listAllForActivityId(String activityId) {
+        Output.findAllByActivityIdAndStatus(activityId, ACTIVE)?.collect {
+            toMap(it)
+        }
     }
 
     /**
@@ -298,7 +309,7 @@ class OutputService {
         OutputMetadata dataModel
         List remove
 
-        if(!context){
+        if (!context) {
             outputMetadata = metadataService.getOutputDataModelByName(metadataName) as Map
             dataModel = new OutputMetadata(outputMetadata);
             names = dataModel.getNamesForDataType(dataTypeName, null);
@@ -308,7 +319,7 @@ class OutputService {
 
         if (activityId && output?.size() > 0) {
             names?.each { name, node ->
-                if(node instanceof Boolean){
+                if (node instanceof Boolean) {
                     remove = []
                     output[name]?.each {
                         // save image if document id not found
@@ -338,14 +349,14 @@ class OutputService {
                 }
 
                 // recursive check for image data
-                if(node instanceof Map){
-                    if(output[name] instanceof Map){
+                if (node instanceof Map) {
+                    if (output[name] instanceof Map) {
                         output[name] = saveMultimedia(output[name], metadataName, outputId, activityId, dataTypeName, role, type, node)
                     }
 
-                    if(output[name] instanceof  List){
-                        output[name].eachWithIndex{ column, index ->
-                            output[name][index] = saveMultimedia(column, metadataName, outputId, activityId, dataTypeName, role, type,  node)
+                    if (output[name] instanceof List) {
+                        output[name].eachWithIndex { column, index ->
+                            output[name][index] = saveMultimedia(column, metadataName, outputId, activityId, dataTypeName, role, type, node)
                         }
                     }
                 }
@@ -354,7 +365,6 @@ class OutputService {
 
         output
     }
-
 
     /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
