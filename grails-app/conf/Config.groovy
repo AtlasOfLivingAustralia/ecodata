@@ -750,6 +750,23 @@ log4j = {
                         file: loggingDir + "/aekosLog.log",
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
             }
+            meritfunctionaltest {
+                console name: "stdout",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
+                        threshold: org.apache.log4j.Level.DEBUG
+                rollingFile name: "ecodataLog",
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/ecodata-test.log",
+                        threshold: org.apache.log4j.Level.INFO,
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+                rollingFile name: "stacktrace",
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/ecodata-test-stacktrace.log"
+                rollingFile name: 'aekosLog',
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/aekosLog.log",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+            }
             production {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
