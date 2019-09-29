@@ -861,7 +861,7 @@ facets.data = [
                 helpText: 'User who created the record'
         ],
         [
-                name: "embargoedFacet",
+                name: "embargoed",
                 dataType: 'text',
                 title:  'Unpublished records'
         ],
