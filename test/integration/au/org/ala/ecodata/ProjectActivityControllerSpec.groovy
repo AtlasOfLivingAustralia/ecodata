@@ -17,6 +17,10 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
 
     void "test create project activity"() {
         setup:
+
+        def visibility = [:]
+        visibility.embargoOption = 'NONE'
+        visibility.alaAdminEnforcedEmbargo = true
         def projectActivity = [name           : 'Test Project Activity',
                                description    : 'Test description',
                                status         : 'active',
@@ -24,6 +28,7 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
                                startDate      : '2015-06-17T14:00:00Z',
                                endDate        : '2015-06-17T14:00:00Z',
                                publicAccess   : true,
+                               visibility     : visibility,
                                dynamicProperty: 'dynamicProperty',
                                projectId      : 'test-project-id',
                                methodType     : "opportunistic",
@@ -63,5 +68,7 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
         savedProjectActivity[0].projectId == projectActivity.projectId
         savedProjectActivity[0].dynamicProperty == projectActivity.dynamicProperty
         savedProjectActivity[0].publicAccess == projectActivity.publicAccess
+        savedProjectActivity[0].visibility.alaAdminEnforcedEmbargo == projectActivity.visibility.alaAdminEnforcedEmbargo
+        savedProjectActivity[0].visibility.embargoOption == projectActivity.visibility.embargoOption
     }
 }

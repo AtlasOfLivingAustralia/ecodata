@@ -59,7 +59,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithoutSpeciesInfo = [data: [userId: "666" ] ]
+        Map propertiesWithoutSpeciesInfo = [data: [userId: "666"]]
 
         when:
         outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithoutSpeciesInfo)
@@ -72,8 +72,8 @@ class OutputServiceSpec extends IntegrationSpec {
 
     def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is 0"() {
         setup:
-        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
-                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"], [dataType: "number", "name": "individualCount", "dwcAttribute": "individualCount"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
@@ -89,8 +89,8 @@ class OutputServiceSpec extends IntegrationSpec {
 
     def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is '0'"() {
         setup:
-        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
-                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"], [dataType: "number", "name": "individualCount", "dwcAttribute": "individualCount"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
@@ -104,10 +104,27 @@ class OutputServiceSpec extends IntegrationSpec {
         totalRecords == 0
     }
 
+    def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is '10'"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"], [dataType: "number", "name": "individualCount", "dwcAttribute": "individualCount"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: "10"]]
+        def totalRecords = 0
+        when:
+        totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
+
+        then:
+        totalRecords == 1
+    }
+
     def "createOrUpdateRecordsForOutput should not create associated Record objects when excludeAbsenceRecord is true and individualCount is null"() {
         setup:
-        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
-                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"], [dataType: "number", "name": "individualCount", "dwcAttribute": "individualCount"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
@@ -121,10 +138,11 @@ class OutputServiceSpec extends IntegrationSpec {
         totalRecords == 0
     }
 
+
     def "createOrUpdateRecordsForOutput should  create associated Record objects when excludeAbsenceRecord is true and individualCount is gt 1"() {
         setup:
-        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord:true, dataModel: [[dataType: "doesNotMatter"], [
-                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"], [dataType:"number", "name":"individualCount", "dwcAttribute":"individualCount"]]]
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"], [dataType: "number", "name": "individualCount", "dwcAttribute": "individualCount"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
@@ -139,10 +157,28 @@ class OutputServiceSpec extends IntegrationSpec {
     }
 
 
+    def "createOrUpdateRecordsForOutput should  create associated Record objects when excludeAbsenceRecord is true and individualCount field is not set"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, excludeAbsenceRecord: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"]]]
+        def totalRecords = 0
+        when:
+        totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
+
+        then:
+        totalRecords == 0
+    }
+
+
     def "createOrUpdateRecordsForOutput should create associated Record objects when they contain species information"() {
         setup:
         metadataService.getOutputDataModelByName(_) >> [record: true, dataModel: [[dataType: "doesNotMatter"], [
-                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"]]]
+                "dataType": "species", "name": "species1", "dwcAttribute": "scientificName"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
@@ -310,9 +346,9 @@ class OutputServiceSpec extends IntegrationSpec {
                                                 "sex2"                     : "Female",
                                                 "comments2"                : "More Species Sightings First",
                                                 "sightingPhoto2"           : [[
-                                                                                      "name"         : "2.png",
-                                                                                      "role"         : "surveyImage",
-                                                                                      "filename"     : "2.png",
+                                                                                      "name"    : "2.png",
+                                                                                      "role"    : "surveyImage",
+                                                                                      "filename": "2.png",
                                                                               ]
                                                 ],
                                                 "species2"                 : [
@@ -339,8 +375,8 @@ class OutputServiceSpec extends IntegrationSpec {
                                                 "sex2"                     : "Unknown",
                                                 "comments2"                : "More Species Sightings Third",
                                                 "sightingPhoto2"           : [[
-                                                                                      "name"         : "4.png",
-                                                                                      "filename"     : "4.png",
+                                                                                      "name"    : "4.png",
+                                                                                      "filename": "4.png",
                                                                               ]
                                                 ],
                                                 "species2"                 : [
@@ -358,8 +394,8 @@ class OutputServiceSpec extends IntegrationSpec {
                                 "locationLongitude"        : 146.0,
                                 "comments1"                : "Single Species Sighting Comment",
                                 "sightingPhoto1"           : [[
-                                                                      "name"         : "1.png",
-                                                                      "filename"     : "1.png",
+                                                                      "name"    : "1.png",
+                                                                      "filename": "1.png",
                                                               ]
                                 ],
                                 "sex1"                     : "Male",
@@ -404,46 +440,46 @@ class OutputServiceSpec extends IntegrationSpec {
 
             switch (argument.individualCount[0]) {
                 case '1':
-                // And then the particular information
-                assert argument.scientificName[0] == "Tigrana"
-                assert argument.multimedia.filename[0][0] == "1.png"
-                assert argument.individualCount[0] == '1'
-                assert argument.sex[0] == 'Male'
-                assert argument.notes[0] == 'Single Species Sighting Comment'
+                    // And then the particular information
+                    assert argument.scientificName[0] == "Tigrana"
+                    assert argument.multimedia.filename[0][0] == "1.png"
+                    assert argument.individualCount[0] == '1'
+                    assert argument.sex[0] == 'Male'
+                    assert argument.notes[0] == 'Single Species Sighting Comment'
 
-                break;
+                    break;
 
                 case '2':
 
-                // And then the particular information
-                assert argument.scientificName[0] == "Abcandonopsis Karanovic, 2004"
-                assert argument.multimedia.filename[0][0] == "2.png"
-                assert argument.individualCount[0] == '2'
-                assert argument.sex[0] == 'Female'
-                assert argument.notes[0] == 'More Species Sightings First'
-                break
+                    // And then the particular information
+                    assert argument.scientificName[0] == "Abcandonopsis Karanovic, 2004"
+                    assert argument.multimedia.filename[0][0] == "2.png"
+                    assert argument.individualCount[0] == '2'
+                    assert argument.sex[0] == 'Female'
+                    assert argument.notes[0] == 'More Species Sightings First'
+                    break
 
                 case '3':
-                assert argument.scientificName[0] == "Sida sp. B (C.Dunlop 1739)"
-                //Missing elements from a row are null rather than inheriting the general data
-                assert argument.multimedia[0] == null
+                    assert argument.scientificName[0] == "Sida sp. B (C.Dunlop 1739)"
+                    //Missing elements from a row are null rather than inheriting the general data
+                    assert argument.multimedia[0] == null
 
-                assert argument.individualCount[0] == '3'
-                assert argument.sex[0] == 'Male and female'
-                assert argument.notes[0] == 'More Species Sightings Second'
-                break
+                    assert argument.individualCount[0] == '3'
+                    assert argument.sex[0] == 'Male and female'
+                    assert argument.notes[0] == 'More Species Sightings Second'
+                    break
 
                 case '4':
-                assert argument.scientificName[0] == "Deflexula pacifica"
-                assert argument.multimedia.filename[0][0] == "4.png"
-                assert argument.individualCount[0] == '4'
-                assert argument.sex[0] == 'Unknown'
-                assert argument.notes[0] == 'More Species Sightings Third'
-                break;
+                    assert argument.scientificName[0] == "Deflexula pacifica"
+                    assert argument.multimedia.filename[0][0] == "4.png"
+                    assert argument.individualCount[0] == '4'
+                    assert argument.sex[0] == 'Unknown'
+                    assert argument.notes[0] == 'More Species Sightings Third'
+                    break;
 
                 default:
 
-                assert false: 'No valid value for individualCount ${argument.individualCount[0]}'
+                    assert false: 'No valid value for individualCount ${argument.individualCount[0]}'
 
             }
 
@@ -457,83 +493,83 @@ class OutputServiceSpec extends IntegrationSpec {
 
         Map outputMetadataModel =
                 [
-                        "record" : "true",
-                        "modelName" : "Biological Survey - Fauna",
-                        "dataModel" : [[
-                                               "dataType" : "list",
-                                               "name" : "surveyResults",
-                                               "columns" : [[
-                                                                    "dataType" : "text",
-                                                                    "description" : "The identifier of the transect or plot in which sampling is being done.",
-                                                                    "name" : "plotId"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "The identifier of the point at which the observational record was made",
-                                                                    "name" : "sampleSiteId"
-                                                            ], [
-                                                                    "dataType" : "species",
-                                                                    "description" : "All species recorded at the sample site",
-                                                                    "name" : "species",
-                                                                    "dwcAttribute" : "scientificName",
-                                                                    "validate" : "required"
-                                                            ], [
-                                                                    "dataType" : "number",
-                                                                    "description" : "The number of organisms in the survey at the sample site which share the same set of record attributes.",
-                                                                    "name" : "numberOfOrganisms",
-                                                                    "dwcAttribute" : "individualCount",
-                                                                    "validate" : "integer,min[0]"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "Nature of the evidence for the basis of the record",
-                                                                    "name" : "evidence",
-                                                                    "constraints" : ["Living organism", "Dead organism", "Tracks", "Scats", "Debris from molting", "Scratchings", "Nest / burrow / lodgings", "Other (specify in notes)"],
-                                                                    "dwcAttribute" : "occurrenceEvidence"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "The sex of the organism recorded",
-                                                                    "name" : "sex",
-                                                                    "constraints" : ["Male", "Female", "Hermaphrodite", "Undetermined", "Other (specify in notes)"],
-                                                                    "dwcAttribute" : "sex"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "Life stage of the organism recorded",
-                                                                    "name" : "lifeStage",
-                                                                    "constraints" : ["Juvenile", "Adolescent", "Pre-metamorphic", "metamorphic juvenile", "Larva", "Nymph", "Pupa", "Adult - non reproductive", "Adult - reproductive", "Other (specify in notes)"],
-                                                                    "dwcAttribute" : "lifeStage"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "The health or condition of the organism recorded",
-                                                                    "name" : "health"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
-                                                                    "name" : "biologicalMaterialTaken",
-                                                                    "constraints" : ["Yes", "No"],
-                                                                    "dwcAttribute" : "associatedOccurrences"
-                                                            ], [
-                                                                    "dataType" : "text",
-                                                                    "description" : "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
-                                                                    "name" : "speciesNotes",
-                                                                    "dwcAttribute" : "occurrenceRemarks"
-                                                            ]
-                                               ]
-                                       ], [
-                                               "dataType" : "number",
-                                               "description" : "Aggregate total of the individual organisms recorded in the survey event",
-                                               "primaryResult" : "true",
-                                               "name" : "totalNumberOfOrganisms",
-                                               "computed" : [
-                                                       "operation" : "sum",
-                                                       "dependents" : [
-                                                               "source" : "numberOfOrganisms",
-                                                               "fromList" : "surveyResults"
-                                                       ]
-                                               ]
-                                       ], [
-                                               "dataType" : "text",
-                                               "name" : "notes",
-                                               "dwcAttribute" : "eventRemarks"
-                                       ]
+                        "record"   : "true",
+                        "modelName": "Biological Survey - Fauna",
+                        "dataModel": [[
+                                              "dataType": "list",
+                                              "name"    : "surveyResults",
+                                              "columns" : [[
+                                                                   "dataType"   : "text",
+                                                                   "description": "The identifier of the transect or plot in which sampling is being done.",
+                                                                   "name"       : "plotId"
+                                                           ], [
+                                                                   "dataType"   : "text",
+                                                                   "description": "The identifier of the point at which the observational record was made",
+                                                                   "name"       : "sampleSiteId"
+                                                           ], [
+                                                                   "dataType"    : "species",
+                                                                   "description" : "All species recorded at the sample site",
+                                                                   "name"        : "species",
+                                                                   "dwcAttribute": "scientificName",
+                                                                   "validate"    : "required"
+                                                           ], [
+                                                                   "dataType"    : "number",
+                                                                   "description" : "The number of organisms in the survey at the sample site which share the same set of record attributes.",
+                                                                   "name"        : "numberOfOrganisms",
+                                                                   "dwcAttribute": "individualCount",
+                                                                   "validate"    : "integer,min[0]"
+                                                           ], [
+                                                                   "dataType"    : "text",
+                                                                   "description" : "Nature of the evidence for the basis of the record",
+                                                                   "name"        : "evidence",
+                                                                   "constraints" : ["Living organism", "Dead organism", "Tracks", "Scats", "Debris from molting", "Scratchings", "Nest / burrow / lodgings", "Other (specify in notes)"],
+                                                                   "dwcAttribute": "occurrenceEvidence"
+                                                           ], [
+                                                                   "dataType"    : "text",
+                                                                   "description" : "The sex of the organism recorded",
+                                                                   "name"        : "sex",
+                                                                   "constraints" : ["Male", "Female", "Hermaphrodite", "Undetermined", "Other (specify in notes)"],
+                                                                   "dwcAttribute": "sex"
+                                                           ], [
+                                                                   "dataType"    : "text",
+                                                                   "description" : "Life stage of the organism recorded",
+                                                                   "name"        : "lifeStage",
+                                                                   "constraints" : ["Juvenile", "Adolescent", "Pre-metamorphic", "metamorphic juvenile", "Larva", "Nymph", "Pupa", "Adult - non reproductive", "Adult - reproductive", "Other (specify in notes)"],
+                                                                   "dwcAttribute": "lifeStage"
+                                                           ], [
+                                                                   "dataType"   : "text",
+                                                                   "description": "The health or condition of the organism recorded",
+                                                                   "name"       : "health"
+                                                           ], [
+                                                                   "dataType"    : "text",
+                                                                   "description" : "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
+                                                                   "name"        : "biologicalMaterialTaken",
+                                                                   "constraints" : ["Yes", "No"],
+                                                                   "dwcAttribute": "associatedOccurrences"
+                                                           ], [
+                                                                   "dataType"    : "text",
+                                                                   "description" : "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
+                                                                   "name"        : "speciesNotes",
+                                                                   "dwcAttribute": "occurrenceRemarks"
+                                                           ]
+                                              ]
+                                      ], [
+                                              "dataType"     : "number",
+                                              "description"  : "Aggregate total of the individual organisms recorded in the survey event",
+                                              "primaryResult": "true",
+                                              "name"         : "totalNumberOfOrganisms",
+                                              "computed"     : [
+                                                      "operation" : "sum",
+                                                      "dependents": [
+                                                              "source"  : "numberOfOrganisms",
+                                                              "fromList": "surveyResults"
+                                                      ]
+                                              ]
+                                      ], [
+                                              "dataType"    : "text",
+                                              "name"        : "notes",
+                                              "dwcAttribute": "eventRemarks"
+                                      ]
                         ]
                 ]
 
@@ -630,4 +666,5 @@ class OutputServiceSpec extends IntegrationSpec {
 
         output
     }
+
 }
