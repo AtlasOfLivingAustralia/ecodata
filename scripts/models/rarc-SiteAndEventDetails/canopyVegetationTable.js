@@ -3,6 +3,7 @@
 // Output model name: rarc_EventAndLocationDetails
 // jsMain: https://dl.dropbox.com/s/fmyel0nh83tl87h/canopyVegetationTable.js?dl=0
 // minifiled: https://dl.dropbox.com/s/ghpu4yaahpo27iu/canopyVegetationTable.min.js?dl=0
+
 self.data.canopyVegetationTable = ko.observableArray([]);
 self.transients.tempCanopyVegetationTableScore = ko.observable();
 self.transients.canopyVegetationTableScore = function (cw, vw) {
