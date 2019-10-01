@@ -196,6 +196,7 @@ class OutputService {
                 boolean excludeAbsenceRecord = outputMetadata && outputMetadata["excludeAbsenceRecord"]?.toBoolean()
                 if (excludeAbsenceRecord && (!record.individualCount || record.individualCount?.toInteger() == 0)) {
                     // Scenario: Species absence + No individualCount = Exclude record generation.
+                    // Do nothing.
                 } else {
                     //Create or update record?
                     Record existingRecord = Record.findByOutputSpeciesId(record.outputSpeciesId)
