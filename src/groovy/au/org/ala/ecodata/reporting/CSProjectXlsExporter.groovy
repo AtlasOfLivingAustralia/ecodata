@@ -42,8 +42,8 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
 
-    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia"]
-    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper) ]
+    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
+    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
 
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
@@ -212,8 +212,8 @@ class CSProjectXlsExporter extends ProjectExporter {
                         }
 
                         properties.addAll(outputConfig.propertyGetters)
-
-                        OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
+                        def model = metadataService.getOutputDataModelByName(output.name)
+                        OutputMetadata outputModel = new OutputMetadata(model)
 
                         processor.hideMemberOnlyAttributes(output, outputModel, userIsProjectMember)
                         List rowSets = processor.flatten(output, outputModel)
@@ -232,12 +232,18 @@ class CSProjectXlsExporter extends ProjectExporter {
                             }
                         } else {
                             rowSets.eachWithIndex { outputFields, index ->
-                                if (outputFields instanceof BasicDBObject) {
+                                    if (outputFields instanceof BasicDBObject) {
                                     rows[index].putAll(outputFields.toMap())
                                 }
                             }
                         }
+
+                        // Exclude absense record
+                        if(model?.excludeAbsenceRecord) {
+                            rows = rows?.findAll{it.individualCount > 0}
+                        }
                     }
+
                     if (!rows[0].isEmpty()) {
                         if (!sheet) {
                             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))

@@ -132,6 +132,8 @@ class ProjectActivityService {
         if(incomingProperties.visibility) {
             EmbargoOption option = incomingProperties.visibility?.embargoOption as EmbargoOption
             VisibilityConstraint visibility = new VisibilityConstraint()
+
+            // Project admin and Moderator defined embargo settings.
             switch (option) {
                 case EmbargoOption.NONE:
                     visibility.embargoOption = EmbargoOption.NONE
@@ -150,6 +152,8 @@ class ProjectActivityService {
                     break
             }
 
+            // ALA admin - Defined embargo settings.
+            visibility.alaAdminEnforcedEmbargo = incomingProperties.visibility?.alaAdminEnforcedEmbargo
             incomingProperties.remove("visibility")
             projectActivity.visibility = visibility
         }

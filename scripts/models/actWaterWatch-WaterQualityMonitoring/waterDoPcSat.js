@@ -2,17 +2,73 @@
 // Activity Name: ACT Water Watch - Water Quality Monitoring.
 // Output model name: actWaterwatch_waterQualitySurvey
 // jsMain: https://dl.dropbox.com/s/55ytuve6qjdi62o/waterDissolvedOxygenInPercentSaturation.js?dl=0
+
 self.data.waterDissolvedOxygenInPercentSaturation = ko.observable();
+self.data.waterTurbidityInNtu = ko.observable();
+
 self.data.waterDissolvedOxygenInMilligramsPerLitre.subscribe(function(disolvedOxygen) {
-    var waterTemp = self.data.waterTemperatureInDegreesCelcius();
-    self.transients.calculateSaturation(waterTemp, disolvedOxygen);
-});
-self.data.waterTemperatureInDegreesCelcius.subscribe(function(waterTemp) {
-    var disolvedOxygen = self.data.waterDissolvedOxygenInMilligramsPerLitre();
-    self.transients.calculateSaturation(waterTemp, disolvedOxygen);
+    if(!self.transients.isValid(disolvedOxygen)){
+        self.data.waterDissolvedOxygenInMilligramsPerLitre ('');
+    } else {
+        var waterTemp = self.data.waterTemperatureInDegreesCelcius();
+        self.transients.calculateSaturation(waterTemp, disolvedOxygen);
+    }
 });
 
-self.transients.calculateSaturation = function(waterTemp, disolvedOxygen){
+self.data.waterTemperatureInDegreesCelcius.subscribe(function(waterTemp) {
+    if(!self.transients.isValid(waterTemp)){
+        self.data.waterTemperatureInDegreesCelcius ('');
+    } else {
+        var disolvedOxygen = self.data.waterDissolvedOxygenInMilligramsPerLitre();
+        self.transients.calculateSaturation(waterTemp, disolvedOxygen);
+    }
+});
+
+self.data.totalParticipants.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.totalParticipants ('');
+    }
+});
+
+self.data.surveyDurationInDecimalHours.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.surveyDurationInDecimalHours ('');
+    }
+});
+
+self.data.waterPh.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.waterPh ('');
+    }
+});
+
+
+self.data.waterTotalPhosphorusInMilligramsPerLitre.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.waterTotalPhosphorusInMilligramsPerLitre ('');
+    }
+});
+
+self.data.waterNitrateInMilligramsPerLitre.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.waterNitrateInMilligramsPerLitre ('');
+    }
+});
+
+self.data.waterEcInMicrosiemensPerCentimetre.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.waterEcInMicrosiemensPerCentimetre ('');
+    }
+});
+
+
+self.data.waterTurbidityInNtu.subscribe(function(val) {
+    if(!self.transients.isValid(val)){
+        self.data.waterTurbidityInNtu ('');
+    }
+});
+
+self.transients.calculateSaturation = function(waterTemp, disolvedOxygen) {
     var saturationFactor = [
         14.62,  // 0C
         14.22,
@@ -64,12 +120,10 @@ self.transients.calculateSaturation = function(waterTemp, disolvedOxygen){
  
         var saturation = 0;
          
-        if ( isNaN(waterTemp) || isNaN(disolvedOxygen) )
-        {
+        if ( isNaN(waterTemp) || isNaN(disolvedOxygen) ) {
             saturation = ''; 
         }
-        else if ( waterTemp < 0 || waterTemp >= saturationFactor.length )
-        {
+        else if ( waterTemp < 0 || waterTemp >= saturationFactor.length ) {
             blockUIWithMessage("<p class='text-center'>ERROR</p><p class='text-center'>Water temperature cannot be more that 45C</p>");
             setTimeout(function(){
                 $.unblockUI();
@@ -77,10 +131,23 @@ self.transients.calculateSaturation = function(waterTemp, disolvedOxygen){
             saturation = '';
             self.data.waterTemperatureInDegreesCelcius(0);
         }
-        else
-        {
+        else {
             waterTemp = Math.round(waterTemp);
             saturation = Math.round(disolvedOxygen / saturationFactor[waterTemp] * 100);
         }
         self.data.waterDissolvedOxygenInPercentSaturation(saturation);
+};
+
+self.transients.isValid = function(val) {
+    var ret = true;
+
+    if(val!= "" && isNaN(val)){
+        blockUIWithMessage("<p class='text-center'>ERROR</p><p class='text-center'>Invalid input, please enter numeric values.</p>");
+        setTimeout(function(){
+            $.unblockUI();
+        }, 2000);
+        ret = false;
+    }
+
+    return ret;
 };
