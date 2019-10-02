@@ -7,7 +7,7 @@ branches:
   only:
   - master
   - dev
-  - hotfix
+  - hot-fix
   - /^feature\/.*$/
 
 services:
