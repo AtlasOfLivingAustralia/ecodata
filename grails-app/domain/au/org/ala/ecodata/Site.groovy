@@ -38,7 +38,7 @@ class Site {
     String type
     String description
     String habitat
-    String area
+  //  Double area
     String recordingMethod
     String landTenure
     String protectionMechanism
@@ -61,7 +61,7 @@ class Site {
         type nullable:true
         description nullable:true, maxSize: 40000
         habitat nullable:true
-        area nullable:true
+   //     area nullable:true
         recordingMethod nullable:true
         landTenure nullable:true
         protectionMechanism nullable:true

@@ -5,7 +5,7 @@ import grails.converters.JSON
 @PreAuthorise(basicAuth = false)
 class DocumentationController {
 
-    def grailsApplication
+   // def grailsApplication
     def metadataService
 
     def index() {
@@ -206,7 +206,7 @@ class DocumentationController {
             log.error error
             return error
         } catch (Exception e) {
-            log.error e
+            log.error e.toString()
             def error = [error:e.message]
             return error
         }

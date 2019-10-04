@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.apache.commons.io.FilenameUtils
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -21,8 +21,8 @@ class DocumentController {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        response.setContentType("application/json; charset=UTF-8")
-        model
+    //    response.setContentType("application/json; charset=UTF-8")
+        render model as JSON
     }
 
     def index() {

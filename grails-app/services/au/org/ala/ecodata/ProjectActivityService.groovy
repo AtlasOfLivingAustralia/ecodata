@@ -74,11 +74,12 @@ class ProjectActivityService {
 
                 updateEmbargoDetails(projectActivity, props)
 
-                if (props.submissionRecords) {
+              /*  if (props.submissionRecords) {
                     updateAekosSubmission(projectActivity, props)
-                }
+                }*/
 
                 notifyChangeToAdmin(props, toMap(projectActivity))
+          //      props['test'] = 'dynamicProperty'
                 commonService.updateProperties(projectActivity, props)
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -243,7 +244,7 @@ class ProjectActivityService {
      */
     Map toMap(projectActivity, levelOfDetail = []) {
         Map mapOfProperties = projectActivity instanceof ProjectActivity ?
-                projectActivity.getProperty("dbo").toMap() : projectActivity
+                GormMongoUtil.extractDboProperties(projectActivity.getProperty("dbo")) : projectActivity
 
         if (levelOfDetail == DOCS) {
             mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)
@@ -257,15 +258,16 @@ class ProjectActivityService {
         }
 
         mapOfProperties["attribution"] = generateAttributionText(projectActivity)
-        mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
+       /* mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
             submissionService.get(it)
-        }
+        } */
 
         String id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
         mapOfProperties.findAll { k, v -> v != null }
+        //GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     List<String> listRestrictedProjectActivityIds(String userId = null, String projectId = null) {

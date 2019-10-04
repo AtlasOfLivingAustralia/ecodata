@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
  */
 class RecordController {
 
-    def grailsApplication
+  //  def grailsApplication
 
     RecordService recordService
     UserService userService

@@ -1,9 +1,9 @@
 /**
  * Manifest for the asset pipeline
  *
- *= require bootstrap
- *= require bootstrap-responsive
- *= require jquery.autocomplete
+ * require bootstrap
+ * require bootstrap-responsive
+ *= require jquery.autocomplete-1.1/jquery.autocomplete.css
  *
  *= require bootstrap-datepicker/css/datepicker
  *= require bootstrap-combobox/bootstrap-combobox

@@ -1,15 +1,15 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.core.artefact.DomainClassArtefactHandler
+import org.grails.web.json.JSONObject
 import org.springframework.context.MessageSourceResolvable
 
 import java.text.SimpleDateFormat
 
 class CommonService {
 
-    //static transactional = false
+   // static transactional = false
     def grailsApplication, cacheService
     def messageSource
 
@@ -50,7 +50,9 @@ class CommonService {
             if (v == "false") {
                 v = false
             }
-            if (v == "null" || v == JSONObject.NULL) {
+          //  if (v == "null" || v == JSONObject.NULL) {
+            // http://docs.grails.org/3.0.6/api/org/grails/web/json/JSONObject.Null.html
+            if (v == "null") {
                 v = null
             }
             o[k] = v
@@ -83,12 +85,13 @@ class CommonService {
      * @return map of properties
      */
     def toBareMap(o) {
-        def dbo = o.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = GormMongoUtil.extractDboProperties(o.getProperty("dbo"))
+     //   def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.findAll {k,v -> v != null && v != ""}
+       // GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     def checkApiKey(key) {

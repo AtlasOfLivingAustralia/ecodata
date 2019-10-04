@@ -23,8 +23,8 @@ class ECTagLib {
         def mb = new MarkupBuilder(out)
         mb.li(class: active == current ? 'active' : '') {
             a(href:attrs.href) {
-                i(class:'icon-chevron-right') { mkp.yieldUnescaped('&nbsp;')}
                 mkp.yield(attrs.title)
+                span(class:'glyphicon glyphicon-chevron-right pull-right') { mkp.yieldUnescaped('&nbsp;')}
             }
         }
     }

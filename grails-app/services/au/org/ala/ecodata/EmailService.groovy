@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import grails.plugin.mail.MailService
+import grails.plugins.mail.MailService
 
 class EmailService {
     MailService mailService

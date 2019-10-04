@@ -117,31 +117,35 @@ class ElasticSearchService {
             return
         }
         def docId = getEntityId(doc)
-        def docJson = doc as JSON
+        def docMap = GormMongoUtil.extractDboProperties(doc)//doc as JSON
         index = index ?: DEFAULT_INDEX
 
         // Delete index if it exists and doc.status == 'deleted'
-        checkForDelete(doc, docId, index)
+        checkForDelete(docMap, docId, index)
 
         // Prevent deleted document from been indexed regardless of whether it has a previous index entry
-        if(doc.status?.toLowerCase() == DELETED) {
+        if(docMap.status?.toLowerCase() == DELETED) {
             return null;
         }
 
+        addCustomFields(docMap)
+        //def docJson = groovy.json.JsonOutput.toJson(docMap)
+        def docJson = docMap as JSON
+
         try {
-            addCustomFields(doc)
             IndexRequestBuilder builder = client.prepareIndex(index, DEFAULT_TYPE, docId)
             builder.setSource(docJson.toString(false)).execute().actionGet()
 
         } catch (Exception e) {
-            log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e
-            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+            log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e.toString()
+           // throw e
+/*            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
             String body = "Type: "+getDocType(doc)+"\n"
             body += "Index: "+index+"\n"
             body += "Error: "+e.getMessage()+"\n"
             body += "Document: "+docJson.toString(true)
 
-            emailService.emailSupport(subject, body)
+            emailService.emailSupport(subject, body)*/
         }
     }
 
@@ -200,6 +204,7 @@ class ElasticSearchService {
 
         // Remove the mongo id if it exists.
         doc.remove("_id")
+        doc.remove("id")
 
         // hand-coded copy fields with different analysers
         doc.docType = getDocType(doc)
@@ -266,7 +271,7 @@ class ElasticSearchService {
     def addMappings(index) {
         Map parsedJson = getMapping()
 
-        def mappingsDoc = (parsedJson as JSON).toString()
+        def mappingsDoc = (parsedJson as JSON).toString() //groovy.json.JsonOutput.toJson(parsedJson).toString() //(parsedJson as JSON).toString()
 
         def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
         indexes.each {
@@ -340,8 +345,8 @@ class ElasticSearchService {
             case 'document':
             case 'stringList':
                 mapping?.mappings.doc["properties"].put(field.indexName, [
-                    "type" : "string",
-                    "index" : "not_analyzed"
+                        "type" : "string",
+                        "index" : "not_analyzed"
                 ])
                 break
             case 'number':
@@ -514,6 +519,7 @@ class ElasticSearchService {
                 break
             case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
+
                 prepareOrganisationForIndexing(organisation)
                 indexDoc(organisation, DEFAULT_INDEX)
                 break
@@ -674,6 +680,7 @@ class ElasticSearchService {
 
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
+
         Project.withNewSession {
             def batchParams = [offset: 0, max: 50, limit: 200]
             def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
@@ -688,16 +695,16 @@ class ElasticSearchService {
                         log.error("Unable to index project:  " + project?.projectId, e)
                     }
                 }
-
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
+
             }
         }
 
         log.info "Indexing all sites"
         int count = 0
         Site.withNewSession { session ->
-            siteService.doWithAllSites { Map siteMap ->
+            siteService.doWithAllSites { def siteMap ->
                 siteMap["className"] = Site.class.name
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
@@ -709,7 +716,7 @@ class ElasticSearchService {
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.debug("Indexed "+count+" sites")
+                    log.info("Indexed "+count+" sites")
                 }
             }
         }
@@ -729,7 +736,7 @@ class ElasticSearchService {
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.debug("Indexed " + count + " activities")
+                    log.info("Indexed " + count + " activities")
                 }
             }
         }
@@ -979,7 +986,9 @@ class ElasticSearchService {
             if (site) {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
+              //  def mapOfSite = site.getProperty("dbo")
                 site.remove('poi')
+              //  site = mapOfSite as Site
                 activity.sites = [site]
             }
         }

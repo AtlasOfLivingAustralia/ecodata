@@ -62,7 +62,7 @@
     var score = JSON.parse('${score as grails.converters.JSON}');
     var updateScoreUrl = '${g.createLink(controller: 'admin', action:'updateScore', id:score.scoreId?:'')}';
     var editScoreUrl = '${g.createLink(action:'editScore')}';
-    var model = new ScoreModel(score, {updateScoreUrl:updateScoreUrl+'.json', editScoreUrl:editScoreUrl, scoreEditorId:'score-configuration'});
+    var model = new ScoreModel(score, {updateScoreUrl:updateScoreUrl, editScoreUrl:editScoreUrl, scoreEditorId:'score-configuration'});
     ko.applyBindings(model);
 
 </asset:script>

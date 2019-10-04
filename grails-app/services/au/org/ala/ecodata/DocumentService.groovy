@@ -38,16 +38,17 @@ class DocumentService {
      * @return map of properties
      */
     def toMap(document, levelOfDetail = []) {
-        def mapOfProperties = document instanceof Document ? document.getProperty("dbo").toMap() : document
+        def mapOfProperties = document instanceof Document ? GormMongoUtil.extractDboProperties(document.getProperty("dbo")) : document
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         // construct document url based on the current configuration
-        mapOfProperties.url = document.url
+        mapOfProperties.url = document.getUrl(grailsApplication.config.getProperty('app.uploads.url'))
         if (document?.type == Document.DOCUMENT_TYPE_IMAGE) {
             mapOfProperties.thumbnailUrl = document.thumbnailUrl
         }
         mapOfProperties.findAll {k,v -> v != null}
+        //GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     def get(id, levelOfDetail = []) {
@@ -168,10 +169,10 @@ class DocumentService {
         Document primaryImageDoc;
         Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
         String urlImage;
-        urlImage = logoDoc?.url ? logoDoc.getThumbnailUrl() : ''
+        urlImage = logoDoc?.getUrl(grailsApplication.config.getProperty('app.uploads.url')) ? logoDoc.getThumbnailUrl(grailsApplication.config.getProperty('app.file.upload.path'), grailsApplication.config.getProperty('app.uploads.url')) : ''
         if(!urlImage){
             primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
-            urlImage = primaryImageDoc?.url;
+            urlImage = primaryImageDoc?.getUrl(grailsApplication.config.getProperty('app.uploads.url'));
         }
         urlImage
     }
@@ -235,7 +236,7 @@ class DocumentService {
                 props.filepath = partition
             }
             commonService.updateProperties(d, props)
-            return [status:'ok',documentId:d.documentId, url:d.url]
+            return [status:'ok',documentId:d.documentId, url:d.getUrl(grailsApplication.config.getProperty('app.uploads.url'))]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
             e.printStackTrace()
@@ -263,7 +264,7 @@ class DocumentService {
                 props.remove('url')
                 props.remove('thumbnailUrl')
                 commonService.updateProperties(d, props)
-                return [status:'ok',documentId:d.documentId, url:d.url]
+                return [status:'ok',documentId:d.documentId, url:d.getUrl(grailsApplication.config.getProperty('app.uploads.url'))]
             } catch (Exception e) {
                 Document.withSession { session -> session.clear() }
                 def error = "Error updating document ${id} - ${e.message}"

@@ -16,8 +16,8 @@ class HubController  {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        response.setContentType("application/json;charset=UTF-8")
-        model
+        //response.setContentType("application/json;charset=UTF-8")
+        render model as JSON
     }
 
     def index(String id) {
@@ -25,6 +25,18 @@ class HubController  {
 
         if (!id) {
             List hubs = Hub.findAllByStatusNotEqual(DELETED, params)
+
+            Map map = ['list': hubs]
+
+           // render map as JSON
+         /*  withFormat {
+               // html bookList: books
+                json { render map as JSON }
+                //xml { render hubs as XML }
+                '*' { render map as JSON }
+            }*/
+            //render([list: hubs]) as JSON
+
             asJson([list: hubs])
         } else {
             Map hub = hubService.get(id, includeDeleted)

@@ -8,8 +8,9 @@ import au.org.ala.ecodata.reporting.WorksProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import groovyx.net.http.ContentType
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+//import groovyx.net.http.ContentType
+import grails.web.servlet.mvc.GrailsParameterMap
+//import org.apache.http.entity.ContentType
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
@@ -372,7 +373,8 @@ class SearchController {
             String extension = params.fileExtension ?: 'zip'
             File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.${extension}")
             if (file) {
-                response.setContentType(ContentType.BINARY.toString())
+                response.setContentType("application/octet-stream")
+                //response.setContentType(ContentType.BINARY.toString())
                 response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')
 
                 file.withInputStream { i -> response.outputStream << i }

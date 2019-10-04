@@ -3,7 +3,10 @@ package au.org.ala.ecodata
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 import com.mongodb.QueryBuilder
+import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
+import org.bson.conversions.Bson
+
 import static au.org.ala.ecodata.Status.*
 
 /**
@@ -78,7 +81,7 @@ class OrganisationService {
             }
             catch (Exception e) {
                 // We don't want this to prevent the organisation from being created.
-                String message = "Failed to establish collectory link for organisation ${organisation.name}"
+                String message = "Failed to establish collectory link for organisation ${organisationProperties.name}"
                 log.error(message, e)
                 emailService.sendEmail(message, "Error: ${e.message}", [grailsApplication.config.ecodata.support.email.address])
             }
@@ -92,7 +95,7 @@ class OrganisationService {
         if (organisation) {
             try {
                 String oldName = organisation.name
-                getCommonService().updateProperties(organisation, props)
+                commonService.updateProperties(organisation, props)
                 if (props.name && (oldName != props.name)) {
                     projectService.updateOrganisationName(organisation.organisationId, props.name)
                 }
@@ -142,8 +145,8 @@ class OrganisationService {
     }
 
     def toMap(Organisation org, levelOfDetail = []) {
-        def dbo = org.dbo
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = GormMongoUtil.extractDboProperties(org.getProperty('dbo'))
+       // def mapOfProperties = dbo.toMap()
 
         if ('projects' in levelOfDetail) {
             mapOfProperties.projects = []
@@ -157,6 +160,7 @@ class OrganisationService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
+       // GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     /**
@@ -169,12 +173,13 @@ class OrganisationService {
      */
     void doWithAllOrganisations(Closure action) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
-        com.mongodb.DBCollection collection = Organisation.getCollection()
-        DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        DBCursor results = collection.find(siteQuery).batchSize(100)
+        def collection = Organisation.getCollection()
+        //DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
+        Bson query = Filters.ne("status", DELETED);
+        def results = collection.find(query).batchSize(100)
 
         results.each { dbObject ->
-            action.call(dbObject.toMap())
+            action.call(dbObject)
         }
     }
 

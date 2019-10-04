@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
 
 /**
@@ -14,8 +16,8 @@ class OrganisationController {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        response.setContentType("application/json;charset=UTF-8")
-        model
+        //response.setContentType("application/json;charset=UTF-8")
+        render model as JSON
     }
 
     def get(String id) {

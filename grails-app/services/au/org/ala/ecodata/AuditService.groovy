@@ -94,7 +94,7 @@ class AuditService {
      */
     public int flushMessageQueue(int maxMessagesToFlush = 1000) {
         int messageCount = 0
-        AuditMessage.withNewSession { MongoSession session ->
+        AuditMessage.withNewSession { session ->
             try {
                 AuditMessage message = null;
                 while (messageCount < maxMessagesToFlush && (message = _messageQueue.poll()) != null) {
@@ -105,7 +105,7 @@ class AuditService {
                 }
                 session.flush()
             } catch (Exception ex) {
-                log.error(ex)
+                log.error(ex.toString())
             }
             return messageCount
         }

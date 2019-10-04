@@ -1,8 +1,10 @@
 package au.org.ala.ecodata
 
+import org.bson.types.ObjectId
+
 class Score {
 
-    Long id
+    ObjectId id
 
     String status = 'active'
     

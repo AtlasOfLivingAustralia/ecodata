@@ -43,6 +43,10 @@
     }
 
     </style>
+    <g:if test="${!grailsApplication.config.headerAndFooter.excludeBootstrapCss}">
+        <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap.min.css" rel="stylesheet" media="screen,print"/>
+        <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap-theme.min.css" rel="stylesheet" media="screen,print"/>
+    </g:if>
     <asset:stylesheet src="ecodata.css"/>
     <g:layoutHead/>
 
@@ -50,14 +54,14 @@
 
 <body>
 <div id="fixed-footer-wrapper">
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
+    <div class="navbar navbar-default navbar-fixed-top">
+        %{--<div class="navbar-inner">--}%
 
             <div class="container-fluid">
-                <a class="brand">Ecodata</a>
+                <p class="navbar-text brand" style="margin-top: 20px">Ecodata</p>
 
-                <div class="nav-collapse collapse">
-                    <div class="navbar-text pull-right">
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-text pull-right">
                         <span id="buttonBar">
                             <ec:currentUserDisplayName/>&nbsp;<hf:loginLogout cssClass="btn btn-small"
                                                                               logoutUrl="${createLink(controller: 'logout', action: 'logout')}"/>
@@ -66,15 +70,15 @@
                                     class="icon-cog icon-white"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
                         </span>
-                    </div>
+                    </ul>
                 </div><!--/.nav-collapse -->
             </div>
-        </div>
+       %{-- </div>--}%
     </div>
 
     <div class="container-fluid">
         <legend>
-            <table style="width: 100%">
+            <table style="width: 100%; margin-bottom: 30px">
                 <tr>
                     <td><g:link class="discreet" controller="home" action="index">Home</g:link><fc:navSeparator/><g:link
                             class="discreet" action="index">Administration</g:link><fc:navSeparator/><g:pageProperty
@@ -85,7 +89,7 @@
         </legend>
 
         <div class="row-fluid">
-            <div class="span3">
+            <div class="col-md-3">
                 <ul class="nav nav-list nav-stacked nav-tabs">
                     %{--<ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'users')}" title="Users" />--}%
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'tools')}" title="Tools"/>
@@ -110,7 +114,7 @@
                 <div style="text-align: center; margin-top: 30px;"><g:pageProperty name="page.adminButtonBar"/></div>
             </div>
 
-            <div class="span9">
+            <div class="col-md-9">
                 <g:if test="${flash.errorMessage}">
                     <div class="container-fluid">
                         <div class="alert alert-error">

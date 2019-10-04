@@ -1,4 +1,4 @@
-
+%{--<%@page expressionCodec="none" %>--}%
 <g:if test="${!omitDescription}">
 <strong>Description</strong>
 <p>

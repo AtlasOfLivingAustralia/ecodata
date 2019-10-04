@@ -798,7 +798,7 @@ class PermissionsController {
                 render out as JSON
             } catch (Exception e){
                 log.error(e.message);
-                log.error(e.stackTrace);
+                log.error(e.stackTrace.toString());
                 render status: 500, text: 'Internal server error'
             }
         } else {

@@ -1,8 +1,10 @@
 package au.org.ala.ecodata
 
+import grails.core.GrailsApplication
+
 class TempFileCleanupJob {
 
-    def grailsApplication
+    GrailsApplication grailsApplication
 
     static triggers = {
         cron name: "midnight", cronExpression: "0 0 0 * * ? *"

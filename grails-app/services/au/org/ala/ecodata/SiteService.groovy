@@ -1,8 +1,11 @@
 package au.org.ala.ecodata
 
 import com.mongodb.*
+import com.mongodb.client.FindIterable
+import com.mongodb.client.model.Filters
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
+import org.bson.conversions.Bson
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
@@ -27,10 +30,10 @@ class SiteService {
     ProjectActivityService projectActivityService
     SpatialService spatialService
 
-    def getCommonService() {
+   /* def getCommonService() {
         grailsApplication.mainContext.commonService
     }
-
+*/
     /**
      * Returns all sites in the system in a list.
      * @param includeDeleted true if deleted sites should be returned.
@@ -134,7 +137,8 @@ class SiteService {
      * @return map of properties
      */
     def toMap(site, levelOfDetail = [], version = null) {
-        def mapOfProperties = site instanceof Site ? site.getProperty("dbo").toMap() : site
+        def mapOfProperties = site instanceof Site ? GormMongoUtil.extractDboProperties(site.getProperty("dbo")) : site
+       // def mapOfProperties = site instanceof Site ? site.getProperty("dbo") : site
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
@@ -152,6 +156,11 @@ class SiteService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
+
+       // mapOfProperties as Site
+  //      def validMap = GormMongoUtil.deepPrune(mapOfProperties)
+   //     return validMap
+//        return validMap
     }
 
     Map toGeoJson(Map site) {
@@ -188,7 +197,7 @@ class SiteService {
     }
 
     def create(props) {
-        assert getCommonService()
+      //  assert getCommonService()
         def site = new Site(siteId: Identifiers.getNew(true,''))
         try {
             site.save(failOnError: true)
@@ -242,7 +251,8 @@ class SiteService {
                         site = Site.findBySiteId(site.siteId)
                         addSpatialPortalPID(props, userId)
                         populateLocationMetadataForSite(props)
-                        getCommonService().updateProperties(site, props)
+                        //getCommonService().updateProperties(site, props)
+                        commonService.updateProperties(site, props)
                     }
                 }
             }
@@ -250,7 +260,8 @@ class SiteService {
                 populateLocationMetadataForSite(props)
             }
         }
-        getCommonService().updateProperties(site, props)
+        //getCommonService().updateProperties(site, props)
+        commonService.updateProperties(site, props)
     }
 
 
@@ -694,14 +705,15 @@ class SiteService {
      * @param action the action to be performed on each Activity.
      */
     void doWithAllSites(Closure action, Integer max = null) {
-        // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
-        com.mongodb.DBCollection collection = Site.getCollection()
-        DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        DBCursor results = collection.find(siteQuery).batchSize(100)
+
+        def collection = Site.getCollection()
+        def siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
+        def results = collection.find(siteQuery).batchSize(100)
 
         results.each { dbObject ->
-            action.call(dbObject.toMap())
+            action.call(dbObject)
         }
+
     }
 
 
@@ -734,7 +746,16 @@ class SiteService {
     }
 
     void reloadSiteMetadata(List<String> fids = null, Date modifiedBefore = null, Integer max = 1000) {
-        com.mongodb.DBCollection collection = Site.getCollection()
+        def collection = Site.getCollection()
+
+       /* Bson query = Filters.and(
+                                Filters.ne("status", "DELETED"),
+                                (Filters.and(Filters.exists("projects", true), Filters.ne("projects", []))),
+                                Filters.ne("refreshed", "Y")
+                            )
+        if (modifiedBefore) {
+            query.and(Filters.lt("lastUpdated", modifiedBefore))
+        }*/
 
         BasicDBObject query = new BasicDBObject()
         query.put('status', new BasicDBObject('$ne', DELETED))
@@ -745,7 +766,8 @@ class SiteService {
         }
 
         println collection.count(query)
-        DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
+       // DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
+        DBCursor results = collection.find(query).batchSize(10).limit(max).iterator()
         int count = 0
         while (results.hasNext()) {
             DBObject site = results.next()
