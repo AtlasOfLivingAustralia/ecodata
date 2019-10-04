@@ -74,8 +74,6 @@ class ManagementUnit {
 
     static embedded = ['associatedOrganisations']
 
-    //static hasMany = [submus:mu]
-
     static constraints = {
         name unique: true
         description nullable: true
