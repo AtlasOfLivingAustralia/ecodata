@@ -9,17 +9,24 @@ db.program.find({$nor:[{"name": "National Landcare Programme"},{name:"Regional L
 //rename Ids
 //db.managementUnit.updateMany({},{$rename:{'programId':'managementUnitId','programSiteId':'managementUnitSiteId','config.programReports':'config.managementUnitReports'}})
 
+
+var outcomes;
 var mus = db.managementUnit.find({});
 while (mus.hasNext()) {
     var mu = mus.next();
+    if (!outcomes && mu.outcomes) {
+        outcomes = mu.outcomes;
+    }
     db.managementUnit.update({_id:mu._id},{$rename:{'programId':'managementUnitId','programSiteId':'managementUnitSiteId','config.programReports':'config.managementUnitReports'}})
 }
+
 
 
 //update programID to managementUnit id
 db.project.find({'programId':{$exists:true}}).forEach(function(project){
     db.project.update( {"projectId":project.projectId}, {$set:{"managementUnitId": project.programId}})
 })
+
 
 
 //Update RPL programId
@@ -62,7 +69,7 @@ if (erf_program){
             "activityPeriodDescriptor": "Outputs report #",
             "requiresActivityLocking": true,
             "navigationMode": "returnToProject",
-            "visibility": "private",
+            "visibility": "public",
             "riskAndThreatTypes": [
                 "Performance",
                 "Work Health and Safety",
@@ -80,6 +87,8 @@ if (erf_program){
         db.project.update( {"projectId":project.projectId}, {$set:{'programId':erf_program.programId}})
     })
 }
+
+db.program.update({}, {$set:{outcomes:outcomes}}, {multi:true});
 
 // Update permissions associated with programs
 db.userPermission.update({entityType:'au.org.ala.ecodata.Program'}, {$set:{entityType:'au.org.ala.ecodata.ManagementUnit'}}, {multi:true});
