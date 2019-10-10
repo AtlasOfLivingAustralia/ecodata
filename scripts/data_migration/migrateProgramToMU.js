@@ -9,14 +9,15 @@ db.program.find({$nor:[{"name": "National Landcare Programme"},{name:"Regional L
 //rename Ids
 //db.managementUnit.updateMany({},{$rename:{'programId':'managementUnitId','programSiteId':'managementUnitSiteId','config.programReports':'config.managementUnitReports'}})
 
+// Update the cooperative management unit outcomes (which are missing a shortDescription)
+var actMu = db.managementUnit.find({name:'ACT'}).next();
+var outcomes = actMu.outcomes;
 
-var outcomes;
+db.managementUnit.update({name:'Co-operative Management Area'}, {$set:{outcomes:outcomes}});
+
 var mus = db.managementUnit.find({});
 while (mus.hasNext()) {
     var mu = mus.next();
-    if (!outcomes && mu.outcomes) {
-        outcomes = mu.outcomes;
-    }
     db.managementUnit.update({_id:mu._id},{$rename:{'programId':'managementUnitId','programSiteId':'managementUnitSiteId','config.programReports':'config.managementUnitReports'}})
 }
 
