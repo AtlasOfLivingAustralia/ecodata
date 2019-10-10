@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.test.mixin.TestFor
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.search.SearchRequest
 import spock.lang.Specification
 
 import javax.servlet.http.HttpServletRequest
@@ -190,5 +191,35 @@ class ElasticSearchServiceSpec extends Specification {
 
         then:
         map.query == 'Test AND (docType:activity AND projectActivity.embargoed:false)'
+    }
+
+
+    void  "the include and exclude parameters are optional"() {
+        setup:
+        String queryString = "name:test"
+        Map params = new GrailsParameterMap([:], null)
+        String index = ElasticIndex.HOMEPAGE_INDEX
+
+        when:
+        service.buildSearchRequest(queryString, params, index)
+
+        then:
+        noExceptionThrown()
+
+
+        when:
+        params = new GrailsParameterMap(["include":"test", "exclude":"test"], null)
+        service.buildSearchRequest(queryString, params, index)
+
+        then:
+        noExceptionThrown()
+
+        when:
+        params = new GrailsParameterMap(["include":["test", "test2"], "exclude":['test3', "test4"]], null)
+        service.buildSearchRequest(queryString, params, index)
+
+        then:
+        noExceptionThrown()
+
     }
 }
