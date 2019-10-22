@@ -105,3 +105,6 @@ hub.availableMapFacets.push("primaryOutcomeFacet");
 hub.availableMapFacets.push("muFacet");
 
 db.hub.save(hub);
+
+db.document.createIndex({managementUnitId:-1});
+db.report.createIndex({managementUnitId:-1});
