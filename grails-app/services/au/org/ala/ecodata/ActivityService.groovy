@@ -110,6 +110,35 @@ class ActivityService {
         Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
+    /**
+     * Get activities of given activities
+     * @param listOfIds  a list of activityId
+     * @param startDate
+     * @param endDate
+     * @param levelOfDetail
+     * @return
+     */
+    def getAll(List listOfIds, Date startDate, Date endDate, levelOfDetail = []) {
+        Activity.findAllByActivityIdInListAndStartDateGreaterThanEqualsAndEndDateLessThanEqualsAndStatus(listOfIds,startDate,endDate, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
+    /**
+     * Get the period of activities
+     * @param listOfIds IDs of activities
+     * @return
+     */
+    def getPeriod(List listOfIds){
+      def period = Activity.createCriteria().list {
+            projections {
+                min "plannedStartDate"
+                max "plannedEndDate"
+            }
+          inList('activityId', listOfIds)
+        }
+        return period
+    }
+
+
     def findAllForSiteId(id, levelOfDetail = [], version = null) {
         if (version) {
             def activityIds = Activity.findAllBySiteId(id).collect { it.activityId }

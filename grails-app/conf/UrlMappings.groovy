@@ -70,9 +70,38 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
+
+
+        //Get reports of all managements
+        "/ws/managementunit/report" {
+        controller = 'managementUnit'
+        action = 'getFullReport'
+        }
+
+        //Get all reports of a management unit
+        "/ws/managementunit/$id/report" {
+            controller = 'managementUnit'
+            action = 'report'
+        }
+
+        //Get reports of all managements
+        "/ws/managementunit/report" {
+            controller = 'managementUnit'
+            action = 'getFullReport'
+        }
+
+        //Get reports of all managements
+        "/ws/managementunit/$action" {
+            controller = 'managementUnit'
+        }
+
+
+
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
+
+
 
         "/ws/output" {
             controller = 'output'
@@ -114,10 +143,6 @@ class UrlMappings {
 
 		"/ws/$controller/$action?/$id?(.$format)?" {
 		}
-
-		"/$controller/$action?/$id?(.$format)?" {
-		}
-
         "/ws/documentation/$version" {
             controller = 'documentation'
             action = 'index'
@@ -180,6 +205,15 @@ class UrlMappings {
         "/ws/$controller/list"() { action = [GET:'list'] }
 
         "/ws/$controller/findByName"{ action = [GET:"findByName"] }
+
+        "/download/$id" {
+             controller = 'download'
+             action = 'get'
+        }
+
+
+        "/$controller/$action?/$id?(.$format)?" {
+        }
 
 
         "/"(redirect:[controller:"documentation"])

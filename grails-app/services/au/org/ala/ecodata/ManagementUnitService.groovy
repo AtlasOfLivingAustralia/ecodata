@@ -8,6 +8,8 @@ class ManagementUnitService {
     
     def commonService
     def siteService
+    def reportService
+    def activityService
 
     ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {
@@ -140,5 +142,64 @@ class ManagementUnitService {
         GeometryUtils.assignDistinctValuesToNeighbouringFeatures(featureCollection.features, "type")
         featureCollection
     }
+    /**
+     * Get reports of a management unit
+     * @param id
+     * @return
+     */
+    List<Map> getReports(String id){
+        ManagementUnit mu = get(id, false)
+        List reports = reportService.getReportsOfManagementUnit(id)
+        reports.collect{
+            it['managementUnitId'] = mu['managementUnitId']
+            it['managementUnitName'] = mu['name']
+        }
+        return reports
+    }
+
+    /**
+     *  Get reports of all management units in a period
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    List<Map> getReports(Date startDate, Date endDate){
+        ManagementUnit[] mus =  ManagementUnit.findAll().toArray()
+        List reports = reportService.getReportsOfManagementUnits(mus,startDate,endDate)
+        return reports
+    }
+
+    List<Map> getFinancialYearPeriods(){
+        String[] muIds = ManagementUnit.findAll().toArray().managementUnitId
+        Date[] periods = reportService.getPeriodOfManagmentUnitReport(muIds)
+        int[] finacialYears = []
+        if (periods && periods[0] && periods[1]){
+            finacialYears = caculateFinicialYear(periods[0],periods[1])
+        }
+
+        return finacialYears
+    }
+
+    private int[] caculateFinicialYear(Date startDate, Date endDate){
+        // idx starts from 0
+        int startMonth = startDate.getAt(Calendar.MONTH)
+        int startYear = startDate.getAt(Calendar.YEAR)
+        if (startMonth < 6) {
+            startYear --
+        }
+
+        int endMonth = endDate.getAt(Calendar.MONTH)
+        int endYear = endDate.getAt(Calendar.YEAR)
+        if (endMonth >= 6)
+            endYear ++
+        List periods = []
+        for(startYear; startYear<endYear; startYear++){
+            periods<<startYear
+        }
+
+        return periods
+    }
+
 
 }

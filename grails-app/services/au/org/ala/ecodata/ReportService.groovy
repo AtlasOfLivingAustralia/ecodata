@@ -1,10 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.reporting.*
-import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.search.SearchHit
-import org.grails.plugins.csv.CSVReaderUtils
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
@@ -335,4 +331,52 @@ class ReportService {
         }
         builder.writeShapefile(outputStream)
     }
+
+    /**
+     *
+     * @param id management unit Id
+     * @return
+     */
+    def getReportsOfManagementUnit(String id){
+        List<Report> reports = Report.findAllByManagementUnitId(id)
+        List<Map> activities = activityService.getAll(reports.activityId,['all'])
+
+        activities.collect{
+            def report = reports.find {it.activityId == it.activityId}
+            if (report){
+                it['reportId'] = report['reportId']
+                it['reportName'] = report['name']
+                it['reportDesc'] = report['description']
+            }
+        }
+
+        return activities
+    }
+
+    def getPeriodOfManagmentUnitReport(String[] muIds ){
+        List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
+        Date[] period = activityService.getPeriod(activityIds)
+    }
+
+    def getReportsOfManagementUnits(ManagementUnit[] mus, Date startDate, Date endDate){
+        List<Map> reportCollection = []
+        mus.each{ mu ->
+            List<Report> reports = Report.findAllByManagementUnitId(mu.managementUnitId)
+            List<Map> activities = activityService.getAll(reports.activityId,startDate,endDate,['all'])
+
+            activities.collect{
+                def report = reports.find {it.activityId == it.activityId}
+                if (report){
+                    it['managementUnitId'] = mu.managementUnitId
+                    it['managementUnitName'] = mu.name
+                    it['reportId'] = report['reportId']
+                    it['reportName'] = report['name']
+                    it['reportDesc'] = report['description']
+                }
+            }
+            reportCollection += activities
+        }
+        reportCollection
+    }
+
 }

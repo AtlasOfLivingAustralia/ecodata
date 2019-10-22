@@ -27,6 +27,7 @@ class DownloadService {
 
     def grailsApplication
     def groovyPageRenderer
+    def grailsLinkGenerator
 
     /**
      * Produces the same file as {@link #downloadProjectData(java.io.OutputStream, org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap)}
@@ -73,6 +74,31 @@ class DownloadService {
     void downloadProjectDataAsync(GrailsParameterMap map) {
         Closure doDownload = {OutputStream outputStream, GrailsParameterMap params -> downloadProjectData(outputStream, params)}
         downloadProjectDataAsync(map, doDownload)
+    }
+
+    void downloadReports(GrailsParameterMap params, Closure downloadAction) {
+        String downloadId = UUID.randomUUID().toString()
+        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        directoryPath.mkdirs()
+        String fileExtension = params.fileExtension?:'zip'
+        File file = new File(directoryPath, "${downloadId}.${fileExtension}")
+
+        task {
+                downloadAction(file)
+        }.onComplete {
+            int days = grailsApplication.config.temp.file.cleanup.days as int
+            String url = grailsLinkGenerator.link(controller:'download', action:'get', params:[id: downloadId, fileExtension: fileExtension])
+            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            if(params.email && params.systemEmail && params.senderEmail)
+                emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
+            else
+                log.error('Email system is missing sender/receiver')
+
+        }.onError { Throwable error ->
+            log.error("Failed to generate zip file for download.", error)
+            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
+        }
     }
 
     /**

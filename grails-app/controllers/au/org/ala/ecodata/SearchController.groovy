@@ -364,6 +364,12 @@ class SearchController {
         render results as JSON
     }
 
+
+    @Deprecated
+    /**
+     *  Use DownloadController instead
+    */
+
     def downloadProjectDataFile() {
         if (!params.id) {
             response.setStatus(400)
@@ -371,7 +377,7 @@ class SearchController {
         } else {
             String extension = params.fileExtension ?: 'zip'
             File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.${extension}")
-            if (file) {
+            if (file.exists()) {
                 response.setContentType(ContentType.BINARY.toString())
                 response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')
 
