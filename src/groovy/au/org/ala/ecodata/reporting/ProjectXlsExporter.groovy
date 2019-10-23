@@ -578,7 +578,7 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("RLP Outcomes", rlpOutcomeHeaders)
             int row = sheet.getSheet().lastRowNum
             Map fields = [:]
-            fields["secondaryOutcomes"] = "Additional benefits"
+            fields["secondaryOutcomes"] = "Secondary Outcome/s"
             fields["shortTermOutcomes"] = "Short-term"
             fields["midTermOutcomes"] = "Medium-term"
 
