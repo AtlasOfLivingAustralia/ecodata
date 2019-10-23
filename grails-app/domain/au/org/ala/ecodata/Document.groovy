@@ -1,11 +1,5 @@
 package au.org.ala.ecodata
 
-import grails.core.support.GrailsConfigurationAware
-
-//import grails.core.GrailsApplication
-import grails.config.Config
-import org.springframework.beans.factory.annotation.Value;
-
 import static au.org.ala.ecodata.Status.ACTIVE
 
 import org.bson.types.ObjectId
@@ -13,9 +7,11 @@ import org.bson.types.ObjectId
 /**
  * Represents documents stored in a filesystem that are accessible via http.
  */
-class Document {//implements GrailsConfigurationAware{
+class Document {
 
-
+   // Commented out grailsApplication as Domain autowiring is not available by default
+   // due to performance reason
+   // https://grails.github.io/grails-upgrade/latest/guide/index.html#upgradingTo33x
    // def grailsApplication
 
     static final String DOCUMENT_TYPE_IMAGE = 'image'
@@ -60,14 +56,6 @@ class Document {//implements GrailsConfigurationAware{
     Boolean isSciStarter = false
     String hosted
     String identifier
-    /** The original content type of the uploaded document */
-    String contentType
-    /** Probably should be implemented as a label - used to tag this document to a report in MERIT*/
-    String stage
-    /** the size of the attachment associated with this document */
-    Long filesize
-    /** Flag to indicate that this document shouldn't be updated once created */
-    boolean readOnly = false
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText
@@ -76,23 +64,9 @@ class Document {//implements GrailsConfigurationAware{
     Date lastUpdated
 	boolean isPrimaryProjectImage = false
 
-   // @Value('${app.file.upload.path}')
-  //  String fileUploadPath
-
-   // @Value('${app.uploads.url}')
-   // String fileUploadUrl
-
-   // static transients = ['fileUploadPath', 'fileUploadUrl']
-
     def isImage() {
         return DOCUMENT_TYPE_IMAGE == type
     }
-
-  /*  @Override
-    void setConfiguration(Config config) {
-        fileUploadPath = config.getProperty('app.file.upload.path')
-        fileUploadUrl = config.getProperty('app.uploads.url')
-    }*/
 
     def getUrl(uploadUrl) {
         if (externalUrl) return externalUrl
@@ -175,8 +149,5 @@ class Document {//implements GrailsConfigurationAware{
         isSciStarter nullable: true
         hosted nullable: true
         identifier nullable: true
-        contentType nullable: true
-        stage nullable: true
-        filesize nullable: true
     }
 }
