@@ -76,7 +76,7 @@ class DownloadService {
         downloadProjectDataAsync(map, doDownload)
     }
 
-    void downloadReports(GrailsParameterMap params, Closure downloadAction) {
+    void generateReports(GrailsParameterMap params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
         File directoryPath = new File("${grailsApplication.config.temp.dir}")
         directoryPath.mkdirs()
@@ -87,7 +87,13 @@ class DownloadService {
                 downloadAction(file)
         }.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
-            String url = grailsLinkGenerator.link(controller:'download', action:'get', params:[id: downloadId, fileExtension: fileExtension])
+            String url = ''
+            // if report url is not supply by FieldCapture, then create a url based on ecodata
+            if (!params.reportDownloadBaseUrl)
+                url = grailsLinkGenerator.link(controller:'download', action:'get', params:[id: downloadId, fileExtension: fileExtension])
+            else
+                url = params.reportDownloadBaseUrl+'/' + downloadId+'.'+fileExtension
+
             String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
             if(params.email && params.systemEmail && params.senderEmail)
                 emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)

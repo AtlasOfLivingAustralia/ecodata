@@ -117,7 +117,7 @@ class ManagementUnitController {
                 exporter.sizeColumns()
                 exporter.save()
             }
-            downloadService.downloadReports(params, doDownload)
+            downloadService.generateReports(params, doDownload)
 
             response.setContentType("application/json")
             respond asJson([message:"Your will receive an email notification when report is generated"])

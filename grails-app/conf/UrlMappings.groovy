@@ -96,7 +96,6 @@ class UrlMappings {
         }
 
 
-
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
@@ -206,15 +205,13 @@ class UrlMappings {
 
         "/ws/$controller/findByName"{ action = [GET:"findByName"] }
 
-        "/download/$id" {
-             controller = 'download'
-             action = 'get'
+        "/ws/$controller/$id?(.$format)?" {
+            action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
-
-        "/$controller/$action?/$id?(.$format)?" {
+        "/$controller/$id?(.$format)?" {
+            action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
-
 
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
