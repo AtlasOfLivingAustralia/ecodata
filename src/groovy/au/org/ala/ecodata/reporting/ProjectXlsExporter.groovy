@@ -592,7 +592,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 outcome.put('outcome',po.description)
                 String assets = po.assets?.join(",")
                 outcome.put('priority',assets)
-                data.add(outcome)
+                data.add(project+outcome)
             }
             fields.each{ocitem, desc->
                 List oocs = project?.custom?.details?.outcomes?.get(ocitem)
@@ -602,12 +602,9 @@ class ProjectXlsExporter extends ProjectExporter {
                     outcome.put('outcome',oc.description)
                     String assets = oc.assets?.join(",")
                     outcome.put('priority',assets)
-                    data.add(outcome)
+                    data.add(project+outcome)
                 }
             }
-            //Add all common project into the first row.
-            if(!data.isEmpty())
-                data.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpOutcomeProperties, row+1)
         }
@@ -634,11 +631,9 @@ class ProjectXlsExporter extends ProjectExporter {
                     threat["keyThreat"] = item.threat
                     threat["keyTreatIntervention"] = item.intervention
                     threat.putAll(project)
-                    data.add(threat)
+                    data.add(project + threat)
                 }
             }
-            if(!data.isEmpty())
-                data.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpKeyThreatProperties, row+1)
         }
@@ -679,11 +674,9 @@ class ProjectXlsExporter extends ProjectExporter {
                     baseline["biType"] = "Indicator"
                     baseline["baseline"] = item.data1
                     baseline["baselineMethod"] = item.data2
-                    data.add(baseline)
+                    data.add(project+baseline)
                 }
             }
-            if(!data.isEmpty())
-                data.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpBaseLineProperties, row+1)
         }
@@ -711,12 +704,10 @@ class ProjectXlsExporter extends ProjectExporter {
                     it.periodTargets.each { pt ->
                         st[pt.period] = pt.target
                     }
-                    data.add(st)
+                    data.add(project+st)
             }
         }
 
-        if(!data.isEmpty())
-            data.get(0)?.putAll(project)
         sheet.add(data?:[], rlpSTProperties, row+1)
     }
 
