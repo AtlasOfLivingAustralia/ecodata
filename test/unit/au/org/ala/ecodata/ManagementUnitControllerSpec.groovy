@@ -81,6 +81,5 @@ class ManagementUnitControllerSpec extends Specification {
 
     }
 
-
 }
 

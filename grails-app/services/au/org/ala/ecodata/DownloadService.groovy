@@ -76,7 +76,7 @@ class DownloadService {
         downloadProjectDataAsync(map, doDownload)
     }
 
-    void generateReports(GrailsParameterMap params, Closure downloadAction) {
+    def generateReports(GrailsParameterMap params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
         File directoryPath = new File("${grailsApplication.config.temp.dir}")
         directoryPath.mkdirs()
@@ -105,6 +105,8 @@ class DownloadService {
             String body = groovyPageRenderer.render(template: "/email/downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
         }
+
+        return downloadId+'.'+fileExtension
     }
 
     /**
