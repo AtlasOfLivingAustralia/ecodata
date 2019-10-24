@@ -62,6 +62,10 @@ class Document {
 
     Date dateCreated
     Date lastUpdated
+
+    // https://github.com/AtlasOfLivingAustralia/ecodata/issues/565
+    // Only relevant for image document
+    Date dateTaken
 	boolean isPrimaryProjectImage = false
 
     def isImage() {
@@ -140,6 +144,7 @@ class Document {
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
+        dateTaken nullable: true
 		isPrimaryProjectImage nullable: true
         thirdPartyConsentDeclarationMade nullable: true
         thirdPartyConsentDeclarationText nullable: true

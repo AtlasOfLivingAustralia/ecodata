@@ -3,3 +3,4 @@ load("./changeReportDoubleToIntegers.js");
 load("./updateEmptyGeoIndex.js");
 load("./updateScoreValueId.js");
 load("./updateUndefinedValues.js");
+load("./updateDocumentDateTaken.js");
