@@ -178,6 +178,7 @@ class UrlMappings {
             controller = 'program'
             action = 'getPrograms'
         }
+        "/ws/program/findByName"(controller:"program"){ action = [GET:"findByName"] }
 
         "/ws/managementUnits" {
             controller = 'managementUnit'
@@ -186,6 +187,7 @@ class UrlMappings {
 
         "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
         "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
+        "/ws/managementUnit/findByName"(controller:"managementUnit"){ action = [GET:"findByName"] }
 
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
@@ -203,7 +205,7 @@ class UrlMappings {
 
         "/ws/$controller/list"() { action = [GET:'list'] }
 
-        "/ws/$controller/findByName"{ action = [GET:"findByName"] }
+
 
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
