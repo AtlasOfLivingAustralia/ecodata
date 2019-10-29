@@ -16,12 +16,7 @@ import java.text.SimpleDateFormat
  * Basic support for exporting data based on a selection of content.
  */
 class TabbedExporter {
-
-
-    /*MetadataService metadataService
-    UserService userService
-    ReportingService reportingService*/
-
+    
     MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
     ReportingService reportingService =  Holders.grailsApplication.mainContext.getBean("reportingService")
