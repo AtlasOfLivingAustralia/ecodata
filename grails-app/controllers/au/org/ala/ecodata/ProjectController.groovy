@@ -17,7 +17,7 @@ class ProjectController {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        //response.setContentType("application/json;charset=UTF-8")
+        response.setContentType("application/json;charset=UTF-8")
         render model as JSON
     }
 
@@ -214,7 +214,7 @@ class ProjectController {
             setResponseHeadersForProjectId(response, result.projectId)
             asJson(message)
         } else {
-            log.error result.error
+            log.error result.error.toString()
             render status:400, text: result.error
         }
     }

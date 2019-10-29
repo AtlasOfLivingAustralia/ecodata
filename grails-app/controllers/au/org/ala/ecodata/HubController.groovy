@@ -71,7 +71,7 @@ class HubController  {
         if (result.status == 'ok') {
             asJson(message)
         } else {
-            log.error result.errors
+            log.error result.errors.toString()
             render status:400, text: result.errors
         }
     }

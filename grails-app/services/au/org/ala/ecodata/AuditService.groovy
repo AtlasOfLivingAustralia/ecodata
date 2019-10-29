@@ -105,7 +105,7 @@ class AuditService {
                 }
                 session.flush()
             } catch (Exception ex) {
-                log.error(ex.toString())
+                log.error(ex.getMessage(), ex)
             }
             return messageCount
         }

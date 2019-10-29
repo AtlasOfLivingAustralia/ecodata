@@ -87,7 +87,7 @@ class AdminController {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        //response.setContentType("application/json; charset=\"UTF-8\"")
+        response.setContentType("application/json; charset=\"UTF-8\"")
         render model as JSON
     }
 
@@ -677,7 +677,7 @@ class AdminController {
             }
         }
         catch (Exception e) {
-            log.error(e)
+            log.error("An error occurred processing output: ${outputId}, message: ${e.message}", e)
             flash.message = "An error occurred processing output: ${outputId}, message: ${e.message}"
         }
 

@@ -203,7 +203,7 @@ class DocumentationController {
             return JSON.parse(conn.content.text)
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error error
+            log.error error.toString()
             return error
         } catch (Exception e) {
             log.error e.toString()

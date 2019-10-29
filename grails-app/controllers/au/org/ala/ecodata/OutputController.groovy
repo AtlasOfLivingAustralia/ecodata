@@ -81,7 +81,7 @@ class OutputController {
             asJson(message)
         } else {
             //Output.withSession { session -> session.clear() }
-            log.error result.error
+            log.error result.error.toString()
             render status:400, text: result.error
         }
     }

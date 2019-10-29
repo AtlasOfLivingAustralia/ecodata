@@ -63,7 +63,7 @@ class CommonService {
             log.error("has errors:")
             List messages = []
             o.errors?.getAllErrors().each { fieldError ->
-                log.error fieldError;
+                log.error fieldError.toString();
                 if(fieldError instanceof MessageSourceResolvable) {
                     messages.add( messageSource.getMessage(fieldError, Locale.getDefault()))
                 } else {

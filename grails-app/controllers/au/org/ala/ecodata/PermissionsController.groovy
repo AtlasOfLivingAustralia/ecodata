@@ -797,8 +797,7 @@ class PermissionsController {
                 Map out =  permissionService.isUserAdminForProjects(userId, projectIds)
                 render out as JSON
             } catch (Exception e){
-                log.error(e.message);
-                log.error(e.stackTrace.toString());
+                log.error(e.message, e);
                 render status: 500, text: 'Internal server error'
             }
         } else {

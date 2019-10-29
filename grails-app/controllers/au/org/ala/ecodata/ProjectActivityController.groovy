@@ -108,7 +108,7 @@ class ProjectActivityController {
         if (result.status == 'ok') {
             asJson(message)
         } else {
-            log.error result.error
+            log.error result.error.toString()
             render status: 400, text: result.error
         }
     }
