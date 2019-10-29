@@ -9,7 +9,7 @@ import au.org.ala.ecodata.Program
 import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import net.sf.json.JSONNull
+//import net.sf.json.JSONNull
 import org.bson.BSON
 import org.bson.Transformer
 import org.bson.types.ObjectId

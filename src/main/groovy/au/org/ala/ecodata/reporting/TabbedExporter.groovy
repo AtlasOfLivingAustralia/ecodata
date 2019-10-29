@@ -18,14 +18,14 @@ import java.text.SimpleDateFormat
 class TabbedExporter {
 
 
-    MetadataService metadataService
+    /*MetadataService metadataService
     UserService userService
-    ReportingService reportingService
+    ReportingService reportingService*/
 
-    /*MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
+    MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
     ReportingService reportingService =  Holders.grailsApplication.mainContext.getBean("reportingService")
-*/
+
     static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     Map<String, AdditionalSheet> sheets
     List<String> tabsToExport
