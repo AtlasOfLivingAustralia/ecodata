@@ -4,25 +4,39 @@ import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.ReportingService
 import au.org.ala.ecodata.UserService
+import grails.testing.web.GrailsWebUnitTest
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
 import org.grails.plugins.excelimport.ExcelImportService
+import org.grails.testing.GrailsUnitTest
+import grails.util.Holders
 import spock.lang.Specification
 
 /**
  * Spec for the ProjectXlsExporter
  */
-class ProjectXlsExporterSpec extends Specification {
+class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest {
 
     def projectService = Mock(ProjectService)
+    def metadataService = Mock (MetadataService)
+    def userService = Mock (UserService)
+    def reportingService = Mock(ReportingService)
     def xlsExporter
     ProjectXlsExporter projectXlsExporter
     ExcelImportService excelImportService
     File outputFile
 
+   // @Before
     void setup() {
+        Holders.grailsApplication = grailsApplication
+        defineBeans {
+            metadataService(MetadataService)
+            userService(UserService)
+            reportingService(ReportingService)
+        }
+
         outputFile = new File('test.xlsx')
         outputFile.deleteOnExit()
         xlsExporter = new XlsExporter(outputFile.name)
