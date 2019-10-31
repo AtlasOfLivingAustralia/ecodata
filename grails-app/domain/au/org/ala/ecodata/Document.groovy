@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.util.Holders
+
 import static au.org.ala.ecodata.Status.ACTIVE
 
 import org.bson.types.ObjectId
@@ -30,7 +32,6 @@ class Document {
         status index: true
         role index: true
         version false
-   //     autowire true
     }
 
     ObjectId id
@@ -72,25 +73,25 @@ class Document {
         return DOCUMENT_TYPE_IMAGE == type
     }
 
-    def getUrl(uploadUrl) {
+    def getUrl() {
         if (externalUrl) return externalUrl
 
-        return urlFor(uploadUrl, filepath, filename)
+        return urlFor(filepath, filename)
     }
 
-    def getThumbnailUrl(uploadPath, uploadUrl) {
+    def getThumbnailUrl() {
         if (isImage()) {
 
             if(hosted == ALA_IMAGE_SERVER){
                 return identifier
             }
 
-            File thumbFile = new File(filePath(uploadPath, THUMBNAIL_PREFIX+filename))
+            File thumbFile = new File(filePath(THUMBNAIL_PREFIX+filename))
             if (thumbFile.exists()) {
-                return urlFor(uploadUrl, filepath, THUMBNAIL_PREFIX + filename)
+                return urlFor(filepath, THUMBNAIL_PREFIX + filename)
             }
             else {
-                return getUrl(uploadUrl)
+                return getUrl()
             }
         }
         return ''
@@ -99,7 +100,7 @@ class Document {
     /**
      * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
      */
-    private def urlFor(uploadUrl, path, name) {
+    private def urlFor(path, name) {
         if (!name) {
             return ''
         }
@@ -111,20 +112,17 @@ class Document {
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
-        // URI uri = new URI(fileUploadUrl + path + encodedFileName)
-        // URI uri = new URI(grailsApplication.config.getProperty('app.uploads.url') + path + encodedFileName)
-        URI uri = new URI(uploadUrl + path + encodedFileName)
+        URI uri = new URI(Holders.config.app.uploads.url + path + encodedFileName)
         return uri.toURL();
     }
 
-    private def filePath(fileUploadPath, name) {
+    private def filePath(name) {
 
         def path = filepath ?: ''
         if (path) {
             path = path+File.separator
         }
-       // return grailsApplication.config.app.file.upload.path + '/' + path  + name
-        return fileUploadPath + '/' + path  + name
+        return Holders.config.app.file.upload.path + '/' + path  + name
 
     }
 
