@@ -33,6 +33,9 @@ db.project.find({'programId':{$exists:true}}).forEach(function(project){
 //Update RPL programId
 var rlp_programId = db.program.findOne({name:"Regional Land Partnerships"}).programId
 
+// Add the RLP acronym
+db.program.update({programId:rlp_programId}, {$set:{acronym:'RLP'}});
+
 //db.project.updateMany({'grantId':{$regex:/^RLP/}},{$set:{'programId':rlp_programId}})
 
 db.project.find({programId:{$exists:true}}).forEach(function(project){
@@ -63,6 +66,7 @@ if (erf_program){
         startDate: programStart,
         parent: parentId,
         endDate: programEnd,
+        acronym: 'ERF',
         status: 'active',
         config: {
             "meriPlanTemplate": "rlpMeriPlan",
