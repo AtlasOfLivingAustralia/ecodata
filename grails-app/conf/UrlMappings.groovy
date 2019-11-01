@@ -189,6 +189,8 @@ class UrlMappings {
         "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
         "/ws/managementUnit/findByName"(controller:"managementUnit"){ action = [GET:"findByName"] }
 
+        "/ws/activityForm/findByName"(controller:"activityForm"){ action = [GET:"findByName"] }
+
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
 
@@ -213,6 +215,9 @@ class UrlMappings {
 
         "/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
+        }
+
+        "/ws/$controller/$action" {
         }
 
         "/"(redirect:[controller:"documentation"])

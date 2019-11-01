@@ -9,7 +9,6 @@ class ManagementUnitService {
     def commonService
     def siteService
     def reportService
-    def activityService
 
     ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {

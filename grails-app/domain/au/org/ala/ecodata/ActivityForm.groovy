@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import org.bson.types.ObjectId
 
 /**
@@ -107,4 +108,22 @@ class ActivityForm {
     def beforeUpdate() {
         lastUpdatedUserId = currentUserId()
     }
+
+    def getFormSection(String name) { sections.find{it.name == name} }
+
+    def getTemplate(String name) {
+        FormSection formSection = getFormSection(name)
+        if (formSection){
+            Map template = formSection.template
+            if (!template) {
+                log.warn("No template found with name: ${name}")
+            }
+            def outputMetadata = JSON.parse(((template ?: [:]) as JSON).toString())
+            return outputMetadata
+        }else
+            return null
+
+    }
+
+
 }

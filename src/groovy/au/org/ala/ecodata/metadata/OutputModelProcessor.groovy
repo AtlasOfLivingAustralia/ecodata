@@ -48,6 +48,11 @@ class OutputModelProcessor {
             return
         }
 
+        if (context == null){
+            log.warn("Found node without value" +node)
+            return
+        }
+
         switch(type) {
             case 'number':
                 processor.number(node, context);

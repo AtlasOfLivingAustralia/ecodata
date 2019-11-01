@@ -1,10 +1,14 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
+import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.ActivityFormService
+import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import grails.converters.JSON
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
@@ -15,6 +19,7 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 class ProjectXlsExporter extends ProjectExporter {
 
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
+    ActivityFormService activityFormService =  Holders.grailsApplication.mainContext.getBean("activityFormService")
 
     // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
@@ -137,16 +142,14 @@ class ProjectXlsExporter extends ProjectExporter {
             project[PROJECT_DATA_PREFIX+it] = project.remove(it)
         }
 
-        Map activitiesModel = metadataService.activitiesModel()
-
         addProjectGeo(project)
 
         exportProject(project)
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
-        exportActivities(project, activitiesModel)
-        exportOutputs(project, activitiesModel)
+        exportActivities(project )
+        exportParticipantInfo(project)
         exportRisks(project)
         exportMeriPlan(project)
         exportReports(project)
@@ -207,84 +210,119 @@ class ProjectXlsExporter extends ProjectExporter {
         translated
     }
 
-    private void exportActivities(Map project, Map activitiesModel) {
-        if (project.activities) {
-            project.activities.each { activity ->
+     void exportActivities(Map project) {
+            project?.activities?.each { activity ->
                 if (shouldExport('Activity Summary')) {
                     AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
                     Map activityData = commonActivityData(project, activity)
                     sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
                 }
                 if (shouldExport(activity.type)) {
-                    exportActivity(project, activitiesModel, activity)
+                    exportActivity(project, activity)
                 }
             }
         }
-    }
 
-    private void exportOutputs(Map project, Map activitiesModel) {
-        List exportableOutputs = ['Participant Information']
-        if (project.activities) {
-            activitiesModel.outputs.each { outputConfig ->
-                if ((!tabsToExport && outputConfig.name in exportableOutputs) || tabsToExport.contains(outputConfig.name)) {
-                    project.activities.each { activity ->
-                        exportOutput(outputConfig.name, project, activity)
-                    }
-                }
+    private void exportActivity(Map project, Map activity) {
+
+        Map commonData = commonActivityData(project, activity)
+
+        String activityType = activity.type
+        int formVersion = activity.formVersion
+        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
+
+        activity.outputs.each{ output->
+            FormSection formSection = activityForm.getFormSection(output.name)
+            if(formSection && formSection.template){
+                String sheetName = output.name + "_V" + formVersion
+                OutputMetadata outputModel = new OutputMetadata(formSection.template)
+
+                Map outputProperty = buildOutputProperties(outputModel)
+                List outputGetters = activityProperties + outputProperty.propertyGetters
+                List headers = commonActivityHeaders + outputProperty.headers
+
+                List outputData = getOutputData(outputModel, output, commonData)
+
+                AdditionalSheet outputSheet = createSheet(sheetName, headers)
+                int outputRow = outputSheet.sheet.lastRowNum
+                outputSheet.add(outputData, outputGetters, outputRow + 1)
+            }else{
+                log.error("Cannot find template of " + output.name)
             }
+
+
         }
     }
 
-    private void exportOutput(String outputName, Map project, Map activity) {
-        Map output = activity.outputs?.find{it.name == outputName}
-        if (output) {
-            List outputGetters = activityProperties + outputProperties(outputName).propertyGetters
-            Map commonData = commonActivityData(project, activity)
-            List outputData = getOutputData(outputName, activity, commonData)
 
-            AdditionalSheet outputSheet = getOutputSheet(outputName)
-            int outputRow = outputSheet.sheet.lastRowNum
-            outputSheet.add(outputData, outputGetters, outputRow + 1)
-        }
 
-    }
-
-    private List getOutputData(String outputName, Map activity, Map commonData) {
+    private List getOutputData(OutputMetadata  outputModel, Map output, Map commonData) {
         List flatData = []
 
-        OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(outputName))
-        Map outputData = activity.outputs?.find { it.name == outputName }
-        if (outputData) {
-            flatData = processor.flatten(outputData, outputModel, false)
+        if (output) {
+            flatData = processor.flatten(output, outputModel, false)
             flatData = flatData.collect { commonData + it }
         }
         flatData
     }
 
-    private void exportActivity(Map project, Map activitiesModel, Map activity) {
 
-        Map commonData = commonActivityData(project, activity)
-        List activityData = []
-        List activityGetters = []
+    private void exportParticipantInfo(Map project) {
+        String tab = 'Participant Information'
+        project?.activities.each{activity->
+            activity.outputs.findAll{it.name == tab}.each { output->
+                Map commonData = commonActivityData(project, activity)
+                String activityType = activity.type
+                int formVersion = activity.formVersion
+                ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
+                FormSection formSection = activityForm.getFormSection(output.name)
+                if(formSection && formSection.template){
+                    String sheetName = output.name + "_V" + formVersion
+                    OutputMetadata outputModel = new OutputMetadata(formSection.template)
+                    Map outputProperty = buildOutputProperties(outputModel)
+                    List outputGetters = activityProperties + outputProperty.propertyGetters
+                    List headers = commonActivityHeaders + outputProperty.headers
 
-        activityGetters += activityProperties
+                    List outputData = getOutputData(outputModel, output, commonData)
 
-        Map activityModel = activitiesModel.activities.find { it.name == activity.type }
-        if (activityModel) {
-            activityModel.outputs?.each { output ->
-                if (activityModel.outputs.contains(output)) {
-                    activityGetters += outputProperties(output).propertyGetters
-                    activityData += getOutputData(output, activity, commonData)
+                    AdditionalSheet outputSheet = createSheet(sheetName, headers)
+                    int outputRow = outputSheet.sheet.lastRowNum
+                    outputSheet.add(outputData, outputGetters, outputRow + 1)
+                }else{
+                    log.error("Cannot find template of " + output.name)
                 }
-            }
-            AdditionalSheet activitySheet = getActivitySheet(activityModel)
-            int activityRow = activitySheet.sheet.lastRowNum
-            activitySheet.add(activityData, activityGetters, activityRow + 1)
 
-        } else {
-            log.error("Found activity not in model: " + activity.type)
+            }
         }
     }
+
+//    private void exportOutput(String outputName, Map project, Map activity) {
+//        Map output = activity.outputs?.find{it.name == outputName}
+//        if (output) {
+//            List outputGetters = activityProperties + outputProperties(outputName).propertyGetters
+//            Map commonData = commonActivityData(project, activity)
+//            List outputData = getOutputData(outputName, activity, commonData)
+//
+//            AdditionalSheet outputSheet = getOutputSheet(outputName)
+//            int outputRow = outputSheet.sheet.lastRowNum
+//            outputSheet.add(outputData, outputGetters, outputRow + 1)
+//        }
+//
+//    }
+
+//    private List getOutputData(String outputName, Map activity, Map commonData) {
+//        List flatData = []
+//
+//        OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(outputName))
+//        Map outputData = activity.outputs?.find { it.name == outputName }
+//        if (outputData) {
+//            flatData = processor.flatten(outputData, outputModel, false)
+//            flatData = flatData.collect { commonData + it }
+//        }
+//        flatData
+//    }
+
+
 
     private void exportSites(Map project) {
         if (shouldExport('Sites')) {
@@ -765,6 +803,25 @@ class ProjectXlsExporter extends ProjectExporter {
             typedActivitySheets[activityType] = exporter.addSheet(name, headers)
         }
         typedActivitySheets[activityType]
+    }
+
+    AdditionalSheet createSheet(String sheetName, List headers) {
+
+        if (!typedActivitySheets[sheetName]) {
+            String name = XlsExporter.sheetName(sheetName)
+
+            // If the sheets are named similarly, they may end up the same after being changed to excel
+            // tab compatible strings
+            int i = 1
+            while (activitySheetNames[sheetName]) {
+                sheetName = sheetName.substring(0, name.length()-1)
+                sheetName = sheetName + Integer.toString(i)
+            }
+
+            activitySheetNames[sheetName] = sheetName
+            typedActivitySheets[sheetName] = exporter.addSheet(name, headers)
+        }
+        typedActivitySheets[sheetName]
     }
 
     AdditionalSheet getOutputSheet(String outputName) {

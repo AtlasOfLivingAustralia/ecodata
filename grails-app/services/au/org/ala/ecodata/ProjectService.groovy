@@ -25,6 +25,7 @@ class ProjectService {
     static final PRIVATE_SITES_REMOVED  = 'privatesitesremoved'
 
     def grailsApplication
+    ProgramService programService
     MessageSource messageSource
     SessionLocaleResolver localeResolver
     SiteService siteService
@@ -39,6 +40,7 @@ class ProjectService {
     EmailService emailService
     ReportingService reportingService
     OrganisationService organisationService
+
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -223,6 +225,23 @@ class ProjectService {
             if(result?.managementUnitId){
                 ManagementUnit mu =  ManagementUnit.findByManagementUnitId(result.managementUnitId)
                 result['managementUnitName'] =mu?.name
+            }
+
+            if (result?.programId) {
+                Program program = programService.get(result.programId)
+                if (program) {
+                    List programNames = programService.parentNames(program)
+
+                    result.associatedProgram = programNames[-1]
+                    if (programNames.size() >= 2) {
+                        result.associatedSubProgram = programNames[-2]
+                    }
+
+                }
+                else {
+                    log.error("Project "+result.projectId+" references invalid program with programId = "+result.programId)
+                }
+
             }
 
 

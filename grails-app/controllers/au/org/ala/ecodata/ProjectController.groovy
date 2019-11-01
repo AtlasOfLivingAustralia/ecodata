@@ -220,7 +220,7 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
+   // @RequireApiKey
     def downloadProjectData() {
 
         def p = Project.findByProjectId(params.id)

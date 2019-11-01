@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.Report
+import grails.util.Holders
+import au.org.ala.ecodata.ActivityFormService
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
@@ -11,6 +12,8 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 class ManagementUnitXlsExporter extends TabbedExporter {
 
     static Log log = LogFactory.getLog(ManagementUnitXlsExporter.class)
+    ActivityFormService activityFormService =  Holders.grailsApplication.mainContext.getBean("activityFormService")
+
 
     // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
@@ -35,8 +38,8 @@ class ManagementUnitXlsExporter extends TabbedExporter {
     }
 
     public void export(activities) {
-
-        Map activitiesModel = metadataService.activitiesModel()
+        //Map activitiesModel = metadataService.activitiesModel()
+        Map activitiesModel = activityFormService.activitiesModel()
         exportOutputs(activities, activitiesModel)
 
     }

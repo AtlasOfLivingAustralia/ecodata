@@ -1,10 +1,13 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.ReportingService
 import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
+import au.org.ala.ecodata.metadata.OutputMetadata
+import grails.converters.JSON
 import grails.util.Holders
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
@@ -53,9 +56,9 @@ class TabbedExporter {
         sheets[name]
     }
 
+    @Deprecated
     protected Map outputProperties(name) {
         def model = metadataService.annotatedOutputDataModel(name)
-
         def headers = []
         def properties = []
         model.each {
@@ -87,6 +90,51 @@ class TabbedExporter {
         List propertyGetters = properties.collect { new OutputDataPropertiesBuilder(it, model, documentMap, timeZone) }
         [headers: headers, propertyGetters: propertyGetters]
     }
+    /**
+     *
+     * @param outputModel OutputModel generated from sectionForm->template
+     * @return
+     */
+
+    protected Map buildOutputProperties(OutputMetadata outputModel) {
+
+        List annotateDataModel = outputModel.annotateDataModel()
+
+        def headers = []
+        def properties = []
+
+        annotateDataModel.each {
+            if (it.dataType == 'list') {
+                it.columns.each { col ->
+                    properties << it.name + '.' + col.name
+                    headers << col.label
+                }
+            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail']) {
+                // not supported, do nothing.
+            } else if (it.dataType == 'stringList') {
+                if (it.constraints) {
+                    it.constraints.each { constraint ->
+                        headers << it.description + ' - ' + constraint
+                        properties << it.name + '[' + constraint + ']'
+                    }
+
+                } else {
+                    properties << it.name
+                    headers << it.label ?: it.description
+                }
+            } else {
+                properties << it.name
+                headers << it.label ?: it.description
+            }
+        }
+
+        def propertyGetters = properties.collect {
+            new OutputDataPropertiesBuilder(it, annotateDataModel, documentMap, timeZone)
+        }
+
+        [headers: headers, propertyGetters: propertyGetters]
+    }
+
 
     protected void exportReports(AdditionalSheet sheet, Map entity, List<String> reportProperties) {
         int row = sheet.getSheet().lastRowNum
