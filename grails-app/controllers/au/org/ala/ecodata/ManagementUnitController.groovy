@@ -104,7 +104,6 @@ class ManagementUnitController {
         XlsExporter exporter = new XlsExporter(tmpFile.name)
         exporter.setResponseHeaders(response)
 
-
         ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
 
         muXlsExporter.export(activities)
@@ -151,7 +150,7 @@ class ManagementUnitController {
             respond asJson([message:"Your will receive an email notification when report is generated", details:downloadId])
         }else{
             response.setContentType("application/json")
-            respond asJson([message:"Your download will be emailed to you when it is complete. WARNING, the period you requested may not have reports.", details: downloadId])
+            respond asJson([message:"Your download will be emailed to you when it is complete. <p> WARNING, the period you requested may not have reports.", details: downloadId])
         }
 
     }

@@ -34,9 +34,14 @@ class ManagementUnitXlsExporter extends TabbedExporter {
     }
 
     public void export(activities) {
-        activities.each{
-            exportReport(it)
+        if(activities.size()>0){
+            activities.each{
+                exportReport(it)
+            }
+        }else{
+            AdditionalSheet outputSheet = createSheet("Sheet1", commonActivityHeaders)
         }
+
     }
 
     private void exportReport(Map activity){
