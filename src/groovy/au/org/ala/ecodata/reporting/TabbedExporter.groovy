@@ -31,8 +31,11 @@ class TabbedExporter {
     XlsExporter exporter
     Map<String, Object> documentMap
     TimeZone timeZone
+    // These fields map full activity names to shortened names that are compatible with Excel tabs.
+    protected Map<String, String> activitySheetNames = [:]
+    protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
-    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:], TimeZone timeZone = TimeZone.default) {
+    TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:], TimeZone timeZone = TimeZone.default) {
         this.exporter = exporter
         this.sheets = new HashMap<String, AdditionalSheet>()
         this.tabsToExport = tabsToExport != null ? tabsToExport : []
@@ -49,7 +52,7 @@ class TabbedExporter {
         return !tabsToExport || tabsToExport.contains(sheetName)
     }
 
-    AdditionalSheet getSheet(String name, List<String> headers) {
+    protected AdditionalSheet getSheet(String name, List<String> headers) {
         if (!sheets[name]) {
             sheets[name] = exporter.addSheet(name, headers)
         }
@@ -133,6 +136,53 @@ class TabbedExporter {
         }
 
         [headers: headers, propertyGetters: propertyGetters]
+    }
+
+
+
+    /**
+     * todo Still on test if it should move from ProjectXlsExporter
+     * @param outputModel
+     * @param output
+     * @param commonData
+     * @return
+     */
+    private List getOutputData(OutputMetadata  outputModel, Map output, Map commonData) {
+        List flatData = []
+        if (output) {
+            flatData = processor.flatten(output, outputModel, false)
+            flatData = flatData.collect { commonData + it }
+        }
+        flatData
+    }
+
+    /**
+     * Todo Still on test if it can be moved from ProjectXlsExporter
+     *
+     * These fields map full activity names to shortened names that are compatible with Excel tabs.
+     * If it has the tab already, create a new tab with index
+     *
+     * @param sheetName
+     * @param headers
+     * @return
+     */
+    protected AdditionalSheet createSheet(String sheetName, List headers) {
+
+        if (!typedActivitySheets[sheetName]) {
+            String name = XlsExporter.sheetName(sheetName)
+
+            // If the sheets are named similarly, they may end up the same after being changed to excel
+            // tab compatible strings
+            int i = 1
+            while (activitySheetNames[sheetName]) {
+                sheetName = sheetName.substring(0, name.length()-1)
+                sheetName = sheetName + Integer.toString(i)
+            }
+
+            activitySheetNames[sheetName] = sheetName
+            typedActivitySheets[sheetName] = exporter.addSheet(name, headers)
+        }
+        typedActivitySheets[sheetName]
     }
 
 

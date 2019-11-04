@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 
-@RequireApiKey
+//@RequireApiKey
 class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
@@ -86,6 +86,34 @@ class ManagementUnitController {
 
         respond managementUnitService.managementUnitSiteMap(ids)
     }
+
+    /**
+     * Get reports of a given management unit
+     * @param id
+     */
+    def report(String id){
+
+        List<Map> activities =  managementUnitService.getReports(id)
+        ManagementUnit mu = managementUnitService.get(id, false)
+        activities.collect{
+            it['managementUnitId'] = mu['managementUnitId']
+            it['managementUnitName'] = mu['name']
+        }
+
+        File tmpFile = File.createTempFile(id, '.xslx')
+        XlsExporter exporter = new XlsExporter(tmpFile.name)
+        exporter.setResponseHeaders(response)
+
+
+        ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
+
+        muXlsExporter.export(activities)
+        exporter.sizeColumns()
+
+        exporter.save(response.outputStream)
+
+    }
+
 
     /**
      * Get reports of all management units in a given period

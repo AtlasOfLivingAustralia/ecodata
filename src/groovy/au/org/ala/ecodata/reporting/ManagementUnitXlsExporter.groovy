@@ -1,5 +1,7 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.FormSection
 import grails.util.Holders
 import au.org.ala.ecodata.ActivityFormService
 import au.org.ala.ecodata.metadata.OutputMetadata
@@ -14,7 +16,6 @@ class ManagementUnitXlsExporter extends TabbedExporter {
     static Log log = LogFactory.getLog(ManagementUnitXlsExporter.class)
     ActivityFormService activityFormService =  Holders.grailsApplication.mainContext.getBean("activityFormService")
 
-
     // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
 
@@ -26,97 +27,47 @@ class ManagementUnitXlsExporter extends TabbedExporter {
                     ACTIVITY_DATA_PREFIX+it
                 }
 
-
-//    AdditionalSheet activitySheet
-    Map<String, String> outputSheetNames = [:]
-    Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
-
     OutputModelProcessor processor = new OutputModelProcessor()
 
-    public ManagementUnitXlsExporter( XlsExporter exporter) {
+    ManagementUnitXlsExporter( XlsExporter exporter) {
         super(exporter, [], [:], TimeZone.default)
     }
 
     public void export(activities) {
-        //Map activitiesModel = metadataService.activitiesModel()
-        Map activitiesModel = activityFormService.activitiesModel()
-        exportOutputs(activities, activitiesModel)
-
+        activities.each{
+            exportReport(it)
+        }
     }
 
+    private void exportReport(Map activity){
+        String activityType = activity.type
+        int formVersion = activity.formVersion
+        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
+        Map activityCommonData = convertActivityData(activity)
 
-    private void exportOutputs(List activities, Map activitiesModel) {
-        if (activities) {
-            activitiesModel.outputs.each { outputConfig ->
-                    activities.each { activity ->
- //                       if (activity.progress == "started")
-                            exportOutput(outputConfig.name, activity)
-                    }
+        activity.outputs.each{ output->
+            FormSection formSection = activityForm.getFormSection(output.name)
+            if(formSection && formSection.template){
+                String sheetName = output.name + "_V" + formVersion
+                OutputMetadata outputModel = new OutputMetadata(formSection.template)
+
+                Map outputProperty = buildOutputProperties(outputModel)
+                List outputGetters = commonActivityProperties + outputProperty.propertyGetters
+                List headers = commonActivityHeaders + outputProperty.headers
+
+                List outputData = getOutputData(outputModel, output, activityCommonData)
+
+                AdditionalSheet outputSheet = createSheet(sheetName, headers)
+                int outputRow = outputSheet.sheet.lastRowNum
+                outputSheet.add(outputData, outputGetters, outputRow + 1)
+            }else{
+                log.error("Cannot find template of " + output.name)
             }
         }
     }
-    /**
-     * Need to convert raw activity to common activity data to avoid naming conflict
-     * @param outputName
-     * @param activity
-     */
-
-    private void exportOutput(String outputName, Map activity) {
-        Map output = activity.outputs?.find{it.name == outputName}
-        if (output) {
-            List outputGetters = commonActivityProperties + outputProperties(outputName).propertyGetters
-
-            Map common_data = convertActivityData(activity)
-
-            List outputData = getOutputData(outputName, activity,common_data)
-
-            AdditionalSheet outputSheet = getOutputSheet(outputName)
-            int outputRow = outputSheet.sheet.lastRowNum
-            outputSheet.add(outputData, outputGetters, outputRow + 1)
-        }
-    }
-
-    private List getOutputData(String outputName, Map activity, Map commonData) {
-        List flatData = []
-
-        OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(outputName))
-        Map outputData = activity.outputs?.find { it.name == outputName }
-        if (outputData) {
-            flatData = processor.flatten(outputData, outputModel, false)
-            flatData = flatData.collect { commonData + it }
-        }
-        flatData
-    }
 
 
 
-    AdditionalSheet getOutputSheet(String outputName) {
-
-        if (!typedOutputSheets[outputName]) {
-            String name = XlsExporter.sheetName(outputName)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (outputSheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            outputSheetNames[name] = outputName
-            List<String> headers = buildOutputHeaders(outputName)
-            typedOutputSheets[outputName] = exporter.addSheet(name, headers)
-        }
-        typedOutputSheets[outputName]
-    }
-
-
-
-    List<String> buildOutputHeaders(String outputName) {
-        List<String> outputHeaders = [] + commonActivityHeaders
-        outputHeaders += outputProperties(outputName).headers
-        outputHeaders
-    }
 
     /**
      * Add activty prefix to each property to avoid name conflicts
