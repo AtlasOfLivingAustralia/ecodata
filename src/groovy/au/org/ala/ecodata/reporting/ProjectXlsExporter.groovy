@@ -34,8 +34,11 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
 
-    List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
-    List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
+    List<String> projectApprovalHeaders = ['MERI plan status','Last approval Date', 'Last approved by']
+    List<String> projectApprovalProperties = ['planStatus','approvalDate', 'approvedBy']
+
+    List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
+    List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
     List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders
     List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties
@@ -347,6 +350,17 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportMeriPlan(Map project) {
+        String[] merit_tabs = [
+                "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
+                "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
+                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+        ]
+        //Add extra info about approval status
+        if (shouldExport(merit_tabs)){
+           Map approvalHistory  = projectService.getMeritProjectApprovalHistory(project.projectId)
+           project['approvalDate'] = approvalHistory.approvalDate
+           project['approvedBy'] =  approvalHistory.approvedBy
+        }
 
         exportBudget(project)
         exportOutcomes(project)

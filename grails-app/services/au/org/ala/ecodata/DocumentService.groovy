@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
+import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
@@ -524,6 +525,21 @@ class DocumentService {
             doc.remove(item)
         }
         doc
+    }
+
+    /**
+     * Read a file, return content as JSON
+     * as the files will be served by Apache in prod.
+     */
+    def read(String filename) {
+        File file = new File(this.fullPath('', filename))
+
+        if (!file.exists()) {
+            return  [error: filename + ' does not exist!']
+        }
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(file)
+        return data
     }
 
 }

@@ -39,6 +39,7 @@ class ProjectService {
     EmailService emailService
     ReportingService reportingService
     OrganisationService organisationService
+    UserService userService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -114,6 +115,29 @@ class ProjectService {
             list = Project.findAllByIsMERITAndStatusNotEqual(true, DELETED)
         }
         list.collect { toMap(it, levelOfDetail) }
+    }
+
+    /**
+     *
+     * @param projectId
+     * @return the lastest approval record
+     */
+    def getMeritProjectApprovalHistory(String projectId){
+        Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
+        List<Map> histories = []
+        results?.documents.collect{
+            def data = documentService.read(it.filepath+File.separator+it.filename)
+
+            if (!data.error){
+                String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
+                def doc = [
+                        approvalDate:data.dateApproved,
+                        approvedBy:displayName,
+                ]
+                histories.push(doc)
+            }
+        }
+       return histories.max{it.approvalDate}
     }
 
     def promoted() {
@@ -237,6 +261,7 @@ class ProjectService {
                     }
                 }
             }
+
         }
 
         result

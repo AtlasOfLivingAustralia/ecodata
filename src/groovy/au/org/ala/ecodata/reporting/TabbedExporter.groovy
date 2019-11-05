@@ -46,6 +46,16 @@ class TabbedExporter {
         return !tabsToExport || tabsToExport.contains(sheetName)
     }
 
+    /**
+     * Check if one in sheetnames should exported, then export lists
+     * Implemented for merit plan
+     * @param sheetNames
+     * @return
+     */
+    boolean  shouldExport(String[] sheetNames) {
+        return !tabsToExport || sheetNames.any{ sheetName -> tabsToExport.contains(sheetName)}
+    }
+
     AdditionalSheet getSheet(String name, List<String> headers) {
         if (!sheets[name]) {
             sheets[name] = exporter.addSheet(name, headers)
