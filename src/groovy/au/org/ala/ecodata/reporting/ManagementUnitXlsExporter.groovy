@@ -46,29 +46,21 @@ class ManagementUnitXlsExporter extends TabbedExporter {
 
     private void exportReport(Map activity){
         String activityType = activity.type
-        int formVersion = activity.formVersion
-        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
+        Integer formVersion = activity.formVersion
+
         Map activityCommonData = convertActivityData(activity)
+        String sheetName = activityType +  (formVersion? "_V" + formVersion: "")
 
-        activity.outputs.each{ output->
-            FormSection formSection = activityForm.getFormSection(output.name)
-            if(formSection && formSection.template){
-                String sheetName = output.name + "_V" + formVersion
-                OutputMetadata outputModel = new OutputMetadata(formSection.template)
+        Map sheetData = buildOutputSheetData(activity)
 
-                Map outputProperty = buildOutputProperties(outputModel)
-                List outputGetters = commonActivityProperties + outputProperty.propertyGetters
-                List headers = commonActivityHeaders + outputProperty.headers
+        //Combine data from output with  header,getter and  common data
+        List outputGetters = commonActivityProperties + sheetData.getters
+        List headers = commonActivityHeaders + sheetData.headers
+        List outputData = sheetData.data.collect { activityCommonData + it }
 
-                List outputData = getOutputData(outputModel, output, activityCommonData)
-
-                AdditionalSheet outputSheet = createSheet(sheetName, headers)
-                int outputRow = outputSheet.sheet.lastRowNum
-                outputSheet.add(outputData, outputGetters, outputRow + 1)
-            }else{
-                log.error("Cannot find template of " + output.name)
-            }
-        }
+        AdditionalSheet outputSheet = createSheet(sheetName, headers)
+        int outputRow = outputSheet.sheet.lastRowNum
+        outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
 

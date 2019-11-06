@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.ActivityForm
 import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Report
@@ -138,15 +139,15 @@ class TabbedExporter {
         [headers: headers, propertyGetters: propertyGetters]
     }
 
-
-
     /**
-     * todo Still on test if it should move from ProjectXlsExporter
+     *Flatten output data + common data
+     *
      * @param outputModel
      * @param output
      * @param commonData
      * @return
      */
+    @Deprecated
     private List getOutputData(OutputMetadata  outputModel, Map output, Map commonData) {
         List flatData = []
         if (output) {
@@ -157,7 +158,61 @@ class TabbedExporter {
     }
 
     /**
-     * Todo Still on test if it can be moved from ProjectXlsExporter
+     * Flatten output data only
+     *
+     * @param outputModel
+     * @param output
+     * @return
+     */
+    private List getOutputData(OutputMetadata  outputModel, Map output) {
+        List flatData = []
+        if (output) {
+            flatData = processor.flatten(output, outputModel, false)
+        }
+        flatData
+    }
+
+
+    /**
+     * Generate data model of a given output type from activity for excel sheet, if outputname is given
+     * Otherwise generate data models of all outputs
+     *
+     * including, headers, data cell reader and data itself
+     * @param activity
+     * @outputName  About the output name
+     * @return  Sheet headers, Getter of data model, data itself
+     */
+    protected buildOutputSheetData(Map activity,String outputName=null){
+
+        String activityType = activity.type
+        Integer formVersion = activity.formVersion
+        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
+
+        List outputGetters = []
+        List headers = []
+        List outputData = []
+
+        activity.outputs.each{ output->
+            if ( !outputName || outputName == output.name )  {
+                FormSection formSection = activityForm?.getFormSection(output.name)
+                if(formSection && formSection.template){
+
+                    OutputMetadata outputModel = new OutputMetadata(formSection.template)
+
+                    Map outputProperty = buildOutputProperties(outputModel)
+                    outputGetters += outputProperty.propertyGetters
+                    headers += outputProperty.headers
+
+                    outputData += getOutputData(outputModel, output)
+                }else{
+                    log.error("Cannot find template of " + output.name)
+                }
+            }
+        }
+        return [headers: headers, getters: outputGetters, data: outputData]
+    }
+
+    /**
      *
      * These fields map full activity names to shortened names that are compatible with Excel tabs.
      * If it has the tab already, create a new tab with index

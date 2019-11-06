@@ -133,7 +133,7 @@ class ProjectXlsExporter extends ProjectExporter {
         projectProperties += distinctElectorates
     }
 
-    public void export(Map project) {
+    void export(Map project) {
 
         commonProjectPropertiesRaw.each {
             project[PROJECT_DATA_PREFIX+it] = project.remove(it)
@@ -225,62 +225,50 @@ class ProjectXlsExporter extends ProjectExporter {
         Map commonData = commonActivityData(project, activity)
 
         String activityType = activity.type
-        int formVersion = activity.formVersion
-        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
-        if(activityForm){
-            activity.outputs.each{ output->
-                FormSection formSection = activityForm.getFormSection(output.name)
-                if(formSection && formSection.template){
-                    String sheetName = output.name + "_V" + formVersion
-                    OutputMetadata outputModel = new OutputMetadata(formSection.template)
+        Integer formVersion = activity.formVersion  //Use Integer to deal with null
 
-                    Map outputProperty = buildOutputProperties(outputModel)
-                    List outputGetters = activityProperties + outputProperty.propertyGetters
-                    List headers = commonActivityHeaders + outputProperty.headers
+        String sheetName = activityType +  (formVersion? "_V" + formVersion: "")
 
-                    List outputData = getOutputData(outputModel, output, commonData)
+        Map sheetData = buildOutputSheetData(activity)
 
-                    AdditionalSheet outputSheet = createSheet(sheetName, headers)
-                    int outputRow = outputSheet.sheet.lastRowNum
-                    outputSheet.add(outputData, outputGetters, outputRow + 1)
-                }else{
-                    log.error("Cannot find template of " + output.name)
-                }
-            }
-        }
+        //Combine data from output with  header,getter and  common data
+        List outputGetters = activityProperties + sheetData.getters
+        List headers = commonActivityHeaders + sheetData.headers
+        List outputData = sheetData.data.collect { commonData + it }
 
+        AdditionalSheet outputSheet = createSheet(sheetName, headers)
+        int outputRow = outputSheet.sheet.lastRowNum
+        outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
-
-
-
-
+    /**
+     * Collect participant info cross multi activities to one tab sheet
+     * @param project
+     */
     private void exportParticipantInfo(Map project) {
         String tab = 'Participant Information'
-        project?.activities.each{activity->
-            activity.outputs.findAll{it.name == tab}.each { output->
-                Map commonData = commonActivityData(project, activity)
-                String activityType = activity.type
-                int formVersion = activity.formVersion
-                ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
-                FormSection formSection = activityForm.getFormSection(output.name)
-                if(formSection && formSection.template){
-                    String sheetName = output.name + "_V" + formVersion
-                    OutputMetadata outputModel = new OutputMetadata(formSection.template)
-                    Map outputProperty = buildOutputProperties(outputModel)
-                    List outputGetters = activityProperties + outputProperty.propertyGetters
-                    List headers = commonActivityHeaders + outputProperty.headers
+        if (shouldExport(tab)){
+            List outputGetters =[]
+            List headers = []
+            List outputData = []
 
-                    List outputData = getOutputData(outputModel, output, commonData)
-
-                    AdditionalSheet outputSheet = createSheet(sheetName, headers)
-                    int outputRow = outputSheet.sheet.lastRowNum
-                    outputSheet.add(outputData, outputGetters, outputRow + 1)
-                }else{
-                    log.error("Cannot find template of " + output.name)
+            project?.activities.each{activity->
+                    Map commonData = commonActivityData(project, activity)
+                    Map sheetData = buildOutputSheetData(activity, tab)
+                    //Combine data from output with  header,getter and  common data
+                    outputGetters += sheetData.getters
+                    headers += sheetData.headers
+                    List currentData = sheetData.data.collect { commonData + it }
+                    outputData += currentData
                 }
+            //Remove duplicated headers and getters
+            //getter is an object. Need to Stringfy to unique
+            outputGetters = activityProperties + outputGetters.unique{it.toString()}
+            headers = commonActivityHeaders + headers.unique()
+            AdditionalSheet outputSheet = createSheet(tab, headers)
+            int outputRow = outputSheet.sheet.lastRowNum
 
-            }
+            outputSheet.add(outputData, outputGetters, outputRow + 1)
         }
     }
 
