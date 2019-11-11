@@ -42,7 +42,7 @@ db.project.find({programId:{$exists:true}}).forEach(function(project){
     db.project.update( {"projectId":project.projectId}, {$set:{'programId':rlp_programId}})
 })
 
-
+db.program.update({}, {$set:{outcomes:outcomes}}, {multi:true});
 
 //Update ERF programId
 var erf_program = db.program.findOne({name:"Environmental Restoration Fund"})
@@ -53,6 +53,9 @@ if (erf_program){
     })
 }else{
     load('uuid.js');
+
+    var rlp = db.program.findOne({programId:rlp_programId});
+    var erfOutcomes = [rlp.outcomes[0], rlp.outcomes[1], rlp.outcomes[3]];
     var now = ISODate();
     var programStart = ISODate('2019-06-30T14:00:00Z');
     var programEnd = ISODate('2023-06-30T13:59:59Z');
@@ -68,6 +71,7 @@ if (erf_program){
         endDate: programEnd,
         acronym: 'ERF',
         status: 'active',
+        outcomes: erfOutcomes,
         config: {
             "meriPlanTemplate": "rlpMeriPlan",
             "projectTemplate": "rlp",
@@ -93,7 +97,8 @@ if (erf_program){
     })
 }
 
-db.program.update({}, {$set:{outcomes:outcomes}}, {multi:true});
+
+
 
 // Update permissions associated with programs
 db.userPermission.update({entityType:'au.org.ala.ecodata.Program'}, {$set:{entityType:'au.org.ala.ecodata.ManagementUnit'}}, {multi:true});
