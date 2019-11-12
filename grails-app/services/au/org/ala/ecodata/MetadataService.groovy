@@ -5,17 +5,14 @@ import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.validation.ValidationException
-import org.apache.commons.validator.Form
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.grails.plugins.csv.CSVMapReader
-
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -321,29 +318,6 @@ class MetadataService {
         }
         annotatedModel
     }
-
-    /**
-     * @deprecated
-     * @param formSection outputDataModel
-     * @return
-     */
-
-    def buildOutputDataModel(FormSection formSection) {
-        Map template = formSection.template
-        if (!template) {
-            log.warn("No template found in FormSection")
-        }
-        def outputMetadata = JSON.parse(((template ?: [:]) as JSON).toString())
-
-        if (outputMetadata) {
-            OutputMetadata metadata = new OutputMetadata(outputMetadata)
-            //annotatedModel = metadata.annotateDataModel()
-            return metadata
-        }
-
-        return null
-    }
-
 
 
     /**

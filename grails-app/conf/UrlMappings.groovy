@@ -84,11 +84,6 @@ class UrlMappings {
             action = 'report'
         }
 
-        //Get reports of all managements
-        "/ws/managementunit/report" {
-            controller = 'managementUnit'
-            action = 'getFullReport'
-        }
 
         //Get reports of all managements
         "/ws/managementunit/$action" {
@@ -188,8 +183,6 @@ class UrlMappings {
         "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
         "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
         "/ws/managementUnit/findByName"(controller:"managementUnit"){ action = [GET:"findByName"] }
-
-        "/ws/activityForm/findByName"(controller:"activityForm"){ action = [GET:"findByName"] }
 
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
