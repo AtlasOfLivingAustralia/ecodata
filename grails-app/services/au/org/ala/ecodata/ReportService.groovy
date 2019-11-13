@@ -355,6 +355,11 @@ class ReportService {
         return hasReports
     }
 
+    /**
+     *
+     * @param muIds a list of management unit Ids
+     * @return
+     */
     Date[] getPeriodOfManagmentUnitReport(String[] muIds ){
         List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
         Date[] period = activityService.getPeriod(activityIds)

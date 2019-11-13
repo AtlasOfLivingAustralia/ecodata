@@ -65,7 +65,7 @@ class ManagementUnitXlsExporter extends TabbedExporter {
      */
     private Map convertActivityData(Map activity) {
         String activityDataPrefix = ACTIVITY_DATA_PREFIX
-        Map activityBaseData = activity.collectEntries{k,v ->
+        activity.collectEntries{k,v ->
             if (!k.startsWith('managementUnit') && !k.startsWith('report'))
                 [activityDataPrefix+k, v]
             else

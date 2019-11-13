@@ -182,6 +182,44 @@ class ManagementUnitService {
         return [count: countOfReports, downloadId: downloadId]
     }
 
+    /**
+     *
+     * @param startDate
+     * @param endDate
+     * @param reportDownloadBaseUrl  Base url of downloading generated report
+     * @param senderEmail
+     * @param systemEmail
+     * @param receiverEmail
+     * @return
+     */
+    public generateReportsInPeriods(Date startDate, Date endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
+        List<Map> reports =  getReportingActivities(startDate,endDate)
+        int countOfReports = reports.count{it.progress="started"}
+        log.info("It contains " + countOfValid +" reports with data")
+
+        Map params = [:]
+        params.fileExtension = "xlsx"
+        params.reportDownloadBaseUrl = reportDownloadBaseUrl
+        params.senderEmail = senderEmail
+        params.systemEmail = systemEmail
+        params.email = receiverEmail
+
+        Closure doDownload = { File file ->
+            XlsExporter exporter = new XlsExporter(file.absolutePath)
+            ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
+            muXlsExporter.export(reports)
+            exporter.sizeColumns()
+            exporter.save()
+        }
+        String downloadId = downloadService.generateReports(params, doDownload)
+        Map message =[:]
+        if (countOfReports>0){
+            message = [message:"Your will receive an email notification when report is generated", details:downloadId]
+        }else{
+            message = [message:"Your download will be emailed to you when it is complete. <p> WARNING, the period you requested may not have reports.", details: downloadId]
+        }
+        return message
+    }
 
 
     /**
@@ -197,7 +235,7 @@ class ManagementUnitService {
         return reports
     }
 
-    List<Map> getFinancialYearPeriods(){
+    int[] getFinancialYearPeriods(){
         String[] muIds = ManagementUnit.findAll().toArray().managementUnitId
         Date[] periods = reportService.getPeriodOfManagmentUnitReport(muIds)
         int[] finacialYears = []
