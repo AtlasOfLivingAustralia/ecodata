@@ -2,8 +2,13 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
+import org.apache.http.HttpStatus
 
-//@RequireApiKey
+import java.text.ParseException
+import java.time.Instant
+
+
+@RequireApiKey
 class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
@@ -23,8 +28,6 @@ class ManagementUnitController {
         model
     }
 
-
-
     def get(String id) {
         ManagementUnit mu = managementUnitService.get(id, false)
         respond mu
@@ -43,7 +46,6 @@ class ManagementUnitController {
         else{
             respond []
         }
-
     }
 
     def findByName(String name) {
@@ -83,17 +85,16 @@ class ManagementUnitController {
         if (request.method == 'POST') {
             ids = request.JSON?.managementUnitIds
         }
-
         respond managementUnitService.managementUnitSiteMap(ids)
     }
 
     /**
      * Get reports of a given management unit
-     * @param id
+     * @param id reportId
      */
     def report(String id){
 
-        List<Map> activities =  managementUnitService.getReports(id)
+        List<Map> activities =  managementUnitService.getReportingActivities(id)
         ManagementUnit mu = managementUnitService.get(id, false)
         activities.collect{
             it['managementUnitId'] = mu['managementUnitId']
@@ -107,57 +108,37 @@ class ManagementUnitController {
         ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
 
         muXlsExporter.export(activities)
-        exporter.sizeColumns()
-
         exporter.save(response.outputStream)
 
     }
 
 
     /**
+     * startDate and endDate need to be ISO 8601
+     *
      * Get reports of all management units in a given period
      */
     def generateReportsInPeriod(){
-        String startDate = params.startDate
-        String endDate = params.endDate
-        String dateFormat = "dd/MM/yyyy"
-
         try{
-            Date.parse(dateFormat,startDate)
-            Date.parse(dateFormat,endDate)
-        }catch (Exception e){
-            def message = [message: 'Error: You need to provide startDate and endDate in the format of dd/MM/yyyy ']
-            response.setContentType("application/json")
-            respond asJson(message)
+            Date sDate = Date.from(Instant.parse(params.startDate))
+            Date eDate = Date.from(Instant.parse(params.endDate))
+            Map message = managementUnitService.generateReportsInPeriods(sDate, eDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email)
+            respond(message, status:200)
+       }catch ( ParseException e){
+            def message = [message: 'Error: You need to provide startDate and endDate in the format of ISO 8601']
+            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
+       }catch(Exception e){
+            def message = [message: 'Fatal: ' + e.message]
+            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
         }
-
-        List<Map> reports =  managementUnitService.getReports(Date.parse(dateFormat,startDate),Date.parse(dateFormat,endDate))
-        int countOfValid = reports.count{it.progress="started"}
-        log.info("It contains " + countOfValid +"valid reports")
-
-        params.fileExtension = "xlsx"
-
-        Closure doDownload = { File file ->
-            XlsExporter exporter = new XlsExporter(file.absolutePath)
-            ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
-            muXlsExporter.export(reports)
-            exporter.sizeColumns()
-            exporter.save()
-        }
-        String downloadId = downloadService.generateReports(params, doDownload)
-        if (countOfValid>0){
-            response.setContentType("application/json")
-            respond asJson([message:"Your will receive an email notification when report is generated", details:downloadId])
-        }else{
-            response.setContentType("application/json")
-            respond asJson([message:"Your download will be emailed to you when it is complete. <p> WARNING, the period you requested may not have reports.", details: downloadId])
-        }
-
     }
-
+    /**
+     * Get financial years of managment unit reports cover
+     * @return
+     */
     def getReportPeriods(){
         int[] financialYears = managementUnitService.getFinancialYearPeriods()
-        response.setContentType("application/json")
+        //response.setContentType("application/json")
         respond financialYears
     }
 }

@@ -76,7 +76,7 @@ class DownloadService {
         downloadProjectDataAsync(map, doDownload)
     }
 
-    def generateReports(GrailsParameterMap params, Closure downloadAction) {
+    def generateReports(Map params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
         File directoryPath = new File("${grailsApplication.config.temp.dir}")
         directoryPath.mkdirs()

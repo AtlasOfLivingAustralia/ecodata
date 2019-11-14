@@ -337,14 +337,14 @@ class ReportService {
      * @param id management unit Id
      * @return
      */
-    def getReportsOfManagementUnit(String id){
+    List getReportsOfManagementUnit(String id){
         List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(id,Status.DELETED)
         List<Map> activities = activityService.getAll(reports.activityId,['all'])
 
         List hasReports = activities.findAll{
             it.outputs?.size()>0
         }
-        hasReports.collect{
+        hasReports.each{
             def report = reports.find {it.activityId == it.activityId}
             if (report){
                 it['reportId'] = report['reportId']
@@ -355,19 +355,26 @@ class ReportService {
         return hasReports
     }
 
-    def getPeriodOfManagmentUnitReport(String[] muIds ){
+    /**
+     *
+     * @param muIds a list of management unit Ids
+     * @return
+     */
+    Date[] getPeriodOfManagmentUnitReport(String[] muIds ){
         List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
         Date[] period = activityService.getPeriod(activityIds)
     }
+
     /**
+     * Get reports of management units
      *
-     * @param mus
+     * @param mus a list of management unit
      * @param startDate
      * @param endDate
      * @return Structure of report == project.activity
      */
 
-    def getReportsOfManagementUnits(ManagementUnit[] mus, Date startDate, Date endDate){
+    List getReportsOfManagementUnits(ManagementUnit[] mus, Date startDate, Date endDate){
         List<Map> reportCollection = []
         mus.each{ mu ->
             List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(mu.managementUnitId,Status.DELETED)

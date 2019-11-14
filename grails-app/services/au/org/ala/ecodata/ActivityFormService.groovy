@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import org.grails.datastore.mapping.query.api.BuildableCriteria
-
 /**
  * Processes requests related to activity forms.
  */
@@ -36,16 +34,6 @@ class ActivityFormService {
 
     ActivityForm[] list(){
        return ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED)
-    }
-
-    ActivityForm findByTemplateName(String templateName){
-        List forms = ActivityForm.where {
-            status != Status.DELETED
-            publicationStatus == PublicationStatus.PUBLISHED
-            sections { templateName == templateName}
-        }.list()
-
-        ActivityForm form = forms.max{it.version}
     }
 
     /**
@@ -119,21 +107,6 @@ class ActivityFormService {
     }
 
 
-//    ActivityForm findByActivityTypeAndVersion(String activityType, String formVersion){
-//        BuildableCriteria criteria = ActivityForm.createCriteria()
-//
-//        ActivityForm af =   criteria.list {
-//            sections {
-//                eq('name',outputName)
-//            }
-//            ne("status",Status.DELETED)
-//            eq("publicationStatus", PublicationStatus.PUBLISHED)
-//        }.first()
-//        return af
-//    }
-
-
-
     /**
      * Publishes an activity form.  This makes it available for selection by the "latest published version"
      * mechanism (findActivityForm with a null formVersion)
@@ -170,7 +143,6 @@ class ActivityFormService {
     ActivityForm newDraft(String activityFormName) {
         ActivityForm form = ActivityForm.findAllByNameAndStatusNotEqual(activityFormName, Status.DELETED).max{it.formVersion}
         if (form) {
-
             if (form.isPublished()) {
                 ActivityForm newForm = new ActivityForm(
                         name: form.name,

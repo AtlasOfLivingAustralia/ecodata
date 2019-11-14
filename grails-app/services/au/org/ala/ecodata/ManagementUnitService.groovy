@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
+import au.org.ala.ecodata.reporting.XlsExporter
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -9,6 +11,7 @@ class ManagementUnitService {
     def commonService
     def siteService
     def reportService
+    def downloadService
 
     ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {
@@ -155,6 +158,69 @@ class ManagementUnitService {
         }
         return reports
     }
+    /**
+     * Generate MU reports in a given period
+     * @param startDate
+     * @param endDate
+     * @return count of reports and downloadId
+     */
+    Map generateReports(Date startDate, Date endDate){
+        List<Map> reports =  getReportingActivities(startDate,endDate)
+        int countOfReports = reports.count{it.progress="started"}
+        log.info("It contains " + countOfValid +" reports with data")
+
+        params.fileExtension = "xlsx"
+
+        Closure doDownload = { File file ->
+            XlsExporter exporter = new XlsExporter(file.absolutePath)
+            ManagementUnitXlsExporter muXlsExporter = new ManagementUnitXlsExporter(exporter)
+            muXlsExporter.export(reports)
+            exporter.sizeColumns()
+            exporter.save()
+        }
+        String downloadId = downloadService.generateReports(params, doDownload)
+        return [count: countOfReports, downloadId: downloadId]
+    }
+
+    /**
+     *
+     * @param startDate
+     * @param endDate
+     * @param reportDownloadBaseUrl  Base url of downloading generated report
+     * @param senderEmail
+     * @param systemEmail
+     * @param receiverEmail
+     * @return
+     */
+    public generateReportsInPeriods(Date startDate, Date endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
+        List<Map> reports =  getReportingActivities(startDate,endDate)
+        int countOfReports = reports.count{it.progress="started"}
+        log.info("It contains " + countOfValid +" reports with data")
+
+        Map params = [:]
+        params.fileExtension = "xlsx"
+        params.reportDownloadBaseUrl = reportDownloadBaseUrl
+        params.senderEmail = senderEmail
+        params.systemEmail = systemEmail
+        params.email = receiverEmail
+
+        Closure doDownload = { File file ->
+            XlsExporter exporter = new XlsExporter(file.absolutePath)
+            ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
+            muXlsExporter.export(reports)
+            exporter.sizeColumns()
+            exporter.save()
+        }
+        String downloadId = downloadService.generateReports(params, doDownload)
+        Map message =[:]
+        if (countOfReports>0){
+            message = [message:"Your will receive an email notification when report is generated", details:downloadId]
+        }else{
+            message = [message:"Your download will be emailed to you when it is complete. <p> WARNING, the period you requested may not have reports.", details: downloadId]
+        }
+        return message
+    }
+
 
     /**
      *  Get reports of all management units in a period
@@ -163,13 +229,13 @@ class ManagementUnitService {
      * @param end
      * @return
      */
-    List<Map> getReports(Date startDate, Date endDate){
+    List<Map> getReportingActivities(Date startDate, Date endDate){
         ManagementUnit[] mus =  ManagementUnit.findAll().toArray()
         List reports = reportService.getReportsOfManagementUnits(mus,startDate,endDate)
         return reports
     }
 
-    List<Map> getFinancialYearPeriods(){
+    int[] getFinancialYearPeriods(){
         String[] muIds = ManagementUnit.findAll().toArray().managementUnitId
         Date[] periods = reportService.getPeriodOfManagmentUnitReport(muIds)
         int[] finacialYears = []

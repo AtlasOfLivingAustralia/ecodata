@@ -208,22 +208,32 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
      void exportActivities(Map project) {
-            project?.activities?.each { activity ->
-                if (shouldExport('Activity Summary')) {
-                    AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
-                    Map activityData = commonActivityData(project, activity)
-                    sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
-                }
-                if (shouldExport(activity.type)) {
+         // if tabs to export not given, export all activities
+         if (!tabsToExport){
+             project?.activities?.each { activity ->
+                 if(activity.type=="Activity Summary")
+                     exportActivitySummary(project)
+                 else
                     exportActivity(project, activity)
-                }
-            }
-        }
+             }
+         }else{
+             tabsToExport.each{ tab ->
+                 if(tab =="Activity Summary"){
+                     exportActivitySummary(project)
+                 }else{
+                     def activity = project?.activities?.find{it.type == tab}
+                     if(activity)
+                         exportActivity(project, activity)
+                     else{
+                         createEmptySheet(tab)
+                     }
+                 }
+             }
+         }
+     }
 
     private void exportActivity(Map project, Map activity) {
-
         Map commonData = commonActivityData(project, activity)
-
         String activityType = activity.type
         Integer formVersion = activity.formVersion  //Use Integer to deal with null
 
@@ -239,6 +249,18 @@ class ProjectXlsExporter extends ProjectExporter {
         AdditionalSheet outputSheet = createSheet(sheetName, headers)
         int outputRow = outputSheet.sheet.lastRowNum
         outputSheet.add(outputData, outputGetters, outputRow + 1)
+    }
+
+    private void exportActivitySummary(Map project){
+        def activity = project?.activities.find{ it.type == 'Activity Summary'}
+        AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
+        if(activity){
+            Map activityData = commonActivityData(project, activity)
+            sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+        }else{
+            sheet.add([], activityProperties, sheet.getSheet().lastRowNum + 1)
+        }
+
     }
 
     /**

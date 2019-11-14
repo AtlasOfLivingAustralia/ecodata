@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.ActivityFormService
 import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Report
@@ -8,11 +9,12 @@ import au.org.ala.ecodata.ReportingService
 import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
 import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputModelProcessor
 import grails.converters.JSON
 import grails.util.Holders
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
-import sun.security.util.Length
+
 
 import java.text.SimpleDateFormat
 
@@ -25,6 +27,8 @@ class TabbedExporter {
     MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
     ReportingService reportingService =  Holders.grailsApplication.mainContext.getBean("reportingService")
+    ActivityFormService activityFormService = Holders.grailsApplication.mainContext.getBean("activityFormService")
+    OutputModelProcessor processor = new OutputModelProcessor()
 
     static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     Map<String, AdditionalSheet> sheets
@@ -238,6 +242,10 @@ class TabbedExporter {
             typedActivitySheets[sheetName] = exporter.addSheet(name, headers)
         }
         typedActivitySheets[sheetName]
+    }
+
+    protected AdditionalSheet createEmptySheet(String sheetName){
+        createSheet(sheetName,['No data'])
     }
 
 

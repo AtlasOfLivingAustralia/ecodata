@@ -1,20 +1,15 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.FormSection
-import grails.util.Holders
-import au.org.ala.ecodata.ActivityFormService
-import au.org.ala.ecodata.metadata.OutputMetadata
-import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
-
+/**
+ * Generate management unit reports
+ */
 class ManagementUnitXlsExporter extends TabbedExporter {
 
     static Log log = LogFactory.getLog(ManagementUnitXlsExporter.class)
-    ActivityFormService activityFormService =  Holders.grailsApplication.mainContext.getBean("activityFormService")
 
     // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
@@ -27,21 +22,19 @@ class ManagementUnitXlsExporter extends TabbedExporter {
                     ACTIVITY_DATA_PREFIX+it
                 }
 
-    OutputModelProcessor processor = new OutputModelProcessor()
-
     ManagementUnitXlsExporter( XlsExporter exporter) {
         super(exporter, [], [:], TimeZone.default)
     }
 
-    public void export(activities) {
+    void export(activities) {
         if(activities.size()>0){
             activities.each{
                 exportReport(it)
             }
         }else{
-            AdditionalSheet outputSheet = createSheet("Sheet1", commonActivityHeaders)
+            //Create a standard empty sheet to avoid malforamt xslx
+            createEmptySheet("Management Unit Reports")
         }
-
     }
 
     private void exportReport(Map activity){
@@ -63,9 +56,6 @@ class ManagementUnitXlsExporter extends TabbedExporter {
         outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
-
-
-
     /**
      * Add activty prefix to each property to avoid name conflicts
      * Combine Management unit info as well
@@ -75,7 +65,7 @@ class ManagementUnitXlsExporter extends TabbedExporter {
      */
     private Map convertActivityData(Map activity) {
         String activityDataPrefix = ACTIVITY_DATA_PREFIX
-        Map activityBaseData = activity.collectEntries{k,v ->
+        activity.collectEntries{k,v ->
             if (!k.startsWith('managementUnit') && !k.startsWith('report'))
                 [activityDataPrefix+k, v]
             else

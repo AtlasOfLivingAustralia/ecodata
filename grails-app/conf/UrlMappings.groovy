@@ -70,8 +70,6 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
-
-
         //Get reports of all managements
         "/ws/managementunit/report" {
         controller = 'managementUnit'
@@ -85,12 +83,6 @@ class UrlMappings {
         }
 
         //Get reports of all managements
-        "/ws/managementunit/report" {
-            controller = 'managementUnit'
-            action = 'getFullReport'
-        }
-
-        //Get reports of all managements
         "/ws/managementunit/$action" {
             controller = 'managementUnit'
         }
@@ -99,8 +91,6 @@ class UrlMappings {
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
-
-
 
         "/ws/output" {
             controller = 'output'
@@ -142,6 +132,10 @@ class UrlMappings {
 
 		"/ws/$controller/$action?/$id?(.$format)?" {
 		}
+
+		"/$controller/$action?/$id?(.$format)?" {
+		}
+
         "/ws/documentation/$version" {
             controller = 'documentation'
             action = 'index'
@@ -189,8 +183,6 @@ class UrlMappings {
         "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
         "/ws/managementUnit/findByName"(controller:"managementUnit"){ action = [GET:"findByName"] }
 
-        "/ws/activityForm/findByName"(controller:"activityForm"){ action = [GET:"findByName"] }
-
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
 
@@ -206,12 +198,6 @@ class UrlMappings {
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
         "/ws/$controller/list"() { action = [GET:'list'] }
-
-
-
-        "/ws/$controller/$id?(.$format)?" {
-            action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
-        }
 
         "/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']

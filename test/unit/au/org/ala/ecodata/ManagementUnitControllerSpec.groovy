@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.test.mixin.TestFor
+import org.apache.commons.httpclient.HttpState
 import org.apache.http.HttpStatus
 
 import spock.lang.Specification
@@ -79,6 +80,20 @@ class ManagementUnitControllerSpec extends Specification {
         response.status == HttpStatus.SC_OK
         response.json == geojson
 
+    }
+
+    def "Should return upsupported date format error"(){
+        setup:
+        String startDate = "30/06/1990"
+        String endDate = "01/07/1991"
+
+        when:
+        params.startDate = startDate
+        params.endDate = endDate
+        controller.generateReportsInPeriod()
+
+        then:
+        response.status == HttpStatus.SC_NOT_ACCEPTABLE
     }
 
 }
