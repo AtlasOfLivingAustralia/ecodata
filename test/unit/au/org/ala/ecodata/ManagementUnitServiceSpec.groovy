@@ -11,7 +11,7 @@ import org.springframework.context.MessageSource
 import spock.lang.Specification
 
 @TestMixin(MongoDbTestMixin)
-@Domain([ManagementUnit, Report])
+@Domain([ManagementUnit, Report, Activity])
 @TestFor(ManagementUnitService)
 class ManagementUnitServiceSpec extends Specification {
 
@@ -79,10 +79,7 @@ class ManagementUnitServiceSpec extends Specification {
 
         then:
         years.size() == 3
-
     }
-
-
 
 
     private void setupMu(int count) {
@@ -97,10 +94,20 @@ class ManagementUnitServiceSpec extends Specification {
         Report report = new Report(
                 managementUnitId: 'm'+count,
                 name: 'report'+count,
-                activityId: 'activity'+count
+                activityId: 'a'+count,
+                reportId: 'r'+count
         )
 
         report.save(flush: true)
+
+        Activity activity = new Activity(
+                reportId: 'r'+count,
+                name: 'activity'+count,
+                activityId: 'a'+count,
+                plannedStartDate: new Date(2008,1,1) ,
+                plannedEndDate: new Date(2010,1,1)
+        )
+        activity.save(flush: true)
     }
 
     private Map squareFeature(String id, int x, int y) {
