@@ -114,7 +114,7 @@ class ManagementUnitController {
      */
     def getReportPeriods(){
         int[] financialYears = managementUnitService.getFinancialYearPeriods()
-        //response.setContentType("application/json")
+        response.setContentType("application/json")
         respond financialYears
     }
 }
