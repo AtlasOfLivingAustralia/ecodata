@@ -28,7 +28,9 @@ db.project.find({'programId':{$exists:true}}).forEach(function(project){
     db.project.update( {"projectId":project.projectId}, {$set:{"managementUnitId": project.programId}})
 })
 
-
+// Update program documents to management unit documents
+db.document.update({programId:{$exists:true}}, {$rename:{'programId':'managementUnitId'}}, {multi:true});
+db.document.update({managementUnitId:{$exists:true}, role:'logo'}, {$set:{public:true}});
 
 //Update RPL programId
 var rlp_programId = db.program.findOne({name:"Regional Land Partnerships"}).programId
@@ -37,7 +39,7 @@ var rlp_programId = db.program.findOne({name:"Regional Land Partnerships"}).prog
 
 db.project.find({programId:{$exists:true}}).forEach(function(project){
     db.project.update( {"projectId":project.projectId}, {$set:{'programId':rlp_programId}})
-})
+});
 
 
 
@@ -61,7 +63,7 @@ if (erf_program){
         dateCreated: now,
         lastUpdated: now,
         startDate: programStart,
-        parent: parentId,
+        parent: null,
         endDate: programEnd,
         status: 'active',
         config: {
