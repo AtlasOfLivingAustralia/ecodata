@@ -88,30 +88,6 @@ class ManagementUnitController {
         respond managementUnitService.managementUnitSiteMap(ids)
     }
 
-    /**
-     * Get reports of a given management unit
-     * @param id reportId
-     */
-    def report(String id){
-
-        List<Map> activities =  managementUnitService.getReportingActivities(id)
-        ManagementUnit mu = managementUnitService.get(id, false)
-        activities.collect{
-            it['managementUnitId'] = mu['managementUnitId']
-            it['managementUnitName'] = mu['name']
-        }
-
-        File tmpFile = File.createTempFile(id, '.xslx')
-        XlsExporter exporter = new XlsExporter(tmpFile.name)
-        exporter.setResponseHeaders(response)
-
-        ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
-
-        muXlsExporter.export(activities)
-        exporter.save(response.outputStream)
-
-    }
-
 
     /**
      * startDate and endDate need to be ISO 8601
@@ -138,7 +114,7 @@ class ManagementUnitController {
      */
     def getReportPeriods(){
         int[] financialYears = managementUnitService.getFinancialYearPeriods()
-        //response.setContentType("application/json")
+        response.setContentType("application/json")
         respond financialYears
     }
 }

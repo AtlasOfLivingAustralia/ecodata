@@ -70,23 +70,9 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
-        //Get reports of all managements
-        "/ws/managementunit/report" {
-        controller = 'managementUnit'
-        action = 'getFullReport'
-        }
-
-        //Get all reports of a management unit
-        "/ws/managementunit/$id/report" {
-            controller = 'managementUnit'
-            action = 'report'
-        }
-
-        //Get reports of all managements
         "/ws/managementunit/$action" {
             controller = 'managementUnit'
         }
-
 
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
@@ -199,12 +185,7 @@ class UrlMappings {
 
         "/ws/$controller/list"() { action = [GET:'list'] }
 
-        "/$controller/$id?(.$format)?" {
-            action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
-        }
 
-        "/ws/$controller/$action" {
-        }
 
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')

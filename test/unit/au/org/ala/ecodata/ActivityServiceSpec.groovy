@@ -195,5 +195,4 @@ class ActivityServiceSpec extends Specification {
         1 * outputService.delete('output1', false)
     }
 
-
 }
