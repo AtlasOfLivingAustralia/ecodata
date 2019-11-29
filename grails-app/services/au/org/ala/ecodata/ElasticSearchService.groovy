@@ -803,6 +803,13 @@ class ElasticSearchService {
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
+
+            // Add ProjectActivity for Biocollect projects
+            def projectActivities = projectActivityService.getAllByProject(project.projectId)
+            projectActivities.each { pActivity ->
+                projectActivityService.addProjectActivityStats(pActivity)
+            }
+            projectMap.projectActivities = projectActivities
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
