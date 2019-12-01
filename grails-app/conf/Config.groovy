@@ -491,7 +491,7 @@ app {
         geographic {
             contextual {
                 state = 'cl927'
-                nrm = 'cl2120'
+                nrm = 'cl10946'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
@@ -661,9 +661,39 @@ environments {
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+    }
+    meritfunctionaltest {
+        grails.cache.config = {
+            diskStore {
+                path '/tmp'
+            }
+        }
+        security.cas.bypass = true
+        grails.logging.jul.usebridge = true
+        ecodata.use.uuids = false
+        app.external.model.dir = "./models/"
+        grails.hostname = "localhost"
+        // Only for travis CI, they must be overriden by ecodata-config.properties
+        serverName = "http://${grails.hostname}:8080"
+        grails.app.context = "ecodata"
+        grails.serverURL = serverName + "/" + grails.app.context
+        app.uploads.url = "${grails.serverURL}/document/download?filename="
 
-
-
+        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexAllOnStartup = true
+        app.elasticsearch.location = "./target/elasticsearch/"
+        app.file.upload.path = "./target/uploads"
+        app.file.upload.path = "./target/archive"
+        String casBaseUrl = "http://localhost:8018"
+        userDetails {
+            url = "${casBaseUrl}/userdetails/userDetails/"
+        }
+        userDetailsSingleUrl = "${userDetailsUrl}/getUserDetails"
+        userDetailsUrl = "${userDetails.url}/getUserListFull"
+        userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
+        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
+        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+        security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
     }
     production {
         grails.logging.jul.usebridge = false
@@ -704,6 +734,23 @@ log4j = {
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
             }
             test {
+                console name: "stdout",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
+                        threshold: org.apache.log4j.Level.DEBUG
+                rollingFile name: "ecodataLog",
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/ecodata-test.log",
+                        threshold: org.apache.log4j.Level.INFO,
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+                rollingFile name: "stacktrace",
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/ecodata-test-stacktrace.log"
+                rollingFile name: 'aekosLog',
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/aekosLog.log",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+            }
+            meritfunctionaltest {
                 console name: "stdout",
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
                         threshold: org.apache.log4j.Level.DEBUG

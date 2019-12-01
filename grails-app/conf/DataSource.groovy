@@ -29,6 +29,15 @@ environments {
             }
         }
     }
+    meritfunctionaltest {
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata-functional-test"
+            }
+        }
+    }
     production {
         grails {
             mongo {

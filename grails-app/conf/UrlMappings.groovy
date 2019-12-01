@@ -1,8 +1,6 @@
 class UrlMappings {
 
 	static mappings = {
-
-
         "/ws/record"(controller: "record"){ action = [GET:"list", POST:"create"] }
         "/ws/record/"(controller: "record"){ action = [GET:"list", POST:"create"] }
 
@@ -152,6 +150,22 @@ class UrlMappings {
             action = 'findByAssociation'
         }
 
+        "/ws/programs" {
+            controller = 'program'
+            action = 'getPrograms'
+        }
+        "/ws/program/findByName"(controller:"program"){ action = [GET:"findByName"] }
+
+        "/ws/managementUnits" {
+            controller = 'managementUnit'
+            action = 'getManagementUnits'
+        }
+
+        "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
+        "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
+        "/ws/managementUnit/findByName"(controller:"managementUnit"){ action = [GET:"findByName"] }
+
+
         "/ws/report/runReport"(controller:"report", action:"runReport")
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
@@ -167,7 +181,7 @@ class UrlMappings {
 
         "/ws/$controller/list"() { action = [GET:'list'] }
 
-        "/ws/$controller/findByName"{ action = [GET:"findByName"] }
+
 
 
         "/"(redirect:[controller:"documentation"])

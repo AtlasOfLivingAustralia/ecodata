@@ -20,6 +20,7 @@ mongoexport --db $DB --collection document --query "{projectId:'$PROJECT_ID'}" >
 mongoexport --db $DB --collection userPermission --query "{entityId:'$PROJECT_ID'}" > userPermission.json
 mongoexport --db $DB --collection projectActivity --query "{projectId:'$PROJECT_ID'}" > projectActivity.json
 mongoexport --db $DB --collection record --query "{projectId:'$PROJECT_ID'}" > record.json
+mongoexport --db $DB --collection report --query "{projectId:'$PROJECT_ID'}" > report.json
 
 
 if [ -f output.json ];
@@ -60,7 +61,7 @@ while read document; do
 done <document.json
 
 
-tar -cvzf ${PROJECT_ID}.tar.gz project.json site.json activity.json document.json userPermission.json projectActivity.json output.json record.json documents
+tar -cvzf ${PROJECT_ID}.tar.gz project.json site.json activity.json document.json userPermission.json projectActivity.json output.json record.json report.json documents
 rm project.json
 rm site.json
 rm activity.json
@@ -69,6 +70,7 @@ rm userPermission.json
 rm output.json
 rm projectActivity.json
 rm record.json
+rm report.json
 
 rm -r ./documents
 

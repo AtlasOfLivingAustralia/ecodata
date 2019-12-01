@@ -3,8 +3,11 @@ package au.org.ala.ecodata
 import com.vividsolutions.jts.geom.*
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import com.vividsolutions.jts.util.GeometricShapeFactory
 import grails.converters.JSON
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.geotools.geojson.geom.GeometryJSON
 import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
@@ -19,6 +22,7 @@ import java.awt.geom.Point2D
  */
 class GeometryUtils {
 
+    static Log log = LogFactory.getLog(GeometryUtils.class)
     static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326", true)
     static GeometryFactory geometryFactory = new GeometryFactory()
 
@@ -223,5 +227,79 @@ class GeometryUtils {
         JSON.parse(byteOut.toString('UTF-8'))
     }
 
+    /**
+     * Simplifies the geometry in the supplied map according to the specified tolerance.
+     * @param geoJson
+     * @param tolerance
+     * @return
+     */
+    static Map simplify(Map geoJson, double tolerance) {
+
+        Geometry input = geoJsonMapToGeometry(geoJson)
+
+        Geometry result = TopologyPreservingSimplifier.simplify(input, tolerance)
+        geometryToGeoJsonMap(result)
+    }
+
+
+    /**
+     * Iterates through the supplied features and determines which features are neighbours using an
+     * intersection test.  The neighbours of each feature is stored as an array of feature ids in a
+     * "neighbours" property of the feature.
+     */
+    static void assignNeighboursToFeatures(List features, String property = "neighbours") {
+
+        Map featureMap = [:]
+        features.each { Map feature ->
+            Geometry geom = geoJsonMapToGeometry(feature.geometry)
+            // Buffer the polygon to force intersections where polygons are very close but aren't actually touching
+            // or intersecting.
+            if (geom && geom.area) {
+                geom = geom.buffer(Math.sqrt(geom.area)*0.02)
+            }
+
+            featureMap[feature] = geom
+        }
+
+        featureMap.each { Map feature, Geometry geom ->
+            feature.properties[(property)] = featureMap.findAll { Map f, Geometry otherGeom -> otherGeom != geom && otherGeom.intersects(geom) }.collect {
+                it.key.properties.id
+            }
+        }
+    }
+
+    /**
+     * Takes a list of features and assigns a numerical value to the supplied property that is not shared by
+     * any of the neighbouring features.  Used to provide a property that can be used to style a map such
+     * that neighbouring polygons use different colours.
+     */
+    static void assignDistinctValuesToNeighbouringFeatures(List features, String property) {
+
+        int maxDistinctValues = 5
+
+        String neighboursProperty = 'neighbours'
+        // Determine features that are adjacent to each other.
+        assignNeighboursToFeatures(features, neighboursProperty)
+
+        // for each feature,  assign it the first distinct value not used by any of it's neighbours.
+        features.each { Map feature ->
+            List neighbourIds = feature.properties.remove(neighboursProperty)
+
+            Set availableValues = 1..maxDistinctValues
+            neighbourIds.each {String id ->
+                Map neighbouringFeature = features.find{it.properties.id == id}
+                if (neighbouringFeature && neighbouringFeature.properties[(property)]) {
+                    availableValues.remove(neighbouringFeature.properties[(property)])
+                }
+            }
+
+            Integer value = availableValues.min()
+            if (!value) {
+                log.info("Unable to assign a distinct value <= ${maxDistinctValues}, increasing the maximum.")
+                value = ++maxDistinctValues
+            }
+            feature.properties[(property)] = value
+        }
+    }
 
 }
