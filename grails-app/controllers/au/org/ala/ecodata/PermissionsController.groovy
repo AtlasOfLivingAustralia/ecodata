@@ -225,6 +225,23 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
+    def removeUserWithRoleFromManagementUnit(String userId, String managementUnitId, String role) {
+        ManagementUnit mu = ManagementUnit.findByManagementUnitId(managementUnitId)
+        Closure removeFromManagementUnit = { String userId2, String role2, String managementUnitId2 ->
+            permissionService.removeUserAsRoleFromManagementUnit(userId2, AccessLevel.valueOf(role2), managementUnitId2)}
+        Map result = validateAndUpdatePermission(mu, managementUnitId, role, userId, removeFromManagementUnit)
+        render status:result.status, text:result.text
+    }
+
+    def addUserWithRoleToManagementUnit(String userId, String managementUnitId, String role) {
+        ManagementUnit mu = ManagementUnit.findByManagementUnitId(managementUnitId)
+        Closure addToManagementUnit = { String userId2, String role2, String managementUnitId2 ->
+            permissionService.addUserAsRoleToManagementUnit(userId2, AccessLevel.valueOf(role2), managementUnitId2)}
+        Map result = validateAndUpdatePermission(mu, managementUnitId, role, userId, addToManagementUnit)
+        render status:result.status, text:result.text
+    }
+
+
     def addUserWithRoleToHub(String userId, String hubId, String role) {
         Hub hub = Hub.findByHubId(hubId)
         Closure addToHub= { String userId2, String role2, String hubId2 ->
@@ -256,6 +273,24 @@ class PermissionsController {
         String order = params.order
         render permissionService.getMembersOfProgram(id, max, offset, order, sort) as JSON
     }
+
+    /**
+     * Returns the users and their roles for a hub.
+     * @param id the hubId of the hub.
+     * @return
+     */
+    def getMembersOfManagementUnit(String id) {
+        if (!id) {
+            render status:400, text:'The id parameter must be supplied'
+        }
+        Integer max = params.max as Integer
+        Integer offset = params.offset as Integer
+        String sort = params.sort
+        String order = params.order
+        render permissionService.getMembersOfManagementUnit(id, max, offset, order, sort) as JSON
+    }
+
+
 
     private Map validateAndUpdatePermission(entity, String entityId, String role, String userId, Closure serviceCall) {
         Map result = validate(entity, entityId, role, userId)

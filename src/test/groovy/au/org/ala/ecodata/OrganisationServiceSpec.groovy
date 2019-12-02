@@ -9,7 +9,7 @@ import spock.lang.Specification
 class OrganisationServiceSpec extends Specification implements ServiceUnitTest<OrganisationService>, DomainUnitTest<Organisation> {
 
     //OrganisationService service = new OrganisationService()
-    def stubbedCollectoryService = Stub(CollectoryService)
+    def collectoryService = Mock(CollectoryService)
     def stubbedUserService = Stub(UserService)
     def mockedPermissionService = Mock(PermissionService)
 
@@ -19,11 +19,12 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
 
         service.commonService = new CommonService()
         service.commonService.grailsApplication = grailsApplication
-        service.collectoryService = stubbedCollectoryService
+        service.collectoryService = collectoryService
         service.userService = stubbedUserService
         service.permissionService = mockedPermissionService
-        grailsApplication.config.collectory = [collectoryIntegrationEnabled:true]
-    //    service.grailsApplication = [config:[collectory:[collectoryIntegrationEnabled:true]]]
+        service.emailService = emailService
+        service.grailsApplication = [config: [collectory:[collectoryIntegrationEnabled:true],
+                                              ecodata:[support:[email:[address:'test@test.com']]]]]
     }
 
     def cleanup() {
@@ -35,7 +36,7 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
         def orgData = [name:'test org', description: 'test org description', dynamicProperty: 'dynamicProperty']
         def institutionId = 'dr1'
         def userId = '1234'
-        stubbedCollectoryService.createInstitution(_) >> institutionId
+        collectoryService.createInstitution(_) >> institutionId
         stubbedUserService.getCurrentUserDetails() >> [userId:userId]
 
 
@@ -58,14 +59,32 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
                 savedOrg.name == orgData.name
                 savedOrg.description == orgData.description
                 savedOrg.collectoryInstitutionId == institutionId
-                //savedOrg['dynamicProperty'] == orgData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
+    }
 
+    def "Organisations should still be created if collectory institution creation fails"() {
+        given:
+        Map orgData = [name:'another test org', description: 'another test org description']
+        String userId = '1234'
+        stubbedUserService.getCurrentUserDetails() >> [userId:userId]
+
+        when:
+        Map result
+        Organisation.withNewTransaction {
+            result = service.create(orgData)
+        }
+
+        then:
+        1 * collectoryService.createInstitution(orgData) >> { throw new RuntimeException("test message") }
+        and: "An email is sent to inform system administrators of the failure"
+        1 * emailService.sendEmail(_, "Error: test message", ['test@test.com'])
+        and: "The organisation is created successfully"
+        result.status == 'ok'
     }
 
     def "test organisation validation"() {
         given:
         def orgData = [description: 'test org description', dynamicProperty: 'dynamicProperty']
-        stubbedCollectoryService.createInstitution(_) >> ""
+        collectoryService.createInstitution(_) >> ""
 
         when:
         def result = service.create(orgData)

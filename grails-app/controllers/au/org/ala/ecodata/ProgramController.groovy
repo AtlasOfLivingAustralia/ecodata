@@ -4,13 +4,27 @@ package au.org.ala.ecodata
 class ProgramController {
 
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE']
+    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE', getPrograms: ['POST']]
 
     ProgramService programService
     ElasticSearchService elasticSearchService
 
     def get(String id) {
         respond programService.get(id, false)
+    }
+
+    /**
+     * A list of programIds
+     * @return a list of programs
+     */
+    def getPrograms() {
+        String[] ids =  request.getJSON()?.programIds
+        if(ids){
+            Program[] programs =  programService.get(ids)
+            respond programs
+        }
+        else
+            respond []
     }
 
     def findByName(String name) {

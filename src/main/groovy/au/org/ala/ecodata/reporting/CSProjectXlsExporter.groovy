@@ -246,7 +246,7 @@ class CSProjectXlsExporter extends ProjectExporter {
                         }
                     }
 
-                    if (!rows[0].isEmpty()) {
+                    if (rows && !rows[0].isEmpty()) {
                         if (!sheet) {
                             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
                         }

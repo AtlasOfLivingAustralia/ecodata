@@ -1,0 +1,291 @@
+{
+  "key" : "BRBBrigalowBelt",
+  "category" : "modelLookupTable",
+  "name" : "BRB - Brigalow Belt",
+  "value" : [
+    {
+      "key" : "11.4.12",
+      "value": [
+        {
+          "name": "Recruitment of dominant canopy species (%)",
+          "description": "",
+          "value": "100"
+        },
+        {
+          "name" : "Native plant species richness - Tree",
+          "description": "",
+          "value" : "2"
+        },
+        {
+          "name" : "Native plant species richness - Shrub",
+          "description": "",
+          "value" : "9"
+        },
+        {
+          "name" : "Native plant species richness - Grass",
+          "description": "",
+          "value" : "15"
+        },
+        {
+          "name" : "Native plant species richness - Forbes and Other",
+          "description": "",
+          "value" : "10"
+        },
+        {
+          "name" : "Trees - Emergent canopy - Tree emergent canopy median height (m)",
+          "description": "",
+          "value" : "na"
+        },
+        {
+          "name" : "Trees - Emergent canopy - Tree emergent canopy cover (%)",
+          "description": "",
+          "value" : "na"
+        },
+        {
+          "name" : "Trees - Tree canopy - Tree canopy median height (m)",
+          "description": "",
+          "value" : "16"
+        },
+        {
+          "name" : "Trees - Tree canopy - Tree canopy cover (%)",
+          "description": "",
+          "value" : "27"
+        },
+        {
+          "name" : "Trees - Tree sub-canopy - Tree sub-canopy median height (m)",
+          "description": "",
+          "value" : "7"
+        },
+        {
+          "name" : "Trees - Tree sub-canopy - Tree sub-canopy cover (%)",
+          "description": "",
+          "value" : "5"
+        },
+        {
+          "name" : "Trees - Large trees - Large eucalypt tree dbh threshold (cm)",
+          "description": "",
+          "value" : "58"
+        },
+        {
+          "name" : "Trees - Large trees - Number of large eucalypt trees per hectare",
+          "description": "",
+          "value" : "11"
+        },
+        {
+          "name" : "Trees - Large trees - Large non-eucalypt tree dbh threshold (cm)",
+          "description": "",
+          "value" : "26"
+        },
+        {
+          "name" : "Trees - Large trees - Number of large non-eucalypt trees per hectare",
+          "description": "",
+          "value" : "15"
+        },
+        {
+          "name" : "Trees - Typical tree species",
+          "description": "Eucalyptus populnea (poplar box), Casuarina cristata (belah), Callitris glaucophylla (white cypress pine), Alectryon oleifolius (boonaree)",
+          "value" : ""
+        },
+        {
+          "name" : "Shrubs - Native shrub cover (%)",
+          "description": "",
+          "value" : "8"
+        },
+        {
+          "name" : "Shrubs - Typical shrub species",
+          "description": "Geijera parviflora (wilga), Eremophila mitchellii (false sandalwood), Santalum lanceolatum (sandalwood)",
+          "value" : ""
+        },
+        {
+          "name" : "Ground cover (%) - Native perennial grass cover (%)",
+          "description": "",
+          "value" : "18"
+        },
+        {
+          "name" : "Ground cover (%) - Organic litter cover (%)",
+          "description": "",
+          "value" : "40"
+        },
+
+        {
+          "name" : "Ground cover (%) - Typical ground cover species",
+          "description": "Cymbopogon refractus (barbed-wire grass), Aristida calycina (dark wiregrass)",
+          "value" : ""
+        },
+
+        {
+          "name" : "Coarse woody debris - Total length (m) of debris ≥ 10cm diameter and ≥0.5m in length per hectare",
+          "description": "",
+          "value" : "307"
+        },
+
+        {
+          "name" : "Non-native plant cover",
+          "description": "",
+          "value" : "0"
+        },
+        {
+          "name" : "Non-native plant cover - Typical non-native species",
+          "description": "Eragrostis curvula^ (weeping lovegrass), Opuntia tomentosa^ (velvety tree pear), Malvastrum americanum (spiked malvastrum), Bryophyllum delagoense (chandelier plant)",
+          "value" : "0"
+        },
+
+        {
+          "name" : "Non-native plant cover - Typical non-native species",
+          "description": "Eragrostis curvula^ (weeping lovegrass), Opuntia tomentosa^ (velvety tree pear), Malvastrum americanum (spiked malvastrum), Bryophyllum delagoense (chandelier plant)",
+          "value" : "0"
+        },
+        {
+          "name": "Benchmark based on",
+          "description" : "2 reference sites, 4 Corveg sites and expert opinion",
+          "value": ""
+        },
+        {
+          "name":"Benchmark reliability ranking",
+          "description": "",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "key" : "11.5.1",
+      "value": [
+        {
+          "name": "Recruitment of dominant canopy species (%)",
+          "description": "",
+          "value": "100"
+        },
+        {
+          "name" : "Native plant species richness - Tree",
+          "description": "",
+          "value" : "5"
+        },
+        {
+          "name" : "Native plant species richness - Shrub",
+          "description": "",
+          "value" : "5"
+        },
+        {
+          "name" : "Native plant species richness - Grass",
+          "description": "",
+          "value" : "8"
+        },
+        {
+          "name" : "Native plant species richness - Forbes and Other",
+          "description": "",
+          "value" : "10"
+        },
+        {
+          "name" : "Trees - Emergent canopy - Tree emergent canopy median height (m)",
+          "description": "",
+          "value" : "na"
+        },
+        {
+          "name" : "Trees - Emergent canopy - Tree emergent canopy cover (%)",
+          "description": "",
+          "value" : "na"
+        },
+        {
+          "name" : "Trees - Tree canopy - Tree canopy median height (m)",
+          "description": "",
+          "value" : "20"
+        },
+        {
+          "name" : "Trees - Tree canopy - Tree canopy cover (%)",
+          "description": "",
+          "value" : "25"
+        },
+        {
+          "name" : "Trees - Tree sub-canopy - Tree sub-canopy median height (m)",
+          "description": "",
+          "value" : "9"
+        },
+        {
+          "name" : "Trees - Tree sub-canopy - Tree sub-canopy cover (%)",
+          "description": "",
+          "value" : "20"
+        },
+        {
+          "name" : "Trees - Large trees - Large eucalypt tree dbh threshold (cm)",
+          "description": "",
+          "value" : "44"
+        },
+        {
+          "name" : "Trees - Large trees - Number of large eucalypt trees per hectare",
+          "description": "",
+          "value" : "7"
+        },
+        {
+          "name" : "Trees - Large trees - Large non-eucalypt tree dbh threshold (cm)",
+          "description": "",
+          "value" : "24"
+        },
+        {
+          "name" : "Trees - Large trees - Number of large non-eucalypt trees per hectare",
+          "description": "",
+          "value" : "10"
+        },
+        {
+          "name" : "Trees - Typical tree species",
+          "description": "Eucalyptus crebra (narrow-leaved red ironbark), Eucalyptus populnea (poplar box), Angophora leiocarpa (rusty gum), Eucalyptus woollsiana (in south of bioregion), Allocasuarina luehmannii (bull oak)",
+          "value" : ""
+        },
+        {
+          "name" : "Shrubs - Native shrub cover (%)",
+          "description": "",
+          "value" : "6"
+        },
+        {
+          "name" : "Shrubs - Typical shrub species",
+          "description": "Allocasuarina luehmannii (bull oak), Callitris glaucophylla (white cypress pine), Acacia leiocalyx, Acacia conferta",
+          "value" : ""
+        },
+        {
+          "name" : "Ground cover (%) - Native perennial grass cover (%)",
+          "description": "",
+          "value" : "23"
+        },
+        {
+          "name" : "Ground cover (%) - Organic litter cover (%)",
+          "description": "",
+          "value" : "45"
+        },
+
+        {
+          "name" : "Ground cover (%) - Typical ground cover species",
+          "description": "Typical ground cover species: Aristida caput-medusae, Eremochloa bimaculata (poverty grass), Eragrostis sororia, Cymbopogon refractus (barbed-wire grass), Fimbristylis dichotoma (common fringe-rush)",
+          "value" : ""
+        },
+
+        {
+          "name" : "Coarse woody debris - Total length (m) of debris ≥ 10cm diameter and ≥0.5m in length per hectare",
+          "description": "",
+          "value" : "135"
+        },
+
+        {
+          "name" : "Non-native plant cover",
+          "description": "",
+          "value" : "0"
+        },
+        {
+          "name" : "Non-native plant cover - Typical non-native species",
+          "description": "",
+          "value" : ""
+        },
+        {
+          "name": "Benchmark based on",
+          "description" : "1 reference site, 23 Corveg sites and expert opinion",
+          "value": ""
+        },
+        {
+          "name":"Benchmark reliability ranking",
+          "description": "",
+          "value": "Moderate"
+        }
+      ]
+    }
+  ]
+}
+
+

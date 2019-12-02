@@ -44,12 +44,11 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import static au.org.ala.ecodata.Status.ACTIVE
-import static au.org.ala.ecodata.Status.DELETED
-import static au.org.ala.ecodata.Status.COMPLETED
+import static au.org.ala.ecodata.Status.*
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
+
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -82,6 +81,7 @@ class ElasticSearchService {
     HubService hubService
     CacheService cacheService
     ProgramService programService
+    ManagementUnitService managementUnitService
 
 
     Node node;
@@ -798,6 +798,15 @@ class ElasticSearchService {
                 projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
             }
 
+            // If we don't flatten these values into the root of the project, they are not currently usable by
+            // the colour points by type function on the map.
+            if (projectMap.custom?.details?.outcomes?.primaryOutcome?.description) {
+                projectMap.primaryOutcome = projectMap.custom.details.outcomes.primaryOutcome.description
+            }
+            if (projectMap.custom?.details?.outcomes?.secondaryOutcomes?.size()) {
+                projectMap.secondaryOutcomes = projectMap.custom.details.outcomes.secondaryOutcomes.collect({it.description})
+            }
+
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
@@ -825,6 +834,9 @@ class ElasticSearchService {
         }?.unique(false)
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
+
+        if(projectMap.managementUnitId)
+            projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
 
         // Populate program facets from the project program, if available
         if (project.programId) {
@@ -1297,6 +1309,18 @@ class ElasticSearchService {
 
         if (params.omitSource) {
             source.noFields()
+        }
+        else if (params.include || params.exclude) {
+            // We support include/exclude as either a List or a String, the elasticsearch API accepts both.
+            def include = params.include
+            if (include instanceof List) {
+                include = include as String[]
+            }
+            def exclude = params.exclude
+            if (exclude instanceof List) {
+                exclude = exclude as String[]
+            }
+            source.fetchSource(include, exclude)
         }
 
         request.source(source)

@@ -57,6 +57,7 @@ class ProjectController {
             def p = params?.version ?
                     AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(params.version as Long), [sort:'date', order:'desc', max: 1])[0].entity :
                     Project.findByProjectId(id)
+
             if (p) {
 
                 withFormat {

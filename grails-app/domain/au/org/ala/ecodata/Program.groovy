@@ -10,6 +10,7 @@ class Program {
     ObjectId id
     String programId
     String name
+    String acronym
     String description
     String status = Status.ACTIVE
     String url
@@ -65,6 +66,7 @@ class Program {
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
         program.blog = blog
+        program.acronym = acronym
 
         program.associatedOrganisations = associatedOrganisations
 
@@ -133,6 +135,7 @@ class Program {
         parent nullable: true
         associatedOrganisations nullable:true
         programSiteId nullable: true
+        acronym nullable: true
     }
 
     public String toString() {
