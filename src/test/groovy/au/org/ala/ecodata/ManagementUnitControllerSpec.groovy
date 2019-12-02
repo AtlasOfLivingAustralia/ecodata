@@ -1,16 +1,17 @@
 package au.org.ala.ecodata
 
-import grails.test.mixin.TestFor
+import grails.testing.gorm.DataTest
+import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 
 import spock.lang.Specification
 
-@TestFor(ManagementUnitController)
-class ManagementUnitControllerSpec extends Specification {
+class ManagementUnitControllerSpec extends Specification implements ControllerUnitTest<ManagementUnitController>, DataTest {
     ManagementUnitService managementUnitService = Mock(ManagementUnitService)
 
     def setup() {
         controller.managementUnitService = managementUnitService
+        mockDomain ManagementUnit
     }
 
     def "find a management unit"() {
@@ -50,11 +51,9 @@ class ManagementUnitControllerSpec extends Specification {
         responseData[0].managementUnitId == 'p1'
     }
 
-    def "The management unit controller can request a geojson FeatureCollection containing the management unit sites"() {
-
+    def "The management unit controller can request a geojson FeatureCollection containing all of the management unit sites"() {
         setup:
-        Map geojson = [type:"FeatureCollection", features:[]]
-        List muIds = ['mu1', 'mu2']
+        Map geojson = [type: "FeatureCollection", features: []]
 
         when:
         request.method = 'POST'
@@ -66,10 +65,16 @@ class ManagementUnitControllerSpec extends Specification {
         and:
         response.status == HttpStatus.SC_OK
         response.json == geojson
+    }
+    def "The management unit controller can request a geojson FeatureCollection containing sites for specific management units"() {
 
+        setup:
+        Map geojson = [type: "FeatureCollection", features: []]
+        List muIds = ['mu1', 'mu2']
 
         when:
-        request.JSON = [managementUnitIds:muIds]
+        request.method = 'POST'
+        request.setJson([managementUnitIds:muIds])
         controller.managementUnitSiteMap()
 
         then:

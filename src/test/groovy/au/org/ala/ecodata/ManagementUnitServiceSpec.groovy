@@ -1,19 +1,14 @@
 package au.org.ala.ecodata
 
-import grails.converters.JSON
-import grails.test.mixin.TestFor
-import grails.test.mixin.TestMixin
-import grails.test.mixin.gorm.Domain
-import grails.test.mixin.mongodb.MongoDbTestMixin
-import org.codehaus.groovy.grails.web.converters.marshaller.json.CollectionMarshaller
-import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
-import org.springframework.context.MessageSource
-import spock.lang.Specification
 
-@TestMixin(MongoDbTestMixin)
-@Domain(ManagementUnit)
-@TestFor(ManagementUnitService)
-class ManagementUnitServiceSpec extends Specification {
+import grails.test.mongodb.MongoSpec
+import grails.testing.services.ServiceUnitTest
+import org.springframework.context.MessageSource
+import grails.converters.JSON
+import org.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.grails.web.converters.marshaller.json.MapMarshaller
+
+class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<ManagementUnitService> {
 
     CommonService commonService = new CommonService()
     SiteService siteService = Mock(SiteService)

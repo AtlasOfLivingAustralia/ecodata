@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.converters.marshaller.json.CollectionMarshaller
-import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
+import org.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
 
 class GeometryUtilsSpec extends Specification {

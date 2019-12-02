@@ -8,10 +8,10 @@ import spock.lang.Specification
 
 class OrganisationServiceSpec extends Specification implements ServiceUnitTest<OrganisationService>, DomainUnitTest<Organisation> {
 
-    //OrganisationService service = new OrganisationService()
     def collectoryService = Mock(CollectoryService)
     def stubbedUserService = Stub(UserService)
     def mockedPermissionService = Mock(PermissionService)
+    def emailService = Mock(EmailService)
 
     def setup() {
        // Fongo fongo = new Fongo("ecodata-test")

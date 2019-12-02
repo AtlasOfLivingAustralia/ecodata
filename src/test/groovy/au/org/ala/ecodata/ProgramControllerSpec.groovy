@@ -1,18 +1,17 @@
 package au.org.ala.ecodata
 
-import grails.test.mixin.TestFor
+import grails.testing.gorm.DataTest
+import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
-import org.springframework.http.HttpMethod
-
 import spock.lang.Specification
 
-
-class ProgramControllerSpec extends Specification {
+class ProgramControllerSpec extends Specification implements ControllerUnitTest<ProgramController>, DataTest {
 
     ProgramService programService = Mock(ProgramService)
 
     def setup() {
         controller.programService = programService
+        mockDomain Program
     }
 
 
