@@ -61,6 +61,15 @@ environments {
             }
         }
     }
+    meritfunctionaltest {
+        grails {
+            mongodb {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata-functional-test"
+            }
+        }
+    }
     production {
         grails {
             mongodb {
@@ -645,8 +654,6 @@ environments {
         app.file.upload.path = "./target/uploads"
         app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://locahost:8018"
-        userDetailsSingleUrl = "${casBaseUrl}/userdetails/userDetails/getUserDetails"
-        userDetailsUrl = "${casBaseUrl}/userdetails/userDetails/getUserListFull"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
@@ -675,10 +682,8 @@ environments {
         app.file.upload.path = "./target/archive"
         String casBaseUrl = "http://localhost:8018"
         userDetails {
-            url = "${casBaseUrl}/userdetails/userDetails/"
+            url = "${casBaseUrl}/userdetails/"
         }
-        userDetailsSingleUrl = "${userDetailsUrl}/getUserDetails"
-        userDetailsUrl = "${userDetails.url}/getUserListFull"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
