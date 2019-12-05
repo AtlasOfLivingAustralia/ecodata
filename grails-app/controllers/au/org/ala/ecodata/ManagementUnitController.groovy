@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import groovy.json.JsonSlurper
+
 @RequireApiKey
 class ManagementUnitController {
 
@@ -11,7 +13,7 @@ class ManagementUnitController {
 
     def get(String id) {
         ManagementUnit mu = managementUnitService.get(id, false)
-        respond mu
+        respond mu.toMap()
     }
 
     /**
@@ -22,7 +24,7 @@ class ManagementUnitController {
         String[] ids =  request.getJSON()?.managementUnitIds
         if(ids){
             List mues =  managementUnitService.get(ids)
-            respond mues
+            respond mue
         }
         else{
             respond []
@@ -39,7 +41,9 @@ class ManagementUnitController {
             respond managementUnitService.create(request.JSON)
         }
         else {
-            respond managementUnitService.update(id, request.JSON)
+            ManagementUnit mu = managementUnitService.get(id)
+            bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
+            respond managementUnitService.save(mu)
         }
     }
 

@@ -7,6 +7,9 @@ import org.bson.types.ObjectId
  */
 class ManagementUnit {
 
+    static bindingProperties = ['managementUnitId', 'managementUnitSiteId', 'name', 'description', 'status', 'url', 'dateCreated', 'lastUpdated', 'projects', 'risks','themes','assets','outcomes',
+                                'priorities','startDate','endDate','associatedOrganisations']
+
     ObjectId id
     String managementUnitId
     String name
@@ -32,8 +35,9 @@ class ManagementUnit {
 
     Date startDate
     Date endDate
-
     List<AssociatedOrg> associatedOrganisations
+    //Management units which have the same service provider
+    List relevantManagementUnits = []
 
     /** (optional) The siteId of a Site that defines the geographic area targeted by this mu */
     String managementUnitSiteId
@@ -62,6 +66,7 @@ class ManagementUnit {
         mu.status = status
 
         mu.associatedOrganisations = associatedOrganisations
+        mu.relevantManagementUnits = relevantManagementUnits
         mu.blog = blog
 
         mu
@@ -74,6 +79,8 @@ class ManagementUnit {
 
     static embedded = ['associatedOrganisations']
 
+    static transients = ['relevantManagementUnits']
+
     static constraints = {
         name unique: true
         description nullable: true
@@ -84,6 +91,12 @@ class ManagementUnit {
         config nullable: true
         associatedOrganisations nullable:true
         managementUnitSiteId nullable: true
+        projects nullable: true
+        themes nullable: true
+        assets nullable: true
+        blog nullable: true
+        priorities nullable: true
+        outcomes nullable:true
     }
 
     public String toString() {

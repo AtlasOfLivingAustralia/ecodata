@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.json.simple.JSONArray
 import org.springframework.context.MessageSourceResolvable
 
 import java.text.SimpleDateFormat
@@ -53,6 +54,7 @@ class CommonService {
             if (v == "null" || v == JSONObject.NULL) {
                 v = null
             }
+
             o[k] = v
         }
         // always flush the update so that that any exceptions are caught before the service returns

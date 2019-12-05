@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.validation.ValidationException
+import javassist.NotFoundException
 
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -13,7 +14,24 @@ class ManagementUnitService {
         if (includeDeleted) {
             return ManagementUnit.findByManagementUnitId(muId)
         }
-        return ManagementUnit.findByManagementUnitIdAndStatusNotEqual(muId, DELETED)
+        ManagementUnit managementUnit = ManagementUnit.findByManagementUnitIdAndStatusNotEqual(muId, DELETED)
+
+        if(managementUnit ){
+            if (managementUnit?.associatedOrganisations?.size()>0
+                    && managementUnit?.associatedOrganisations[0]?.description.compareToIgnoreCase('Service Provider')==0) {
+                String serviceProviderId = managementUnit.associatedOrganisations[0].organisationId
+
+                ManagementUnit[] relevantManagementUnits = ManagementUnit.withCriteria{
+                    sizeGt('associatedOrganisations',0)
+                }.findAll{
+                    it.associatedOrganisations[0].organisationId == serviceProviderId &&
+                    it.managementUnitId != managementUnit.managementUnitId
+                }
+                managementUnit['relevantManagementUnits'] = relevantManagementUnits.collect{return ["name":it.name, "managementUnitId": it.managementUnitId]}
+            }
+            return managementUnit
+        }else
+            throw new NotFoundException('Management Unit: ' + muId + "is not found")
     }
 
     /**
@@ -49,15 +67,20 @@ class ManagementUnitService {
 
     ManagementUnit create(Map properties) {
 
-        properties.programId = Identifiers.getNew(true, '')
-        ManagementUnit mu = new ManagementUnit(MUId:properties.MUId)
+        properties.managementUnitId = Identifiers.getNew(true, '')
+        ManagementUnit mu = new ManagementUnit(managementUnitId: properties.managementUnitId)
         commonService.updateProperties(mu, properties)
         return mu
     }
 
     ManagementUnit update(String id, Map properties) {
         ManagementUnit mu = get(id)
-        commonService.updateProperties(mu, properties)
+        //commonService.updateProperties(mu, properties)
+        mu.save(flush:true)
+        return mu
+    }
+
+    ManagementUnit save(ManagementUnit mu) {
         mu.save(flush:true)
         return mu
     }
