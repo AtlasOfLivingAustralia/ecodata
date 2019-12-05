@@ -141,7 +141,7 @@ class ReportingService {
      */
     private void syncReportActivity(Report report) {
 
-        Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, programId:report.programId]
+        Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, managementUnitId:report.managementUnitId]
         Map syncResult
         if (report.activityId) {
             activity.activityId = report.activityId

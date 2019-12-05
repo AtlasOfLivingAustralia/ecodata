@@ -53,10 +53,13 @@ class Document {
     String outputId
     String organisationId
     String programId
+    String reportId
     String externalUrl
     Boolean isSciStarter = false
     String hosted
     String identifier
+    /* To be replaced by reportId */
+    String stage
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText
@@ -139,6 +142,8 @@ class Document {
         activityId nullable: true
         outputId nullable: true
         programId nullable: true
+        reportId nullable: true
+        stage nullable: true
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
