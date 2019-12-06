@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import groovy.json.JsonSlurper
+import grails.converters.JSON
 
 @RequireApiKey
 class ManagementUnitController {
@@ -13,11 +13,10 @@ class ManagementUnitController {
 
     def get(String id) {
         ManagementUnit mu = managementUnitService.get(id, false)
-        respond mu.toMap()
+        respond  mu
     }
 
     /**
-     * A list of programIds
      * @return a list of programs
      */
     def getManagementUnits() {
@@ -74,4 +73,12 @@ class ManagementUnitController {
 
         respond managementUnitService.managementUnitSiteMap(ids)
     }
+
+
+//    def generalException(final Exception exception) {
+//        def e = exception.undeclaredThrowable
+//        if (e instanceof NotFoundException)
+//            render(status: 404, error: e.message)
+//    }
+
 }

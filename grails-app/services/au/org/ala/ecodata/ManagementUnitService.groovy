@@ -29,9 +29,9 @@ class ManagementUnitService {
                 }
                 managementUnit['relevantManagementUnits'] = relevantManagementUnits.collect{return ["name":it.name, "managementUnitId": it.managementUnitId]}
             }
-            return managementUnit
-        }else
-            throw new NotFoundException('Management Unit: ' + muId + "is not found")
+
+        }
+        return managementUnit
     }
 
     /**
