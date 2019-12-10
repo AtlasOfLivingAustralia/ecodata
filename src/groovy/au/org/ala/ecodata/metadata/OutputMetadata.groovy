@@ -201,10 +201,14 @@ class OutputMetadata {
             def props = [:]
             validationRules.each {
                 if (it.startsWith('min')) {
-                    props << minProperty(it)
+                    def mp = minProperty(it)
+                    if(mp)
+                        props << minProperty(it)
                 }
                 else if (it.startsWith('max')) {
-                    props << maxProperty(it)
+                    def mp = maxProperty(it)
+                    if(mp)
+                        props << maxProperty(it)
                 }
             }
             return props
@@ -220,18 +224,20 @@ class OutputMetadata {
 
         def minProperty(rule) {
             def min = valueInBrackets(rule)
-            if (min) {
+            //ignore equation, for example: $geom.areaHa(sitesBenefittedByHabitatAugmentation)
+            if (min && (min instanceof  BigDecimal || min instanceof BigInteger)) {
                 return [minimum: min]
             }
-            throw new IllegalArgumentException("Invalid validation rule: "+rule)
+            //throw new IllegalArgumentException("Invalid validation rule: "+rule)
         }
 
         def maxProperty(rule) {
             def max = valueInBrackets(rule)
-            if (max) {
+            //ignore equation, for example: $geom.areaHa(sitesBenefittedByHabitatAugmentation)
+            if (max && (max instanceof  BigDecimal || max instanceof BigInteger)) {
                 return [maximum: max]
             }
-            throw new IllegalArgumentException("Invalid validation rule: "+rule)
+            //throw new IllegalArgumentException("Invalid validation rule: "+rule)
         }
 
     }

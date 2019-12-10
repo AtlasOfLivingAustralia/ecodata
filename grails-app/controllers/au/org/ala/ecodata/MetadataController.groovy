@@ -288,4 +288,11 @@ class MetadataController {
         Map indices = metadataService.getIndicesForDataModels()
         render( text: indices as JSON, contentType: 'application/json')
     }
+
+    def handleException(Exception e){
+        log.error(e.printStackTrace())
+        render(text: e.message, contentType: 'application/json', status: 420)
+    }
+
+
 }
