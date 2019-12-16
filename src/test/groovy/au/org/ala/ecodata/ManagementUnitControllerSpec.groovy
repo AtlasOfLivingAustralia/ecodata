@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
+import org.apache.commons.lang.time.FastDateFormat
 import org.apache.http.HttpStatus
 
 import spock.lang.Specification
@@ -157,10 +158,10 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
         props.each {
             println "${it.key}, ${it.value}"
             if (mu[it.key] instanceof Date) {
-                assertEquals(it.value, FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'").format(mu[it.key]))
+                assert it.value == FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'").format(mu[it.key])
             }
             else {
-                assertEquals(it.value, mu[it.key])
+                assert it.value == mu[it.key]
             }
         }
     }
