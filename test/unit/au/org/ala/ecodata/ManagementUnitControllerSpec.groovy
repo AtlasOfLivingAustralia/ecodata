@@ -1,12 +1,16 @@
 package au.org.ala.ecodata
 
 import grails.test.mixin.TestFor
-import org.apache.commons.httpclient.HttpState
+import grails.test.mixin.TestMixin
+import grails.test.mixin.gorm.Domain
+import grails.test.mixin.mongodb.MongoDbTestMixin
+import org.apache.commons.lang.time.FastDateFormat
 import org.apache.http.HttpStatus
-
 import spock.lang.Specification
 
 @TestFor(ManagementUnitController)
+@TestMixin(MongoDbTestMixin)
+@Domain(ManagementUnit)
 class ManagementUnitControllerSpec extends Specification {
     ManagementUnitService managementUnitService = Mock(ManagementUnitService)
 
@@ -82,19 +86,85 @@ class ManagementUnitControllerSpec extends Specification {
 
     }
 
-    def "Should return upsupported date format error"(){
+    def "Not supplying an id to the update method will create a management unit"() {
+
         setup:
-        String startDate = "30/06/1990"
-        String endDate = "01/07/1991"
+        Map props = [
+                name:'Test',
+                description:'Test description',
+                url:'https://www.mu.org',
+                startDate:'2019-01-01T00:00:00Z',
+                endDate:'2023-06-30T14:00:00Z',
+                priorities:[[category:"Threatened species", priority:"Hibiscus brennanii"]],
+                outcomes:[[outcome:"outcome 1", priorities: [category:"Threatened species"]]],
+                managementUnitSiteId:'site1',
+                config:[config1:'1', config2:'2']
+
+        ]
+        ManagementUnit capturedMu = null
 
         when:
-        params.startDate = startDate
-        params.endDate = endDate
-        controller.generateReportsInPeriod()
+        request.method = 'POST'
+        request.json = props
+        controller.update('')
 
         then:
-        response.status == HttpStatus.SC_NOT_ACCEPTABLE
+        1 * managementUnitService.create({capturedMu = it})
+        compareMu(props, capturedMu)
     }
+
+    def "Extra properties supplied to the controller should not bound to the domain object"() {
+
+        setup:
+        Map props = [
+                name:'Test',
+                description:'Test description',
+                url:'https://www.mu.org',
+                startDate:'2019-01-01T00:00:00Z',
+                endDate:'2023-06-30T14:00:00Z',
+                priorities:[[category:"Threatened species", priority:"Hibiscus brennanii"]],
+                outcomes:[[outcome:"outcome 1", priorities: [category:"Threatened species"]]],
+                managementUnitSiteId:'site1',
+                config:[config1:'1', config2:'2']
+                ]
+
+        Map unboundProps = [
+                dateCreated:'2019-01-01T00:00:00Z',
+                lastUpdated:'2019-01-01T00:00:00Z',
+                status:'deleted',
+                managementUnitId:'mu1',
+                id:'test'
+            ]
+        ManagementUnit capturedMu = null
+
+        when:
+        request.method = 'POST'
+        request.json = props + unboundProps
+        controller.update('')
+
+        then:
+        1 * managementUnitService.create({capturedMu = it})
+        compareMu(props, capturedMu)
+        capturedMu.id == null
+        capturedMu.managementUnitId == null
+        capturedMu.dateCreated == null
+        capturedMu.lastUpdated == null
+        capturedMu.status == Status.ACTIVE
+
+    }
+
+    private void compareMu(Map props, ManagementUnit mu) {
+        props.each {
+            println "${it.key}, ${it.value}"
+            if (mu[it.key] instanceof Date) {
+                assertEquals(it.value, FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'").format(mu[it.key]))
+            }
+            else {
+                assertEquals(it.value, mu[it.key])
+            }
+        }
+    }
+
 
 }
 
