@@ -188,12 +188,12 @@ class OutputMetadata {
             return validationRules.contains('required')
         }
 
-        public BigDecimal min() {
+        def min() {
             def min = validationProperties().minimum?:new BigDecimal(0)
             return min
         }
 
-        public BigDecimal max() {
+        def max() {
             return validationProperties().maximum
         }
 
@@ -201,14 +201,10 @@ class OutputMetadata {
             def props = [:]
             validationRules.each {
                 if (it.startsWith('min')) {
-                    def mp = minProperty(it)
-                    if(mp)
-                        props << minProperty(it)
+                    props << minProperty(it)
                 }
                 else if (it.startsWith('max')) {
-                    def mp = maxProperty(it)
-                    if(mp)
-                        props << maxProperty(it)
+                    props << maxProperty(it)
                 }
             }
             return props
@@ -224,20 +220,18 @@ class OutputMetadata {
 
         def minProperty(rule) {
             def min = valueInBrackets(rule)
-            //ignore equation, for example: $geom.areaHa(sitesBenefittedByHabitatAugmentation)
-            if (min && (min instanceof  BigDecimal || min instanceof BigInteger)) {
+            if (min) {
                 return [minimum: min]
             }
-            //throw new IllegalArgumentException("Invalid validation rule: "+rule)
+            throw new IllegalArgumentException("Invalid validation rule: "+rule)
         }
 
         def maxProperty(rule) {
             def max = valueInBrackets(rule)
-            //ignore equation, for example: $geom.areaHa(sitesBenefittedByHabitatAugmentation)
-            if (max && (max instanceof  BigDecimal || max instanceof BigInteger)) {
+            if (max) {
                 return [maximum: max]
             }
-            //throw new IllegalArgumentException("Invalid validation rule: "+rule)
+            throw new IllegalArgumentException("Invalid validation rule: "+rule)
         }
 
     }
