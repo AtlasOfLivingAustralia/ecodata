@@ -15,8 +15,9 @@ class ManagementUnitController {
     }
 
     /**
-     * A list of programIds
-     * @return a list of programs
+     * @param The request body should contain a JSON object with a single attribute: ids which is an array
+     * of managementUnitIds to retrieve.
+     * @return a list of management units with the ids matching the request.
      */
     def getManagementUnits() {
         String[] ids =  request.getJSON()?.managementUnitIds
@@ -36,10 +37,19 @@ class ManagementUnitController {
 
     def update(String id) {
         if (!id) {
-            respond managementUnitService.create(request.JSON)
+            ManagementUnit mu = new ManagementUnit()
+            bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
+            respond managementUnitService.create(mu)
         }
         else {
-            respond managementUnitService.update(id, request.JSON)
+            ManagementUnit mu = managementUnitService.get(id)
+            if (!mu) {
+                respond null
+            }
+            else {
+                bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
+                respond managementUnitService.save(mu)
+            }
         }
     }
 
