@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.validation.ValidationException
+import javassist.NotFoundException
 
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -13,7 +14,24 @@ class ManagementUnitService {
         if (includeDeleted) {
             return ManagementUnit.findByManagementUnitId(muId)
         }
-        return ManagementUnit.findByManagementUnitIdAndStatusNotEqual(muId, DELETED)
+        ManagementUnit managementUnit = ManagementUnit.findByManagementUnitIdAndStatusNotEqual(muId, DELETED)
+
+        if(managementUnit ){
+            if (managementUnit?.associatedOrganisations?.size()>0
+                    && managementUnit?.associatedOrganisations[0]?.description.compareToIgnoreCase('Service Provider')==0) {
+                String serviceProviderId = managementUnit.associatedOrganisations[0].organisationId
+
+                ManagementUnit[] relevantManagementUnits = ManagementUnit.withCriteria{
+                    sizeGt('associatedOrganisations',0)
+                }.findAll{
+                    it.associatedOrganisations[0].organisationId == serviceProviderId &&
+                    it.managementUnitId != managementUnit.managementUnitId
+                }
+                managementUnit['relevantManagementUnits'] = relevantManagementUnits.collect{return ["name":it.name, "managementUnitId": it.managementUnitId]}
+            }
+
+        }
+        return managementUnit
     }
 
     /**
@@ -47,17 +65,12 @@ class ManagementUnitService {
         return ManagementUnit.findByNameAndStatusNotEqual(name, DELETED)
     }
 
-    ManagementUnit create(Map properties) {
-
-        properties.programId = Identifiers.getNew(true, '')
-        ManagementUnit mu = new ManagementUnit(MUId:properties.MUId)
-        commonService.updateProperties(mu, properties)
-        return mu
+    ManagementUnit create(ManagementUnit mu) {
+        mu.managementUnitId = Identifiers.getNew(true, '')
+        save(mu)
     }
 
-    ManagementUnit update(String id, Map properties) {
-        ManagementUnit mu = get(id)
-        commonService.updateProperties(mu, properties)
+    ManagementUnit save(ManagementUnit mu) {
         mu.save(flush:true)
         return mu
     }

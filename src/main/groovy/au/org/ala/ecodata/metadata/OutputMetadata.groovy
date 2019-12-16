@@ -188,12 +188,12 @@ class OutputMetadata {
             return validationRules.contains('required')
         }
 
-        public BigDecimal min() {
+        def min() {
             def min = validationProperties().minimum?:new BigDecimal(0)
             return min
         }
 
-        public BigDecimal max() {
+        def max() {
             return validationProperties().maximum
         }
 

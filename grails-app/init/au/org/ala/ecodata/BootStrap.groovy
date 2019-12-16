@@ -6,6 +6,7 @@ import au.org.ala.ecodata.AuditEventType
 import au.org.ala.ecodata.GormEventListener
 import au.org.ala.ecodata.Hub
 import au.org.ala.ecodata.Program
+import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -71,6 +72,10 @@ class BootStrap {
         }
 
         JSON.registerObjectMarshaller(Program) {
+            return it.toMap()
+        }
+
+        JSON.registerObjectMarshaller(ManagementUnit) {
             return it.toMap()
         }
 

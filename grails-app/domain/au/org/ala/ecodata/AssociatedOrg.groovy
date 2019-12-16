@@ -3,9 +3,11 @@ package au.org.ala.ecodata
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
+
 @EqualsAndHashCode
 @ToString
 class AssociatedOrg {
+
     String organisationId
     String name
     String logo
