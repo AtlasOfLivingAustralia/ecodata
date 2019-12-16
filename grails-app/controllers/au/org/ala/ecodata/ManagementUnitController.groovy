@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import grails.converters.JSON
-
 @RequireApiKey
 class ManagementUnitController {
 
@@ -13,17 +11,19 @@ class ManagementUnitController {
 
     def get(String id) {
         ManagementUnit mu = managementUnitService.get(id, false)
-        respond  mu
+        respond mu
     }
 
     /**
-     * @return a list of programs
+     * @param The request body should contain a JSON object with a single attribute: ids which is an array
+     * of managementUnitIds to retrieve.
+     * @return a list of management units with the ids matching the request.
      */
     def getManagementUnits() {
         String[] ids =  request.getJSON()?.managementUnitIds
         if(ids){
             List mues =  managementUnitService.get(ids)
-            respond mue
+            respond mues
         }
         else{
             respond []
@@ -37,12 +37,19 @@ class ManagementUnitController {
 
     def update(String id) {
         if (!id) {
-            respond managementUnitService.create(request.JSON)
+            ManagementUnit mu = new ManagementUnit()
+            bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
+            respond managementUnitService.create(mu)
         }
         else {
             ManagementUnit mu = managementUnitService.get(id)
-            bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
-            respond managementUnitService.save(mu)
+            if (!mu) {
+                respond null
+            }
+            else {
+                bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
+                respond managementUnitService.save(mu)
+            }
         }
     }
 
@@ -73,12 +80,4 @@ class ManagementUnitController {
 
         respond managementUnitService.managementUnitSiteMap(ids)
     }
-
-
-//    def generalException(final Exception exception) {
-//        def e = exception.undeclaredThrowable
-//        if (e instanceof NotFoundException)
-//            render(status: 404, error: e.message)
-//    }
-
 }

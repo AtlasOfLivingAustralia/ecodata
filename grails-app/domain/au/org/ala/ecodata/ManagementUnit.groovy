@@ -7,43 +7,42 @@ import org.bson.types.ObjectId
  */
 class ManagementUnit {
 
-    static bindingProperties = ['managementUnitId', 'managementUnitSiteId', 'name', 'description', 'status', 'url', 'dateCreated', 'lastUpdated', 'projects', 'risks','themes','assets','outcomes',
-                                'priorities','startDate','endDate','associatedOrganisations']
+    static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
+                                'startDate', 'endDate', 'associatedOrganisations', 'config']
 
     ObjectId id
-    String managementUnitId
-    String name
-    String description
     String status = Status.ACTIVE
-    String url
     Date dateCreated
     Date lastUpdated
-    List<Project> projects = []
+    String managementUnitId
 
-    List risks
-    /** Themes for this mu */
-    List themes
-    /** Assets managed by this mu (e.g. threatened species, or ecological communities) */
-    List assets
-    /** Outcomes to be achieved by this mu */
-    List outcomes
-    /** Priorities for mu outcomes */
-    List priorities
-
-    /** Configuration related to the mu */
-    Map config
-
+    String name
+    String description
+    String url
+    /** The date this management unit was established */
     Date startDate
     Date endDate
-    List<AssociatedOrg> associatedOrganisations
-    //Management units which have the same service provider
-    List relevantManagementUnits = []
+
+    /** Outcomes to be achieved in this mu (probably should only be defined by programs) */
+    List<Map> outcomes
+
+    /** Priority assets managed within the boundary of this mu (e.g. threatened species, or ecological communities) */
+    List<Map> priorities
 
     /** (optional) The siteId of a Site that defines the geographic area targeted by this mu */
     String managementUnitSiteId
-    /** Allows management unit administrators to publicise and communicate about the management unit */
-    List blog
 
+    /** Configuration related to the mu, reporting frequencies and types of reports */
+    Map config
+
+    /**
+     * Organisations that have a relationship of some kind with this managmement unit.  Currently the only
+     * relationship is a service provider.
+     */
+    List<AssociatedOrg> associatedOrganisations
+
+    //Management units which have the same service provider
+    List relevantManagementUnits = []
 
     /** Custom rendering for the mu */
     Map toMap() {
@@ -56,18 +55,13 @@ class ManagementUnit {
         mu.dateCreated = dateCreated
         mu.lastUpdated = lastUpdated
         mu.url = url
-        mu.themes = themes
-        mu.assets = assets
         mu.outcomes = outcomes
         mu.priorities = priorities
         mu.config = config
-        mu.risks = risks
         mu.managementUnitSiteId = managementUnitSiteId
         mu.status = status
-
         mu.associatedOrganisations = associatedOrganisations
         mu.relevantManagementUnits = relevantManagementUnits
-        mu.blog = blog
 
         mu
     }
@@ -84,22 +78,17 @@ class ManagementUnit {
     static constraints = {
         name unique: true
         description nullable: true
-        risks nullable: true
         startDate nullable: true
         endDate nullable: true
         url nullable: true
         config nullable: true
         associatedOrganisations nullable:true
         managementUnitSiteId nullable: true
-        projects nullable: true
-        themes nullable: true
-        assets nullable: true
-        blog nullable: true
         priorities nullable: true
         outcomes nullable:true
     }
 
-    public String toString() {
+    String toString() {
         return "Name: "+name+ ", description: "+description
     }
 }

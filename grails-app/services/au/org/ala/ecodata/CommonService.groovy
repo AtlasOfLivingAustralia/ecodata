@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 import org.codehaus.groovy.grails.web.json.JSONObject
-import org.json.simple.JSONArray
 import org.springframework.context.MessageSourceResolvable
 
 import java.text.SimpleDateFormat

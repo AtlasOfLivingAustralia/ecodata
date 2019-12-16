@@ -65,19 +65,9 @@ class ManagementUnitService {
         return ManagementUnit.findByNameAndStatusNotEqual(name, DELETED)
     }
 
-    ManagementUnit create(Map properties) {
-
-        properties.managementUnitId = Identifiers.getNew(true, '')
-        ManagementUnit mu = new ManagementUnit(managementUnitId: properties.managementUnitId)
-        commonService.updateProperties(mu, properties)
-        return mu
-    }
-
-    ManagementUnit update(String id, Map properties) {
-        ManagementUnit mu = get(id)
-        //commonService.updateProperties(mu, properties)
-        mu.save(flush:true)
-        return mu
+    ManagementUnit create(ManagementUnit mu) {
+        mu.managementUnitId = Identifiers.getNew(true, '')
+        save(mu)
     }
 
     ManagementUnit save(ManagementUnit mu) {
