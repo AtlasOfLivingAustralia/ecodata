@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.validation.ValidationException
-import javassist.NotFoundException
 
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -253,13 +252,13 @@ class ManagementUnitService {
         Date[] periods = reportService.getPeriodOfManagmentUnitReport(muIds)
         int[] finacialYears = []
         if (periods && periods[0] && periods[1]){
-            finacialYears = caculateFinicialYear(periods[0],periods[1])
+            finacialYears = calculateFinancialYear(periods[0],periods[1])
         }
 
         return finacialYears
     }
 
-    private int[] caculateFinicialYear(Date startDate, Date endDate){
+    private int[] calculateFinancialYear(Date startDate, Date endDate){
         // idx starts from 0
         int startMonth = startDate.getAt(Calendar.MONTH)
         int startYear = startDate.getAt(Calendar.YEAR)
