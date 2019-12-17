@@ -13,7 +13,9 @@ import spock.lang.Specification
 class ProjectServiceSpec extends Specification {
 
     ProjectService service = new ProjectService()
-    def stubbedCollectoryService = Stub(CollectoryService)
+    CollectoryService stubbedCollectoryService = Stub(CollectoryService)
+    DocumentService documentService = Mock(DocumentService)
+    UserService userService = Mock(UserService)
 
     def setup() {
         Fongo fongo = new Fongo("ecodata-test")
@@ -25,6 +27,8 @@ class ProjectServiceSpec extends Specification {
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
         service.grailsApplication = grailsApplication
         service.collectoryService = stubbedCollectoryService
+        service.documentService = documentService
+        service.userService = userService
     }
 
     def "test create and update project"() {
@@ -88,5 +92,39 @@ class ProjectServiceSpec extends Specification {
         result.status == 'error'
         result.error != null
 
+    }
+
+    def "The most recent entry in a project MERI plan approval history can be found and returned"() {
+        setup:
+        String projectId = 'p1'
+        List documents = []
+        (1..5).each {
+            documents << buildApprovalDocument(it, projectId)
+        }
+        userService.lookupUserDetails('1234') >> [displayName:'test']
+        int count = 0
+
+        when:
+        Map mostRecentMeriPlanApproval = service.getMostRecentMeriPlanApproval(projectId)
+
+        then:
+        1 * documentService.search([projectId:projectId, role:'approval', labels:'MERI']) >> [documents:documents]
+        5 * documentService.readJsonDocument(_) >> {documents[count++].content}
+
+        mostRecentMeriPlanApproval.approvalDate == '2019-07-01T00:00:05Z'
+        mostRecentMeriPlanApproval.approvedBy == 'test'
+    }
+
+    private Map buildApprovalDocument(int i, String projectId) {
+        Map approval = [
+                dateApproved:"2019-07-01T00:00:0${i}Z",
+                approvedBy:'1234',
+                reason:'r',
+                referenceDocument: 'c',
+                project: [projectId:projectId]
+        ]
+        Map document = [documentId:i, projectId:projectId, url:'url'+i, content:approval]
+
+        document
     }
 }

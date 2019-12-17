@@ -528,14 +528,14 @@ class DocumentService {
     }
 
     /**
-     * Read a file, return content as JSON
-     * as the files will be served by Apache in prod.
+     * Reads the contents of a file associated with a Document and return content as JSON
      */
-    def read(String filename) {
-        File file = new File(this.fullPath('', filename))
+    def readJsonDocument(Map document) {
+        String fullPath = this.fullPath(document.filepath, document.filename)
+        File file = new File(fullPath)
 
         if (!file.exists()) {
-            return  [error: filename + ' does not exist!']
+            return  [error: fullPath + ' does not exist!']
         }
         def jsonSlurper = new JsonSlurper()
         def data = jsonSlurper.parse(file)

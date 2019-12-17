@@ -120,15 +120,15 @@ class ProjectService {
     }
 
     /**
-     *
-     * @param projectId
-     * @return the lastest approval record
+     * Returns a list of times the project MERI plan has been approved.
+     * @param projectId the project to get the approval history for.
+     * @return a List of Maps with keys approvalDate, approvedBy.
      */
-    def getMeritProjectApprovalHistory(String projectId){
+    private List getMeriPlanApprovalHistory(String projectId){
         Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
         List<Map> histories = []
         results?.documents.collect{
-            def data = documentService.read(it.filepath+File.separator+it.filename)
+            def data = documentService.readJsonDocument(it)
 
             if (!data.error){
                 String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
@@ -139,7 +139,17 @@ class ProjectService {
                 histories.push(doc)
             }
         }
-       return histories.max{it.approvalDate}
+        histories
+    }
+
+    /**
+     * Returns the date and user of the most recent approval of the project MERI plan
+     * @param projectId the project.
+     * @return Map with keys approvalDate and approvedBy.  Null if the plan has not been approved.
+     */
+    Map getMostRecentMeriPlanApproval(String projectId) {
+        List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
+        meriApprovalHistory.max{it.approvalDate}
     }
 
     def promoted() {

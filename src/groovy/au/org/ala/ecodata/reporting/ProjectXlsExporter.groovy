@@ -358,16 +358,18 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportMeriPlan(Map project) {
-        String[] merit_tabs = [
+        String[] meriPlanTabs = [
                 "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
                 "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
                 "MERI_Attachments", "MERI_Baseline", "MERI_Event", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
         ]
-        //Add extra info about approval status
-        if (shouldExport(merit_tabs)){
-           Map approvalHistory  = projectService.getMeritProjectApprovalHistory(project.projectId)
-           project['approvalDate'] = approvalHistory.approvalDate
-           project['approvedBy'] =  approvalHistory.approvedBy
+        //Add extra info about approval status if any MERI plan information is to be exported.
+        if (shouldExport(meriPlanTabs)){
+            Map approval  = projectService.getMostRecentMeriPlanApproval(project.projectId)
+            if (approval) {
+                project['approvalDate'] = approval.approvalDate
+                project['approvedBy'] =  approval.approvedBy
+            }
         }
 
         exportBudget(project)
