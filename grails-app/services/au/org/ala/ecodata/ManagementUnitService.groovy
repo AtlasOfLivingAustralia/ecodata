@@ -50,8 +50,6 @@ class ManagementUnitService {
         for(ManagementUnit mu in mues){
             Map muInfo = mu.toMap()
             if (mu.managementUnitSiteId){
-                //Not work
-                //Map site = siteService.getSiteWithLimitedFields(mu.managementUnitSiteId,["siteId","name","extent.geometry.state"])
                 Site site = Site.findBySiteId(mu.managementUnitSiteId)
 
                 muInfo['site'] = ["siteId":site.siteId,
