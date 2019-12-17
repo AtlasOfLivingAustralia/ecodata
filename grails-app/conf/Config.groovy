@@ -628,7 +628,7 @@ environments {
         app.elasticsearch.indexOnGormEvents = true
         app.external.model.dir = "./models/"
         grails.serverURL = "http://devt.ala.org.au:8080/ecodata"
-        app.uploads.url = "${grails.serverURL}/document/download?filename="
+        app.uploads.url = "${grails.serverURL}/ws/document/download?filename="
         grails.mail.host="localhost"
         grails.mail.port=1025
         temp.dir="/data/ecodata/tmp"
