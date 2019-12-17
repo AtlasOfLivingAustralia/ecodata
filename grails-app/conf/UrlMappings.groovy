@@ -183,6 +183,8 @@ class UrlMappings {
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
+        "/ws/document/download"(controller:"document", action:"download")
+
         "/ws/$controller/list"() { action = [GET:'list'] }
 
 
