@@ -9,14 +9,11 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import org.grails.datastore.mapping.query.api.ProjectionList
-import org.grails.datastore.mapping.query.Projections
-//import org.hibernate.criterion.Projections
-
-
-
 
 import static au.org.ala.ecodata.Status.DELETED
+
+//import org.hibernate.criterion.Projections
+
 import static grails.async.Promises.task
 
 class SiteService {
@@ -119,31 +116,6 @@ class SiteService {
     List<Site> sitesForProject(String projectId) {
         Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
     }
-
-    /**
-     * Not working
-     * Works by given ["siteId","name"]
-     * return empty result by given ["siteId","name","extent"]
-     * Error in projecting unknown field - "siteId","name","extent.geometry.state"
-     * @param siteId
-     * @param fields
-     * @return
-     */
-
-    def getSiteWithLimitedFields(String siteId, List<String> fields) {
-        List results = Site.withCriteria {
-            eq ("siteId", siteId)
-            projections {
-                fields.each{
-                    property(it)
-                }
-            }
-        }
-        if(results){
-            print result
-        }
-     }
-
 
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
