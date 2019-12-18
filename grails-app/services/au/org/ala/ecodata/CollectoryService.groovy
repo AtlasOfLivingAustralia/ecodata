@@ -18,6 +18,7 @@ class CollectoryService {
     GrailsApplication grailsApplication
     ProjectService projectService
     EmailService emailService
+    CommonService commonService
 
     /** These are configuration options used by the Collectory to describe how to import data from MERIT / BioCollect */
     Map defaultConnectionParameters = [
@@ -97,8 +98,8 @@ class CollectoryService {
     }
 
     /**
-     * Creates a new Data Provider (=~ ecodata project) and Data Resource (=~ ecodata outputs)
-     * in the collectory using the supplied properties as input.  Much of project meta data is
+     * Creates Data Resource for a given Data Provider in the collectory using the supplied properties as input.
+     * The data resource is only created when {@link Project#alaHarvest} flag is `true`. Much of project meta data is
      * stored in a 'hiddenJSON' field in collectory.
      * @param props the properties for the new data provider and resource.
      * @return a map containing the created data provider id and data resource id, or null.
@@ -106,25 +107,27 @@ class CollectoryService {
     Map createDataResource(Map props) {
         Map ids = [:]
 
-        Map collectoryProps = mapProjectAttributesToCollectoryDataResource(props)
-        ids.dataProviderId = dataProviderForProject(props)
+        if (props.alaHarvest) {
+            Map collectoryProps = mapProjectAttributesToCollectoryDataResource(props)
+            ids.dataProviderId = dataProviderForProject(props)
 
-        if (ids.dataProviderId) {
-            // create a dataResource in collectory to hold project outputs
-            collectoryProps.dataProvider = [uid: ids.dataProviderId]
-            Map result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
-            if (result.error) {
-                throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
+            if (ids.dataProviderId) {
+                // create a dataResource in collectory to hold project outputs
+                collectoryProps.dataProvider = [uid: ids.dataProviderId]
+                Map result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
+                if (result.error) {
+                    throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
+                }
+                ids.dataResourceId = webService.extractIdFromLocationHeader(result)
+
+                // Now we have an id we can create the connection properties
+                Map connectionParameters = [connectionParameters:collectoryConnectionParametersForProject(props, ids.dataResourceId)]
+                result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH+'/'+ids.dataResourceId, connectionParameters)
+                if (result.error) {
+                    throw new Exception("Failed to create Collectory data resource connection parameters: ${result.error} ${result.detail ?: ""}")
+                }
+
             }
-            ids.dataResourceId = webService.extractIdFromLocationHeader(result)
-
-            // Now we have an id we can create the connection properties
-            Map connectionParameters = [connectionParameters:collectoryConnectionParametersForProject(props, ids.dataResourceId)]
-            result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH+'/'+ids.dataResourceId, connectionParameters)
-            if (result.error) {
-                throw new Exception("Failed to create Collectory data resource connection parameters: ${result.error} ${result.detail ?: ""}")
-            }
-
         }
 
         ids
@@ -150,31 +153,46 @@ class CollectoryService {
     }
 
     /**
-     * Updates the Data Resource in the collectory using the supplied properties as input.  The 'hiddenJSON' field in
-     * collectory is recreated to reflect the latest project properties.
+     * Updates the Data Resource in the collectory using the supplied properties as input if {@link Project#alaHarvest}
+     * flag is true. The 'hiddenJSON' field in collectory is recreated to reflect the latest project properties.
+     * If {@link Project#alaHarvest} is false, then {@link Project#dataResourceId} is cleared.
      * @param project the UPDATED project in ecodata.
      * @return void.
      */
     def updateDataResource(Map project, Map changedProperties = null, Boolean forceUpdate = false) {
-
-        if (!project.dataResourceId || project.dataResourceId == "null") {
-           createDataResource(project)
-        }
-        else {
-            def projectId = project.projectId
-
-            Map properties = changedProperties ?: project
-            Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
-            if (forceUpdate) {
-                collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
-            }
-
-            // Only update if a property other than the "hiddenJSON" attribute has changed.
-            if ((collectoryAttributes.size() > 1) || forceUpdate) {
-                Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
-                if (result.error) {
-                    log.error "Error updating collectory info for project ${projectId} - ${result.error}"
+        if (project.alaHarvest) {
+            if (!project.dataResourceId || project.dataResourceId == "null") {
+                Map collectoryProps = createDataResource(project)
+                if (collectoryProps?.dataResourceId && project?.projectId) {
+                    Project.withSession {
+                        Project projectDO = Project.findByProjectId(project.projectId)
+                        projectService.getCommonService().updateProperties(projectDO, collectoryProps)
+                    }
                 }
+            }
+            else {
+                def projectId = project.projectId
+
+                Map properties = changedProperties ?: project
+                Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
+                if (forceUpdate) {
+                    collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
+                }
+
+                // Only update if a property other than the "hiddenJSON" attribute has changed.
+                if ((collectoryAttributes.size() > 1) || forceUpdate) {
+                    Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
+                    if (result.error) {
+                        log.error "Error updating collectory info for project ${projectId} - ${result.error}"
+                    }
+                }
+            }
+        }
+        else if (project.dataResourceId) {
+            // clear dataResourceId field
+            Project.withSession {
+                Project projectDO = Project.findByProjectId(project.projectId)
+                commonService.updateProperties(projectDO, [dataResourceId: ""])
             }
         }
     }

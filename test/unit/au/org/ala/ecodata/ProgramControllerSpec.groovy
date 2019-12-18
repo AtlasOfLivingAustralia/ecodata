@@ -2,11 +2,9 @@ package au.org.ala.ecodata
 
 import grails.test.mixin.TestFor
 import org.apache.http.HttpStatus
-import org.springframework.http.HttpMethod
-
 import spock.lang.Specification
 
-
+@TestFor(ProgramController)
 class ProgramControllerSpec extends Specification {
 
     ProgramService programService = Mock(ProgramService)

@@ -330,8 +330,11 @@ class ProjectService {
                 Map collectoryProps = [:]
                 collectoryProps << collectoryService.createDataResource(props)
 
-                Project.withSession {
-                    getCommonService().updateProperties(project, collectoryProps)
+                // only update Project if dataResourceId has been created in collectory
+                if (collectoryProps.dataResourceId) {
+                    Project.withSession {
+                        getCommonService().updateProperties(project, collectoryProps)
+                    }
                 }
             }.onComplete {
                 log.info("Collectory link established for project ${project.name} (id = ${project.projectId})")
@@ -353,7 +356,7 @@ class ProjectService {
             task {
                 collectoryService.updateDataResource(projectProps, props)
             }.onComplete {
-                log.info("Collectory link updated for project ${project.name} (id = ${project.projectId})")
+                log.info("Completed task to link project with collectory - ${project.name} (id = ${project.projectId})")
             }.onError { Throwable error ->
                 if (error instanceof UndeclaredThrowableException) {
                     error = error.undeclaredThrowable

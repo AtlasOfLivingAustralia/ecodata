@@ -4,7 +4,6 @@ import com.github.fakemongo.Fongo
 import grails.test.mixin.TestMixin
 import grails.test.mixin.mongodb.MongoDbTestMixin
 import spock.lang.Specification
-
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
@@ -24,15 +23,16 @@ class ProjectServiceSpec extends Specification {
         }
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
         service.grailsApplication = grailsApplication
+        grailsApplication.config.collectory.collectoryIntegrationEnabled = true
         service.collectoryService = stubbedCollectoryService
     }
 
     def "test create and update project"() {
         given:
-        def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty']
+        def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty', alaHarvest: true]
         def dataProviderId = 'dp1'
         def dataResourceId = 'dr1'
-        stubbedCollectoryService.createDataResource(_,_) >> [dataResourceId: dataResourceId]
+        stubbedCollectoryService.createDataResource(_) >> [dataResourceId: dataResourceId, dataProviderId: dataProviderId]
         def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
 
@@ -53,6 +53,7 @@ class ProjectServiceSpec extends Specification {
         then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
         savedProj.description == projData.description
+        savedProj.dataResourceId == dataResourceId
         //savedProj['dynamicProperty'] == projData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
 
         when:
