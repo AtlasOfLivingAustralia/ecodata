@@ -160,7 +160,9 @@ class CollectoryService {
      * @return void.
      */
     def updateDataResource(Map project, Map changedProperties = null, Boolean forceUpdate = false) {
-        if (project.alaHarvest) {
+        Map properties = changedProperties ?: project
+        def alaHarvest = properties.alaHarvest?:project.alaHarvest
+        if (alaHarvest) {
             if (!project.dataResourceId || project.dataResourceId == "null") {
                 Map collectoryProps = createDataResource(project)
                 if (collectoryProps?.dataResourceId && project?.projectId) {
@@ -173,7 +175,6 @@ class CollectoryService {
             else {
                 def projectId = project.projectId
 
-                Map properties = changedProperties ?: project
                 Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
                 if (forceUpdate) {
                     collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
