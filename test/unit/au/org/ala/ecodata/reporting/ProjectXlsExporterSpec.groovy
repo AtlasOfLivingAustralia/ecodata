@@ -1,14 +1,12 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.ReportingService
-import au.org.ala.ecodata.UserService
+import au.org.ala.ecodata.*
 import grails.test.mixin.Mock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
 import org.grails.plugins.excelimport.ExcelImportService
@@ -18,7 +16,7 @@ import spock.lang.Specification
  * Spec for the ProjectXlsExporter
  */
 @TestMixin(GrailsUnitTestMixin)
-@Mock([MetadataService, UserService, ReportingService])
+@Mock([MetadataService, UserService, ReportingService, ActivityFormService])
 class ProjectXlsExporterSpec extends Specification {
 
     def projectService = Mock(ProjectService)
