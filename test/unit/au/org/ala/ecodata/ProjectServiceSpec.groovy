@@ -3,16 +3,22 @@ package au.org.ala.ecodata
 import com.github.fakemongo.Fongo
 import grails.test.mixin.TestMixin
 import grails.test.mixin.mongodb.MongoDbTestMixin
+import grails.test.mixin.web.ControllerUnitTestMixin
 import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
-
-@TestMixin(MongoDbTestMixin)
+// Added ControllerUnitTestMixin to include grails JSON converter. It is used in a service class.
+@TestMixin([MongoDbTestMixin,ControllerUnitTestMixin])
 class ProjectServiceSpec extends Specification {
 
     ProjectService service = new ProjectService()
-    def stubbedCollectoryService = Stub(CollectoryService)
+    def webServiceStub = Stub(WebService)
+    String collectoryBaseUrl = ''
+    String meritDataProvider = 'drMerit'
+    String biocollectDataProvider = 'drBiocollect'
+    String dataProviderId = 'dp1'
+    String dataResourceId = 'dr1'
 
     def setup() {
         Fongo fongo = new Fongo("ecodata-test")
@@ -20,19 +26,26 @@ class ProjectServiceSpec extends Specification {
 
         defineBeans {
             commonService(CommonService)
+            collectoryService(CollectoryService)
         }
+
+        grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider], collectoryIntegrationEnabled: true]
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
+        grailsApplication.mainContext.collectoryService.grailsApplication = grailsApplication
+        grailsApplication.mainContext.collectoryService.webService = webServiceStub
+        grailsApplication.mainContext.collectoryService.projectService = service
+        service.collectoryService = grailsApplication.mainContext.collectoryService
         service.grailsApplication = grailsApplication
-        grailsApplication.config.collectory.collectoryIntegrationEnabled = true
-        service.collectoryService = stubbedCollectoryService
+
+        webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
+        webServiceStub.extractIdFromLocationHeader(_) >> dataResourceId
+        webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, _) >> [:]
+
     }
 
     def "test create and update project"() {
         given:
         def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty', alaHarvest: true]
-        def dataProviderId = 'dp1'
-        def dataResourceId = 'dr1'
-        stubbedCollectoryService.createDataResource(_) >> [dataResourceId: dataResourceId, dataProviderId: dataProviderId]
         def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
 
@@ -80,7 +93,6 @@ class ProjectServiceSpec extends Specification {
     def "test project validation"() {
         given:
         def projData = [description: 'test proj description', dynamicProperty: 'dynamicProperty']
-        stubbedCollectoryService.createDataProviderAndResource(_,_) >> ""
 
         when:
         def result = service.create(projData)

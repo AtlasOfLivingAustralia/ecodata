@@ -24,14 +24,16 @@ class CollectoryServiceSpec extends Specification {
     String expectedConnectionJson = '{"protocol":"DwC","url":"sftp://upload.ala.org.au:biocollect/dr1234","automation":false,"csv_delimiter":",","csv_eol":"\\n","csv_escape_char":"\\\\","csv_text_enclosure":"\\"","termsForUniqueKey":["occurrenceID"],"strip":false,"incremental":false}'
 
     void setup() {
-        grailsApplication.mainContext.registerSingleton('commonService', CommonService)
+        defineBeans {
+            commonService(CommonService)
+            projectService(ProjectService)
+        }
 
         webServiceMock = Mock(WebService)
         service.webService = webServiceMock
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider]]
         service.grailsApplication = grailsApplication
-        grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
-
+        grailsApplication.mainContext.commonService.grailsApplication = grailsApplication.mainContext.projectService.grailsApplication = grailsApplication
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
 
@@ -74,7 +76,7 @@ class CollectoryServiceSpec extends Specification {
 
     }
 
-    void "new project with harvest disabled will not create data resource"() {
+    void "new project with harvest disabled will create data resource"() {
         setup:
         Map projectData = [name:'project 1', description:'test 123', isMERIT:false, alaHarvest: false]
         String dataResourceId = 'dr1234'
@@ -84,10 +86,10 @@ class CollectoryServiceSpec extends Specification {
         Map result = service.createDataResource(projectData)
 
         then:
-        result.size() == 0
-        0 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource", [name:projectData.name, pubDescription:projectData.description, 'dataProvider':['uid':biocollectDataProvider], hiddenJSON:[isMERIT:false, alaHarvest: true]]) >> [:]
-        0 * webServiceMock.extractIdFromLocationHeader(_) >> dataResourceId
-        0 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, [connectionParameters:expectedConnectionJson]) >> [:]
+        result.size() == 2
+        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource", [name:projectData.name, pubDescription:projectData.description, 'dataProvider':['uid':biocollectDataProvider], hiddenJSON:[isMERIT:false, alaHarvest: false]]) >> [:]
+        1 * webServiceMock.extractIdFromLocationHeader(_) >> dataResourceId
+        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, [connectionParameters:expectedConnectionJson]) >> [:]
         0 * webServiceMock.doPost(_, _)
 
     }
@@ -165,7 +167,7 @@ class CollectoryServiceSpec extends Specification {
         then:
         0 * webServiceMock.doPost(_, _)
         Project proj = Project.findByProjectId(projectId)
-        proj.dataResourceId == ""
+        proj.dataResourceId == null
     }
 
 
