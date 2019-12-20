@@ -32,7 +32,7 @@ class ActivityController {
         def detail = params.view == SCORES ? [SCORES] : []
         if (!id) {
 
-            def list = activityService.getAll(params.includeDeleted as boolean, params.view)
+            def list = activityService.getAll(params.boolean('includeDeleted'), params.view)
             list.sort {it.name}
             //log.debug list
             asJson([list: list])
