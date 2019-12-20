@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import grails.converters.JSON
+
 import org.bson.types.ObjectId
 
 /**
