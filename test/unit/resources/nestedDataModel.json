@@ -1,0 +1,92 @@
+{
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "number1"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "value1"
+        },
+        {
+          "dataType": "list",
+          "name": "nestedList",
+          "columns": [
+            {
+              "dataType": "text",
+              "name": "value2"
+            }
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "afterNestedList"
+        }
+      ],
+      "dataType": "list",
+      "name": "list"
+    },
+    {
+      "dataType": "text",
+      "name": "notes"
+    }
+  ],
+  "modelName": "Nested lists",
+  "title": "Nested lists",
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "number",
+          "source": "number1",
+          "preLabel": "Number 1"
+        }
+      ]
+    },
+    {
+      "type": "repeat",
+      "source": "list",
+      "items": [
+        {
+          "type": "text",
+          "source": "value1",
+          "preLabel": "Value 1"
+        },
+        {
+          "type": "table",
+          "source": "nestedList",
+          "columns": [
+            {
+              "type": "text",
+              "source": "value2",
+              "title": "Value 2"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "text",
+              "source": "afterNestedList",
+              "preLabel": "After list"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "Notes"
+        }
+      ]
+    }
+  ]
+}

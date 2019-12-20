@@ -84,10 +84,66 @@ class OutputMetadataTests extends Specification {
         postLabelTest.label == 'Post label'
     }
 
+    void "Nested properties can be identified in the data model"() {
+        setup:
+        def model = getJsonResource('revegetationDetailsMetadata')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getNestedPropertyNames()
+
+        then:
+        names == ['planting']
+    }
+
+    void "More than one level of nesting can be identified in the data model"() {
+        setup:
+        def model = getJsonResource('nestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getNestedPropertyNames()
+
+        then:
+        names == ['list', 'list.nestedList']
+    }
+
+    void "The property names from the data model can be returned as a list"() {
+        setup:
+        def model = getJsonResource('nestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.propertyNamesAsList()
+
+        then:
+        names == ['number1', 'list', 'list.value1', 'list.nestedList', 'list.nestedList.value2', 'list.afterNestedList', 'notes']
+    }
+
+    void "test model iterator"() {
+        setup:
+        def model = getJsonResource('nestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = []
+        outputMetadata.modelIterator { path, view, data ->
+            names << [path:path, view:view.type, data:data.name]
+        }
+
+        then:
+        names == [[path:'number1', view:'number', data:'number1'],
+                  [path:'list', view:'repeat', data:'list'],
+                  [path:'list.value1', view:'text', data:'value1'],
+                  [path:'list.nestedList', view:'table', data:'nestedList'],
+                  [path:'list.nestedList.value2', view:'text', data:'value2'],
+                  [path:'list.afterNestedList', view:'text', data:'afterNestedList'],
+                  [path:'notes', view:'textarea', data:'notes']
+        ]
+    }
 
     private List annotatedRevegetationModel() {
         def model = getJsonResource('revegetationDetailsMetadata')
-        println model.toString(2)
         OutputMetadata outputMetadata = new OutputMetadata(model)
 
         List annotated = outputMetadata.annotateDataModel()

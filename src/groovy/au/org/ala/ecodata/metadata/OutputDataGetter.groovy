@@ -3,13 +3,13 @@ package au.org.ala.ecodata.metadata
 import grails.util.Holders
 import pl.touk.excel.export.getters.Getter
 
-class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
+class OutputDataGetter extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
     static DateTimeParser TIME_PARSER = new DateTimeParser(DateTimeParser.Style.TIME)
     private DateTimeParser DATE_PARSER = new DateTimeParser(DateTimeParser.Style.DATE, timeZone)
 
-    private String[] nameParts
+    private String propertyName
     private String constraint
-    private List outputDataModel
+    private Map dataNode
     private Map<String, Object> documentMap
     private def imageMapper = {
         if (it.imageId)
@@ -21,17 +21,18 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     private timeZone
 
 
-    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, Object> documentMap, TimeZone timeZone) {
-        if (!name) {
+    OutputDataGetter(String propertyName, Map dataNode, Map<String, Object> documentMap, TimeZone timeZone) {
+        if (!propertyName) {
             throw new IllegalArgumentException("Name cannot be null")
         }
-        if (name.endsWith(']')) {
-            constraint = name.substring(name.indexOf('[')+1, name.indexOf(']'))
-            name = name.substring(0, name.indexOf('['))
+        if (propertyName.endsWith(']')) {
+            constraint = propertyName.substring(propertyName.indexOf('[')+1, propertyName.indexOf(']'))
+            this.propertyName = propertyName.substring(0, propertyName.indexOf('['))
         }
-        this.nameParts = name.tokenize('.');
-
-        this.outputDataModel = outputDataModel;
+        else {
+            this.propertyName = propertyName
+        }
+        this.dataNode = dataNode
         this.documentMap = documentMap
         this.timeZone = timeZone
     }
@@ -133,38 +134,28 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     // Implementation of Getter<String>
     @Override
     String getPropertyName() {
-        return nameParts.join('.');
+        return propertyName
     }
 
     @Override
     String getFormattedValue(Object output) {
-        def result = ''
-        def node = outputDataModel
-        for (String part : nameParts) {
-            def tmpNode = node.find { it.name == part }
-            // List typed model elements have a cols element containing nested nodes.
-            node = tmpNode.columns ?: tmpNode
-            // ignore columns property of geoMap
-            if(tmpNode.dataType == "geoMap"){
-                node = tmpNode
-            }
-        }
+        String result = ''
         try {
-            result = processNode(this, node, getValue(output))
+            result = processNode(this, dataNode, getValue(output))
         }
         catch (Exception e) {
-            log.error("Error getting value from output: ${output?.outputId}, property: ${nameParts.join('.')}", e)
+            log.error("Error getting value from output: ${output?.outputId}, property: ${propertyName}", e)
         }
         result
     }
 
     def getValue(outputModelOrData) {
-        def value = outputModelOrData[nameParts[nameParts.size() - 1]]
+        def value = outputModelOrData[propertyName]
         new Value(value)
     }
 
     String toString() {
-        return nameParts?.join(", ")
+        return propertyName
     }
 
     static class Value implements OutputModelProcessor.ProcessingContext {

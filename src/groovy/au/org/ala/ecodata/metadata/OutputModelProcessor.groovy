@@ -139,6 +139,79 @@ class OutputModelProcessor {
         rows
     }
 
+    List flatten2(Map output, OutputMetadata outputMetadata) {
+        Map data = output.remove('data') ?: [:]
+        data += output
+
+        flattenNode(data, '', outputMetadata.getNestedPropertyNames())
+    }
+
+    private List flattenList(String path, List values, List nestedPropertyNames) {
+        List results = []
+
+        values.each { Map node ->
+           results.addAll(flattenNode(node, path, nestedPropertyNames))
+        }
+        results
+    }
+
+    private String fullPath(String path, String propertyName) {
+        path ? path+'.'+propertyName : propertyName
+    }
+    private Map nestedPropertiesByName(Map node, String path, List nestedPropertyNames) {
+       node.findAll{key, value -> fullPath(path, key) in nestedPropertyNames}
+    }
+
+    private List flattenNode(Map node, String path, List nestedPropertyNames) {
+
+        List results = []
+        nestedPropertiesByName(node, path, nestedPropertyNames).each { String property, List nestedList ->
+            node.remove(property)
+            List nestedResults = flattenList(property, nestedList, nestedPropertyNames)
+
+            // Prepend the current path to the keys in the returned list if necessary.
+            if (path) {
+                nestedResults = nestedResults.collect {Map result ->
+                    result.collectEntries{k, v -> [(path+'.'+k), v]}
+                }
+            }
+            results.addAll(nestedResults)
+        }
+        // If there are nested properties, combine the results of flattening the list with the
+        // non-nested values of this node, otherwise just return a single result containing the node
+        Map nonNestedData = node
+        if (path) {
+            nonNestedData = node.collectEntries {k, v -> [(fullPath(path, k)):v]}
+        }
+        results = results.collect{ it+nonNestedData }
+        if (!results) {
+            results << nonNestedData
+        }
+        results
+    }
+
+    private List flattenOutputData(Map data, String path, List nestedPropertyNames, Map repeatedData) {
+
+        List results = []
+        Map result = [:]
+        List<Map> nestedProperties = []
+
+        data.each { k, v ->
+            String fullPath = fullPath(path, k)
+            if (nestedPropertyNames.contains(fullPath)) {
+                nestedProperties << [fullPath,v]
+            }
+            else {
+                result[fullPath] = v
+            }
+        }
+
+
+        results << result
+
+    }
+
+
     def hideMemberOnlyAttributes(Map output, OutputMetadata outputMetadata, boolean userIsProjectMember = false) {
 
         if (userIsProjectMember) {

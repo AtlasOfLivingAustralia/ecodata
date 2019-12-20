@@ -106,9 +106,86 @@ class TabbedExporter {
                 headers << it.label ?: it.description
             }
         }
-        List propertyGetters = properties.collect { new OutputDataPropertiesBuilder(it, model, documentMap, timeZone) }
+        List propertyGetters = properties.collect { new OutputDataGetter(it, model, documentMap, timeZone) }
         [headers: headers, propertyGetters: propertyGetters]
     }
+
+
+    /**
+     *
+     * @param outputModel OutputModel generated from sectionForm->template
+     * @return
+     */
+    protected Map buildOutputProperties(OutputMetadata outputModel) {
+
+        List annotatedDataModel = outputModel.annotateDataModel()
+
+        def headers = []
+        def properties = []
+
+        annotatedDataModel.each {
+            if (it.dataType == 'list') {
+                it.columns.each { col ->
+                    properties << it.name + '.' + col.name
+                    headers << col.label
+                }
+            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail']) {
+                // not supported, do nothing.
+            } else if (it.dataType == 'stringList') {
+                if (it.constraints) {
+                    it.constraints.each { constraint ->
+                        headers << it.description + ' - ' + constraint
+                        properties << it.name + '[' + constraint + ']'
+                    }
+
+                } else {
+                    properties << it.name
+                    headers << it.label ?: it.description
+                }
+            } else {
+                properties << it.name
+                headers << it.label ?: it.description
+            }
+        }
+
+        def propertyGetters = properties.collect { String name ->
+            Map node = annotatedDataModel.find{it.name == name}
+            new OutputDataGetter(name, node, documentMap, timeZone)
+        }
+
+        [headers: headers, propertyGetters: propertyGetters]
+    }
+
+    private boolean isExportableType(Map dataNode) {
+        !(dataNode.dataType in ['photoPoints', 'matrix', 'masterDetail', 'list'])
+    }
+
+    private void addHeaderAndGetter(String path, String header, Map dataNode, List headers, List outputGetters) {
+        headers << header
+        outputGetters << new OutputDataGetter(path, dataNode, documentMap, timeZone)
+    }
+
+    Map<String, List> getHeadersAndPropertiesForOutput(OutputMetadata outputMetadata) {
+
+        List headers = []
+        List outputPropertyGetters = []
+        outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
+            if (isExportableType(dataNode)) {
+                if (dataNode.dataType == 'stringList' && dataNode.constraints) {
+                    dataNode.constraints.each { constraint ->
+                        String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
+                        addHeaderAndGetter(path + '[' + constraint + ']', header, dataNode, headers, outputPropertyGetters)
+                    }
+                }
+                else {
+                    addHeaderAndGetter(path, outputMetadata.getLabel(viewNode, dataNode), dataNode, headers, outputPropertyGetters)
+                }
+            }
+        }
+
+        [headers: headers, propertyGetters: outputPropertyGetters]
+    }
+
     /**
      *
      * @param outputModel OutputModel generated from sectionForm->template
