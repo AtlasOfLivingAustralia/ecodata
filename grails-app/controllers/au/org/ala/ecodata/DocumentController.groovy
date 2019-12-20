@@ -44,7 +44,7 @@ class DocumentController {
             //log.debug list
             asJson([list: list])
         } else {
-            def list = documentService.getAll(params.includeDeleted as boolean, params.view)
+            def list = documentService.getAll(params.boolean('includeDeleted'), params.view)
             list.sort {it.name}
             //log.debug list
             asJson([list: list])
