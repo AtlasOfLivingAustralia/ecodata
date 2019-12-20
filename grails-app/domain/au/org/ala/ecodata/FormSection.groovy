@@ -18,7 +18,7 @@ class FormSection {
      */
     String templateName
 
-    /**  */
+    /** Defines the fields collected in this FormSection and how they are displayed.  Currently created and edited as JSON */
     Map template
 
     // Form sections can be individually marked as optional and expanded/collapsed

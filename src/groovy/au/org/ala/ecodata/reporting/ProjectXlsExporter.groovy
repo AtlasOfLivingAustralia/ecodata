@@ -1,14 +1,9 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.ActivityFormService
-import au.org.ala.ecodata.FormSection
+
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
-import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
-import grails.converters.JSON
-import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
@@ -19,9 +14,8 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 class ProjectXlsExporter extends ProjectExporter {
 
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
-    ActivityFormService activityFormService =  Holders.grailsApplication.mainContext.getBean("activityFormService")
 
-    // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
+    // Avoids name clashes for fields that appear in activities and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String PROJECT_DATA_PREFIX = 'project_'
 
@@ -223,11 +217,14 @@ class ProjectXlsExporter extends ProjectExporter {
              tabsToExport.each{ tab ->
                  if(tab =="Activity Summary"){
                      exportActivitySummary(project)
-                 }else{
-                     def activity = project?.activities?.find{it.type == tab}
-                     if(activity)
-                         exportActivity(project, activity)
-                     else{
+                 } else {
+                     List activities = project?.activities?.findAll{it.type == tab}
+                     if(activities) {
+                         activities.each {
+                             exportActivity(project, it)
+                         }
+                     }
+                     else {
                          createEmptySheet(tab)
                      }
                  }

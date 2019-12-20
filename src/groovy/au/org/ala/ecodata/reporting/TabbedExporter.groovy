@@ -1,20 +1,15 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.ActivityFormService
-import au.org.ala.ecodata.FormSection
-import au.org.ala.ecodata.MetadataService
-import au.org.ala.ecodata.Report
-import au.org.ala.ecodata.ReportingService
-import au.org.ala.ecodata.UserService
-import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
+import au.org.ala.ecodata.*
+import au.org.ala.ecodata.metadata.OutputDataGetter
+//import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
-import grails.converters.JSON
 import grails.util.Holders
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
 
 import java.text.SimpleDateFormat
 
@@ -23,6 +18,7 @@ import java.text.SimpleDateFormat
  */
 class TabbedExporter {
 
+    static Log log = LogFactory.getLog(TabbedExporter.class)
 
     MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
@@ -39,6 +35,11 @@ class TabbedExporter {
     // These fields map full activity names to shortened names that are compatible with Excel tabs.
     protected Map<String, String> activitySheetNames = [:]
     protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
+
+    /** Cache of headers by activity/version */
+    protected Map<String, List<String>> activityHeaderCache = [:]
+    /** Cache of property getters for an activity type / version */
+    protected Map<String, List> activityDataGetterCache = [:]
 
     TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:], TimeZone timeZone = TimeZone.default) {
         this.exporter = exporter
@@ -113,7 +114,7 @@ class TabbedExporter {
      * @param outputModel OutputModel generated from sectionForm->template
      * @return
      */
-
+/*
     protected Map buildOutputProperties(OutputMetadata outputModel) {
 
         List annotateDataModel = outputModel.annotateDataModel()
@@ -151,7 +152,7 @@ class TabbedExporter {
         }
 
         [headers: headers, propertyGetters: propertyGetters]
-    }
+    } */
 
     /**
      *Flatten output data + common data
@@ -181,11 +182,33 @@ class TabbedExporter {
     private List getOutputData(OutputMetadata  outputModel, Map output) {
         List flatData = []
         if (output) {
-            flatData = processor.flatten(output, outputModel, false)
+            flatData = processor.flatten2(output, outputModel)
         }
         flatData
     }
 
+    protected Map headersAndPropertyGettersForActivity(Map activity) {
+        List activityDataGetters = []
+        List headers = []
+        ActivityForm activityForm = activityFormService.findActivityForm(activity.type, activity.formVersion)
+        String key = activityForm.type+"_V"+activityForm.formVersion
+        if (activityHeaderCache[key]) {
+            headers = activityHeaderCache[key]
+            activityDataGetters = activityDataGetterCache[key]
+        }
+        else {
+            activityForm.sections.each { FormSection section ->
+                OutputMetadata outputModel = new OutputMetadata(section.template)
+
+                Map outputProperty = getHeadersAndPropertiesForOutput(outputModel)
+                activityDataGetters += outputProperty.propertyGetters
+                headers += outputProperty.headers
+            }
+            activityHeaderCache[key] = headers
+            activityDataGetterCache[key] = activityDataGetters
+        }
+        [headers: headers, outputGetters: activityDataGetters]
+    }
 
     /**
      * Generate data model of a given output type from activity for excel sheet, if outputname is given
@@ -198,27 +221,20 @@ class TabbedExporter {
      */
     protected buildOutputSheetData(Map activity,String outputName=null){
 
-        String activityType = activity.type
-        Integer formVersion = activity.formVersion
-        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
+        Map results = headersAndPropertyGettersForActivity(activity)
+        List headers = results.headers
+        List outputGetters = results.outputGetters
 
-        List outputGetters = []
-        List headers = []
         List outputData = []
+        ActivityForm activityForm = activityFormService.findActivityForm(activity.type, activity.formVersion)
 
         activity.outputs.each{ output->
             if ( !outputName || outputName == output.name )  {
                 FormSection formSection = activityForm?.getFormSection(output.name)
-                if(formSection && formSection.template){
-
+                if (formSection && formSection.template) {
                     OutputMetadata outputModel = new OutputMetadata(formSection.template)
-
-                    Map outputProperty = buildOutputProperties(outputModel)
-                    outputGetters += outputProperty.propertyGetters
-                    headers += outputProperty.headers
-
                     outputData += getOutputData(outputModel, output)
-                }else{
+                } else {
                     log.error("Cannot find template of " + output.name)
                 }
             }

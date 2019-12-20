@@ -4,7 +4,9 @@ import au.org.ala.ecodata.*
 import grails.test.mixin.Mock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
+import groovy.json.JsonSlurper
 import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
@@ -16,20 +18,24 @@ import spock.lang.Specification
  * Spec for the ProjectXlsExporter
  */
 @TestMixin(GrailsUnitTestMixin)
-@Mock([MetadataService, UserService, ReportingService, ActivityFormService])
+@Mock([MetadataService, UserService, ReportingService, ActivityFormService, ActivityForm])
 class ProjectXlsExporterSpec extends Specification {
 
     def projectService = Mock(ProjectService)
     def xlsExporter
     ProjectXlsExporter projectXlsExporter
     ExcelImportService excelImportService
+    ActivityFormService activityFormService = Mock(ActivityFormService)
     File outputFile
 
     void setup() {
-        outputFile = new File('test.xlsx')
-        outputFile.deleteOnExit()
-        xlsExporter = new XlsExporter(outputFile.name)
-
+        outputFile = File.createTempFile('test', '.xlsx')
+        String name = outputFile.absolutePath
+        outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
+        xlsExporter = new XlsExporter(name)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter)
+        projectXlsExporter.activityFormService = activityFormService
+        projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
     }
 
@@ -59,9 +65,7 @@ class ProjectXlsExporterSpec extends Specification {
         setup:
         String sheet = 'MERI_Baseline'
         List<String> properties = ['Baseline Method','Baseline']
-        Map project = new groovy.json.JsonSlurper().parseText(projectJson)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter)
-        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
 
         when:
         projectXlsExporter.export(project)
@@ -81,6 +85,105 @@ class ProjectXlsExporterSpec extends Specification {
 
     }
 
+    void "Activities can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel.json")
+        Map project = project()
+        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[new JsonSlurper().parse(getClass().getResource("/resources/singleSampleNestedDataModel.json"))]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport+"_V1")
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 3
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(1, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["3", "0.value1", "", "notes"]
+        List dataRow2 = readRow(2, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["3", "1.value1", "", "notes"]
+
+    }
+
+    void "Activities with deeply nested data can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel.json")
+        Map project = project()
+        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[new JsonSlurper().parse(getClass().getResource("/resources/sampleNestedDataModel.json"))]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport+"_V1")
+
+        and: "There is a header row and 5 data rows"
+        activitySheet.physicalNumberOfRows == 6
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "Value 2", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(1, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["3", "0.value1", "0.0.value2", "", "notes"]
+        List dataRow2 = readRow(2, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["3", "0.value1", "0.1.value2", "", "notes"]
+        List dataRow3 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["3", "1.value1", "1.0.value2", "", "notes"]
+        List dataRow4 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["3", "1.value1", "1.1.value2", "", "notes"]
+        List dataRow5 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["3", "1.value1", "1.2.value2", "", "notes"]
+
+    }
+
+    private List readRow(int index, Sheet sheet) {
+        Row row = sheet.getRow(index)
+        row.cellIterator().collect { Cell cell ->
+            cell.getStringCellValue()
+        }
+    }
+
+    private Workbook readWorkbook() {
+        Workbook workbook = null
+        outputFile.withInputStream { fileIn ->
+            workbook = WorkbookFactory.create(fileIn)
+        }
+        workbook
+    }
+
+    private ActivityForm createActivityForm(String name, int formVersion, String templateFileName) {
+        Map formTemplate = new JsonSlurper().parse(getClass().getResource("/resources/$templateFileName"), "UTF-8")
+        ActivityForm activityForm = new ActivityForm(name:name, formVersion: formVersion)
+        activityForm.sections << new FormSection(name:formTemplate.modelName, template:formTemplate)
+        activityForm
+    }
 
     private List readSheet(String sheet, List properties) {
         def columnMap = [:]
@@ -98,6 +201,10 @@ class ProjectXlsExporterSpec extends Specification {
             excelImportService.convertColumnMapConfigManyRows(workbook, config)
         }
 
+    }
+
+    private Map project() {
+        new groovy.json.JsonSlurper().parseText(projectJson)
     }
 
     private String projectJson = "{\n" +

@@ -1,0 +1,15 @@
+{
+  "name": "Nested lists",
+  "data": {
+    "number1": "3",
+    "notes": "notes",
+    "list": [
+      {
+        "value1": "0.value1"
+      },
+      {
+        "value1": "1.value1"
+      }
+    ]
+  }
+}

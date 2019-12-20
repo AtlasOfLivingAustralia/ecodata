@@ -1,11 +1,22 @@
 package au.org.ala.ecodata.metadata
+
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+
 /**
  * Works with the Output metadata.
  */
 class OutputMetadata {
 
-    private def metadata
-    public OutputMetadata(metadata) {
+    static Log log = LogFactory.getLog(OutputMetadata.class)
+
+    /** Used to construct property names to nested model items */
+    String pathSeparator = '.'
+
+    /** The metadata template associated with this output type */
+    private Map metadata
+
+    OutputMetadata(Map metadata) {
         this.metadata = metadata
     }
 
