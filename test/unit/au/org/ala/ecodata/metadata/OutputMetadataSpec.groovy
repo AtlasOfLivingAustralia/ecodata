@@ -9,7 +9,7 @@ import spock.lang.Specification
  * tests for OutputMetadata.groovy.
  */
 
-class OutputMetadataTests extends Specification {
+class OutputMetadataSpec extends Specification {
 
     void "test null"() {
         when:
@@ -140,6 +140,47 @@ class OutputMetadataTests extends Specification {
                   [path:'list.afterNestedList', view:'text', data:'afterNestedList'],
                   [path:'notes', view:'textarea', data:'notes']
         ]
+    }
+
+    void "Data model properties marked with the memberOnlyView attribute can be identified"() {
+        setup:
+        Map model = getJsonResource("modelWithMemberOnlyProperties")
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getMemberOnlyPropertyNames()
+
+        then:
+        names.size() == 3
+        names.containsAll(['notes', 'list.value1', 'list.nestedList.value2'])
+
+        when:
+        model = getJsonResource("sampleNestedDataModel")
+        outputMetadata = new OutputMetadata(model)
+        names = outputMetadata.getMemberOnlyPropertyNames()
+
+        then:
+        names.isEmpty()
+    }
+
+    void "Data model properties representing a specific Darwin Core attribute can be identified"() {
+        setup:
+        Map model = getJsonResource("actwwWaterBugSurvey")
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getPropertyNamesByDwcAttribute("individualCount")
+
+        then:
+        names == ['taxaObservations.individualCount']
+
+        when:
+        model = getJsonResource("sampleNestedDataModel")
+        outputMetadata = new OutputMetadata(model)
+        names = outputMetadata.getPropertyNamesByDwcAttribute("individualCount")
+
+        then:
+        names.isEmpty()
     }
 
     private List annotatedRevegetationModel() {

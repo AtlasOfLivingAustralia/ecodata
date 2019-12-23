@@ -2,7 +2,6 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputDataGetter
-//import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import grails.util.Holders
@@ -75,86 +74,6 @@ class TabbedExporter {
         sheets[name]
     }
 
-    @Deprecated
-    protected Map outputProperties(name) {
-        def model = metadataService.annotatedOutputDataModel(name)
-        def headers = []
-        def properties = []
-        model.each {
-            if (it.dataType == 'list') {
-                it.columns.each { col ->
-                    properties << it.name + '.' + col.name
-                    headers << col.label
-                }
-            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail']) {
-                // not supported, do nothing.
-            } else if (it.dataType == 'stringList') {
-                if (it.constraints) {
-                    it.constraints.each { constraint ->
-                        headers << it.description + ' - ' + constraint
-                        properties << it.name + '['+constraint+']'
-                    }
-
-                }
-                else {
-                    properties << it.name
-                    headers << it.label ?: it.description
-                }
-            }
-            else {
-                properties << it.name
-                headers << it.label ?: it.description
-            }
-        }
-        List propertyGetters = properties.collect { new OutputDataGetter(it, model, documentMap, timeZone) }
-        [headers: headers, propertyGetters: propertyGetters]
-    }
-
-
-    /**
-     *
-     * @param outputModel OutputModel generated from sectionForm->template
-     * @return
-     */
-    protected Map buildOutputProperties(OutputMetadata outputModel) {
-
-        List annotatedDataModel = outputModel.annotateDataModel()
-
-        def headers = []
-        def properties = []
-
-        annotatedDataModel.each {
-            if (it.dataType == 'list') {
-                it.columns.each { col ->
-                    properties << it.name + '.' + col.name
-                    headers << col.label
-                }
-            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail']) {
-                // not supported, do nothing.
-            } else if (it.dataType == 'stringList') {
-                if (it.constraints) {
-                    it.constraints.each { constraint ->
-                        headers << it.description + ' - ' + constraint
-                        properties << it.name + '[' + constraint + ']'
-                    }
-
-                } else {
-                    properties << it.name
-                    headers << it.label ?: it.description
-                }
-            } else {
-                properties << it.name
-                headers << it.label ?: it.description
-            }
-        }
-
-        def propertyGetters = properties.collect { String name ->
-            Map node = annotatedDataModel.find{it.name == name}
-            new OutputDataGetter(name, node, documentMap, timeZone)
-        }
-
-        [headers: headers, propertyGetters: propertyGetters]
-    }
 
     private boolean isExportableType(Map dataNode) {
         !(dataNode.dataType in ['photoPoints', 'matrix', 'masterDetail', 'list'])
@@ -187,69 +106,6 @@ class TabbedExporter {
     }
 
     /**
-     *
-     * @param outputModel OutputModel generated from sectionForm->template
-     * @return
-     */
-/*
-    protected Map buildOutputProperties(OutputMetadata outputModel) {
-
-        List annotateDataModel = outputModel.annotateDataModel()
-
-        def headers = []
-        def properties = []
-
-        annotateDataModel.each {
-            if (it.dataType == 'list') {
-                it.columns.each { col ->
-                    properties << it.name + '.' + col.name
-                    headers << col.label
-                }
-            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail']) {
-                // not supported, do nothing.
-            } else if (it.dataType == 'stringList') {
-                if (it.constraints) {
-                    it.constraints.each { constraint ->
-                        headers << it.description + ' - ' + constraint
-                        properties << it.name + '[' + constraint + ']'
-                    }
-
-                } else {
-                    properties << it.name
-                    headers << it.label ?: it.description
-                }
-            } else {
-                properties << it.name
-                headers << it.label ?: it.description
-            }
-        }
-
-        def propertyGetters = properties.collect {
-            new OutputDataPropertiesBuilder(it, annotateDataModel, documentMap, timeZone)
-        }
-
-        [headers: headers, propertyGetters: propertyGetters]
-    } */
-
-    /**
-     *Flatten output data + common data
-     *
-     * @param outputModel
-     * @param output
-     * @param commonData
-     * @return
-     */
-    @Deprecated
-    private List getOutputData(OutputMetadata  outputModel, Map output, Map commonData) {
-        List flatData = []
-        if (output) {
-            flatData = processor.flatten(output, outputModel, false)
-            flatData = flatData.collect { commonData + it }
-        }
-        flatData
-    }
-
-    /**
      * Flatten output data only
      *
      * @param outputModel
@@ -264,10 +120,10 @@ class TabbedExporter {
         flatData
     }
 
-    protected Map headersAndPropertyGettersForActivity(Map activity) {
+    protected Map headersAndPropertyGettersForActivity(String activityType, Integer formVersion) {
         List activityDataGetters = []
         List headers = []
-        ActivityForm activityForm = activityFormService.findActivityForm(activity.type, activity.formVersion)
+        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
         String key = activityForm.type+"_V"+activityForm.formVersion
         if (activityHeaderCache[key]) {
             headers = activityHeaderCache[key]
@@ -298,7 +154,7 @@ class TabbedExporter {
      */
     protected buildOutputSheetData(Map activity,String outputName=null){
 
-        Map results = headersAndPropertyGettersForActivity(activity)
+        Map results = headersAndPropertyGettersForActivity(activity.type, activity.formVersion)
         List headers = results.headers
         List outputGetters = results.outputGetters
 

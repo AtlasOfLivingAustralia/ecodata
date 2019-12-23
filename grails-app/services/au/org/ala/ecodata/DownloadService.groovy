@@ -151,7 +151,7 @@ class DownloadService {
                 log.debug("Images added")
 
                 XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
-                zip.putNextEntry(new ZipEntry("data.xls"))
+                zip.putNextEntry(new ZipEntry("data.xlsx"))
                 ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
                 xlsExporter.save(xslFile)
                 xslFile.flush()

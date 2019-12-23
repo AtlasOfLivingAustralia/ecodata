@@ -139,6 +139,15 @@ class OutputModelProcessor {
         rows
     }
 
+    /**
+     * Takes an output containing potentially nested values and produces a flat List of stuff.
+     * If the output contains more than one set of nested properties, the number of items returned will
+     * be the sum of the nested properties - any particular row will only contain values from one of the
+     * nested rows.
+     * @param output the data to flatten
+     * @param outputMetadata description of the output to flatten
+     * @param duplicationNonNestedValues true if each item in the returned list contains all of the non-nested data in the output
+     */
     List flatten2(Map output, OutputMetadata outputMetadata) {
         Map data = output.remove('data') ?: [:]
         data += output
@@ -189,28 +198,6 @@ class OutputModelProcessor {
         }
         results
     }
-
-    private List flattenOutputData(Map data, String path, List nestedPropertyNames, Map repeatedData) {
-
-        List results = []
-        Map result = [:]
-        List<Map> nestedProperties = []
-
-        data.each { k, v ->
-            String fullPath = fullPath(path, k)
-            if (nestedPropertyNames.contains(fullPath)) {
-                nestedProperties << [fullPath,v]
-            }
-            else {
-                result[fullPath] = v
-            }
-        }
-
-
-        results << result
-
-    }
-
 
     def hideMemberOnlyAttributes(Map output, OutputMetadata outputMetadata, boolean userIsProjectMember = false) {
 

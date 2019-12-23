@@ -161,7 +161,8 @@ class CSProjectXlsExporter extends ProjectExporter {
         activityList.addAll(activityIds)
 
         List<Map> activities = []
-
+        // BioCollect currently doesn't use form versioning so just get the latest version of the form.
+        ActivityForm form = activityFormService.findActivityForm(projectActivity.pActivityFormName)
         if (activityIds == null || activityIds.isEmpty()) {
             activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
         } else {
@@ -205,18 +206,22 @@ class CSProjectXlsExporter extends ProjectExporter {
                     }
 
                     activity?.outputs?.each { output ->
-                        Map outputConfig = outputProperties(output.name)
+                        Map model = form.getFormSection(output.name)?.template
+                        if (!model) {
+                            log.warn("No form template found for output: ${output.name}")
+                            return
+                        }
+                        OutputMetadata outputModel = new OutputMetadata(model)
+                        Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
                         if (!uniqueOutputs.contains(output.name)) {
                             headers.addAll(outputConfig.headers)
                             uniqueOutputs << output.name
                         }
 
                         properties.addAll(outputConfig.propertyGetters)
-                        def model = metadataService.getOutputDataModelByName(output.name)
-                        OutputMetadata outputModel = new OutputMetadata(model)
 
                         processor.hideMemberOnlyAttributes(output, outputModel, userIsProjectMember)
-                        List rowSets = processor.flatten(output, outputModel)
+                        List rowSets = processor.flatten2(output, outputModel)
 
                         // some outputs (e.g. with list datatypes) result in multiple rows in the spreadsheet, so make sure that the existing rows are duplicated
                         while (rows.size() < rowSets.size()) {
@@ -226,21 +231,25 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                         if (rowSets.size() == 1 && rows.size() > 1) {
                             rows.each {
-                                if (rowSets[0] instanceof BasicDBObject) {
-                                    it.putAll(rowSets[0].toMap())
-                                }
+                                it.putAll(rowSets[0])
                             }
                         } else {
                             rowSets.eachWithIndex { outputFields, index ->
-                                    if (outputFields instanceof BasicDBObject) {
-                                    rows[index].putAll(outputFields.toMap())
-                                }
+                                rows[index].putAll(outputFields)
                             }
                         }
 
-                        // Exclude absense record
+                        // Exclude absence records from the export if the model is configured to do so.
                         if(model?.excludeAbsenceRecord) {
-                            rows = rows?.findAll{it.individualCount > 0}
+                            List<String> propertyNamesForIndividualCount = outputModel.getPropertyNamesByDwcAttribute("individualCount")
+                            if (propertyNamesForIndividualCount) {
+                                rows = rows?.findAll{ Map row ->
+                                    propertyNamesForIndividualCount.find { String property ->
+                                        return (row[property] && row[property] instanceof Number && row[property] > 0)
+                                    }
+                                }
+                            }
+
                         }
                     }
 

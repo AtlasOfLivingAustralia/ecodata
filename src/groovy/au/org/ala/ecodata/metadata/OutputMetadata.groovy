@@ -153,7 +153,7 @@ class OutputMetadata {
         if (viewNode) {
             label = viewNode.preLabel?:(viewNode.title?:viewNode.postLabel)
         }
-        label ?: dataNode.name
+        label ?: (dataNode.description ?: dataNode.name)
     }
 
     void modelIterator(Closure callback) {
@@ -169,6 +169,7 @@ class OutputMetadata {
     }
 
     void modelIterator(String path, List viewNodes, List dataModelNodes, Closure callback) {
+        Set visitedDataNodes = new HashSet()
         viewNodes.each { Map node ->
             String nestedPath = path
             List dataModelContext = dataModelNodes
@@ -176,6 +177,7 @@ class OutputMetadata {
                 Map dataNode = findDataModelItemByName(node.source, dataModelContext)
 
                 if (dataNode) {
+                    visitedDataNodes.add(dataNode)
                     String dataNodePath = fullPathToNode(path, dataNode)
                     callback(dataNodePath, node, dataNode)
 
@@ -187,27 +189,51 @@ class OutputMetadata {
                 else {
                     log.warn("View node: "+node+" references missing dataModel node")
                 }
-
             }
 
             if (isNestedViewModelType(node)) {
                 modelIterator(nestedPath, getNestedViewNodes(node), dataModelContext, callback)
             }
         }
-    }
 
-    def getMemberOnlyPropertyNames() {
-        def props = []
+        // Include any data model nodes that are not referenced by the view model
+        dataModelNodes.each {Map node ->
+            if (!visitedDataNodes.contains(node)) {
+                callback(fullPathToNode(path, node), null, node)
 
-        metadata.dataModel.each { property ->
-            def viewNode = findViewByName(property.name)
-            if (viewNode?.memberOnlyView) {
-                props << property.name
+                if (isNestedDataModelType(node)) {
+                    dataModelIterator(path, getNestedDataModelNodes(node)) { String nodePath, Map currentNode ->
+                        callback(fullPathToNode(nodePath, currentNode), currentNode)
+                    }
+                }
             }
         }
-
-        props
     }
+
+
+
+
+    List<String> getMemberOnlyPropertyNames() {
+        List memberOnlyNames = []
+        modelIterator { String path, Map viewNode, Map dataNode ->
+            if (viewNode.memberOnlyView) {
+                memberOnlyNames << path
+            }
+        }
+        memberOnlyNames
+    }
+
+
+    List<String> getPropertyNamesByDwcAttribute(String dwcAttribute) {
+        List matchingNames = []
+        dataModelIterator {String path, Map node ->
+            if (node.dwcAttribute == dwcAttribute) {
+                matchingNames << path
+            }
+        }
+        matchingNames
+    }
+
 
     def getNestedViewNodes(node) {
         return (node.type in ['table', 'photoPoints', 'grid'] ) ? node.columns: node.items
