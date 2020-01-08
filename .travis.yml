@@ -9,6 +9,7 @@ branches:
   - dev
   - hot-fix
   - /^feature\/.*$/
+  - /^hotfix\/.*$/
 
 services:
   - mongodb
