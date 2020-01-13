@@ -26,6 +26,7 @@ class ProjectXlsExporterSpec extends Specification {
     ProjectXlsExporter projectXlsExporter
     ExcelImportService excelImportService
     ActivityFormService activityFormService = Mock(ActivityFormService)
+
     File outputFile
 
     void setup() {
@@ -82,6 +83,45 @@ class ProjectXlsExporterSpec extends Specification {
             testSheet.getRow(1).getCell(baselineCell.getColumnIndex()).stringCellValue == 'Test'
 
         }
+
+    }
+
+    void "RLP Merit approvals exported to XSLS"() {
+        setup:
+        String sheet = 'MERI_Approvals'
+        Map recentApproval = [
+                approvalDate:"2018-10-23T23:47:28.263Z",
+                approvedBy:"Test User",
+                comment: "Test purpose",
+                changeOrderNumber: "Test 2"
+        ]
+        List approvals = [recentApproval]
+
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        1 * projectService.getMostRecentMeriPlanApproval(_) >> recentApproval
+        1 * projectService.getMeriPlanApprovalHistory(_) >> approvals
+
+        outputFile.withInputStream {fileIn ->
+            Workbook workbook = WorkbookFactory.create(fileIn)
+            Sheet testSheet = workbook.getSheet(sheet)
+            testSheet.physicalNumberOfRows == 2
+
+            Cell approvedDateCell = testSheet.getRow(0).find{it.stringCellValue == 'Date / Time Approved'}
+            approvedDateCell != null
+            testSheet.getRow(1).getCell(approvedDateCell.getColumnIndex()).stringCellValue == '2018-10-23T23:47:28.263Z'
+
+            Cell conDateCell = testSheet.getRow(0).find{it.stringCellValue == 'Change Order Numbers'}
+            conDateCell != null
+            testSheet.getRow(1).getCell(conDateCell.getColumnIndex()).stringCellValue == 'Test 2'
+
+        }
+
 
     }
 

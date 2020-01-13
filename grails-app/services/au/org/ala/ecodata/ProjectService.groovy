@@ -124,7 +124,7 @@ class ProjectService {
      * @param projectId the project to get the approval history for.
      * @return a List of Maps with keys approvalDate, approvedBy.
      */
-    private List getMeriPlanApprovalHistory(String projectId){
+     List getMeriPlanApprovalHistory(String projectId){
         Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
         List<Map> histories = []
         results?.documents.collect{
@@ -135,6 +135,8 @@ class ProjectService {
                 def doc = [
                         approvalDate:data.dateApproved,
                         approvedBy:displayName,
+                        comment:data.reason,
+                        changeOrderNumber:data.referenceDocument
                 ]
                 histories.push(doc)
             }

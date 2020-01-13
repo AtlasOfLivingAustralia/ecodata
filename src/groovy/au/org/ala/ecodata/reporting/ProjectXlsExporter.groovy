@@ -76,6 +76,10 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3']
     List<String> whsAndCaseStudyHeaders = commonProjectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
     List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
+
+    List<String> approvalsHeaders = commonProjectHeaders + ['Date / Time Approved', 'Change Order Numbers','Comment','Approved by']
+    List<String> approvalsProperties = commonProjectProperties + ['approvalDate', 'changeOrderNumber', 'comment','approvedBy']
+
     List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
@@ -358,7 +362,7 @@ class ProjectXlsExporter extends ProjectExporter {
         String[] meriPlanTabs = [
                 "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
                 "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
-                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
@@ -380,6 +384,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportAttachments(project)
         exportBaseline(project)
         exportEvents(project)
+        exportApprovals(project)
         exportRLPOutcomes(project)
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
@@ -511,12 +516,26 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportRisks(Map project) {
-        if (tabsToExport && tabsToExport.contains('MERI_Risks and Threats')) {
+        if (shouldExport('MERI_Risks and Threats')) {
             risksAndThreatsSheet()
             int row = risksAndThreatsSheet.getSheet().lastRowNum
             if (project.risks && project.risks.rows) {
                 List data = project.risks.rows.collect { it + project }
                 risksAndThreatsSheet.add(data, risksAndThreatsProperties, row + 1)
+            }
+
+        }
+    }
+
+    private void exportApprovals(Map project) {
+        if (shouldExport('MERI_Approvals')) {
+            AdditionalSheet sheet = getSheet("MERI_Approvals", approvalsHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            List approvals  = projectService.getMeriPlanApprovalHistory(project.projectId)
+             if (approvals && approvals.size()>0) {
+                List data = approvals.collect { it + project }
+                sheet.add(data, approvalsProperties, row + 1)
             }
 
         }
