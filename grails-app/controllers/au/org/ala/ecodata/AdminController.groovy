@@ -564,7 +564,7 @@ class AdminController {
     @AlaSecured("ROLE_ADMIN")
     def updateProgramsModel() {
         def model = request.JSON
-        log.debug model
+        log.debug model.toString()
         metadataService.updateProgramsModel(model)
         flash.message = "Programs model updated."
         def result = model
