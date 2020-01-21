@@ -228,9 +228,6 @@ class ProjectXlsExporter extends ProjectExporter {
                              exportActivity(project, it)
                          }
                      }
-                     else {
-                         createEmptySheet(tab)
-                     }
                  }
              }
          }
@@ -388,9 +385,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRLPOutcomes(project)
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
-        //exportRLPBaselinesIndicators(project)
         exportRLPServicesTargets(project)
-
     }
 
     private void exportBudget(Map project) {
@@ -574,7 +569,7 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private  void exportRLPProjectDetails(Map project){
+    private void exportRLPProjectDetails(Map project){
         if (shouldExport("RLP_Project_Details")) {
             /**
              * RLP outcome does not use HEADERs from DB
@@ -676,49 +671,6 @@ class ProjectXlsExporter extends ProjectExporter {
             }
 
             sheet.add(data?:[], rlpKeyThreatProperties, row+1)
-        }
-    }
-
-/***
- * Deprecated
- * @param project
- */
-    private  void exportRLPBaselinesIndicators(Map project){
-        List<String> rlpBaseLineHeaders =commonProjectHeaders + ["Baseline/Indicator","Project baseline",	"Baseline method"]
-        List<String> rlpBaseLineProperties = commonProjectProperties + ["biType","baseline",	"baselineMethod"]
-
-        if (shouldExport("RLP_Baselines")) {
-            /**
-             * RLP outcome does not use HEADERs from DB
-             */
-            AdditionalSheet sheet = getSheet("RLP Monitoring methodology", rlpBaseLineHeaders)
-            int row = sheet.getSheet().lastRowNum
-
-            List data = []
-
-            if (project?.custom?.details?.baseline?.rows){
-                def items = project?.custom?.details?.baseline?.rows
-                items.each{ Map item ->
-                    Map baseline = [:]
-                    baseline["biType"] = "Baseline"
-                    baseline["baseline"] = item.baseline
-                    baseline["baselineMethod"] = item.method
-                    data.add(baseline)
-                }
-            }
-            //Reuse custom.details.keq
-            if (project?.custom?.details?.keq?.rows){
-                def items = project?.custom?.details?.keq?.rows
-                items.each{ Map item ->
-                    Map baseline = [:]
-                    baseline["biType"] = "Indicator"
-                    baseline["baseline"] = item.data1
-                    baseline["baselineMethod"] = item.data2
-                    data.add(project+baseline)
-                }
-            }
-
-            sheet.add(data?:[], rlpBaseLineProperties, row+1)
         }
     }
 
