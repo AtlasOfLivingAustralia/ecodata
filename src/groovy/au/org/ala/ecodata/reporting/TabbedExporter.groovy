@@ -53,7 +53,7 @@ class TabbedExporter {
         exporter.setDateCellFormat(dateFormat)
     }
 
-    boolean  shouldExport(String sheetName) {
+    boolean shouldExport(String sheetName) {
         return !tabsToExport || tabsToExport.contains(sheetName)
     }
 
@@ -63,7 +63,7 @@ class TabbedExporter {
      * @param sheetNames
      * @return
      */
-    boolean  shouldExport(String[] sheetNames) {
+    boolean shouldExport(String[] sheetNames) {
         return !tabsToExport || sheetNames.any{ sheetName -> tabsToExport.contains(sheetName)}
     }
 
@@ -124,22 +124,28 @@ class TabbedExporter {
         List activityDataGetters = []
         List headers = []
         ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
-        String key = activityForm.type+"_V"+activityForm.formVersion
-        if (activityHeaderCache[key]) {
-            headers = activityHeaderCache[key]
-            activityDataGetters = activityDataGetterCache[key]
+        if (activityForm) {
+            String key = activityType+"_V"+activityForm.formVersion
+            if (activityHeaderCache[key]) {
+                headers = activityHeaderCache[key]
+                activityDataGetters = activityDataGetterCache[key]
+            }
+            else {
+                activityForm.sections.each { FormSection section ->
+                    OutputMetadata outputModel = new OutputMetadata(section.template)
+
+                    Map outputProperty = getHeadersAndPropertiesForOutput(outputModel)
+                    activityDataGetters += outputProperty.propertyGetters
+                    headers += outputProperty.headers
+                }
+                activityHeaderCache[key] = headers
+                activityDataGetterCache[key] = activityDataGetters
+            }
         }
         else {
-            activityForm.sections.each { FormSection section ->
-                OutputMetadata outputModel = new OutputMetadata(section.template)
-
-                Map outputProperty = getHeadersAndPropertiesForOutput(outputModel)
-                activityDataGetters += outputProperty.propertyGetters
-                headers += outputProperty.headers
-            }
-            activityHeaderCache[key] = headers
-            activityDataGetterCache[key] = activityDataGetters
+            log.warn("Cannot export activity of type: ${activityType} version: ${formVersion} - no form found")
         }
+
         [headers: headers, outputGetters: activityDataGetters]
     }
 
