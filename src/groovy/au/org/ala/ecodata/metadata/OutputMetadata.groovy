@@ -157,7 +157,17 @@ class OutputMetadata {
     }
 
     void modelIterator(Closure callback) {
-        modelIterator('', metadata.viewModel, metadata.dataModel, callback)
+        Set visitedDataNodes = new HashSet()
+        visitedDataNodes = modelIteratorInternal('', metadata.viewModel, metadata.dataModel, visitedDataNodes, callback)
+
+        // The iteration is done via matching view nodes to data nodes, so after it's complete ensure any
+        // data nodes not associated with a view node are visited as well.
+        dataModelIterator { path, node ->
+            if (!visitedDataNodes.contains(node)) {
+                println "Warning: node ${path} is not refernced by the view model"
+                callback(fullPathToNode(path, node), null, node)
+            }
+        }
     }
 
     /**
@@ -168,8 +178,7 @@ class OutputMetadata {
         viewNode.source && viewNode.type != 'literal'
     }
 
-    void modelIterator(String path, List viewNodes, List dataModelNodes, Closure callback) {
-        Set visitedDataNodes = new HashSet()
+    private Set modelIteratorInternal(String path, List viewNodes, List dataModelNodes, Set visitedDataNodes, Closure callback) {
         viewNodes.each { Map node ->
             String nestedPath = path
             List dataModelContext = dataModelNodes
@@ -192,22 +201,11 @@ class OutputMetadata {
             }
 
             if (isNestedViewModelType(node)) {
-                modelIterator(nestedPath, getNestedViewNodes(node), dataModelContext, callback)
+                modelIteratorInternal(nestedPath, getNestedViewNodes(node), dataModelContext, visitedDataNodes, callback)
             }
         }
 
-        // Include any data model nodes that are not referenced by the view model
-        dataModelNodes.each {Map node ->
-            if (!visitedDataNodes.contains(node)) {
-                callback(fullPathToNode(path, node), null, node)
-
-                if (isNestedDataModelType(node)) {
-                    dataModelIterator(path, getNestedDataModelNodes(node)) { String nodePath, Map currentNode ->
-                        callback(fullPathToNode(nodePath, currentNode), currentNode)
-                    }
-                }
-            }
-        }
+        visitedDataNodes
     }
 
 
