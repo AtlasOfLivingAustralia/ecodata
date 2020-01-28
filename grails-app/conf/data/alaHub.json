@@ -193,6 +193,16 @@
           "interval": 10,
           "state": "Collapsed",
           "title": "Contributing Data to ALA"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Project associated with bushfire recovery",
+          "facetTermType": "Default",
+          "formattedName": "Bushfire recovery projects",
+          "name": "isBushfire",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "Bushfire recovery projects"
         }
       ]
     },
