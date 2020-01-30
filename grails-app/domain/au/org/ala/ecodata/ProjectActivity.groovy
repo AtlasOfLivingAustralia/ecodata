@@ -38,10 +38,11 @@ class ProjectActivity {
     String dataManagementPolicyDescription
     String dataManagementPolicyURL
     String dataManagementPolicyDocument
+    MapLayersConfiguration mapLayersConfig
     Date dateCreated
     Date lastUpdated
 
-    static embedded = ['visibility']
+    static embedded = ['visibility', 'mapLayersConfig']
 
     static hasMany = [submissionRecords: SubmissionRecord]
 
@@ -75,6 +76,7 @@ class ProjectActivity {
         dataManagementPolicyURL nullable: true
         dataManagementPolicyDocument nullable: true
         excludeProjectSite nullable: true
+        mapLayersConfig nullable: true
     }
 
     static mapping = {
