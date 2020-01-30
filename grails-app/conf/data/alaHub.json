@@ -15,7 +15,7 @@
     "showNote": false,
     "hideProjectAndSurvey": false,
     "industries": false,
-    "bushfireCategories": false,
+    "bushfireCategories": true,
     "isContainer": false,
     "recordNote": ""
   },
