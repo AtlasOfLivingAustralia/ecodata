@@ -1156,6 +1156,11 @@ facets.project = [
                 name: "industryFacet",
                 title: "Industry",
                 helpText: "The industries relevant to the project"
+        ],
+        [
+                name: "bushfireCategoriesFacet",
+                title: "Bushfire Categories",
+                helpText: "The bushfire categories relevant to the project"
         ]
 ]
 
