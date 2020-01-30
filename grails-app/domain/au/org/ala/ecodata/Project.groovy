@@ -78,6 +78,7 @@ class Project {
     List<String> industries = []
     String origin = 'atlasoflivingaustralia'
     String baseLayer
+    MapLayersConfiguration mapLayersConfig
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -88,7 +89,7 @@ class Project {
     /** The program of work this project is a part of, if any */
     String programId
 
-    static embedded = ['associatedOrganisations','fundings']
+    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
@@ -192,6 +193,7 @@ class Project {
         industries nullable: true
         programId nullable: true
         baseLayer nullable: true
+        mapLayersConfig nullable: true
     }
 }
 
