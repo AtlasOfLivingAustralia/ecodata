@@ -264,6 +264,9 @@
                     "recordNameFacet":{"type":"string", "index":"not_analyzed"}
                   }
                 }
+              },
+              "eventTime":{
+                "type": "string"
               }
             },
             "methodType":{
