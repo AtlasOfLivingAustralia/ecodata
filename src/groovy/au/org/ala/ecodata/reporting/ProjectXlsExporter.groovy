@@ -141,7 +141,6 @@ class ProjectXlsExporter extends ProjectExporter {
         }
 
         addProjectGeo(project)
-
         exportProject(project)
         exportOutputTargets(project)
         exportSites(project)
@@ -153,6 +152,10 @@ class ProjectXlsExporter extends ProjectExporter {
         exportReports(project)
         exportReportSummary(project)
         exportBlog(project)
+
+        if(exporter.workbook.numberOfSheets == 0){
+            createEmptySheet()
+        }
     }
 
     private addProjectGeo(Map project) {

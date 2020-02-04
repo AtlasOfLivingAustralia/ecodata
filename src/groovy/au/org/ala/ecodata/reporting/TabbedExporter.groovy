@@ -209,8 +209,8 @@ class TabbedExporter {
         typedActivitySheets[sheetName]
     }
 
-    protected AdditionalSheet createEmptySheet(String sheetName){
-        createSheet(sheetName,['No data'])
+    protected AdditionalSheet createEmptySheet(){
+        createSheet('Sheet 1',[])
     }
 
 
