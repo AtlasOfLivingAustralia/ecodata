@@ -29,7 +29,7 @@ class ProjectServiceSpec extends Specification {
 
     def "test create and update project"() {
         given:
-        def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty']
+        def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty', isBushfire:true, bushfireCategories: null]
         def dataProviderId = 'dp1'
         def dataResourceId = 'dr1'
         stubbedCollectoryService.createDataResource(_,_) >> [dataResourceId: dataResourceId]
@@ -73,6 +73,10 @@ class ProjectServiceSpec extends Specification {
 
         then: "ensure the updated properties are the same as the change"
         savedProj.description == updatedData.description
+
+        then: "categories can be null for tagged bushfire recovery projects"
+        savedProj.isBushfire == updatedData.isBushfire
+        savedProj.bushfireCategories == updatedData.bushfireCategories
 
     }
 
