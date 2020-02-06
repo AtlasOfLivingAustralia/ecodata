@@ -286,7 +286,7 @@ class ProjectService {
             props.remove('id')
 
             if (collectoryLink) {
-                establishCollectoryLinkForProject(project, props)
+                updateCollectoryLinkForProject(project, props)
             }
 
             getCommonService().updateProperties(project, props, overrideUpdateDate)
@@ -316,36 +316,6 @@ class ProjectService {
         return props
     }
 
-
-
-    /*
-     * Async task for establishing the Collectory data resource - this is because it could be relatively slow and we do
-     * not want to delay the project creation process for the user.
-     */
-
-    private establishCollectoryLinkForProject(Project project, Map props) {
-        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
-
-            task {
-                Map collectoryProps = [:]
-                collectoryProps << collectoryService.createDataResource(props)
-
-                Project.withSession {
-                    getCommonService().updateProperties(project, collectoryProps)
-                }
-            }.onComplete {
-                log.info("Collectory link established for project ${project.name} (id = ${project.projectId})")
-            }.onError { Throwable error ->
-                if (error instanceof UndeclaredThrowableException) {
-                    error = error.undeclaredThrowable
-                }
-                String message = "Failed to establish collectory link for project ${project.name} (id = ${project.projectId})"
-                log.error(message, error)
-                emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
-            }
-        }
-    }
-
     private updateCollectoryLinkForProject(Project project, Map props) {
         if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
@@ -353,7 +323,7 @@ class ProjectService {
             task {
                 collectoryService.updateDataResource(projectProps, props)
             }.onComplete {
-                log.info("Collectory link updated for project ${project.name} (id = ${project.projectId})")
+                log.info("Completed task to link project with collectory - ${project.name} (id = ${project.projectId})")
             }.onError { Throwable error ->
                 if (error instanceof UndeclaredThrowableException) {
                     error = error.undeclaredThrowable
@@ -365,13 +335,14 @@ class ProjectService {
         }
     }
 
-    def update(Map props, String id) {
+    def update(Map props, String id, Boolean shouldUpdateCollectory = true) {
         Project project = Project.findByProjectId(id)
         if (project) {
             props = prepareProject(props)
             try {
                 getCommonService().updateProperties(project, props)
-                updateCollectoryLinkForProject(project, props)
+                if (shouldUpdateCollectory)
+                    updateCollectoryLinkForProject(project, props)
                 return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
