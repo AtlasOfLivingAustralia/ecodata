@@ -76,7 +76,10 @@ grails.project.dependency.resolution = {
 
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
         compile "com.drewnoakes:metadata-extractor:2.10.1"
-        compile "org.apache.poi:ooxml-schemas:1.0"
+        compile 'org.apache.poi:ooxml-schemas:1.4'
+        compile 'org.apache.poi:poi:4.1.1'
+        compile 'org.apache.poi:poi-ooxml:4.1.1'
+        compile 'org.apache.poi:poi-ooxml-schemas:4.1.1'
 
         compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
         compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'

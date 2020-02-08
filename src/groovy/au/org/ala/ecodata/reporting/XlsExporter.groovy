@@ -2,6 +2,7 @@ package au.org.ala.ecodata.reporting
 
 import org.apache.poi.hssf.util.HSSFColor
 import org.apache.poi.ss.usermodel.CellStyle
+import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.Sheet
@@ -112,10 +113,10 @@ class XlsExporter extends XlsxExporter {
     CellStyle headerStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
-        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         Font font = workbook.createFont();
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        font.setColor(HSSFColor.WHITE.index);
+        font.setBold(true);
+        font.setColor(HSSFColor.HSSFColorPredefined.WHITE.index);
         headerStyle.setFont(font);
         return headerStyle
     }
