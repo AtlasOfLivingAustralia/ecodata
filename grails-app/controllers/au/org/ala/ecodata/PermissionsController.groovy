@@ -666,7 +666,7 @@ class PermissionsController {
      *
      * @return
      */
-    def getOrganisationsForUserId() {
+    def gitgetOrganisationsForUserId() {
         String userId = params.id
         if (userId) {
             List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Organisation.class.name, AccessLevel.starred, DELETED, params)
