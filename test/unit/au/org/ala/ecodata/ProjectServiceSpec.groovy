@@ -3,19 +3,22 @@ package au.org.ala.ecodata
 import com.github.fakemongo.Fongo
 import grails.test.mixin.TestMixin
 import grails.test.mixin.mongodb.MongoDbTestMixin
+import grails.test.mixin.web.ControllerUnitTestMixin
 import spock.lang.Specification
-
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
-
-@TestMixin(MongoDbTestMixin)
+// Added ControllerUnitTestMixin to include grails JSON converter. It is used in a service class.
+@TestMixin([MongoDbTestMixin,ControllerUnitTestMixin])
 class ProjectServiceSpec extends Specification {
 
     ProjectService service = new ProjectService()
-    CollectoryService stubbedCollectoryService = Stub(CollectoryService)
-    DocumentService documentService = Mock(DocumentService)
-    UserService userService = Mock(UserService)
+    def webServiceStub = Stub(WebService)
+    String collectoryBaseUrl = ''
+    String meritDataProvider = 'drMerit'
+    String biocollectDataProvider = 'drBiocollect'
+    String dataProviderId = 'dp1'
+    String dataResourceId = 'dr1'
 
     def setup() {
         Fongo fongo = new Fongo("ecodata-test")
@@ -23,20 +26,26 @@ class ProjectServiceSpec extends Specification {
 
         defineBeans {
             commonService(CommonService)
+            collectoryService(CollectoryService)
         }
+
+        grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider], collectoryIntegrationEnabled: true]
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
+        grailsApplication.mainContext.collectoryService.grailsApplication = grailsApplication
+        grailsApplication.mainContext.collectoryService.webService = webServiceStub
+        grailsApplication.mainContext.collectoryService.projectService = service
+        service.collectoryService = grailsApplication.mainContext.collectoryService
         service.grailsApplication = grailsApplication
-        service.collectoryService = stubbedCollectoryService
-        service.documentService = documentService
-        service.userService = userService
+
+        webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
+        webServiceStub.extractIdFromLocationHeader(_) >> dataResourceId
+        webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, _) >> [:]
+
     }
 
     def "test create and update project"() {
         given:
-        def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty']
-        def dataProviderId = 'dp1'
-        def dataResourceId = 'dr1'
-        stubbedCollectoryService.createDataResource(_,_) >> [dataResourceId: dataResourceId]
+        def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty', alaHarvest: true]
         def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
 
@@ -57,6 +66,7 @@ class ProjectServiceSpec extends Specification {
         then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
         savedProj.description == projData.description
+        savedProj.dataResourceId == dataResourceId
         //savedProj['dynamicProperty'] == projData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
 
         when:
@@ -83,7 +93,6 @@ class ProjectServiceSpec extends Specification {
     def "test project validation"() {
         given:
         def projData = [description: 'test proj description', dynamicProperty: 'dynamicProperty']
-        stubbedCollectoryService.createDataProviderAndResource(_,_) >> ""
 
         when:
         def result = service.create(projData)
@@ -92,39 +101,5 @@ class ProjectServiceSpec extends Specification {
         result.status == 'error'
         result.error != null
 
-    }
-
-    def "The most recent entry in a project MERI plan approval history can be found and returned"() {
-        setup:
-        String projectId = 'p1'
-        List documents = []
-        (1..5).each {
-            documents << buildApprovalDocument(it, projectId)
-        }
-        userService.lookupUserDetails('1234') >> [displayName:'test']
-        int count = 0
-
-        when:
-        Map mostRecentMeriPlanApproval = service.getMostRecentMeriPlanApproval(projectId)
-
-        then:
-        1 * documentService.search([projectId:projectId, role:'approval', labels:'MERI']) >> [documents:documents]
-        5 * documentService.readJsonDocument(_) >> {documents[count++].content}
-
-        mostRecentMeriPlanApproval.approvalDate == '2019-07-01T00:00:05Z'
-        mostRecentMeriPlanApproval.approvedBy == 'test'
-    }
-
-    private Map buildApprovalDocument(int i, String projectId) {
-        Map approval = [
-                dateApproved:"2019-07-01T00:00:0${i}Z",
-                approvedBy:'1234',
-                reason:'r',
-                referenceDocument: 'c',
-                project: [projectId:projectId]
-        ]
-        Map document = [documentId:i, projectId:projectId, url:'url'+i, content:approval]
-
-        document
     }
 }

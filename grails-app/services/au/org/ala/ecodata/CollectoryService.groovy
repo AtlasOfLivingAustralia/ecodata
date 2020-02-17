@@ -97,9 +97,8 @@ class CollectoryService {
     }
 
     /**
-     * Creates a new Data Provider (=~ ecodata project) and Data Resource (=~ ecodata outputs)
-     * in the collectory using the supplied properties as input.  Much of project meta data is
-     * stored in a 'hiddenJSON' field in collectory.
+     * Creates Data Resource for a given Data Provider in the collectory using the supplied properties as input.
+     * Much of project meta data is stored in a 'hiddenJSON' field in collectory.
      * @param props the properties for the new data provider and resource.
      * @return a map containing the created data provider id and data resource id, or null.
      */
@@ -150,32 +149,42 @@ class CollectoryService {
     }
 
     /**
-     * Updates the Data Resource in the collectory using the supplied properties as input.  The 'hiddenJSON' field in
-     * collectory is recreated to reflect the latest project properties.
+     * Updates the Data Resource in the collectory using the supplied properties as input if {@link Project#alaHarvest}
+     * flag is true. The 'hiddenJSON' field in collectory is recreated to reflect the latest project properties.
+     * If {@link Project#alaHarvest} is false, then {@link Project#dataResourceId} is cleared.
      * @param project the UPDATED project in ecodata.
      * @return void.
      */
     def updateDataResource(Map project, Map changedProperties = null, Boolean forceUpdate = false) {
-
-        if (!project.dataResourceId || project.dataResourceId == "null") {
-           createDataResource(project)
-        }
-        else {
-            def projectId = project.projectId
-
-            Map properties = changedProperties ?: project
-            Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
-            if (forceUpdate) {
-                collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
-            }
-
-            // Only update if a property other than the "hiddenJSON" attribute has changed.
-            if ((collectoryAttributes.size() > 1) || forceUpdate) {
-                Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
-                if (result.error) {
-                    log.error "Error updating collectory info for project ${projectId} - ${result.error}"
+        Map properties = changedProperties ?: project
+        def alaHarvest = properties.alaHarvest?:project.alaHarvest
+        if (alaHarvest) {
+            if (!project.dataResourceId || project.dataResourceId == "null") {
+                Map collectoryProps = createDataResource(project)
+                if (collectoryProps?.dataResourceId && project?.projectId) {
+                    projectService.update(collectoryProps, project.projectId, false)
                 }
             }
+            else {
+                def projectId = project.projectId
+
+                Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
+                if (forceUpdate) {
+                    collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
+                }
+
+                // Only update if a property other than the "hiddenJSON" attribute has changed.
+                if ((collectoryAttributes.size() > 1) || forceUpdate) {
+                    Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
+                    if (result.error) {
+                        log.error "Error updating collectory info for project ${projectId} - ${result.error}"
+                    }
+                }
+            }
+        }
+        else if (project.dataResourceId) {
+            // clear dataResourceId field
+            projectService.update([dataResourceId: null, dataProviderId: null], project.projectId, false)
         }
     }
 

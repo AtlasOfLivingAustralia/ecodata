@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import grails.test.mixin.Mock
 import grails.test.spock.IntegrationSpec
 
 class ProjectControllerIntegrationSpec extends IntegrationSpec {

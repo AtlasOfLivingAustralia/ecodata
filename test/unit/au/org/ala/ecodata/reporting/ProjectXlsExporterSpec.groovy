@@ -479,6 +479,7 @@ class ProjectXlsExporterSpec extends Specification {
             "    \"funding\" : 0.0,\n" +
             "    \"grantId\" : \"RLP-Test-Program-Project-1\",\n" +
             "    \"industries\" : [],\n" +
+            "    \"bushfireCategories\" : [],\n" +
             "    \"isCitizenScience\" : false,\n" +
             "    \"isExternal\" : false,\n" +
             "    \"isMERIT\" : true,\n" +
