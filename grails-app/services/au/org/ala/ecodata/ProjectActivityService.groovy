@@ -428,7 +428,6 @@ class ProjectActivityService {
         attribution
     }
 
-
     /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
      * Multiple properties will be ANDed together when producing results.
