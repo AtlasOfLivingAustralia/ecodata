@@ -274,6 +274,22 @@ class ActivityController {
     }
 
     /**
+     * Count distinct sites associated with activities in a project
+     * @param id Project identifier
+     * @return [ sites: [ 'Site id' ] ]
+     */
+    def getDistinctSitesForProject(String id){
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else {
+            def total = activityService.getDistinctSitesForProject(id)
+            render text: [sites: total] as JSON, contentType: 'application/json'
+        }
+    }
+
+    /**
      * Request body should be JSON formatted of the form:
      * {
      *     "property1":value1,
