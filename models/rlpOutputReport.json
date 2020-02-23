@@ -1,17 +1,17 @@
 {
   "class": "au.org.ala.ecodata.ActivityForm",
-  "id": "5d3e4036e4b08a9431a62f93",
+  "id": "5e462497c2dc0bacab5a7c15",
   "activationDate": null,
   "category": "RLP Reports",
   "createdUserId": "1493",
-  "dateCreated": "2019-07-29T00:39:18Z",
-  "formVersion": 3,
+  "dateCreated": "2020-02-14T04:39:52Z",
+  "formVersion": 4,
   "gmsId": null,
-  "lastUpdated": "2020-01-06T21:12:44Z",
+  "lastUpdated": "2020-02-14T04:59:20Z",
   "lastUpdatedUserId": "1493",
   "minOptionalSectionsCompleted": 0,
   "name": "RLP Output Report",
-  "publicationStatus": "published",
+  "publicationStatus": "unpublished",
   "sections": [
     {
       "class": "au.org.ala.ecodata.FormSection",
@@ -204,9 +204,15 @@
             "name": "projectAssuranceDetails"
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -261,10 +267,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -339,9 +348,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Communication Materials",
@@ -421,10 +436,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -521,9 +539,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Community engagement",
@@ -628,10 +652,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -865,9 +892,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Controlling access",
@@ -1103,10 +1136,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -1413,9 +1449,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Pest animal management",
@@ -1744,10 +1786,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -1940,9 +1985,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Management plan development",
@@ -2133,10 +2184,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -2341,9 +2395,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Debris removal",
@@ -2555,10 +2615,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -2815,9 +2878,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Erosion Management",
@@ -3081,10 +3150,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -3282,9 +3354,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Maintaining feral free enclosures",
@@ -3517,10 +3595,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -3677,9 +3758,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Establishing ex-situ breeding programs",
@@ -3827,10 +3914,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -4017,9 +4107,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Establishing Agreements",
@@ -4211,10 +4307,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -4294,14 +4393,20 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
           {
-            "type": "row",
+            "type": "section",
             "items": [
               {
                 "type": "table",
@@ -4382,10 +4487,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -4449,9 +4557,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -4520,10 +4634,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -4722,9 +4839,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Fauna survey",
@@ -4960,10 +5083,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -5216,9 +5342,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Fire management",
@@ -5442,10 +5574,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -5648,9 +5783,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Flora survey",
@@ -5891,10 +6032,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -6132,9 +6276,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Habitat augmentation",
@@ -6365,10 +6515,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -6414,9 +6567,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -6481,10 +6640,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -6660,9 +6822,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Improving hydrological regimes",
@@ -6885,10 +7053,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -7140,9 +7311,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Improving land management practices",
@@ -7377,10 +7554,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -7619,8 +7799,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Disease management",
@@ -7862,10 +8049,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -7930,9 +8120,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Negotiations",
@@ -8000,10 +8196,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -8045,9 +8244,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -8102,10 +8307,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -8326,9 +8534,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Pest animal survey",
@@ -8579,10 +8793,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -8790,9 +9007,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Plant survival survey",
@@ -9034,10 +9257,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -9091,9 +9317,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -9156,10 +9388,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -9397,9 +9632,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Remediating riparian and aquatic areas",
@@ -9636,10 +9877,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -9896,9 +10140,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Weed treatment",
@@ -10166,10 +10416,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -10442,9 +10695,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Revegetating habitat",
@@ -10742,10 +11001,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -10980,9 +11242,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Site preparation",
@@ -11200,10 +11468,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -11291,9 +11562,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -11391,10 +11668,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -11518,9 +11798,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Soil testing",
@@ -11625,10 +11911,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -11795,9 +12084,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Emergency Interventions",
@@ -11940,10 +12235,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -12157,9 +12455,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Water quality survey",
@@ -12401,10 +12705,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
@@ -12599,9 +12906,15 @@
             "description": ""
           },
           {
-            "dataType": "document",
-            "name": "attachments",
-            "description": "Please attach any Evidence of Service Delivery here"
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
           }
         ],
         "modelName": "RLP - Weed distribution survey",
@@ -12837,10 +13150,13 @@
                 ]
               },
               {
-                "type": "row",
-                "items": [
+                "type": "table",
+                "source": "assuranceDocuments",
+                "userAddedRows": true,
+                "disableTableUpload": true,
+                "columns": [
                   {
-                    "preLabel": "",
+                    "title": "Attached documents",
                     "source": "attachments",
                     "type": "document"
                   }
