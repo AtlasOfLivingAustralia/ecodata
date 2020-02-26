@@ -698,7 +698,17 @@
                 },
                 "dataType": "number",
                 "name": "sitesInstalledCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                {
+                  "condition": "areaInvoicedHa > 0",
+                  "type": "conditional_validation",
+                  "value": {
+                    "message": "The controlled area must be mapped",
+                    "validate": "required,min[0.0001]"
+                  }
+                }
+              ]
               },
               {
                 "computed": {
@@ -706,7 +716,16 @@
                 },
                 "dataType": "number",
                 "name": "sitesInstalledCalculatedLengthKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthInvoicedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The length controlled must be mapped",
+                      "validate": "required,min[0.001]"
+                    }
+                  }]
               },
               {
                 "dataType": "document",
@@ -1186,7 +1205,17 @@
                 "computed": {
                   "expression": "$geom.areaHa(site)"
                 },
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The controlled area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "dataType": "number",
@@ -1194,7 +1223,17 @@
                 "computed": {
                   "expression": "$geom.lengthKm(site)"
                 },
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthInvoicedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The controlled length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "dataType": "number",
@@ -1876,7 +1915,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The area covered by the plan must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "dataType": "document",
@@ -2234,7 +2283,16 @@
                 },
                 "dataType": "number",
                 "name": "calculatedDebrisRemovedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaOfRemovedDebrisInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The cleared area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }]
               },
               {
                 "computed": {
@@ -2242,7 +2300,16 @@
                 },
                 "dataType": "number",
                 "name": "calculatedDebrisRemovedKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "debrisRemovedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The cleared length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }]
               },
               {
                 "defaultValue": {
@@ -2679,7 +2746,16 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaOfErosionControlHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaOfErosionControlInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The controlled area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }]
               },
               {
                 "computed": {
@@ -2687,7 +2763,16 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthOfErosionControlKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthOfErosionControlInvoicedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The controlled length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }]
               },
               {
                 "dataType": "document",
@@ -3211,7 +3296,16 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaOfEnclosuresHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The area of the enclosure must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }]
               },
               {
                 "defaultValue": {
@@ -4001,7 +4095,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaCoveredByAgreementsHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaOfCoveredByAgreementsInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -4697,7 +4801,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The area surveyed must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -5133,7 +5247,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaTreatedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedTreatedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The managed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -5141,7 +5265,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthTreatedKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthTreatedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The managed length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -5636,7 +5770,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The surveyed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -6082,7 +6226,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaAugmentedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedAumentationHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The augmented area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -6090,7 +6244,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthAugmentedKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthAugmentedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The augmented length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -6697,7 +6861,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaCoveringRegimeChangeHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaCoveringRegimeChangeHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -6705,7 +6879,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthOfRegimeChangeKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthOfRegimeChangeKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "dataType": "document",
@@ -7104,7 +7288,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaImplementedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaImplementedInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -7113,7 +7307,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthImplementedKm",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "lengthImplementedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -7605,7 +7809,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaTreatedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaTreatedInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The managed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -7613,7 +7827,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthTreatedKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthTreatedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The managed length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -8370,7 +8594,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The surveyed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -8855,7 +9089,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The surveyed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -9439,7 +9683,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaRemediatedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaRemediatedInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The remediated area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -9447,7 +9701,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthRemediatedKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthRemediatedInvoicedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The remediated length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -9927,7 +10191,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The treated area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -9935,7 +10209,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedLengthKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthInvoicedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The treated length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -10466,7 +10750,17 @@
                 "computed": {
                   "expression": "$geom.areaHa(sitesRevegetated)"
                 },
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The revegetated area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "dataType": "number",
@@ -10474,7 +10768,17 @@
                 "computed": {
                   "expression": "$geom.lengthKm(sitesRevegetated)"
                 },
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthRevegetatedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The revegetated length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -11043,7 +11347,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedAreaPreparedHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaPreparedInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The prepared area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "computed": {
@@ -11051,7 +11365,17 @@
                 },
                 "dataType": "number",
                 "name": "calculatedLengthPreparedKm",
-                "units": "km"
+                "units": "km",
+                "behaviour": [
+                  {
+                    "condition": "lengthPreparedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The prepared length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -12297,7 +12621,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The surveyed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -12767,7 +13101,17 @@
                 },
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
-                "units": "ha"
+                "units": "ha",
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The surveyed area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
               },
               {
                 "defaultValue": {
