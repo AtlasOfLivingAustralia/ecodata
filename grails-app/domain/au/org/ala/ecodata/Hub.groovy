@@ -44,6 +44,7 @@ class Hub {
     Map pages
     /** on record listing pages like all records, my records etc., configure table columns using this property */
     List dataColumns
+    MapLayersConfiguration mapLayersConfig
 
     String status = 'active'
 
@@ -67,5 +68,8 @@ class Hub {
         customBreadCrumbs nullable: true
         pages nullable: true
         dataColumns nullable: true
+        mapLayersConfig nullable: true
     }
+
+    static embedded = ['mapLayersConfig']
 }

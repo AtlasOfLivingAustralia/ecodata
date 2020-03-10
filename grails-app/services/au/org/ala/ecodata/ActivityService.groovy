@@ -247,6 +247,30 @@ class ActivityService {
     }
 
     /**
+     * Get distinct sites associated with activities in a project
+     * @param projectId Project identifier
+     * @return activity count.
+     */
+    List getDistinctSitesForProject(projectId, status = ACTIVE) {
+
+        BuildableCriteria c = Activity.createCriteria()
+        def results = c.listDistinct {
+            projections {
+                property 'siteId'
+            }
+            eq("projectId", projectId)
+            eq("status", status)
+            and{
+                ne("siteId", null)
+                ne("siteId", "")
+            }
+
+        }
+
+        results
+    }
+
+    /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
      * @param act an Activity instance
