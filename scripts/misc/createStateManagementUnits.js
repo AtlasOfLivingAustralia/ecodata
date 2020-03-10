@@ -364,8 +364,10 @@ var nswSite = {
     "visibility" : "private"
 };
 
-db.site.insert(nswSite);
-
+var siteCursor = db.site.find({name:nswSite.name});
+if (!siteCursor.hasNext()) {
+    db.site.insert(nswSite);
+}
 
 var states = [{
     name:"New South Wales",
@@ -386,6 +388,9 @@ for (var i=0; i<states.length; i++) {
         managementUnitSiteId: state.siteId
     };
 
-    db.managementUnit.insert(mu);
-    print(mu.name+" "+mu.managementUnitId);
+    var existingMU = db.managementUnit.find({name:states[i].name});
+    if (!existingMU.hasNext()) {
+        db.managementUnit.insert(mu);
+        print(mu.name+" "+mu.managementUnitId);
+    }
 }
