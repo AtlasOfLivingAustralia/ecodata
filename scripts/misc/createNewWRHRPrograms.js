@@ -131,13 +131,13 @@ var gaConfig = {
         "activityPeriodDescriptor" : "Outputs report #",
         "meriPlanTemplate" : "configurableMeriPlan",
         "riskAndThreatTypes" : [
-        "Performance",
-        "Work Health and Safety",
-        "People resources",
-        "Financial",
-        "External stakeholders",
-        "Natural Environment"
-    ],
+            "Performance",
+            "Work Health and Safety",
+            "People resources",
+            "Financial",
+            "External stakeholders",
+            "Natural Environment"
+        ],
         "projectReports" : [
         {
             "reportType" : "Activity",
@@ -256,5 +256,52 @@ var erf = db.program.find({acronym:'ERF'}).next();
 var directSourceProcurement = createOrUpdateProgram("Direct source procurement", "", erf.startDate, erf.endDate, erf.outcomes, erf._id, null);
 db.project.update({programId:erf.programId}, {$set:{programId:directSourceProcurement.programId}}, {multi:true});
 
+var emergencyInterventionConfig = {
+    "visibility" : "public",
+    "requiresActivityLocking" : true,
+    "navigationMode" : "returnToProject",
+    "projectTemplate" : "rlp",
+    "activityPeriodDescriptor" : "Outputs report #",
+    "meriPlanTemplate" : "configurableMeriPlan",
+    "riskAndThreatTypes" : [
+        "Performance",
+        "Work Health and Safety",
+        "People resources",
+        "Financial",
+        "External stakeholders",
+        "Natural Environment"
+    ],
+    "projectReports" : [
+        {
+            "reportType" : "Activity",
+            "reportDescriptionFormat" : "Progress Report %1d",
+            "reportNameFormat" : "Progress Report %1d",
+            "description" : "",
+            "category" : "Progress Reports",
+            "activityType" : "Wildlife Recovery Progress Report",
+            "reportsAlignedToCalendar" : false,
+            "endDates" : [
+                "2020-04-14T14:00:00Z",
+                "2020-07-14T14:00:00Z",
+                "2021-01-14T13:00:00Z"
+            ],
+            "canSubmitDuringReportingPeriod" : true
+        },
+        {
+            "reportType" : "Single",
+            "firstReportingPeriodEnd" : "2021-06-30T14:00:00Z",
+            "reportDescriptionFormat" : "Final Report",
+            "reportNameFormat" : "Final Report",
+            "reportingPeriodInMonths" : 18,
+            "multiple" : false,
+            "description" : "",
+            "category" : "Final Report",
+            "reportsAlignedToCalendar" : false,
+            "activityType" : "Final Report"
+        }]
+};
+
+var emergencyIntervention = createOrUpdateProgram("Emergency Intervention", "", ISODate("2020-06-30T14:00:00Z"), ISODate("2021-06-30T14:00:00Z"), [], null, emergencyInterventionConfig);
+var stateGrants = createOrUpdateProgram("State Intervention", "", emergencyIntervention.startDate, emergencyIntervention.endDate, [], emergencyIntervention._id, emergencyInterventionConfig);
 
 
