@@ -65,6 +65,7 @@ var cvaConfig = {
     "requiresActivityLocking" : true,
     "navigationMode" : "returnToProject",
     "projectTemplate" : "rlp",
+    "organisationRelationship": "Grantee",
     "activityPeriodDescriptor" : "Outputs report #",
     "meriPlanTemplate" : "configurableMeriPlan",
     "riskAndThreatTypes" : [
@@ -111,7 +112,7 @@ var cvaConfig = {
     ]
 };
 
-//createOrUpdateProgram("CVA", "", program.startDate, program.endDate, cvaOutcomes, program._id, cvaConfig)
+createOrUpdateProgram("CVA", "", program.startDate, program.endDate, [], program._id, cvaConfig)
 
 var gaConfig = {
 
@@ -124,20 +125,21 @@ var gaConfig = {
         "meriBudget",
         "risksAndThreats"
     ],
-        "visibility" : "public",
-        "requiresActivityLocking" : true,
-        "navigationMode" : "returnToProject",
-        "projectTemplate" : "rlp",
-        "activityPeriodDescriptor" : "Outputs report #",
-        "meriPlanTemplate" : "configurableMeriPlan",
-        "riskAndThreatTypes" : [
-            "Performance",
-            "Work Health and Safety",
-            "People resources",
-            "Financial",
-            "External stakeholders",
-            "Natural Environment"
-        ],
+    "visibility" : "public",
+    "requiresActivityLocking" : true,
+    "organisationRelationship": "Grantee",
+    "navigationMode" : "returnToProject",
+    "projectTemplate" : "rlp",
+    "activityPeriodDescriptor" : "Outputs report #",
+    "meriPlanTemplate" : "configurableMeriPlan",
+    "riskAndThreatTypes" : [
+        "Performance",
+        "Work Health and Safety",
+        "People resources",
+        "Financial",
+        "External stakeholders",
+        "Natural Environment"
+    ],
         "projectReports" : [
         {
             "reportType" : "Activity",
@@ -186,11 +188,20 @@ var wrrOutcomes = [
 ];
 var wrrConfig = {
 
-    "meriPlanContents": ["objectivesList",  "activities"],
+    "meriPlanContents": [
+        "objectivesList",
+        "activities",
+        "monitoringIndicators",
+        "projectImplementation",
+        "projectPartnerships",
+        "keq",
+        "meriBudget",
+        "risksAndThreats"],
     "visibility": "public",
     "requiresActivityLocking": true,
     "navigationMode": "returnToProject",
     "projectTemplate": "rlp",
+    "organisationRelationship": "Grantee",
     "activityPeriodDescriptor": "Outputs report #",
     "meriPlanTemplate": "configurableMeriPlan",
     "riskAndThreatTypes": [
@@ -263,6 +274,7 @@ var emergencyInterventionConfig = {
     "projectTemplate" : "rlp",
     "activityPeriodDescriptor" : "Outputs report #",
     "meriPlanTemplate" : "configurableMeriPlan",
+    "organisationRelationship": "Grantee",
     "riskAndThreatTypes" : [
         "Performance",
         "Work Health and Safety",
