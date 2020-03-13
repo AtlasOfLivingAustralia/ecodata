@@ -363,372 +363,10 @@ var nswSite = {
     "type" : "managementUnitArea",
     "visibility" : "private"
 };
-
-var victoriaState = {
-
-    "dateCreated" : ISODate("2020-03-11T00:31:43.766Z"),
-    "isSciStarter" : false,
-    "lastUpdated" : ISODate("2020-03-11T00:32:00.368Z"),
-
-    "siteId" : UUID.generate(),
-    "status" : "active",
-    "address" : "",
-    "nrm" : "",
-    "externalId" : "",
-    "poi" : [ ],
-    "context" : "none",
-    "state" : "",
-    "area" : "",
-    "description" : "",
-    "extent" : {
-        "geometry" : {
-            "fid" : "cl22",
-            "area" : 227711.74073643668,
-            "lga" : [
-                "Wellington (S)",
-                "Corowa Shire (A)",
-                "Corangamite (S)",
-                "Murray (A)",
-                "East Gippsland (S)",
-                "Knox (C)",
-                "Manningham (C)",
-                "Maroondah (C)",
-                "Maribyrnong (C)",
-                "Stonnington (C)",
-                "Queenscliffe (B)",
-                "Macedon Ranges (S)",
-                "Indigo (S)",
-                "Mornington Peninsula (S)",
-                "Wyndham (C)",
-                "Wentworth (A)",
-                "Campaspe (S)",
-                "Monash (C)",
-                "Hobsons Bay (C)",
-                "Melton (S)",
-                "Hepburn (S)",
-                "Bayside (C)",
-                "Mount Alexander (S)",
-                "Alpine (S)",
-                "Wodonga (RC)",
-                "Greater Geelong (C)",
-                "Greater Hume Shire (A)",
-                "Hume (C)",
-                "Casey (C)",
-                "Southern Mallee (DC)",
-                "Cardinia (S)",
-                "Flinders (M)",
-                "Loddon (S)",
-                "Horsham (RC)",
-                "Glenelg (S)",
-                "Yarra (C)",
-                "Yarra Ranges (S)",
-                "Central Goldfields (S)",
-                "Yarriambiack (S)",
-                "Colac-Otway (S)",
-                "Tatiara (DC)",
-                "Ararat (RC)",
-                "Warrnambool (C)",
-                "Naracoorte and Lucindale (DC)",
-                "Whittlesea (C)",
-                "Nillumbik (S)",
-                "Whitehorse (C)",
-                "Northern Grampians (S)",
-                "Pyrenees (S)",
-                "Port Phillip (C)",
-                "Renmark Paringa (DC)",
-                "Darebin (C)",
-                "Frankston (C)",
-                "Southern Grampians (S)",
-                "Mansfield (S)",
-                "Golden Plains (S)",
-                "Strathbogie (S)",
-                "Surf Coast (S)",
-                "Swan Hill (RC)",
-                "Baw Baw (S)",
-                "Banyule (C)",
-                "Bass Coast (S)",
-                "Berrigan (A)",
-                "Albury (C)",
-                "Moonee Valley (C)",
-                "Latrobe (C)",
-                "Brimbank (C)",
-                "Glen Eira (C)",
-                "Greater Bendigo (C)",
-                "Hindmarsh (S)",
-                "Loxton Waikerie (DC)",
-                "Buloke (S)",
-                "Bega Valley (A)",
-                "Melbourne (C)",
-                "Kingston (C)",
-                "Benalla (RC)",
-                "West Wimmera (S)",
-                "Moyne (S)",
-                "South Gippsland (S)",
-                "Greater Dandenong (C)",
-                "Grant (DC)",
-                "Murrindindi (S)",
-                "Greater Shepparton (C)",
-                "Mitchell (S)",
-                "Moira (S)",
-                "Mildura (RC)",
-                "Moorabool (S)",
-                "Gannawarra (S)",
-                "Moreland (C)",
-                "Tumbarumba (A)",
-                "Towong (S)",
-                "Unincorporated SA",
-                "Unincorporated Vic",
-                "Wakool (A)",
-                "Wangaratta (RC)",
-                "Balranald (A)",
-                "Ballarat (C)",
-                "Wattle Range (DC)",
-                "Boroondara (C)"
-            ],
-            "name" : "Victoria",
-            "nrm" : [
-                "Wimmera",
-                "Western",
-                "West Gippsland",
-                "South East NSW",
-                "North East",
-                "South East",
-                "South Australian Murray Darling Basin",
-                "Port Phillip and Western Port",
-                "North Central",
-                "North NRM Region",
-                "Murray",
-                "Mallee",
-                "Goulburn Broken",
-                "Glenelg Hopkins",
-                "East Gippsland",
-                "Corangamite"
-            ],
-            "locality" : "",
-            "centre" : [
-                "144.29908119594236",
-                "-36.84968275012256"
-            ],
-            "aream2" : 227655936548.42267,
-            "pid" : "3742609",
-            "layerName" : "Australian States and Territories",
-            "state" : [
-                "Tasmania (including Coastal Waters)",
-                "New South Wales (including Coastal Waters)",
-                "South Australia (including Coastal Waters)",
-                "Victoria (including Coastal Waters)"
-            ],
-            "type" : "pid",
-            "ibra" : [
-                "Riverina",
-                "Australian Alps",
-                "South Eastern Highlands",
-                "South East Corner",
-                "Murray Darling Depression",
-                "Naracoorte Coastal Plain",
-                "Victorian Volcanic Plain",
-                "Victorian Midlands",
-                "NSW South Western Slopes",
-                "Flinders",
-                "South East Coastal Plain"
-            ],
-            "imcra4_pb" : [
-                "Southeast Shelf Transition",
-                "Bass Strait Shelf Province",
-                "Western Bass Strait Shelf Transition"
-            ],
-            "elect" : [
-                "MONASH",
-                "HOLT",
-                "DUNKLEY",
-                "LA TROBE",
-                "ISAACS",
-                "CORIO",
-                "MELBOURNE",
-                "MENZIES",
-                "COOPER",
-                "JAGAJAGA",
-                "SCULLIN",
-                "WILLS",
-                "MARIBYRNONG",
-                "FRASER",
-                "GORTON",
-                "CALWELL",
-                "BALLARAT",
-                "MCEWEN",
-                "INDI",
-                "BENDIGO",
-                "NICHOLLS",
-                "KOOYONG",
-                "CORANGAMITE",
-                "WANNON",
-                "MALLEE",
-                "LALOR",
-                "MACNAMARA",
-                "GELLIBRAND",
-                "FLINDERS",
-                "BASS",
-                "BRUCE",
-                "FARRER",
-                "GOLDSTEIN",
-                "ASTON",
-                "HOTHAM",
-                "CASEY",
-                "EDEN-MONARO",
-                "CHISHOLM",
-                "HIGGINS",
-                "DEAKIN",
-                "BARKER",
-                "GIPPSLAND"
-            ],
-            "cmz" : [
-                "Naracoorte woodlands",
-                "Tasman temperate forests",
-                "South Eastern Australia mallee woodlands",
-                "South Eastern Australia mixed temperate forests woodlands and grasslands",
-                "South Eastern Australia temperate woodlands",
-                "Australian Alps montane grasslands and heathlands"
-            ],
-            "other" : [
-                "Australian Coral Ecoregions",
-                "RAMSAR wetland regions",
-                "Directory of Important Wetlands",
-                "NSW Local Land Services Regions",
-                "National Native Title Register (NNTR, Determinations of Native Title) - boundaries and core attributes",
-                "Atlas of Life in the Coastal Wilderness",
-                "Great Eastern Ranges Initiative",
-                "Indigenous Protected Areas 2013",
-                "Indigenous Land Use Agreements"
-            ],
-            "gerSubRegion" : [
-                "GER Central Victorial Biolinks",
-                "GER Kosciuszko to Coast",
-                "GER Slopes To Summit",
-                "GER Victorian BioLinks"
-            ]
-        },
-        "source" : "pid"
-    },
-    "name" : "Victoria",
-    "notes" : "",
-    "type" : "worksArea",
-    "visibility" : "private"
-};
-
-var tasmaniaSite = {
-    "dateCreated" : ISODate("2020-03-11T02:54:33.184Z"),
-    "isSciStarter" : false,
-    "lastUpdated" : ISODate("2020-03-11T02:54:53.856Z"),
-    "siteId" : UUID.generate(),
-    "status" : "active",
-    "address" : "",
-    "nrm" : "",
-    "externalId" : "",
-    "poi" : [ ],
-    "context" : "none",
-    "state" : "",
-    "area" : "",
-    "description" : "",
-    "extent" : {
-        "geometry" : {
-            "fid" : "cl22",
-            "area" : 68332.69688982605,
-            "lga" : [
-                "Dorset (M)",
-                "George Town (M)",
-                "Devonport (C)",
-                "Launceston (C)",
-                "Glamorgan/Spring Bay (M)",
-                "Burnie (C)",
-                "Derwent Valley (M)",
-                "West Coast (M)",
-                "Flinders (M)",
-                "Sorell (M)",
-                "Central Highlands (M)",
-                "Circular Head (M)",
-                "Clarence (C)",
-                "Northern Midlands (M)",
-                "Southern Midlands (M)",
-                "Meander Valley (M)",
-                "West Tamar (M)",
-                "Tasman (M)",
-                "Latrobe (M)",
-                "Break O'Day (M)",
-                "Brighton (M)",
-                "Glenorchy (C)",
-                "Hobart (C)",
-                "Huon Valley (M)",
-                "Kingborough (M)",
-                "King Island (M)",
-                "Kentish (M)",
-                "Central Coast (M)",
-                "Waratah/Wynyard (M)"
-            ],
-            "name" : "Tasmania",
-            "nrm" : [
-                "Marine NRM",
-                "North West NRM Region",
-                "South NRM Region",
-                "North NRM Region"
-            ],
-            "locality" : "",
-            "centre" : [
-                "146.59429039923327",
-                "-41.93602432206031"
-            ],
-            "aream2" : 68241834215.61387,
-            "pid" : "3742610",
-            "layerName" : "Australian States and Territories",
-            "state" : [
-                "Tasmania (including Coastal Waters)"
-            ],
-            "type" : "pid",
-            "ibra" : [
-                "Tasmanian Central Highlands",
-                "Tasmanian Southern Ranges",
-                "King",
-                "Ben Lomond",
-                "Tasmanian Northern Slopes",
-                "Tasmanian West",
-                "Tasmanian South East",
-                "Flinders",
-                "Tasmanian Northern Midlands"
-            ],
-            "imcra4_pb" : [
-                "Tasmanian Shelf Province",
-                "Southeast Shelf Transition",
-                "Bass Strait Shelf Province",
-                "Western Bass Strait Shelf Transition"
-            ],
-            "elect" : [
-                "CLARK",
-                "LYONS",
-                "FRANKLIN",
-                "BASS",
-                "BRADDON"
-            ],
-            "cmz" : [
-                "Tasman temperate forests",
-                "Tasman temperate rainforests and highland forests"
-            ],
-            "other" : [
-                "Australian Coral Ecoregions",
-                "Directory of Important Wetlands",
-                "Indigenous Protected Areas 2013"
-            ],
-            "gerSubRegion" : [ ]
-        },
-        "source" : "pid"
-    },
-    "name" : "Tasmania",
-    "notes" : "",
-    "type" : "worksArea",
-    "visibility" : "private"
-};
 var saState = {
-    "dateCreated" : ISODate("2020-03-11T22:28:41.972Z"),
+    "dateCreated" : ISODate("2020-03-12T22:48:20.021Z"),
     "isSciStarter" : false,
-    "lastUpdated" : ISODate("2020-03-11T22:29:07.299Z"),
+    "lastUpdated" : ISODate("2020-03-12T22:48:47.357Z"),
     "siteId" : UUID.generate(),
     "status" : "active",
     "address" : "",
@@ -915,13 +553,127 @@ var saState = {
     },
     "name" : "South Australia",
     "notes" : "",
-    "type" : "worksArea",
+    "type" : "managementUnitArea",
+    "visibility" : "private"
+};
+var tasState ={
+    "_id" : ObjectId("5e6abff7c2dc5f92fd0dc00e"),
+    "dateCreated" : ISODate("2020-03-12T23:04:28.874Z"),
+    "isSciStarter" : false,
+    "lastUpdated" : ISODate("2020-03-12T23:04:48.442Z"),
+    "projects" : [
+        "d4cff543-0923-4bb6-a11c-4dfd9d64a7c6"
+    ],
+    "siteId" : "37cc85a0-2119-4b65-9ebf-ba75a9ba5ffd",
+    "status" : "active",
+    "address" : "",
+    "nrm" : "",
+    "externalId" : "",
+    "poi" : [ ],
+    "context" : "none",
+    "state" : "",
+    "area" : "",
+    "description" : "",
+    "extent" : {
+        "geometry" : {
+            "fid" : "cl22",
+            "area" : 68332.69688982605,
+            "lga" : [
+                "Dorset (M)",
+                "George Town (M)",
+                "Devonport (C)",
+                "Launceston (C)",
+                "Glamorgan/Spring Bay (M)",
+                "Burnie (C)",
+                "Derwent Valley (M)",
+                "West Coast (M)",
+                "Flinders (M)",
+                "Sorell (M)",
+                "Central Highlands (M)",
+                "Circular Head (M)",
+                "Clarence (C)",
+                "Northern Midlands (M)",
+                "Southern Midlands (M)",
+                "Meander Valley (M)",
+                "West Tamar (M)",
+                "Tasman (M)",
+                "Latrobe (M)",
+                "Break O'Day (M)",
+                "Brighton (M)",
+                "Glenorchy (C)",
+                "Hobart (C)",
+                "Huon Valley (M)",
+                "Kingborough (M)",
+                "King Island (M)",
+                "Kentish (M)",
+                "Central Coast (M)",
+                "Waratah/Wynyard (M)"
+            ],
+            "name" : "Tasmania",
+            "nrm" : [
+                "Marine NRM",
+                "North West NRM Region",
+                "South NRM Region",
+                "North NRM Region"
+            ],
+            "locality" : "",
+            "centre" : [
+                "146.59429039923327",
+                "-41.93602432206031"
+            ],
+            "aream2" : 68241834215.61387,
+            "pid" : "3742610",
+            "layerName" : "Australian States and Territories",
+            "state" : [
+                "Tasmania (including Coastal Waters)"
+            ],
+            "type" : "pid",
+            "ibra" : [
+                "Tasmanian Central Highlands",
+                "Tasmanian Southern Ranges",
+                "King",
+                "Ben Lomond",
+                "Tasmanian Northern Slopes",
+                "Tasmanian West",
+                "Tasmanian South East",
+                "Flinders",
+                "Tasmanian Northern Midlands"
+            ],
+            "imcra4_pb" : [
+                "Tasmanian Shelf Province",
+                "Southeast Shelf Transition",
+                "Bass Strait Shelf Province",
+                "Western Bass Strait Shelf Transition"
+            ],
+            "elect" : [
+                "CLARK",
+                "LYONS",
+                "FRANKLIN",
+                "BASS",
+                "BRADDON"
+            ],
+            "cmz" : [
+                "Tasman temperate forests",
+                "Tasman temperate rainforests and highland forests"
+            ],
+            "other" : [
+                "Australian Coral Ecoregions",
+                "Directory of Important Wetlands",
+                "Indigenous Protected Areas 2013"
+            ],
+            "gerSubRegion" : [ ]
+        },
+        "source" : "pid"
+    },
+    "name" : "Tasmania",
+    "notes" : "",
+    "type" : "managementUnitArea",
     "visibility" : "private"
 };
 var waState = {
-    "dateCreated" : ISODate("2020-03-11T23:31:03.517Z"),
+    "dateCreated" : ISODate("2020-03-12T23:24:22.929Z"),
     "isSciStarter" : false,
-    "lastUpdated" : ISODate("2020-03-11T23:31:58.975Z"),
+    "lastUpdated" : ISODate("2020-03-12T23:25:18.106Z"),
     "siteId" : UUID.generate(),
     "status" : "active",
     "address" : "",
@@ -1173,13 +925,13 @@ var waState = {
     },
     "name" : "Western Australia",
     "notes" : "",
-    "type" : "worksArea",
+    "type" : "managementUnitArea",
     "visibility" : "private"
 };
 var qldState = {
-    "dateCreated" : ISODate("2020-03-11T23:56:06.183Z"),
+    "dateCreated" : ISODate("2020-03-13T00:19:45.762Z"),
     "isSciStarter" : false,
-    "lastUpdated" : ISODate("2020-03-11T23:57:02.996Z"),
+    "lastUpdated" : ISODate("2020-03-13T00:20:42.461Z"),
     "siteId" : UUID.generate(),
     "status" : "active",
     "address" : "",
@@ -1398,37 +1150,303 @@ var qldState = {
     },
     "name" : "Queensland",
     "notes" : "",
-    "type" : "worksArea",
+    "type" : "managementUnitArea",
     "visibility" : "private"
+};
+
+var vicState = {
+    "dateCreated" : ISODate("2020-03-13T00:23:27.714Z"),
+    "isSciStarter" : false,
+    "lastUpdated" : ISODate("2020-03-13T00:23:43.903Z"),
+    "siteId" : UUID.generate(),
+    "status" : "active",
+    "address" : "",
+    "nrm" : "",
+    "externalId" : "",
+    "poi" : [ ],
+    "context" : "none",
+    "state" : "",
+    "area" : "",
+    "description" : "",
+    "extent" : {
+        "geometry" : {
+            "fid" : "cl22",
+            "area" : 227711.74073643668,
+            "lga" : [
+                "Wellington (S)",
+                "Corowa Shire (A)",
+                "Corangamite (S)",
+                "Murray (A)",
+                "East Gippsland (S)",
+                "Knox (C)",
+                "Manningham (C)",
+                "Maroondah (C)",
+                "Maribyrnong (C)",
+                "Stonnington (C)",
+                "Queenscliffe (B)",
+                "Macedon Ranges (S)",
+                "Indigo (S)",
+                "Mornington Peninsula (S)",
+                "Wyndham (C)",
+                "Wentworth (A)",
+                "Campaspe (S)",
+                "Monash (C)",
+                "Hobsons Bay (C)",
+                "Melton (S)",
+                "Hepburn (S)",
+                "Bayside (C)",
+                "Mount Alexander (S)",
+                "Alpine (S)",
+                "Wodonga (RC)",
+                "Greater Geelong (C)",
+                "Greater Hume Shire (A)",
+                "Hume (C)",
+                "Casey (C)",
+                "Southern Mallee (DC)",
+                "Cardinia (S)",
+                "Flinders (M)",
+                "Loddon (S)",
+                "Horsham (RC)",
+                "Glenelg (S)",
+                "Yarra (C)",
+                "Yarra Ranges (S)",
+                "Central Goldfields (S)",
+                "Yarriambiack (S)",
+                "Colac-Otway (S)",
+                "Tatiara (DC)",
+                "Ararat (RC)",
+                "Warrnambool (C)",
+                "Naracoorte and Lucindale (DC)",
+                "Whittlesea (C)",
+                "Nillumbik (S)",
+                "Whitehorse (C)",
+                "Northern Grampians (S)",
+                "Pyrenees (S)",
+                "Port Phillip (C)",
+                "Renmark Paringa (DC)",
+                "Darebin (C)",
+                "Frankston (C)",
+                "Southern Grampians (S)",
+                "Mansfield (S)",
+                "Golden Plains (S)",
+                "Strathbogie (S)",
+                "Surf Coast (S)",
+                "Swan Hill (RC)",
+                "Baw Baw (S)",
+                "Banyule (C)",
+                "Bass Coast (S)",
+                "Berrigan (A)",
+                "Albury (C)",
+                "Moonee Valley (C)",
+                "Latrobe (C)",
+                "Brimbank (C)",
+                "Glen Eira (C)",
+                "Greater Bendigo (C)",
+                "Hindmarsh (S)",
+                "Loxton Waikerie (DC)",
+                "Buloke (S)",
+                "Bega Valley (A)",
+                "Melbourne (C)",
+                "Kingston (C)",
+                "Benalla (RC)",
+                "West Wimmera (S)",
+                "Moyne (S)",
+                "South Gippsland (S)",
+                "Greater Dandenong (C)",
+                "Grant (DC)",
+                "Murrindindi (S)",
+                "Greater Shepparton (C)",
+                "Mitchell (S)",
+                "Moira (S)",
+                "Mildura (RC)",
+                "Moorabool (S)",
+                "Gannawarra (S)",
+                "Moreland (C)",
+                "Tumbarumba (A)",
+                "Towong (S)",
+                "Unincorporated SA",
+                "Unincorporated Vic",
+                "Wakool (A)",
+                "Wangaratta (RC)",
+                "Balranald (A)",
+                "Ballarat (C)",
+                "Wattle Range (DC)",
+                "Boroondara (C)"
+            ],
+            "name" : "Victoria",
+            "nrm" : [
+                "Wimmera",
+                "Western",
+                "West Gippsland",
+                "South East NSW",
+                "North East",
+                "South East",
+                "South Australian Murray Darling Basin",
+                "Port Phillip and Western Port",
+                "North Central",
+                "North NRM Region",
+                "Murray",
+                "Mallee",
+                "Goulburn Broken",
+                "Glenelg Hopkins",
+                "East Gippsland",
+                "Corangamite"
+            ],
+            "locality" : "",
+            "centre" : [
+                "144.29908119594236",
+                "-36.84968275012256"
+            ],
+            "aream2" : 227655936548.42267,
+            "pid" : "3742609",
+            "layerName" : "Australian States and Territories",
+            "state" : [
+                "Tasmania (including Coastal Waters)",
+                "New South Wales (including Coastal Waters)",
+                "South Australia (including Coastal Waters)",
+                "Victoria (including Coastal Waters)"
+            ],
+            "type" : "pid",
+            "ibra" : [
+                "Riverina",
+                "Australian Alps",
+                "South Eastern Highlands",
+                "South East Corner",
+                "Murray Darling Depression",
+                "Naracoorte Coastal Plain",
+                "Victorian Volcanic Plain",
+                "Victorian Midlands",
+                "NSW South Western Slopes",
+                "Flinders",
+                "South East Coastal Plain"
+            ],
+            "imcra4_pb" : [
+                "Southeast Shelf Transition",
+                "Bass Strait Shelf Province",
+                "Western Bass Strait Shelf Transition"
+            ],
+            "elect" : [
+                "MONASH",
+                "HOLT",
+                "DUNKLEY",
+                "LA TROBE",
+                "ISAACS",
+                "CORIO",
+                "MELBOURNE",
+                "MENZIES",
+                "COOPER",
+                "JAGAJAGA",
+                "SCULLIN",
+                "WILLS",
+                "MARIBYRNONG",
+                "FRASER",
+                "GORTON",
+                "CALWELL",
+                "BALLARAT",
+                "MCEWEN",
+                "INDI",
+                "BENDIGO",
+                "NICHOLLS",
+                "KOOYONG",
+                "CORANGAMITE",
+                "WANNON",
+                "MALLEE",
+                "LALOR",
+                "MACNAMARA",
+                "GELLIBRAND",
+                "FLINDERS",
+                "BASS",
+                "BRUCE",
+                "FARRER",
+                "GOLDSTEIN",
+                "ASTON",
+                "HOTHAM",
+                "CASEY",
+                "EDEN-MONARO",
+                "CHISHOLM",
+                "HIGGINS",
+                "DEAKIN",
+                "BARKER",
+                "GIPPSLAND"
+            ],
+            "cmz" : [
+                "Naracoorte woodlands",
+                "Tasman temperate forests",
+                "South Eastern Australia mallee woodlands",
+                "South Eastern Australia mixed temperate forests woodlands and grasslands",
+                "South Eastern Australia temperate woodlands",
+                "Australian Alps montane grasslands and heathlands"
+            ],
+            "other" : [
+                "Australian Coral Ecoregions",
+                "RAMSAR wetland regions",
+                "Directory of Important Wetlands",
+                "NSW Local Land Services Regions",
+                "National Native Title Register (NNTR, Determinations of Native Title) - boundaries and core attributes",
+                "Atlas of Life in the Coastal Wilderness",
+                "Great Eastern Ranges Initiative",
+                "Indigenous Protected Areas 2013",
+                "Indigenous Land Use Agreements"
+            ],
+            "gerSubRegion" : [
+                "GER Central Victorial Biolinks",
+                "GER Kosciuszko to Coast",
+                "GER Slopes To Summit",
+                "GER Victorian BioLinks"
+            ]
+        },
+        "source" : "pid"
+    },
+    "name" : "Victoria",
+    "notes" : "",
+    "type" : "managementUnitArea",
+    "visibility" : "private"
+};
+
+var stateLists = [nswSite, tasState, saState, qldState, waState, vicState];
+for (var i = 0; i<stateLists.length; i++){
+    var stateSearchResult = db.site.find({name:stateLists[i].name, type:stateLists[i].type});
+    if (!stateSearchResult.hasNext()){
+        db.site.insert(stateLists[i]);
+        print("Site Name: "+ stateLists[i].name + "inserted")
+
+    }
+    else {
+        print("Search for "+stateLists[i].name +" returned "+stateSearchResult.count()+ " results, not inserting")
+    }
 }
 
-
-var siteCursor = db.site.find({name:nswSite.name});
-if (!siteCursor.hasNext()) {
-    db.site.insert(nswSite);
+for (var newStates = 0; newStates<stateLists.length; newStates++){
+    var statesName = db.site.find({name:stateLists[newStates].name});
+    var stateType = db.site.find({type:stateLists[newStates].type});
+    if (!statesName.hasNext()){
+        if (stateType !== {type:stateLists[newStates].type}){
+            db.site.insert(stateLists[newStates]);
+            print("Site Name: "+ statesName + "inserted")
+        }
+    }
 }
 
 var states = [
     {
-        name:"New South Wales",
-        acronym:"NSW",
+        name: "New South Wales",
+        acronym: "NSW",
         siteId: nswSite.siteId
     },
     {
-        name: "Victoria",
-        acronym: "VIC",
-        siteId: victoriaState.siteId
-
-    },
-    {
-        name: "Tasmania",
-        acronym: "TAS",
-        siteId:tasmaniaSite.siteId
-    },
-    {
         name:"South Australia",
-        acronym:"SA",
-        siteId:saState.siteId
+        acronym: "SA",
+        siteId: saState.siteId
+    },
+    {
+        name:"Tasmania",
+        acronym:"TAS",
+        siteId:tasState.siteId
+    },
+    {
+        name:"Queensland",
+        acronym:"QLD",
+        siteId:qldState.siteId
     },
     {
         name:"Western Australia",
@@ -1436,9 +1454,9 @@ var states = [
         siteId:waState.siteId
     },
     {
-        name:"Queensland",
-        acronym:"QLD",
-        siteId:qldState.siteId
+        name:"Victoria",
+        acronym:"VIC",
+        siteId:vicState.siteId
     }
 
 ];
