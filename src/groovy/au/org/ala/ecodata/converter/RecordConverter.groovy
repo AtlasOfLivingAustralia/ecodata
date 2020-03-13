@@ -46,6 +46,7 @@ class RecordConverter {
     static final List MULTI_ITEM_DATA_TYPES = ["list", "masterDetail"]
     static final String DELIMITER = ";"
     static final String DEFAULT_BASIS_OF_RECORD = "HumanObservation"
+    static final String DEFAULT_LICENCE_TYPE = "https://creativecommons.org/publicdomain/zero/1.0/"
 
     static List<Map> convertRecords(Project project, Site site, ProjectActivity projectActivity, Activity activity, Output output, Map data, Map outputMetadata) {
         // Outputs are made up of multiple 'dataModels', where each dataModel could map to one or more Record fields
@@ -176,6 +177,7 @@ class RecordConverter {
         if (project) {
             dwcFields.rightsHolder = project.organisationName
             dwcFields.institutionID = project.organisationName
+            // fix this
             dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
         }
 
@@ -183,6 +185,14 @@ class RecordConverter {
         if (projectActivity) {
             dwcFields.datasetID = projectActivity.projectActivityId
             dwcFields.datasetName = projectActivity.name
+            // use licence if specified, otherwise default to CC-0
+            if (projectActivity.dataSharingLicense) {
+              dwcFields.licence = projectActivity.dataSharingLicense
+            }
+            else {
+              dwcFields.licence = DEFAULT_LICENCE_TYPE
+            }
+
         }
 
         // Site fields
