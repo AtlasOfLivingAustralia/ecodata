@@ -1416,17 +1416,6 @@ for (var i = 0; i<stateLists.length; i++){
     }
 }
 
-for (var newStates = 0; newStates<stateLists.length; newStates++){
-    var statesName = db.site.find({name:stateLists[newStates].name});
-    var stateType = db.site.find({type:stateLists[newStates].type});
-    if (!statesName.hasNext()){
-        if (stateType !== {type:stateLists[newStates].type}){
-            db.site.insert(stateLists[newStates]);
-            print("Site Name: "+ statesName + "inserted")
-        }
-    }
-}
-
 var states = [
     {
         name: "New South Wales",
