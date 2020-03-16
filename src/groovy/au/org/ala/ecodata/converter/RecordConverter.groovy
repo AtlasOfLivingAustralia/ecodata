@@ -105,8 +105,8 @@ class RecordConverter {
             List<Map> recordFieldSets = converter.convert(data, dataModel)
             Map speciesRecord = overrideFieldValues(baseRecord, recordFieldSets[0])
 
-            // We want to create a record in the DB only if species information is present
-            if(speciesRecord.outputSpeciesId) {
+            // We want to create a record in the DB only if species guid is present i.e. species is valid
+            if(speciesRecord.guid && speciesRecord.guid != "") {
                 records << speciesRecord
             } else {
                 log.warn("Record [${speciesRecord}] does not contain full species information. " +
