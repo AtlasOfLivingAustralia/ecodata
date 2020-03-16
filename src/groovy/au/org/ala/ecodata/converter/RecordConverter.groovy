@@ -46,6 +46,10 @@ class RecordConverter {
     static final List MULTI_ITEM_DATA_TYPES = ["list", "masterDetail"]
     static final String DELIMITER = ";"
     static final String DEFAULT_BASIS_OF_RECORD = "HumanObservation"
+    static final String MACHINE_OBSERVATION_BASIS_OF_RECORD = "MachineObservation"
+    static final String DEFAULT_LICENCE_TYPE = "https://creativecommons.org/publicdomain/zero/1.0/"
+    static final String SYSTEMATIC_SURVEY = "systematic"
+    static final List MACHINE_SURVEY_TYPES = ["Bat survey - Echolocation recorder","Fauna survey - Call playback","Fauna survey - Camera trapping"]
 
     static List<Map> convertRecords(Project project, Site site, ProjectActivity projectActivity, Activity activity, Output output, Map data, Map outputMetadata) {
         // Outputs are made up of multiple 'dataModels', where each dataModel could map to one or more Record fields
@@ -101,8 +105,8 @@ class RecordConverter {
             List<Map> recordFieldSets = converter.convert(data, dataModel)
             Map speciesRecord = overrideFieldValues(baseRecord, recordFieldSets[0])
 
-            // We want to create a record in the DB only if species information is present
-            if(speciesRecord.outputSpeciesId) {
+            // We want to create a record in the DB only if species guid is present i.e. species is valid
+            if(speciesRecord.guid && speciesRecord.guid != "") {
                 records << speciesRecord
             } else {
                 log.warn("Record [${speciesRecord}] does not contain full species information. " +
@@ -176,13 +180,30 @@ class RecordConverter {
         if (project) {
             dwcFields.rightsHolder = project.organisationName
             dwcFields.institutionID = project.organisationName
-            dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
+
+
         }
 
         // ProjectActivity fields
         if (projectActivity) {
             dwcFields.datasetID = projectActivity.projectActivityId
             dwcFields.datasetName = projectActivity.name
+            // use licence if specified, otherwise default to CC-0
+            if (projectActivity.dataSharingLicense) {
+              dwcFields.licence = projectActivity.dataSharingLicense
+            }
+            else {
+              dwcFields.licence = DEFAULT_LICENCE_TYPE
+            }
+
+            // human observation is most common record type
+            if (projectActivity.methodType == SYSTEMATIC_SURVEY && MACHINE_SURVEY_TYPES.contains(projectActivity.methodName)) {
+              dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
+            }
+            else {
+              dwcFields.basisOfRecord = MACHINE_OBSERVATION_BASIS_OF_RECORD
+            }
+
         }
 
         // Site fields
