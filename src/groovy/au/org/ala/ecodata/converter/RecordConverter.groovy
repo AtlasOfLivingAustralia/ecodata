@@ -124,7 +124,7 @@ class RecordConverter {
 
                 recordFieldSets.each {
                     Map rowRecord = overrideFieldValues(baseRecord, it)
-                    if(rowRecord.outputSpeciesId) {
+                    if(speciesRecord.guid && speciesRecord.guid != "") {
                         records << rowRecord
                     } else {
                         log.warn("Multi item Record [${rowRecord}] does not contain species information, " +
