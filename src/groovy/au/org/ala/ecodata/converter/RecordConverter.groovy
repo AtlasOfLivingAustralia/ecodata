@@ -198,10 +198,10 @@ class RecordConverter {
 
             // human observation is most common record type
             if (projectActivity.methodType == SYSTEMATIC_SURVEY && MACHINE_SURVEY_TYPES.contains(projectActivity.methodName)) {
-              dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
+              dwcFields.basisOfRecord = MACHINE_OBSERVATION_BASIS_OF_RECORD
             }
             else {
-              dwcFields.basisOfRecord = MACHINE_OBSERVATION_BASIS_OF_RECORD
+              dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
             }
 
         }
