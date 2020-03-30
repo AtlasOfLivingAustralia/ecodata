@@ -29,11 +29,22 @@ class ProgramService {
     }
 
     Program create(Map properties) {
+        String id = properties.parentProgramId
+        if (!id){
+            properties.programId = Identifiers.getNew(true, '')
+            Program program = new Program(programId:properties.programId)
+            commonService.updateProperties(program, properties)
+            return program
+        }else{
+            Program parent = get(id)
+            properties.programId = Identifiers.getNew(true, '')
+            Program subProgram = new Program(properties)
+            subProgram.parent = parent
+            subProgram.save(flush: true)
+            return subProgram
 
-        properties.programId = Identifiers.getNew(true, '')
-        Program program = new Program(programId:properties.programId)
-        commonService.updateProperties(program, properties)
-        return program
+        }
+
     }
 
     Program update(String id, Map properties) {
