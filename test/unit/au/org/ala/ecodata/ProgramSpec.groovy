@@ -90,4 +90,25 @@ class ProgramSpec extends Specification {
         serializedProgram.parent == null
 
     }
+
+    void "Create Sub Program should added parent object"(){
+        setup:
+        Program program = new Program(programId:"123", name:"Parent program", description: "parent Description")
+        program.save(flush: true, failOnError: true)
+
+        when:
+        Program parentProgram = Program.findByProgramId(program.programId)
+
+        Program subPrograms = new Program(programId:"1213", name:"Sub Program", description: "Sub Description")
+        subPrograms.parent = parentProgram
+        subPrograms.save(flush: true, failOnError: true)
+
+
+        then:
+        subPrograms.programId == "1213"
+        subPrograms.name == "Sub Program"
+        subPrograms.description == "Sub Description"
+        subPrograms.parent.id == parentProgram.id
+
+    }
 }
