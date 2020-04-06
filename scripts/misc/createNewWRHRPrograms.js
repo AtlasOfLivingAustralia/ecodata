@@ -58,8 +58,7 @@ var cvaConfig = {
         "projectImplementation",
         "projectPartnerships",
         "keq",
-        "meriBudget",
-        "risksAndThreats"
+        "meriBudget"
     ],
     "visibility" : "public",
     "requiresActivityLocking" : true,
@@ -122,8 +121,7 @@ var gaConfig = {
         "projectImplementation",
         "projectPartnerships",
         "keq",
-        "meriBudget",
-        "risksAndThreats"
+        "meriBudget"
     ],
     "visibility" : "public",
     "requiresActivityLocking" : true,
@@ -150,9 +148,9 @@ var gaConfig = {
             "activityType" : "Wildlife Recovery Progress Report",
             "reportsAlignedToCalendar" : false,
             "endDates" : [
-                "2020-04-14T14:00:00Z",
-                "2020-07-14T14:00:00Z",
-                "2021-01-14T13:00:00Z"
+                "2020-03-31T13:00:00Z",
+                "2020-06-30T14:00:00Z",
+                "2020-12-31T13:00:00Z"
             ],
             "canSubmitDuringReportingPeriod" : true
         },
@@ -195,8 +193,7 @@ var wrrConfig = {
         "projectImplementation",
         "projectPartnerships",
         "keq",
-        "meriBudget",
-        "risksAndThreats"],
+        "meriBudget"],
     "visibility": "public",
     "requiresActivityLocking": true,
     "navigationMode": "returnToProject",
@@ -241,15 +238,15 @@ var wrrConfig = {
         "activityType": "Final Report"
     }
 ],
-    services: [
-        {name:"Post-bushfire native wildlife rescue, treatment, rehabilitation, transfer and re-introduction into suitable environments", id:34},
-        {name:"Provision of supplementary food, water and shelter in situ to post bushfire affected native wildlife to support their survival", id:35},
-        {name:"New, upgraded or extended facilities and equipment for treating and housing rescued native wildlife ", id:36},
-        {name:"Emergency interventions to support at risk threatened species affected by bushfire, such as conservation breeding programs for potential future re-introductions", id:37},
-        {name:"Education, training and reference resources to improve the knowledge and skills of wildlife rehabilitators and veterinarians providing native wildlife rehabilitation and conservation services", id:38},
-        {name:"Training, development of policies and procedures, personal protective equipment and support services to keep wildlife rehabilitators physically and mentally safe and well", id:39},
-        {name:"Communications, including a wildlife rescue hotline and website presence", id:40},
-        {name:"Administrative costs and professional services necessary to ensure proper management of funds.", id:41}
+    activities: [
+        "Post-bushfire native wildlife rescue, treatment, rehabilitation, transfer and re-introduction into suitable environments",
+        "Provision of supplementary food, water and shelter in situ to post bushfire affected native wildlife to support their survival",
+        "New, upgraded or extended facilities and equipment for treating and housing rescued native wildlife ",
+        "Emergency interventions to support at risk threatened species affected by bushfire, such as conservation breeding programs for potential future re-introductions",
+        "Education, training and reference resources to improve the knowledge and skills of wildlife rehabilitators and veterinarians providing native wildlife rehabilitation and conservation services",
+        "Training, development of policies and procedures, personal protective equipment and support services to keep wildlife rehabilitators physically and mentally safe and well",
+        "Communications, including a wildlife rescue hotline and website presence",
+        "Administrative costs and professional services necessary to ensure proper management of funds."
     ],
     objectives:[
         "Rescue and rehabilitate displaced, orphaned, sick and injured native wildlife",
@@ -272,8 +269,9 @@ var emergencyInterventionConfig = {
     "requiresActivityLocking" : true,
     "navigationMode" : "returnToProject",
     "projectTemplate" : "rlp",
+    "optionalProjectContent": ["MERI Plan", "Risks and Threats"],
     "activityPeriodDescriptor" : "Outputs report #",
-    "meriPlanTemplate" : "configurableMeriPlan",
+    "meriPlanTemplate" : "rlpMeriPlan",
     "organisationRelationship": "Grantee",
     "riskAndThreatTypes" : [
         "Performance",
@@ -289,8 +287,8 @@ var emergencyInterventionConfig = {
             "reportDescriptionFormat" : "Progress Report %1d",
             "reportNameFormat" : "Progress Report %1d",
             "description" : "",
-            "category" : "Progress Reports",
-            "activityType" : "Wildlife Recovery Progress Report",
+            "category" : "Phase 1",
+            "activityType" : "RLP Output Report",
             "reportsAlignedToCalendar" : false,
             "endDates" : [
                 "2020-04-14T14:00:00Z",
@@ -302,18 +300,19 @@ var emergencyInterventionConfig = {
         {
             "reportType" : "Single",
             "firstReportingPeriodEnd" : "2021-06-30T14:00:00Z",
-            "reportDescriptionFormat" : "Final Report",
-            "reportNameFormat" : "Final Report",
+            "reportDescriptionFormat" : "Phase 2",
+            "reportNameFormat" : "RLP Output Report",
             "reportingPeriodInMonths" : 18,
             "multiple" : false,
             "description" : "",
-            "category" : "Final Report",
+            "category" : "Phase 2",
             "reportsAlignedToCalendar" : false,
             "activityType" : "Final Report"
         }]
 };
 
-var emergencyIntervention = createOrUpdateProgram("Emergency Intervention", "", ISODate("2020-06-30T14:00:00Z"), ISODate("2021-06-30T14:00:00Z"), [], null, emergencyInterventionConfig);
-var stateGrants = createOrUpdateProgram("State Intervention", "", emergencyIntervention.startDate, emergencyIntervention.endDate, [], emergencyIntervention._id, emergencyInterventionConfig);
+var emergencyIntervention = createOrUpdateProgram("Emergency Intervention Fund", "", ISODate("2020-06-30T14:00:00Z"), ISODate("2021-06-30T14:00:00Z"), [], null, emergencyInterventionConfig);
+var stateGrants = createOrUpdateProgram("State Government Emergency", "", emergencyIntervention.startDate, emergencyIntervention.endDate, [], emergencyIntervention._id, emergencyInterventionConfig);
 
-
+var nlp = db.program.find({name:'National Landcare Programme'}).next();
+var localProgrammes = createOrUpdateProgram("Local Programmes", "", ISODate("2015-06-30T14:00:00Z"), ISODate("2025-06-30T14:00:00Z"), [], nlp._id, {})
