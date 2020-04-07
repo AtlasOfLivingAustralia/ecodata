@@ -85,9 +85,9 @@ var cvaConfig = {
             "activityType" : "Wildlife Recovery Progress Report",
             "reportsAlignedToCalendar" : false,
             "endDates" : [
-                "2020-04-14T14:00:00Z",
-                "2020-07-14T14:00:00Z",
-                "2021-01-14T13:00:00Z"
+                "2020-03-31T13:00:00Z",
+                "2020-06-30T14:00:00Z",
+                "2020-12-31T13:00:00Z"
             ],
             "canSubmitDuringReportingPeriod" : true
         },
@@ -219,9 +219,9 @@ var wrrConfig = {
         "activityType": "Wildlife Recovery Progress Report",
         "reportsAlignedToCalendar": false,
         "endDates": [
-            "2020-04-14T14:00:00Z",
-            "2020-07-14T14:00:00Z",
-            "2021-01-14T13:00:00Z"
+            "2020-03-31T13:00:00Z",
+            "2020-06-30T14:00:00Z",
+            "2020-12-31T13:00:00Z"
         ],
         "canSubmitDuringReportingPeriod": true
     },
