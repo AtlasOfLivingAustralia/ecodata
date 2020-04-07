@@ -43,6 +43,7 @@ class Site {
     String landTenure
     String protectionMechanism
     String notes
+    String catchment
     Date dateCreated
     Date lastUpdated
     Boolean isSciStarter = false
@@ -69,6 +70,7 @@ class Site {
         isSciStarter nullable: true
         extent nullable: true
         features nullable: true
+        catchment nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
             if(value){
