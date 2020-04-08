@@ -27,7 +27,7 @@ class FilteredAggregationConfig extends AggregationConfig {
 
 class GroupingConfig extends Aggregation {
     String type // DATE, DISCRETE, FILTER, HISTOGRAM
-    String filterValue
+    Object filterValue
     List<String> buckets
     String format
 }
