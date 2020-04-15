@@ -179,8 +179,13 @@ class RecordConverter {
         // Project fields
         if (project) {
             dwcFields.rightsHolder = project.organisationName
-            dwcFields.institutionID = project.organisationName
-
+            // check if valid collectory institution id exists
+            if (project.collectoryInstitutionId && project.collectoryInstitutionId != "null" && project.collectoryInstitutionId != '') {
+              dwcFields.institutionID = project.collectoryInstitutionId
+            }
+            else {
+              dwcFields.institutionID = project.organisationName
+            }
 
         }
 
