@@ -411,6 +411,23 @@ class ProjectActivityService {
         ""
     }
 
+    String generateCollectoryAttributionText (ProjectActivity projectActivity) {
+        def name = projectActivity?.name
+        Project project = Project.findByProjectId(projectActivity?.projectId)
+        if (projectActivity && name && project) {
+            def orgName = project.organisationName
+            if (orgName) {
+                def calendar = Calendar.getInstance()
+                def year = calendar.get(Calendar.YEAR).toString()
+                attribution = [orgName, " (",year,") ", name, " dataset"].join("")​
+                return attribution
+            }
+        }
+
+        ""
+    }
+
+
     /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
      * Multiple properties will be ANDed together when producing results.

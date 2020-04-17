@@ -226,21 +226,30 @@ class CollectoryService {
     private def mapProjectAttributesToCollectoryDataResource(props) {
         def mapKeyProjectDataToCollectory = [
                 description: 'pubDescription',
+                aim: 'purpose'
                 manager: 'email',
                 name: 'name',
                 dataSharingLicense: 'licenseType',
-                urlWeb: 'websiteUrl'
+                urlWeb: 'websiteUrl',
+                citation: 'citation',
+                qualityControlDescription: 'qualityControlDescription',
+                methodStepDescription: 'methodStepDescription',
+                westBoundingCoordinate: 'westBoundingCoordinate',
+                eastBoundingCoordinate: 'eastBoundingCoordinate',
+                northBoundingCoordinate: 'northBoundingCoordinate',
+                southBoundingCoordinate: 'southBoundingCoordinate'
+
         ]
         def collectoryProps = [:]
 
         def hiddenJSON = [:]
         props.each { k, v ->
             if (v != null) {
-                def keyCollectory = mapKeyProjectDataToCollectory[k]
-                if (keyCollectory == null) // not mapped to first class collectory property
-                    hiddenJSON[k] = v
-                else if (keyCollectory != '') // not to be ignored
-                    collectoryProps[keyCollectory] = v
+              def keyCollectory = mapKeyProjectDataToCollectory[k]
+              if (keyCollectory == null) // not mapped to first class collectory property
+                  hiddenJSON[k] = v
+              else if (keyCollectory != '') // not to be ignored
+                  collectoryProps[keyCollectory] = v
             }
         }
         collectoryProps.hiddenJSON = hiddenJSON

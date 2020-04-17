@@ -286,6 +286,9 @@ class ProjectService {
             props.remove('id')
 
             if (collectoryLink) {
+                List projectActivities = projectActivityService.getAllByProject(props.projectId)
+                projectSite = siteService.get(id)
+                props = prepareProject(props, projectActivities, projectSite)
                 updateCollectoryLinkForProject(project, props)
             }
 
@@ -305,7 +308,7 @@ class ProjectService {
     * Remove unnecceary fields of JSON
     */
 
-    private prepareProject(Map props){
+    private prepareProject(Map props, List projectActivities = null, Site projectSite = null){
         if(props.fundings){
             List fundings = []
             props.fundings.each {
@@ -313,8 +316,89 @@ class ProjectService {
             }
             props.fundings = fundings;
         }
+
+
+        if(projectActivities) {
+          props.citation = buildProjectCitation(projectActivities)
+          props.methodStepDescription = buildMethodDescription(projectActivities)
+          props.qualityControlDescription = buildQualityControlDescription(projectActivities)
+        }
+        if(projectSite) {
+          props << retrieveProjectCoordinates(props)
+        }
         return props
     }
+
+    private buildProjectCitation(List projectActivities) {
+      citation = ""
+      projectActivities.each {
+        name = toMap(it, FLAT).name
+        citation += name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+      }
+
+      return citation
+    }
+
+    private buildMethodDescription(List projectActivities) {
+      String method = ""
+      projectActivities.each {
+        props = toMap(it, FLAT)
+        name = props.name + " method:"
+        method = [method,name,props.methodType,props.methodName,props.methodUrl].findAll({it != null}).join("\n")  + //name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+      }
+      return method
+    }
+
+    private buildQualityControlDescription(List projectActivities) {
+      String qualityDescription = ""
+      projectActivities.each {
+        props = toMap(it, FLAT)
+        name = props.name + " data quality description:"
+        if(props.dataQualityAssuranceMethods) {
+          assurance_methods =  "Data quality assurance methods: " + props.dataQualityAssuranceMethods.join(", ")
+        }
+        else {
+          assurance_methods = null
+        }
+        if(props.dataQualityAssuranceDescription) {
+          assurance_description = "Data quality assurance description: " + props.dataQualityAssuranceDescription
+        }
+        else {
+          assurance_description = null
+        }
+
+        if(props.dataManagementPolicyDescription) {
+          policy_description = "Data Management policy description" + props.dataManagementPolicyDescription
+        }
+        else {
+          policy_description = null
+        }
+
+        if(props.dataManagementPolicyURL) {
+          policy_url = "Data Management policy url" + props.dataManagementPolicyURL
+        }
+        else {
+          policy_url = null
+        }
+        qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({it != null}).join("\n") //name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+      }
+      return qualityDescription
+    }
+
+    private retrieveProjectCoordinates(Site projectSite) {
+
+      Map siteProps = toMap(projectSite, FLAT)
+      coordinateProps = [:]
+
+      if(siteProps.coordinates[0]) {
+        coordinateProps.northBoundingCoordinate = siteProps.coordinates[0][1][1]
+        coordinateProps.southBoundingCoordinate = siteProps.coordinates[0][0][1]
+        coordinateProps.eastBoundingCoordinate = siteProps.coordinates[0][2][0]
+        coordinateProps.westBoundingCoordinate = siteProps.coordinates[0][0][0]
+      }
+      return coordinateProps
+    }
+
 
     private updateCollectoryLinkForProject(Project project, Map props) {
         if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
@@ -338,7 +422,11 @@ class ProjectService {
     def update(Map props, String id, Boolean shouldUpdateCollectory = true) {
         Project project = Project.findByProjectId(id)
         if (project) {
-            props = prepareProject(props)
+            // retrieve any project activities associated with the project
+            List projectActivities = projectActivityService.getAllByProject(id)
+            // retrieve the project site
+            projectSite = siteService.get(id)
+            props = prepareProject(props, projectActivities, projectSite)
             try {
                 getCommonService().updateProperties(project, props)
                 if (shouldUpdateCollectory)
