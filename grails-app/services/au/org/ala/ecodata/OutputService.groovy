@@ -17,6 +17,7 @@ class OutputService {
     DocumentService documentService
     CommentService commentService
     ActivityService activityService
+    OrganisationService organisationService
 
     static final ACTIVE = "active"
     static final SCORES = 'scores'
@@ -189,8 +190,8 @@ class OutputService {
             Project project = Project.findByProjectId(activity.projectId)
             Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
             ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
-
-            List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
+            Organisation organisation = project.organisationName ? organisationService.findByName(project.organisationService) : null
+            List<Map> records = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, props.data, outputMetadata)
 
             records.each { record ->
                 boolean excludeAbsenceRecord = outputMetadata && outputMetadata["excludeAbsenceRecord"]?.toBoolean()
