@@ -324,7 +324,7 @@ class ProjectService {
           props.qualityControlDescription = buildQualityControlDescription(projectActivities)
         }
         if(projectSite) {
-          props << retrieveProjectCoordinates(props)
+          props << retrieveProjectCoordinates(projectSite)
         }
         return props
     }
@@ -332,8 +332,7 @@ class ProjectService {
     private buildProjectCitation(List projectActivities) {
       citation = ""
       projectActivities.each {
-        name = toMap(it, FLAT).name
-        citation += name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+        citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
       }
 
       return citation
@@ -342,9 +341,8 @@ class ProjectService {
     private buildMethodDescription(List projectActivities) {
       String method = ""
       projectActivities.each {
-        props = toMap(it, FLAT)
-        name = props.name + " method:"
-        method = [method,name,props.methodType,props.methodName,props.methodUrl].findAll({it != null}).join("\n")  + //name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+        name = it.name + " method:"
+        method = [method,name,props.methodType,props.methodName,props.methodUrl].findAll({it != null}).join("\n")
       }
       return method
     }
@@ -352,7 +350,7 @@ class ProjectService {
     private buildQualityControlDescription(List projectActivities) {
       String qualityDescription = ""
       projectActivities.each {
-        props = toMap(it, FLAT)
+        props = projectActivityService.toMap(it, FLAT)
         name = props.name + " data quality description:"
         if(props.dataQualityAssuranceMethods) {
           assurance_methods =  "Data quality assurance methods: " + props.dataQualityAssuranceMethods.join(", ")
@@ -368,33 +366,31 @@ class ProjectService {
         }
 
         if(props.dataManagementPolicyDescription) {
-          policy_description = "Data Management policy description" + props.dataManagementPolicyDescription
+          policy_description = "Data Management policy description: " + props.dataManagementPolicyDescription
         }
         else {
           policy_description = null
         }
 
         if(props.dataManagementPolicyURL) {
-          policy_url = "Data Management policy url" + props.dataManagementPolicyURL
+          policy_url = "Data Management policy url: " + props.dataManagementPolicyURL
         }
         else {
           policy_url = null
         }
-        qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({it != null}).join("\n") //name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+        qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({it != null}).join("\n")
       }
       return qualityDescription
     }
 
     private retrieveProjectCoordinates(Site projectSite) {
 
-      Map siteProps = toMap(projectSite, FLAT)
+      Map siteProps = siteService.toMap(projectSite, FLAT)
       coordinateProps = [:]
 
-      if(siteProps.coordinates[0]) {
-        coordinateProps.northBoundingCoordinate = siteProps.coordinates[0][1][1]
-        coordinateProps.southBoundingCoordinate = siteProps.coordinates[0][0][1]
-        coordinateProps.eastBoundingCoordinate = siteProps.coordinates[0][2][0]
-        coordinateProps.westBoundingCoordinate = siteProps.coordinates[0][0][0]
+      if(siteProps.extent.geometry.centre) {
+        coordinateProps.address.latitude = siteProps.extent.geometry.centre[1],
+        coordinateProps.address.longitude = siteProps.extent.geometry.centre[0]
       }
       return coordinateProps
     }
