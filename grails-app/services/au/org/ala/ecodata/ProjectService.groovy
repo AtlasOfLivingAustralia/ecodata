@@ -386,7 +386,7 @@ class ProjectService {
     private retrieveProjectCoordinates(Site projectSite) {
 
       Map siteProps = siteService.toMap(projectSite, FLAT)
-      coordinateProps = [:]
+      coordinateProps = [ address: [:] ]
 
       if(siteProps.extent.geometry.centre) {
         coordinateProps.address.latitude = siteProps.extent.geometry.centre[1],
