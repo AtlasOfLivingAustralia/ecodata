@@ -389,7 +389,7 @@ class ProjectService {
       coordinateProps = [ address: [:] ]
 
       if(siteProps.extent.geometry.centre) {
-        coordinateProps.address.latitude = siteProps.extent.geometry.centre[1],
+        coordinateProps.address.latitude = siteProps.extent.geometry.centre[1]
         coordinateProps.address.longitude = siteProps.extent.geometry.centre[0]
       }
       return coordinateProps

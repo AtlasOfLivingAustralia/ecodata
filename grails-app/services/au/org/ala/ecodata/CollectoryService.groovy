@@ -226,7 +226,7 @@ class CollectoryService {
     private def mapProjectAttributesToCollectoryDataResource(props) {
         def mapKeyProjectDataToCollectory = [
                 description: 'pubDescription',
-                aim: 'purpose'
+                aim: 'purpose',
                 manager: 'email',
                 name: 'name',
                 dataSharingLicense: 'licenseType',
