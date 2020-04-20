@@ -4,6 +4,7 @@ import au.org.ala.ecodata.Activity
 import au.org.ala.ecodata.Output
 import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.ProjectActivity
+import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.Site
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
