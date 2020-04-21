@@ -95,5 +95,17 @@ class ProgramService {
         result
     }
 
+    List<Map> findAllProgramList() {
+        List allProgramList = Program.where {
+            status != Status.DELETED
+            projections {
+                property("name")
+                property("programId")
+            }
+        }.toList()
+
+        allProgramList.collect{[name:it[0], programId:it[1]]}
+    }
+
 
 }
