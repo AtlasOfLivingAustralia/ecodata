@@ -233,11 +233,8 @@ class CollectoryService {
                 urlWeb: 'websiteUrl',
                 citation: 'citation',
                 qualityControlDescription: 'qualityControlDescription',
-                methodStepDescription: 'methodStepDescription',
-                westBoundingCoordinate: 'westBoundingCoordinate',
-                eastBoundingCoordinate: 'eastBoundingCoordinate',
-                northBoundingCoordinate: 'northBoundingCoordinate',
-                southBoundingCoordinate: 'southBoundingCoordinate'
+                latitude: 'latitude',
+                longitude: 'longitude'
 
         ]
         def collectoryProps = [:]

@@ -287,7 +287,7 @@ class ProjectService {
 
             if (collectoryLink) {
                 List projectActivities = projectActivityService.getAllByProject(props.projectId)
-                projectSite = siteService.get(id)
+                Site projectSite = siteService.get(id)
                 props = prepareProject(props, projectActivities, projectSite)
                 updateCollectoryLinkForProject(project, props)
             }
@@ -330,11 +330,10 @@ class ProjectService {
     }
 
     private buildProjectCitation(List projectActivities) {
-      citation = ""
+      String citation = ""
       projectActivities.each {
         citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
       }
-
       return citation
     }
 
@@ -349,9 +348,10 @@ class ProjectService {
 
     private buildQualityControlDescription(List projectActivities) {
       String qualityDescription = ""
+
       projectActivities.each {
-        props = projectActivityService.toMap(it, FLAT)
-        name = props.name + " data quality description:"
+        def props = projectActivityService.toMap(it, FLAT)
+        String name = props.name + " data quality description:"
         if(props.dataQualityAssuranceMethods) {
           assurance_methods =  "Data quality assurance methods: " + props.dataQualityAssuranceMethods.join(", ")
         }
@@ -386,7 +386,7 @@ class ProjectService {
     private retrieveProjectCoordinates(Site projectSite) {
 
       Map siteProps = siteService.toMap(projectSite, FLAT)
-      coordinateProps = [ address: [:] ]
+      def coordinateProps = [ address: [:] ]
 
       if(siteProps.extent.geometry.centre) {
         coordinateProps.address.latitude = siteProps.extent.geometry.centre[1]
