@@ -413,18 +413,19 @@ class ProjectActivityService {
 
     String generateCollectoryAttributionText (ProjectActivity projectActivity) {
         def name = projectActivity?.name
+        String attribution = ""
         Project project = Project.findByProjectId(projectActivity?.projectId)
         if (projectActivity && name && project) {
             def orgName = project.organisationName
             if (orgName) {
                 def calendar = Calendar.getInstance()
                 def year = calendar.get(Calendar.YEAR).toString()
-                attribution = [orgName, " (",year,") ", name, " dataset"].join("")​
+                attribution = [orgName, " (", year, ") ", name, " dataset"].join()
                 return attribution
             }
         }
 
-        ""
+        attribution
     }
 
 

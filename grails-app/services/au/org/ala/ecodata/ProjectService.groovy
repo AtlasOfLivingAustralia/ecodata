@@ -287,7 +287,7 @@ class ProjectService {
 
             if (collectoryLink) {
                 List projectActivities = projectActivityService.getAllByProject(props.projectId)
-                Site projectSite = siteService.get(id)
+                Site projectSite = siteService.get(props.projectId) as Site
                 props = prepareProject(props, projectActivities, projectSite)
                 updateCollectoryLinkForProject(project, props)
             }
@@ -332,7 +332,7 @@ class ProjectService {
     private buildProjectCitation(List projectActivities) {
       String citation = ""
       projectActivities.each {
-        citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it) + "\n"
+        citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it as ProjectActivity) + "\n"
       }
       return citation
     }
@@ -340,7 +340,8 @@ class ProjectService {
     private buildMethodDescription(List projectActivities) {
       String method = ""
       projectActivities.each {
-        name = it.name + " method:"
+        def props = projectActivityService.toMap(it, FLAT)
+        String name = props.name + " method:"
         method = [method,name,props.methodType,props.methodName,props.methodUrl].findAll({it != null}).join("\n")
       }
       return method
@@ -348,35 +349,29 @@ class ProjectService {
 
     private buildQualityControlDescription(List projectActivities) {
       String qualityDescription = ""
+      String assurance_methods = null
+      String assurance_description = null
+      String policy_description = null
+      String policy_url = null
 
       projectActivities.each {
         def props = projectActivityService.toMap(it, FLAT)
         String name = props.name + " data quality description:"
+
         if(props.dataQualityAssuranceMethods) {
-          assurance_methods =  "Data quality assurance methods: " + props.dataQualityAssuranceMethods.join(", ")
-        }
-        else {
-          assurance_methods = null
+          String method_string = props.dataQualityAssuranceMethods.join(", ")
+          assurance_methods =  "Data quality assurance methods: " + method_string
         }
         if(props.dataQualityAssuranceDescription) {
           assurance_description = "Data quality assurance description: " + props.dataQualityAssuranceDescription
-        }
-        else {
-          assurance_description = null
         }
 
         if(props.dataManagementPolicyDescription) {
           policy_description = "Data Management policy description: " + props.dataManagementPolicyDescription
         }
-        else {
-          policy_description = null
-        }
 
         if(props.dataManagementPolicyURL) {
           policy_url = "Data Management policy url: " + props.dataManagementPolicyURL
-        }
-        else {
-          policy_url = null
         }
         qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({it != null}).join("\n")
       }
@@ -385,10 +380,10 @@ class ProjectService {
 
     private retrieveProjectCoordinates(Site projectSite) {
 
-      Map siteProps = siteService.toMap(projectSite, FLAT)
+      Map siteProps = siteService.toMap(projectSite, FLAT) as Map
       def coordinateProps = [ address: [:] ]
 
-      if(siteProps.extent.geometry.centre) {
+      if(siteProps?.extent?.geometry?.centre) {
         coordinateProps.address.latitude = siteProps.extent.geometry.centre[1]
         coordinateProps.address.longitude = siteProps.extent.geometry.centre[0]
       }
@@ -421,7 +416,7 @@ class ProjectService {
             // retrieve any project activities associated with the project
             List projectActivities = projectActivityService.getAllByProject(id)
             // retrieve the project site
-            projectSite = siteService.get(id)
+            Site projectSite = siteService.get(id)
             props = prepareProject(props, projectActivities, projectSite)
             try {
                 getCommonService().updateProperties(project, props)
