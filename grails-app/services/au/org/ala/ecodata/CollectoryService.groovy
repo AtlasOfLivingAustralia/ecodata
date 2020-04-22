@@ -233,8 +233,7 @@ class CollectoryService {
                 urlWeb: 'websiteUrl',
                 citation: 'citation',
                 qualityControlDescription: 'qualityControlDescription',
-                latitude: 'latitude',
-                longitude: 'longitude'
+                adress: 'address'
 
         ]
         def collectoryProps = [:]
