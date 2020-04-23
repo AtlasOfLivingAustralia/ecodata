@@ -287,7 +287,7 @@ class ProjectService {
 
             if (collectoryLink) {
                 List projectActivities = projectActivityService.getAllByProject(props.projectId)
-                Site projectSite = siteService.get(props.projectId) as Site
+                Site projectSite = project.projectSiteId ? siteService.get(project.projectSiteId) as Site : null
                 props = prepareProject(props, projectActivities, projectSite)
                 updateCollectoryLinkForProject(project, props)
             }
@@ -317,7 +317,6 @@ class ProjectService {
             props.fundings = fundings;
         }
 
-
         if(projectActivities) {
           props.citation = buildProjectCitation(projectActivities)
           props.methodStepDescription = buildMethodDescription(projectActivities)
@@ -330,6 +329,7 @@ class ProjectService {
     }
 
     private buildProjectCitation(List projectActivities) {
+
       String citation = ""
       projectActivities.each {
         citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it as ProjectActivity) + "\n"
@@ -340,9 +340,8 @@ class ProjectService {
     private buildMethodDescription(List projectActivities) {
       String method = ""
       projectActivities.each {
-        def props = projectActivityService.toMap(it, FLAT)
-        String name = props.name + " method:"
-        method = [method,name,props.methodType,props.methodName,props.methodUrl].findAll({it != null}).join("\n")
+        String name = it.name + " method:"
+        method = [method,name,it.methodType,it.methodName,it.methodUrl].findAll({it != null}).join("\n")
       }
       return method
     }
@@ -355,23 +354,22 @@ class ProjectService {
       String policy_url = null
 
       projectActivities.each {
-        def props = projectActivityService.toMap(it, FLAT)
-        String name = props.name + " data quality description:"
+        String name = it.name + " data quality description:"
 
-        if(props.dataQualityAssuranceMethods) {
-          String method_string = props.dataQualityAssuranceMethods.join(", ")
+        if(it.dataQualityAssuranceMethods) {
+          String method_string = it.dataQualityAssuranceMethods.join(", ")
           assurance_methods =  "Data quality assurance methods: " + method_string
         }
-        if(props.dataQualityAssuranceDescription) {
-          assurance_description = "Data quality assurance description: " + props.dataQualityAssuranceDescription
+        if(it.dataQualityAssuranceDescription) {
+          assurance_description = "Data quality assurance description: " + it.dataQualityAssuranceDescription
         }
 
-        if(props.dataManagementPolicyDescription) {
-          policy_description = "Data Management policy description: " + props.dataManagementPolicyDescription
+        if(it.dataManagementPolicyDescription) {
+          policy_description = "Data Management policy description: " + it.dataManagementPolicyDescription
         }
 
-        if(props.dataManagementPolicyURL) {
-          policy_url = "Data Management policy url: " + props.dataManagementPolicyURL
+        if(it.dataManagementPolicyURL) {
+          policy_url = "Data Management policy url: " + it.dataManagementPolicyURL
         }
         qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({it != null}).join("\n")
       }
@@ -380,18 +378,18 @@ class ProjectService {
 
     private retrieveProjectCoordinates(Site projectSite) {
 
-      Map siteProps = siteService.toMap(projectSite, FLAT) as Map
       def coordinateProps = [ address: [:] ]
-
-      if(siteProps?.extent?.geometry?.centre) {
-        coordinateProps.address.latitude = siteProps.extent.geometry.centre[1]
-        coordinateProps.address.longitude = siteProps.extent.geometry.centre[0]
+      if(projectSite?.extent?.geometry?.centre) {
+        coordinateProps.address.latitude = projectSite.extent.geometry.centre[1]
+        coordinateProps.address.longitude = projectSite.extent.geometry.centre[0]
       }
       return coordinateProps
     }
 
 
     private updateCollectoryLinkForProject(Project project, Map props) {
+
+
         if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             Map projectProps = toMap(project, FLAT)
@@ -416,7 +414,7 @@ class ProjectService {
             // retrieve any project activities associated with the project
             List projectActivities = projectActivityService.getAllByProject(id)
             // retrieve the project site
-            Site projectSite = siteService.get(id)
+            Site projectSite = project.projectSiteId ? siteService.get(project.projectSiteId) as Site : null
             props = prepareProject(props, projectActivities, projectSite)
             try {
                 getCommonService().updateProperties(project, props)
