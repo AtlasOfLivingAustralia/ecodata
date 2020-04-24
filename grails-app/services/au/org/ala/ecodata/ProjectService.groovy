@@ -287,8 +287,7 @@ class ProjectService {
 
             if (collectoryLink) {
                 List projectActivities = projectActivityService.getAllByProject(props.projectId)
-                Site projectSite = project.projectSiteId ? siteService.get(project.projectSiteId) as Site : null
-                props = prepareProject(props, projectActivities, projectSite)
+                props = prepareProject(props, projectActivities)
                 updateCollectoryLinkForProject(project, props)
             }
 
@@ -308,7 +307,7 @@ class ProjectService {
     * Remove unnecceary fields of JSON
     */
 
-    private prepareProject(Map props, List projectActivities = null, Site projectSite = null){
+    private prepareProject(Map props, List projectActivities = null){
         if(props.fundings){
             List fundings = []
             props.fundings.each {
@@ -322,9 +321,7 @@ class ProjectService {
           props.methodStepDescription = buildMethodDescription(projectActivities)
           props.qualityControlDescription = buildQualityControlDescription(projectActivities)
         }
-        if(projectSite) {
-          props << retrieveProjectCoordinates(projectSite)
-        }
+
         return props
     }
 
@@ -376,17 +373,6 @@ class ProjectService {
       return qualityDescription
     }
 
-    private retrieveProjectCoordinates(Site projectSite) {
-
-      def coordinateProps = [ address: [:] ]
-      if(projectSite?.extent?.geometry?.centre) {
-        coordinateProps.address.latitude = projectSite.extent.geometry.centre[1]
-        coordinateProps.address.longitude = projectSite.extent.geometry.centre[0]
-      }
-      return coordinateProps
-    }
-
-
     private updateCollectoryLinkForProject(Project project, Map props) {
 
 
@@ -413,9 +399,7 @@ class ProjectService {
         if (project) {
             // retrieve any project activities associated with the project
             List projectActivities = projectActivityService.getAllByProject(id)
-            // retrieve the project site
-            Site projectSite = project.projectSiteId ? siteService.get(project.projectSiteId) as Site : null
-            props = prepareProject(props, projectActivities, projectSite)
+            props = prepareProject(props, projectActivities)
             try {
                 getCommonService().updateProperties(project, props)
                 if (shouldUpdateCollectory)

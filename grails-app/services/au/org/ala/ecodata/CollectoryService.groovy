@@ -106,6 +106,7 @@ class CollectoryService {
         Map ids = [:]
 
         Map collectoryProps = mapProjectAttributesToCollectoryDataResource(props)
+
         ids.dataProviderId = dataProviderForProject(props)
 
         if (ids.dataProviderId) {
@@ -157,6 +158,7 @@ class CollectoryService {
      */
     def updateDataResource(Map project, Map changedProperties = null, Boolean forceUpdate = false) {
         Map properties = changedProperties ?: project
+
         def alaHarvest = properties.alaHarvest?:project.alaHarvest
         if (alaHarvest) {
             if (!project.dataResourceId || project.dataResourceId == "null") {
@@ -226,14 +228,13 @@ class CollectoryService {
     private def mapProjectAttributesToCollectoryDataResource(props) {
         def mapKeyProjectDataToCollectory = [
                 description: 'pubDescription',
-                aim: 'purpose',
                 manager: 'email',
                 name: 'name',
                 dataSharingLicense: 'licenseType',
                 urlWeb: 'websiteUrl',
                 citation: 'citation',
                 qualityControlDescription: 'qualityControlDescription',
-                adress: 'address'
+                methodStepDescription: 'methodStepDescription'
 
         ]
         def collectoryProps = [:]
@@ -249,6 +250,7 @@ class CollectoryService {
             }
         }
         collectoryProps.hiddenJSON = hiddenJSON
+
         if (props.organisationId) {
 
             Organisation organisation = Organisation.findByOrganisationIdAndStatusNotEqual(props.organisationId, Status.DELETED)
@@ -256,6 +258,7 @@ class CollectoryService {
                 collectoryProps.institution = [uid: organisation.collectoryInstitutionId]
             }
         }
+
         collectoryProps
     }
 
