@@ -9,6 +9,7 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 import static au.org.ala.ecodata.Status.DELETED
 //import org.hibernate.criterion.Projections
@@ -266,7 +267,7 @@ class SiteService {
                 // Sharing props object between thread causes ConcurrentModificationException.
                 // Cloned object is used by spawned thread.
                 // https://github.com/AtlasOfLivingAustralia/ecodata/issues/594
-                Map clonedProps = props?.clone()
+                Map clonedProps = new JSONObject(props)
                 String userId = props.remove('userId')
                 task {
                     Site.withNewSession { MongoSession session ->
