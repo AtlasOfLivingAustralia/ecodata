@@ -60,6 +60,7 @@ var cvaConfig = {
         "keq",
         "meriBudget"
     ],
+    "optionalProjectContent": ["MERI Plan", "Risks and Threats"],
     "visibility" : "public",
     "requiresActivityLocking" : true,
     "navigationMode" : "returnToProject",
@@ -111,7 +112,7 @@ var cvaConfig = {
     ]
 };
 
-createOrUpdateProgram("CVA", "", program.startDate, program.endDate, [], program._id, cvaConfig)
+createOrUpdateProgram("Conservation Volunteers Australia", "CVA", program.startDate, program.endDate, [], program._id, cvaConfig)
 
 var gaConfig = {
 
@@ -123,6 +124,7 @@ var gaConfig = {
         "keq",
         "meriBudget"
     ],
+    "optionalProjectContent": ["MERI Plan", "Risks and Threats"],
     "visibility" : "public",
     "requiresActivityLocking" : true,
     "organisationRelationship": "Grantee",
@@ -180,7 +182,7 @@ var gaConfig = {
 };
 var gaOutcomes = [];
 
-createOrUpdateProgram("GA", "", bushfireParent.startDate, bushfireParent.endDate, gaOutcomes, bushfireParent._id, gaConfig);
+createOrUpdateProgram("Greening Australia", "GA", bushfireParent.startDate, bushfireParent.endDate, gaOutcomes, bushfireParent._id, gaConfig);
 
 var wrrOutcomes = [
 ];
@@ -194,6 +196,7 @@ var wrrConfig = {
         "projectPartnerships",
         "keq",
         "meriBudget"],
+    "optionalProjectContent": ["MERI Plan", "Risks and Threats"],
     "visibility": "public",
     "requiresActivityLocking": true,
     "navigationMode": "returnToProject",

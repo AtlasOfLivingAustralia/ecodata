@@ -1457,11 +1457,11 @@ var states = [
         acronym:"ACT",
         siteId:actStateSiteId
     },
-    {
-        name:"Northern Territory Bushfires",
-        acronym:"NT",
-        siteId:ntStateSiteId
-    },
+    // {
+    //     name:"Northern Territory Bushfires",
+    //     acronym:"NT",
+    //     siteId:ntStateSiteId
+    // },
 
 ];
 for (var i=0; i<states.length; i++) {
