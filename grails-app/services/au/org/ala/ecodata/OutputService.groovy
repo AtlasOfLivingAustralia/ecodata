@@ -190,7 +190,7 @@ class OutputService {
             Project project = Project.findByProjectId(activity.projectId)
             Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
             ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
-            Organisation organisation = project.organisationName ? organisationService.findByName(project.organisationService) : null
+            Organisation organisation = project.organisationName ? organisationService.findByName(project.organisationName) : null
             List<Map> records = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, props.data, outputMetadata)
 
             records.each { record ->
