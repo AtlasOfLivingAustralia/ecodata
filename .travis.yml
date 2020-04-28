@@ -10,6 +10,7 @@ branches:
   - hot-fix
   - /^feature\/.*$/
   - /^hotfix\/.*$/
+  - institution_fixes
 
 services:
   - mongodb
