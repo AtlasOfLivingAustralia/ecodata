@@ -9,14 +9,10 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import org.grails.datastore.mapping.query.api.ProjectionList
-import org.grails.datastore.mapping.query.Projections
-//import org.hibernate.criterion.Projections
-
-
-
 
 import static au.org.ala.ecodata.Status.DELETED
+//import org.hibernate.criterion.Projections
+
 import static grails.async.Promises.task
 
 class SiteService {
