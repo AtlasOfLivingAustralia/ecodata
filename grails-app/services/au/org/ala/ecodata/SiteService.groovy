@@ -267,13 +267,17 @@ class SiteService {
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             if (asyncUpdate){
+                // Sharing props object between thread causes ConcurrentModificationException.
+                // Cloned object is used by spawned thread.
+                // https://github.com/AtlasOfLivingAustralia/ecodata/issues/594
+                Map clonedProps = props?.clone()
                 String userId = props.remove('userId')
                 task {
                     Site.withNewSession { MongoSession session ->
                         site = Site.findBySiteId(site.siteId)
-                        addSpatialPortalPID(props, userId)
-                        populateLocationMetadataForSite(props)
-                        getCommonService().updateProperties(site, props)
+                        addSpatialPortalPID(clonedProps, userId)
+                        populateLocationMetadataForSite(clonedProps)
+                        getCommonService().updateProperties(site, clonedProps)
                     }
                 }
             }
