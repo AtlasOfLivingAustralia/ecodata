@@ -30,29 +30,25 @@ class ProgramService {
 
     Program create(Map properties) {
         String id = properties.parentProgramId
-
-        if (!id) {
-            properties.programId = Identifiers.getNew(true, '')
-            Program program = new Program(programId: properties.programId)
-            commonService.updateProperties(program, properties)
-            return program
-
-        } else {
-            Program parent = get(id)
-            properties.programId = Identifiers.getNew(true, '')
-            Program subProgram = new Program(properties)
-            subProgram.parent = parent
-            subProgram.save(flush: true)
-            return subProgram
+        properties.programId = Identifiers.getNew(true, '')
+        Program program = new Program(properties)
+        if (id != null) {
+            program.parent = get(id)
         }
+        commonService.updateProperties(program, properties)
+        program.save(flush: true)
+        return program
     }
 
+
     Program update(String id, Map properties) {
-        String newParentProgramId = properties.parentProgramId
-        Program program = get(id)
-        Program newParent = get(newParentProgramId)
-        program.parent = newParent
+        String parentProgramId = properties.parentProgramId
         properties.remove('parentProgramId')
+        Program program = get(id)
+        if (parentProgramId != null){
+            Program newParent = get(parentProgramId)
+            program.parent = newParent
+        }
         commonService.updateProperties(program, properties)
         program.save(flush:true)
         return program
@@ -99,6 +95,9 @@ class ProgramService {
         result
     }
 
+    /**
+    * @return All of programs with their name and programId if the program status is not Deleted
+     * * */
     List<Map> findAllProgramList() {
         List allProgramList = Program.where {
             status != Status.DELETED

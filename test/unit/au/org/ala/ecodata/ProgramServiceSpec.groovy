@@ -69,7 +69,7 @@ class ProgramServiceSpec extends Specification {
         newParentProgram.save(flush: true, failOnError: true)
 
         when:
-        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", newParentProgramId:'3']
+        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", parentProgramId:'3']
         service.update(details.programId, details)
         Program updatedProgram = service.get(subProgram.programId)
 
@@ -77,7 +77,6 @@ class ProgramServiceSpec extends Specification {
         updatedProgram.name == "subprogram name"
         updatedProgram.description == "subProgram description"
         updatedProgram.parent.id == newParentProgram.id
-        print("update  " + updatedProgram.parent.id + "   new  "+ newParentProgram.id)
     }
 
     void "update existing Parent with null parent program"(){
@@ -92,7 +91,7 @@ class ProgramServiceSpec extends Specification {
         subProgram.save(flush: true, failOnError: true)
 
         when:
-        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", newParentProgramId:'']
+        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", parentProgramId:'']
         service.update(details.programId, details)
         Program updatedProgram = service.get(subProgram.programId)
 
@@ -100,7 +99,6 @@ class ProgramServiceSpec extends Specification {
         updatedProgram.name == "subprogram name"
         updatedProgram.description == "subProgram description"
         updatedProgram.parent == null
-        print(updatedProgram.parent)
     }
 
 }
