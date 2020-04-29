@@ -4,7 +4,7 @@ package au.org.ala.ecodata
 class ProgramController {
 
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', listOfAllPrograms:['GET'], findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE', getPrograms: ['POST']]
+    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', listOfAllPrograms:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE', getPrograms: ['POST']]
 
     ProgramService programService
     ElasticSearchService elasticSearchService

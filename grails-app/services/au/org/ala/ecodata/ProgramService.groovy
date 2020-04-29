@@ -48,11 +48,11 @@ class ProgramService {
     }
 
     Program update(String id, Map properties) {
-        String newParentProgramId = properties.newParentProgramId
+        String newParentProgramId = properties.parentProgramId
         Program program = get(id)
         Program newParent = get(newParentProgramId)
         program.parent = newParent
-        properties.remove('newParentProgramId')
+        properties.remove('parentProgramId')
         commonService.updateProperties(program, properties)
         program.save(flush:true)
         return program
