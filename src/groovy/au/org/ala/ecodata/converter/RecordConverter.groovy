@@ -47,7 +47,7 @@ class RecordConverter {
     static final String DELIMITER = ";"
     static final String DEFAULT_BASIS_OF_RECORD = "HumanObservation"
     static final String MACHINE_OBSERVATION_BASIS_OF_RECORD = "MachineObservation"
-    static final String DEFAULT_LICENCE_TYPE = "https://creativecommons.org/publicdomain/zero/1.0/"
+    static final String DEFAULT_LICENCE_TYPE = "https://creativecommons.org/licenses/by/4.0/"
     static final String SYSTEMATIC_SURVEY = "systematic"
     static final List MACHINE_SURVEY_TYPES = ["Bat survey - Echolocation recorder","Fauna survey - Call playback","Fauna survey - Camera trapping"]
 
