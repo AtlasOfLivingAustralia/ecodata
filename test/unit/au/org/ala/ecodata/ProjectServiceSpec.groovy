@@ -13,6 +13,7 @@ import spock.lang.Specification
 class ProjectServiceSpec extends Specification {
 
     ProjectService service = new ProjectService()
+    def projectActivityServiceStub = Stub(ProjectActivityService)
     def webServiceStub = Stub(WebService)
     String collectoryBaseUrl = ''
     String meritDataProvider = 'drMerit'
@@ -35,6 +36,7 @@ class ProjectServiceSpec extends Specification {
         grailsApplication.mainContext.collectoryService.webService = webServiceStub
         grailsApplication.mainContext.collectoryService.projectService = service
         service.collectoryService = grailsApplication.mainContext.collectoryService
+        service.projectActivityService = projectActivityServiceStub
         service.grailsApplication = grailsApplication
 
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
