@@ -38,7 +38,8 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
                                "nonTaxonomicAccuracy": "low",
                                "temporalAccuracy": "low",
                                "speciesIdentification": "low",
-                               "spatialAccuracy": "low"
+                               "spatialAccuracy": "low",
+                               dataSharingLicense: "CC BY"
         ]
         projectActivityController.request.contentType = 'application/json;charset=UTF-8'
         projectActivityController.request.content = (projectActivity as JSON).toString().getBytes('UTF-8')
