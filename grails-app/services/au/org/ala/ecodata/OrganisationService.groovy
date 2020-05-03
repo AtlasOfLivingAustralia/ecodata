@@ -90,11 +90,16 @@ class OrganisationService {
 
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
+
             try {
                 String oldName = organisation.name
                 getCommonService().updateProperties(organisation, props)
                 if (props.name && (oldName != props.name)) {
                     projectService.updateOrganisationName(organisation.organisationId, props.name)
+                }
+                // if no collectory institution exists for this organisation, create one
+                if (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '') {
+                  organisation.collectoryInstitutionId = createCollectoryInstitution(props)
                 }
                 return [status:'ok']
             } catch (Exception e) {

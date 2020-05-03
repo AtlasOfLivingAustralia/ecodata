@@ -106,6 +106,7 @@ class CollectoryService {
         Map ids = [:]
 
         Map collectoryProps = mapProjectAttributesToCollectoryDataResource(props)
+
         ids.dataProviderId = dataProviderForProject(props)
 
         if (ids.dataProviderId) {
@@ -157,6 +158,7 @@ class CollectoryService {
      */
     def updateDataResource(Map project, Map changedProperties = null, Boolean forceUpdate = false) {
         Map properties = changedProperties ?: project
+
         def alaHarvest = properties.alaHarvest?:project.alaHarvest
         if (alaHarvest) {
             if (!project.dataResourceId || project.dataResourceId == "null") {
@@ -229,21 +231,26 @@ class CollectoryService {
                 manager: 'email',
                 name: 'name',
                 dataSharingLicense: 'licenseType',
-                urlWeb: 'websiteUrl'
+                urlWeb: 'websiteUrl',
+                citation: 'citation',
+                qualityControlDescription: 'qualityControlDescription',
+                methodStepDescription: 'methodStepDescription'
+
         ]
         def collectoryProps = [:]
 
         def hiddenJSON = [:]
         props.each { k, v ->
             if (v != null) {
-                def keyCollectory = mapKeyProjectDataToCollectory[k]
-                if (keyCollectory == null) // not mapped to first class collectory property
-                    hiddenJSON[k] = v
-                else if (keyCollectory != '') // not to be ignored
-                    collectoryProps[keyCollectory] = v
+              def keyCollectory = mapKeyProjectDataToCollectory[k]
+              if (keyCollectory == null) // not mapped to first class collectory property
+                  hiddenJSON[k] = v
+              else if (keyCollectory != '') // not to be ignored
+                  collectoryProps[keyCollectory] = v
             }
         }
         collectoryProps.hiddenJSON = hiddenJSON
+
         if (props.organisationId) {
 
             Organisation organisation = Organisation.findByOrganisationIdAndStatusNotEqual(props.organisationId, Status.DELETED)
@@ -251,6 +258,7 @@ class CollectoryService {
                 collectoryProps.institution = [uid: organisation.collectoryInstitutionId]
             }
         }
+
         collectoryProps
     }
 

@@ -557,6 +557,7 @@ class RecordControllerSpec extends IntegrationSpec {
                 startDate: new Date(),
                 status: ACTIVE,
                 isDataManagementPolicyDocumented: false, dataAccessMethods: ["na"], dataQualityAssuranceMethods: ["dataownercurated"], "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", methodType     : "opportunistic","spatialAccuracy": "low",
+                dataSharingLicense: "CC BY",
                 visibility: new VisibilityConstraint(embargoUntil: embargoDate)).save(failOnError: true, flush: true)
 
         pa.projectActivityId

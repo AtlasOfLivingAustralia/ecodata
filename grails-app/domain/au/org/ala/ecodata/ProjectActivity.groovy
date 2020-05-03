@@ -40,6 +40,7 @@ class ProjectActivity {
     String dataManagementPolicyDescription
     String dataManagementPolicyURL
     String dataManagementPolicyDocument
+    String dataSharingLicense
     MapLayersConfiguration mapLayersConfig
     String surveySiteOption
     boolean canEditAdminSelectedSites

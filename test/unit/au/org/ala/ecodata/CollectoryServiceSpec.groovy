@@ -31,6 +31,7 @@ class CollectoryServiceSpec extends Specification {
 
         webServiceMock = Mock(WebService)
         service.webService = webServiceMock
+        grailsApplication.mainContext.projectService.projectActivityService = Mock(ProjectActivityService)
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider]]
         service.grailsApplication = grailsApplication
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication.mainContext.projectService.grailsApplication = grailsApplication
@@ -161,6 +162,7 @@ class CollectoryServiceSpec extends Specification {
         String projectId = '1234'
         Map projectData = [name:'project 1', description:'test 123', isMERIT:false, dataResourceId:dataResourceId, projectId: projectId, alaHarvest: false]
         new Project(projectData).save(flush: true);
+        grailsApplication.mainContext.projectService.projectActivityService.getAllByProject(_) >> []
         when:
         service.updateDataResource(projectData, [alaHarvest: false])
 

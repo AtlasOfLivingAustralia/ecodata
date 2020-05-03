@@ -1416,37 +1416,52 @@ for (var i = 0; i<stateLists.length; i++){
     }
 }
 
+var actMu = db.managementUnit.find({name:"ACT"}).next();
+var actStateSiteId = actMu.managementUnitSiteId;
+var ntMu = db.managementUnit.find({name:"Northern Territory"}).next();
+var ntStateSiteId = ntMu.managementUnitSiteId;
+
 var states = [
     {
-        name: "New South Wales",
+        name: "New South Wales Bushfires",
         acronym: "NSW",
         siteId: nswSite.siteId
     },
     {
-        name:"South Australia",
+        name:"South Australia Bushfires",
         acronym: "SA",
         siteId: saState.siteId
     },
     {
-        name:"Tasmania",
+        name:"Tasmania Bushfires",
         acronym:"TAS",
         siteId:tasState.siteId
     },
     {
-        name:"Queensland",
+        name:"Queensland Bushfires",
         acronym:"QLD",
         siteId:qldState.siteId
     },
     {
-        name:"Western Australia",
+        name:"Western Australia Bushfires",
         acronym:"WA",
         siteId:waState.siteId
     },
     {
-        name:"Victoria",
+        name:"Victoria Bushfires",
         acronym:"VIC",
         siteId:vicState.siteId
-    }
+    },
+    {
+        name:"ACT Bushfires",
+        acronym:"ACT",
+        siteId:actStateSiteId
+    },
+    // {
+    //     name:"Northern Territory Bushfires",
+    //     acronym:"NT",
+    //     siteId:ntStateSiteId
+    // },
 
 ];
 for (var i=0; i<states.length; i++) {

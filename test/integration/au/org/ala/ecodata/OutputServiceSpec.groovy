@@ -112,7 +112,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: "10"]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: "guid"], individualCount: "10"]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -129,7 +129,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: null]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: 'guid'], individualCount: null]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -147,7 +147,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: 2.0]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: 'guid'], individualCount: 2.0]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -165,7 +165,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"]]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: 'guid']]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -182,7 +182,7 @@ class OutputServiceSpec extends IntegrationSpec {
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anhotherid"]]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anhotherid", guid: 'guid']]]
 
         when:
         outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -354,7 +354,7 @@ class OutputServiceSpec extends IntegrationSpec {
                                                 "species2"                 : [
                                                         "guid"           : "urn:lsid:biodiversity.org.au:afd.taxon:a1fbd43e-2093-4675-bdd2-783afb82aef8",
                                                         "outputSpeciesId": "16cb0ae5-fdd4-46d3-a753-925b6abb4c43",
-                                                        "name"           : "Abcandonopsis Karanovic, 2004"
+                                                        "scientificName"           : "Abcandonopsis Karanovic, 2004"
                                                 ]
                                         ],
                                         [
@@ -366,7 +366,7 @@ class OutputServiceSpec extends IntegrationSpec {
                                                 "species2"                 : [
                                                         "guid"           : "urn:lsid:biodiversity.org.au:apni.taxon:759444",
                                                         "outputSpeciesId": "a1b7d9ec-f5da-49bb-9918-3494e0ef6ad0",
-                                                        "name"           : "Sida sp. B (C.Dunlop 1739)"
+                                                        "scientificName"           : "Sida sp. B (C.Dunlop 1739)"
                                                 ]
                                         ], [
                                                 "previousSightings2"       : "1 Year or longer ago",
@@ -382,14 +382,14 @@ class OutputServiceSpec extends IntegrationSpec {
                                                 "species2"                 : [
                                                         "guid"           : "urn:lsid:catalogueoflife.org:taxon:dbc96dea-29c1-102b-9a4a-00304854f820:col20120124",
                                                         "outputSpeciesId": "94276a62-fa80-489b-bb62-dbd8ad09ac99",
-                                                        "name"           : "Deflexula pacifica"
+                                                        "scientificName"           : "Deflexula pacifica"
                                                 ]
                                         ]
                                 ],
                                 "species1"                 : [
                                         "guid"           : "urn:lsid:biodiversity.org.au:afd.taxon:0fb1b639-10cf-4360-afa2-6f97a4491273",
                                         "outputSpeciesId": "1717aab2-cc1d-46ef-8f3b-56ca77be1d89",
-                                        "name"           : "Tigrana"
+                                        "scientificName"           : "Tigrana"
                                 ],
                                 "locationLongitude"        : 146.0,
                                 "comments1"                : "Single Species Sighting Comment",
@@ -588,7 +588,7 @@ class OutputServiceSpec extends IntegrationSpec {
                                                                    "species"                : [
                                                                            "guid"           : "urn:lsid:biodiversity.org.au:afd.name:349301",
                                                                            "outputSpeciesId": "40557c84-968e-4f44-851e-44a0395b115c",
-                                                                           "name"           : "Phocarctos hookeri"
+                                                                           "scientificName"           : "Phocarctos hookeri"
                                                                    ],
                                                                    "numberOfOrganisms"      : "3",
                                                                    "evidence"               : "Living organism",
