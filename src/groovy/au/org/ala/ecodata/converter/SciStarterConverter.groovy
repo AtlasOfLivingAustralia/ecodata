@@ -85,7 +85,14 @@ class SciStarterConverter {
                                 return null
                             }
                         }],
-                'difficulty'  : 'difficulty',
+                'difficulty'  : [
+                        'name'     : 'difficulty',
+                        'transform': { props, target ->
+                            props?.difficulty?.findAll {
+                                (it instanceof String) && it.capitalize() in ['Easy', 'Medium', 'Hard']
+                            }?.getAt(0)?.capitalize()
+                        }
+                ],
                 'begin_date'  : [
                         'name'     : 'plannedStartDate',
                         'transform': { props, target ->
@@ -131,7 +138,7 @@ class SciStarterConverter {
                             props?.topics?.each { String type ->
                                 String lowerType = type?.toLowerCase()
                                 approvedScienceType?.each { String scienceType ->
-                                    if(scienceType.toLowerCase() == lowerType){
+                                    if (scienceType.toLowerCase() == lowerType) {
                                         scienceTypes.push(scienceType)
                                     }
                                 }
@@ -176,7 +183,7 @@ class SciStarterConverter {
                                 }
                             }
 
-                            if(matchedRegions.size()){
+                            if (matchedRegions.size()) {
                                 return matchedRegions
                             } else {
                                 return ["Americas – Northern America"]
@@ -188,7 +195,6 @@ class SciStarterConverter {
         // default values
         Map target = [
                 "funding"                : 0,
-                "hasParticipantCost"     : false,
                 "hasTeachingMaterials"   : false,
                 "isCitizenScience"       : true,
                 "isDIY"                  : false,
@@ -228,7 +234,7 @@ class SciStarterConverter {
                 "importDate"             : new Date(),
                 "origin"                 : "scistarter",
                 "countries"              : [],
-                "unRegions"             : []
+                "unRegions"              : []
         ] << override;
 
         // iterate through mapping variable and copy or tranform the value
