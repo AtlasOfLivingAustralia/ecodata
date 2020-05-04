@@ -91,7 +91,7 @@ class ProgramServiceSpec extends Specification {
         subProgram.save(flush: true, failOnError: true)
 
         when:
-        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", parentProgramId:'']
+        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", parentProgramId: null]
         service.update(details.programId, details)
         Program updatedProgram = service.get(subProgram.programId)
 

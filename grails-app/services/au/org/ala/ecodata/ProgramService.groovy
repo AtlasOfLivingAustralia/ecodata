@@ -48,6 +48,8 @@ class ProgramService {
         if (parentProgramId != null){
             Program newParent = get(parentProgramId)
             program.parent = newParent
+        }else{
+            program.parent = null
         }
         commonService.updateProperties(program, properties)
         program.save(flush:true)
