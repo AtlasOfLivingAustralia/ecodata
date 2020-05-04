@@ -31,6 +31,7 @@ class ProjectActivitySpec extends Specification {
 
         DateFormat format = new SimpleDateFormat('yyyy/MM/dd')
         def methodTypes = ['opportunistic', 'opportunistic', 'systematic', 'systematic', 'systematic', 'systematic']
+        def methodNames = ['Opportunistic/ad-hoc observation recording','Opportunistic/ad-hoc observation recording','Bird survey - Fixed-area','Vegetation survey - Intensive inventory','Vegetation survey - Intensive inventory','Vegetation survey - Intensive inventory']
         def spatialAccuracy = ['low', 'moderate', 'high', 'low', 'moderate', 'moderate']
         def speciesIdentification = ['low', 'moderate', 'high', 'na', 'low', 'moderate']
         def temporalAccuracy = ['low', 'moderate', 'high', 'low', 'moderate', 'high']
@@ -49,6 +50,7 @@ class ProjectActivitySpec extends Specification {
                     projectId                  : 'project' + i,
                     status                     : status[i],
                     methodType                 : methodTypes[i],
+                    methodName                 : methodNames[i],
                     description                : 'description ' + i,
                     spatialAccuracy            : spatialAccuracy[i],
                     speciesIdentification      : speciesIdentification[i],
