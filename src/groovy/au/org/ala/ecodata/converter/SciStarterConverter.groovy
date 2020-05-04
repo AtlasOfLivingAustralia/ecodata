@@ -88,9 +88,18 @@ class SciStarterConverter {
                 'difficulty'  : [
                         'name'     : 'difficulty',
                         'transform': { props, target ->
-                            props?.difficulty?.findAll {
-                                (it instanceof String) && it.capitalize() in ['Easy', 'Medium', 'Hard']
-                            }?.getAt(0)?.capitalize()
+                            def difficulty
+                            if (props?.difficulty instanceof List) {
+                                difficulty = props.difficulty.findAll {
+                                    (it instanceof String) && it.capitalize() in ['Easy', 'Medium', 'Hard']
+                                }?.getAt(0)?.capitalize()
+                            }
+
+                            if (props?.difficulty instanceof String) {
+                                difficulty = props.difficulty.capitalize()
+                            }
+
+                            difficulty
                         }
                 ],
                 'begin_date'  : [
