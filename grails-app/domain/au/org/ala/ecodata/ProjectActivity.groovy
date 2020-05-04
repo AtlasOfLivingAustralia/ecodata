@@ -12,6 +12,7 @@ class ProjectActivity {
     String status
     String pActivityFormName
     String methodType
+    String methodName
     boolean commentsAllowed
     Date startDate
     Date endDate
