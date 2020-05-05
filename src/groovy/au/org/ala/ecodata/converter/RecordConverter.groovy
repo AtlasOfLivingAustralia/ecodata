@@ -184,9 +184,10 @@ class RecordConverter {
 
             if(organisation && organisation.collectoryInstitutionId && organisation.collectoryInstitutionId != "null" && organisation.collectoryInstitutionId != '') {
                 dwcFields.institutionID = organisation.collectoryInstitutionId
+                dwcFields.institutionCode = organisation.name
             }
             else {
-              dwcFields.institutionID = project.organisationName
+                dwcFields.institutionCode = dwcFields.institutionID = project.organisationName
             }
         }
 
