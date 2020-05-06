@@ -53,6 +53,7 @@ class CommonService {
             if (v == "null" || v == JSONObject.NULL) {
                 v = null
             }
+
             o[k] = v
         }
         // always flush the update so that that any exceptions are caught before the service returns

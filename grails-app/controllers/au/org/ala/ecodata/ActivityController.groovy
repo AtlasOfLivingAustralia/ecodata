@@ -32,7 +32,7 @@ class ActivityController {
         def detail = params.view == SCORES ? [SCORES] : []
         if (!id) {
 
-            def list = activityService.getAll(params.includeDeleted as boolean, params.view)
+            def list = activityService.getAll(params.boolean('includeDeleted'), params.view)
             list.sort {it.name}
             //log.debug list
             asJson([list: list])
@@ -269,6 +269,22 @@ class ActivityController {
         }
         else {
             def total = activityService.getDistinctSitesForProjectActivity(id)
+            render text: [sites: total] as JSON, contentType: 'application/json'
+        }
+    }
+
+    /**
+     * Count distinct sites associated with activities in a project
+     * @param id Project identifier
+     * @return [ sites: [ 'Site id' ] ]
+     */
+    def getDistinctSitesForProject(String id){
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else {
+            def total = activityService.getDistinctSitesForProject(id)
             render text: [sites: total] as JSON, contentType: 'application/json'
         }
     }

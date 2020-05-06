@@ -654,7 +654,7 @@ environments {
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
-        app.file.upload.path = "./target/archive"
+        app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://locahost:8018"
         userDetailsSingleUrl = "${casBaseUrl}/userdetails/userDetails/getUserDetails"
         userDetailsUrl = "${casBaseUrl}/userdetails/userDetails/getUserListFull"
@@ -683,7 +683,7 @@ environments {
         app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
-        app.file.upload.path = "./target/archive"
+        app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://localhost:8018"
         userDetails {
             url = "${casBaseUrl}/userdetails/userDetails/"

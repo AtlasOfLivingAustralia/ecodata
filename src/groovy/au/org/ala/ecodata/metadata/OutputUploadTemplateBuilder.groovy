@@ -315,11 +315,16 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
         DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
         OutputMetadata.ValidationRules rules = new OutputMetadata.ValidationRules(node)
 
-        def operator = rules.max() ? DataValidationConstraint.OperatorType.BETWEEN : DataValidationConstraint.OperatorType.GREATER_OR_EQUAL
+        def max = rules.max()
+        def min = rules.min()
+        if (!min) {
+            min = '0'
+        }
+        def operator = max ? DataValidationConstraint.OperatorType.BETWEEN : DataValidationConstraint.OperatorType.GREATER_OR_EQUAL
 
         DataValidationConstraint dvConstraint =
                 dvHelper.createNumericConstraint(DataValidationConstraint.ValidationType.DECIMAL,
-                operator, rules.min().toString(), rules.max()?rules.max().toString():"")
+                operator, min, max?max.toString():"")
 
         addValidation(node, context, dvConstraint)
     }
