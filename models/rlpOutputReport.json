@@ -697,6 +697,7 @@
                   "expression": "$geom.areaHa(sitesInstalled)"
                 },
                 "dataType": "number",
+                "decimalPlaces": 3,
                 "name": "sitesInstalledCalculatedAreaHa",
                 "units": "ha",
                 "behaviour": [
@@ -715,6 +716,7 @@
                   "expression": "$geom.lengthKm(sitesInstalled)"
                 },
                 "dataType": "number",
+                "decimalPlaces": 3,
                 "name": "sitesInstalledCalculatedLengthKm",
                 "units": "km",
                 "behaviour": [
@@ -746,6 +748,7 @@
                 },
                 "dataType": "number",
                 "name": "areaInstalledHa",
+                "decimalPlaces": 3,
                 "units": "ha",
                 "validate": "required,min[0]"
               },
@@ -756,12 +759,14 @@
                 },
                 "dataType": "number",
                 "name": "lengthInstalledKm",
+                "decimalPlaces": 3,
                 "units": "km",
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
+                "decimalPlaces": 3,
                 "units": "ha",
                 "validate": [
                   {
@@ -782,6 +787,7 @@
               {
                 "dataType": "number",
                 "name": "lengthInvoicedKm",
+                "decimalPlaces": 3,
                 "units": "km",
                 "validate": [
                   {
@@ -862,6 +868,7 @@
                 },
                 "dataType": "number",
                 "name": "areaProtectedHa",
+                "decimalPlaces": 3,
                 "units": "ha"
               },
               {
@@ -1206,6 +1213,7 @@
                   "expression": "$geom.areaHa(site)"
                 },
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -1224,6 +1232,7 @@
                   "expression": "$geom.lengthKm(site)"
                 },
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthInvoicedKm > 0",
@@ -1240,6 +1249,7 @@
                 "name": "areaControlledHa",
                 "validate": "required,min[0]",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "defaultValue": {
                   "type": "computed",
                   "expression": "$geom.areaHa(site)"
@@ -1250,6 +1260,7 @@
                 "name": "lengthControlledKm",
                 "validate": "required,min[0]",
                 "units": "km",
+                "decimalPlaces": 3,
                 "defaultValue": {
                   "type": "computed",
                   "expression": "$geom.lengthKm(site)"
@@ -1259,6 +1270,7 @@
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -1279,6 +1291,7 @@
                 "dataType": "number",
                 "name": "lengthInvoicedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -1916,6 +1929,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -1947,6 +1961,7 @@
                 "dataType": "number",
                 "name": "areaCoveredByPlanHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -1979,6 +1994,7 @@
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -2284,6 +2300,7 @@
                 "dataType": "number",
                 "name": "calculatedDebrisRemovedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaOfRemovedDebrisInvoicedHa > 0",
@@ -2301,6 +2318,7 @@
                 "dataType": "number",
                 "name": "calculatedDebrisRemovedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "debrisRemovedKm > 0",
@@ -2318,6 +2336,7 @@
                 },
                 "dataType": "number",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "name": "debrisRemovedHa",
                 "validate": "required,min[0]"
               },
@@ -2328,6 +2347,7 @@
                 },
                 "dataType": "number",
                 "units": "km",
+                "decimalPlaces": 3,
                 "name": "debrisRemovedKm",
                 "validate": "required,min[0]"
               },
@@ -2372,6 +2392,7 @@
               {
                 "dataType": "number",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "name": "areaOfRemovedDebrisInvoicedHa",
                 "validate": [
                   {
@@ -2734,6 +2755,7 @@
                 "dataType": "number",
                 "name": "existingErosionAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "min[0]"
               },
               {
@@ -2747,6 +2769,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaOfErosionControlHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaOfErosionControlInvoicedHa > 0",
@@ -2764,6 +2787,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthOfErosionControlKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthOfErosionControlInvoicedKm > 0",
@@ -2794,6 +2818,7 @@
                 "dataType": "number",
                 "name": "areaOfErosionControlHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -2804,12 +2829,14 @@
                 "dataType": "number",
                 "name": "lengthOfErosionControlKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaOfErosionControlInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -2830,6 +2857,7 @@
                 "dataType": "number",
                 "name": "lengthOfErosionControlInvoicedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -2941,6 +2969,7 @@
                 },
                 "dataType": "number",
                 "name": "areaBenefitingHa",
+                "decimalPlaces": 3,
                 "units": "ha"
               },
               {
@@ -3297,6 +3326,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaOfEnclosuresHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -3315,12 +3345,14 @@
                 "dataType": "number",
                 "name": "areaOfEnclosuresHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -4096,6 +4128,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaCoveredByAgreementsHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaOfCoveredByAgreementsInvoicedHa > 0",
@@ -4115,6 +4148,7 @@
                 "dataType": "number",
                 "name": "areaCoveredByAgreementsHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -4147,6 +4181,7 @@
                 "dataType": "number",
                 "name": "areaOfCoveredByAgreementsInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -4802,6 +4837,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -4821,12 +4857,14 @@
                 "dataType": "number",
                 "name": "areaSurveyedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -5248,6 +5286,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaTreatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedTreatedHa > 0",
@@ -5266,6 +5305,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthTreatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthTreatedKm > 0",
@@ -5285,6 +5325,7 @@
                 "dataType": "number",
                 "name": "areaTreatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -5295,6 +5336,7 @@
                 "dataType": "number",
                 "name": "lengthTreatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -5339,6 +5381,7 @@
                 "dataType": "number",
                 "name": "areaInvoicedTreatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -5386,6 +5429,7 @@
                 "dataType": "number",
                 "name": "lengthTreatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min",
@@ -5771,6 +5815,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -5790,12 +5835,14 @@
                 "dataType": "number",
                 "name": "areaSurveyedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -6227,6 +6274,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaAugmentedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedAumentationHa > 0",
@@ -6245,6 +6293,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthAugmentedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthAugmentedKm > 0",
@@ -6264,6 +6313,7 @@
                 "dataType": "number",
                 "name": "areaAugmentedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -6274,6 +6324,7 @@
                 "dataType": "number",
                 "name": "lengthAugmentedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -6318,6 +6369,7 @@
                 "dataType": "number",
                 "name": "areaInvoicedAumentationHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -6862,6 +6914,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaCoveringRegimeChangeHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "invoicedAreaHa > 0",
@@ -6880,6 +6933,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthOfRegimeChangeKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthOfRegimeChangeKm > 0",
@@ -6937,6 +6991,7 @@
                 "dataType": "number",
                 "name": "areaCoveringRegimeChangeHa",
                 "validate": "min[0]",
+                "decimalPlaces": 3,
                 "units": "ha"
               },
               {
@@ -6947,12 +7002,14 @@
                 "dataType": "number",
                 "name": "lengthOfRegimeChangeKm",
                 "validate": "min[0]",
+                "decimalPlaces": 3,
                 "units": "km"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -7375,6 +7432,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaImplementedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaImplementedInvoicedHa > 0",
@@ -7394,6 +7452,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthImplementedKm",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthImplementedKm > 0",
@@ -7413,6 +7472,7 @@
                 "dataType": "number",
                 "name": "areaImplementedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -7423,6 +7483,7 @@
                 "dataType": "number",
                 "name": "lengthImplementedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -7467,6 +7528,7 @@
                 "dataType": "number",
                 "name": "areaImplementedInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -7896,6 +7958,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaTreatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaTreatedInvoicedHa > 0",
@@ -7914,6 +7977,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthTreatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthTreatedKm > 0",
@@ -7933,6 +7997,7 @@
                 "dataType": "number",
                 "name": "areaTreatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -7943,6 +8008,7 @@
                 "dataType": "number",
                 "name": "lengthTreatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -7987,6 +8053,7 @@
                 "dataType": "number",
                 "name": "areaTreatedInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -8078,6 +8145,7 @@
                 "dataType": "number",
                 "name": "offSiteBenefitAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "min[0]"
               },
               {
@@ -8088,6 +8156,7 @@
                 "dataType": "number",
                 "name": "offSiteBenefitLengthKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "min[0]"
               },
               {
@@ -8681,6 +8750,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -8700,12 +8770,14 @@
                 "dataType": "number",
                 "name": "areaSurveyedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -9176,6 +9248,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -9195,12 +9268,14 @@
                 "dataType": "number",
                 "name": "areaSurveyedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -9770,6 +9845,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaRemediatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaRemediatedInvoicedHa > 0",
@@ -9788,6 +9864,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthRemediatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthRemediatedInvoicedKm > 0",
@@ -9807,6 +9884,7 @@
                 "dataType": "number",
                 "name": "areaRemediatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -9817,6 +9895,7 @@
                 "dataType": "number",
                 "name": "lengthRemediatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -9861,6 +9940,7 @@
                 "dataType": "number",
                 "name": "areaRemediatedInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -9878,6 +9958,7 @@
                 "dataType": "number",
                 "name": "lengthRemediatedInvoicedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -9961,6 +10042,7 @@
                 "dataType": "number",
                 "name": "offSiteBenefitAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "min[0]"
               },
               {
@@ -10278,6 +10360,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -10296,6 +10379,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedLengthKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthInvoicedKm > 0",
@@ -10315,6 +10399,7 @@
                 "dataType": "number",
                 "name": "areaTreatedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -10325,12 +10410,14 @@
                 "dataType": "number",
                 "name": "lengthTreatedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -10351,6 +10438,7 @@
                 "dataType": "number",
                 "name": "lengthInvoicedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -10837,6 +10925,7 @@
                   "expression": "$geom.areaHa(sitesRevegetated)"
                 },
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -10855,6 +10944,7 @@
                   "expression": "$geom.lengthKm(sitesRevegetated)"
                 },
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthRevegetatedKm > 0",
@@ -10874,6 +10964,7 @@
                 "dataType": "number",
                 "name": "areaRevegetatedHa",
                 "validate": "required,min[0]",
+                "decimalPlaces": 3,
                 "units": "ha"
               },
               {
@@ -10884,12 +10975,14 @@
                 "dataType": "number",
                 "name": "lengthRevegetatedKm",
                 "validate": "required,min[0]",
+                "decimalPlaces": 3,
                 "units": "km"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -11434,6 +11527,7 @@
                 "dataType": "number",
                 "name": "calculatedAreaPreparedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaPreparedInvoicedHa > 0",
@@ -11452,6 +11546,7 @@
                 "dataType": "number",
                 "name": "calculatedLengthPreparedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "lengthPreparedKm > 0",
@@ -11470,6 +11565,7 @@
                 },
                 "dataType": "number",
                 "name": "areaPreparedHa",
+                "decimalPlaces": 3,
                 "units": "ha",
                 "validate": "required,min[0]"
               },
@@ -11481,6 +11577,7 @@
                 "dataType": "number",
                 "name": "lengthPreparedKm",
                 "units": "km",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
@@ -11525,6 +11622,7 @@
                 "dataType": "number",
                 "name": "areaPreparedInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "min[0]"
@@ -12708,6 +12806,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -12727,12 +12826,14 @@
                 "dataType": "number",
                 "name": "areaSurveyedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"
@@ -13188,6 +13289,7 @@
                 "dataType": "number",
                 "name": "siteCalculatedAreaHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "behaviour": [
                   {
                     "condition": "areaInvoicedHa > 0",
@@ -13207,12 +13309,14 @@
                 "dataType": "number",
                 "name": "areaSurveyedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": "required,min[0]"
               },
               {
                 "dataType": "number",
                 "name": "areaInvoicedHa",
                 "units": "ha",
+                "decimalPlaces": 3,
                 "validate": [
                   {
                     "rule": "required"

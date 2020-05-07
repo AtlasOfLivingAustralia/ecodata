@@ -269,12 +269,13 @@ class SiteService {
                 // https://github.com/AtlasOfLivingAustralia/ecodata/issues/594
                 Map clonedProps = new JSONObject(props)
                 String userId = props.remove('userId')
+                String siteId = site.siteId
                 task {
                     Site.withNewSession { MongoSession session ->
-                        site = Site.findBySiteId(site.siteId)
+                        Site createdSite = Site.findBySiteId(siteId)
                         addSpatialPortalPID(clonedProps, userId)
                         populateLocationMetadataForSite(clonedProps)
-                        getCommonService().updateProperties(site, clonedProps)
+                        getCommonService().updateProperties(createdSite, clonedProps)
                     }
                 }
             }

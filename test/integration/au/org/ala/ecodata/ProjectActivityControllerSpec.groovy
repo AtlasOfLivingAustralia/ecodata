@@ -32,6 +32,7 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
                                dynamicProperty: 'dynamicProperty',
                                projectId      : 'test-project-id',
                                methodType     : "opportunistic",
+                               methodName     : "Opportunistic/ad-hoc observation recording",
                                isDataManagementPolicyDocumented: false,
                                dataAccessMethods: ["na"],
                                dataQualityAssuranceMethods: ["dataownercurated"],
