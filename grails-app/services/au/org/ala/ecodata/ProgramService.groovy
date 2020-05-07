@@ -28,15 +28,29 @@ class ProgramService {
         return Program.findByNameAndStatusNotEqual(name, DELETED)
     }
 
-    Program create(Map properties){
+    Program create(Map properties) {
+        String id = properties.parentProgramId
         properties.programId = Identifiers.getNew(true, '')
-        Program program = new Program(programId:properties.programId)
+        Program program = new Program(properties)
+        if (id != null) {
+            program.parent = get(id)
+        }
         commonService.updateProperties(program, properties)
+        program.save(flush: true)
         return program
     }
 
+
     Program update(String id, Map properties) {
+        String parentProgramId = properties.parentProgramId
+        properties.remove('parentProgramId')
         Program program = get(id)
+        if (parentProgramId != null){
+            Program newParent = get(parentProgramId)
+            program.parent = newParent
+        }else{
+            program.parent = null
+        }
         commonService.updateProperties(program, properties)
         program.save(flush:true)
         return program
@@ -81,6 +95,21 @@ class ProgramService {
 
         List result = Program.findAllByProgramIdInList(userPrograms?.collect{it.entityId})
         result
+    }
+
+    /**
+    * @return All of programs with their name and programId if the program status is not Deleted
+     * * */
+    List<Map> findAllProgramList() {
+        List allProgramList = Program.where {
+            status != Status.DELETED
+            projections {
+                property("name")
+                property("programId")
+            }
+        }.toList()
+
+        allProgramList.collect{[name:it[0], programId:it[1]]}
     }
 
 
