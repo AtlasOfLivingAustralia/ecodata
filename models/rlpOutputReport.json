@@ -7260,7 +7260,7 @@
                         "type": "row",
                         "items": [
                           {
-                            "preLabel": "Reason for actual being different to mapped amount",
+                            "preLabel": "Reason for invoiced amount being different to actual amount",
                             "source": "invoicedNotActualReason",
                             "type": "selectOne"
                           }
