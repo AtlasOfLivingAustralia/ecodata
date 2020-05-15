@@ -44,6 +44,26 @@
                 "type": "enable"
               }
             ]
+          },
+          {
+            "name": "covidRestrictionsImpactedProject",
+            "dataType": "text",
+            "validate": "required",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "name": "covidRestrictionsImpact",
+            "dataType": "text",
+            "validate": "required,maxSize[500]",
+            "behaviour": [
+              {
+                "condition": "covidRestrictionsImpactedProject == \"Yes\"",
+                "type": "enable"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -67,11 +87,84 @@
                 "preLabel": "Please enter the reason(s) the WHS requirements were not met"
               }
             ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "css": "span6",
+                "type": "selectOne",
+                "source": "covidRestrictionsImpactedProject",
+                "preLabel": "Have the COVID-19 restrictions affected the Service Provider’s ability to deliver contracted activities within the 2019-20 financial year / this reporting period?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "covidRestrictionsImpact",
+                "preLabel": "Describe the affect the COVID-19 restrictions had on the Service Providers ability to meet the requirements"
+              }
+            ]
           }
         ]
       },
       "templateName": "rlpOutputWHS",
       "title": "WHS Requirements"
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": false,
+      "modelName": null,
+      "name": "RLP - Maintaining capacity during covid19",
+      "optional": false,
+      "optionalQuestionText": null,
+      "template": {
+        "name": "RLP - Maintaining capacity during covid19",
+        "title": "Maintaining organisational capacity during covid-19",
+        "dataModel": [
+          {
+            "name": "servicesChanged",
+            "dataType": "text",
+            "validate": "required,maxSize[500]"
+          },
+          {
+            "name": "changedServicesDetails",
+            "dataType": "text",
+            "validate": "required,maxSize[300]"
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "servicesChanged",
+                "preLabel": "What changes to services will be implemented to address the inability to meet planned activities?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "changedServicesDetails",
+                "preLabel": "Describe how these activities will be implemented, including what activities, where, how many, and how they will be reported."
+              }
+            ]
+          }
+        ]
+      },
+      "templateName": "maintainingCapacityDuringCovid",
+      "title": "Maintaining organisational capacity during covid-19"
     },
     {
       "class": "au.org.ala.ecodata.FormSection",
