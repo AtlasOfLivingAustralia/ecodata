@@ -44,6 +44,26 @@
                 "type": "enable"
               }
             ]
+          },
+          {
+            "name": "covidRestrictionsImpactedProject",
+            "dataType": "text",
+            "validate": "required",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "name": "covidRestrictionsImpact",
+            "dataType": "text",
+            "validate": "required,maxSize[500]",
+            "behaviour": [
+              {
+                "condition": "covidRestrictionsImpactedProject == \"Yes\"",
+                "type": "enable"
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -67,11 +87,128 @@
                 "preLabel": "Please enter the reason(s) the WHS requirements were not met"
               }
             ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "selectOne",
+                "source": "covidRestrictionsImpactedProject",
+                "preLabel": "Have the COVID-19 restrictions affected the Service Provider’s ability to deliver contracted activities within the 2019-20 financial year / this reporting period?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "covidRestrictionsImpact",
+                "preLabel": "Describe the affect the COVID-19 restrictions had on the Service Providers ability to meet the requirements"
+              }
+            ]
           }
         ]
       },
       "templateName": "rlpOutputWHS",
       "title": "WHS Requirements"
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": false,
+      "modelName": null,
+      "name": "RLP - Adapting to the COVID-19 Pandemic",
+      "optional": false,
+      "optionalQuestionText": null,
+      "template": {
+        "name": "RLP - Adapting to the COVID-19 Pandemic",
+        "title": "Maintaining organisational capacity during covid-19",
+        "dataModel": [
+          {
+            "name": "projectOutcomesImpacted",
+            "dataType": "text",
+            "validate": "required",
+            "description": "Project Outcomes are identified in the agreed project MERI Plan",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "name": "adaptiveManagementDetails",
+            "dataType": "text",
+            "validate": "required,maxSize[500]"
+          },
+          {
+            "dataType": "document",
+            "name": "additionalAdaptiveManagement",
+            "description": "Use this if you are unable to complete a description of your adaptive management strategy above",
+            "behaviour": [
+              {
+                "type":"visible",
+                "condition": "length adaptiveManagementDetails >= 490"
+              }
+
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "literal",
+                "source": "<p>This section is applicable to Service Providers that agreed in writing to the alternate payment arrangement due to COVID-19 and either have or intend to invoice for the service 'Maintaining organisational capacity (COVID-19)' in the 2019-20 financial year.</p><h4>Maintaining organisational capacity (COVID-19)</h4>"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "selectOne",
+                "source": "projectOutcomesImpacted",
+                "preLabel": "Are the project outcome/s impacted by COVID-19?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "literal",
+                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in Quarter 4 of the 2019-20 financial year?</b></p><p>Describe how you minimised the effects of COVID-19 on the delivery of the project outcomes and attributed funding to maximise the delivery of project outcomes. If changes are likely to be required to your Project Work Order, please outline the detail of this in the Project Change Management section below and explain why it will not be possible to get back on track to fully deliver the Services over the remaining life of the project. This includes changes to Project Services identified in Table 1 of the executed project work order and/or activities undertaken to deliver the contracted Project Services.</p>"
+              }
+
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 5,
+                "source": "adaptiveManagementDetails",
+                "preLabel": "If you have reached the character limit, you may attach additional information"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "document",
+                "source": "additionalAdaptiveManagement",
+                "preLabel": ""
+              }
+            ]
+          }
+        ]
+      },
+      "templateName": "adaptingToTheCovid19Pandemic",
+      "title": "Adapting to the COVID-19 Pandemic"
     },
     {
       "class": "au.org.ala.ecodata.FormSection",
