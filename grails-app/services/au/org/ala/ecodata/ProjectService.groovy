@@ -225,7 +225,19 @@ class ProjectService {
                 ManagementUnit mu =  ManagementUnit.findByManagementUnitId(result.managementUnitId)
                 result['managementUnitName'] =mu?.name
             }
-
+            // Populate the associatedProgram and associatedSubProgram properties if the programId exists.
+            if (result?.programId) {
+                Program program = Program.findByProgramId(result.programId)
+                if (program) {
+                    if (program.parent) {
+                        result['associatedProgram'] = program.parent.name
+                        result['associatedSubProgram'] = program.name
+                    }
+                    else {
+                        result['associatedProgram'] = program.name
+                    }
+                }
+            }
 
             // look up current associated organisation details
             result.associatedOrgs?.each {
