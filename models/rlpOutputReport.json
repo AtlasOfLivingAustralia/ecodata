@@ -44,26 +44,6 @@
                 "type": "enable"
               }
             ]
-          },
-          {
-            "name": "covidRestrictionsImpactedProject",
-            "dataType": "text",
-            "validate": "required",
-            "constraints": [
-              "Yes",
-              "No"
-            ]
-          },
-          {
-            "name": "covidRestrictionsImpact",
-            "dataType": "text",
-            "validate": "required,maxSize[500]",
-            "behaviour": [
-              {
-                "condition": "covidRestrictionsImpactedProject == \"Yes\"",
-                "type": "enable"
-              }
-            ]
           }
         ],
         "viewModel": [
@@ -87,27 +67,6 @@
                 "preLabel": "Please enter the reason(s) the WHS requirements were not met"
               }
             ]
-          },
-          {
-            "type": "row",
-            "items": [
-              {
-                "type": "selectOne",
-                "source": "covidRestrictionsImpactedProject",
-                "preLabel": "Have the COVID-19 restrictions affected the Service Provider’s ability to deliver contracted activities within the 2019-20 financial year / this reporting period?"
-              }
-            ]
-          },
-          {
-            "type": "row",
-            "items": [
-              {
-                "type": "textarea",
-                "rows": 3,
-                "source": "covidRestrictionsImpact",
-                "preLabel": "Describe the affect the COVID-19 restrictions had on the Service Providers ability to meet the requirements"
-              }
-            ]
           }
         ]
       },
@@ -124,7 +83,7 @@
       "optionalQuestionText": null,
       "template": {
         "name": "RLP - Adapting to the COVID-19 Pandemic",
-        "title": "Maintaining organisational capacity during covid-19",
+        "title": "Adapting to the COVID-19 Pandemic",
         "dataModel": [
           {
             "name": "projectOutcomesImpacted",
@@ -191,7 +150,7 @@
                 "type": "textarea",
                 "rows": 5,
                 "source": "adaptiveManagementDetails",
-                "preLabel": "If you have reached the character limit, you may attach additional information"
+                "preLabel": ""
               }
             ]
           },
@@ -201,7 +160,7 @@
               {
                 "type": "document",
                 "source": "additionalAdaptiveManagement",
-                "preLabel": ""
+                "preLabel": "If you have reached the character limit, you may attach additional information"
               }
             ]
           }
