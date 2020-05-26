@@ -129,7 +129,7 @@
               {
                 "type": "selectOne",
                 "source": "projectOutcomesImpacted",
-                "preLabel": "Are the project outcome/s impacted by COVID-19?"
+                "preLabel": "Has COVID-19 impacted on project delivery?"
               }
             ]
           },
@@ -138,7 +138,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in Quarter 4 of the 2019-20 financial year?</b></p><p>Describe how you minimised the effects of COVID-19 on the delivery of the project outcomes and attributed funding to maximise the delivery of project outcomes. If changes are likely to be required to your Project Work Order, please outline the detail of this in the Project Change Management section below and explain why it will not be possible to get back on track to fully deliver the Services over the remaining life of the project. This includes changes to Project Services identified in Table 1 of the executed project work order and/or activities undertaken to deliver the contracted Project Services.</p>"
+                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in Quarter 4 of the 2019-20 financial year?</b></p><p>Describe how you have adapted the project to minimise the effects of COVID-19 and maximise the delivery of the project outcomes, including redirection of funds, changes to project services and/or changes to project activities.</p><p>If, as a result of these adaptations, it will not be possible to fully deliver the contracted project services over the life of the project and you are likely to require changes to the project work order, please describe in the project change management section below.</p>"
               }
 
             ]
