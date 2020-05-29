@@ -157,6 +157,15 @@
 
         },
 
+        "bushfireCategories":{
+          "type":"string",
+          "path":"just_name",
+          "fields" : {
+            "bushfireCategoriesFacet":{"type":"string", "index":"not_analyzed"}
+          }
+
+        },
+
         "name": {
           "type" : "string",
           "fields" : {
@@ -264,6 +273,9 @@
                     "recordNameFacet":{"type":"string", "index":"not_analyzed"}
                   }
                 }
+              },
+              "eventTime":{
+                "type": "string"
               }
             },
             "methodType":{

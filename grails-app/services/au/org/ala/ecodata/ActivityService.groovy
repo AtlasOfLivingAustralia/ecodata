@@ -238,7 +238,7 @@ class ActivityService {
 
         }
 
-        results
+        new HashSet(results).toArray().toList()
     }
 
     /**

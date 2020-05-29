@@ -76,6 +76,8 @@ class Project {
     List<String> uNRegions = []
     List<String> countries = []
     List<String> industries = []
+    List<String> bushfireCategories = []
+    boolean isBushfire
     String origin = 'atlasoflivingaustralia'
     String baseLayer
     MapLayersConfiguration mapLayersConfig
@@ -193,6 +195,8 @@ class Project {
         industries nullable: true
         programId nullable: true
         baseLayer nullable: true
+        isBushfire nullable: true
+        bushfireCategories nullable: true
         mapLayersConfig nullable: true
     }
 }

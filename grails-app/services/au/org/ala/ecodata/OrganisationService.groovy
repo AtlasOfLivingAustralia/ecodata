@@ -72,7 +72,7 @@ class OrganisationService {
     private String createCollectoryInstitution(Map organisationProperties) {
 
         String institutionId = null
-        if (grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+        if (Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
             try {
                 institutionId = collectoryService.createInstitution(organisationProperties)
             }
@@ -90,8 +90,14 @@ class OrganisationService {
 
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
+
             try {
                 String oldName = organisation.name
+                // if no collectory institution exists for this organisation, create one
+                if (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '') {
+                    props.collectoryInstitutionId = createCollectoryInstitution(props)
+                }
+
                 getCommonService().updateProperties(organisation, props)
                 if (props.name && (oldName != props.name)) {
                     projectService.updateOrganisationName(organisation.organisationId, props.name)

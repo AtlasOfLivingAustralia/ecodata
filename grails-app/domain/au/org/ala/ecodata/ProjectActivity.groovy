@@ -12,6 +12,7 @@ class ProjectActivity {
     String status
     String pActivityFormName
     String methodType
+    String methodName
     boolean commentsAllowed
     Date startDate
     Date endDate
@@ -40,6 +41,8 @@ class ProjectActivity {
     String dataManagementPolicyDescription
     String dataManagementPolicyURL
     String dataManagementPolicyDocument
+    String dataSharingLicense
+
     MapLayersConfiguration mapLayersConfig
     String surveySiteOption
     boolean canEditAdminSelectedSites

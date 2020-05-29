@@ -71,7 +71,6 @@
       ]
     },
 
-
     {
       "key" : "table_8",
       "value": [
@@ -94,6 +93,27 @@
           "name" : ">200%",
           "description": "",
           "value" : "3"
+        }
+      ]
+    },
+
+    {
+      "key" : "table_9",
+      "value": [
+        {
+          "name": "<10% of benchmark shrub cover",
+          "description": "",
+          "value": "0"
+        },
+        {
+          "name" : ">/= 10 to <50% or >200% of benchmark shrub cover",
+          "description": "",
+          "value" : "3"
+        },
+        {
+          "name" : "≥50% or ≤200% of benchmark shrub cover",
+          "description": "",
+          "value" : "5"
         }
       ]
     },
