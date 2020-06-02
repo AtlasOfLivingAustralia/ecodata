@@ -181,30 +181,6 @@
           }
         ],
         "modelName": "Progress Report",
-        "pre-populate": [
-          {
-            "source": {
-              "context-path": "project"
-            },
-            "merge": true,
-            "mapping": [
-              {
-                "target": "outcomes",
-                "mapping": [
-                  {
-                    "target": "outcome",
-                    "source-path": "description"
-                  },
-                  {
-                    "target": "assets",
-                    "source-path": "assets"
-                  }
-                ],
-                "source-path": "custom.details.objectives.rows1"
-              }
-            ]
-          }
-        ],
         "title": "Overview of Project Progress",
         "viewModel": [
           {
