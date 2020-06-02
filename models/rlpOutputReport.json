@@ -89,7 +89,6 @@
             "name": "projectOutcomesImpacted",
             "dataType": "text",
             "validate": "required",
-            "description": "Project Outcomes are identified in the agreed project MERI Plan",
             "constraints": [
               "Yes",
               "No"
