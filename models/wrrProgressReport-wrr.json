@@ -22,6 +22,33 @@
       "optional": false,
       "optionalQuestionText": null,
       "template": {
+        "pre-populate": [
+          {
+            "mapping": [
+              {
+                "mapping": [{
+                  "source-path": "storyDetails",
+                  "target": "storyDetails"
+                }],
+                "source-path": "goodNewsStories",
+                "target": "goodNewsStories"
+              }
+            ],
+            "merge": false,
+            "source": {
+              "literal": {
+                "goodNewsStories": [
+                  {
+                    "storyDetails": ""
+                  },
+                  {
+                    "storyDetails": ""
+                  }
+                ]
+              }
+            }
+          }
+        ],
         "dataModel": [
           {
             "dataType": "text",
@@ -35,7 +62,7 @@
           {
             "dataType": "text",
             "name": "detailsOfOrganisationChange",
-            "validate": "required",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -55,7 +82,7 @@
           {
             "dataType": "text",
             "name": "detailsOfProjectContacts",
-            "validate": "required",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -67,7 +94,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -76,17 +103,20 @@
             "columns": [
               {
                 "dataType": "text",
-                "name": "nature"
+                "name": "nature",
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "How you are managing, or proposing to manage, the issue?",
-                "name": "how"
+                "name": "how",
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "Implications for the project",
-                "name": "implication"
+                "name": "implication",
+                "validate": "required,maxSize[1000]"
               }
             ]
           },
@@ -108,7 +138,8 @@
                 "type": "enable",
                 "condition": "hasReportableIncidents == \"Yes\""
               }
-            ]
+            ],
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "text",
@@ -116,7 +147,8 @@
             "description": "",
             "constraints": [
               "Yes",
-              "No"
+              "No",
+              "N/A"
             ]
           },
           {
@@ -128,7 +160,8 @@
                 "type": "enable",
                 "condition": "grantsProvided == \"Yes\""
               }
-            ]
+            ],
+            "validate": "required,min[0]"
           },
           {
             "dataType": "text",
@@ -139,7 +172,8 @@
                 "type": "enable",
                 "condition": "grantsProvided == \"Yes\""
               }
-            ]
+            ],
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -149,7 +183,12 @@
               {
                 "dataType": "text",
                 "description": "",
-                "name": "storyDetails"
+                "name": "storyDetails",
+                "validate": "required,maxSize[1000]"
+              },
+              {
+                "dataType": "image",
+                "name": "photo"
               }
             ]
           },
@@ -157,7 +196,11 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required"
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "dataType": "document",
+            "name": "monitoringAttachment"
           },
           {
             "dataType": "stringList",
@@ -177,7 +220,7 @@
                 "type": "enable"
               }
             ],
-            "validate": "required"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "modelName": "Progress Report",
@@ -198,12 +241,15 @@
                 "source": "organisationDetailsChanged",
                 "preLabel": "1.1 Has there been a change to your organisation's details?",
                 "type": "selectOne",
-                "helpText": "(e.g. Organisation name, ABN, GST status, Trust Deed, telephone, street or postal address)"
+                "helpText": "(e.g. Organisation name, ABN, GST status, Trust Deed, telephone, street or postal address)",
+                "css": "span4"
               },
               {
                 "source": "detailsOfOrganisationChange",
                 "preLabel": "If 'Yes', please enter details of the changes here",
-                "type": "textarea"
+                "type": "textarea",
+                "css": "span8",
+                "rows": 4
               }
             ],
             "type": "row"
@@ -214,12 +260,15 @@
                 "source": "projectContactDetailsChanged",
                 "preLabel": "1.2 Has there been a change to key project contacts or their details?",
                 "type": "selectOne",
-                "helpText": "(e.g. Name, position, role, email, telephone or address of key contacts)"
+                "helpText": "(e.g. Name, position, role, email, telephone or address of key contacts)",
+                "css": "span4"
               },
               {
                 "source": "detailsOfProjectContacts",
                 "preLabel": "If 'Yes', please enter details of the changes here",
-                "type": "textarea"
+                "type": "textarea",
+                "css": "span8",
+                "rows": 4
               }
             ],
             "type": "row"
@@ -354,7 +403,15 @@
               {
                 "source": "storyDetails",
                 "type": "textarea",
-                "title": "Good News Story Details"
+                "rows": 4,
+                "title": "Good News Story Details",
+                "width": "50%"
+              },
+              {
+                "type": "image",
+                "source": "photo",
+                "title": "",
+                "width": "45%"
               }
             ],
             "userAddedRows": true,
@@ -373,7 +430,7 @@
           {
             "items": [
               {
-                "source": "<b>4.1 Provide a summary of:</b><i>a) what project monitoring and/or evaluation activities have been undertaken this period;<br/>b) any key findings and/or learnings gained this period from the project; and<br/>c) any changes you have made (or are making) in response to these.</i><br/>(Detailed information, such as survey data, can be submitted as an attachment to the report).",
+                "source": "<b>4.1 Provide a summary of:</b><i><br/>a) what project monitoring and/or evaluation activities have been undertaken this period;<br/>b) any key findings and/or learnings gained this period from the project; and<br/>c) any changes you have made (or are making) in response to these.</i><br/>(Detailed information, such as survey data, can be submitted as an attachment to the report).",
                 "type": "literal"
               }
             ],
@@ -382,9 +439,18 @@
           {
             "items": [
               {
-                "source": "summary",
+                "source": "projectMonitoringAndLearnings",
                 "type": "textarea",
-                "title": "Summary of monitoring "
+                "rows": 5
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "monitoringAttachment",
+                "type": "document"
               }
             ],
             "type": "row"
@@ -414,7 +480,8 @@
                 "preLabel": "5.2 If you answered 'No' to question 6.1, please provide details:",
                 "source": "reasonOfOverBudget",
                 "type": "textarea",
-                "helpText": "a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.<br/>(Please ensure you comment on Comonwealth, Recipient and Other funding sources. If your budget has Recipient or Other cash contributions and none have been received to date, please explain.)"
+                "rows": 3,
+                "helpText": "a) the nature of the issues, <br/>b) how you are managing (or proposing to manage) the issues, and <br/>c) implications for the project.<br/>(Please ensure you comment on Comonwealth, Recipient and Other funding sources. <br/>If your budget has Recipient or Other cash contributions and none have been received to date, please explain.)"
               }
             ],
             "type": "row"
@@ -450,7 +517,7 @@
               {
                 "name": "rescueLocation",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "numberTreated",
@@ -470,7 +537,7 @@
               {
                 "name": "releaseLocation",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               }
             ]
           },
@@ -642,7 +709,7 @@
               {
                 "name": "locationOfProvisions",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "numberBenefited",
@@ -651,7 +718,8 @@
               },
               {
                 "name": "comments",
-                "dataType": "text"
+                "dataType": "text",
+                "validate": "maxSize[1000]"
               }
             ]
           },
@@ -755,7 +823,7 @@
               {
                 "name": "interventionActivity",
                 "dataType": "text",
-                "validate": "required",
+                "validate": "required,maxSize[1000]",
                 "description": "Enter emergency intervention type e.g. captive breeding, temporary holding, predator control, habitat"
               },
               {
@@ -784,12 +852,13 @@
               {
                 "name": "locationOfActivity",
                 "dataType": "text",
-                "validate": "required",
+                "validate": "required,maxSize[1000]",
                 "description": "Enter location(s) of where the intervention activity was  undertaken e.g. postcode, area or upload site"
               },
               {
                 "name": "comments",
-                "dataType": "text"
+                "dataType": "text",
+                "validate": "maxSize[1000]"
               }
             ]
           },
@@ -839,7 +908,7 @@
                 "title": "Intervention activity"
               },
               {
-                "type": "species",
+                "type": "speciesSelect",
                 "source": "predatorSpecies",
                 "width": "18%",
                 "title": "Target species of predator control. NOTE: only applicable where predator control has been implemented"
@@ -851,7 +920,7 @@
                 "title": "Number of individuals controlled. NOTE: only applicable where predator control has been implemented as an intervention activity"
               },
               {
-                "type": "species",
+                "type": "speciesSelect",
                 "source": "supportedSpecies",
                 "width": "18%",
                 "title": "Target species"
@@ -967,7 +1036,7 @@
               {
                 "dataType": "text",
                 "name": "otherCommunications",
-                "validate": "required",
+                "validate": "required,maxSize[1000]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -1030,12 +1099,12 @@
               {
                 "dataType": "text",
                 "name": "resourceType",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "name": "resourceDescription",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
@@ -1050,12 +1119,7 @@
               {
                 "name": "providedToWho",
                 "dataType": "text",
-                "validate": "required",
-                "constraints": [
-                  "Wildlife rehabilitators",
-                  "Veterinarians",
-                  "Both"
-                ],
+                "validate": "required,maxSize[1000]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -1138,11 +1202,13 @@
               },
               {
                 "name": "facilityName",
-                "dataType": "text"
+                "dataType": "text",
+                "validate": "maxSize[1000]"
               },
               {
                 "name": "facilityLocation",
-                "dataType": "text"
+                "dataType": "text",
+                "validate": "maxSize[1000]"
               },
               {
                 "dataType": "species",
@@ -1171,18 +1237,18 @@
                 "width": "15%"
               },
               {
-                "type": "selectOne",
+                "type": "text",
                 "source": "facilityName",
-                "title": "Name of facility (if applicable)",
+                "title": "Name of facility/equipment type (if applicable)",
                 "width": "20%",
-                "helpText": "Enter name of facility"
+                "helpText": "Enter name of facility or equipment"
               },
               {
                 "type": "text",
                 "source": "facilityLocation",
-                "title": "Location of facility (if applicable)",
+                "title": "Location of facility/equipment type (if applicable)",
                 "width": "20%",
-                "helpText": "Enter location(s) of facility postcode or area"
+                "helpText": "Enter location(s) of facility/equipment. Postcode or area"
               },
               {
                 "type": "speciesSelect",
@@ -1213,12 +1279,12 @@
               {
                 "dataType": "text",
                 "name": "typeOfSupportService",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "name": "shortDescription",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               }
             ]
           }
@@ -1265,12 +1331,12 @@
               {
                 "dataType": "text",
                 "name": "typeOfAdministration",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "name": "shortDescription",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               }
             ]
           }
