@@ -1,0 +1,1086 @@
+{
+  "class": "au.org.ala.ecodata.ActivityForm",
+  "id": "5e5851f4c2dccb03d385210e",
+  "activationDate": null,
+  "category": "Administration and Reporting",
+  "createdUserId": "1493",
+  "dateCreated": "2020-02-27T23:34:12Z",
+  "formVersion": 1,
+  "gmsId": null,
+  "lastUpdated": "2020-03-06T04:50:51Z",
+  "lastUpdatedUserId": "1493",
+  "minOptionalSectionsCompleted": 1,
+  "name": "Wildlife Recovery Progress Report - GA",
+  "publicationStatus": "published",
+  "sections": [
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": false,
+      "modelName": null,
+      "name": "Wildlife Recovery Progress Report",
+      "optional": false,
+      "optionalQuestionText": null,
+      "template": {
+        "pre-populate": [
+          {
+            "mapping": [
+              {
+                "mapping": [
+                  {
+                    "source-path": "storyDetails",
+                    "target": "storyDetails"
+                  }
+                ],
+                "source-path": "goodNewsStories",
+                "target": "goodNewsStories"
+              }
+            ],
+            "merge": false,
+            "source": {
+              "literal": {
+                "goodNewsStories": [
+                  {
+                    "storyDetails": ""
+                  },
+                  {
+                    "storyDetails": ""
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "dataModel": [
+          {
+            "dataType": "text",
+            "name": "organisationDetailsChanged",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "detailsOfOrganisationChange",
+            "validate": "required,maxSize[1000]",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "organisationDetailsChanged == \"Yes\""
+              }
+            ]
+          },
+          {
+            "dataType": "text",
+            "name": "projectContactDetailsChanged",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "detailsOfProjectContacts",
+            "validate": "required,maxSize[1000]",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "projectContactDetailsChanged == \"Yes\""
+              }
+            ]
+          },
+          {
+            "dataType": "text",
+            "description": "Summary of Project Progress for the Period",
+            "name": "progressSummary",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "dataType": "list",
+            "description": "",
+            "name": "issue",
+            "columns": [
+              {
+                "dataType": "text",
+                "name": "nature",
+                "validate": "required,maxSize[1000]"
+              },
+              {
+                "dataType": "text",
+                "description": "How you are managing, or proposing to manage, the issue?",
+                "name": "how",
+                "validate": "required,maxSize[1000]"
+              },
+              {
+                "dataType": "text",
+                "description": "Implications for the project",
+                "name": "implication",
+                "validate": "required,maxSize[1000]"
+              }
+            ]
+          },
+          {
+            "dataType": "text",
+            "name": "hasReportableIncidents",
+            "description": "Has reportable WHS incidents",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "dataType": "text",
+            "name": "whsIncidentDetails",
+            "description": "Please provide a description of the incident/s",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "hasReportableIncidents == \"Yes\""
+              }
+            ],
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "dataType": "text",
+            "name": "grantsProvided",
+            "description": "",
+            "constraints": [
+              "Yes",
+              "No",
+              "N/A"
+            ]
+          },
+          {
+            "dataType": "number",
+            "name": "numberOfGrantsProvided",
+            "description": "",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "grantsProvided == \"Yes\""
+              }
+            ],
+            "validate": "required,min[0]"
+          },
+          {
+            "dataType": "text",
+            "name": "grantInformation",
+            "description": "",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "grantsProvided == \"Yes\""
+              }
+            ],
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "dataType": "list",
+            "description": "",
+            "name": "goodNewsStories",
+            "columns": [
+              {
+                "dataType": "text",
+                "description": "",
+                "name": "storyDetails",
+                "validate": "required,maxSize[1000]"
+              },
+              {
+                "dataType": "image",
+                "name": "photo"
+              }
+            ]
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "projectMonitoringAndLearnings",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "dataType": "document",
+            "name": "monitoringAttachment"
+          },
+          {
+            "dataType": "stringList",
+            "name": "isExpenditureWithinBudget",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "reasonOfOverBudget",
+            "behaviour": [
+              {
+                "condition": "isExpenditureWithinBudget == \"No\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1000]"
+          }
+        ],
+        "modelName": "Progress Report",
+        "title": "Overview of Project Progress",
+        "viewModel": [
+          {
+            "items": [
+              {
+                "source": "<h4>1. Organisation and Contact Details</h4>",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "organisationDetailsChanged",
+                "preLabel": "1.1 Has there been a change to your organisation's details?",
+                "type": "selectOne",
+                "helpText": "(e.g. Organisation name, ABN, GST status, Trust Deed, telephone, street or postal address)",
+                "css": "span4"
+              },
+              {
+                "source": "detailsOfOrganisationChange",
+                "preLabel": "If 'Yes', please enter details of the changes here",
+                "type": "textarea",
+                "css": "span8",
+                "rows": 4
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "projectContactDetailsChanged",
+                "preLabel": "1.2 Has there been a change to key project contacts or their details?",
+                "type": "selectOne",
+                "helpText": "(e.g. Name, position, role, email, telephone or address of key contacts)",
+                "css": "span4"
+              },
+              {
+                "source": "detailsOfProjectContacts",
+                "preLabel": "If 'Yes', please enter details of the changes here",
+                "type": "textarea",
+                "css": "span8",
+                "rows": 4
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "<h4>2. Project Progress for the Period</h4>",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "progressSummary",
+                "type": "textarea",
+                "rows": 5,
+                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan.<i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "<b>2.2 If you have encountered any issues or delays in delivering the Activities and/or Outcomes in your Agreement and (where relevant) your Activity Plan, please explain here:</b>",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "columns": [
+              {
+                "source": "",
+                "type": "literal",
+                "preLabel": {
+                  "computed": "\\'No. \\' || (index + 1)"
+                },
+                "title": "Issue No."
+              },
+              {
+                "source": "nature",
+                "type": "textarea",
+                "title": "Nature of the issue"
+              },
+              {
+                "source": "how",
+                "type": "textarea",
+                "title": "How you are managing, or proposing to manage, the issue?"
+              },
+              {
+                "source": "implication",
+                "type": "textarea",
+                "title": "Implications for the project",
+                "helpText": "(e.g. Impacts on timeframes, feasibility, costs, ability to meet contracted deliverables)"
+              }
+            ],
+            "userAddedRows": true,
+            "source": "issue",
+            "type": "table"
+          },
+          {
+            "items": [
+              {
+                "source": "hasReportableIncidents",
+                "preLabel": "2.3 Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+                "type": "selectOne"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "<i>If 'Yes', please provide updated details by email direct to the Department.</i>",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "grantsProvided",
+                "preLabel": "2.4 Have any grants been provided to wildlife rehabilitation volunteers for equipment and consumables for long term care of orphaned and injured native wildlife during this reporting period?",
+                "type": "selectOne"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "numberOfGrantsProvided",
+                "preLabel": "How many grants were provided?",
+                "type": "number",
+                "css": "span3"
+              },
+              {
+                "source": "grantInformation",
+                "preLabel": "Please provide details of the grants",
+                "type": "textarea",
+                "rows": 4,
+                "css": "span9"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "<h4>3. Good News Stories</h4>Please provide at least two good news stories that highlight what the project is doing/achieving. This information is intended for potential use by the Department in publicly promoting the program. ",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "columns": [
+              {
+                "source": "",
+                "type": "literal",
+                "width": "5%",
+                "preLabel": {
+                  "computed": "\\'No. \\' || (index + 1)"
+                },
+                "title": "Story No."
+              },
+              {
+                "source": "storyDetails",
+                "type": "textarea",
+                "rows": 4,
+                "title": "Good News Story Details",
+                "width": "50%"
+              },
+              {
+                "type": "image",
+                "source": "photo",
+                "title": "",
+                "width": "45%"
+              }
+            ],
+            "userAddedRows": true,
+            "source": "goodNewsStories",
+            "type": "table"
+          },
+          {
+            "items": [
+              {
+                "source": "<h4>4. Monitoring, Evaluation and Project Learnings</h3>",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "<b>4.1 Provide a summary of:</b><i><br/>a) what project monitoring and/or evaluation activities have been undertaken this period;<br/>b) any key findings and/or learnings gained this period from the project; and<br/>c) any changes you have made (or are making) in response to these.</i><br/>(Detailed information, such as survey data, can be submitted as an attachment to the report).",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "projectMonitoringAndLearnings",
+                "type": "textarea",
+                "rows": 5
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "monitoringAttachment",
+                "type": "document"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "<h4>5. Project Income and Expenditure</h4>",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "isExpenditureWithinBudget",
+                "preLabel": "5.1 Is the project's expenditure proceeding in accordance with the Activity budget, the expected rate of expenditure and within the total project budget?",
+                "type": "selectOne"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "preLabel": "5.2 If you answered 'No' to question 6.1, please provide details:",
+                "source": "reasonOfOverBudget",
+                "type": "textarea",
+                "rows": 3,
+                "helpText": "a) the nature of the issues, <br/>b) how you are managing (or proposing to manage) the issues, and <br/>c) implications for the project.<br/>(Please ensure you comment on Comonwealth, Recipient and Other funding sources. <br/>If your budget has Recipient or Other cash contributions and none have been received to date, please explain.)"
+              }
+            ],
+            "type": "row"
+          }
+        ]
+      },
+      "templateName": "regionalFundingFinalReport",
+      "title": "Final Report"
+    },
+    {
+      "name": "Native seed supply",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "nativeSeedSupply",
+      "template": {
+        "modelName": "Native seed supply",
+        "dataModel": [
+          {
+            "dataType": "list",
+            "name": "seedSupplyDetails",
+            "columns": [
+              {
+                "name": "processesCommenced",
+                "dataType": "text",
+                "validate": "required"
+              },
+              {
+                "name": "seedSupplyNeeds",
+                "dataType": "text",
+                "validate": "required"
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "table",
+            "source": "seedSupplyDetails",
+            "userAddedRows": true,
+            "columns": [
+              {
+                "type": "textarea",
+                "source": "processesCommenced",
+                "width": "50%",
+                "rows": 4,
+                "title": "In this reporting period what processes were commenced (or continued) to understand the native seed supply needs to restore vegetation and wildlife habitat across fire impacted regions?",
+                "helpText": "Explain what type of processes were undertaken during this reporting period to understand the native seed supply needs across fire impacted areas, and whether any stakeholder organisations or individuals were consulted."
+              },
+              {
+                "type": "textarea",
+                "source": "seedSupplyNeeds",
+                "width": "50%",
+                "rows": 4,
+                "title": "What is Greening Australia's current understanding of the native seed supply to restore vegetation and wildlife habitat across fire impacted areas? If further information is required to make this analysis, please explain what information is still required to be obtained and how it will be sourced."
+              }
+            ]
+          }
+        ],
+        "title": "Activity 1: Understanding the native seed supply needs to restore vegetation and wildlife habitat across fire impacted regions."
+      }
+    },
+    {
+      "name": "Native Seed Capacity",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "nativeSeedCapacity",
+      "template": {
+        "modelName": "Native seed capacity",
+        "dataModel": [
+          {
+            "dataType": "text",
+            "name": "seedsCollected",
+            "validate": "required",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "dataType": "text",
+            "name": "otherActivities",
+            "validate": "required",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "seedsCollected == \"No\""
+              }
+            ]
+          },
+          {
+            "dataType": "list",
+            "name": "speciesByProvenance",
+            "columns": [
+              {
+                "name": "seedProvenance",
+                "dataType": "text",
+                "validate": "required,maxSize[1000]",
+                "behaviour": [
+                  {
+                    "type": "enable",
+                    "condition": "seedsCollected == \"Yes\""
+                  }
+                ]
+              },
+              {
+                "name": "totalNumberSpeciesCollected",
+                "dataType": "number",
+                "decimalPlaces": 0,
+                "computed": {
+                  "expression": "count(seedCollectionDetails, \"speciesCollected\")"
+                }
+              },
+              {
+                "name": "totalSeedWeight",
+                "dataType": "number",
+                "decimalPlaces": 0,
+                "computed": {
+                  "expression": "sum(seedCollectionDetails, \"weightCollectedKg\")"
+                }
+              },
+              {
+                "dataType": "list",
+                "name": "seedCollectionDetails",
+                "columns": [
+                  {
+                    "name": "speciesCollected",
+                    "dataType": "species",
+                    "validate": "required",
+                    "behaviour": [
+                      {
+                        "type": "enable",
+                        "condition": "seedsCollected == \"Yes\""
+                      }
+                    ]
+                  },
+                  {
+                    "name": "weightCollectedKg",
+                    "units": "kg",
+                    "dataType": "number",
+                    "validate": "required,min[0]",
+                    "behaviour": [
+                      {
+                        "type": "enable",
+                        "condition": "seedsCollected == \"Yes\""
+                      }
+                    ]
+                  },
+                  {
+                    "name": "participatingOrganisations",
+                    "dataType": "text",
+                    "validate": "required,maxSize[1000]",
+                    "behaviour": [
+                      {
+                        "type": "enable",
+                        "condition": "seedsCollected == \"Yes\""
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "selectOne",
+                "source": "seedsCollected",
+                "preLabel": "Have seed collection activities in bushfire affected regions and other vulnerable landscapes been coordinated by Greening Australia in this reporting period?",
+                "css": "span4"
+              },
+              {
+                "type": "textarea",
+                "source": "otherActivities",
+                "rows": 4,
+                "css": "span8",
+                "preLabel": "Have any other activities been undertaken to build the capacity of the native seed and nursery industry during this reporting period?  If no, please explain when coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes will commence."
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "literal",
+                "source": "Activity 2b: Building the capacity of the native seed and nursery industry through coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes,"
+              }
+            ]
+          },
+          {
+            "type": "repeat",
+            "source": "speciesByProvenance",
+            "userAddedRows": true,
+            "addRowText": "Add New Provenance",
+            "items": [
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "source": "seedProvenance",
+                    "type": "text",
+                    "preLabel": "Provenance of seed"
+                  }
+                ]
+              },
+              {
+                "type": "table",
+                "userAddedRows": true,
+                "source": "seedCollectionDetails",
+                "columns": [
+                  {
+                    "source": "speciesCollected",
+                    "type": "speciesSelect",
+                    "title": "Weight (kg) of seed collected"
+                  },
+                  {
+                    "source": "weightCollectedKg",
+                    "type": "number",
+                    "title": "Weight (kg) of seed collected"
+                  },
+                  {
+                    "source": "participatingOrganisations",
+                    "type": "text",
+                    "title": "Participating organisations"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "title": "Activity 2: Building the capacity of the native seed and nursery industry through coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes"
+      }
+    },
+    {
+      "name": "Ten Year Native Seed and Landscape Strategy",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "tenYearStrategy",
+      "template": {
+        "modelName": "Ten year strategy",
+        "dataModel": [
+          {
+            "name": "tenYearStrategyDeveloped",
+            "dataType": "text",
+            "validate": "required",
+            "constraints": [
+              "Yes",
+              "No"
+            ]
+          },
+          {
+            "name": "strategyDocument",
+            "dataType": "document"
+          },
+          {
+            "name": "stakeholdersEngaged",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "name": "progressTowardsStrategy",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "tenYearStrategyDeveloped == \"No\""
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "col",
+                "items": [
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "type": "selectOne",
+                        "source": "tenYearStrategyDeveloped",
+                        "preLabel": "Has the ten-year native seed and landscape restoration strategy been developed? If yes, attach strategy."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "document",
+                    "source": "strategyDocument"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "source": "stakeHoldersEngaged",
+                "preLabel": "Which stakeholder/s have been engaged and how has their involvement contributed to developing and coordinating the strategy?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "source": "progressTowardsStrategy",
+                "preLabel": "What progress has been made during this reporting period to develop the ten-year native seed and landscape restoration strategy?"
+              }
+            ]
+          }
+        ],
+        "title": "Activity 3: Developing and coordinating a ten-year native seed and landscape restoration strategy, including engagement with stakeholders."
+      }
+    },
+    {
+      "name": "Investigating Florabank",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "investigatingFlorabank",
+      "template": {
+        "modelName": "Investigating Florabank",
+        "dataModel": [
+          {
+            "name": "processesUsingFlorabank",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "name": "steeringCommitteeReview",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "processesUsingFlorabank",
+                "preLabel": "During this reporting period what processes have been undertaken to use Florabank as a national tool to coordinate, manage and record seed collection activities?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "source": "steeringCommitteeReview",
+                "preLabel": "Have the Steering Committee reviewed the processes undertaken to determine the scope of florabank as a National tool to coordinate, manage and record seed collection activities?"
+              }
+            ]
+          }
+        ],
+        "title": "Activity 4: Determining the scope of Florabank as the National tool to coordinate, manage and record seed collection activity, in consultation with the Steering Committee."
+      }
+    },
+    {
+      "name": "Supporting seed banks",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "supportingSeedBanks",
+      "template": {
+        "modelName": "Supporting seed banks",
+        "dataModel": [
+          {
+            "name": "measuresToSupportSeedBanks",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "measuresToSupportSeedBanks",
+                "preLabel": "What measures have been applied in this reporting period to support conservation seed banks for future safeguarding against local extinctions and adaptation? Please include information on whether existing resources and expertise have been utilised for these measures."
+              }
+            ]
+          }
+        ],
+        "title": "Activity 5: In collaboration with existing resources and expertise, supporting conservation seed banks for future safeguarding against local extinctions and adaptation."
+      }
+    },
+    {
+      "name": "Developing training and employment opportunities",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "developingEmploymentOpportunities",
+      "template": {
+        "modelName": "Developing training and employment opportunities",
+        "dataModel": [
+          {
+            "name": "trainingEmploymentOpportunitiesDeveloped",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "name": "howOpportunitiesWillBeUsed",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "name": "stakeholdersAndLocation",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "name": "numberOfOrganisations",
+            "dataType": "number",
+            "validate": "required,min[0]"
+          },
+          {
+            "name": "numberOfIndividuals",
+            "dataType": "number",
+            "validate": "required,min[0]"
+          },
+          {
+            "name": "numberOfIndigenousParticipants",
+            "dataType": "number",
+            "validate": "required,min[0]"
+          },
+          {
+            "name": "comments",
+            "dataType": "text",
+            "validate": "maxSize[1000]"
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "trainingEmploymentOpportunitiesDeveloped",
+                "preLabel": "What training or employment opportunities have been developed or utilised in this reporting period?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "howOpportunitiesWillBeUsed",
+                "preLabel": "How are these training or employment opportunities going to be used?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "stakeholdersAndLocation",
+                "preLabel": "What stakeholders will be using these training or employment opportunities, and where will they be used?"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "number",
+                "source": "numberOfOrganisations",
+                "preLabel": "Number of stakeholder organisations involved"
+              },
+              {
+                "type": "number",
+                "source": "numberOfIndividuals",
+                "preLabel": "Number of individuals involved"
+              },
+              {
+                "type": "number",
+                "source": "numberOfIndigenousParticipants",
+                "preLabel": "Indigenous participants"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "comments",
+                "preLabel": "Other comments"
+              }
+            ]
+          }
+        ],
+        "title": "Activity 6: Developing and utilising national native seed capacity and employment / training opportunities, with particular emphasis on Indigenous and local communities."
+      }
+    },
+    {
+      "name": "Fire-ground safety",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "fireGroundSafety",
+      "template": {
+        "modelName": "Fire-ground safety",
+        "dataModel": [
+          {
+            "name": "safetyMeasuresImplemented",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "safetyMeasuresImplemented",
+                "preLabel": "What safety measures have been implemented to keep participants safe during this reporting period?"
+              }
+            ]
+          }
+        ],
+        "title": "Activity 7: Keeping participants safe, with particular regard to working in or near fire-grounds"
+      }
+    },
+    {
+      "name": "Governance arrangements",
+      "optionalQuestionText": null,
+      "optional": true,
+      "collapsedByDefault": false,
+      "templateName": "governanceArrangements",
+      "template": {
+        "modelName": "Governance arrangements",
+        "dataModel": [
+          {
+            "name": "governanceEstablished",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          },
+          {
+            "name": "governanceOfFunds",
+            "dataType": "text",
+            "validate": "required,maxSize[1000]"
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "governanceEstablished",
+                "preLabel": "Explain what governance arrangement/s have been established or maintained in this reporting period."
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "textarea",
+                "rows": 3,
+                "source": "governanceEstablished",
+                "preLabel": "Explain how these governance arrangements are being (or have been) utilised to ensure funds are used correctly"
+              }
+            ]
+          }
+        ],
+        "title": "Activity 8a: Establishing sound governance arrangements to ensure proper use of funds, including establishment of a Steering Committee to oversee implementation of the Activity. The Steering Committee must have an agreed Terms of Reference."
+      }
+    }
+  ],
+  "status": "active",
+  "supportsPhotoPoints": false,
+  "supportsSites": false,
+  "type": "Report"
+}
