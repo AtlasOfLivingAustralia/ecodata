@@ -911,7 +911,7 @@
                 "type": "speciesSelect",
                 "source": "predatorSpecies",
                 "width": "18%",
-                "title": "Target species of predator control. NOTE: only applicable where predator control has been implemented"
+                "title": "Predator Species. NOTE: only applicable where predator control has been implemented"
               },
               {
                 "type": "number",
