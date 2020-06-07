@@ -81,7 +81,7 @@ grails.project.dependency.resolution = {
         compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
         compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 
-        compile 'org.mongodb:mongo-java-driver:2.12.3'
+        compile 'org.mongodb:mongo-java-driver:2.13.3'
 
         compile 'com.twelvemonkeys.imageio:imageio-jpeg:3.3.2'
 
