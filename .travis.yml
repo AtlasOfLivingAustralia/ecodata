@@ -1,6 +1,6 @@
+os: linux
 dist: xenial
 language: groovy
-sudo: false
 jdk:
 - openjdk8
 branches:
@@ -19,8 +19,23 @@ before_install:
 - chmod +x ala_common.sh
 - source ./ala_common.sh
 - ala_travis_grails_setup_env
+
+before_script:
+  - sudo systemctl stop mongod
+  - sudo apt-get purge mongodb-org
+  - sudo apt autoremove
+  - sudo rm -r /var/lib/mongodb/*
+  - sudo rm -r /var/log/mongodb/*
+  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+  - echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+  - sudo apt-get update
+  - sudo apt-get install mongodb-org -y
+  - sudo systemctl start mongod
+  - sleep 15
+  - sudo systemctl status mongod
+
 script:
-  - grails clean; grails refresh-dependencies --non-interactive && ala_travis_grails_build
+  - grails clean; grails refresh-dependencies --non-interactive && grails test-app -clover.on && ala_travis_grails_build
 env:
   global:
   - secure: bIwDtP92h7r2iGMpwneKwZYjh2kK9gIDkaEHHIuNnatZsyLvqm/FukeJIbeYlXACiOHJVslQu4bpTwYvdI5UzD5KPSUMY4bu+hwtuIgQofF4zArpNzCDA3QW4Jqs87TsvjGs8zfNT5JSM6xt4RoALqpCleiwL9eH3bFIpZx/dIk=

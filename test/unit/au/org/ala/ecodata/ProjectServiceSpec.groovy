@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import com.github.fakemongo.Fongo
+import com.mongodb.BasicDBObject
 import grails.test.mixin.TestMixin
 import grails.test.mixin.mongodb.MongoDbTestMixin
 import grails.test.mixin.web.ControllerUnitTestMixin
@@ -13,8 +14,13 @@ import spock.lang.Specification
 class ProjectServiceSpec extends Specification {
 
     ProjectService service = new ProjectService()
-    def projectActivityServiceStub = Stub(ProjectActivityService)
-    def webServiceStub = Stub(WebService)
+    ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
+    WebService webServiceStub = Stub(WebService)
+    SiteService siteService = Mock(SiteService)
+    DocumentService documentService = Mock(DocumentService)
+    ActivityService activityService = Mock(ActivityService)
+    ReportingService reportingService = Mock(ReportingService)
+
     String collectoryBaseUrl = ''
     String meritDataProvider = 'drMerit'
     String biocollectDataProvider = 'drBiocollect'
@@ -23,7 +29,7 @@ class ProjectServiceSpec extends Specification {
 
     def setup() {
         Fongo fongo = new Fongo("ecodata-test")
-        mongoDomain(fongo.mongo, [Project])
+        mongoDomain(fongo.mongo, [Project, Program, ManagementUnit])
 
         defineBeans {
             commonService(CommonService)
@@ -37,6 +43,10 @@ class ProjectServiceSpec extends Specification {
         grailsApplication.mainContext.collectoryService.projectService = service
         service.collectoryService = grailsApplication.mainContext.collectoryService
         service.projectActivityService = projectActivityServiceStub
+        service.siteService = siteService
+        service.activityService = activityService
+        service.reportingService = reportingService
+        service.documentService = documentService
         service.grailsApplication = grailsApplication
 
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
@@ -105,6 +115,34 @@ class ProjectServiceSpec extends Specification {
         then:
         result.status == 'error'
         result.error != null
+
+    }
+
+    def "Program names will be returned in the ALL view if the project references the program by programId"() {
+
+        setup:
+        Project project = new Project(projectId: 'p1', name: "A project", programId: 'program2')
+        Program program = new Program(programId: 'program1', name: "Program 1")
+        Program child = new Program(programId: 'program2', name: "Child Program", parent: program)
+        Project.withTransaction {
+            program.save(failOnError: true)
+            child.save(failOnError: true)
+        }
+
+        project.metaClass.getDbo = { new BasicDBObject(project.properties) }
+
+        when:
+        Map result = null
+        Project.withTransaction {
+            result = service.toMap(project, 'all')
+        }
+
+        then:
+        result.projectId == project.projectId
+        result.name == project.name
+        result.programId == project.programId
+        result.associatedProgram == program.name
+        result.associatedSubProgram == child.name
 
     }
 }
