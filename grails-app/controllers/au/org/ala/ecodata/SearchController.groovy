@@ -12,6 +12,7 @@ import groovyx.net.http.ContentType
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
+import static javax.servlet.http.HttpServletResponse.*
 
 
 import static au.org.ala.ecodata.ElasticIndex.*
@@ -35,6 +36,7 @@ class SearchController {
     SensitiveSpeciesService sensitiveSpeciesService
     ReportingService reportingService
     OrganisationService organisationService
+    GeoServerService geoServerService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -677,5 +679,35 @@ class SearchController {
      */
     def getMapping(){
         render(text: elasticSearchService.getMapping() as JSON, contentType: 'application/json')
+    }
+
+    def createWorkspace () {
+        def result = geoServerService.createWorkspace()
+        render(text: result?.resp?:"")
+    }
+
+    def deleteWorkspace() {
+        def result = geoServerService.deleteWorkspace()
+        render(text: result)
+    }
+
+    def createDatastore() {
+        def result = geoServerService.createDatastore()
+        render(text: result?.resp?:"")
+    }
+
+    def deleteDatastore() {
+        def result = geoServerService.deleteDatastore()
+        render(text: result)
+    }
+
+    def deleteStylesFromWorkspace() {
+        def result = geoServerService.deleteWorkspaceStyles() ?: [status: SC_BAD_REQUEST, message: "Could not delete styles."]
+        render(text: result as JSON, status: result.status )
+    }
+
+    def createStyles() {
+        def result = geoServerService.createPredefinedStyles() ?: [ status: SC_BAD_REQUEST, message: "Could not delete styles."]
+        render(text: result as JSON, status: result.status )
     }
 }

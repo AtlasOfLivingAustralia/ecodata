@@ -182,7 +182,7 @@ class UrlMappings {
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
         "/ws/$controller/list"() { action = [GET:'list'] }
-
+        "/ws/geoServer/wms"(controller: "geoServer", action: "wms")
 
 
 
