@@ -60,7 +60,7 @@ grails.project.dependency.resolution = {
     def imgscalrVersion = "4.2"
 
     dependencies {
-        compile "org.elasticsearch:elasticsearch:1.7.1"
+        compile "org.elasticsearch:elasticsearch:1.7.3"
 
         // Schema validation for external web service clients
         compile ("com.github.fge:json-schema-validator:2.1.6") {

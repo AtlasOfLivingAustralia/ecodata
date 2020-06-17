@@ -131,7 +131,7 @@ if (!webservice.connectTimeout) {
     webservice.connectTimeout = 10000
 }
 if (!webservice.readTimeout) {
-    webservice.readTimeout = 20000
+    webservice.readTimeout = 30000
 }
 // spatial services
 if (!spatial.baseUrl) {
@@ -1178,3 +1178,16 @@ security {
         authenticateOnlyIfLoggedInPattern =  ''
     }
 }
+
+// geo server config
+geoServer.enabled = true
+geoServer.baseURL = "http://localhost:8081/geoserver"
+geoServer.workspace = "ecodata"
+geoServer.workspaceURI = "http://localhost:8080/ecodata"
+geoServer.username = "admin"
+geoServer.password = "geoserver"
+geoServer.datastore = "pasearch_test"
+geoServer.indexName = "pasearch"
+geoServer.elasticHome = "localhost"
+geoServer.elasticPort = "9300"
+geoServer.clusterName = "elasticsearch"
