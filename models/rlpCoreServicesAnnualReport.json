@@ -21,7 +21,7 @@
       "name": "RLP - Core services annual report",
       "optional": false,
       "optionalQuestionText": null,
-      "template": {
+      "template":{
         "dataModel": [
           {
             "dataType": "text",
@@ -162,14 +162,19 @@
           },
           {
             "dataType": "text",
-            "name": "indigenousParticipation",
-            "description": "Quantitative figures can include number of participants, timeframes, dollar value etc)",
+            "name": "indigenousParticipationForClause40Point2",
+            "description": "Quantitative figures are to include number of procurements and value of each procurement, number employed full time equivalent",
             "validate": "required,maxSize[1250]"
           },
           {
             "dataType": "text",
-            "name": "indigenousParticipationForClause40Point2",
-            "description": "Quantitative figures are to include number of procurements and value of each procurement, number employed full time equivalent",
+            "name": "indigenousInvestment",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "indigenousParticipation",
+            "description": "Quantitative figures can include number of participants, timeframes, dollar value etc)",
             "validate": "required,maxSize[1250]"
           },
           {
@@ -352,7 +357,7 @@
             "type": "row",
             "items": [
               {
-                "preLabel": "7. In the past 12 months, have all plans been submitted as required under the executed Services Agreement?",
+                "preLabel": "7. Have all plans been submitted as required under the executed Services Agreement?",
                 "css": "span6",
                 "source": "plansSubmitted",
                 "type": "selectOne"
@@ -425,29 +430,31 @@
             "type": "row",
             "items": [
               {
-                "css": "span6",
-                "source": "<b>9. In the past 12 months, what has been the level of Indigenous participation, employment and procurement in the RLP?</b>",
-                "type": "literal"
-              }
-            ]
-          },
-          {
-            "type": "row",
-            "items": [
-              {
-                "preLabel": "9. a) Please describe how Indigenous people have participated in the delivery of any of the Core Services and projects over the past 12 months, including quantitative figures. (1250 character [approx. 250 word] limit).",
-                "source": "indigenousParticipation",
-                "type": "textarea"
-              }
-            ]
-          },
-          {
-            "type": "row",
-            "items": [
-              {
-                "preLabel": "9. b) Please provide the level of Indigenous employment and procurement investment that has occurred over the past 12 months, including quantitative figures, that contributes to the requirement of clause 40.2 of the agreed Services Agreement. Also include whether you are on track to meet the requirement of clause 40.2 of the agreed Services Agreement over the life of the agreed Services Agreement. (1250 character [approx. 250 word] limit).",
+                "preLabel": "9. a) Please describe the level of Indigenous employment and procurement investment that has occurred over the past 12 months that contributes to the requirement of clause 40.2 of the agreed Services Agreement. Also include whether you are on track to meet the requirement of clause 40.2 of the agreed Services Agreement over the life of the agreed Services Agreement. (1250 character [approx. 250 word] limit).",
                 "source": "indigenousParticipationForClause40Point2",
                 "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "9. b) In the past 12 months, what has been the level of investment in Indigenous employment and procurement associated with the delivery of both Core and Projects Services? (1250 character [approx. 250 word] limit)",
+                "source": "indigenousInvestment",
+                "type": "textarea",
+                "helpText": "Quantitative figures are to include number of procurements and value of each procurement, number employed full time equivalent"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "css": "span6",
+                "preLabel": "9. c) Please describe how Indigenous people have participated in the delivery of any of the Core Services and projects over the past 12 months, including quantitative figures. (1250 character [approx. 250 word] limit)",
+                "source": "indigenousParticipation",
+                "helpText": "Quantitative figures can include number of participants, timeframes, dollar value etc"
               }
             ]
           },
@@ -465,7 +472,7 @@
             "type": "row",
             "items": [
               {
-                "preLabel": "11. In the past 12 months, have you submitted all of the required reports to the Department of Agriculture and Water Resources in relation to the Regional Agriculture Landcare Facilitator position?",
+                "preLabel": "11. In the past 12 months, have you submitted all of the required reports in relation to the Regional Agriculture Landcare Facilitator position?",
                 "css": "span6",
                 "source": "waterPlansSubmitted",
                 "type": "selectOne"
