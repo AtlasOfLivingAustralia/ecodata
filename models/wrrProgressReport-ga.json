@@ -79,7 +79,7 @@
           {
             "dataType": "text",
             "name": "detailsOfOrganisationChange",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -99,7 +99,7 @@
           {
             "dataType": "text",
             "name": "detailsOfProjectContacts",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -111,7 +111,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -121,19 +121,19 @@
               {
                 "dataType": "text",
                 "name": "nature",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "How you are managing, or proposing to manage, the issue?",
                 "name": "how",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "Implications for the project",
                 "name": "implication",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               }
             ]
           },
@@ -147,18 +147,6 @@
             ]
           },
           {
-            "dataType": "text",
-            "name": "whsIncidentDetails",
-            "description": "Please provide a description of the incident/s",
-            "behaviour": [
-              {
-                "type": "enable",
-                "condition": "hasReportableIncidents == \"Yes\""
-              }
-            ],
-            "validate": "required,maxSize[500]"
-          },
-          {
             "dataType": "list",
             "description": "",
             "name": "goodNewsStories",
@@ -167,7 +155,7 @@
                 "dataType": "text",
                 "description": "",
                 "name": "storyDetails",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "image",
@@ -179,7 +167,7 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "document",
@@ -203,7 +191,7 @@
                 "type": "enable"
               }
             ],
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "modelName": "Progress Report",
@@ -535,7 +523,7 @@
               {
                 "name": "seedProvenance",
                 "dataType": "text",
-                "validate": "required,maxSize[500]",
+                "validate": "required,maxSize[1000]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -589,7 +577,7 @@
                   {
                     "name": "participatingOrganisations",
                     "dataType": "text",
-                    "validate": "required,maxSize[500]",
+                    "validate": "required,maxSize[1000]",
                     "behaviour": [
                       {
                         "type": "enable",
@@ -699,12 +687,18 @@
           {
             "name": "stakeholdersEngaged",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "tenYearStrategyDeveloped == \"Yes\""
+              }
+            ]
           },
           {
             "name": "progressTowardsStrategy",
             "dataType": "text",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -743,7 +737,7 @@
             "items": [
               {
                 "type": "textarea",
-                "source": "stakeHoldersEngaged",
+                "source": "stakeholdersEngaged",
                 "preLabel": "Which stakeholder/s have been engaged and how has their involvement contributed to developing and coordinating the strategy?"
               }
             ]
@@ -774,12 +768,12 @@
           {
             "name": "processesUsingFlorabank",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "steeringCommitteeReview",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -820,7 +814,7 @@
           {
             "name": "measuresToSupportSeedBanks",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -851,17 +845,17 @@
           {
             "name": "trainingEmploymentOpportunitiesDeveloped",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "howOpportunitiesWillBeUsed",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "stakeholdersAndLocation",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "numberOfOrganisations",
@@ -881,7 +875,7 @@
           {
             "name": "comments",
             "dataType": "text",
-            "validate": "maxSize[500]"
+            "validate": "maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -965,7 +959,7 @@
           {
             "name": "safetyMeasuresImplemented",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -996,12 +990,12 @@
           {
             "name": "governanceEstablished",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "governanceOfFunds",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -1028,7 +1022,7 @@
             ]
           }
         ],
-        "title": "Activity 8a: Establishing sound governance arrangements to ensure proper use of funds, including establishment of a Steering Committee to oversee implementation of the Activity. The Steering Committee must have an agreed Terms of Reference."
+        "title": "Activity 8: Establishing sound governance arrangements to ensure proper use of funds, including establishment of a Steering Committee to oversee implementation of the Activity. The Steering Committee must have an agreed Terms of Reference."
       }
     }
   ],
