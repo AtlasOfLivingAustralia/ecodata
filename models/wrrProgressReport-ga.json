@@ -450,12 +450,12 @@
               {
                 "name": "processesCommenced",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "seedSupplyNeeds",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               }
             ]
           }
@@ -508,7 +508,7 @@
           {
             "dataType": "text",
             "name": "otherActivities",
-            "validate": "required",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -614,7 +614,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "Activity 2b: Building the capacity of the native seed and nursery industry through coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes,"
+                "source": "Activity 2b: Building the capacity of the native seed and nursery industry through coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes"
               }
             ]
           },
