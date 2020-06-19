@@ -79,7 +79,7 @@
           {
             "dataType": "text",
             "name": "detailsOfOrganisationChange",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -99,7 +99,7 @@
           {
             "dataType": "text",
             "name": "detailsOfProjectContacts",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -111,7 +111,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -121,19 +121,19 @@
               {
                 "dataType": "text",
                 "name": "nature",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "How you are managing, or proposing to manage, the issue?",
                 "name": "how",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "Implications for the project",
                 "name": "implication",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               }
             ]
           },
@@ -156,7 +156,7 @@
                 "condition": "hasReportableIncidents == \"Yes\""
               }
             ],
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -167,7 +167,7 @@
                 "dataType": "text",
                 "description": "",
                 "name": "storyDetails",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "image",
@@ -179,7 +179,7 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "document",
@@ -203,7 +203,7 @@
                 "type": "enable"
               }
             ],
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "modelName": "Progress Report",
@@ -477,17 +477,17 @@
           {
             "name": "environmentalActivities",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "environmentalActivityLocations",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "comments",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -582,17 +582,17 @@
           {
             "name": "environmentalActivitiesOrganisations",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "environmentalActivityLocationsOrganisations",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "name": "commentsOrganisations",
             "dataType": "text",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "viewModel": [
@@ -677,7 +677,7 @@
           {
             "name": "whsProtocols",
             "dataType": "text",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -688,7 +688,7 @@
           {
             "name": "comments",
             "dataType": "text",
-            "validate": "maxSize[500]"
+            "validate": "maxSize[1000]"
           }
         ],
         "viewModel": [
