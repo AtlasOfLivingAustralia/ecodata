@@ -523,13 +523,7 @@
               {
                 "name": "seedProvenance",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]",
-                "behaviour": [
-                  {
-                    "type": "enable",
-                    "condition": "seedsCollected == \"Yes\""
-                  }
-                ]
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "totalNumberSpeciesCollected",
@@ -554,36 +548,18 @@
                   {
                     "name": "speciesCollected",
                     "dataType": "species",
-                    "validate": "required",
-                    "behaviour": [
-                      {
-                        "type": "enable",
-                        "condition": "seedsCollected == \"Yes\""
-                      }
-                    ]
+                    "validate": "required"
                   },
                   {
                     "name": "weightCollectedKg",
                     "units": "kg",
                     "dataType": "number",
-                    "validate": "required,min[0]",
-                    "behaviour": [
-                      {
-                        "type": "enable",
-                        "condition": "seedsCollected == \"Yes\""
-                      }
-                    ]
+                    "validate": "required,min[0]"
                   },
                   {
                     "name": "participatingOrganisations",
                     "dataType": "text",
-                    "validate": "required,maxSize[1000]",
-                    "behaviour": [
-                      {
-                        "type": "enable",
-                        "condition": "seedsCollected == \"Yes\""
-                      }
-                    ]
+                    "validate": "required,maxSize[1000]"
                   }
                 ]
               }
