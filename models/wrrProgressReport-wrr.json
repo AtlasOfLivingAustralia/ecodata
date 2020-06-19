@@ -47,6 +47,21 @@
                 ]
               }
             }
+          },
+          {
+            "mapping": [
+              {
+                "mapping": [],
+                "source-path": "issue",
+                "target": "issue"
+              }
+            ],
+            "merge": false,
+            "source": {
+              "literal": {
+                "issue": []
+              }
+            }
           }
         ],
         "dataModel": [
@@ -62,7 +77,7 @@
           {
             "dataType": "text",
             "name": "detailsOfOrganisationChange",
-            "validate": "required,maxSize[1000]",
+            "validate": "required,maxSize[500]",
             "behaviour": [
               {
                 "type": "enable",
@@ -82,7 +97,7 @@
           {
             "dataType": "text",
             "name": "detailsOfProjectContacts",
-            "validate": "required,maxSize[1000]",
+            "validate": "required,maxSize[500]",
             "behaviour": [
               {
                 "type": "enable",
@@ -94,7 +109,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[500]"
           },
           {
             "dataType": "list",
@@ -104,19 +119,19 @@
               {
                 "dataType": "text",
                 "name": "nature",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "text",
                 "description": "How you are managing, or proposing to manage, the issue?",
                 "name": "how",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "text",
                 "description": "Implications for the project",
                 "name": "implication",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               }
             ]
           },
@@ -139,7 +154,7 @@
                 "condition": "hasReportableIncidents == \"Yes\""
               }
             ],
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[500]"
           },
           {
             "dataType": "text",
@@ -173,7 +188,7 @@
                 "condition": "grantsProvided == \"Yes\""
               }
             ],
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[500]"
           },
           {
             "dataType": "list",
@@ -184,7 +199,7 @@
                 "dataType": "text",
                 "description": "",
                 "name": "storyDetails",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "image",
@@ -196,7 +211,7 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[500]"
           },
           {
             "dataType": "document",
@@ -220,7 +235,7 @@
                 "type": "enable"
               }
             ],
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[500]"
           }
         ],
         "modelName": "Progress Report",
@@ -288,7 +303,7 @@
                 "source": "progressSummary",
                 "type": "textarea",
                 "rows": 5,
-                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan.<i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
+                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan. <i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
               }
             ],
             "type": "row"
@@ -346,7 +361,7 @@
           {
             "items": [
               {
-                "source": "<i>If 'Yes', please provide updated details by email direct to the Department.</i>",
+                "source": "<i><b style=\"background-color:yellow\">If 'Yes', please provide updated details by email direct to the Department.</b></i>",
                 "type": "literal"
               }
             ],
@@ -477,7 +492,7 @@
           {
             "items": [
               {
-                "preLabel": "5.2 If you answered 'No' to question 6.1, please provide details:",
+                "preLabel": "5.2 If you have answered no, please provide details:",
                 "source": "reasonOfOverBudget",
                 "type": "textarea",
                 "rows": 3,
@@ -517,7 +532,7 @@
               {
                 "name": "rescueLocation",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "name": "numberTreated",
@@ -537,7 +552,7 @@
               {
                 "name": "releaseLocation",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               }
             ]
           },
@@ -709,7 +724,7 @@
               {
                 "name": "locationOfProvisions",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "name": "numberBenefited",
@@ -719,7 +734,7 @@
               {
                 "name": "comments",
                 "dataType": "text",
-                "validate": "maxSize[1000]"
+                "validate": "maxSize[500]"
               }
             ]
           },
@@ -823,7 +838,7 @@
               {
                 "name": "interventionActivity",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]",
+                "validate": "required,maxSize[500]",
                 "description": "Enter emergency intervention type e.g. captive breeding, temporary holding, predator control, habitat"
               },
               {
@@ -852,13 +867,13 @@
               {
                 "name": "locationOfActivity",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]",
+                "validate": "required,maxSize[500]",
                 "description": "Enter location(s) of where the intervention activity was  undertaken e.g. postcode, area or upload site"
               },
               {
                 "name": "comments",
                 "dataType": "text",
-                "validate": "maxSize[1000]"
+                "validate": "maxSize[500]"
               }
             ]
           },
@@ -1036,7 +1051,7 @@
               {
                 "dataType": "text",
                 "name": "otherCommunications",
-                "validate": "required,maxSize[1000]",
+                "validate": "required,maxSize[500]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -1099,12 +1114,12 @@
               {
                 "dataType": "text",
                 "name": "resourceType",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "text",
                 "name": "resourceDescription",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "text",
@@ -1119,7 +1134,7 @@
               {
                 "name": "providedToWho",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]",
+                "validate": "required,maxSize[500]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -1203,12 +1218,12 @@
               {
                 "name": "facilityName",
                 "dataType": "text",
-                "validate": "maxSize[1000]"
+                "validate": "maxSize[500]"
               },
               {
                 "name": "facilityLocation",
                 "dataType": "text",
-                "validate": "maxSize[1000]"
+                "validate": "maxSize[500]"
               },
               {
                 "dataType": "species",
@@ -1279,12 +1294,12 @@
               {
                 "dataType": "text",
                 "name": "typeOfSupportService",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "text",
                 "name": "shortDescription",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               }
             ]
           }
@@ -1331,12 +1346,12 @@
               {
                 "dataType": "text",
                 "name": "typeOfAdministration",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               },
               {
                 "dataType": "text",
                 "name": "shortDescription",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[500]"
               }
             ]
           }
