@@ -77,7 +77,7 @@
           {
             "dataType": "text",
             "name": "detailsOfOrganisationChange",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -97,7 +97,7 @@
           {
             "dataType": "text",
             "name": "detailsOfProjectContacts",
-            "validate": "required,maxSize[500]",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -109,7 +109,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -119,19 +119,19 @@
               {
                 "dataType": "text",
                 "name": "nature",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "How you are managing, or proposing to manage, the issue?",
                 "name": "how",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "description": "Implications for the project",
                 "name": "implication",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               }
             ]
           },
@@ -154,7 +154,7 @@
                 "condition": "hasReportableIncidents == \"Yes\""
               }
             ],
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "text",
@@ -188,7 +188,7 @@
                 "condition": "grantsProvided == \"Yes\""
               }
             ],
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -199,7 +199,7 @@
                 "dataType": "text",
                 "description": "",
                 "name": "storyDetails",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "image",
@@ -211,7 +211,7 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "document",
@@ -235,7 +235,7 @@
                 "type": "enable"
               }
             ],
-            "validate": "required,maxSize[500]"
+            "validate": "required,maxSize[1000]"
           }
         ],
         "modelName": "Progress Report",
@@ -532,7 +532,7 @@
               {
                 "name": "rescueLocation",
                 "dataType": "text",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "numberTreated",
@@ -552,7 +552,7 @@
               {
                 "name": "releaseLocation",
                 "dataType": "text",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               }
             ]
           },
@@ -649,7 +649,8 @@
                 "type": "text",
                 "source": "releaseLocation",
                 "width": "20%",
-                "title": "Enter location(s) where species were released e.g. postcode, area or upload site information through the sites tab"
+                "title": "Release location/s",
+                "helpText": "Enter the location(s) where this species was released  e.g. postcode, area or upload site information"
               }
             ],
             "footer": {
@@ -724,7 +725,7 @@
               {
                 "name": "locationOfProvisions",
                 "dataType": "text",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "numberBenefited",
@@ -734,7 +735,7 @@
               {
                 "name": "comments",
                 "dataType": "text",
-                "validate": "maxSize[500]"
+                "validate": "maxSize[1000]"
               }
             ]
           },
@@ -838,7 +839,7 @@
               {
                 "name": "interventionActivity",
                 "dataType": "text",
-                "validate": "required,maxSize[500]",
+                "validate": "required,maxSize[1000]",
                 "description": "Enter emergency intervention type e.g. captive breeding, temporary holding, predator control, habitat"
               },
               {
@@ -867,13 +868,13 @@
               {
                 "name": "locationOfActivity",
                 "dataType": "text",
-                "validate": "required,maxSize[500]",
+                "validate": "required,maxSize[1000]",
                 "description": "Enter location(s) of where the intervention activity was  undertaken e.g. postcode, area or upload site"
               },
               {
                 "name": "comments",
                 "dataType": "text",
-                "validate": "maxSize[500]"
+                "validate": "maxSize[1000]"
               }
             ]
           },
@@ -932,7 +933,8 @@
                 "type": "number",
                 "source": "numberControlled",
                 "width": "8%",
-                "title": "Number of individuals controlled. NOTE: only applicable where predator control has been implemented as an intervention activity"
+                "title": "Number of individuals controlled",
+                "helpText": "Enter estimated number of individuals. <b>NOTE: only applicable where predator control has been implemented as an intervention activity</b>"
               },
               {
                 "type": "speciesSelect",
@@ -1051,7 +1053,7 @@
               {
                 "dataType": "text",
                 "name": "otherCommunications",
-                "validate": "required,maxSize[500]",
+                "validate": "required,maxSize[1000]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -1114,12 +1116,12 @@
               {
                 "dataType": "text",
                 "name": "resourceType",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "name": "resourceDescription",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
@@ -1134,7 +1136,7 @@
               {
                 "name": "providedToWho",
                 "dataType": "text",
-                "validate": "required,maxSize[500]",
+                "validate": "required,maxSize[1000]",
                 "behaviour": [
                   {
                     "type": "enable",
@@ -1218,12 +1220,12 @@
               {
                 "name": "facilityName",
                 "dataType": "text",
-                "validate": "maxSize[500]"
+                "validate": "maxSize[1000]"
               },
               {
                 "name": "facilityLocation",
                 "dataType": "text",
-                "validate": "maxSize[500]"
+                "validate": "maxSize[1000]"
               },
               {
                 "dataType": "species",
@@ -1246,7 +1248,7 @@
                 "width": "15%"
               },
               {
-                "type": "text",
+                "type": "selectOne",
                 "source": "newOrUpgraded",
                 "title": "New, upgraded or expanded?",
                 "width": "15%"
@@ -1294,12 +1296,12 @@
               {
                 "dataType": "text",
                 "name": "typeOfSupportService",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "name": "shortDescription",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               }
             ]
           }
@@ -1327,7 +1329,7 @@
             ]
           }
         ],
-        "title": "Activity 7: Training, development of policies and procedures, personal protective equipment and support"
+        "title": "Activity 7: Training, development of policies and procedures, personal protective equipment and support services to keep wildlife rehabilitators physically and mentally safe and well"
       }
     },
     {
@@ -1346,12 +1348,12 @@
               {
                 "dataType": "text",
                 "name": "typeOfAdministration",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "dataType": "text",
                 "name": "shortDescription",
-                "validate": "required,maxSize[500]"
+                "validate": "required,maxSize[1000]"
               }
             ]
           }
