@@ -192,7 +192,7 @@ class ReportService {
         GroupedAggregationResult allResults = aggregator.result()
 
         allResults.groups.each { group ->
-            group?.results = postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
+            group?.results = postProcessOutputData(group?.results?:[], aggregationSpec)
         }
         return topLevelAggregationConfig ? allResults.groups : allResults.groups[0]?.results
     }

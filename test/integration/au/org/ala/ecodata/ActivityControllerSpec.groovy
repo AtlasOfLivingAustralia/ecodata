@@ -97,5 +97,20 @@ class ActivityControllerSpec extends IntegrationSpec {
 
     }
 
+    void "should list distinct siteIds for activities in a project"() {
+        setup:
+        new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:'a', siteId: 'a').save(flush: true, failOnError: true)
+        new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:'b', siteId: 'a').save(flush: true, failOnError: true)
+        new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:'c', siteId: 'b').save(flush: true, failOnError: true)
+        new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:'d', siteId: '').save(flush: true, failOnError: true)
+        new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:'e', siteId: null).save(flush: true, failOnError: true)
+        new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:'e', siteId: 'c', status: 'deleted').save(flush: true, failOnError: true)
+
+        when:
+        activityController.getDistinctSitesForProject('a project')
+
+        then:
+        activityController.response.json.sites == [ 'a', 'b' ]
+    }
 
 }

@@ -9,9 +9,9 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 import static au.org.ala.ecodata.Status.DELETED
-
 //import org.hibernate.criterion.Projections
 
 import static grails.async.Promises.task
@@ -116,6 +116,31 @@ class SiteService {
     List<Site> sitesForProject(String projectId) {
         Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
     }
+
+    /**
+     * Not working
+     * Works by given ["siteId","name"]
+     * return empty result by given ["siteId","name","extent"]
+     * Error in projecting unknown field - "siteId","name","extent.geometry.state"
+     * @param siteId
+     * @param fields
+     * @return
+     */
+
+    def getSiteWithLimitedFields(String siteId, List<String> fields) {
+        List results = Site.withCriteria {
+            eq ("siteId", siteId)
+            projections {
+                fields.each{
+                    property(it)
+                }
+            }
+        }
+        if(results){
+            print result
+        }
+     }
+
 
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
@@ -239,13 +264,18 @@ class SiteService {
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             if (asyncUpdate){
+                // Sharing props object between thread causes ConcurrentModificationException.
+                // Cloned object is used by spawned thread.
+                // https://github.com/AtlasOfLivingAustralia/ecodata/issues/594
+                Map clonedProps = new JSONObject(props)
                 String userId = props.remove('userId')
+                String siteId = site.siteId
                 task {
                     Site.withNewSession { MongoSession session ->
-                        site = Site.findBySiteId(site.siteId)
-                        addSpatialPortalPID(props, userId)
-                        populateLocationMetadataForSite(props)
-                        getCommonService().updateProperties(site, props)
+                        Site createdSite = Site.findBySiteId(siteId)
+                        addSpatialPortalPID(clonedProps, userId)
+                        populateLocationMetadataForSite(clonedProps)
+                        getCommonService().updateProperties(createdSite, clonedProps)
                     }
                 }
             }

@@ -48,7 +48,7 @@ class RecordControllerSpec extends IntegrationSpec {
         Calendar future = Calendar.getInstance()
         future.add(Calendar.MONTH, 1)
 
-        new Record(projectActivityId: createProjectActivity("pa1", "project1", future.getTime()), occurrenceID: "1234", userId: "id1", projectId: "project1", status: ACTIVE, isDataManagementPolicyDocumented: false, dataAccessMethods: ["na"], dataQualityAssuranceMethods: ["dataownercurated"], "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", methodType     : "opportunistic","spatialAccuracy": "low").save(flush: true, failOnError: true)
+        new Record(projectActivityId: createProjectActivity("pa1", "project1", future.getTime()), occurrenceID: "1234", userId: "id1", projectId: "project1", status: ACTIVE, isDataManagementPolicyDocumented: false, dataAccessMethods: ["na"], dataQualityAssuranceMethods: ["dataownercurated"], "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", methodType     : "opportunistic",methodName:"Opportunistic/ad-hoc observation recording","spatialAccuracy": "low").save(flush: true, failOnError: true)
 
         when:
         recordController.params.id = "1234"
@@ -556,7 +556,8 @@ class RecordControllerSpec extends IntegrationSpec {
                 name: "n",
                 startDate: new Date(),
                 status: ACTIVE,
-                isDataManagementPolicyDocumented: false, dataAccessMethods: ["na"], dataQualityAssuranceMethods: ["dataownercurated"], "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", methodType     : "opportunistic","spatialAccuracy": "low",
+                isDataManagementPolicyDocumented: false, dataAccessMethods: ["na"], dataQualityAssuranceMethods: ["dataownercurated"], "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", methodType     : "opportunistic", methodName: "Opportunistic/ad-hoc observation recording","spatialAccuracy": "low",
+                dataSharingLicense: "CC BY",
                 visibility: new VisibilityConstraint(embargoUntil: embargoDate)).save(failOnError: true, flush: true)
 
         pa.projectActivityId

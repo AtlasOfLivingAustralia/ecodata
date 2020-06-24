@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
@@ -25,7 +26,6 @@ class ProjectService {
     static final PRIVATE_SITES_REMOVED  = 'privatesitesremoved'
 
     def grailsApplication
-    ProgramService programService
     MessageSource messageSource
     SessionLocaleResolver localeResolver
     SiteService siteService
@@ -40,8 +40,6 @@ class ProjectService {
     EmailService emailService
     ReportingService reportingService
     OrganisationService organisationService
-    UserService userService
-
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -117,41 +115,6 @@ class ProjectService {
             list = Project.findAllByIsMERITAndStatusNotEqual(true, DELETED)
         }
         list.collect { toMap(it, levelOfDetail) }
-    }
-
-    /**
-     * Returns a list of times the project MERI plan has been approved.
-     * @param projectId the project to get the approval history for.
-     * @return a List of Maps with keys approvalDate, approvedBy.
-     */
-     List getMeriPlanApprovalHistory(String projectId){
-        Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
-        List<Map> histories = []
-        results?.documents.collect{
-            def data = documentService.readJsonDocument(it)
-
-            if (!data.error){
-                String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
-                def doc = [
-                        approvalDate:data.dateApproved,
-                        approvedBy:displayName,
-                        comment:data.reason,
-                        changeOrderNumber:data.referenceDocument
-                ]
-                histories.push(doc)
-            }
-        }
-        histories
-    }
-
-    /**
-     * Returns the date and user of the most recent approval of the project MERI plan
-     * @param projectId the project.
-     * @return Map with keys approvalDate and approvedBy.  Null if the plan has not been approved.
-     */
-    Map getMostRecentMeriPlanApproval(String projectId) {
-        List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
-        meriApprovalHistory.max{it.approvalDate}
     }
 
     def promoted() {
@@ -262,24 +225,19 @@ class ProjectService {
                 ManagementUnit mu =  ManagementUnit.findByManagementUnitId(result.managementUnitId)
                 result['managementUnitName'] =mu?.name
             }
-
+            // Populate the associatedProgram and associatedSubProgram properties if the programId exists.
             if (result?.programId) {
-                Program program = programService.get(result.programId)
+                Program program = Program.findByProgramId(result.programId)
                 if (program) {
-                    List programNames = programService.parentNames(program)
-
-                    result.associatedProgram = programNames[-1]
-                    if (programNames.size() >= 2) {
-                        result.associatedSubProgram = programNames[-2]
+                    if (program.parent) {
+                        result['associatedProgram'] = program.parent.name
+                        result['associatedSubProgram'] = program.name
                     }
-
+                    else {
+                        result['associatedProgram'] = program.name
+                    }
                 }
-                else {
-                    log.error("Project "+result.projectId+" references invalid program with programId = "+result.programId)
-                }
-
             }
-
 
             // look up current associated organisation details
             result.associatedOrgs?.each {
@@ -292,7 +250,6 @@ class ProjectService {
                     }
                 }
             }
-
         }
 
         result
@@ -342,6 +299,8 @@ class ProjectService {
             props.remove('id')
 
             if (collectoryLink) {
+                List projectActivities = projectActivityService.getAllByProject(props.projectId)
+                props = prepareProject(props, projectActivities)
                 updateCollectoryLinkForProject(project, props)
             }
 
@@ -361,7 +320,7 @@ class ProjectService {
     * Remove unnecceary fields of JSON
     */
 
-    private prepareProject(Map props){
+    private prepareProject(Map props, List projectActivities = null){
         if(props.fundings){
             List fundings = []
             props.fundings.each {
@@ -369,10 +328,67 @@ class ProjectService {
             }
             props.fundings = fundings;
         }
+
+        if(projectActivities) {
+          props.citation = buildProjectCitation(projectActivities)
+          props.methodStepDescription = buildMethodDescription(projectActivities)
+          props.qualityControlDescription = buildQualityControlDescription(projectActivities)
+        }
+
         return props
     }
 
+    private buildProjectCitation(List projectActivities) {
+
+      String citation = ""
+      projectActivities.each {
+        citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it as ProjectActivity) + "\n"
+      }
+      return citation
+    }
+
+    private buildMethodDescription(List projectActivities) {
+      String method = ""
+      projectActivities.each {
+        String name = it.name + " method:"
+        method = [method,name,it.methodType,it.methodName,it.methodUrl].findAll({it != null}).join("\n")
+      }
+      return method
+    }
+
+    private buildQualityControlDescription(List projectActivities) {
+      String qualityDescription = ""
+      String assurance_methods = null
+      String assurance_description = null
+      String policy_description = null
+      String policy_url = null
+
+      projectActivities.each {
+        String name = it.name + " data quality description:"
+
+        if(it.dataQualityAssuranceMethods) {
+          String method_string = it.dataQualityAssuranceMethods.join(", ")
+          assurance_methods =  "Data quality assurance methods: " + method_string
+        }
+        if(it.dataQualityAssuranceDescription) {
+          assurance_description = "Data quality assurance description: " + it.dataQualityAssuranceDescription
+        }
+
+        if(it.dataManagementPolicyDescription) {
+          policy_description = "Data Management policy description: " + it.dataManagementPolicyDescription
+        }
+
+        if(it.dataManagementPolicyURL) {
+          policy_url = "Data Management policy url: " + it.dataManagementPolicyURL
+        }
+        qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({it != null}).join("\n")
+      }
+      return qualityDescription
+    }
+
     private updateCollectoryLinkForProject(Project project, Map props) {
+
+
         if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             Map projectProps = toMap(project, FLAT)
@@ -394,7 +410,9 @@ class ProjectService {
     def update(Map props, String id, Boolean shouldUpdateCollectory = true) {
         Project project = Project.findByProjectId(id)
         if (project) {
-            props = prepareProject(props)
+            // retrieve any project activities associated with the project
+            List projectActivities = projectActivityService.getAllByProject(id)
+            props = prepareProject(props, projectActivities)
             try {
                 getCommonService().updateProperties(project, props)
                 if (shouldUpdateCollectory)
@@ -611,6 +629,7 @@ class ProjectService {
         int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0
         log.info("Starting SciStarter import")
         try {
+            JsonSlurper jsonSlurper = new JsonSlurper()
             String sciStarterProjectUrl
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
@@ -620,12 +639,11 @@ class ProjectService {
                 if (project && project.title && project.id) {
                     Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
                     // get more details about the project
-                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    String text = webService.get(sciStarterProjectUrl, false);
-                    if(text instanceof String) {
-                        ObjectMapper mapper = new ObjectMapper()
-                        Map projectDetails = mapper.readValue(text, Map.class)
-                        if (!projectDetails.error) {
+                    try {
+                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                        String text = webService.get(sciStarterProjectUrl, false);
+                        if(text instanceof String) {
+                            Map projectDetails = jsonSlurper.parseText(text)
                             if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
                                 // ignore projects SciStarter imported from Biocollect
                                 log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
@@ -645,11 +663,10 @@ class ProjectService {
                                     updatedProjects++
                                 }
                             }
-                        } else {
-                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                            ignoredProjects++
                         }
-
+                    } catch (Exception e) {
+                        log.error("Error processing project - ${sciStarterProjectUrl}. Ignoring it. ${e.message}", e);
+                        ignoredProjects++
                     }
                 }
             }

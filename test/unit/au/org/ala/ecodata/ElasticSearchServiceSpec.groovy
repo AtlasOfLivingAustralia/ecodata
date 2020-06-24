@@ -1,8 +1,14 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import grails.test.mixin.TestFor
+import org.codehaus.groovy.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.ListenableActionFuture
+import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.client.Client
 import spock.lang.Specification
 
 import javax.servlet.http.HttpServletRequest
@@ -14,10 +20,22 @@ import javax.servlet.http.HttpServletRequest
 class ElasticSearchServiceSpec extends Specification {
     PermissionService permissionService = Stub(PermissionService)
     ProgramService programService = Stub(ProgramService)
+    ProjectService projectService = Mock(ProjectService)
+    Client client = Mock(Client)
+    SiteService siteService = Mock(SiteService)
+    ActivityService activityService = Mock(ActivityService)
+    DocumentService documentService = Mock(DocumentService)
 
     def setup() {
         service.permissionService = permissionService
         service.programService = programService
+        service.client = client
+        service.projectService = projectService
+        service.siteService = siteService
+        service.activityService = activityService
+        service.documentService = documentService
+        JSON.registerObjectMarshaller(new MapMarshaller())
+        JSON.registerObjectMarshaller(new CollectionMarshaller())
     }
 
     def cleanup() {
@@ -221,5 +239,27 @@ class ElasticSearchServiceSpec extends Specification {
         then:
         noExceptionThrown()
 
+    }
+
+    def "A project can be prepared with extra information for use in the main project finder/project explorer index"() {
+
+        setup:
+        Project project = new Project(projectId:'p1', isMERIT:true)
+        IndexRequestBuilder builder = Mock(IndexRequestBuilder)
+        Map result
+
+        when:
+        service.indexHomePage(project, Project.class.name)
+
+        then:
+        2 * client.prepareGet(ElasticIndex.HOMEPAGE_INDEX, "doc", project.projectId)
+        1 * client.prepareIndex(ElasticIndex.HOMEPAGE_INDEX, "doc", project.projectId) >> builder
+        1 * builder.setSource({result = JSON.parse(it)}) >> builder
+        1 * builder.execute() >> Mock(ListenableActionFuture)
+        1 * projectService.toMap(project, ProjectService.FLAT) >> new HashMap(project.properties)
+
+        and:
+        result.projectId == project.projectId
+        result.isMERIT ==  project.isMERIT
     }
 }

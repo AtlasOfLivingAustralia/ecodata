@@ -65,6 +65,7 @@ class Program {
         program.config = config
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
+        program.subPrograms = subPrograms
         program.blog = blog
         program.acronym = acronym
 
