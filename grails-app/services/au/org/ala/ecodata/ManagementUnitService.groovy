@@ -202,10 +202,9 @@ class ManagementUnitService {
      * @param receiverEmail
      * @return
      */
-    public generateReportsInPeriods(Date startDate, Date endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
+    Map generateReportsInPeriods(Date startDate, Date endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
         List<Map> reports =  getReportingActivities(startDate,endDate)
-        int countOfReports = reports.count{it.progress="started"}
-        log.info("It contains " + countOfValid +" reports with data")
+        int countOfReports = reports.count{it.progress!=Activity.PLANNED}
 
         Map params = [:]
         params.fileExtension = "xlsx"
