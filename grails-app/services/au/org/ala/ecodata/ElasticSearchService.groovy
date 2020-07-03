@@ -474,10 +474,12 @@ class ElasticSearchService {
                 break;
             case Site.class.name:
                 def doc = Site.findBySiteId(docId)
-                def siteMap = siteService.toMap(doc, "flat")
+                def siteMap = siteService.toMap(doc, SiteService.FLAT)
                 siteMap["className"] = docType
                 siteMap = prepareSiteForIndexing(siteMap, true)
-                indexDoc(siteMap, DEFAULT_INDEX)
+                if (siteMap) {
+                    indexDoc(siteMap, DEFAULT_INDEX)
+                }
                 break;
 
             case Record.class.name:
@@ -542,7 +544,10 @@ class ElasticSearchService {
     private Map prepareSiteForIndexing(Map siteMap, Boolean indexNestedDocuments) {
         List projects = [], surveys = []
         if(siteMap.projects){
-            List allProjects = Project.findAllByProjectIdInList(siteMap.projects)
+            List allProjects = Project.createCriteria().list {
+                'in'('projectId', siteMap.projects)
+                ne('isMERIT', true)
+            }
             projects.addAll(allProjects.collect { project ->
                 if(indexNestedDocuments){
                     indexHomePage(project, "au.org.ala.ecodata.Project")
@@ -572,7 +577,8 @@ class ElasticSearchService {
             siteMap.photoType = 'photoPoint'
         }
 
-        siteMap
+        // Don't include orphan sites or MERIT sites.
+        siteMap.projectList ? siteMap  : null
     }
 
     /**
@@ -701,7 +707,9 @@ class ElasticSearchService {
                 siteMap["className"] = Site.class.name
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
-                    indexDoc(siteMap, DEFAULT_INDEX)
+                    if (siteMap) {
+                        indexDoc(siteMap, DEFAULT_INDEX)
+                    }
                 }
                 catch (Exception e) {
                     log.error("Unable index site: "+siteMap?.siteId, e)
@@ -787,7 +795,10 @@ class ElasticSearchService {
             // Allow ESP sites to be hidden, even on the project explorer.  Needs to be tided up a bit as MERIT sites were
             // already marked as private to avoid discovery via BioCollect
             if (!projectMap.privateSites) {
-                projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+                projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT).collect{ Map site ->
+                    site.remove('geoIndex')
+                    site
+                }
                 projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
             }
 
