@@ -47,6 +47,21 @@
                 ]
               }
             }
+          },
+          {
+            "mapping": [
+              {
+                "mapping": [],
+                "source-path": "issue",
+                "target": "issue"
+              }
+            ],
+            "merge": false,
+            "source": {
+              "literal": {
+                "issue": []
+              }
+            }
           }
         ],
         "dataModel": [
@@ -288,7 +303,7 @@
                 "source": "progressSummary",
                 "type": "textarea",
                 "rows": 5,
-                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan.<i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
+                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan. <i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
               }
             ],
             "type": "row"
@@ -346,7 +361,7 @@
           {
             "items": [
               {
-                "source": "<i>If 'Yes', please provide updated details by email direct to the Department.</i>",
+                "source": "<i><b style=\"background-color:yellow\">If 'Yes', please provide updated details by email direct to the Department.</b></i>",
                 "type": "literal"
               }
             ],
@@ -477,7 +492,7 @@
           {
             "items": [
               {
-                "preLabel": "5.2 If you answered 'No' to question 6.1, please provide details:",
+                "preLabel": "5.2 If you have answered no, please provide details:",
                 "source": "reasonOfOverBudget",
                 "type": "textarea",
                 "rows": 3,
@@ -634,7 +649,8 @@
                 "type": "text",
                 "source": "releaseLocation",
                 "width": "20%",
-                "title": "Enter location(s) where species were released e.g. postcode, area or upload site information through the sites tab"
+                "title": "Release location/s",
+                "helpText": "Enter the location(s) where this species was released  e.g. postcode, area or upload site information"
               }
             ],
             "footer": {
@@ -917,7 +933,8 @@
                 "type": "number",
                 "source": "numberControlled",
                 "width": "8%",
-                "title": "Number of individuals controlled. NOTE: only applicable where predator control has been implemented as an intervention activity"
+                "title": "Number of individuals controlled",
+                "helpText": "Enter estimated number of individuals. <b>NOTE: only applicable where predator control has been implemented as an intervention activity</b>"
               },
               {
                 "type": "speciesSelect",
@@ -1231,7 +1248,7 @@
                 "width": "15%"
               },
               {
-                "type": "text",
+                "type": "selectOne",
                 "source": "newOrUpgraded",
                 "title": "New, upgraded or expanded?",
                 "width": "15%"
@@ -1312,7 +1329,7 @@
             ]
           }
         ],
-        "title": "Activity 7: Training, development of policies and procedures, personal protective equipment and support"
+        "title": "Activity 7: Training, development of policies and procedures, personal protective equipment and support services to keep wildlife rehabilitators physically and mentally safe and well"
       }
     },
     {

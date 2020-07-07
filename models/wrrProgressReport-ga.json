@@ -49,6 +49,21 @@
                 ]
               }
             }
+          },
+          {
+            "mapping": [
+              {
+                "mapping": [],
+                "source-path": "issue",
+                "target": "issue"
+              }
+            ],
+            "merge": false,
+            "source": {
+              "literal": {
+                "issue": []
+              }
+            }
           }
         ],
         "dataModel": [
@@ -130,52 +145,6 @@
               "Yes",
               "No"
             ]
-          },
-          {
-            "dataType": "text",
-            "name": "whsIncidentDetails",
-            "description": "Please provide a description of the incident/s",
-            "behaviour": [
-              {
-                "type": "enable",
-                "condition": "hasReportableIncidents == \"Yes\""
-              }
-            ],
-            "validate": "required,maxSize[1000]"
-          },
-          {
-            "dataType": "text",
-            "name": "grantsProvided",
-            "description": "",
-            "constraints": [
-              "Yes",
-              "No",
-              "N/A"
-            ]
-          },
-          {
-            "dataType": "number",
-            "name": "numberOfGrantsProvided",
-            "description": "",
-            "behaviour": [
-              {
-                "type": "enable",
-                "condition": "grantsProvided == \"Yes\""
-              }
-            ],
-            "validate": "required,min[0]"
-          },
-          {
-            "dataType": "text",
-            "name": "grantInformation",
-            "description": "",
-            "behaviour": [
-              {
-                "type": "enable",
-                "condition": "grantsProvided == \"Yes\""
-              }
-            ],
-            "validate": "required,maxSize[1000]"
           },
           {
             "dataType": "list",
@@ -290,7 +259,7 @@
                 "source": "progressSummary",
                 "type": "textarea",
                 "rows": 5,
-                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan.<i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
+                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan. <i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
               }
             ],
             "type": "row"
@@ -348,36 +317,8 @@
           {
             "items": [
               {
-                "source": "<i>If 'Yes', please provide updated details by email direct to the Department.</i>",
+                "source": "<i><b style=\"background-color:yellow\">If 'Yes', please provide updated details by email direct to the Department.</b></i>",
                 "type": "literal"
-              }
-            ],
-            "type": "row"
-          },
-          {
-            "items": [
-              {
-                "source": "grantsProvided",
-                "preLabel": "2.4 Have any grants been provided to wildlife rehabilitation volunteers for equipment and consumables for long term care of orphaned and injured native wildlife during this reporting period?",
-                "type": "selectOne"
-              }
-            ],
-            "type": "row"
-          },
-          {
-            "items": [
-              {
-                "source": "numberOfGrantsProvided",
-                "preLabel": "How many grants were provided?",
-                "type": "number",
-                "css": "span3"
-              },
-              {
-                "source": "grantInformation",
-                "preLabel": "Please provide details of the grants",
-                "type": "textarea",
-                "rows": 4,
-                "css": "span9"
               }
             ],
             "type": "row"
@@ -479,7 +420,7 @@
           {
             "items": [
               {
-                "preLabel": "5.2 If you answered 'No' to question 6.1, please provide details:",
+                "preLabel": "5.2 If you have answered no, please provide details:",
                 "source": "reasonOfOverBudget",
                 "type": "textarea",
                 "rows": 3,
@@ -509,12 +450,12 @@
               {
                 "name": "processesCommenced",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "seedSupplyNeeds",
                 "dataType": "text",
-                "validate": "required"
+                "validate": "required,maxSize[1000]"
               }
             ]
           }
@@ -567,7 +508,7 @@
           {
             "dataType": "text",
             "name": "otherActivities",
-            "validate": "required",
+            "validate": "required,maxSize[1000]",
             "behaviour": [
               {
                 "type": "enable",
@@ -582,13 +523,7 @@
               {
                 "name": "seedProvenance",
                 "dataType": "text",
-                "validate": "required,maxSize[1000]",
-                "behaviour": [
-                  {
-                    "type": "enable",
-                    "condition": "seedsCollected == \"Yes\""
-                  }
-                ]
+                "validate": "required,maxSize[1000]"
               },
               {
                 "name": "totalNumberSpeciesCollected",
@@ -613,36 +548,18 @@
                   {
                     "name": "speciesCollected",
                     "dataType": "species",
-                    "validate": "required",
-                    "behaviour": [
-                      {
-                        "type": "enable",
-                        "condition": "seedsCollected == \"Yes\""
-                      }
-                    ]
+                    "validate": "required"
                   },
                   {
                     "name": "weightCollectedKg",
                     "units": "kg",
                     "dataType": "number",
-                    "validate": "required,min[0]",
-                    "behaviour": [
-                      {
-                        "type": "enable",
-                        "condition": "seedsCollected == \"Yes\""
-                      }
-                    ]
+                    "validate": "required,min[0]"
                   },
                   {
                     "name": "participatingOrganisations",
                     "dataType": "text",
-                    "validate": "required,maxSize[1000]",
-                    "behaviour": [
-                      {
-                        "type": "enable",
-                        "condition": "seedsCollected == \"Yes\""
-                      }
-                    ]
+                    "validate": "required,maxSize[1000]"
                   }
                 ]
               }
@@ -673,7 +590,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "Activity 2b: Building the capacity of the native seed and nursery industry through coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes,"
+                "source": "Activity 2b: Building the capacity of the native seed and nursery industry through coordination of seed collection activities in bushfire affected regions and other vulnerable landscapes"
               }
             ]
           },
@@ -701,7 +618,7 @@
                   {
                     "source": "speciesCollected",
                     "type": "speciesSelect",
-                    "title": "Weight (kg) of seed collected"
+                    "title": "Species of seed collected"
                   },
                   {
                     "source": "weightCollectedKg",
@@ -746,7 +663,13 @@
           {
             "name": "stakeholdersEngaged",
             "dataType": "text",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[1000]",
+            "behaviour": [
+              {
+                "type": "enable",
+                "condition": "tenYearStrategyDeveloped == \"Yes\""
+              }
+            ]
           },
           {
             "name": "progressTowardsStrategy",
@@ -790,7 +713,7 @@
             "items": [
               {
                 "type": "textarea",
-                "source": "stakeHoldersEngaged",
+                "source": "stakeholdersEngaged",
                 "preLabel": "Which stakeholder/s have been engaged and how has their involvement contributed to developing and coordinating the strategy?"
               }
             ]
@@ -1075,7 +998,7 @@
             ]
           }
         ],
-        "title": "Activity 8a: Establishing sound governance arrangements to ensure proper use of funds, including establishment of a Steering Committee to oversee implementation of the Activity. The Steering Committee must have an agreed Terms of Reference."
+        "title": "Activity 8: Establishing sound governance arrangements to ensure proper use of funds, including establishment of a Steering Committee to oversee implementation of the Activity. The Steering Committee must have an agreed Terms of Reference."
       }
     }
   ],

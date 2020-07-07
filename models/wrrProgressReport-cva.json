@@ -49,6 +49,21 @@
                 ]
               }
             }
+          },
+          {
+            "mapping": [
+              {
+                "mapping": [],
+                "source-path": "issue",
+                "target": "issue"
+              }
+            ],
+            "merge": false,
+            "source": {
+              "literal": {
+                "issue": []
+              }
+            }
           }
         ],
         "dataModel": [
@@ -139,40 +154,6 @@
               {
                 "type": "enable",
                 "condition": "hasReportableIncidents == \"Yes\""
-              }
-            ],
-            "validate": "required,maxSize[1000]"
-          },
-          {
-            "dataType": "text",
-            "name": "grantsProvided",
-            "description": "",
-            "constraints": [
-              "Yes",
-              "No",
-              "N/A"
-            ]
-          },
-          {
-            "dataType": "number",
-            "name": "numberOfGrantsProvided",
-            "description": "",
-            "behaviour": [
-              {
-                "type": "enable",
-                "condition": "grantsProvided == \"Yes\""
-              }
-            ],
-            "validate": "required,min[0]"
-          },
-          {
-            "dataType": "text",
-            "name": "grantInformation",
-            "description": "",
-            "behaviour": [
-              {
-                "type": "enable",
-                "condition": "grantsProvided == \"Yes\""
               }
             ],
             "validate": "required,maxSize[1000]"
@@ -290,7 +271,7 @@
                 "source": "progressSummary",
                 "type": "textarea",
                 "rows": 5,
-                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan.<i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
+                "preLabel": "2.1 Provide a concise summary of what has been achieved to date against the Activity identified in your Funding Agreement and (where relevant) your Activity Plan. <i>Where possible, please quantify key outputs or achievements. Supporting evidence of your activities and achievements (e.g. media releases, articles, photos, etc.), should be provided as attachments to this report via the Admin tab > Documents sub-tab of MERIT.</i>"
               }
             ],
             "type": "row"
@@ -348,36 +329,8 @@
           {
             "items": [
               {
-                "source": "<i>If 'Yes', please provide updated details by email direct to the Department.</i>",
+                "source": "<i><b style=\"background-color:yellow\">If 'Yes', please provide updated details by email direct to the Department.</b></i>",
                 "type": "literal"
-              }
-            ],
-            "type": "row"
-          },
-          {
-            "items": [
-              {
-                "source": "grantsProvided",
-                "preLabel": "2.4 Have any grants been provided to wildlife rehabilitation volunteers for equipment and consumables for long term care of orphaned and injured native wildlife during this reporting period?",
-                "type": "selectOne"
-              }
-            ],
-            "type": "row"
-          },
-          {
-            "items": [
-              {
-                "source": "numberOfGrantsProvided",
-                "preLabel": "How many grants were provided?",
-                "type": "number",
-                "css": "span3"
-              },
-              {
-                "source": "grantInformation",
-                "preLabel": "Please provide details of the grants",
-                "type": "textarea",
-                "rows": 4,
-                "css": "span9"
               }
             ],
             "type": "row"
@@ -479,7 +432,7 @@
           {
             "items": [
               {
-                "preLabel": "5.2 If you answered 'No' to question 6.1, please provide details:",
+                "preLabel": "5.2 If you have answered no, please provide details:",
                 "source": "reasonOfOverBudget",
                 "type": "textarea",
                 "rows": 3,
@@ -595,7 +548,7 @@
             ]
           }
         ],
-        "title": "Activity 1: Understanding the native seed supply needs to restore vegetation and wildlife habitat across fire impacted regions."
+        "title": "Activity 1: Developing a central point nationally for volunteers to register their interest in participating in environmental restoration work in bushfire affected areas"
       }
     },
     {
