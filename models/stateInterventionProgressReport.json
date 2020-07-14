@@ -7,7 +7,7 @@
   "dateCreated": "2020-06-30T22:21:48Z",
   "formVersion": 1,
   "gmsId": null,
-  "lastUpdated": "2020-07-14T03:41:03Z",
+  "lastUpdated": "2020-07-14T23:26:13Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
   "name": "State Intervention Progress Report",
@@ -994,32 +994,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaInstalledHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthInstalledKm, 2) != roundTo(lengthInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "feature",
                 "name": "protectedSites"
               },
@@ -1106,7 +1080,7 @@
                     "title": "Number of structures installed"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "type": "col",
                     "title": "Site/s where access has been controlled",
                     "items": [
@@ -1154,7 +1128,7 @@
                   },
                   {
                     "helpText": "May be changed manually if different to the calculated areas",
-                    "width": "15%",
+                    "width": "20%",
                     "type": "col",
                     "title": "Actual length (km) / area (ha) where access has been controlled",
                     "items": [
@@ -1196,50 +1170,7 @@
                     ]
                   },
                   {
-                    "helpText": "May be changed manually if different to the calculated areas",
                     "width": "15%",
-                    "type": "col",
-                    "title": "Area (ha) / Length (km) invoiced",
-                    "items": [
-                      {
-                        "source": "areaInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "source": "lengthInvoicedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
                     "type": "col",
                     "title": "Site/s protected by access control structures",
                     "items": [
@@ -1524,32 +1455,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "if"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "if",
-                    "condition": "roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2) and \"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "invoicedLengthNotActualReason",
                 "constraints": [
                   "Work was undertaken over a greater length than will be invoiced for",
@@ -1761,7 +1666,7 @@
                             "type": "row",
                             "items": [
                               {
-                                "preLabel": "Actual area (ha) created for pest animals",
+                                "preLabel": "Actual area (ha) treated for pest animals",
                                 "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                                 "source": "areaControlledHa",
                                 "type": "number",
@@ -1796,7 +1701,7 @@
                             "type": "row",
                             "items": [
                               {
-                                "preLabel": "Actual length (km) created for pest animals",
+                                "preLabel": "Actual length (km) treated for pest animals",
                                 "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                                 "source": "lengthControlledKm",
                                 "type": "number",
@@ -1823,82 +1728,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping length didn't align with the invoiced amount",
                                 "source": "mappingLengthNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "col",
-                        "css": "span4",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) treated for pest animals",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced length (km) treated for pest animals",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "lengthInvoicedKm",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedLengthNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedLengthNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -2172,32 +2001,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaCoveredByPlanHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "speciesOrTECCoveredByPlan",
                 "description": "This free text field allows multiple species and/or TECs to be entered. For Species: Use Scientific names with (common name in brackets), TECs should be written as listed in EPBC. Species or TECs should be separated by commas.",
                 "validate": "required,maxSize[300]"
@@ -2264,13 +2067,13 @@
                     ]
                   },
                   {
-                    "width": "6%",
+                    "width": "10%",
                     "source": "numberOfPlansDeveloped",
                     "title": "Number of plans developed",
                     "type": "number"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "type": "col",
                     "title": "Sites/s covered by plan/s",
                     "items": [
@@ -2299,7 +2102,7 @@
                     ]
                   },
                   {
-                    "width": "17%",
+                    "width": "20%",
                     "title": "Actual area (ha) covered by plan/s",
                     "type": "col",
                     "items": [
@@ -2334,43 +2137,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) covered by the plan",
-                    "items": [
-                      {
-                        "source": "areaInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "20%",
+                    "width": "22%",
                     "source": "speciesOrTECCoveredByPlan",
                     "type": "textarea",
                     "title": "Species and/or Threatened ecological communities covered in plan"
@@ -2573,32 +2340,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(debrisRemovedHa, 2) != roundTo(areaOfRemovedDebrisInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "visible",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "debrisType",
                 "description": "",
                 "constraints": [
@@ -2667,7 +2408,7 @@
               {
                 "columns": [
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "source": "initialOrFollowup",
                     "title": "Initial or follow-up activity?",
                     "type": "selectOne"
@@ -2710,7 +2451,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Actual area (ha) / length (km) of debris removed",
                     "helpText": "Enter the amount which were actually removed during this reporting period.",
@@ -2753,42 +2494,6 @@
                     ]
                   },
                   {
-                    "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) of debris removed",
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "items": [
-                      {
-                        "source": "areaOfRemovedDebrisInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
                     "width": "20%",
                     "title": "Type of debris removed",
                     "type": "col",
@@ -2810,13 +2515,13 @@
                     ]
                   },
                   {
-                    "width": "10%",
+                    "width": "12%",
                     "source": "weightOfDebrisTonnes",
                     "title": "Weight (tonnes) of debris removed",
                     "type": "number"
                   },
                   {
-                    "width": "10%",
+                    "width": "12%",
                     "source": "volumeRemovedM3",
                     "title": "Volume (m3) of debris removed",
                     "type": "number"
@@ -3067,32 +2772,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaOfErosionControlHa, 2) != roundTo(areaOfErosionControlInvoicedHa, 2) or roundTo(lengthOfErosionControlKm, 2) != roundTo(lengthOfErosionControlInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberInstalled",
                 "validate": "required,min[0]"
@@ -3184,7 +2863,7 @@
                     "type": "selectOne"
                   },
                   {
-                    "width": "5%",
+                    "width": "7%",
                     "title": "Site/s where erosion is evident",
                     "type": "col",
                     "items": [
@@ -3202,7 +2881,7 @@
                     ]
                   },
                   {
-                    "width": "6%",
+                    "width": "10%",
                     "type": "col",
                     "title": "Site/s of erosion control",
                     "items": [
@@ -3240,7 +2919,7 @@
                   },
                   {
                     "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
-                    "width": "17%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Actual area (ha) / length (km) of erosion control",
                     "items": [
@@ -3282,50 +2961,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) / length (km) of erosion control",
-                    "items": [
-                      {
-                        "source": "areaOfErosionControlInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "source": "lengthOfErosionControlInvoicedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "5%",
+                    "width": "10%",
                     "source": "numberInstalled",
                     "title": "Number of erosion control structures installed",
                     "type": "number"
@@ -3563,32 +3199,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaOfEnclosuresHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -3764,46 +3374,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) of feral-free enclosures",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -4376,32 +3946,6 @@
                   }
                 ],
                 "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaOfCoveredByAgreementsInvoicedHa, 2) != roundTo(areaCoveredByAgreementsHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               }
             ],
             "dataType": "list",
@@ -4465,13 +4009,13 @@
                     "title": "Established or maintained?"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "source": "numberOfAgreements",
                     "type": "number",
                     "title": "Number of agreements"
                   },
                   {
-                    "width": "10%",
+                    "width": "20%",
                     "source": "numberOfDaysMaintainingAgreements",
                     "type": "number",
                     "title": "Number of days maintaining agreements (if applicable)"
@@ -4534,42 +4078,6 @@
                           {
                             "placeholder": "Please enter the reason/s the actual didn't align with the agreed amount",
                             "source": "mappingNotAlignedComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) of site/s agreements",
-                    "items": [
-                      {
-                        "source": "areaOfCoveredByAgreementsInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
                             "type": "textarea",
                             "rows": 5
                           }
@@ -5075,32 +4583,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -5276,48 +4758,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) covered by fauna surveys",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -5563,32 +5003,6 @@
                 ]
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "visible",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "defaultValue": {
                   "type": "computed",
                   "expression": "$geom.lengthKm(sitesTreated)"
@@ -5713,7 +5127,7 @@
                     "title": "Initial or follow-up control?"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "title": "Area (ha) treated by fire management action",
                     "type": "col",
                     "items": [
@@ -5794,42 +5208,6 @@
                   },
                   {
                     "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) treated by management action",
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "items": [
-                      {
-                        "source": "areaInvoicedTreatedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "15%",
                     "title": "Type of fire management action",
                     "type": "col",
                     "items": [
@@ -5849,7 +5227,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "type": "col",
                     "title": "Please map any off-site area/s if they benefitted from this fire management action",
                     "items": [
@@ -5867,7 +5245,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "source": "evidenceOfBenefit",
                     "type": "textarea",
                     "rows": 3,
@@ -6047,32 +5425,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -6259,48 +5611,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) covered by flora surveys",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -6554,32 +5864,6 @@
                 ]
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "visible",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfStructuresInstalled",
                 "validate": "required,min[0]"
@@ -6766,42 +6050,6 @@
                   },
                   {
                     "width": "10%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) habitat augmentation",
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "items": [
-                      {
-                        "source": "areaInvoicedAumentationHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "5%",
                     "source": "numberOfStructuresInstalled",
                     "type": "number",
                     "title": "Number of structures installed"
@@ -6832,7 +6080,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "source": "habitatAugmentationObjective",
                     "title": "Purpose of habitat augmentation",
                     "type": "textarea"
@@ -6857,7 +6105,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "source": "evidenceOfBenefit",
                     "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
                     "type": "textarea"
@@ -7195,32 +6443,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaCoveringRegimeChangeHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "treatmentType",
                 "description": "",
                 "constraints": [
@@ -7302,7 +6524,7 @@
                     "title": "Installed or maintained?"
                   },
                   {
-                    "width": "6%",
+                    "width": "10%",
                     "source": "numberOfTreatmentsImplemented",
                     "title": "Number of treatments implemented to improve water management",
                     "type": "number"
@@ -7355,7 +6577,7 @@
                     "title": "Site/s where hydrological regimes are being improved"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "title": "Actual area (ha) / length (km) covering the hydrological regime change",
                     "type": "col",
                     "items": [
@@ -7407,47 +6629,7 @@
                     ]
                   },
                   {
-                    "width": "10%",
-                    "title": "Invoiced area (ha) covering the hydrological regime change",
-                    "type": "col",
-                    "items": [
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "source": "areaInvoicedHa",
-                            "type": "number",
-                            "displayOptions": {
-                              "displayUnits": true
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "25%",
+                    "width": "30%",
                     "title": "Type of treatment implemented to improve water management",
                     "type": "col",
                     "items": [
@@ -7711,32 +6893,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaImplementedHa, 2) != roundTo(areaImplementedInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "practiceChangeType",
                 "description": "",
                 "constraints": [
@@ -7936,43 +7092,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) covered by practice change",
-                    "items": [
-                      {
-                        "source": "areaImplementedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "15%",
+                    "width": "20%",
                     "title": "Type of action",
                     "type": "col",
                     "items": [
@@ -8005,7 +7125,7 @@
                     "type": "textarea"
                   },
                   {
-                    "width": "15%",
+                    "width": "25%",
                     "title": "Please map any off-site area/s if they benefitted from this practice change",
                     "type": "col",
                     "items": [
@@ -8236,32 +7356,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaTreatedInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "targetDisease",
                 "description": "",
                 "validate": "required,maxSize[100]"
@@ -8451,49 +7545,13 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
                     "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) treated for disease",
-                    "items": [
-                      {
-                        "source": "areaTreatedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
                     "source": "targetDisease",
                     "title": "Disease treated",
                     "type": "text"
                   },
                   {
-                    "width": "12%",
+                    "width": "15%",
                     "type": "col",
                     "title": "Type of management method / treatment",
                     "items": [
@@ -8988,32 +8046,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -9211,48 +8243,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) surveyed for pest animals",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -9486,32 +8476,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -9703,48 +8667,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) surveyed for plant survival",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -9857,7 +8779,7 @@
       "optional": true,
       "optionalQuestionText": null,
       "template": {
-        "title": "Project planning and delivery of documents as required for the delivery of the Project Services and monitoring",
+        "title": "Project planning and delivery of documents as required for the delivery of the Project and monitoring",
         "modelName": "RLP - Project planning",
         "dataModel": [
           {
@@ -9910,7 +8832,7 @@
                 "columns": [
                   {
                     "source": "numberPlanningDocuments",
-                    "title": "Number of planning and delivery documents for delivery of the project services and monitoring",
+                    "title": "Number of planning and delivery documents for delivery of the project and monitoring",
                     "type": "number",
                     "width": "15%"
                   },
@@ -10140,32 +9062,6 @@
                 ]
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaRemediatedHa, 2) != roundTo(areaRemediatedInvoicedHa, 2) or roundTo(lengthRemediatedKm, 2) != roundTo(lengthRemediatedInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfStructuresInstalled",
                 "validate": "required,min[0]"
@@ -10295,7 +9191,7 @@
                   },
                   {
                     "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Actual area (ha) / length (km) being remediated",
                     "items": [
@@ -10337,50 +9233,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) / length (km) being remediated",
-                    "items": [
-                      {
-                        "source": "areaRemediatedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "source": "lengthRemediatedInvoicedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
+                    "width": "15%",
                     "source": "numberOfStructuresInstalled",
                     "type": "number",
                     "title": "Number of structures installed"
@@ -10407,7 +9260,7 @@
                     ]
                   },
                   {
-                    "width": "17%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Please identify any area/s that have shown evidence of off-site benefits",
                     "items": [
@@ -10649,32 +9502,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthTreatedKm, 2) != roundTo(lengthInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -10902,56 +9729,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) / length (km) treated for weed removal",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "source": "lengthInvoicedKm",
-                            "type": "number",
-                            "validate": "required",
-                            "displayOptions": {
-                              "displayUnits": true
-                            }
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -11191,32 +9968,6 @@
                     "condition": "\"Other\" == mappingNotAlignedReason"
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaRevegetatedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "if",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "document",
@@ -11472,48 +10223,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "col",
-                        "css": "span4",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) of habitat revegetated",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -11804,32 +10513,6 @@
                 ]
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaPreparedHa, 2) != roundTo(areaPreparedInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfDaysPreparingSite",
                 "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
@@ -12017,43 +10700,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
                     "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) of site preparation",
-                    "items": [
-                      {
-                        "source": "areaPreparedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
                     "source": "numberOfDaysPreparingSite",
                     "title": "Number of days in preparing site",
                     "type": "number"
@@ -12065,7 +10712,7 @@
                     "type": "select2"
                   },
                   {
-                    "width": "15%",
+                    "width": "16%",
                     "type": "col",
                     "title": "Type of action",
                     "items": [
@@ -12086,13 +10733,13 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "17%",
                     "source": "purposeOfSitePreparation",
                     "title": "Aim of site preparation",
                     "type": "textarea"
                   },
                   {
-                    "width": "15%",
+                    "width": "17%",
                     "source": "threatenedEcologicalCommunity",
                     "title": "Threatened ecological community (if applicable)",
                     "type": "text"
@@ -13109,32 +11756,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -13326,48 +11947,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) covered by water quality surveys",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -13592,32 +12171,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "document",
                 "name": "extraMappingDetails",
                 "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
@@ -13790,48 +12343,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
                                 "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) surveyed for weed distribution",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
