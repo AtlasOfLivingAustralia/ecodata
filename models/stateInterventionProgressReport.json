@@ -7,7 +7,7 @@
   "dateCreated": "2020-06-30T22:21:48Z",
   "formVersion": 1,
   "gmsId": null,
-  "lastUpdated": "2020-07-14T23:26:13Z",
+  "lastUpdated": "2020-07-15T00:06:52Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
   "name": "State Intervention Progress Report",
@@ -328,6 +328,15 @@
                 "source": "isExpenditureWithinBudget",
                 "preLabel": "4.1 Is the project's expenditure proceeding in accordance with the Exchange of Letters Agreement, the expected rate of expenditure and within the total project budget? If you have answered no, please inform the Department of any issue(s) related to the project budget.",
                 "type": "selectOne"
+              }
+            ],
+            "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "</br><strong>Note:</strong> Please de-select <strong>‘Not applicable’</strong> for activities that were undertaken during the reporting period and complete the required fields",
+                "type": "literal"
               }
             ],
             "type": "row"
