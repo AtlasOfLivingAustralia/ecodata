@@ -872,19 +872,7 @@ class ElasticSearchService {
 
         def project = projectService.get(activity.projectId, ProjectService.FLAT, version)
 
-        def output, isWorksActivity
-
-        if(project?.isWorks) {
-            // only include activities with output. works by default creates activities but without data in them.
-            output = Output.findByActivityIdAndStatus(activity.activityId, ACTIVE)
-            // changing status to deleted so that works activity with no output is not indexed
-            if(!output){
-                activity.status = DELETED
-                return activity
-            }
-
-            isWorksActivity = !!output
-        }
+        boolean isWorksActivity = project?.isWorks
 
         if (activity.projectActivityId || isWorksActivity) {
             Date eventDate
