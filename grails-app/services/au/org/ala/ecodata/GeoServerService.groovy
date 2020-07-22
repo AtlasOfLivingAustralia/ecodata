@@ -3,6 +3,8 @@ package au.org.ala.ecodata
 import asset.pipeline.AssetHelper
 import grails.converters.JSON
 import groovy.xml.StreamingMarkupBuilder
+import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
+import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.common.xcontent.XContentHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -11,15 +13,17 @@ import org.springframework.core.io.support.ResourcePatternResolver
 import javax.annotation.PostConstruct
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
-import static javax.servlet.http.HttpServletResponse.SC_OK
+import static javax.servlet.http.HttpServletResponse.SC_OK 
 
 class GeoServerService {
     def grailsApplication
     def webService
     ElasticSearchService elasticSearchService
     HubService hubService
+    CacheService cacheService
 
     boolean enabled = false
+    def LAYER_PREFIX = "act", GENERAL_LAYER = '_general', INFO_LAYER = '_info', INDICES_LAYER = '_indices'
 
     @Autowired
     ResourcePatternResolver resourceResolver
@@ -231,6 +235,282 @@ class GeoServerService {
         }
     }
 
+    def createLayer(name, indices) {
+        if (enabled) {
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${grailsApplication.config.geoServer.datastore}/featuretypes"
+            Map layerConfig = getLayerConfiguration(name, indices)
+            String content = getLayerDefinition(layerConfig)
+            log.debug("Creating layer (${layerConfig.name}) on GeoServer with content: ${content}")
+            Map response = webService.doPost(url, content, false, getHeaders())
+            if(!response.error) {
+                response.success = 'Created'
+                response.layerName = layerConfig.name
+                response.location = response.headers.location
+            }
+
+            response
+        }
+    }
+
+    Map getLayerConfiguration (String name, List indices) {
+        // deep copy configuration
+        String configSerialized = (grailsApplication.config.geoServer.layerConfiguration as JSON).toString()
+        Map config = JSON.parse(configSerialized)
+        Map fieldsMapping = getFieldsMapping()
+        List attributes = []
+
+        indices?.each { index ->
+            Map attributeConfig = getConfigForIndex(index, fieldsMapping)
+            if (attributeConfig) {
+                attributes.add(attributeConfig)
+            }
+        }
+
+        config.attributes.addAll(attributes)
+        config.name = name
+        config.nativeName = name
+        config
+    }
+
+    /**
+     * Get configuration for index.
+     * @param index
+     * @return
+     */
+    Map getConfigForIndex(String index, Map fieldsMapping) {
+        String dataType = getDataTypeForIndex(index)
+        if (dataType instanceof String) {
+            String className = getClassForElasticSearchDataType(dataType)
+            String shortName = index
+            boolean isUseShortName = fieldsMapping?.get(index) != null
+            if (isUseShortName) {
+                index = fieldsMapping?.get(index).path
+            }
+
+            Map config = [
+                    "name": index,
+                    "shortName": shortName,
+                    "useShortName": isUseShortName,
+                    "type": className,
+                    "use": true,
+                    "defaultGeometry": false,
+                    "stored": false,
+                    "nested": false,
+                    "binding": className,
+                    "nillable": true,
+                    "minOccurs": 0,
+                    "maxOccurs": 1
+            ]
+
+            if (className == Date.class.name) {
+                config.put("dateFormat", "dateOptionalTime")
+            }
+
+            config
+        }
+    }
+
+    String getDataTypeForIndex (String index) {
+        Map mapping = getMapping()
+        mapping = mapping["properties"]
+        getDataTypeFromMapping(index, mapping, getFieldsMapping())
+    }
+
+    Map getMapping() {
+        cacheService.get('elastic-search-mapping-with-dynamic-indices', {
+            String index = grailsApplication.config.geoServer.indexName
+            GetMappingsResponse response = elasticSearchService.client.admin().indices().getMappings(new GetMappingsRequest().indices(index)).get()
+            response.getMappings().get(index).get(elasticSearchService.DEFAULT_TYPE).getSourceAsMap()
+        }) as Map
+    }
+
+    Map getFieldsMapping() {
+        cacheService.get('elastic-search-fields-mapping', {
+            Map mapping = getMapping()
+            mapping = mapping["properties"]
+            getFieldsMapping(mapping)
+        }) as Map
+    }
+
+    String getDataTypeFromMapping (String index, Map mapping, Map fieldsMapping = null) {
+        List path = index?.split('\\.')?.toList()
+        Map currentMapping = mapping
+
+        path?.each { element ->
+            currentMapping = currentMapping?.get(element)
+            if (currentMapping?.properties) {
+                currentMapping = currentMapping.properties
+            }
+        }
+
+        // see if field mapping has definition
+        if(!currentMapping) {
+            currentMapping = fieldsMapping[path.last()]
+        }
+
+        currentMapping?.type
+    }
+
+    Map getFieldsMapping(Map mapping, Map fieldsMapping = null, List path = []) {
+        fieldsMapping = fieldsMapping ?: [:]
+        mapping?.each { field, definition ->
+            List fieldPath = path.clone()
+            fieldPath.add(field)
+            definition.fields?.each {
+                fieldsMapping[it.key] = it.value
+                fieldsMapping[it.key].path = "${fieldPath.join('.')}"
+            }
+
+            if(definition.properties) {
+                getFieldsMapping(definition.properties, fieldsMapping, fieldPath)
+            }
+        }
+
+        fieldsMapping
+    }
+
+    /**
+     * Maps ElasticSearch data type to Java Class. Class is used by
+     * @param type
+     * @return
+     */
+    String getClassForElasticSearchDataType (String type) {
+        String className
+        switch (type) {
+            case "string":
+                className = String.class.name
+                break;
+            case "integer":
+                className = Integer.class.name
+                break;
+            case "long":
+                className = Long.class.name
+                break;
+            case "float":
+                className = Float.class.name
+                break;
+            case "double":
+                className = Double.class.name
+                break;
+            case "boolean":
+                className = Boolean.class.name
+                break;
+            case "date":
+                className = Date.class.name
+                break;
+            case "geo_shape":
+                className = com.vividsolutions.jts.geom.Geometry.class.name
+                break
+            case "geo_point":
+                className = com.vividsolutions.jts.geom.Point.class.name
+                break
+        }
+
+        className
+    }
+
+    /**
+     * Generates a layer name for the provided list of indices. It will generate a unique name
+     * for provided indices regardless of their order in the list.
+     * @param indices
+     * @return
+     */
+    String getLayerName (List indices) {
+        indices?.sort()
+        String layerName = LAYER_PREFIX + indices?.join('')
+        AssetHelper.getByteDigest(layerName.bytes)
+    }
+
+    /**
+     * Remove layers already on default list.
+     * @param indices
+     * @return
+     */
+    List sanitizeIndices (List indices) {
+        List defaultIndices = grailsApplication.config.geoServer.layerConfiguration.attributes.collect {it.name}
+        indices?.findAll { !defaultIndices.contains(it) && (getDataTypeForIndex(it) != null) }
+    }
+
+    /**
+     * Check a layer exists on GeoServer.
+     * @param layerName
+     * @return
+     */
+    boolean checkIfLayerExists (String layerName) {
+        if (enabled) {
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${grailsApplication.config.geoServer.datastore}/featuretypes/${layerName}.json"
+            Map headers = getHeaders()
+            def response = webService.getJson(url, null ,headers)
+            return !response.error
+        }
+
+        return false
+    }
+
+    String getLayerForIndices(List indices, String name = null) {
+        indices = sanitizeIndices(indices)
+        name = name ?: getLayerName(indices)
+        boolean isCreated = checkIfLayerExists(name)
+        if (!isCreated) {
+            Map response = createLayer(name, indices)
+            if (response.error) {
+                log.warn("Could not create ${name} on GeoServer.")
+                return
+            }
+        }
+
+        name
+    }
+
+    String getLayerNameForType(String type, List indices) {
+        if (type && indices) {
+            String layerName
+            Map config
+
+            switch (type) {
+                case GENERAL_LAYER:
+                    config = grailsApplication.config.geoServer.layerNames[GENERAL_LAYER]
+                    layerName = getLayerForIndices(config.attributes, config.name)
+                    break
+                case INFO_LAYER:
+                    config = grailsApplication.config.geoServer.layerNames[INFO_LAYER]
+                    layerName = getLayerForIndices(config.attributes, config.name)
+                    break
+                case INDICES_LAYER:
+                    layerName = getLayerForIndices(indices)
+                    break
+            }
+
+            layerName
+        }
+    }
+
+    /**
+     * Create an XML representation of the layer. Output is used to create layer on GeoServer.
+     * @param layerConfig
+     * @return
+     */
+    String getLayerDefinition (Map layerConfig) {
+        def files = resourceResolver.getResources("classpath:data/templates/layer.template")
+        def engine = new groovy.text.XmlTemplateEngine()
+        engine.setIndentation('')
+        String content
+        files?.each { Resource file ->
+            content = engine.createTemplate(file.getFile()).make(layerConfig).toString()
+        }
+
+        content?.replaceAll('\n', '');
+    }
+
+    def deleteLayer() {
+        if (enabled) {
+            String datastore = grailsApplication.config.geoServer.datastore
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces/${grailsApplication.config.geoServer.workspace}/datastores/${datastore}?recurse=true&purge=true"
+            Map headers = getHeaders()
+            webService.doDelete(url, headers)
+        }
+    }
+
     def deleteStyle (String styleName) {
         String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/styles/${styleName}?purge=true"
         Map headers = getHeaders()
@@ -258,6 +538,7 @@ class GeoServerService {
                     "xmlns:xlink": "http://www.w3.org/1999/xlink",
                     "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance") {
                 NamedLayer() {
+                    // todo: is ecodata needed?
                     Name("ecodata:${field}")
                     UserStyle() {
                         Name("Style for ${field}")
@@ -350,6 +631,7 @@ class GeoServerService {
                     "xmlns:xlink": "http://www.w3.org/1999/xlink",
                     "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance") {
                 NamedLayer() {
+                    // todo: is ecodata needed?
                     Name("ecodata:${field}")
                     UserStyle() {
                         Name("Style for ${field}")
@@ -406,7 +688,7 @@ class GeoServerService {
         List whitelist = [
                 'SERVICE', 'VERSION', 'REQUEST', 'FORMAT', 'TRANSPARENT', 'STYLES', 'LAYERS', 'SRS', 'CRS', 'WIDTH', 'LAYER',
                 'HEIGHT', 'BBOX', 'QUERY_LAYERS', 'INFO_FORMAT', 'FEATURE_COUNT', 'X', 'Y', 'I', 'J', 'EXCEPTIONS', 'TIME',
-                'STYLE', 'LEGEND_OPTIONS', 'RULE', 'SLD_BODY', 'SLD', 'SCALE', 'FEATURETYPE'
+                'STYLE', 'LEGEND_OPTIONS', 'RULE', 'SLD_BODY', 'SLD', 'SCALE', 'FEATURETYPE', 'MAXFEATURES', 'PROPERTYNAME'
         ]
         Map legitimateParams = [:]
         params = params ?: [:]

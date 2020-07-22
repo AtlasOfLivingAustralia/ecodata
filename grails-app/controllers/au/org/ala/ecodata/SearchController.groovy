@@ -1,22 +1,17 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.reporting.OrganisationXlsExporter
-import au.org.ala.ecodata.reporting.ProjectExporter
-import au.org.ala.ecodata.reporting.ProjectXlsExporter
-import au.org.ala.ecodata.reporting.SummaryXlsExporter
-import au.org.ala.ecodata.reporting.WorksProjectXlsExporter
-import au.org.ala.ecodata.reporting.XlsExporter
+import au.org.ala.ecodata.Score
+import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import groovyx.net.http.ContentType
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-import static javax.servlet.http.HttpServletResponse.*
 
+import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import java.text.SimpleDateFormat
 
 class SearchController {
 
@@ -679,35 +674,5 @@ class SearchController {
      */
     def getMapping(){
         render(text: elasticSearchService.getMapping() as JSON, contentType: 'application/json')
-    }
-
-    def createWorkspace () {
-        def result = geoServerService.createWorkspace()
-        render(text: result?.resp?:"")
-    }
-
-    def deleteWorkspace() {
-        def result = geoServerService.deleteWorkspace()
-        render(text: result)
-    }
-
-    def createDatastore() {
-        def result = geoServerService.createDatastore()
-        render(text: result?.resp?:"")
-    }
-
-    def deleteDatastore() {
-        def result = geoServerService.deleteDatastore()
-        render(text: result)
-    }
-
-    def deleteStylesFromWorkspace() {
-        def result = geoServerService.deleteWorkspaceStyles() ?: [status: SC_BAD_REQUEST, message: "Could not delete styles."]
-        render(text: result as JSON, status: result.status )
-    }
-
-    def createStyles() {
-        def result = geoServerService.createPredefinedStyles() ?: [ status: SC_BAD_REQUEST, message: "Could not delete styles."]
-        render(text: result as JSON, status: result.status )
     }
 }
