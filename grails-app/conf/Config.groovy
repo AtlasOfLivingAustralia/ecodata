@@ -1186,8 +1186,53 @@ geoServer.workspace = "ecodata"
 geoServer.workspaceURI = "http://localhost:8080/ecodata"
 geoServer.username = "admin"
 geoServer.password = "geoserver"
-geoServer.datastore = "pasearch_test"
+geoServer.datastore = "pasearch"
 geoServer.indexName = "pasearch"
 geoServer.elasticHome = "localhost"
 geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
+geoServer.layerNames = [
+        "_general" : [ name: "general", attributes: ['sites.geoIndex', 'dateCreated']],
+        "_info"    : [ name: "layerinfo", attributes: ['sites.geoIndex', 'dateCreated', 'projectId']]
+]
+
+geoServer.layerConfiguration = [
+        "name": "layerName",
+        "nativeName": "layerNativeName",
+        "title": "BioCollect survey activity",
+        "keywords": ["activity", "survey", "biocollect"],
+        "timeEnabled": false,
+        "attributes": [
+                [
+                        "name": "lastUpdated",
+                        "shortName": "lastUpdated",
+                        "useShortName": true,
+                        "type": "java.util.Date",
+                        "use": true,
+                        "defaultGeometry": false,
+                        "dateFormat": "dateOptionalTime",
+                        "stored": false,
+                        "nested": false,
+                        "binding": "java.util.Date",
+                        "nillable": true,
+                        "minOccurs": 0,
+                        "maxOccurs": 1
+                ],
+                [
+                        "name": "sites.geoIndex",
+                        "shortName": "geoIndex",
+                        "useShortName": true,
+                        "type": "com.vividsolutions.jts.geom.Geometry",
+                        "use": true,
+                        "defaultGeometry": true,
+                        "geometryType": "GEO_SHAPE",
+                        "srid": "4326",
+                        "stored": false,
+                        "nested": false,
+                        "binding": "com.vividsolutions.jts.geom.Geometry",
+                        "nillable": true,
+                        "minOccurs": 0,
+                        "maxOccurs": 1
+                ]
+        ]
+]
