@@ -53,8 +53,8 @@ program.config.meriPlanContents = [
         "model": {
             "approachHeading": "Describe the project monitoring indicator(s) approach",
             "indicatorHeading": "Identify the project monitoring indicator(s)",
-            "indicatorHelpText": "",
-            "approachHelpText": "",
+            "indicatorHelpText": "List the measurable indicators of project success that will be monitored. Indicators should link back to the outcome statements and have units of measure. Indicators should measure both project outputs (e.g. area (ha) of rabbit control, length (km) of predator proof fencing) and change the project is aiming to achieve (e.g. Change in abundance of X threatened species at Y location, Change in vegetation cover (%), etc).",
+            "approachHelpText": "How will the indicator be monitored? Briefly describe the method to be used to monitor the indicator (including timing of monitoring, who will collect/collate / analyse data, etc)",
             "indicatorPlaceHolder": "[Free text]",
             "approachPlaceHolder": "[Free text]",
             "title": "Project Monitoring Indicators"
