@@ -874,6 +874,7 @@ class ElasticSearchService {
 
         boolean isWorksActivity = project?.isWorks
 
+        // The below condition checks for BioCollect activity from survey and works project. It ignores MERIT activity.
         if (activity.projectActivityId || isWorksActivity) {
             Date eventDate
             def organisation = organisationService.get(project?.organisationId)
