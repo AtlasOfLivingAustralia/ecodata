@@ -8,7 +8,6 @@ import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.index.IndexRequestBuilder
-import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.Client
 import spock.lang.Specification
 
@@ -18,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
  * Created by sat01a on 24/11/15.
  */
 @TestFor(ElasticSearchService)
-@Mock([Document, Project, Site, ProjectActivity])
+@Mock([Document, Project, Site, ProjectActivity, Activity])
 class ElasticSearchServiceSpec extends Specification {
     PermissionService permissionService = Stub(PermissionService)
     ProgramService programService = Stub(ProgramService)
@@ -354,4 +353,23 @@ class ElasticSearchServiceSpec extends Specification {
 
     }
 
+    void "works activities must be index even if output is not present"() {
+        setup:
+        Project worksProject = new Project(projectId:'p1', name:"project 1", isMERIT:false, isWorks: true)
+        worksProject.save(flush:true, failOnError: true)
+        Activity activity = new Activity(activityId: 'act1', projectId:'p1')
+        activity.save(flush:true, failOnError: true)
+
+        IndexRequestBuilder builder = Mock(IndexRequestBuilder)
+
+        when: "Activity without associated output linked to works project is indexed"
+        service.indexDocType("act1", Activity.class.name)
+
+        then: "Activity object is indexed"
+        1 * activityService.toMap(_, ActivityService.FLAT) >> [activityId:"act1", projectId:worksProject.projectId, status: 'active']
+        1 * projectService.toMap (_, ProjectService.FLAT) >> [projectId:'p1', name:"project 1", isMERIT:false, isWorks: true]
+        2 * client.prepareIndex(_,_,_) >> builder
+        2 * builder.setSource(_) >> builder
+        2 * builder.execute() >> Mock(ListenableActionFuture)
+    }
 }
