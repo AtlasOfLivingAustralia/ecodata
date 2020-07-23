@@ -7,7 +7,7 @@
   "dateCreated": "2020-06-30T22:21:48Z",
   "formVersion": 1,
   "gmsId": null,
-  "lastUpdated": "2020-07-21T04:49:33Z",
+  "lastUpdated": "2020-07-23T01:35:05Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
   "name": "State Intervention Progress Report",
@@ -9720,6 +9720,7 @@
                 },
                 "dataType": "number",
                 "name": "areaTestedHa",
+                "units": "Ha",
                 "validate": [
                   {
                     "rule": "min",
@@ -9744,12 +9745,14 @@
                 },
                 "dataType": "number",
                 "name": "lengthTestedKm",
+                "units": "Km",
                 "validate": [
                   {
                     "rule": "min",
                     "param": {
                       "type": "computed",
-                      "expression": "$geom.lengthKm(sitesTested)*0.9"
+                      "expression": "$geom.lengthKm(sitesTested)*0.9",
+                      "errorMessages": "Please Select"
                     }
                   },
                   {
@@ -9760,6 +9763,28 @@
                     }
                   }
                 ]
+              },
+              {
+                "defaultValue": {
+                  "type": "computed",
+                  "expression": "areaTestedHa"
+                },
+                "dataType": "number",
+                "name": "areaTestedChangeHa",
+                "validate": "min[0]",
+                "decimalPlaces": 3,
+                "units": "ha"
+              },
+              {
+                "defaultValue": {
+                  "type": "computed",
+                  "expression": "lengthTestedKm"
+                },
+                "dataType": "number",
+                "name": "lengthTestedChangeKm",
+                "validate": "min[0]",
+                "decimalPlaces": 3,
+                "units": "km"
               },
               {
                 "dataType": "text",
@@ -9825,22 +9850,73 @@
                     "type": "text"
                   },
                   {
-                    "width": "5%",
-                    "source": "sitesTested",
-                    "type": "feature",
+                    "width": "10%",
+                    "type": "col",
+                    "items": [
+                      {
+                        "type": "feature",
+                        "source": "sitesTested"
+                      },
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "type": "number",
+                            "source": "areaTestedHa",
+                            "displayOptions": {
+                              "displayUnits": true
+                            },
+                            "readonly": true
+                          }
+                        ]
+                      },
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "type": "number",
+                            "source": "lengthTestedKm",
+                            "displayOptions": {
+                              "displayUnits": true
+                            },
+                            "readonly": true
+                          }
+                        ]
+                      }
+                    ],
                     "title": "Project site/s where soil tests were conducted"
                   },
                   {
-                    "width": "10%",
-                    "source": "areaTestedHa",
-                    "type": "number",
-                    "title": "Area (ha) where soil tests were conducted"
-                  },
-                  {
-                    "width": "10%",
-                    "source": "lengthTestedKm",
-                    "type": "number",
-                    "title": "Length (km) where soil tests were conducted"
+                    "width": "15%",
+                    "title": "Actual Area (ha) / length (km) where soil tests were conducted",
+                    "helpText": "Manually enter correct figure if different to mapped value.",
+                    "type": "col",
+                    "items": [
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "source": "areaTestedChangeHa",
+                            "type": "number",
+                            "displayOptions": {
+                              "displayUnits": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "source": "lengthTestedChangeKm",
+                            "type": "number",
+                            "displayOptions": {
+                              "displayUnits": true
+                            }
+                          }
+                        ]
+                      }
+                    ]
                   },
                   {
                     "width": "18%",
