@@ -4,6 +4,7 @@ while (meritHub.hasNext()){
     var facets = meritHub.next();
     const adminFacets = facets.adminFacets.includes(fundingSource);
     const  availableFacets = facets.availableFacets.includes(fundingSource)
+    // if funding source already exist it will print as true
     print("Admin Facets: " + adminFacets)
     print("Available Facets: " + availableFacets)
 
