@@ -1,15 +1,27 @@
 var meritHub = db.hub.find({ urlPath:"merit"});
 var fundingSource = "fundingSource"
 while (meritHub.hasNext()){
-    var adminFacets = meritHub.next();
-    const funding = adminFacets.adminFacets.includes(fundingSource);
-    print("Funding: " + funding)
-    if (funding === false){
-        adminFacets.adminFacets.push("fundingSource");
-        print("Added Funding Source: "+adminFacets.adminFacets);
-        db.hub.save(adminFacets)
+    var facets = meritHub.next();
+    const adminFacets = facets.adminFacets.includes(fundingSource);
+    const  availableFacets = facets.availableFacets.includes(fundingSource)
+    print("Admin Facets: " + adminFacets)
+    print("Available Facets: " + availableFacets)
+
+    if (adminFacets === false){
+        facets.adminFacets.push("fundingSource");
+        print("Added Funding Source to admin Facets: "+facets.adminFacets);
+        db.hub.save(facets)
     }else{
-        print("Funding Source Already Exist:" + adminFacets.adminFacets);
+        print("Funding Source Already Exist in Admin Facets:" + facets.adminFacets);
     }
+
+    if (availableFacets === false){
+        facets.availableFacets.push("fundingSource");
+        print("Added Funding Source to Available Facets: "+facets.availableFacets);
+        db.hub.save(facets)
+    }else{
+        print("Funding source is Already Exist in Available Facets: " + facets.availableFacets )
+    }
+
 }
 
