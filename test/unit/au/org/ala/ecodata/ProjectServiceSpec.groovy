@@ -242,6 +242,6 @@ class ProjectServiceSpec extends Specification {
                         "threat" : "Workplace health & safety (eg. Project staff and / or delivery partner injury or death)",
                         "riskRating" : "Significant"
                 ]]
-        [overallRisk:'High', dateUpdated:'2020-07-01T01:00:00Z', rows: risks]
+        [overallRisk:'High', dateUpdated:'2020-07-01T14:00:00Z', rows: risks]
     }
 }
