@@ -29,8 +29,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding Source','Funding', 'Status', 'Last Modified']
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate','fundingSource', 'funding', 'status', 'lastUpdated']
 
     List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
 
@@ -85,8 +85,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> blogHeaders = commonProjectHeaders + ['Type', 'Date', 'Title', 'Content', "See more URL"]
     List<String> blogProperties = commonProjectProperties + ['type', 'date', 'title', 'content', 'viewMoreUrl']
 
-    List<String> eventHeaders = commonProjectHeaders + ['Funding', 'Name', 'Description', 'Scheduled Date', 'Media', 'Grant Announcement Date', 'Type']
-    List<String> eventProperties = commonProjectProperties + ['funding', 'name', 'description', 'scheduledDate', 'media', 'grantAnnouncementDate', 'Type']
+    List<String> eventHeaders = commonProjectHeaders + ['Funding Source','Funding', 'Name', 'Description', 'Scheduled Date', 'Media', 'Grant Announcement Date', 'Type']
+    List<String> eventProperties = commonProjectProperties + ['fundingSource','funding', 'name', 'description', 'scheduledDate', 'media', 'grantAnnouncementDate', 'Type']
     List<String> baselineHeaders = commonProjectHeaders + ['Baseline Method', 'Baseline']
     List<String> baselineProperties = commonProjectProperties + ['method', 'baseline']
 
