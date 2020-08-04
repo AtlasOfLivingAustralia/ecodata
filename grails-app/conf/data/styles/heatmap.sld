@@ -17,6 +17,12 @@
                             <ogc:Literal>data</ogc:Literal>
                         </ogc:Function>
                         <ogc:Function name="parameter">
+                            <ogc:Literal>weightAttr</ogc:Literal>
+                            <ogc:Function name="env">
+                                <ogc:Literal>weight</ogc:Literal>
+                            </ogc:Function>
+                        </ogc:Function>
+                        <ogc:Function name="parameter">
                             <ogc:Literal>radiusPixels</ogc:Literal>
                             <ogc:Function name="env">
                                 <ogc:Literal>radius</ogc:Literal>

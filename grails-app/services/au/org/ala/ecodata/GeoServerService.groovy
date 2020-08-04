@@ -23,7 +23,12 @@ class GeoServerService {
     CacheService cacheService
 
     boolean enabled = false
-    def LAYER_PREFIX = "act", GENERAL_LAYER = '_general', INFO_LAYER = '_info', INDICES_LAYER = '_indices'
+    def LAYER_PREFIX = "act",
+        GENERAL_LAYER = '_general',
+        INFO_LAYER = '_info',
+        INDICES_LAYER = '_indices',
+        INFO_LAYER_DEFAULT = 'default',
+        TIMESERIES_LAYER = '_time'
 
     @Autowired
     ResourcePatternResolver resourceResolver
@@ -235,10 +240,10 @@ class GeoServerService {
         }
     }
 
-    def createLayer(name, indices) {
+    def createLayer(name, indices, Boolean enableTimeDimension = false) {
         if (enabled) {
             String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${grailsApplication.config.geoServer.datastore}/featuretypes"
-            Map layerConfig = getLayerConfiguration(name, indices)
+            Map layerConfig = getLayerConfiguration(name, indices, enableTimeDimension)
             String content = getLayerDefinition(layerConfig)
             log.debug("Creating layer (${layerConfig.name}) on GeoServer with content: ${content}")
             Map response = webService.doPost(url, content, false, getHeaders())
@@ -252,7 +257,7 @@ class GeoServerService {
         }
     }
 
-    Map getLayerConfiguration (String name, List indices) {
+    Map getLayerConfiguration (String name, List indices, Boolean enableTimeDimension = false) {
         // deep copy configuration
         String configSerialized = (grailsApplication.config.geoServer.layerConfiguration as JSON).toString()
         Map config = JSON.parse(configSerialized)
@@ -269,6 +274,7 @@ class GeoServerService {
         config.attributes.addAll(attributes)
         config.name = name
         config.nativeName = name
+        config.timeEnabled = enableTimeDimension
         config
     }
 
@@ -415,9 +421,9 @@ class GeoServerService {
      * @param indices
      * @return
      */
-    String getLayerName (List indices) {
+    String getLayerName (List indices, String prefix = LAYER_PREFIX) {
         indices?.sort()
-        String layerName = LAYER_PREFIX + indices?.join('')
+        String layerName = prefix + indices?.join('')
         AssetHelper.getByteDigest(layerName.bytes)
     }
 
@@ -447,12 +453,12 @@ class GeoServerService {
         return false
     }
 
-    String getLayerForIndices(List indices, String name = null) {
+    String getLayerForIndices(List indices, String prefix = null, String name = null, Boolean enableTimeDimension = false) {
         indices = sanitizeIndices(indices)
-        name = name ?: getLayerName(indices)
+        name = name ?: getLayerName(indices, prefix)
         boolean isCreated = checkIfLayerExists(name)
         if (!isCreated) {
-            Map response = createLayer(name, indices)
+            Map response = createLayer(name, indices, enableTimeDimension)
             if (response.error) {
                 log.warn("Could not create ${name} on GeoServer.")
                 return
@@ -470,14 +476,30 @@ class GeoServerService {
             switch (type) {
                 case GENERAL_LAYER:
                     config = grailsApplication.config.geoServer.layerNames[GENERAL_LAYER]
-                    layerName = getLayerForIndices(config.attributes, config.name)
+                    layerName = getLayerForIndices(config.attributes, null, config.name)
                     break
                 case INFO_LAYER:
                     config = grailsApplication.config.geoServer.layerNames[INFO_LAYER]
-                    layerName = getLayerForIndices(config.attributes, config.name)
+                    if (indices?.contains(INFO_LAYER_DEFAULT)) {
+                        indices = []
+                    }
+
+                    indices.addAll(config.attributes)
+                    Set uniqueList = new HashSet<String>()
+                    uniqueList.addAll(indices)
+                    indices = uniqueList.toList()
+                    layerName = getLayerForIndices(indices)
                     break
                 case INDICES_LAYER:
-                    layerName = getLayerForIndices(indices)
+                    layerName = getLayerForIndices(indices, INDICES_LAYER)
+                    break
+                case TIMESERIES_LAYER:
+                    config = grailsApplication.config.geoServer.layerNames[TIMESERIES_LAYER]
+                    indices.addAll(config.attributes)
+                    Set uniqueList = new HashSet<String>()
+                    uniqueList.addAll(indices)
+                    indices = uniqueList.toList()
+                    layerName = getLayerForIndices(indices, TIMESERIES_LAYER, null, true)
                     break
             }
 
@@ -688,7 +710,8 @@ class GeoServerService {
         List whitelist = [
                 'SERVICE', 'VERSION', 'REQUEST', 'FORMAT', 'TRANSPARENT', 'STYLES', 'LAYERS', 'SRS', 'CRS', 'WIDTH', 'LAYER',
                 'HEIGHT', 'BBOX', 'QUERY_LAYERS', 'INFO_FORMAT', 'FEATURE_COUNT', 'X', 'Y', 'I', 'J', 'EXCEPTIONS', 'TIME',
-                'STYLE', 'LEGEND_OPTIONS', 'RULE', 'SLD_BODY', 'SLD', 'SCALE', 'FEATURETYPE', 'MAXFEATURES', 'PROPERTYNAME'
+                'STYLE', 'LEGEND_OPTIONS', 'RULE', 'SLD_BODY', 'SLD', 'SCALE', 'FEATURETYPE', 'MAXFEATURES', 'PROPERTYNAME',
+                'CQL_FILTER', 'TIME', 'ENV'
         ]
         Map legitimateParams = [:]
         params = params ?: [:]

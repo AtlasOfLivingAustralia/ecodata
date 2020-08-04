@@ -70,7 +70,7 @@
           }
         },
         "dateCreated": {
-          "type" : "string",
+          "type" : "date",
           "path" : "just_name",
           "fields" : {
             "dateCreatedSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
