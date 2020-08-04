@@ -1296,6 +1296,12 @@ class ElasticSearchService {
             }
         }
 
+        if(params.statFacets){
+            addStatFacets(params.statFacets).each {
+                source.facet(it)
+            }
+        }
+
         if (params.highlight) {
             source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
         }
@@ -1364,6 +1370,12 @@ class ElasticSearchService {
         }
         if (params.terms) {
             filters << FilterBuilders.termsFilter(params.terms.field, params.terms.values)
+        }
+
+        if (params.exists) {
+            params.exists.split (',').each {
+                filters << FilterBuilders.existsFilter(it)
+            }
         }
 
         QueryStringQueryBuilder qsQuery = queryStringQuery(query)
@@ -1512,6 +1524,24 @@ class ElasticSearchService {
             facets.split(",").each { facet ->
                 List parts = facet.split(':')
                 facetList.add(FacetBuilders.histogramFacet(parts[0]).field(parts[0]).interval(Long.parseLong(parts[1])))
+            }
+        }
+
+        return facetList
+    }
+
+    /**
+     * Create statistical facets. Coma separated field names are required.
+     * Example usage - 'individualCount,count'
+     * @param facets
+     * @return
+     */
+    List addStatFacets(String facets){
+        List facetList = []
+
+        if (facets) {
+            facets.split(",").each { facet ->
+                facetList.add(FacetBuilders.statisticalFacet(facet).field(facet))
             }
         }
 

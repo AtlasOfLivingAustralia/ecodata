@@ -1192,8 +1192,22 @@ geoServer.elasticHome = "localhost"
 geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
 geoServer.layerNames = [
-        "_general" : [ name: "general", attributes: ['sites.geoIndex', 'dateCreated']],
-        "_info"    : [ name: "layerinfo", attributes: ['sites.geoIndex', 'dateCreated', 'projectId']]
+        "_general" : [ name: "general", attributes: ['sites.geoIndex']],
+        "_info"    : [ name: "layerinfo",
+           attributes: [
+                'sites.geoIndex', 
+                'dateCreated', 
+                'projectId', 
+                'thumbnailUrl', 
+                'activityId',
+                'recordNameFacet',
+                'projectActivityNameFacet',
+                'projectNameFacet',
+                'surveyMonthFacet',
+                'surveyYearFacet'
+           ]
+        ],
+        "_time": [ name: "time", attributes: ['sites.geoIndex', 'dateCreated']]
 ]
 
 geoServer.layerConfiguration = [
@@ -1202,22 +1216,8 @@ geoServer.layerConfiguration = [
         "title": "BioCollect survey activity",
         "keywords": ["activity", "survey", "biocollect"],
         "timeEnabled": false,
+        "timeAttribute": "dateCreated",
         "attributes": [
-                [
-                        "name": "lastUpdated",
-                        "shortName": "lastUpdated",
-                        "useShortName": true,
-                        "type": "java.util.Date",
-                        "use": true,
-                        "defaultGeometry": false,
-                        "dateFormat": "dateOptionalTime",
-                        "stored": false,
-                        "nested": false,
-                        "binding": "java.util.Date",
-                        "nillable": true,
-                        "minOccurs": 0,
-                        "maxOccurs": 1
-                ],
                 [
                         "name": "sites.geoIndex",
                         "shortName": "geoIndex",
