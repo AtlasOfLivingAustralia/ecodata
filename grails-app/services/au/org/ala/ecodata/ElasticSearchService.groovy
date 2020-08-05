@@ -268,7 +268,7 @@ class ElasticSearchService {
 
         def mappingsDoc = (parsedJson as JSON).toString()
 
-        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX, ACTIVITY_INDEX]
+        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
         indexes.each {
             client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
         }
@@ -504,7 +504,6 @@ class ElasticSearchService {
                 doc = prepareActivityForIndexing(doc)
                 // Works project activities are created before a survey is filled in
                 indexDoc(doc, (doc?.projectActivityId || doc?.isWorks) ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
-                indexDoc(doc, ACTIVITY_INDEX)
                 // update linked project -- index for homepage
                 def pDoc = Project.findByProjectId(doc.projectId)
                 if (pDoc) {
@@ -730,7 +729,6 @@ class ElasticSearchService {
                 try {
                     activity = prepareActivityForIndexing(activity)
                     indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
-                    indexDoc(activity, ACTIVITY_INDEX)
                 }
                 catch (Exception e) {
                     log.error("Unable to index activity: " + activity?.activityId, e)
@@ -1761,7 +1759,7 @@ class ElasticSearchService {
      * @return
      */
     public deleteIndex(index) {
-        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX, ACTIVITY_INDEX]
+        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
 
         indexes.each {
             log.info "trying to delete $it"
