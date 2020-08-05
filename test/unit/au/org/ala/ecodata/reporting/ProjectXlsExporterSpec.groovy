@@ -46,13 +46,16 @@ class ProjectXlsExporterSpec extends Specification {
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId:'1234'])
+        projectXlsExporter.export([projectId:'1234', workOrderId:'work order 1', contractStartDate:'2019-06-30T14:00:00Z', contractEndDate:'2022-06-30T14:00:00Z'])
         xlsExporter.save()
 
         then:
-        List<Map> results = readSheet(sheet, projectXlsExporter.projectProperties)
+        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
         results.size() == 1
-        results[0]['projectId'] == '1234'
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
 
     }
 

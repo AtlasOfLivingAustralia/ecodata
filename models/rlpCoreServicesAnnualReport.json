@@ -1,0 +1,502 @@
+{
+  "class": "au.org.ala.ecodata.ActivityForm",
+  "id": "5eeac35ec2dcfa56e997b4f3",
+  "activationDate": null,
+  "category": "RLP Reports",
+  "createdUserId": "1493",
+  "dateCreated": "2020-06-18T01:29:02Z",
+  "formVersion": 2,
+  "gmsId": null,
+  "lastUpdated": "2020-06-18T01:29:02Z",
+  "lastUpdatedUserId": "1493",
+  "minOptionalSectionsCompleted": 1,
+  "name": "RLP Core Services annual report",
+  "publicationStatus": "unpublished",
+  "sections": [
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": false,
+      "modelName": null,
+      "name": "RLP - Core services annual report",
+      "optional": false,
+      "optionalQuestionText": null,
+      "template":{
+        "dataModel": [
+          {
+            "dataType": "text",
+            "name": "coreServicesProgress",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "coreServicesIssues",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "governanceFrameworksMaintained",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "managementActionsForGovernanceFrameworks",
+            "behaviour": [
+              {
+                "condition": "governanceFrameworksMaintained == \"No\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "governanceIssuesOccurred",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "managementActionsForGovernanceRisksAndIssues",
+            "behaviour": [
+              {
+                "condition": "governanceIssuesOccurred == \"Yes\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "adaptiveManagementImplemented",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "adaptiveManagementActions",
+            "behaviour": [
+              {
+                "condition": "adaptiveManagementImplemented == \"Yes\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "whsIncidentsOccurred",
+            "description": "Include only incidents that have not been reported in project annual reports",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "whsIncidents",
+            "behaviour": [
+              {
+                "condition": "whsIncidentsOccurred == \"Yes\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "plansSubmitted",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "planDetails",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "plansReviewed",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "plansReviewedDetails",
+            "behaviour": [
+              {
+                "condition": "plansReviewed == \"Yes\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "communityParticipation",
+            "description": "Quantitative figures can include number of participants, timeframes, dollar value etc)",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "communityParticipationFor20PercentRequirement",
+            "description": "",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "indigenousParticipationForClause40Point2",
+            "description": "Quantitative figures are to include number of procurements and value of each procurement, number employed full time equivalent",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "indigenousInvestment",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "indigenousParticipation",
+            "description": "Quantitative figures can include number of participants, timeframes, dollar value etc)",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "keyCommunicationActivities",
+            "description": "Include communications activities specifically related to Projects",
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "waterPlansSubmitted",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "waterPlansNotSubmittedReason",
+            "behaviour": [
+              {
+                "condition": "waterPlansSubmitted == \"No\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          },
+          {
+            "dataType": "text",
+            "name": "whsPlanChangesRequired",
+            "constraints": [
+              "Yes",
+              "No"
+            ],
+            "validate": "required"
+          },
+          {
+            "dataType": "text",
+            "name": "whsPlanChangesDescription",
+            "behaviour": [
+              {
+                "condition": "whsPlanChangesRequired == \"Yes\"",
+                "type": "enable"
+              }
+            ],
+            "validate": "required,maxSize[1250]"
+          }
+        ],
+        "name": "RLP - Core services annual report",
+        "title": "Core services annual reporting",
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "1. Please outline the key achievements in the delivery of Core Services in the past 12 months. (1250 character, [approx. 250 word] limit)",
+                "source": "coreServicesProgress",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "2. Please outline any key issues in the delivery of Core Services in the past 12 months and how they were managed/rectified. (1250 character, [approx. 250 word] limit)",
+                "source": "coreServicesIssues",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "3. In the past 12 months, have appropriate governance frameworks been maintained, as required in the Statement of Work?",
+                "css": "span6",
+                "source": "governanceFrameworksMaintained",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "3. a) Please describe what management actions have been taken. (1250 character [approx. 250 word] limit).",
+                "source": "managementActionsForGovernanceFrameworks",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "4. In the past 12 months, have any governance risks or issues occurred?",
+                "css": "span6",
+                "source": "governanceIssuesOccurred",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "4. a) Please describe what management actions have been taken. (1250 character [approx. 250 word] limit).",
+                "source": "managementActionsForGovernanceRisksAndIssues",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "5. In the past 12 months, have any adaptive management actions been implemented, or are planned to be implemented, to improve the delivery of Core Services?",
+                "css": "span6",
+                "source": "adaptiveManagementImplemented",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "5. a) Please describe these adaptive management actions and how they are/ will be implemented. (1250 character [approx. 250 word] limit).",
+                "source": "adaptiveManagementActions",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "6. In the past 12 months, have any notifiable Workplace Health and Safety incidents occurred?",
+                "css": "span6",
+                "source": "whsIncidentsOccurred",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "6. a) Please describe the Workplace Health and Safety incidents, were they reported and what was the outcome of any investigation. (1250 character [approx. 250 word] limit).",
+                "source": "whsIncidents",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "6. b) i) Are changes to the Workplace Health and Safety plan required?",
+                "css": "span6",
+                "source": "whsPlanChangesRequired",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "6. b) ii) Please outline changes required to the Workplace Health and Safety plan and why they are required. (1250 character [approx. 250 word] limit)",
+                "source": "whsPlanChangesDescription",
+                "type": "textarea",
+                "rows": 4
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "7. Have all plans been submitted as required under the executed Services Agreement?",
+                "css": "span6",
+                "source": "plansSubmitted",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "7. a) Please provide the name of the plans and the date submitted. If you haven't submitted a plan as required, please provide a reason and proposed timeline for submission. (1250 character [approx. 250 word] limit).",
+                "source": "planDetails",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "7. b) i) Where required plans have previously been submitted, have they recently been reviewed?",
+                "css": "span6",
+                "source": "plansReviewed",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "7. b) ii)  If yes, which plans have been reviewed? (1250 character [approx. 250 word] limit)",
+                "source": "plansReviewedDetails",
+                "type": "textarea",
+                "rows": 4
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "css": "span6",
+                "source": "<b>8. In the past 12 months, what has been the level of community participation and investment in the RLP?</b>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "8. a) Please describe how the community has participated in the delivery of any of the Core Services and projects over the past 12 months, including quantitative figures. (1250 character [approx. 250 word] limit).",
+                "source": "communityParticipation",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "8. b) Please provide the level of community investment that has occurred over the past 12 months that contributes to the requirement that at least 20% of the combined value of RLP Projects delivered by a Service Provider must directly support the delivery of small on-ground projects and related activities that are delivered by, or directly engage with, the local landcare community (the Requirement). Also include whether you are on track to meet the Requirement over the life of the agreed Services Agreement. (1250 character [approx. 250 word] limit).",
+                "source": "communityParticipationFor20PercentRequirement",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "9. a) Please describe the level of Indigenous employment and procurement investment that has occurred over the past 12 months that contributes to the requirement of clause 40.2 of the agreed Services Agreement. Also include whether you are on track to meet the requirement of clause 40.2 of the agreed Services Agreement over the life of the agreed Services Agreement. (1250 character [approx. 250 word] limit).",
+                "source": "indigenousParticipationForClause40Point2",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "9. b) In the past 12 months, what has been the level of investment in Indigenous employment and procurement associated with the delivery of both Core and Projects Services? (1250 character [approx. 250 word] limit)",
+                "source": "indigenousInvestment",
+                "type": "textarea",
+                "helpText": "Quantitative figures are to include number of procurements and value of each procurement, number employed full time equivalent"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "css": "span6",
+                "preLabel": "9. c) Please describe how Indigenous people have participated in the delivery of any of the Core Services and projects over the past 12 months, including quantitative figures. (1250 character [approx. 250 word] limit)",
+                "source": "indigenousParticipation",
+                "helpText": "Quantitative figures can include number of participants, timeframes, dollar value etc"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "10. In the past 12 months, what have been the key communications activities undertaken? (1250 character [approx. 250 word] limit).",
+                "source": "keyCommunicationActivities",
+                "type": "textarea"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "11. In the past 12 months, have you submitted all of the required reports in relation to the Regional Agriculture Landcare Facilitator position?",
+                "css": "span6",
+                "source": "waterPlansSubmitted",
+                "type": "selectOne"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "11. a) Please provide a reason why and describe what management actions have been implemented to rectify this. (1250 character [approx. 250 word] limit).",
+                "source": "waterPlansNotSubmittedReason",
+                "type": "textarea"
+              }
+            ]
+          }
+        ]
+      },
+      "templateName": "rlpCoreServicesAnnualReport",
+      "title": null
+    }
+  ],
+  "status": "active",
+  "supportsPhotoPoints": false,
+  "supportsSites": false,
+  "type": "Report"
+}
