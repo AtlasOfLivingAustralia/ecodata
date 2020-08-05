@@ -353,7 +353,7 @@ class ElasticSearchServiceSpec extends Specification {
 
     }
 
-    void "works activities must be index even if output is not present"() {
+    void "works activities must be indexed even if output is not present"() {
         setup:
         Project worksProject = new Project(projectId:'p1', name:"project 1", isMERIT:false, isWorks: true)
         worksProject.save(flush:true, failOnError: true)

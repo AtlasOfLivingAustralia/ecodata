@@ -12,6 +12,4 @@ interface ElasticIndex {
 
     //Used by Biocollect for survey/projectActivity based projects.
     String PROJECT_ACTIVITY_INDEX = "pasearch"
-
-    String ACTIVITY_INDEX = "activity"
 }
