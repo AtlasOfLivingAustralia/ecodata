@@ -27,6 +27,7 @@ class AdminController {
         collectoryService, organisationService, hubService, excelImportService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
+    GeoServerService geoServerService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
     /**
@@ -709,6 +710,15 @@ class AdminController {
     def updateCollectoryEntryForBiocollectProjects () {
         collectoryService.updateCollectoryEntryForBiocollectProjects()
         render text: [ message: 'Successfully submit synchronisation job.' ] as JSON
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def buildGeoServerDependencies() {
+        def result = geoServerService.buildGeoServerDependencies()
+        def message, code
+        message = result ? "Successfully created GeoServer dependencies" : "Failed to create GeoServer dependencies. Is GeoServer running?"
+        code = result ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR
+        render text: [message: message] as JSON, status: code
     }
 
 }

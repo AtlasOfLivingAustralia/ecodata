@@ -58,7 +58,7 @@ class GeoServerService {
 
     def deleteWorkspace() {
         if (enabled) {
-            String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces/${grailsApplication.config.geoServer.workspace}?purge=true"
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}?recurse=true&purge=true"
             Map headers = getHeaders()
             webService.doDelete(url, headers)
         }
@@ -100,6 +100,18 @@ class GeoServerService {
             String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces/${grailsApplication.config.geoServer.workspace}/datastores/${datastore}?recurse=true&purge=true"
             Map headers = getHeaders()
             webService.doDelete(url, headers)
+        }
+    }
+
+    boolean buildGeoServerDependencies () {
+        if (enabled) {
+            deleteLayers()
+            deleteDatastore()
+            deleteWorkspace()
+
+            createWorkspace()
+            createDatastore()
+            createPredefinedStyles()
         }
     }
 
@@ -210,13 +222,15 @@ class GeoServerService {
             Map result = [status: null, message: null]
             List failedDeletes = []
             Map styles = getStylesInWorkspace()
-            styles?.styles?.style?.each { Map style ->
-                String url = "${style.href}?purge=true"
-                Map headers = getHeaders()
-                headers.remove("Content-Type")
-                Integer status = webService.doDelete(url, headers)
-                if (status != 200) {
-                    failedDeletes.add(style.name)
+            if (styles?.styles) {
+                styles?.styles?.style?.each { Map style ->
+                    String url = "${style.href}?purge=true"
+                    Map headers = getHeaders()
+                    headers.remove("Content-Type")
+                    Integer status = webService.doDelete(url, headers)
+                    if (status != 200) {
+                        failedDeletes.add(style.name)
+                    }
                 }
             }
 
@@ -524,12 +538,17 @@ class GeoServerService {
         content?.replaceAll('\n', '');
     }
 
-    def deleteLayer() {
+    def deleteLayers() {
         if (enabled) {
             String datastore = grailsApplication.config.geoServer.datastore
-            String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces/${grailsApplication.config.geoServer.workspace}/datastores/${datastore}?recurse=true&purge=true"
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/featuretypes.json"
             Map headers = getHeaders()
-            webService.doDelete(url, headers)
+            Map layers = webService.getJson(url, null, headers)
+            if (layers?.featureTypes){
+                layers.featureTypes.featureType?.each { layer ->
+                    webService.doDelete(layer.href, headers)
+                }
+            }
         }
     }
 
