@@ -106,9 +106,7 @@ class ManagementUnitController {
      */
     def generateReportsInPeriod(){
         try{
-            Date sDate = Date.from(Instant.parse(params.startDate))
-            Date eDate = Date.from(Instant.parse(params.endDate))
-            Map message = managementUnitService.generateReportsInPeriods(sDate, eDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email)
+            Map message = managementUnitService.generateReportsInPeriods(params.startDate, params.endDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email)
             respond(message, status:200)
        }catch ( ParseException e){
             def message = [message: 'Error: You need to provide startDate and endDate in the format of ISO 8601']

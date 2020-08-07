@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.Report
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
@@ -13,11 +14,12 @@ class ManagementUnitXlsExporter extends TabbedExporter {
 
     // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
+    private static final String  REPORT_PREFIX = 'report_'
 
-    List<String> activityHeaders = ['Activity Type','Activity Description','Activity Progress', 'Activity Date Created','Activity Start Date','Activity End Date', 'Activity Last Updated' ]
-    List<String> activityProperties =  ['type','description','progress', 'dateCreated','startDate','endDate', 'lastUpdated']
-    List<String> commonActivityHeaders =  ["Managment Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description'] + activityHeaders
-    List<String> commonActivityProperties = ["managementUnitId",'managementUnitName', 'reportId', 'reportName', 'reportDesc'] +
+    List<String> activityHeaders = ['Activity Type','Activity Description','Activity Progress', 'Activity Last Updated' ]
+    List<String> activityProperties =  ['type','description','progress', 'lastUpdated']
+    List<String> commonActivityHeaders =  ["Management Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Current Report Status', 'Date of status change', 'Changed by'] + activityHeaders
+    List<String> commonActivityProperties = ["managementUnitId",'managementUnitName', REPORT_PREFIX+'reportId', REPORT_PREFIX+'name', REPORT_PREFIX+'description', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy'] +
             activityProperties.collect {
                     ACTIVITY_DATA_PREFIX+it
                 }
@@ -26,13 +28,25 @@ class ManagementUnitXlsExporter extends TabbedExporter {
         super(exporter, [], [:], TimeZone.default)
     }
 
-    void export(activities) {
-        if(activities.size()>0){
-            activities.each{
-                exportReport(it)
+    void export(List<Map> managementUnits) {
+        if(managementUnits.size() > 0) {
+            managementUnits.each { Map mu ->
+                mu.activities.each { Map activity ->
+                    Report report = mu.reports.find {it.activityId == activity.activityId}
+                    if (report){
+                        activity['managementUnitId'] = mu.managementUnitId
+                        activity['managementUnitName'] = mu.name
+
+                        Map reportData = report.properties.collectEntries{k,v -> [REPORT_PREFIX+k, v]}
+                        reportData.putAll(extractCurrentReportStatus(report).collectEntries{k,v -> [REPORT_PREFIX+k, v]})
+                        activity.putAll(reportData)
+                    }
+                    exportReport(activity)
+                }
+
             }
         }else{
-            //Create a standard empty sheet to avoid malforamt xslx
+            //Create a standard empty sheet to avoid malformed xslx
             createEmptySheet("Management Unit Reports")
         }
     }

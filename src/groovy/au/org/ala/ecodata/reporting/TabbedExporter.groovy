@@ -74,6 +74,27 @@ class TabbedExporter {
         sheets[name]
     }
 
+    /** Matches the status string supplied for a Report (which is determined via the status change history) */
+    protected String translatePublicationStatus(String status) {
+
+        String translated
+        switch (status) {
+            case Report.REPORT_APPROVED:
+                translated = 'Approved'
+                break
+            case Report.REPORT_NOT_APPROVED:
+                translated = 'Returned'
+                break
+            case Report.REPORT_SUBMITTED:
+                translated = 'Submitted'
+                break
+            default:
+                translated = 'Unpublished (no action – never been submitted)'
+                break
+
+        }
+        translated
+    }
 
     private boolean isExportableType(Map dataNode) {
         !(dataNode.dataType in ['photoPoints', 'matrix', 'masterDetail', 'list'])
@@ -240,41 +261,45 @@ class TabbedExporter {
 
     protected void exportReportSummary(AdditionalSheet sheet, Map entity, List<String> reportSummaryProperties) {
         int row = sheet.getSheet().lastRowNum
-        SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
+
         List data = []
         entity.reports?.each { report ->
 
             Map reportDetails = entity + [reportName:report.name, fromDate:report.fromDate, toDate:report.toDate, progress:report.progress]
             reportDetails.activityCount = reportingService.getActivityCountForReport(report)
-            if (report.statusChangeHistory) {
-                int numChanges = report.statusChangeHistory.size()
-                def change = report.statusChangeHistory[numChanges-1]
-                String noTimeStr = format.format(change.dateChanged)
-                Date noTime = format.parse(noTimeStr)
-                int delta = 0
-                if (numChanges > 1) {
-                    def previousChange = report.statusChangeHistory[numChanges-2]
-                    delta = Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged)
-
-                }
-                reportDetails.reportStatus = change.status
-                reportDetails.changedBy = change.changedBy
-                if (change.changedBy) {
-                    reportDetails.changedByName = userService.lookupUserDetails(change.changedBy).displayName
-                }
-                reportDetails.dateChanged = noTime
-                reportDetails.delta = delta
-
-                data << reportDetails
-            }
-            else if (report.toDate <= new Date()) {
-                reportDetails.reportStatus = 'Unpublished (no action – never been submitted)'
-                reportDetails.delta = 0
-
-                data << reportDetails
-            }
+            reportDetails.putAll(extractCurrentReportStatus(report))
+            data << reportDetails
         }
         sheet.add(data, reportSummaryProperties, row + 1)
+    }
+
+    protected Map extractCurrentReportStatus(Report report) {
+        Map reportDetails = [:]
+        SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
+        if (report.statusChangeHistory) {
+            int numChanges = report.statusChangeHistory.size()
+            def change = report.statusChangeHistory[numChanges-1]
+            String noTimeStr = format.format(change.dateChanged)
+            Date noTime = format.parse(noTimeStr)
+            int delta = 0
+            if (numChanges > 1) {
+                def previousChange = report.statusChangeHistory[numChanges-2]
+                delta = Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged)
+
+            }
+            reportDetails.reportStatus = change.status
+            reportDetails.changedBy = change.changedBy
+            if (change.changedBy) {
+                reportDetails.changedByName = userService.lookupUserDetails(change.changedBy).displayName
+            }
+            reportDetails.dateChanged = noTime
+            reportDetails.delta = delta
+        }
+        else if (report.toDate <= new Date()) {
+            reportDetails.reportStatus = 'Unpublished (no action – never been submitted)'
+            reportDetails.delta = 0
+        }
+        reportDetails
     }
 
     protected void exportList(String tab, Map project, List data, List headers, List properties) {

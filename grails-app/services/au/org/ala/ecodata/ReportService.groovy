@@ -364,35 +364,4 @@ class ReportService {
         List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
         Date[] period = activityService.getPeriod(activityIds)
     }
-
-    /**
-     * Get reports of management units
-     *
-     * @param mus a list of management unit
-     * @param startDate
-     * @param endDate
-     * @return Structure of report == project.activity
-     */
-
-    List getReportsOfManagementUnits(ManagementUnit[] mus, Date startDate, Date endDate){
-        List<Map> reportCollection = []
-        mus.each{ mu ->
-            List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(mu.managementUnitId,Status.DELETED)
-            List<Map> activities = activityService.getAll(reports.activityId,startDate,endDate,['all'])
-
-            activities.collect{
-                def report = reports.find {it.activityId == it.activityId}
-                if (report){
-                    it['managementUnitId'] = mu.managementUnitId
-                    it['managementUnitName'] = mu.name
-                    it['reportId'] = report['reportId']
-                    it['reportName'] = report['name']
-                    it['reportDesc'] = report['description']
-                }
-            }
-            reportCollection += activities
-        }
-        reportCollection
-    }
-
 }

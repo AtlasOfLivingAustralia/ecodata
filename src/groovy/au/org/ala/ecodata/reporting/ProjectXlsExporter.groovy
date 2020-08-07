@@ -189,28 +189,6 @@ class ProjectXlsExporter extends ProjectExporter {
         activityData
     }
 
-    /** Matches the status string supplied for a Report (which is determined via the status change history) */
-    private String translatePublicationStatus(String status) {
-
-        String translated
-        switch (status) {
-            case Report.REPORT_APPROVED:
-                translated = 'Approved'
-                break
-            case Report.REPORT_NOT_APPROVED:
-                translated = 'Returned'
-                break
-            case Report.REPORT_SUBMITTED:
-                translated = 'Submitted'
-                break
-            default:
-                translated = 'Unpublished (no action – never been submitted)'
-                break
-
-        }
-        translated
-    }
-
      void exportActivities(Map project) {
          // if tabs to export not given, export all activities
          if (!tabsToExport){

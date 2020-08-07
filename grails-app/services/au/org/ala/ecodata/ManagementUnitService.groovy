@@ -8,10 +8,12 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class ManagementUnitService {
     
-    def commonService
-    def siteService
-    def reportService
-    def downloadService
+    CommonService commonService
+    SiteService siteService
+    ReportService reportService
+    ReportingService reportingService
+    ActivityService activityService
+    DownloadService downloadService
 
     ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {
@@ -175,16 +177,14 @@ class ManagementUnitService {
      * @return count of reports and downloadId
      */
     Map generateReports(Date startDate, Date endDate){
-        List<Map> reports =  getReportingActivities(startDate,endDate)
-        int countOfReports = reports.count{it.progress="started"}
-        log.info("It contains " + countOfValid +" reports with data")
-
-        params.fileExtension = "xlsx"
+        List<Map> managementUnits = getReportingActivities(startDate,endDate)
+        int countOfReports = managementUnits.activities?.findAll{it.progress && it.progress != Activity.PLANNED}
+        Map params =  [fileExtension :"xlsx"]
 
         Closure doDownload = { File file ->
             XlsExporter exporter = new XlsExporter(file.absolutePath)
             ManagementUnitXlsExporter muXlsExporter = new ManagementUnitXlsExporter(exporter)
-            muXlsExporter.export(reports)
+            muXlsExporter.export(managementUnits)
             exporter.sizeColumns()
             exporter.save()
         }
@@ -202,9 +202,9 @@ class ManagementUnitService {
      * @param receiverEmail
      * @return
      */
-    Map generateReportsInPeriods(Date startDate, Date endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
+    Map generateReportsInPeriods(String startDate, String endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
         List<Map> reports =  getReportingActivities(startDate,endDate)
-        int countOfReports = reports.count{it.progress!=Activity.PLANNED}
+        int countOfReports = reports.sum{it.activities?.count{it.progress!=Activity.PLANNED}}
 
         Map params = [:]
         params.fileExtension = "xlsx"
@@ -238,10 +238,24 @@ class ManagementUnitService {
      * @param end
      * @return
      */
-    List<Map> getReportingActivities(Date startDate, Date endDate){
+    List<Map> getReportingActivities(String startDate, String endDate){
         ManagementUnit[] mus =  ManagementUnit.findAll().toArray()
-        List reports = reportService.getReportsOfManagementUnits(mus,startDate,endDate)
-        return reports
+
+        List<Map> managementUnitDetails = []
+        mus.each { mu ->
+
+            List<Report> reports = reportingService.search([managementUnitId:mu.managementUnitId, dateProperty:'toDate', startDate:startDate, endDate:endDate])
+
+            List<Map> activities = activityService.search([activityId:reports.activityId], ['all'])
+
+            Map result = new HashMap(mu.properties)
+            result.reports = reports
+            result.activities = activities
+
+            managementUnitDetails << result
+        }
+        managementUnitDetails
+
     }
 
     int[] getFinancialYearPeriods(){
