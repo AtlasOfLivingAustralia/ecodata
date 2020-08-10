@@ -29,8 +29,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding Source','Funding', 'Status', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate','fundingSource', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date','Funding', 'Status', 'Last Modified']
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
 
     List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
 
@@ -331,7 +331,27 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportProject(Map project) {
         if (shouldExport('Projects')) {
+            List<Map> projectFunding = project?.fundings?.collect {it}?.flatten()?.findAll()
+            Map st = [:]
+            projectFunding.each { items ->
+                if (items?.fundingSource) {
+                    if (items.fundingSource == "RLP"){
+                        projectHeaders = projectHeaders + ["Funding Source(RLP)", "Funding Source Amount(RLP)"]
+                        projectProperties = projectProperties + ["fundingSourceRLP", "fundingSourceAmountRLP"]
+                        st['fundingSourceRLP'] = items.fundingSource
+                        st['fundingSourceAmountRLP'] = items.fundingSourceAmount
+                    }
+                    if (items.fundingSource == "NON-RLP"){
+                        projectHeaders = projectHeaders + ["Funding Source(NON-RLP)", "Funding Source Amount(NON-RLP)"]
+                        projectProperties = projectProperties + ["fundingSourceNONRLP", "fundingSourceAmountNONRLP"]
+                        st['fundingSourceNONRLP'] = items.fundingSource
+                        st['fundingSourceAmountNONRLP'] = items.fundingSourceAmount
+                    }
+                }
+                project.putAll(st)
+            }
             projectSheet()
+
             int row = projectSheet.getSheet().lastRowNum
 
             List properties = new ArrayList(projectProperties)
@@ -341,8 +361,7 @@ class ProjectXlsExporter extends ProjectExporter {
             distinctElectorates.each{ electorate ->
                 project[electorate] = projectElectorates.contains(electorate)? 'Y' : 'N'
             }
-
-            projectSheet.add([project], properties, row + 1)
+            projectSheet.add(project, properties, row + 1)
         }
     }
 
