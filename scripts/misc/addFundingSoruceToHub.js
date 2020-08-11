@@ -1,6 +1,6 @@
 var meritHub = db.hub.find({ urlPath:"merit"});
 var fundingSource = "fundingSource"
-var fundings = "fundings.fundingSource"
+var fundings = "fundingSourceFacet"
 while (meritHub.hasNext()){
     var facets = meritHub.next();
     const adminFacets = facets.adminFacets.includes(fundingSource);
@@ -25,7 +25,7 @@ while (meritHub.hasNext()){
     }
 
     if (adminFacets2 === false){
-        facets.adminFacets.push("fundings.fundingSource");
+        facets.adminFacets.push("fundingSourceFacet");
         print("Added Funding Source to admin Facets: "+facets.adminFacets);
         db.hub.save(facets)
     }else{
@@ -33,7 +33,7 @@ while (meritHub.hasNext()){
     }
 
     if (availableFacets2 === false){
-        facets.availableFacets.push("fundings.fundingSource");
+        facets.availableFacets.push("fundingSourceFacet");
         print("Added Funding Source to Available Facets: "+facets.availableFacets);
         db.hub.save(facets)
     }else{
