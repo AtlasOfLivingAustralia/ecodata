@@ -51,13 +51,22 @@ class ProjectXlsExporterSpec extends Specification {
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId:'1234'])
+       projectXlsExporter.export([projectId:'1234', workOrderId:'work order 1', contractStartDate:'2019-06-30T14:00:00Z', contractEndDate:'2022-06-30T14:00:00Z',
+                                  fundings: [[fundingSource: 'RLP', fundingSourceAmount: 500],[fundingSource: 'NON-RLP', fundingSourceAmount: 300]], funding: 800 ])
         xlsExporter.save()
 
         then:
-        List<Map> results = readSheet(sheet, projectXlsExporter.projectProperties)
+        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
         results.size() == 1
-        results[0]['projectId'] == '1234'
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
+        results[0]['Funding Source(RLP)'] == 'RLP'
+        results[0]['Funding Source(NON-RLP)'] == 'NON-RLP'
+        results[0]['Funding Source Amount(RLP)'] == 500
+        results[0]['Funding Source Amount(NON-RLP)'] == 300
+        results[0]['Funding'] == 800
 
     }
 
@@ -476,7 +485,8 @@ class ProjectXlsExporterSpec extends Specification {
             "    \"description\" : \"TBA - this is a temporary description\",\n" +
             "    \"ecoScienceType\" : [],\n" +
             "    \"externalId\" : \"\",\n" +
-            "    \"funding\" : 0.0,\n" +
+            "    \"fundingSource\" : \"RLP\",\n" +
+            "    \"funding\" : 10000,\n" +
             "    \"grantId\" : \"RLP-Test-Program-Project-1\",\n" +
             "    \"industries\" : [],\n" +
             "    \"bushfireCategories\" : [],\n" +
@@ -1038,6 +1048,16 @@ class ProjectXlsExporterSpec extends Specification {
             "    \"tags\" : [],\n" +
             "    \"uNRegions\" : [],\n" +
             "    \"workOrderId\" : \"1234565\",\n" +
-            "    \"blog\" : []\n" +
+            "    \"blog\" : [],\n" +
+            "            \"fundings\" : [ \n" +
+            "                {\n" +
+            "                    \"fundingSource\" : \"RLP\",\n" +
+            "                    \"fundingSourceAmount\" : 500\n" +
+            "                }, \n" +
+            "                {\n" +
+            "                    \"fundingSource\" : \"NON-RLP\",\n" +
+            "                    \"fundingSourceAmount\" : 500\n" +
+            "                }\n" +
+            "            ]\n" +
             "}"
 }
