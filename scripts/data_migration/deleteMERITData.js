@@ -21,7 +21,7 @@ var softDelete = "soft",
     deleteType = hardDelete,
     sleepTime = 10000,
     sleepSeconds = sleepTime/1000,
-    justOne = true;
+    justOne = false;
 function getNumberOfDocumentsToDelete() {
     var projects = db.project.distinct('projectId', {isMERIT: true});
     var sites = db.site.distinct('siteId', {projects: {$in: projects}});

@@ -17,7 +17,7 @@
             <FeatureTypeStyle>
                 <Rule>
                     <Name>rule1</Name>
-                    <Title>Red circle</Title>
+                    <Title>All activities</Title>
                     <Abstract>A 6 pixel circle with a red fill and no stroke</Abstract>
                     <PointSymbolizer>
                         <Graphic>
@@ -27,7 +27,12 @@
                                     <CssParameter name="fill">#FF0000</CssParameter>
                                 </Fill>
                             </Mark>
-                            <Size>6</Size>
+                            <Size>
+                                <ogc:Function name="env">
+                                    <ogc:Literal>size</ogc:Literal>
+                                    <ogc:Literal>5</ogc:Literal>
+                                </ogc:Function>
+                            </Size>
                         </Graphic>
                     </PointSymbolizer>
                 </Rule>
