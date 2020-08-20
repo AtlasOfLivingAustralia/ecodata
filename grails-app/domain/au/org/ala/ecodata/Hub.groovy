@@ -74,7 +74,7 @@ class Hub {
         dataColumns nullable: true
         mapLayersConfig nullable: true
         mapDisplays nullable: true
-//        timeSeriesOnIndex nullable: true
+        timeSeriesOnIndex nullable: true
     }
 
     static embedded = ['mapLayersConfig']
