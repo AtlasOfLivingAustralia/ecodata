@@ -577,6 +577,8 @@ class ElasticSearchService {
             siteMap.photoType = 'photoPoint'
         }
 
+        siteMap.geoPoint = siteService.getSiteCentroidGeoJSON(siteMap);
+
         // Don't include orphan sites or MERIT sites.
         siteMap.projectList ? siteMap  : null
     }
@@ -992,6 +994,7 @@ class ElasticSearchService {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
                 site.remove('poi')
+                site.geoPoint = siteService.getSiteCentroidGeoJSON(site)
                 activity.sites = [site]
             }
         }

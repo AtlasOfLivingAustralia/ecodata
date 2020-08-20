@@ -1192,10 +1192,10 @@ geoServer.elasticHome = "localhost"
 geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
 geoServer.layerNames = [
-        "_general" : [ name: "general", attributes: ['sites.geoIndex']],
+        "_general" : [ name: "general", attributes: ['sites.geoPoint']],
         "_info"    : [ name: "layerinfo",
            attributes: [
-                'sites.geoIndex', 
+                'sites.geoPoint', 
                 'dateCreated', 
                 'projectId', 
                 'thumbnailUrl', 
@@ -1207,7 +1207,7 @@ geoServer.layerNames = [
                 'surveyYearFacet'
            ]
         ],
-        "_time": [ name: "time", attributes: ['sites.geoIndex']]
+        "_time": [ name: "time", attributes: ['sites.geoPoint']]
 ]
 
 geoServer.layerConfiguration = [
@@ -1219,8 +1219,8 @@ geoServer.layerConfiguration = [
         "timeAttribute": "dateCreated",
         "attributes": [
                 [
-                        "name": "sites.geoIndex",
-                        "shortName": "geoIndex",
+                        "name": "sites.geoPoint",
+                        "shortName": "geoPoint",
                         "useShortName": true,
                         "type": "com.vividsolutions.jts.geom.Geometry",
                         "use": true,
