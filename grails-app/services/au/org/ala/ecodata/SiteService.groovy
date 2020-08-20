@@ -882,4 +882,12 @@ class SiteService {
 
         resp
     }
+
+    def getSiteCentroidGeoJSON (Map site) {
+        if ( site?.extent?.geometry?.centre ) {
+            List coords = site.extent.geometry.centre
+            List centre = [coords[0] as Double, coords[1] as Double]
+            return [ type:'point', coordinates: centre ]
+        }
+    }
 }

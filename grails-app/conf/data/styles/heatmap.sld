@@ -63,9 +63,9 @@
                         <ColorMap type="ramp">
                             <ColorMapEntry color="#FFFFFF" quantity="0" label="nodata"
                                            opacity="0"/>
-                            <ColorMapEntry color="#4444FF" quantity=".1" label="nodata"/>
-                            <ColorMapEntry color="#FF0000" quantity=".5" label="values"/>
-                            <ColorMapEntry color="#FFFF00" quantity="1.0" label="values"/>
+                            <ColorMapEntry color="#4444FF" quantity="0.1" label="0.1"/>
+                            <ColorMapEntry color="#FF0000" quantity="0.5" label="0.5"/>
+                            <ColorMapEntry color="#FFFF00" quantity="1.0" label="1.0"/>
                         </ColorMap>
                     </RasterSymbolizer>
                 </Rule>
