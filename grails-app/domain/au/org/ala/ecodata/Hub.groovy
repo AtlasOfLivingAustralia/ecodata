@@ -45,6 +45,10 @@ class Hub {
     /** on record listing pages like all records, my records etc., configure table columns using this property */
     List dataColumns
     MapLayersConfiguration mapLayersConfig
+    /** configure how activity is displayed on map for example point, heatmap or cluster. */
+    List mapDisplays
+    /** time series animation can be done on an index other than dateCreated. */
+    String timeSeriesOnIndex
 
     String status = 'active'
 
@@ -69,6 +73,8 @@ class Hub {
         pages nullable: true
         dataColumns nullable: true
         mapLayersConfig nullable: true
+        mapDisplays nullable: true
+//        timeSeriesOnIndex nullable: true
     }
 
     static embedded = ['mapLayersConfig']
