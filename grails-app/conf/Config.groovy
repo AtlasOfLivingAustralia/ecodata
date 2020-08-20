@@ -1207,7 +1207,7 @@ geoServer.layerNames = [
                 'surveyYearFacet'
            ]
         ],
-        "_time": [ name: "time", attributes: ['sites.geoIndex', 'dateCreated']]
+        "_time": [ name: "time", attributes: ['sites.geoIndex']]
 ]
 
 geoServer.layerConfiguration = [
