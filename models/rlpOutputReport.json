@@ -7,7 +7,7 @@
   "dateCreated": "2020-06-26T02:29:04Z",
   "formVersion": 5,
   "gmsId": null,
-  "lastUpdated": "2020-08-23T22:20:53Z",
+  "lastUpdated": "2020-08-25T22:53:59Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 0,
   "name": "RLP Output Report",
@@ -512,7 +512,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n"
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -746,7 +746,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -1275,7 +1275,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -1969,7 +1969,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -2398,7 +2398,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -2872,7 +2872,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -3453,7 +3453,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -3929,7 +3929,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -4266,7 +4266,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -4690,7 +4690,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -4888,7 +4888,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n"
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -5053,7 +5053,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -5533,7 +5533,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -6068,7 +6068,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -6557,7 +6557,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -7083,7 +7083,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -7226,7 +7226,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -7768,7 +7768,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -8312,7 +8312,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -8852,7 +8852,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -9017,7 +9017,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -9146,7 +9146,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -9663,7 +9663,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -10158,7 +10158,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -10307,7 +10307,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -10841,7 +10841,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -11424,7 +11424,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n"
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -12052,7 +12052,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -12562,7 +12562,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -12780,7 +12780,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -13041,7 +13041,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -13351,7 +13351,7 @@
                         "type": "textarea",
                         "title": "Clarification, if needed",
                         "rows": 3,
-                        "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                        "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                       }
                     ],
                     "userAddedRows": true,
@@ -13867,7 +13867,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n"
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -14343,7 +14343,7 @@
                     "rows": 4,
                     "css": "span8",
                     "source": "comments",
-                    "placeholder": "Clarification comments may: \n 1: Identify any reported items that are not being invoiced (over-achievement) \n 2: Outline any extraneous circumstances that affected delivery of the service \n "
+                    "placeholder": "(maximum 1500 characters, approx. 250 words) \n Clarification comments include points for follow up with the project manager about this service like:\n • whether the Project Service was delivered from funds invoiced under the ‘Replacement Service’ \n • any reported items that are not being invoiced ( e.g., over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
