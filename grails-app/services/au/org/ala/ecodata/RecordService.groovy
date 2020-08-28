@@ -551,7 +551,7 @@ class RecordService {
         def httpClient = new DefaultHttpClient()
         def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/updateMetadata/${imageId}")
         httpPost.setHeader("X-ALA-userId", "${record.userId}");
-        httpPost.setHeader('apiKey', "dcefca58-950d-431c-9ff7-56aefef85c76");
+        httpPost.setHeader('apiKey', "${grailsApplication.config.api_key}");
         httpPost.setEntity(entity)
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
@@ -598,7 +598,7 @@ class RecordService {
         def httpClient = new DefaultHttpClient()
         def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/uploadImage")
         httpPost.setHeader("X-ALA-userId", "${record.userId}");
-        httpPost.setHeader('apiKey', "dcefca58-950d-431c-9ff7-56aefef85c76");
+        httpPost.setHeader('apiKey', "${grailsApplication.config.api_key}");
         httpPost.setEntity(entity)
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
