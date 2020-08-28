@@ -417,7 +417,7 @@ class RecordService {
                     }
                 }
             } catch (Exception ex) {
-                log.error("Error uploading image to images.ala.org.au -${ex.message}")
+                log.error("Error uploading image to ${grailsApplication.config.imagesService.baseURL} -${ex.message}")
             }
 
         } else if (imageMap) {
@@ -550,9 +550,9 @@ class RecordService {
 
         def httpClient = new DefaultHttpClient()
         def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/updateMetadata/${imageId}")
+        httpPost.setHeader("X-ALA-userId", "${record.userId}");
+        httpPost.setHeader('apiKey', "dcefca58-950d-431c-9ff7-56aefef85c76");
         httpPost.setEntity(entity)
-        httpPost.addHeader("X-ALA-userId", "${record.userId}");
-        httpPost.addHeader('Authorization', "${grailsApplication.config.api_key}");
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
     }
@@ -597,16 +597,14 @@ class RecordService {
 
         def httpClient = new DefaultHttpClient()
         def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/uploadImage")
+        httpPost.setHeader("X-ALA-userId", "${record.userId}");
+        httpPost.setHeader('apiKey', "dcefca58-950d-431c-9ff7-56aefef85c76");
         httpPost.setEntity(entity)
-        httpPost.addHeader("X-ALA-userId", "${record.userId}");
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
         def responseBody = response.getEntity().getContent().getText()
-
         log.debug("Image service response code: " + result.getStatusCode())
-
         def jsonSlurper = new JsonSlurper()
-
         def map = jsonSlurper.parseText(responseBody)
         log.debug("Image ID: " + map["imageId"])
         if (!map["imageId"]) {
