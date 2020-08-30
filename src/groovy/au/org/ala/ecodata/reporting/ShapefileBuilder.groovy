@@ -2,6 +2,7 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.GeometryUtils
 import au.org.ala.ecodata.ProjectService
+import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.SiteService
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.MultiPolygon
@@ -37,7 +38,7 @@ class ShapefileBuilder {
 
     /** Attributes of each project to write to the shape file */
     static
-    def DEFAULT_PROJECT_PROPERTIES = [[property: 'name', attribute: 'projectName'], [property: 'grantId', attribute: 'grantId'], [property: 'externalId', attribute: 'externalId']]
+    def DEFAULT_PROJECT_PROPERTIES = [[property: 'name', attribute: 'projectName'], [property: 'grantId', attribute: 'grantId'], [property: 'externalId', attribute: 'externalId'], [property: 'workOrderId', attribute: 'workOrderId']]
 
     static String GEOMETRY_ATTRIBUTE_NAME = "site"
 
@@ -67,7 +68,7 @@ class ShapefileBuilder {
      * invocations of the addProject method.
      * @param name the name for the shapefile
      */
-    public void setName(String name) {
+    void setName(String name) {
         if (writer) {
             throw new IllegalArgumentException("The schema name must be assigned before any projects are added")
         }
@@ -77,9 +78,9 @@ class ShapefileBuilder {
     /**
      * Writes each of the sites for the supplied projectId into the shapefile.
      */
-    public void addProject(String projectId) {
+    void addProject(String projectId) {
 
-        def project = projectService.get(projectId)
+        Map project = projectService.get(projectId)
 
         if (!project) {
             return
@@ -90,48 +91,64 @@ class ShapefileBuilder {
         }
     }
 
-    private void addGeometry(site, project) {
+    private void addGeometry(Map site, Map project) {
         if (!writer) {
             createShapefile()
         }
         try {
-            // Currently necessary as not all our sites store valid geojson as their geometry.
-            def siteGeom = siteService.geometryAsGeoJson(site)
-            if (siteGeom && !siteGeom.error) {
-
-                // All geometries in a shapefile need to be of the same type, so we convert everything to
-                // multi-polygons
-                Geometry geom = GeometryUtils.geoGsonToMultiPolygon((siteGeom as JSON).toString())
-
-                SimpleFeature siteFeature = writer.next()
-
-                def attributes = [geom]
-                attributes += getAttributes(site, DEFAULT_SITE_PROPERTIES)
-                attributes += getAttributes(project, DEFAULT_PROJECT_PROPERTIES)
-
-                siteFeature.setAttributes(attributes)
-
-                try {
-                    writer.write()
-                    featureCount++
+            if (Site.TYPE_COMPOUND == site.type) {
+                site.features.each { Map feature ->
+                    if (feature.geometry) {
+                        Map siteProps = new HashMap(site)
+                        siteProps.name = site.name + '-' + (feature.properties?.name ?: '')
+                        writeGeometry(siteProps, project, feature.geometry)
+                    }
+                    else {
+                        log.warn("Missing geometry for feature: ${site.siteId}")
+                    }
                 }
-                catch (Exception e) {
-                    writer.remove()
-                    featureCount--
-                    log.error("Unable to write feature for site: ${site.siteId}", e)
+            }
+            else {
+                // Currently necessary as not all our sites store valid geojson as their geometry.
+                def siteGeom = siteService.geometryAsGeoJson(site)
+                if (siteGeom && !siteGeom.error) {
+                    writeGeometry(site, project, siteGeom)
+                } else {
+                    log.warn("Unable to get geometry for site: ${site.siteId}")
                 }
-
-            } else {
-                log.warn("Unable to get geometry for site: ${site.siteId}")
             }
         }
         catch (Exception e) {
-            log.error("Error getting geomerty for site: ${site.siteId}", e)
+            log.error("Error getting geometry for site: ${site.siteId}", e)
         }
     }
 
-    public void addSite(String siteId) {
-        def site = siteService.get(siteId)
+    private void writeGeometry(Map site, Map project, Map siteGeom) {
+        // All geometries in a shapefile need to be of the same type, so we convert everything to
+        // multi-polygons
+        Geometry geom = GeometryUtils.geoGsonToMultiPolygon((siteGeom as JSON).toString())
+
+        SimpleFeature siteFeature = writer.next()
+
+        def attributes = [geom]
+        attributes += getAttributes(site, DEFAULT_SITE_PROPERTIES)
+        attributes += getAttributes(project, DEFAULT_PROJECT_PROPERTIES)
+
+        siteFeature.setAttributes(attributes)
+
+        try {
+            writer.write()
+            featureCount++
+        }
+        catch (Exception e) {
+            writer.remove()
+            featureCount--
+            log.error("Unable to write feature for site: ${site.siteId}", e)
+        }
+    }
+
+    void addSite(String siteId) {
+        Map site = siteService.get(siteId)
         if (!site) {
             return
         }
@@ -236,7 +253,4 @@ class ShapefileBuilder {
 
         }
     }
-
-
-
 }
