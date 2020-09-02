@@ -40,6 +40,7 @@ class ProjectService {
     EmailService emailService
     ReportingService reportingService
     OrganisationService organisationService
+    UserService userService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -909,5 +910,40 @@ class ProjectService {
         } else if (projectMap.isEcoScience) {
             return "ecoScience"
         }
+    }
+
+    /**
+     * Returns a list of times the project MERI plan has been approved.
+     * @param projectId the project to get the approval history for.
+     * @return a List of Maps with keys approvalDate, approvedBy.
+     */
+    List getMeriPlanApprovalHistory(String projectId){
+        Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
+        List<Map> histories = []
+        results?.documents.collect{
+            def data = documentService.readJsonDocument(it)
+
+            if (!data.error){
+                String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
+                def doc = [
+                        approvalDate:data.dateApproved,
+                        approvedBy:displayName,
+                        comment:data.reason,
+                        changeOrderNumber:data.referenceDocument
+                ]
+                histories.push(doc)
+            }
+        }
+        histories
+    }
+
+    /**
+     * Returns the date and user of the most recent approval of the project MERI plan
+     * @param projectId the project.
+     * @return Map with keys approvalDate and approvedBy.  Null if the plan has not been approved.
+     */
+    Map getMostRecentMeriPlanApproval(String projectId) {
+        List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
+        meriApprovalHistory.max{it.approvalDate}
     }
 }
