@@ -10,9 +10,11 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.grails.plugins.csv.CSVMapReader
+
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -25,7 +27,7 @@ class MetadataService {
 
     private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
-    def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService, commonService
+    def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -661,10 +663,10 @@ class MetadataService {
                 columnMap:columnMap
         ]
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
-
-        excelImportService.convertColumnMapConfigManyRows(workbook, config)
-
+        excelImportService.mapSheet(workbook, config)
     }
+
+
 
     /**
      * Converts a Score domain object to a Map.

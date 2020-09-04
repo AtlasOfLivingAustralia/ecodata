@@ -11,7 +11,6 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import org.grails.plugins.excelimport.ExcelImportService
 import spock.lang.Specification
 
 /**
@@ -242,7 +241,7 @@ class ProjectXlsExporterSpec extends Specification {
         ]
         outputFile.withInputStream {fileIn ->
             Workbook workbook = WorkbookFactory.create(fileIn)
-            excelImportService.convertColumnMapConfigManyRows(workbook, config)
+            excelImportService.mapSheet(workbook, config)
         }
 
     }

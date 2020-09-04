@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.metadata.FormQuickStarter
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
@@ -24,7 +23,7 @@ class AdminController {
     private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
 
     def outputService, activityService, siteService, projectService, authService,
-        collectoryService, organisationService, hubService, excelImportService,
+        collectoryService, organisationService, hubService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
@@ -686,23 +685,9 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
-    def getIndexNames() {
+    def getIndexNames() {F
         Map model = [indexNames: metadataService.getIndicesForDataModels()]
         render view: 'indexNames', model: model
-    }
-
-    @AlaSecured("ROLE_ADMIN")
-    def quickStartModel() {
-        MultipartFile file = null
-        if (request.respondsTo('getFile')) {
-            file = request.getFile('file')
-            FormQuickStarter formQuickStarter = new FormQuickStarter(excelImportService)
-            Map outputDescription = formQuickStarter.outputModelFromSpreadsheet(file.inputStream)
-
-            render outputDescription as JSON
-        }
-        Map errors = [error:"No file attached"]
-        render errors as JSON
     }
 
     @AlaSecured("ROLE_ADMIN")
