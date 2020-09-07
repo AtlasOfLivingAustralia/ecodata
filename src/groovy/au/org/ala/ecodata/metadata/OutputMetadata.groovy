@@ -214,7 +214,7 @@ class OutputMetadata {
     List<String> getMemberOnlyPropertyNames() {
         List memberOnlyNames = []
         modelIterator { String path, Map viewNode, Map dataNode ->
-            if (viewNode.memberOnlyView) {
+            if (viewNode?.memberOnlyView) {
                 memberOnlyNames << path
             }
         }
