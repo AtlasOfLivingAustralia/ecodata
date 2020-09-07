@@ -197,8 +197,9 @@
             "geoIndex": {
               "type": "geo_shape"
             },
-            "geoPoint": {
-              "type": "geo_shape"
+            "geometryType": {
+              "type":"string",
+              "index":"not_analyzed"
             },
             "name": {
               "type" : "string",

@@ -19,8 +19,9 @@ class GeoServerController {
         def terms = body?.terms ?: []
         def field = body?.field
         def type = body?.type
+        def style = body?.style
         if (field && terms) {
-            def name = geoServerService.createStyleForFacet(field, terms, type)
+            def name = geoServerService.createStyleForFacet(field, terms, style, type)
             render text: [name: name] as JSON , contentType: 'application/json'
         } else {
             render text: "JSON body must have terms and field properties", status: HttpStatus.BAD_REQUEST

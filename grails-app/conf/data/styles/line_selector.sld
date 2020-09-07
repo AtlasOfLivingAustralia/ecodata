@@ -7,19 +7,35 @@
                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <!-- a Named Layer is the basic building block of an SLD document -->
     <NamedLayer>
-        <Name>point_circle</Name>
+        <Name>line_selector</Name>
         <UserStyle>
             <!-- Styles can have names, titles and abstracts -->
-            <Title>Point circle</Title>
-            <Abstract>A sample style that draws a point</Abstract>
+            <Title>Sites with line</Title>
+            <Abstract>Sites with line</Abstract>
             <!-- FeatureTypeStyles describe how to render different features -->
             <!-- A FeatureTypeStyle for rendering points -->
             <FeatureTypeStyle>
-                <Name>Point</Name>
+                <Name>line</Name>
                 <Rule>
-                    <Name>point</Name>
-                    <Title>All activities</Title>
-                    <Abstract>A circle with a red fill and no stroke</Abstract>
+                    <Name>lineselector</Name>
+                    <Title>Activities with line sites</Title>
+                    <Abstract>Style used by GetFeatureInfo to select line sites.
+                        Elasticgeo plugin does not support function.
+                        GetFeatureInfo by default add geometryType function if
+                        LineSymobizer is added to style. Therefore, using PointSymbolizer here.
+                    </Abstract>
+                    <ogc:Filter>
+                        <ogc:Or>
+                            <ogc:PropertyIsEqualTo>
+                                <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                <ogc:Literal>LineString</ogc:Literal>
+                            </ogc:PropertyIsEqualTo>
+                            <ogc:PropertyIsEqualTo>
+                                <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                <ogc:Literal>MultiLineString</ogc:Literal>
+                            </ogc:PropertyIsEqualTo>
+                        </ogc:Or>
+                    </ogc:Filter>
                     <PointSymbolizer>
                         <Graphic>
                             <Mark>
@@ -31,7 +47,7 @@
                             <Size>
                                 <ogc:Function name="env">
                                     <ogc:Literal>size</ogc:Literal>
-                                    <ogc:Literal>5</ogc:Literal>
+                                    <ogc:Literal>30</ogc:Literal>
                                 </ogc:Function>
                             </Size>
                         </Graphic>

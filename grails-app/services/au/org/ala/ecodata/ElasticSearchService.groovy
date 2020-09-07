@@ -295,8 +295,8 @@ class ElasticSearchService {
             Map parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
             def facetMappings = buildFacetMapping()
             // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
-            parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
-            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
+            parsedJson.mappings.doc["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
+            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
             parsedJson
         })
     }
@@ -577,7 +577,7 @@ class ElasticSearchService {
             siteMap.photoType = 'photoPoint'
         }
 
-        siteMap.geoPoint = siteService.getSiteCentroidGeoJSON(siteMap);
+        siteMap.geometryType = siteMap?.geoIndex?.type
 
         // Don't include orphan sites or MERIT sites.
         siteMap.projectList ? siteMap  : null
@@ -682,47 +682,47 @@ class ElasticSearchService {
 
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
-        Project.withNewSession {
-            def batchParams = [offset: 0, max: 50, limit: 200]
-            def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
-
-            while (projects) {
-                projects.each { project ->
-                    try {
-                        Map projectMap = prepareProjectForHomePageIndex(project)
-                        indexDoc(projectMap, HOMEPAGE_INDEX)
-                    }
-                    catch (Exception e) {
-                        log.error("Unable to index project:  " + project?.projectId, e)
-                    }
-                }
-
-                batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
-            }
-        }
+//        Project.withNewSession {
+//            def batchParams = [offset: 0, max: 50, limit: 200]
+//            def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
+//
+//            while (projects) {
+//                projects.each { project ->
+//                    try {
+//                        Map projectMap = prepareProjectForHomePageIndex(project)
+//                        indexDoc(projectMap, HOMEPAGE_INDEX)
+//                    }
+//                    catch (Exception e) {
+//                        log.error("Unable to index project:  " + project?.projectId, e)
+//                    }
+//                }
+//
+//                batchParams.offset = batchParams.offset + batchParams.max
+//                projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
+//            }
+//        }
 
         log.info "Indexing all sites"
         int count = 0
-        Site.withNewSession { session ->
-            siteService.doWithAllSites { Map siteMap ->
-                siteMap["className"] = Site.class.name
-                try {
-                    siteMap = prepareSiteForIndexing(siteMap, false)
-                    if (siteMap) {
-                        indexDoc(siteMap, DEFAULT_INDEX)
-                    }
-                }
-                catch (Exception e) {
-                    log.error("Unable index site: "+siteMap?.siteId, e)
-                }
-                count++
-                if (count % 1000 == 0) {
-                    session.clear()
-                    log.debug("Indexed "+count+" sites")
-                }
-            }
-        }
+//        Site.withNewSession { session ->
+//            siteService.doWithAllSites { Map siteMap ->
+//                siteMap["className"] = Site.class.name
+//                try {
+//                    siteMap = prepareSiteForIndexing(siteMap, false)
+//                    if (siteMap) {
+//                        indexDoc(siteMap, DEFAULT_INDEX)
+//                    }
+//                }
+//                catch (Exception e) {
+//                    log.error("Unable index site: "+siteMap?.siteId, e)
+//                }
+//                count++
+//                if (count % 1000 == 0) {
+//                    session.clear()
+//                    log.debug("Indexed "+count+" sites")
+//                }
+//            }
+//        }
 
         log.info "Indexing all activities"
         count = 0;
@@ -744,16 +744,16 @@ class ElasticSearchService {
             }
         }
 
-        log.info "Indexing all organisations"
-        organisationService.doWithAllOrganisations { Map org ->
-            try {
-                prepareOrganisationForIndexing(org)
-                indexDoc(org, DEFAULT_INDEX)
-            }
-            catch (Exception e) {
-                log.error("Unable to index organisation: "+org?.organisationId, e)
-            }
-        }
+//        log.info "Indexing all organisations"
+//        organisationService.doWithAllOrganisations { Map org ->
+//            try {
+//                prepareOrganisationForIndexing(org)
+//                indexDoc(org, DEFAULT_INDEX)
+//            }
+//            catch (Exception e) {
+//                log.error("Unable to index organisation: "+org?.organisationId, e)
+//            }
+//        }
 
         log.info "Indexing complete"
     }
@@ -994,7 +994,7 @@ class ElasticSearchService {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
                 site.remove('poi')
-                site.geoPoint = siteService.getSiteCentroidGeoJSON(site)
+                site.geometryType = site?.geoIndex?.type
                 activity.sites = [site]
             }
         }

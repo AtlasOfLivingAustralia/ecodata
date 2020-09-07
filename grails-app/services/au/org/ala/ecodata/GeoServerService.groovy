@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import asset.pipeline.AssetHelper
 import grails.converters.JSON
-import groovy.xml.StreamingMarkupBuilder
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.common.xcontent.XContentHelper
@@ -13,7 +12,7 @@ import org.springframework.core.io.support.ResourcePatternResolver
 import javax.annotation.PostConstruct
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
-import static javax.servlet.http.HttpServletResponse.SC_OK 
+import static javax.servlet.http.HttpServletResponse.SC_OK
 
 class GeoServerService {
     def grailsApplication
@@ -143,15 +142,15 @@ class GeoServerService {
         }
     }
 
-    def createStyleForFacet(String field, List terms, String type = 'terms') {
+    def createStyleForFacet(String field, List terms, String style, String type = 'terms') {
         if (enabled) {
             String sld
             switch (type) {
                 case 'terms':
-                    sld = buildStyleForTermFacet(field, terms)
+                    sld = buildStyleForTermFacet(field, terms, style)
                     break;
                 case 'range':
-                    sld = buildStyleForRangeFacet(field, terms)
+                    sld = buildStyleForRangeFacet(field, terms, style)
                     break;
             }
 
@@ -508,6 +507,8 @@ class GeoServerService {
                     layerName = getLayerForIndices(indices)
                     break
                 case INDICES_LAYER:
+                    config = grailsApplication.config.geoServer.layerNames[INDICES_LAYER]
+                    indices.addAll(config.attributes)
                     layerName = getLayerForIndices(indices, INDICES_LAYER)
                     break
                 case TIMESERIES_LAYER:
@@ -564,170 +565,64 @@ class GeoServerService {
         webService.doDelete(url, headers)
     }
 
-    def buildStyleForTermFacet(String field, List terms) {
-
-        // http://docs.groovy-lang.org/docs/groovy-2.4.10/html/documentation/#_creating_xml
-        List colour = [
-                '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
-                '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000',
-                '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
-        ]
-
-        def builder = new StreamingMarkupBuilder()
-        builder.encoding = 'UTF-8'
-        def style = builder.bind {
-            mkp.xmlDeclaration()
-            StyledLayerDescriptor("version": "1.0.0",
-                    "xsi:schemaLocation": "http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd",
-                    "xmlns": "http://www.opengis.net/sld",
-                    "xmlns:ogc": "http://www.opengis.net/ogc",
-                    "xmlns:xlink": "http://www.w3.org/1999/xlink",
-                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance") {
-                NamedLayer() {
-                    // todo: is ecodata needed?
-                    Name("ecodata:${field}")
-                    UserStyle() {
-                        Name("Style for ${field}")
-                        Title("Style for ${field}")
-                        def lastIndex
-                        FeatureTypeStyle() {
-                            terms.eachWithIndex { Map entry, index ->
-                                if ( index < (colour.size() - 1)) {
-                                    Rule() {
-                                        Title(entry.displayName)
-                                        'ogc:Filter'() {
-                                            'ogc:PropertyIsEqualTo'() {
-                                                'ogc:PropertyName'(field)
-                                                'ogc:Literal'(entry.term)
-                                            }
-                                        }
-                                        PointSymbolizer() {
-                                            Graphic() {
-                                                Mark() {
-                                                    WellKnownName("circle")
-                                                    Fill() {
-                                                        CssParameter(name: "fill", colour[index])
-                                                    }
-                                                }
-                                                Size(6)
-                                            }
-                                        }
-                                    }
-
-                                    lastIndex = index
-                                }
-                            }
-
-                            Rule() {
-                                Title("Others")
-                                'ogc:Filter'() {
-                                    'ogc:And'() {
-                                        terms.eachWithIndex {  Map entry, index ->
-                                            if ( index < (colour.size() - 1)) {
-                                                'ogc:PropertyIsNotEqualTo'() {
-                                                    'ogc:PropertyName'(field)
-                                                    'ogc:Literal'(entry.term)
-                                                }
-                                            }
-                                        }
-                                        'ogc:Not'() {
-                                            'ogc:PropertyIsNull'() {
-                                                'ogc:PropertyName'(field)
-                                            }
-                                        }
-                                    }
-                                }
-                                PointSymbolizer() {
-                                    Graphic() {
-                                        Mark() {
-                                            WellKnownName("circle")
-                                            Fill() {
-                                                CssParameter(name: "fill", colour[lastIndex + 1])
-                                            }
-                                        }
-                                        Size(6)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    String bindDataToXMLTemplate (String fileClassPath, Map data) {
+        def files = resourceResolver.getResources(fileClassPath)
+        def engine = new groovy.text.XmlTemplateEngine()
+        engine.setIndentation('')
+        String content
+        files?.each { Resource file ->
+            content = engine.createTemplate(file.getFile()).make(data).toString()
         }
 
-        return style
+        content?.replaceAll('\n', '');
     }
 
-    def buildStyleForRangeFacet(String field, List terms) {
-
-        // http://docs.groovy-lang.org/docs/groovy-2.4.10/html/documentation/#_creating_xml
-        List colour = [
-                '#11336E', '#1D3D72', '#294777', '#35517C', '#415B81', '#4D6585', '#596F8A', '#65798F', '#718394',
-                '#7D8D99', '#8A979D', '#96A1A2', '#A2ABA7', '#AEB5AC', '#BABFB1', '#C6C9B5', '#D2D3BA', '#DEDDBF',
-                '#EAE7C4', '#F7F2C9'
-        ]
-        def builder = new StreamingMarkupBuilder()
-        builder.encoding = 'UTF-8'
-        def style = builder.bind {
-            mkp.xmlDeclaration()
-            StyledLayerDescriptor("version": "1.0.0",
-                    "xsi:schemaLocation": "http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd",
-                    "xmlns": "http://www.opengis.net/sld",
-                    "xmlns:ogc": "http://www.opengis.net/ogc",
-                    "xmlns:xlink": "http://www.w3.org/1999/xlink",
-                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance") {
-                NamedLayer() {
-                    // todo: is ecodata needed?
-                    Name("ecodata:${field}")
-                    UserStyle() {
-                        Name("Style for ${field}")
-                        Title("Style for ${field}")
-                        def lastIndex
-                        FeatureTypeStyle() {
-                            terms.eachWithIndex { Map entry, index ->
-                                if ( index < (colour.size() - 1)) {
-                                    Rule() {
-                                        Title(entry.displayName)
-                                        'ogc:Filter'() {
-                                            'ogc:And'() {
-                                                if (entry.from != null) {
-                                                    'ogc:PropertyIsGreaterThanOrEqualTo'() {
-                                                        'ogc:PropertyName'(field)
-                                                        'ogc:Literal'(entry.from)
-                                                    }
-                                                }
-
-                                                if (entry.to != null) {
-                                                    'ogc:PropertyIsLessThan'() {
-                                                        'ogc:PropertyName'(field)
-                                                        'ogc:Literal'(entry.to)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        PointSymbolizer() {
-                                            Graphic() {
-                                                Mark() {
-                                                    WellKnownName("circle")
-                                                    Fill() {
-                                                        CssParameter(name: "fill", colour[index])
-                                                    }
-                                                }
-                                                Size(6)
-                                            }
-                                        }
-                                    }
-
-                                    lastIndex = index
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    def buildStyleForTermFacet(String field, List terms, String style) {
+        int cIndex = 0
+        List colour = grailsApplication.config.geoserver.facetTermColour
+        terms?.eachWithIndex { Map term, index ->
+            // reuse last colour in array if number of terms exceed number of colours
+            cIndex = index > (colour.size() - 1 ) ? (colour.size() - 1 ) : index
+            // add colour value only if not provided
+            term.colour = term.colour ?: colour[cIndex]
         }
 
-        return style
+        cIndex++
+        if (cIndex >= colour.size()) {
+            cIndex = colour.size() - 1
+        }
+
+        Map dataBinding = [
+                namespace: grailsApplication.config.geoServer.workspace,
+                field: field,
+                terms: terms,
+                style: style,
+                otherColour: colour[cIndex]
+        ]
+
+        bindDataToXMLTemplate("classpath:data/templates/colour_by_term.template", dataBinding)
+    }
+
+    def buildStyleForRangeFacet(String field, List terms, String style) {
+        int cIndex = 0
+        List colour = grailsApplication.config.geoserver.facetRangeColour
+
+        terms?.eachWithIndex { Map term, index ->
+            // reuse last colour in array if number of terms exceed number of colours
+            cIndex = index > (colour.size() - 1 ) ? (colour.size() - 1 ) : index
+            // add colour value only if not provided
+            term.colour = term.colour ?: colour[cIndex]
+            term.displayName = term.displayName?.replaceAll('<', '&lt;')?.replaceAll('>', '&gt;')
+        }
+
+        Map dataBinding = [
+                namespace: grailsApplication.config.geoServer.workspace,
+                field: field,
+                terms: terms,
+                style: style
+        ]
+
+        bindDataToXMLTemplate("classpath:data/templates/colour_by_range.template", dataBinding)
     }
 
     def whiteListWMSParams(params) {
