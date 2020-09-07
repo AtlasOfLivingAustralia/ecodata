@@ -1192,10 +1192,10 @@ geoServer.elasticHome = "localhost"
 geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
 geoServer.layerNames = [
-        "_general" : [ name: "general", attributes: ['sites.geoPoint']],
+        "_general" : [ name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],
         "_info"    : [ name: "layerinfo",
            attributes: [
-                'sites.geoPoint', 
+                'sites.geoIndex',
                 'dateCreated', 
                 'projectId', 
                 'thumbnailUrl', 
@@ -1204,10 +1204,12 @@ geoServer.layerNames = [
                 'projectActivityNameFacet',
                 'projectNameFacet',
                 'surveyMonthFacet',
-                'surveyYearFacet'
+                'surveyYearFacet',
+                'sites.geometryType'
            ]
         ],
-        "_time": [ name: "time", attributes: ['sites.geoPoint']]
+        "_time": [ name: "time", attributes: ['sites.geoIndex', 'sites.geometryType']],
+        "_indices": [ name: "colour_by", attributes: ['sites.geometryType']]
 ]
 
 geoServer.layerConfiguration = [
@@ -1219,8 +1221,8 @@ geoServer.layerConfiguration = [
         "timeAttribute": "dateCreated",
         "attributes": [
                 [
-                        "name": "sites.geoPoint",
-                        "shortName": "geoPoint",
+                        "name": "sites.geoIndex",
+                        "shortName": "geoIndex",
                         "useShortName": true,
                         "type": "com.vividsolutions.jts.geom.Geometry",
                         "use": true,
@@ -1236,3 +1238,19 @@ geoServer.layerConfiguration = [
                 ]
         ]
 ]
+
+if (!geoserver.facetTermColour) {
+    geoserver.facetTermColour = [
+            '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
+            '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000',
+            '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
+    ]
+}
+
+if (!geoserver.facetRangeColour) {
+    geoserver.facetRangeColour = [
+            '#11336E', '#1D3D72', '#294777', '#35517C', '#415B81', '#4D6585', '#596F8A', '#65798F', '#718394',
+            '#7D8D99', '#8A979D', '#96A1A2', '#A2ABA7', '#AEB5AC', '#BABFB1', '#C6C9B5', '#D2D3BA', '#DEDDBF',
+            '#EAE7C4', '#F7F2C9'
+    ]
+}

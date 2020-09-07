@@ -98,6 +98,7 @@
                 </attributes>
             </elasticLayerConfiguration>
         </entry>
+        <entry key="cachingEnabled">true</entry>
     </metadata>
     <maxFeatures>0</maxFeatures>
     <numDecimals>0</numDecimals>
