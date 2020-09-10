@@ -166,4 +166,40 @@ class PermissionServiceSpec extends Specification {
         '2'    | 'p2'       | true
         '3'    | 'p1'       | false
     }
+
+    void "delete user Permission when userID is Provided "(){
+
+        setup:
+        String userId = "1"
+        new UserPermission(entityId:'p1', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p3', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+
+
+        when:
+        def results = service.deleteUserPermissionByUserId(userId)
+
+        then:
+        UserPermission.findAllByUserId(userId).size() == 0
+        results.status == 200
+        !results.error
+    }
+
+    void "unable to find user when wrong userID  Provided or no user exist in userPermission database table "(){
+
+        setup:
+        String userId = "1"
+        new UserPermission(entityId:'p1', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p3', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+
+
+        when:
+        def results = service.deleteUserPermissionByUserId(userId)
+
+        then:
+        UserPermission.findAllByUserId("2").size() == 3
+        results.status == 400
+        results.error == "No User Permissions found"
+    }
 }

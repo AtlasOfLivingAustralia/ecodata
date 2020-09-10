@@ -1114,26 +1114,7 @@ class PermissionsController {
 
     def deleteUserPermission(){
         String userId = params.id
-
-        List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
-        Map details
-        if (permissions.size() > 0) {
-            permissions.each {
-                try {
-                    it.delete(flush: true)
-                    log.warn("The Permission is removed for this user: " + userId)
-                } catch (Exception e) {
-                    String msg = "Failed to delete UserPermission: ${e.message}"
-                    log.error msg, e
-                    details = [status: 500, error: msg]
-                    render details as JSON
-                }
-            }
-            details = [status: 200, error: false]
-            render details as JSON
-        } else {
-            details = [status: 400, error: "No UserPermissions found"]
-            render details as JSON
-        }
+        Map results = permissionService.deleteUserPermissionByUserId(userId)
+        render results as JSON
     }
 }

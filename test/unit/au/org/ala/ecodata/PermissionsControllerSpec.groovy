@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import com.mongodb.MongoExecutionTimeoutException
+import grails.converters.JSON
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
@@ -12,7 +13,7 @@ import spock.lang.Specification
  */
 @TestMixin(GrailsUnitTestMixin)
 @TestFor(PermissionsController)
-@Mock([Program, Hub])
+@Mock([Program, Hub, UserPermission])
 class PermissionsControllerSpec extends Specification {
     PermissionService permissionService = Mock(PermissionService)
 
@@ -375,6 +376,43 @@ class PermissionsControllerSpec extends Specification {
         "test"                                | HttpStatus.SC_BAD_REQUEST
 
 
+    }
+
+    void "delete user Permission when userID is Provided"(){
+        setup:
+        String userId = "1"
+        Map details = [status: 200, error: false]
+
+        when:
+        params.id = userId
+        request.method = "GET"
+        controller.deleteUserPermission()
+        def result = response
+
+
+        then:
+        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+
+        then:
+
+        result.getText() == '{"status":200,"error":false}'
+    }
+
+    void "UserId does not exist in merit database"(){
+        setup:
+        String userId = "1"
+        Map details = [status: 400, error: "No User Permissions found"]
+
+        when:
+        params.id = userId
+        controller.deleteUserPermission()
+        def result = response
+
+        then:
+        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+
+        then:
+        result.getText() == '{"status":400,"error":"No User Permissions found"}'
     }
 
 }

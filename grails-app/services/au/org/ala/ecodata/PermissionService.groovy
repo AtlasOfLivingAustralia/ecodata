@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
+import grails.converters.JSON
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -501,5 +502,26 @@ class PermissionService {
         }
 
         result
+    }
+
+    Map deleteUserPermissionByUserId(String userId){
+        List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
+        if (permissions.size() > 0) {
+            permissions.each {
+                try {
+                    it.delete(flush: true, failOnError: true)
+                    log.warn("The Permission is removed for this user: " + userId)
+                } catch (Exception e) {
+                    String msg = "Failed to delete UserPermission: ${e.message}"
+                    log.error msg, e
+                   return [status: 500, error: msg]
+                }
+            }
+            return [status: 200, error: false]
+
+        } else {
+            return [status: 400, error: "No User Permissions found"]
+        }
+
     }
 }
