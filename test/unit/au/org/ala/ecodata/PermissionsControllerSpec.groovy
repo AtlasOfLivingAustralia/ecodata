@@ -387,7 +387,7 @@ class PermissionsControllerSpec extends Specification {
         params.id = userId
         request.method = "GET"
         controller.deleteUserPermission()
-        def result = response
+        def result = response.getJson()
 
 
         then:
@@ -395,7 +395,8 @@ class PermissionsControllerSpec extends Specification {
 
         then:
 
-        result.getText() == '{"status":200,"error":false}'
+        result.status == 200
+        result.error == false
     }
 
     void "UserId does not exist in merit database"(){
@@ -406,13 +407,14 @@ class PermissionsControllerSpec extends Specification {
         when:
         params.id = userId
         controller.deleteUserPermission()
-        def result = response
+        def result = response.getJson()
 
         then:
         1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
 
         then:
-        result.getText() == '{"status":400,"error":"No User Permissions found"}'
+        result.status == 400
+        result.error == "No User Permissions found"
     }
 
 }
