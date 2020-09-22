@@ -1249,8 +1249,89 @@ if (!geoserver.facetTermColour) {
 
 if (!geoserver.facetRangeColour) {
     geoserver.facetRangeColour = [
-            '#11336E', '#1D3D72', '#294777', '#35517C', '#415B81', '#4D6585', '#596F8A', '#65798F', '#718394',
-            '#7D8D99', '#8A979D', '#96A1A2', '#A2ABA7', '#AEB5AC', '#BABFB1', '#C6C9B5', '#D2D3BA', '#DEDDBF',
-            '#EAE7C4', '#F7F2C9'
+            '#491649','#54194B','#6A1F4E','#75224F','#802551','#8B2852','#962B54','#A12E55','#B73458','#C2385A','#C6455F',
+            '#CB5365','#D56E71','#DA7C77','#DF8A7D','#E39783','#E8A589','#EDB38F','#F2C095','#F7CE9B'
     ]
 }
+
+geohash.lookupTable = [
+        [
+                length: 1,
+                width: 5009400,
+                height: 4992600,
+                area:25009930440000
+        ],
+        [
+                length: 2,
+                width: 1252300,
+                height: 624100,
+                area: 781560430000
+        ],
+        [
+                length: 3,
+                width: 156500,
+                height: 156000,
+                area: 24414000000
+        ],
+        [
+                length: 4,
+                width: 39100,
+                height: 19500,
+                area: 762450000
+        ],
+        [
+                length: 5,
+                width: 4900,
+                height: 4900,
+                area: 24010000
+        ],
+        [
+                length: 6,
+                width: 1200,
+                height: 609.4,
+                area: 731280
+        ],
+        [
+                length: 7,
+                width: 152.9,
+                height: 152.4,
+                area: 23301.96
+        ],
+        [
+                length: 8,
+                width: 38.2,
+                height: 19,
+                area: 725.8
+        ],
+        [
+                length: 9,
+                width: 4.8,
+                height: 4.8,
+                area: 23.04
+        ],
+        [
+                length: 10,
+                width: 1.2,
+                height: 0.0595,
+                area: 0.0714
+        ],
+        [
+                length: 11,
+                width: 0.0149,
+                height: 0.0149,
+                area: 0.00022201
+        ],
+        [
+                length: 12,
+                width: 0.0037,
+                height: 0.0019,
+                area: 0.00000703
+        ]
+
+]
+
+geohash.maxNumberOfGrids = 250
+// Sets the maximum precision geohash grid.
+// Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
+// hide exact location.
+geohash.maxLength =  5

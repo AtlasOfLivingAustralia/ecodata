@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST
 
 class GeoServerController {
-    GeoServerService geoServerService
+    MapService mapService
     static allowedMethods = [createStyle: 'POST', wms: 'GET']
 
     def wms() {
-        geoServerService.wms(params, response)
+        mapService.wms(params, response)
         return null
     }
 
@@ -21,7 +21,7 @@ class GeoServerController {
         def type = body?.type
         def style = body?.style
         if (field && terms) {
-            def name = geoServerService.createStyleForFacet(field, terms, style, type)
+            def name = mapService.createStyleForFacet(field, terms, style, type)
             render text: [name: name] as JSON , contentType: 'application/json'
         } else {
             render text: "JSON body must have terms and field properties", status: HttpStatus.BAD_REQUEST
@@ -29,7 +29,7 @@ class GeoServerController {
     }
 
     def createPredefinedStyles () {
-        def response = geoServerService.createPredefinedStyles()
+        def response = mapService.createPredefinedStyles()
         if( response.success ) {
             render( text: [success: "Successfully created styles."] as JSON, contentType: 'application/json')
         } else {
@@ -41,7 +41,7 @@ class GeoServerController {
         def type = params.type ?: ""
         def indices = params.indices ?: ""
         List listOfIndex = indices.split(',')
-        def name = geoServerService.getLayerNameForType (type, listOfIndex)
+        def name = mapService.getLayerNameForType (type, listOfIndex)
         if (name) {
             render( text: [success: "Layer resolved.", layerName: name] as JSON, contentType: 'application/json')
         } else {
@@ -50,32 +50,32 @@ class GeoServerController {
     }
 
     def createWorkspace () {
-        def result = geoServerService.createWorkspace()
+        def result = mapService.createWorkspace()
         render(text: result?.resp?:"")
     }
 
     def deleteWorkspace() {
-        def result = geoServerService.deleteWorkspace()
+        def result = mapService.deleteWorkspace()
         render(text: result)
     }
 
     def createDatastore() {
-        def result = geoServerService.createDatastore()
+        def result = mapService.createDatastore()
         render(text: result?.resp?:"")
     }
 
     def deleteDatastore() {
-        def result = geoServerService.deleteDatastore()
+        def result = mapService.deleteDatastore()
         render(text: result)
     }
 
     def deleteStylesFromWorkspace() {
-        def result = geoServerService.deleteWorkspaceStyles() ?: [status: SC_BAD_REQUEST, message: "Could not delete styles."]
+        def result = mapService.deleteWorkspaceStyles() ?: [status: SC_BAD_REQUEST, message: "Could not delete styles."]
         render(text: result as JSON, status: result.status )
     }
 
     def createStyles() {
-        def result = geoServerService.createPredefinedStyles() ?: [ status: SC_BAD_REQUEST, message: "Could not delete styles."]
+        def result = mapService.createPredefinedStyles() ?: [status: SC_BAD_REQUEST, message: "Could not delete styles."]
         render(text: result as JSON, status: result.status )
     }
 }

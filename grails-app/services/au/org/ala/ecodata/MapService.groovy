@@ -1,10 +1,14 @@
 package au.org.ala.ecodata
 
 import asset.pipeline.AssetHelper
+import com.spatial4j.core.context.SpatialContext
+import com.spatial4j.core.io.GeohashUtils
+import com.spatial4j.core.shape.Rectangle
 import grails.converters.JSON
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.common.xcontent.XContentHelper
+import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternResolver
@@ -14,7 +18,7 @@ import javax.annotation.PostConstruct
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static javax.servlet.http.HttpServletResponse.SC_OK
 
-class GeoServerService {
+class MapService {
     def grailsApplication
     def webService
     ElasticSearchService elasticSearchService
@@ -642,6 +646,92 @@ class GeoServerService {
         }
 
         legitimateParams
+    }
+
+    def getFeatureCollectionFromSearchResult(res, String aggName = "heatmap") {
+        Map features = [type: "FeatureCollection", features: []]
+        SpatialContext sc = new SpatialContext(true)
+        GeoHashGrid geoHashGridAgg = res.getAggregations().get(aggName)
+
+        for (GeoHashGrid.Bucket entry : geoHashGridAgg.getBuckets()) {
+            Map properties = [:]
+            properties.key = entry.getKey()
+            properties.count = entry.getDocCount()
+            Rectangle rect = GeohashUtils.decodeBoundary(properties.key, sc)
+            Map bottomRight = [lat: rect.minY, lon: rect.maxX]
+            Map topLeft = [lat: rect.maxY, lon: rect.minX]
+            features.features.add([type: "Feature", properties: properties, geometry: getGeoJSONPolygonFromPoints(topLeft, bottomRight)])
+        }
+
+        features
+    }
+
+    Map getGeoJSONPolygonFromPoints (Map topLeft, Map bottomRight) {
+        List first, second, third, fourth, last
+        first = last = [topLeft.lon, topLeft.lat]
+        second = [topLeft.lon, bottomRight.lat]
+        third = [bottomRight.lon, bottomRight.lat]
+        fourth = [bottomRight.lon, topLeft.lat]
+
+        [
+                type: "Polygon",
+                coordinates: [[first, second, third, fourth, last]]
+        ]
+    }
+
+    Map setHeatmapColour(Map features) {
+        int maxCount= 0,
+            minCount = Integer.MAX_VALUE,
+            numberOfBuckets = grailsApplication.config.geoserver.facetRangeColour.size()
+
+        features?.features?.each { Map feature ->
+            Map properties = feature.properties
+            if (properties.count > maxCount) {
+                maxCount = properties.count
+            }
+
+            if (properties.count < minCount) {
+                minCount = properties.count
+            }
+        }
+
+        int stepSize = 1
+        if (stepSize*numberOfBuckets < maxCount) {
+            stepSize = Math.ceil((maxCount - minCount) / numberOfBuckets)
+        }
+
+        // upper bound is exclusive
+        maxCount ++
+        List buckets = []
+        int minRange, maxRange = minCount - 1
+        for ( int i = 0; i < numberOfBuckets; i++) {
+            minRange = maxRange
+            maxRange = (minCount + (i + 1) * stepSize)
+
+            if (i == (numberOfBuckets - 1)) {
+                maxRange = maxCount
+            }
+
+            buckets.add([label: "${minRange} - ${maxRange}", colour: grailsApplication.config.geoserver.facetRangeColour[numberOfBuckets - i - 1], min: minRange, max: maxRange])
+        }
+
+        features?.features?.each { Map feature ->
+            Map properties = feature.properties
+            int index = (properties.count - minCount) / stepSize
+            Map bucket = buckets[index]
+            if(!((properties.count >= bucket.min) && (properties.count < bucket.max))) {
+                if ((properties.count >= bucket.max) && ((index + 1) < numberOfBuckets)) {
+                    bucket = buckets[index + 1]
+                }
+                else if ((properties.count < bucket.min) && ((index - 1) >= 0)) {
+                    bucket = buckets[index - 1]
+                }
+            }
+
+            properties.putAll (bucket)
+        }
+
+        features
     }
 
     private Map getHeaders() {

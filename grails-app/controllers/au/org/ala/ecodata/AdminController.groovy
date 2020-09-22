@@ -27,7 +27,7 @@ class AdminController {
         collectoryService, organisationService, hubService, excelImportService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
-    GeoServerService geoServerService
+    MapService mapService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
     /**
@@ -714,7 +714,7 @@ class AdminController {
 
     @AlaSecured("ROLE_ADMIN")
     def buildGeoServerDependencies() {
-        def result = geoServerService.buildGeoServerDependencies()
+        def result = mapService.buildGeoServerDependencies()
         def message, code
         message = result ? "Successfully created GeoServer dependencies" : "Failed to create GeoServer dependencies. Is GeoServer running?"
         code = result ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR
