@@ -156,7 +156,7 @@ class UrlMappings {
         }
         "/ws/program/findByName"(controller:"program"){ action = [GET:"findByName"] }
         "/ws/program/listOfAllPrograms"(controller: "program"){action = [GET: "listOfAllPrograms"]}
-        "/ws/permissions/deleteUserPermission/$id"(controller: "permissions"){action = [GET: "deleteUserPermission"]}
+        "/ws/permissions/deleteUserPermission/$id"(controller: "permissions"){action = [POST: "deleteUserPermission"]}
 
         "/ws/managementUnits" {
             controller = 'managementUnit'

@@ -6,7 +6,7 @@ import grails.test.mixin.gorm.Domain
 import grails.test.mixin.mongodb.MongoDbTestMixin
 import spock.lang.Specification
 
-@Domain(UserPermission)
+@Domain([UserPermission, Project])
 @TestMixin(MongoDbTestMixin)
 @TestFor(PermissionService)
 class PermissionServiceSpec extends Specification {
@@ -15,12 +15,14 @@ class PermissionServiceSpec extends Specification {
 
     void setup() {
         UserPermission.findAll().each{it.delete(flush:true)}
+        Project.findAll().each {it.delete(flush: true)}
         service.userService = userService
         userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
     }
 
     void tearDown() {
         UserPermission.findAll().each{it.delete(flush:true)}
+        Project.findAll().each {it.delete(flush: true)}
     }
 
 
@@ -167,14 +169,44 @@ class PermissionServiceSpec extends Specification {
         '3'    | 'p1'       | false
     }
 
-    void "delete user Permission when userID is Provided "(){
+    void "delete user Permission when userID is Provided entity Type is organisation"(){
+
+        setup:
+        String userId = "1"
+        new UserPermission(entityId:'p1', entityType:Organisation.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new Project(projectId: "project1", name:"test", organisationId: "p1", isMERIT: true).save(flush: true, failOnError: true)
+
+        when:
+        def results = service.deleteUserPermissionByUserId(userId)
+
+        then:
+        UserPermission.findAllByUserId(userId).size() == 0
+        results.status == 200
+        !results.error
+    }
+
+    void "delete user Permission when userID is Provided entity Type is Project"(){
 
         setup:
         String userId = "1"
         new UserPermission(entityId:'p1', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
-        new UserPermission(entityId:'p2', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
-        new UserPermission(entityId:'p3', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new Project(projectId: "p1", name:"test", isMERIT: true).save(flush: true, failOnError: true)
 
+        when:
+        def results = service.deleteUserPermissionByUserId(userId)
+
+        then:
+        UserPermission.findAllByUserId(userId).size() == 0
+        results.status == 200
+        !results.error
+    }
+
+    void "delete user Permission when userID is Provided entity Type is Program"(){
+
+        setup:
+        String userId = "1"
+        new UserPermission(entityId:'p1', entityType:Program.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new Project(projectId: "p1", name:"test", organisationId: "p1", programId: "p1", isMERIT: true).save(flush: true, failOnError: true)
 
         when:
         def results = service.deleteUserPermissionByUserId(userId)

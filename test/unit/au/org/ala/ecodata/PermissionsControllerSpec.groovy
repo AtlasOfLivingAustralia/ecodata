@@ -385,7 +385,7 @@ class PermissionsControllerSpec extends Specification {
 
         when:
         params.id = userId
-        request.method = "GET"
+        request.method = "DELETE"
         controller.deleteUserPermission()
         def result = response.getJson()
 
@@ -406,6 +406,7 @@ class PermissionsControllerSpec extends Specification {
 
         when:
         params.id = userId
+        request.method = "DELETE"
         controller.deleteUserPermission()
         def result = response.getJson()
 
