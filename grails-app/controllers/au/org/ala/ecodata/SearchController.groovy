@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.Score
+
 import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -31,7 +31,7 @@ class SearchController {
     SensitiveSpeciesService sensitiveSpeciesService
     ReportingService reportingService
     OrganisationService organisationService
-    GeoServerService geoServerService
+    MapService mapService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -74,6 +74,16 @@ class SearchController {
         }
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
+    }
+
+    def getHeatmap () {
+        def res
+        elasticSearchService.buildProjectActivityQuery(params)
+        res = elasticSearchService.searchAndAggregateOnGeohash(params.query, params)
+        Map features = mapService.getFeatureCollectionFromSearchResult(res)
+        features = mapService.setHeatmapColour(features)
+        response.setContentType("application/json; charset=\"UTF-8\"")
+        render features as JSON
     }
 
     /*

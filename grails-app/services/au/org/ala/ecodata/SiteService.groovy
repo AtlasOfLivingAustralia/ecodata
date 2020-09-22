@@ -883,11 +883,29 @@ class SiteService {
         resp
     }
 
-    def getSiteCentroidGeoJSON (Map site) {
+    def getSiteCentroid(Map site) {
         if ( site?.extent?.geometry?.centre ) {
             List coords = site.extent.geometry.centre
-            List centre = [coords[0] as Double, coords[1] as Double]
-            return [ type:'point', coordinates: centre ]
+            [coords[0] as Double, coords[1] as Double]
         }
     }
+
+    int calculateGeohashPrecision(Map boundingBox) {
+        Geometry geom = GeometryUtils.geoJsonMapToGeometry(boundingBox)
+        double area = GeometryUtils.area(geom)
+        List lookupTable = grailsApplication.config.geohash.lookupTable
+        int maxNumberOfGrids = grailsApplication.config.geohash.maxNumberOfGrids as int
+        int maxLengthIndex = grailsApplication.config.geohash.maxLength as int
+        Map step
+
+        for(int i = 0; i <= maxLengthIndex;  i++) {
+            step = lookupTable[i]
+            if ( (area / step.area) > maxNumberOfGrids ) {
+                break
+            }
+        }
+
+        step.length
+    }
+
 }
