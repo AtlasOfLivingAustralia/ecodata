@@ -679,7 +679,7 @@ environments {
         app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
-        app.file.upload.path = "./target/archive"
+        app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://localhost:8018"
         userDetails {
             url = "${casBaseUrl}/userdetails/"
@@ -962,6 +962,12 @@ facets.project = [
                 helpText: 'Name of the project'
         ],
         [
+                name: "isBushfire",
+                title: 'Bushfire Recovery',
+                dataType: 'text',
+                helpText: 'Project associated to bushfire recovery'
+        ],
+        [
                 name: "organisationFacet",
                 title: 'Organisation',
                 dataType: 'text',
@@ -1145,6 +1151,11 @@ facets.project = [
                 name: "industryFacet",
                 title: "Industry",
                 helpText: "The industries relevant to the project"
+        ],
+        [
+                name: "bushfireCategoriesFacet",
+                title: "Bushfire Categories",
+                helpText: "The bushfire categories relevant to the project"
         ]
 ]
 

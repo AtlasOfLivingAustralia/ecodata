@@ -1,9 +1,9 @@
+os: linux
 dist: xenial
 language: groovy
 sudo: false
 jdk:
 - openjdk8
-
 branches:
   only:
   - master
@@ -11,6 +11,7 @@ branches:
   - hot-fix
   - /^feature\/.*$/
   - grails3
+  - /^hotfix\/.*$/
 
 services:
   - mongodb

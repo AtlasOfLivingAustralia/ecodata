@@ -14,8 +14,6 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     }
 
     def setup() {
-      //  mockDomain Program
-     //   mockDomain Hub
         controller.permissionService = permissionService
     }
 
@@ -373,6 +371,46 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         "test"                                | HttpStatus.SC_BAD_REQUEST
 
 
+    }
+
+    void "delete user Permission when userID is Provided"(){
+        setup:
+        String userId = "1"
+        Map details = [status: 200, error: false]
+
+        when:
+        params.id = userId
+        request.method = "POST"
+        controller.deleteUserPermission()
+        def result = response.getJson()
+
+
+        then:
+        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+
+        then:
+
+        result.status == 200
+        result.error == false
+    }
+
+    void "UserId does not exist in merit database"(){
+        setup:
+        String userId = "1"
+        Map details = [status: 400, error: "No User Permissions found"]
+
+        when:
+        params.id = userId
+        request.method = "POST"
+        controller.deleteUserPermission()
+        def result = response.getJson()
+
+        then:
+        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+
+        then:
+        result.status == 400
+        result.error == "No User Permissions found"
     }
 
 }

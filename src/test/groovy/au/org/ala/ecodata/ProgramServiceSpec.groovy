@@ -49,4 +49,72 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
         newProgram.name == 'test 2'
         newProgram.description == 'description 2'
     }
+
+    void "update existing Parent with new parent program"(){
+        setup:
+
+        Program parentProgram = new Program(programId: "1", name: 'parentProgram Name', description: 'parent description')
+        parentProgram.save(flush: true, failOnError: true)
+
+        Program subProgram = new Program(programId: "2", name: "subprogram name", description: "subProgram description")
+        Program parent = service.get("1")
+        subProgram.parent = parent
+        subProgram.save(flush: true, failOnError: true)
+
+        Program newParentProgram = new Program(programId: '3', name: 'new Parent Program Name', description: 'new Parent Program Description')
+        newParentProgram.save(flush: true, failOnError: true)
+
+        when:
+        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", parentProgramId:'3']
+        service.update(details.programId, details)
+        Program updatedProgram = service.get(subProgram.programId)
+
+        then:
+        updatedProgram.name == "subprogram name"
+        updatedProgram.description == "subProgram description"
+        updatedProgram.parent.id == newParentProgram.id
+    }
+
+    void "update existing Parent with null parent program"(){
+        setup:
+
+        Program parentProgram = new Program(programId: "1", name: 'parentProgram Name', description: 'parent description')
+        parentProgram.save(flush: true, failOnError: true)
+
+        Program subProgram = new Program(programId: "2", name: "subprogram name", description: "subProgram description")
+        Program parent = service.get("1")
+        subProgram.parent = parent
+        subProgram.save(flush: true, failOnError: true)
+
+        when:
+        Map details = [programId: "2", name: "subprogram name", description: "subProgram description", parentProgramId: null]
+        service.update(details.programId, details)
+        Program updatedProgram = service.get(subProgram.programId)
+
+        then:
+        updatedProgram.name == "subprogram name"
+        updatedProgram.description == "subProgram description"
+        updatedProgram.parent == null
+    }
+
+    void "If no parentProgramId is supplied to an update, the Program parent should remain unchanged"() {
+        Program parentProgram = new Program(programId: "1", name: 'parentProgram Name', description: 'parent description')
+        parentProgram.save(flush: true, failOnError: true)
+
+        Program subProgram = new Program(programId: "2", name: "subprogram name", description: "subProgram description")
+        Program parent = service.get("1")
+        subProgram.parent = parent
+        subProgram.save(flush: true, failOnError: true)
+
+        when:
+        Map details = [programId: "2", name: "subprogram name", description: "edited subProgram description"]
+        service.update(details.programId, details)
+        Program updatedProgram = service.get(subProgram.programId)
+
+        then:
+        updatedProgram.name == details.name
+        updatedProgram.description == details.description
+        updatedProgram.parent.id == parentProgram.id
+    }
+
 }

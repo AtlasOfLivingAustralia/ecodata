@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
 
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
-import com.mongodb.QueryBuilder
+
 import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
 import org.bson.conversions.Bson
@@ -75,7 +73,7 @@ class OrganisationService {
     private String createCollectoryInstitution(Map organisationProperties) {
 
         String institutionId = null
-        if (grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+        if (Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
             try {
                 institutionId = collectoryService.createInstitution(organisationProperties)
             }
@@ -93,9 +91,16 @@ class OrganisationService {
 
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
+
             try {
                 String oldName = organisation.name
                 commonService.updateProperties(organisation, props)
+                // if no collectory institution exists for this organisation, create one
+                if (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '') {
+                    props.collectoryInstitutionId = createCollectoryInstitution(props)
+                }
+
+                getCommonService().updateProperties(organisation, props)
                 if (props.name && (oldName != props.name)) {
                     projectService.updateOrganisationName(organisation.organisationId, props.name)
                 }
@@ -160,7 +165,6 @@ class OrganisationService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
-       // GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     /**

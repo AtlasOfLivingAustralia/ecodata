@@ -17,6 +17,7 @@ class PermissionsController {
     ProjectService projectService
     OrganisationService organisationService
 
+    static allowedMethods = [deleteUserPermission:"POST"]
     def index() {
         render([message: "Hello"] as JSON)
     }
@@ -1108,5 +1109,15 @@ class PermissionsController {
             render status:400, text:'The id parameter must be supplied'
         }
         render permissionService.getMembersForHub(id) as JSON
+    }
+
+    /**
+     * Admin function to delete all UserPermissions entries for the specific userId for merit user
+     * @return
+     */
+    def deleteUserPermission(){
+        String userId = params.id
+        Map results = permissionService.deleteUserPermissionByUserId(userId)
+        render results as JSON
     }
 }

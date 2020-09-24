@@ -42,7 +42,7 @@ trait RecordFieldConverter {
 
         if (dwcMappings.containsKey("species")){
             fields.name = dataModel[dwcMappings["species"]].name
-            fields.scientificName = dataModel[dwcMappings["species"]].name
+            fields.scientificName = dataModel[dwcMappings["species"]].scientificName
             fields.guid = dataModel[dwcMappings["species"]].guid
         }
 
