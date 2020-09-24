@@ -53,6 +53,7 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
+    String managementUnitId
 	Map custom
 	Risks risks
 	Date dateCreated
@@ -198,6 +199,7 @@ class Project {
         isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
+        managementUnitId nullable: true
     }
 }
 

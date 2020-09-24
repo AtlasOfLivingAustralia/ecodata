@@ -217,6 +217,22 @@ class PermissionServiceSpec extends Specification {
         !results.error
     }
 
+    void "delete user Permission when userID is Provided entity Type is Management Unit"(){
+
+        setup:
+        String userId = "1"
+        new UserPermission(entityId:'p1', entityType:ManagementUnit.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new Project(projectId: "p1", name:"test", organisationId: "p1", programId: "p1", managementUnitId: "p1", isMERIT: true).save(flush: true, failOnError: true)
+
+        when:
+        def results = service.deleteUserPermissionByUserId(userId)
+
+        then:
+        UserPermission.findAllByUserId(userId).size() == 0
+        results.status == 200
+        !results.error
+    }
+
     void "unable to find user when wrong userID  Provided or no user exist in userPermission database table "(){
 
         setup:
