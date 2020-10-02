@@ -7,32 +7,41 @@
                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <!-- a Named Layer is the basic building block of an SLD document -->
     <NamedLayer>
-        <Name>line_sites</Name>
+        <Name>polygon_sites_project</Name>
         <UserStyle>
             <!-- Styles can have names, titles and abstracts -->
-            <Title>Sites with line</Title>
-            <Abstract>Sites with line</Abstract>
+            <Title>Project area</Title>
+            <Abstract>Project area</Abstract>
             <!-- FeatureTypeStyles describe how to render different features -->
             <!-- A FeatureTypeStyle for rendering points -->
             <FeatureTypeStyle>
-                <Name>line</Name>
+                <Name>Polygon</Name>
                 <Rule>
-                    <Name>linesites</Name>
-                    <Title>Activities with line sites</Title>
-                    <Abstract>Activities with line sites</Abstract>
+                    <Name>polygonsites</Name>
+                    <Title>Project</Title>
+                    <Abstract>Projects with polygon sites</Abstract>
                     <ogc:Filter>
                         <ogc:Or>
                             <ogc:PropertyIsEqualTo>
-                                <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
-                                <ogc:Literal>LineString</ogc:Literal>
+                                <ogc:PropertyName>projectArea.geometryType</ogc:PropertyName>
+                                <ogc:Literal>Polygon</ogc:Literal>
                             </ogc:PropertyIsEqualTo>
                             <ogc:PropertyIsEqualTo>
-                                <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
-                                <ogc:Literal>MultiLineString</ogc:Literal>
+                                <ogc:PropertyName>projectArea.geometryType</ogc:PropertyName>
+                                <ogc:Literal>MultiPolygon</ogc:Literal>
                             </ogc:PropertyIsEqualTo>
                         </ogc:Or>
                     </ogc:Filter>
-                    <LineSymbolizer>
+                    <PolygonSymbolizer>
+                        <Fill>
+                            <CssParameter name="fill">#FF0000</CssParameter>
+                            <CssParameter name="opacity">
+                                <ogc:Function name="env">
+                                    <ogc:Literal>opacity</ogc:Literal>
+                                    <ogc:Literal>0.5</ogc:Literal>
+                                </ogc:Function>
+                            </CssParameter>
+                        </Fill>
                         <Stroke>
                             <CssParameter name="stroke">#FF0000</CssParameter>
                             <CssParameter name="stroke-width">
@@ -42,7 +51,7 @@
                                 </ogc:Function>
                             </CssParameter>
                         </Stroke>
-                    </LineSymbolizer>
+                    </PolygonSymbolizer>
                 </Rule>
             </FeatureTypeStyle>
         </UserStyle>

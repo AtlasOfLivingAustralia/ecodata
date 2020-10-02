@@ -16,9 +16,9 @@
                 <gsp:scriptlet>terms?.each {</gsp:scriptlet>
                 <Rule>
                     <Title>${it.displayName}</Title>
-                    <gsp:scriptlet>if (style == 'point_circle') {</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['point_circle', 'point_circle_project']) {</gsp:scriptlet>
                     <ogc:Filter>
-                        <ogc:PropertyIsEqualTo>
+                        <ogc:PropertyIsEqualTo matchCase="false">
                             <ogc:PropertyName>$field</ogc:PropertyName>
                             <ogc:Literal>${it.term}</ogc:Literal>
                         </ogc:PropertyIsEqualTo>
@@ -40,20 +40,20 @@
                         </Graphic>
                     </PointSymbolizer>
                     <gsp:scriptlet>}</gsp:scriptlet>
-                    <gsp:scriptlet>if (style == 'polygon_sites') {</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['polygon_sites', 'polygon_sites_project']) {</gsp:scriptlet>
                     <ogc:Filter>
                         <ogc:And>
-                            <ogc:PropertyIsEqualTo>
+                            <ogc:PropertyIsEqualTo matchCase="false">
                                 <ogc:PropertyName>$field</ogc:PropertyName>
                                 <ogc:Literal>${it.term}</ogc:Literal>
                             </ogc:PropertyIsEqualTo>
                             <ogc:Or>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>Polygon</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>MultiPolygon</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                             </ogc:Or>
@@ -83,17 +83,17 @@
                     <gsp:scriptlet>if (style == 'line_sites') {</gsp:scriptlet>
                     <ogc:Filter>
                         <ogc:And>
-                            <ogc:PropertyIsEqualTo>
+                            <ogc:PropertyIsEqualTo  matchCase="false">
                                 <ogc:PropertyName>$field</ogc:PropertyName>
                                 <ogc:Literal>${it.term}</ogc:Literal>
                             </ogc:PropertyIsEqualTo>
                             <ogc:Or>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>LineString</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>MultiLineString</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                             </ogc:Or>
@@ -116,10 +116,10 @@
 
                 <Rule>
                     <Title>Others</Title>
-                    <gsp:scriptlet>if (style == 'point_circle') {</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['point_circle', 'point_circle_project']) {</gsp:scriptlet>
                     <ogc:Filter>
                         <gsp:scriptlet>terms?.each {</gsp:scriptlet>
-                        <ogc:PropertyIsNotEqualTo>
+                        <ogc:PropertyIsNotEqualTo matchCase="false">
                             <ogc:PropertyName>$field</ogc:PropertyName>
                             <ogc:Literal>${it.term}</ogc:Literal>
                         </ogc:PropertyIsNotEqualTo>
@@ -147,11 +147,11 @@
                         </Graphic>
                     </PointSymbolizer>
                     <gsp:scriptlet>}</gsp:scriptlet>
-                    <gsp:scriptlet>if (style == 'polygon_sites') {</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['polygon_sites', 'polygon_sites_project']) {</gsp:scriptlet>
                     <ogc:Filter>
                         <ogc:And>
                             <gsp:scriptlet>terms?.each {</gsp:scriptlet>
-                            <ogc:PropertyIsNotEqualTo>
+                            <ogc:PropertyIsNotEqualTo matchCase="false">
                                 <ogc:PropertyName>$field</ogc:PropertyName>
                                 <ogc:Literal>${it.term}</ogc:Literal>
                             </ogc:PropertyIsNotEqualTo>
@@ -165,11 +165,11 @@
 
                             <ogc:Or>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>Polygon</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>MultiPolygon</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                             </ogc:Or>
@@ -200,7 +200,7 @@
                     <ogc:Filter>
                         <ogc:And>
                             <gsp:scriptlet>terms?.each {</gsp:scriptlet>
-                            <ogc:PropertyIsNotEqualTo>
+                            <ogc:PropertyIsNotEqualTo matchCase="false">
                                 <ogc:PropertyName>$field</ogc:PropertyName>
                                 <ogc:Literal>${it.term}</ogc:Literal>
                             </ogc:PropertyIsNotEqualTo>
@@ -214,11 +214,11 @@
 
                             <ogc:Or>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>LineString</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                                 <ogc:PropertyIsEqualTo>
-                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:PropertyName>$geometryTypeField</ogc:PropertyName>
                                     <ogc:Literal>MultiLineString</ogc:Literal>
                                 </ogc:PropertyIsEqualTo>
                             </ogc:Or>

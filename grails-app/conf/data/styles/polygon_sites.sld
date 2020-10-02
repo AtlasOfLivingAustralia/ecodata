@@ -47,7 +47,7 @@
                             <CssParameter name="stroke-width">
                                 <ogc:Function name="env">
                                     <ogc:Literal>size</ogc:Literal>
-                                    <ogc:Literal>5</ogc:Literal>
+                                    <ogc:Literal>1</ogc:Literal>
                                 </ogc:Function>
                             </CssParameter>
                         </Stroke>

@@ -7,35 +7,19 @@
                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <!-- a Named Layer is the basic building block of an SLD document -->
     <NamedLayer>
-        <Name>line_selector</Name>
+        <Name>point_circle</Name>
         <UserStyle>
             <!-- Styles can have names, titles and abstracts -->
-            <Title>Sites with line</Title>
-            <Abstract>Sites with line</Abstract>
+            <Title>Point circle</Title>
+            <Abstract>A sample style that draws a point</Abstract>
             <!-- FeatureTypeStyles describe how to render different features -->
             <!-- A FeatureTypeStyle for rendering points -->
             <FeatureTypeStyle>
-                <Name>line</Name>
+                <Name>Point</Name>
                 <Rule>
-                    <Name>lineselector</Name>
-                    <Title>Activities with line sites</Title>
-                    <Abstract>Style used by GetFeatureInfo to select line sites.
-                        Elasticgeo plugin does not support function.
-                        GetFeatureInfo by default add geometryType function if
-                        LineSymobizer is added to style. Therefore, using PointSymbolizer here.
-                    </Abstract>
-                    <ogc:Filter>
-                        <ogc:Or>
-                            <ogc:PropertyIsEqualTo>
-                                <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
-                                <ogc:Literal>LineString</ogc:Literal>
-                            </ogc:PropertyIsEqualTo>
-                            <ogc:PropertyIsEqualTo>
-                                <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
-                                <ogc:Literal>MultiLineString</ogc:Literal>
-                            </ogc:PropertyIsEqualTo>
-                        </ogc:Or>
-                    </ogc:Filter>
+                    <Name>point</Name>
+                    <Title>Projects</Title>
+                    <Abstract>A circle with a red fill and no stroke</Abstract>
                     <PointSymbolizer>
                         <Graphic>
                             <Mark>

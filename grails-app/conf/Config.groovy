@@ -1187,54 +1187,110 @@ geoServer.workspaceURI = "http://localhost:8080/ecodata"
 geoServer.username = "admin"
 geoServer.password = "geoserver"
 geoServer.datastore = "pasearch"
-geoServer.indexName = "pasearch"
+geoServer.defaultIndexName = "pasearch"
+geoServer.pasearch.geometryTypeField = "sites.geometryType"
+geoServer.homepage.geometryTypeField = "projectArea.geometryType"
+geoServer.pasearch.geoIndexField = "projectArea.geoIndex"
+geoServer.homepage.geoIndexField = "sites.geoIndex"
+geoServer.defaultDataType = "pa"
 geoServer.elasticHome = "localhost"
 geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
 geoServer.layerNames = [
-        "_general" : [ name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],
-        "_info"    : [ name: "layerinfo",
-           attributes: [
-                'sites.geoIndex',
-                'dateCreated', 
-                'projectId', 
-                'thumbnailUrl', 
-                'activityId',
-                'recordNameFacet',
-                'projectActivityNameFacet',
-                'projectNameFacet',
-                'surveyMonthFacet',
-                'surveyYearFacet',
-                'sites.geometryType'
-           ]
+        "_general" : [
+                "pa": [ name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],
+                "project": [ name: "generalproject", attributes: ['projectArea.geoIndex', 'projectArea.geometryType']],
         ],
-        "_time": [ name: "time", attributes: ['sites.geoIndex', 'sites.geometryType']],
-        "_indices": [ name: "colour_by", attributes: ['sites.geometryType']]
+        "_info"    : [
+                "pa": [ name: "layerinfo",
+                                       attributes: [
+                                               'sites.geoIndex',
+                                               'dateCreated',
+                                               'projectId',
+                                               'thumbnailUrl',
+                                               'activityId',
+                                               'recordNameFacet',
+                                               'projectActivityNameFacet',
+                                               'projectNameFacet',
+                                               'surveyMonthFacet',
+                                               'surveyYearFacet',
+                                               'sites.geometryType'
+                                       ]
+                ],
+                "project": [ name: "layerinfoproject",
+                             attributes: [
+                                     'projectArea.geoIndex',
+                                     'projectArea.geometryType',
+                                     'name',
+                                     'aim',
+                                     'projectId',
+                                     'imageUrl',
+                                     'logoAttribution',
+                                     'plannedStartDate',
+                                     'plannedEndDate'
+                             ]
+                ],
+        ],
+        "_time": [
+                "pa": [ name: "time", attributes: ['sites.geoIndex', 'sites.geometryType']]
+        ],
+        "_indices": [
+                "pa": [ name: "colour_by", attributes: ['sites.geometryType']],
+                "project": [ name: "colour_byproject", attributes: ['projectArea.geometryType']],
+        ]
 ]
 
 geoServer.layerConfiguration = [
-        "name": "layerName",
-        "nativeName": "layerNativeName",
-        "title": "BioCollect survey activity",
-        "keywords": ["activity", "survey", "biocollect"],
-        "timeEnabled": false,
-        "timeAttribute": "dateCreated",
-        "attributes": [
-                [
-                        "name": "sites.geoIndex",
-                        "shortName": "geoIndex",
-                        "useShortName": true,
-                        "type": "com.vividsolutions.jts.geom.Geometry",
-                        "use": true,
-                        "defaultGeometry": true,
-                        "geometryType": "GEO_SHAPE",
-                        "srid": "4326",
-                        "stored": false,
-                        "nested": false,
-                        "binding": "com.vividsolutions.jts.geom.Geometry",
-                        "nillable": true,
-                        "minOccurs": 0,
-                        "maxOccurs": 1
+        "pasearch": [
+                "name": "layerName",
+                "nativeName": "layerNativeName",
+                "title": "BioCollect survey activity",
+                "keywords": ["activity", "survey", "biocollect"],
+                "timeEnabled": false,
+                "timeAttribute": "dateCreated",
+                "attributes": [
+                        [
+                                "name": "sites.geoIndex",
+                                "shortName": "sites.geoIndex",
+                                "useShortName": false,
+                                "type": "com.vividsolutions.jts.geom.Geometry",
+                                "use": true,
+                                "defaultGeometry": true,
+                                "geometryType": "GEO_SHAPE",
+                                "srid": "4326",
+                                "stored": false,
+                                "nested": false,
+                                "binding": "com.vividsolutions.jts.geom.Geometry",
+                                "nillable": true,
+                                "minOccurs": 0,
+                                "maxOccurs": 1
+                        ]
+                ]
+        ],
+        "homepage": [
+                "name": "layerName",
+                "nativeName": "layerNativeName",
+                "title": "BioCollect survey activity",
+                "keywords": ["activity", "survey", "biocollect"],
+                "timeEnabled": false,
+                "timeAttribute": "dateCreated",
+                "attributes": [
+                        [
+                                "name": "projectArea.geoIndex",
+                                "shortName": "projectArea.geoIndex",
+                                "useShortName": false,
+                                "type": "com.vividsolutions.jts.geom.Geometry",
+                                "use": true,
+                                "defaultGeometry": true,
+                                "geometryType": "GEO_SHAPE",
+                                "srid": "4326",
+                                "stored": false,
+                                "nested": false,
+                                "binding": "com.vividsolutions.jts.geom.Geometry",
+                                "nillable": true,
+                                "minOccurs": 0,
+                                "maxOccurs": 1
+                        ]
                 ]
         ]
 ]
@@ -1249,8 +1305,9 @@ if (!geoserver.facetTermColour) {
 
 if (!geoserver.facetRangeColour) {
     geoserver.facetRangeColour = [
-            '#491649','#54194B','#6A1F4E','#75224F','#802551','#8B2852','#962B54','#A12E55','#B73458','#C2385A','#C6455F',
-            '#CB5365','#D56E71','#DA7C77','#DF8A7D','#E39783','#E8A589','#EDB38F','#F2C095','#F7CE9B'
+            '#FD3C07', '#FC4606', '#FC5105', '#FC5B05', '#FC6604', '#FC7004', '#FC7B03', '#FC8503', '#FC9002', '#FC9A02',
+            '#FCA501', '#FCB001', '#FCB70C', '#FCBE17', '#FCC523', '#FDCC2E', '#FDD339', '#FDDB45', '#FDE250', '#FEE95B',
+            '#FEF067', '#FEF772', '#FFFF7E'
     ]
 }
 

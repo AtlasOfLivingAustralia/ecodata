@@ -230,6 +230,47 @@
             }
           }
         },
+        "projectArea":{
+          "properties":{
+            "geoIndex": {
+              "type": "geo_shape"
+            },
+            "geoPoint": {
+              "type": "geo_point",
+              "geohash": true,
+              "geohash_precision": "1km",
+              "geohash_prefix": true
+            },
+            "geometryType": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "isBushfire":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "difficulty":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "fundingSourceFacet":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "reportingThemesFacet":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "assessment":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "isExternal":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
         "externalId": {
           "type":"string"
         },

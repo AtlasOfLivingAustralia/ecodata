@@ -77,9 +77,23 @@ class SearchController {
     }
 
     def getHeatmap () {
-        def res
-        elasticSearchService.buildProjectActivityQuery(params)
-        res = elasticSearchService.searchAndAggregateOnGeohash(params.query, params)
+        def res, index, geohashField, boundingBoxField
+        switch (params.dataType) {
+            case MapService.PROJECT_TYPE:
+                geohashField = "projectArea.geoPoint"
+                boundingBoxField = "projectArea.geoIndex"
+                index = HOMEPAGE_INDEX
+                break
+            default:
+                elasticSearchService.buildProjectActivityQuery(params)
+                geohashField = "sites.geoPoint"
+                boundingBoxField = "sites.geoIndex"
+                index = PROJECT_ACTIVITY_INDEX
+                break
+        }
+
+
+        res = elasticSearchService.searchAndAggregateOnGeohash(params.query, params, geohashField, boundingBoxField, index)
         Map features = mapService.getFeatureCollectionFromSearchResult(res)
         features = mapService.setHeatmapColour(features)
         response.setContentType("application/json; charset=\"UTF-8\"")

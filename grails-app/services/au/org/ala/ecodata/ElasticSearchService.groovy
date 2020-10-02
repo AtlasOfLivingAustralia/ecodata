@@ -581,9 +581,6 @@ class ElasticSearchService {
             siteMap.photoType = 'photoPoint'
         }
 
-        siteMap.geometryType = siteMap?.geoIndex?.type
-        siteMap.geoPoint = siteService.getSiteCentroid(siteMap);
-
         // Don't include orphan sites or MERIT sites.
         siteMap.projectList ? siteMap  : null
     }
@@ -821,6 +818,10 @@ class ElasticSearchService {
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
+            // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
+            // all sites associated with project.
+            // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
+            projectMap.projectArea = siteService.get(project.projectSiteId, SiteService.FLAT)
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -999,8 +1000,6 @@ class ElasticSearchService {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
                 site.remove('poi')
-                site.geometryType = site?.geoIndex?.type
-                site.geoPoint = siteService.getSiteCentroid(site)
                 activity.sites = [site]
             }
         }
@@ -1135,7 +1134,7 @@ class ElasticSearchService {
         return response
     }
 
-    def searchAndAggregateOnGeohash(String query, Map params = [:], geohashField = "sites.geoPoint", boundingBoxField = "geoIndex") {
+    def searchAndAggregateOnGeohash(String query, Map params = [:], geohashField = "sites.geoPoint", boundingBoxField = "geoIndex", String index = PROJECT_ACTIVITY_INDEX) {
         String aggName = "heatmap"
         Map boundingBox = params.geoSearchJSON instanceof Map ? params.geoSearchJSON : JSON.parse(params.geoSearchJSON)
         int precision = siteService.calculateGeohashPrecision(boundingBox)
@@ -1143,7 +1142,7 @@ class ElasticSearchService {
         params.max = "0"
         params.geoSearchField = boundingBoxField
         params.aggs = ([[type: "geohash", precision: precision, name: aggName, field: geohashField]] as JSON).toString()
-        search(query, params, PROJECT_ACTIVITY_INDEX, boundingBox)
+        search(query, params, index, boundingBox)
     }
 
     def searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {

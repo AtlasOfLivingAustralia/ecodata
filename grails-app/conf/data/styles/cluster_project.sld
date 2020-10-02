@@ -10,7 +10,7 @@
         <UserStyle>
             <!-- Styles can have names, titles and abstracts -->
             <Title>Stacked Point</Title>
-            <Abstract>Activities stacked points</Abstract>
+            <Abstract>Projects stacked points</Abstract>
             <FeatureTypeStyle>
                 <Transformation>
                     <ogc:Function name="vec:PointStacker">
@@ -43,7 +43,7 @@
                 </Transformation>
                 <Rule>
                     <Name>rule1</Name>
-                    <Title>An activity</Title>
+                    <Title>A project</Title>
                     <ogc:Filter>
                         <ogc:PropertyIsLessThanOrEqualTo>
                             <ogc:PropertyName>count</ogc:PropertyName>
@@ -64,7 +64,7 @@
                 </Rule>
                 <Rule>
                     <Name>rule29</Name>
-                    <Title>2-9 activities</Title>
+                    <Title>2-9 projects</Title>
                     <ogc:Filter>
                         <ogc:PropertyIsBetween>
                             <ogc:PropertyName>count</ogc:PropertyName>
@@ -119,7 +119,7 @@
                 </Rule>
                 <Rule>
                     <Name>rule29</Name>
-                    <Title>10-99 activities</Title>
+                    <Title>10-99 projects</Title>
                     <ogc:Filter>
                         <ogc:PropertyIsBetween>
                             <ogc:PropertyName>count</ogc:PropertyName>
@@ -174,7 +174,7 @@
                 </Rule>
                 <Rule>
                     <Name>rule10</Name>
-                    <Title>100+ activities</Title>
+                    <Title>100+ projects</Title>
                     <ogc:Filter>
                         <ogc:PropertyIsGreaterThan>
                             <ogc:PropertyName>count</ogc:PropertyName>

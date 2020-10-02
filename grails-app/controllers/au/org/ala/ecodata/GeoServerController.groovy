@@ -15,13 +15,15 @@ class GeoServerController {
     }
 
     def createStyle () {
+
         def body = request.getJSON()
         def terms = body?.terms ?: []
         def field = body?.field
         def type = body?.type
         def style = body?.style
+        def dataType = body?.dataType
         if (field && terms) {
-            def name = mapService.createStyleForFacet(field, terms, style, type)
+            def name = mapService.createStyleForFacet(field, terms, style, type, dataType)
             render text: [name: name] as JSON , contentType: 'application/json'
         } else {
             render text: "JSON body must have terms and field properties", status: HttpStatus.BAD_REQUEST
@@ -40,8 +42,9 @@ class GeoServerController {
     def getLayerName () {
         def type = params.type ?: ""
         def indices = params.indices ?: ""
+        def dataType = params.dataType ?: grailsApplication.config.geoServer.defaultDataType
         List listOfIndex = indices.split(',')
-        def name = mapService.getLayerNameForType (type, listOfIndex)
+        def name = mapService.getLayerNameForType (type, listOfIndex, dataType)
         if (name) {
             render( text: [success: "Layer resolved.", layerName: name] as JSON, contentType: 'application/json')
         } else {
@@ -60,12 +63,12 @@ class GeoServerController {
     }
 
     def createDatastore() {
-        def result = mapService.createDatastore()
+        def result = mapService.createDatastores()
         render(text: result?.resp?:"")
     }
 
     def deleteDatastore() {
-        def result = mapService.deleteDatastore()
+        def result = mapService.deleteDatastores()
         render(text: result)
     }
 
