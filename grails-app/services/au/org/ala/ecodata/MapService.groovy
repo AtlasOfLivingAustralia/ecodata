@@ -5,6 +5,7 @@ import com.spatial4j.core.context.SpatialContext
 import com.spatial4j.core.io.GeohashUtils
 import com.spatial4j.core.shape.Rectangle
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.common.xcontent.XContentHelper
@@ -15,6 +16,7 @@ import org.springframework.core.io.support.ResourcePatternResolver
 
 import javax.annotation.PostConstruct
 
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static javax.servlet.http.HttpServletResponse.SC_OK
 
@@ -26,12 +28,16 @@ class MapService {
     CacheService cacheService
 
     boolean enabled = false
-    def LAYER_PREFIX = "act",
-        GENERAL_LAYER = '_general',
-        INFO_LAYER = '_info',
-        INDICES_LAYER = '_indices',
-        INFO_LAYER_DEFAULT = 'default',
-        TIMESERIES_LAYER = '_time'
+    public static final String LAYER_PREFIX = "act"
+    public static final String GENERAL_LAYER = '_general'
+    public static final String INFO_LAYER = '_info'
+    public static final String INDICES_LAYER = '_indices'
+    public static final String INFO_LAYER_DEFAULT = 'default'
+    public static final String TIMESERIES_LAYER = '_time'
+    public static final String PROJECT_ACTIVITY_TYPE = 'pa'
+    public static final String PROJECT_TYPE = 'project'
+
+    List datastores = [PROJECT_ACTIVITY_INDEX, HOMEPAGE_INDEX]
 
     @Autowired
     ResourcePatternResolver resourceResolver
@@ -51,10 +57,11 @@ class MapService {
         if (enabled) {
             String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces"
             Map headers = getHeaders()
-            String body = "<namespace>\n" +
-                    "  <prefix>${grailsApplication.config.geoServer.workspace}</prefix>\n" +
-                    "  <uri>${grailsApplication.config.geoServer.workspaceURI}</uri>\n" +
-                    "</namespace>"
+            Map data = [
+                    workspace: grailsApplication.config.geoServer.workspace,
+                    workspaceURI: grailsApplication.config.geoServer.workspaceURI
+            ]
+            String body = bindDataToXMLTemplate("classpath:data/templates/namespace.template", data)
             webService.doPost(url, body, false, headers)
         }
     }
@@ -67,62 +74,72 @@ class MapService {
         }
     }
 
-    def createDatastore() {
+    def createDatastores() {
         if (enabled) {
             String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores"
-            String datastoreName = grailsApplication.config.geoServer.datastore
-            String indexName = grailsApplication.config.geoServer.indexName
-            String elasticHome = "localhost"
-            String elasticPort = "9300"
-            String clusterName = "elasticsearch"
-            String body = "<dataStore>\n" +
-                    "  <name>${datastoreName}</name>\n" +
-                    "  <type>Elasticsearch</type>\n" +
-                    "  <enabled>true</enabled>\n" +
-                    "  <connectionParameters>\n" +
-                    "    <entry key=\"cluster_name\">${clusterName}</entry>\n" +
-                    "    <entry key=\"scroll_time\">120</entry>\n" +
-                    "    <entry key=\"elasticsearch_port\">${elasticPort}</entry>\n" +
-                    "    <entry key=\"store_data\">false</entry>\n" +
-                    "    <entry key=\"scroll_enabled\">false</entry>\n" +
-                    "    <entry key=\"scroll_size\">20</entry>\n" +
-                    "    <entry key=\"index_name\">${indexName}</entry>\n" +
-                    "    <entry key=\"elasticsearch_host\">${elasticHome}</entry>\n" +
-                    "    <entry key=\"use_local_node\">false</entry>\n" +
-                    "  </connectionParameters>\n" +
-                    "</dataStore>";
+            datastores?.each { name ->
+                Map data = [
+                        datastoreName: name,
+                        indexName: name,
+                        elasticHome: "localhost",
+                        elasticPort: "9300",
+                        clusterName: "elasticsearch"
+                ]
 
-            Map headers = getHeaders()
-            webService.doPost(url, body, false, headers)
+                String body = bindDataToXMLTemplate("classpath:data/templates/datastore.template", data)
+                Map headers = getHeaders()
+                webService.doPost(url, body, false, headers)
+            }
         }
     }
 
-    def deleteDatastore() {
+    def deleteDatastores() {
         if (enabled) {
-            String datastore = grailsApplication.config.geoServer.datastore
-            String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces/${grailsApplication.config.geoServer.workspace}/datastores/${datastore}?recurse=true&purge=true"
-            Map headers = getHeaders()
-            webService.doDelete(url, headers)
+            datastores?.each { datastore ->
+                String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces/${grailsApplication.config.geoServer.workspace}/datastores/${datastore}?recurse=true&purge=true"
+                Map headers = getHeaders()
+                webService.doDelete(url, headers)
+            }
         }
     }
 
     boolean buildGeoServerDependencies () {
         if (enabled) {
             deleteLayers()
-            deleteDatastore()
+            deleteDatastores()
             deleteWorkspace()
 
             createWorkspace()
-            createDatastore()
+            createDatastores()
             createPredefinedStyles()
         }
     }
 
     def wms(params, response) {
         if(enabled) {
-            elasticSearchService.buildProjectActivityQuery(params)
-            def index = PROJECT_ACTIVITY_INDEX
-            def request = elasticSearchService.buildSearchRequest(params.query, params, index)
+            def index, geoSearch
+            switch (params.dataType) {
+                case PROJECT_TYPE:
+                    if (params.geoSearchJSON) {
+                        geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
+                    }
+
+                    params.includes = "projectArea.geoIndex,projectArea.geometryType"
+                    index = HOMEPAGE_INDEX
+                    break
+                default:
+                    params.geoSearchField = "sites.geoIndex"
+                    elasticSearchService.buildProjectActivityQuery(params)
+                    index = PROJECT_ACTIVITY_INDEX
+                    break
+            }
+
+            // double quotes need to be escaped to get valid JSON
+            if (params.query) {
+                params.query = params.query.replaceAll('"', '\\\\"')
+            }
+
+            def request = elasticSearchService.buildSearchRequest(params.query, params, index, geoSearch)
             String requestJSON = XContentHelper.convertToJson(request.source(), true)
             requestJSON = JSON.parse(requestJSON).query.toString()
             requestJSON = requestJSON.replaceAll(',', '\\\\,')
@@ -146,15 +163,30 @@ class MapService {
         }
     }
 
-    def createStyleForFacet(String field, List terms, String style, String type = 'terms') {
+    def getDataStoreForDataType (String dataType) {
+        String dataStore
+        switch (dataType) {
+            case PROJECT_TYPE:
+                dataStore = HOMEPAGE_INDEX
+                break
+            default:
+                dataStore = PROJECT_ACTIVITY_INDEX
+                break
+        }
+
+        dataStore
+    }
+
+    def createStyleForFacet(String field, List terms, String style, String type = 'terms', String dataType = 'pa') {
         if (enabled) {
             String sld
+            String dataStore = getDataStoreForDataType(dataType)
             switch (type) {
                 case 'terms':
-                    sld = buildStyleForTermFacet(field, terms, style)
+                    sld = buildStyleForTermFacet(field, terms, style, dataStore)
                     break;
                 case 'range':
-                    sld = buildStyleForRangeFacet(field, terms, style)
+                    sld = buildStyleForRangeFacet(field, terms, style, dataStore)
                     break;
             }
 
@@ -257,10 +289,10 @@ class MapService {
         }
     }
 
-    def createLayer(name, indices, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
+    def createLayer(String name, String dataStore, List indices, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
         if (enabled) {
-            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${grailsApplication.config.geoServer.datastore}/featuretypes"
-            Map layerConfig = getLayerConfiguration(name, indices, enableTimeDimension, timeSeriesIndex)
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${dataStore}/featuretypes"
+            Map layerConfig = getLayerConfiguration(name, indices, dataStore, enableTimeDimension, timeSeriesIndex)
             String content = getLayerDefinition(layerConfig)
             log.debug("Creating layer (${layerConfig.name}) on GeoServer with content: ${content}")
             Map response = webService.doPost(url, content, false, getHeaders())
@@ -274,15 +306,15 @@ class MapService {
         }
     }
 
-    Map getLayerConfiguration (String name, List indices, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
+    Map getLayerConfiguration (String name, List indices, String dataStore, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
         // deep copy configuration
-        String configSerialized = (grailsApplication.config.geoServer.layerConfiguration as JSON).toString()
+        String configSerialized = (grailsApplication.config.geoServer.layerConfiguration[dataStore] as JSON).toString()
         Map config = JSON.parse(configSerialized)
-        Map fieldsMapping = getFieldsMapping()
+        Map fieldsMapping = getFieldsMapping(dataStore)
         List attributes = []
 
         indices?.each { index ->
-            Map attributeConfig = getConfigForIndex(index, fieldsMapping)
+            Map attributeConfig = getConfigForIndex(index, fieldsMapping, dataStore)
             if (attributeConfig) {
                 attributes.add(attributeConfig)
             }
@@ -303,8 +335,8 @@ class MapService {
      * @param index
      * @return
      */
-    Map getConfigForIndex(String index, Map fieldsMapping) {
-        String dataType = getDataTypeForIndex(index)
+    Map getConfigForIndex(String index, Map fieldsMapping, String dataStore) {
+        String dataType = getDataTypeForIndex(index, dataStore)
         if (dataType instanceof String) {
             String className = getClassForElasticSearchDataType(dataType)
             String shortName = index
@@ -336,23 +368,27 @@ class MapService {
         }
     }
 
-    String getDataTypeForIndex (String index) {
-        Map mapping = getMapping()
+    String getDataTypeForIndex (String index, String dataStore) {
+        Map mapping = getMapping(dataStore)
         mapping = mapping["properties"]
-        getDataTypeFromMapping(index, mapping, getFieldsMapping())
+        getDataTypeFromMapping(index, mapping, getFieldsMapping(dataStore))
     }
 
-    Map getMapping() {
-        cacheService.get('elastic-search-mapping-with-dynamic-indices', {
-            String index = grailsApplication.config.geoServer.indexName
+    /**
+     * Get elasticsearch mapping for a specific dataStore (index) e.g. {@link ElasticIndex#HOMEPAGE_INDEX}
+     * @return
+     */
+    Map getMapping(String dataStore) {
+        cacheService.get("elastic-search-mapping-with-dynamic-indices-${dataStore}", {
+            String index = dataStore ?: grailsApplication.config.geoServer.defaultIndexName
             GetMappingsResponse response = elasticSearchService.client.admin().indices().getMappings(new GetMappingsRequest().indices(index)).get()
             response.getMappings().get(index).get(elasticSearchService.DEFAULT_TYPE).getSourceAsMap()
         }) as Map
     }
 
-    Map getFieldsMapping() {
-        cacheService.get('elastic-search-fields-mapping', {
-            Map mapping = getMapping()
+    Map getFieldsMapping(String dataStore) {
+        cacheService.get("elastic-search-fields-mapping-${dataStore}", {
+            Map mapping = getMapping(dataStore)
             mapping = mapping["properties"]
             getFieldsMapping(mapping)
         }) as Map
@@ -452,9 +488,9 @@ class MapService {
      * @param indices
      * @return
      */
-    List sanitizeIndices (List indices) {
-        List defaultIndices = grailsApplication.config.geoServer.layerConfiguration.attributes.collect {it.name}
-        indices?.findAll { !defaultIndices.contains(it) && (getDataTypeForIndex(it) != null) }
+    List sanitizeIndices (List indices, String dataStore) {
+        List defaultIndices = grailsApplication.config.geoServer.layerConfiguration[dataStore].attributes.collect {it.name}
+        indices?.findAll { !defaultIndices.contains(it) && (getDataTypeForIndex(it, dataStore) != null) }
     }
 
     /**
@@ -462,9 +498,9 @@ class MapService {
      * @param layerName
      * @return
      */
-    boolean checkIfLayerExists (String layerName) {
+    boolean checkIfLayerExists (String layerName, String dataStore) {
         if (enabled) {
-            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${grailsApplication.config.geoServer.datastore}/featuretypes/${layerName}.json"
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${dataStore}/featuretypes/${layerName}.json"
             Map headers = getHeaders()
             def response = webService.getJson(url, null ,headers)
             return !response.error
@@ -473,12 +509,12 @@ class MapService {
         return false
     }
 
-    String getLayerForIndices(List indices, String prefix = null, String name = null, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
-        indices = sanitizeIndices(indices)
+    String getLayerForIndices(List indices, String dataStore, String prefix = null, String name = null, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
+        indices = sanitizeIndices(indices, dataStore)
         name = name ?: getLayerName(indices, prefix)
-        boolean isCreated = checkIfLayerExists(name)
+        boolean isCreated = checkIfLayerExists(name, dataStore)
         if (!isCreated) {
-            Map response = createLayer(name, indices, enableTimeDimension, timeSeriesIndex)
+            Map response = createLayer(name, dataStore, indices, enableTimeDimension, timeSeriesIndex)
             if (response.error) {
                 log.warn("Could not create ${name} on GeoServer.")
                 return
@@ -488,18 +524,29 @@ class MapService {
         name
     }
 
-    String getLayerNameForType(String type, List indices) {
+    String getLayerNameForType(String type, List indices, String dataType) {
         if (type && indices) {
-            String layerName, timeSeriesIndex
+            String layerName, timeSeriesIndex, dataStore
             Map config
+
+            switch (dataType) {
+                case PROJECT_TYPE:
+                    dataType = PROJECT_TYPE
+                    dataStore = HOMEPAGE_INDEX
+                    break
+                default:
+                    dataType = PROJECT_ACTIVITY_TYPE
+                    dataStore = PROJECT_ACTIVITY_INDEX
+                    break
+            }
 
             switch (type) {
                 case GENERAL_LAYER:
-                    config = grailsApplication.config.geoServer.layerNames[GENERAL_LAYER]
-                    layerName = getLayerForIndices(config.attributes, null, config.name)
+                    config = grailsApplication.config.geoServer.layerNames[GENERAL_LAYER][dataType]
+                    layerName = getLayerForIndices(config.attributes, dataStore,null, config.name)
                     break
                 case INFO_LAYER:
-                    config = grailsApplication.config.geoServer.layerNames[INFO_LAYER]
+                    config = grailsApplication.config.geoServer.layerNames[INFO_LAYER][dataType]
                     if (indices?.contains(INFO_LAYER_DEFAULT)) {
                         indices = []
                     }
@@ -508,12 +555,12 @@ class MapService {
                     Set uniqueList = new HashSet<String>()
                     uniqueList.addAll(indices)
                     indices = uniqueList.toList()
-                    layerName = getLayerForIndices(indices)
+                    layerName = getLayerForIndices(indices, dataStore)
                     break
                 case INDICES_LAYER:
-                    config = grailsApplication.config.geoServer.layerNames[INDICES_LAYER]
+                    config = grailsApplication.config.geoServer.layerNames[INDICES_LAYER][dataType]
                     indices.addAll(config.attributes)
-                    layerName = getLayerForIndices(indices, INDICES_LAYER)
+                    layerName = getLayerForIndices(indices, dataStore, INDICES_LAYER)
                     break
                 case TIMESERIES_LAYER:
                     config = grailsApplication.config.geoServer.layerNames[TIMESERIES_LAYER]
@@ -523,7 +570,7 @@ class MapService {
                     Set uniqueList = new HashSet<String>()
                     uniqueList.addAll(indices)
                     indices = uniqueList.toList()
-                    layerName = getLayerForIndices(indices, TIMESERIES_LAYER, null, true, timeSeriesIndex)
+                    layerName = getLayerForIndices(indices, dataStore, TIMESERIES_LAYER, null, true, timeSeriesIndex)
                     break
             }
 
@@ -550,7 +597,6 @@ class MapService {
 
     def deleteLayers() {
         if (enabled) {
-            String datastore = grailsApplication.config.geoServer.datastore
             String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/featuretypes.json"
             Map headers = getHeaders()
             Map layers = webService.getJson(url, null, headers)
@@ -581,7 +627,7 @@ class MapService {
         content?.replaceAll('\n', '');
     }
 
-    def buildStyleForTermFacet(String field, List terms, String style) {
+    def buildStyleForTermFacet(String field, List terms, String style, String dataStore) {
         int cIndex = 0
         List colour = grailsApplication.config.geoserver.facetTermColour
         terms?.eachWithIndex { Map term, index ->
@@ -589,6 +635,9 @@ class MapService {
             cIndex = index > (colour.size() - 1 ) ? (colour.size() - 1 ) : index
             // add colour value only if not provided
             term.colour = term.colour ?: colour[cIndex]
+            // escape entities like &, <, > etc. in XML
+            term.term = groovy.xml.XmlUtil.escapeXml(term.term)
+            term.displayName = groovy.xml.XmlUtil.escapeXml(term.displayName)
         }
 
         cIndex++
@@ -601,6 +650,7 @@ class MapService {
                 field: field,
                 terms: terms,
                 style: style,
+                geometryTypeField: grailsApplication.config.geoServer[dataStore].geometryTypeField,
                 otherColour: colour[cIndex]
         ]
 
@@ -718,6 +768,10 @@ class MapService {
         features?.features?.each { Map feature ->
             Map properties = feature.properties
             int index = (properties.count - minCount) / stepSize
+            if (index >= buckets.size()) {
+                index = buckets.size() - 1
+            }
+
             Map bucket = buckets[index]
             if(!((properties.count >= bucket.min) && (properties.count < bucket.max))) {
                 if ((properties.count >= bucket.max) && ((index + 1) < numberOfBuckets)) {

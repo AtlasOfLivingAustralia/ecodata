@@ -108,4 +108,15 @@ class Site {
     boolean isCompoundSite() {
         return type == TYPE_COMPOUND
     }
+
+    String getGeometryType() {
+        geoIndex?.type
+    }
+
+    List getGeoPoint() {
+        if ( extent?.geometry?.centre ) {
+            List coords = extent.geometry.centre
+            [coords[0] as Double, coords[1] as Double]
+        }
+    }
 }

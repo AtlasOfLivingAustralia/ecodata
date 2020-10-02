@@ -16,7 +16,7 @@
                 <gsp:scriptlet>terms?.each {</gsp:scriptlet>
                 <Rule>
                     <Title>${it.displayName}</Title>
-                    <gsp:scriptlet>if (style in ['point_circle', '', null]) {</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['point_circle', 'point_circle_project', '', null]) {</gsp:scriptlet>
                     <ogc:Filter>
                         <ogc:And>
                             <gsp:scriptlet>if (it.from != null) {</gsp:scriptlet>
@@ -50,7 +50,7 @@
                         </Graphic>
                     </PointSymbolizer>
                     <gsp:scriptlet>}</gsp:scriptlet>
-                    <gsp:scriptlet>if (style == 'polygon_sites') {</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['polygon_sites', 'polygon_sites_project']) {</gsp:scriptlet>
                     <ogc:Filter>
                         <ogc:And>
                             <gsp:scriptlet>if (it.from != null) {</gsp:scriptlet>

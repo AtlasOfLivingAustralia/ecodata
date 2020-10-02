@@ -166,6 +166,8 @@ class SiteService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
+        mapOfProperties.geometryType = site.geometryType
+        mapOfProperties.geoPoint = site.geoPoint
 
         if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
             mapOfProperties.documents = documentService.findAllForSiteId(site.siteId, version)
@@ -898,7 +900,7 @@ class SiteService {
         int maxLengthIndex = grailsApplication.config.geohash.maxLength as int
         Map step
 
-        for(int i = 0; i <= maxLengthIndex;  i++) {
+        for(int i = 0; i < maxLengthIndex;  i++) {
             step = lookupTable[i]
             if ( (area / step.area) > maxNumberOfGrids ) {
                 break
