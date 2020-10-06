@@ -602,7 +602,14 @@ class MapService {
             Map layers = webService.getJson(url, null, headers)
             if (layers?.featureTypes){
                 layers.featureTypes.featureType?.each { layer ->
-                    webService.doDelete(layer.href, headers)
+                    String layerURL = "${grailsApplication.config.geoServer.baseURL}/rest/layers/${layer.name}"
+                    webService.doDelete(layerURL, headers)
+//                    Feature type needs data store for deletion. Don't know which data store this feature type is
+//                    associated with. Therefore, try all data stores.
+                    datastores?.each { String store ->
+                        String featureTypeURL = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${store}/layers/${layer.name}"
+                        webService.doDelete(featureTypeURL, headers)
+                    }
                 }
             }
         }
