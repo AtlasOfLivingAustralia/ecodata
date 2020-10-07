@@ -86,7 +86,6 @@ class ElasticSearchService {
     CacheService cacheService
     ProgramService programService
     ManagementUnitService managementUnitService
-    MapService mapService
 
     Node node;
     Client client;
@@ -109,8 +108,14 @@ class ElasticSearchService {
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
         // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
         // The below code recreates the connectors.
-        mapService?.buildGeoServerDependencies()
+        getMapService()?.buildGeoServerDependencies()
     }
+
+    // Used to avoid a circular dependency during initialisation
+    def getMapService() {
+        return grailsApplication.mainContext.mapService
+    }
+
 
     /**
      * Index a single document (toMap representation not domain class)
