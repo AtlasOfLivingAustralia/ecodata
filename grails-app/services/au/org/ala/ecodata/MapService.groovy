@@ -6,6 +6,7 @@ import com.spatial4j.core.io.GeohashUtils
 import com.spatial4j.core.shape.Rectangle
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import org.codehaus.groovy.grails.web.servlet.HttpHeaders
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.common.xcontent.XContentHelper
@@ -159,7 +160,7 @@ class MapService {
             }
 
             String url = "${grailsApplication.config.geoServer.baseURL}/${grailsApplication.config.geoServer.workspace}/wms?${requestParams.join('&')}"
-            webService.proxyGetRequest(response, url, false, false)
+            webService.proxyGetRequest(response, url, false, false,  [HttpHeaders.EXPIRES, HttpHeaders.CACHE_CONTROL, HttpHeaders.CONTENT_DISPOSITION, HttpHeaders.CONTENT_TYPE])
         }
     }
 
@@ -691,7 +692,7 @@ class MapService {
                 'SERVICE', 'VERSION', 'REQUEST', 'FORMAT', 'TRANSPARENT', 'STYLES', 'LAYERS', 'SRS', 'CRS', 'WIDTH', 'LAYER',
                 'HEIGHT', 'BBOX', 'QUERY_LAYERS', 'INFO_FORMAT', 'FEATURE_COUNT', 'X', 'Y', 'I', 'J', 'EXCEPTIONS', 'TIME',
                 'STYLE', 'LEGEND_OPTIONS', 'RULE', 'SLD_BODY', 'SLD', 'SCALE', 'FEATURETYPE', 'MAXFEATURES', 'PROPERTYNAME',
-                'CQL_FILTER', 'TIME', 'ENV'
+                'CQL_FILTER', 'TIME', 'ENV', 'TILED'
         ]
         Map legitimateParams = [:]
         params = params ?: [:]
