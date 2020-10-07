@@ -3,7 +3,8 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.AggregationResult
 import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
-import grails.transaction.Transactional
+import grails.gorm.services.Service
+import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.*
@@ -213,10 +214,20 @@ class ReportingService {
     }
 
     def submit(String id, String comment = '') {
+
         def user = userService.getCurrentUserDetails()
+//        Report r = null
+//        Report.withTransaction {
+//            r = get(id)
+//            Map report =  r.submit(user.userId, comment)
+//            r =  new Report(report).save()
+//        }
+
         Report r = get(id)
         r.submit(user.userId, comment)
-        r.save()
+        r.markDirty("publicationStatus", r.getPublicationStatus(), "unpublished")
+        r.merge()
+
         return r
     }
 
