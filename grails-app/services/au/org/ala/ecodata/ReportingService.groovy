@@ -216,18 +216,9 @@ class ReportingService {
     def submit(String id, String comment = '') {
 
         def user = userService.getCurrentUserDetails()
-//        Report r = null
-//        Report.withTransaction {
-//            r = get(id)
-//            Map report =  r.submit(user.userId, comment)
-//            r =  new Report(report).save()
-//        }
-
         Report r = get(id)
         r.submit(user.userId, comment)
-        r.markDirty("publicationStatus", r.getPublicationStatus(), "unpublished")
-        r.merge()
-
+        r.save()
         return r
     }
 
