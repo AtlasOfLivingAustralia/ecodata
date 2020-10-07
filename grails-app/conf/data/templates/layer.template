@@ -35,6 +35,8 @@
     <enabled>true</enabled>
     <advertised>false</advertised>
     <metadata>
+        <entry key="cacheAgeMax">300</entry>
+        <entry key="cachingEnabled">true</entry>
         <entry key="elevation">
             <dimensionInfo>
                 <enabled>false</enabled>

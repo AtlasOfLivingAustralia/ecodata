@@ -115,8 +115,12 @@ class Site {
 
     List getGeoPoint() {
         if ( extent?.geometry?.centre ) {
-            List coords = extent.geometry.centre
-            [coords[0] as Double, coords[1] as Double]
+            if (extent.geometry.centre.getClass().isArray() || (extent.geometry.centre instanceof List)) {
+                List coords = extent.geometry.centre
+                if (coords) {
+                    [coords[0] as Double, coords[1] as Double]
+                }
+            }
         }
     }
 }

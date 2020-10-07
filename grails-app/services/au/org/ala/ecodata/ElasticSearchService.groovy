@@ -86,7 +86,7 @@ class ElasticSearchService {
     CacheService cacheService
     ProgramService programService
     ManagementUnitService managementUnitService
-
+    MapService mapService
 
     Node node;
     Client client;
@@ -107,6 +107,9 @@ class ElasticSearchService {
 //        node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
+        // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
+        // The below code recreates the connectors.
+        mapService.buildGeoServerDependencies()
     }
 
     /**
