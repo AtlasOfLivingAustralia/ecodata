@@ -54,15 +54,15 @@ class MapService {
         }
     }
 
+
     def createWorkspace() {
         if (enabled) {
-            String url = "${grailsApplication.config.geoServer.baseURL}/rest/namespaces"
+            String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces"
             Map headers = getHeaders()
             Map data = [
-                    workspace: grailsApplication.config.geoServer.workspace,
-                    workspaceURI: grailsApplication.config.geoServer.workspaceURI
+                    workspace: grailsApplication.config.geoServer.workspace
             ]
-            String body = bindDataToXMLTemplate("classpath:data/templates/namespace.template", data)
+            String body = bindDataToXMLTemplate("classpath:data/templates/workspace.template", data)
             webService.doPost(url, body, false, headers)
         }
     }
@@ -564,7 +564,7 @@ class MapService {
                     layerName = getLayerForIndices(indices, dataStore, INDICES_LAYER)
                     break
                 case TIMESERIES_LAYER:
-                    config = grailsApplication.config.geoServer.layerNames[TIMESERIES_LAYER]
+                    config = grailsApplication.config.geoServer.layerNames[TIMESERIES_LAYER][dataType]
                     // assumption is the first index is date index
                     timeSeriesIndex = indices.get(0)
                     indices.addAll(config.attributes)
