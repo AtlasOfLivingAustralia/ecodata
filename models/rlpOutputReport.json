@@ -1,17 +1,17 @@
 {
   "class": "au.org.ala.ecodata.ActivityForm",
-  "id": "5e462497c2dc0bacab5a7c15",
+  "id": "5ef55d70c2dcbc2cc13faa36",
   "activationDate": null,
   "category": "RLP Reports",
   "createdUserId": "1493",
-  "dateCreated": "2020-02-14T04:39:52Z",
-  "formVersion": 4,
+  "dateCreated": "2020-06-26T02:29:04Z",
+  "formVersion": 5,
   "gmsId": null,
-  "lastUpdated": "2020-02-14T04:59:20Z",
-  "lastUpdatedUserId": "1493",
+  "lastUpdated": "2020-09-25T05:13:13Z",
+  "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 0,
   "name": "RLP Output Report",
-  "publicationStatus": "unpublished",
+  "publicationStatus": "published",
   "sections": [
     {
       "class": "au.org.ala.ecodata.FormSection",
@@ -105,10 +105,9 @@
             "description": "Use this if you are unable to complete a description of your adaptive management strategy above",
             "behaviour": [
               {
-                "type":"visible",
+                "type": "visible",
                 "condition": "length adaptiveManagementDetails >= 490"
               }
-
             ]
           }
         ],
@@ -139,7 +138,6 @@
                 "type": "literal",
                 "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in Quarter 4 of the 2019-20 financial year?</b></p><p>Describe how you have adapted the project to minimise the effects of COVID-19 and maximise the delivery of the project outcomes, including redirection of funds, changes to project services and/or changes to project activities.</p><p>If, as a result of these adaptations, it will not be possible to fully deliver the contracted project services over the life of the project and you are likely to require changes to the project work order, please describe in the project change management section below.</p>"
               }
-
             ]
           },
           {
@@ -439,6 +437,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -497,6 +500,19 @@
                   {
                     "source": "<i>Note: to upload a communication material refer to the documents tab.</i>",
                     "type": "literal"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n• any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -625,6 +641,11 @@
             "name": "events"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -720,6 +741,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -796,15 +830,15 @@
                 "name": "sitesInstalledCalculatedAreaHa",
                 "units": "ha",
                 "behaviour": [
-                {
-                  "condition": "areaInvoicedHa > 0",
-                  "type": "conditional_validation",
-                  "value": {
-                    "message": "The controlled area must be mapped",
-                    "validate": "required,min[0.0001]"
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The controlled area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
                   }
-                }
-              ]
+                ]
               },
               {
                 "computed": {
@@ -822,7 +856,8 @@
                       "message": "The length controlled must be mapped",
                       "validate": "required,min[0.001]"
                     }
-                  }]
+                  }
+                ]
               },
               {
                 "dataType": "document",
@@ -1002,6 +1037,11 @@
             ],
             "dataType": "list",
             "name": "accessControlDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -1230,6 +1270,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -1296,6 +1349,11 @@
                   "Follow-up"
                 ],
                 "validate": "required"
+              },
+              {
+                "dataType": "text",
+                "name": "comments",
+                "validate": "maxSize[1500]"
               },
               {
                 "dataType": "feature",
@@ -1587,6 +1645,11 @@
             "name": "areasControlled"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -1694,7 +1757,7 @@
                             "type": "row",
                             "items": [
                               {
-                                "preLabel": "Actual area (ha) created for pest animals",
+                                "preLabel": "Actual area (ha) treated for pest animals",
                                 "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                                 "source": "areaControlledHa",
                                 "type": "number",
@@ -1899,6 +1962,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -2141,6 +2217,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -2317,6 +2398,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -2404,7 +2498,8 @@
                       "message": "The cleared area must be mapped",
                       "validate": "required,min[0.0001]"
                     }
-                  }]
+                  }
+                ]
               },
               {
                 "computed": {
@@ -2422,7 +2517,8 @@
                       "message": "The cleared length must be mapped",
                       "validate": "required,min[0.0001]"
                     }
-                  }]
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -2567,6 +2663,11 @@
             ],
             "dataType": "list",
             "name": "debrisRemovalDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -2771,6 +2872,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -2873,7 +2987,8 @@
                       "message": "The controlled area must be mapped",
                       "validate": "required,min[0.0001]"
                     }
-                  }]
+                  }
+                ]
               },
               {
                 "computed": {
@@ -2891,7 +3006,8 @@
                       "message": "The controlled length must be mapped",
                       "validate": "required,min[0.0001]"
                     }
-                  }]
+                  }
+                ]
               },
               {
                 "dataType": "document",
@@ -3076,6 +3192,11 @@
             "dataType": "list",
             "name": "erosionManagementDetails",
             "minSize": 0
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -3332,6 +3453,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -3430,7 +3564,8 @@
                       "message": "The area of the enclosure must be mapped",
                       "validate": "required,min[0.0001]"
                     }
-                  }]
+                  }
+                ]
               },
               {
                 "defaultValue": {
@@ -3564,6 +3699,11 @@
             ],
             "dataType": "list",
             "name": "enclosureDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -3789,6 +3929,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -3868,7 +4021,7 @@
               {
                 "dataType": "number",
                 "name": "numberOfSitesCreated",
-                "validate": "required,min[1]"
+                "validate": "required"
               },
               {
                 "dataType": "number",
@@ -3968,6 +4121,11 @@
             ],
             "dataType": "list",
             "name": "breedingProgramDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -4101,6 +4259,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -4337,6 +4508,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -4514,6 +4690,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -4618,6 +4807,11 @@
             ]
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "name": "photographicEvidence",
             "dataType": "image"
           },
@@ -4687,6 +4881,19 @@
                     "type": "image",
                     "source": "photographicEvidence",
                     "preLabel": "Optionally attach photos"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -4787,6 +4994,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -4836,6 +5048,19 @@
                 ],
                 "userAddedRows": true,
                 "type": "table"
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
               },
               {
                 "type": "row",
@@ -5077,6 +5302,11 @@
             "minSize": 1
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -5296,6 +5526,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -5606,6 +5849,11 @@
             "name": "fireManagementDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -5813,6 +6061,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -6060,6 +6321,11 @@
             "minSize": 1
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -6284,6 +6550,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -6583,6 +6862,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -6799,6 +7083,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -6874,6 +7171,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -6917,6 +7219,19 @@
                     "type": "image",
                     "source": "photographicEvidence",
                     "preLabel": "Optionally attach photos"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -7195,6 +7510,11 @@
             "name": "hydrologicalRegimeDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -7441,6 +7761,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -7749,6 +8082,11 @@
             "name": "landManagementDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -7967,6 +8305,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -8264,6 +8615,11 @@
             "name": "diseaseManagementDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -8496,6 +8852,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -8590,6 +8959,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -8638,6 +9012,19 @@
                 "userAddedRows": true,
                 "source": "negotiations",
                 "type": "table"
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
               },
               {
                 "type": "row",
@@ -8714,6 +9101,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -8747,6 +9139,19 @@
                     "type": "textarea",
                     "rows": 3,
                     "css": "span9"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -9012,6 +9417,11 @@
             "name": "pestAnimalSurveys"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -9246,6 +9656,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -9498,6 +9921,11 @@
             "name": "plantSurvivalSurveys"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -9730,6 +10158,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -9813,6 +10254,11 @@
           },
           {
             "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
+            "dataType": "text",
             "name": "projectAssuranceDetails",
             "description": ""
           },
@@ -9854,6 +10300,19 @@
                     "type": "textarea",
                     "rows": 3,
                     "width": "70%"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -10150,6 +10609,11 @@
             "name": "remediationDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -10370,6 +10834,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -10684,6 +11161,11 @@
             "name": "weedTreatmentSites"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -10935,6 +11417,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -11264,6 +11759,11 @@
             "name": "revegetationArea"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -11545,6 +12045,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -11836,6 +12349,11 @@
             "name": "sitePreparationDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -12044,6 +12562,19 @@
                 "type": "row",
                 "items": [
                   {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
                     "type": "literal",
                     "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
                   }
@@ -12156,6 +12687,11 @@
             ]
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "name": "photographicEvidence",
             "dataType": "image"
           },
@@ -12237,6 +12773,19 @@
                     "type": "image",
                     "source": "photographicEvidence",
                     "preLabel": "Optionally attach photos"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -12392,6 +12941,11 @@
             "name": "soilTestingDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -12425,6 +12979,11 @@
                     "source": "initialOrFollowup",
                     "title": "Initial or follow-up activity?",
                     "type": "selectOne"
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "comment",
+                    "validate": "maxSize[1500]"
                   },
                   {
                     "width": "10%",
@@ -12480,6 +13039,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -12667,7 +13239,7 @@
                   {
                     "dataType": "text",
                     "name": "comment",
-                    "validate": "maxSize[300]"
+                    "validate": "maxSize[1500]"
                   }
                 ],
                 "dataType": "list",
@@ -12787,8 +13359,9 @@
                         "width": "30%",
                         "source": "comment",
                         "type": "textarea",
-                        "title": "Comments",
-                        "rows": 3
+                        "title": "Clarification, if needed",
+                        "rows": 3,
+                        "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                       }
                     ],
                     "userAddedRows": true,
@@ -13062,6 +13635,11 @@
             "name": "waterQualitySurveySites"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -13287,6 +13865,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },
@@ -13526,6 +14117,11 @@
             "name": "weedDistributionSurveySites"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -13745,6 +14341,19 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Clarification, if needed",
+                    "type": "textarea",
+                    "rows": 4,
+                    "css": "span8",
+                    "source": "comments",
+                    "placeholder": "Clarification comments include points for follow up with the project manager about this service like:\n • any reported items that are not being invoiced (eg, over-achievement) \n • any extraneous circumstances that affected delivery of the service \n"
                   }
                 ]
               },

@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.ProjectService
+import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.SiteService
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
@@ -47,15 +48,13 @@ class ShapefileBuilderSpec extends Specification {
 
         setup:
         projectService.get(_) >> project()
-        when:
 
+        when:
         shapefileBuilder.setName("testShapefile")
         shapefileBuilder.addProject('1234')
 
         File tempDir = File.createTempDir()
         File shapeOut = new File(tempDir, "testShapefile.zip")
-        //shapeOut.deleteOnExit()
-
         shapeOut.withOutputStream {
             shapefileBuilder.writeShapefile(it)
         }
@@ -74,6 +73,7 @@ class ShapefileBuilderSpec extends Specification {
             f.getProperty("name") == "Site name"
             f.getProperty('externalId') == 'External ID'
             f.getProperty('projectName') == 'Project name'
+            f.getProperty('workOrderId') == '1234'
 
             GeometryAttribute geom = f.getDefaultGeometryProperty()
             geom.value.geometryType  == "MultiPolygon"
@@ -94,20 +94,88 @@ class ShapefileBuilderSpec extends Specification {
             features.features.features().close()
         }
         finally {
-
             features.getDataStore().dispose()
         }
 
     }
 
+    def "it will export the features of a compound site separately"() {
+        setup:
+        projectService.get(_) >> projectWithCompoundSites()
+
+        when:
+        shapefileBuilder.setName("testShapefile")
+        shapefileBuilder.addProject('1234')
+
+        File tempDir = File.createTempDir()
+        File shapeOut = new File(tempDir, "testShapefile.zip")
+        shapeOut.withOutputStream {
+            shapefileBuilder.writeShapefile(it)
+        }
+
+        unzip(shapeOut, tempDir)
+        def shapefile = new File(tempDir, "testShapefile.shp")
+
+        then:
+        shapefile.exists()
+        FeatureSource features = readShapefile(shapefile)
+        try {
+            features.features.size() == 1
+
+            Feature f = features.features.features().next()
+            f.getProperty("name") == "Site name"
+            f.getProperty('externalId') == 'External ID'
+            f.getProperty('projectName') == 'Project name'
+            f.getProperty('workOrderId') == '1234'
+
+            GeometryAttribute geom = f.getDefaultGeometryProperty()
+            geom.value.geometryType  == "MultiPolygon"
+            Coordinate[] coordinates = geom.value.coordinates
+
+            coordinates.length == 5
+            coordinates[0].x == 137
+            coordinates[0].y == -34
+            coordinates[1].x == 137
+            coordinates[1].y == -35
+            coordinates[2].x == 136
+            coordinates[2].y == -35
+
+            features.features.features().close()
+        }
+        finally {
+            features.getDataStore().dispose()
+        }
+    }
+
     private Map project() {
-        return [grantId:'Grant ID', externalId:'External ID', name:'Project name', sites:sites()]
+        return [grantId:'Grant ID', externalId:'External ID', name:'Project name', sites:sites(), workOrderId:'1234']
+    }
+
+    private Map projectWithCompoundSites() {
+        return [grantId:'Grant ID', externalId:'External ID', name:'Project name', sites:compoundSites(), workOrderId:'1234']
     }
 
     private List sites() {
         return [
                 [name:'Site name', extent:[source:'drawn', geometry: [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]]]
         ]
+    }
+
+    private List compoundSites() {
+        Map site = [
+                name:'Compound site',
+                type: Site.TYPE_COMPOUND,
+                extent:[source:'calculated', geometry: [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]],
+                features:[[
+                            type:'Feature',
+                            properties:[name:'feature 1'],
+                            geometry: [
+                                  type:'Point',
+                                  coordinates:[137,-34]
+                            ]]
+                ]
+        ]
+        [site]
     }
 
     private void unzip(File zipfile, File destinationFolder) {
