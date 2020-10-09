@@ -1180,7 +1180,7 @@ security {
 }
 
 // geo server config
-geoServer.enabled = true
+geoServer.enabled = false
 geoServer.baseURL = "http://localhost:8081/geoserver"
 geoServer.workspace = "ecodata"
 geoServer.username = "admin"
