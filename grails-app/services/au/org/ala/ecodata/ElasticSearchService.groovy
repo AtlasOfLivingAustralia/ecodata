@@ -53,6 +53,7 @@ import static au.org.ala.ecodata.Status.COMPLETED
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
+import static grails.async.Promises.task
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -108,7 +109,9 @@ class ElasticSearchService {
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
         // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
         // The below code recreates the connectors.
-        getMapService()?.buildGeoServerDependencies()
+        task {
+            getMapService()?.buildGeoServerDependencies()
+        }
     }
 
     // Used to avoid a circular dependency during initialisation

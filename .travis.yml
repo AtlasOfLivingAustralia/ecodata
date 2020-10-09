@@ -35,7 +35,9 @@ before_script:
   - sudo systemctl status mongod
 
 script:
-  - grails clean; grails refresh-dependencies --non-interactive && grails test-app -clover.on && ala_travis_grails_build
+  - grails clean; grails refresh-dependencies --non-interactive && ala_travis_grails_build
+#  - grails clean; grails refresh-dependencies --non-interactive && grails test-app -clover.on && ala_travis_grails_build
+
 env:
   global:
   - secure: bIwDtP92h7r2iGMpwneKwZYjh2kK9gIDkaEHHIuNnatZsyLvqm/FukeJIbeYlXACiOHJVslQu4bpTwYvdI5UzD5KPSUMY4bu+hwtuIgQofF4zArpNzCDA3QW4Jqs87TsvjGs8zfNT5JSM6xt4RoALqpCleiwL9eH3bFIpZx/dIk=
