@@ -1183,7 +1183,6 @@ security {
 geoServer.enabled = true
 geoServer.baseURL = "http://localhost:8081/geoserver"
 geoServer.workspace = "ecodata"
-geoServer.workspaceURI = "https://ecodata.ala.org.au"
 geoServer.username = "admin"
 geoServer.password = "geoserver"
 geoServer.datastore = "pasearch"
