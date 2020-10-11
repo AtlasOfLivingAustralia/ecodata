@@ -152,7 +152,9 @@ class Report {
             approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
         }
         StatusChange change = changeStatus(userId, 'approved', changeDate, comment)
-
+        markDirty("submittedBy")
+        markDirty("dateSubmitted")
+        markDirty("publicationStatus")
         publicationStatus = REPORT_APPROVED
         approvedBy = change.changedBy
         dateApproved = change.dateChanged
@@ -167,6 +169,9 @@ class Report {
         if (dueDate && !submissionDeltaInWeekdays) {
             submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
         }
+        markDirty("submittedBy")
+        markDirty("dateSubmitted")
+        markDirty("publicationStatus")
         publicationStatus = REPORT_SUBMITTED
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
@@ -174,10 +179,12 @@ class Report {
 
     public void returnForRework(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, 'returned', changeDate, comment, category)
-
+        markDirty("submittedBy")
+        markDirty("dateSubmitted")
+        markDirty("publicationStatus")
         publicationStatus = REPORT_NOT_APPROVED
-        returnedBy = change.changedBy
-        dateReturned = change.dateChanged
+        submittedBy = change.changedBy
+        dateSubmitted = change.dateChanged
     }
 
     public void adjust(String userId, String comment, Date changeDate = new Date()) {
@@ -187,9 +194,13 @@ class Report {
         }
         StatusChange change = changeStatus(userId, 'adjusted', changeDate, comment)
 
+        markDirty("submittedBy")
+        markDirty("dateSubmitted")
+        markDirty("publicationStatus")
+
         publicationStatus = REPORT_APPROVED
-        adjustedBy = change.changedBy
-        dateAdjusted = change.dateChanged
+        submittedBy = change.changedBy
+        dateSubmitted = change.dateChanged
     }
 
     private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
