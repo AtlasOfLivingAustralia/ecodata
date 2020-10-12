@@ -1,13 +1,14 @@
 package au.org.ala.ecodata
 
 import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Unroll
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectActivityService> {
+class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectActivityService>, DomainUnitTest<ProjectActivity> {
 
     /** Insert some project activities into the database to work with */
     def setup() {
@@ -85,7 +86,7 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
 
         where:
         criteria                                                    | expectedActivityIds
-        [methodType: 'opportunistic']                               | ['projectActivity0', 'projectActivity1']
+        [methodType: 'opportunistic']                               | ['projectActivity0',  'projectActivity1']
         [description: 'description 3']                              | ['projectActivity3']
         [methodType: 'opportunistic', description: 'description 1'] | ['projectActivity1']
         [methodType: 'systematic', description: 'description 0']    | []
