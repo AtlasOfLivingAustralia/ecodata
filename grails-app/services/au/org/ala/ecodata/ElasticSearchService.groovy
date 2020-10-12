@@ -107,9 +107,12 @@ class ElasticSearchService {
 //        node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
-        // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
-        // The below code recreates the connectors.
+
+        // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
+        // Therefore, calling the below function in a thread.
         task {
+            // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
+            // The below code recreates the connectors.
             getMapService()?.buildGeoServerDependencies()
         }
     }
