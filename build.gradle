@@ -35,7 +35,7 @@ apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-bui
 
 repositories {
     mavenLocal()
-    maven { url "https://repo.osgeo.org/service/rest/repository/browse/release/" }
+    maven { url "https://repo.osgeo.org/repository/release/" }
     maven { url "https://repo.grails.org/grails/core" }
     maven { url "https://nexus.ala.org.au/content/groups/public/" }
     jcenter()
