@@ -152,8 +152,8 @@ class Report {
             approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
         }
         StatusChange change = changeStatus(userId, 'approved', changeDate, comment)
-        markDirty("submittedBy")
-        markDirty("dateSubmitted")
+        markDirty("approvedBy")
+        markDirty("dateApproved")
         markDirty("publicationStatus")
         publicationStatus = REPORT_APPROVED
         approvedBy = change.changedBy
@@ -179,12 +179,12 @@ class Report {
 
     public void returnForRework(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, 'returned', changeDate, comment, category)
-        markDirty("submittedBy")
-        markDirty("dateSubmitted")
+        markDirty("returnedBy")
+        markDirty("dateReturned")
         markDirty("publicationStatus")
         publicationStatus = REPORT_NOT_APPROVED
-        submittedBy = change.changedBy
-        dateSubmitted = change.dateChanged
+        returnedBy = change.changedBy
+        dateReturned = change.dateChanged
     }
 
     public void adjust(String userId, String comment, Date changeDate = new Date()) {
@@ -194,13 +194,13 @@ class Report {
         }
         StatusChange change = changeStatus(userId, 'adjusted', changeDate, comment)
 
-        markDirty("submittedBy")
-        markDirty("dateSubmitted")
+        markDirty("adjustedBy")
+        markDirty("dateAdjusted")
         markDirty("publicationStatus")
 
         publicationStatus = REPORT_APPROVED
-        submittedBy = change.changedBy
-        dateSubmitted = change.dateChanged
+        adjustedBy = change.changedBy
+        dateAdjusted = change.dateChanged
     }
 
     private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
