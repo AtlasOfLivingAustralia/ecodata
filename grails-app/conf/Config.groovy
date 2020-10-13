@@ -1195,6 +1195,7 @@ geoServer.defaultDataType = "pa"
 geoServer.elasticHome = "localhost"
 geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
+geoServer.readTimeout = 600000
 geoServer.layerNames = [
         "_general" : [
                 "pa": [ name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],

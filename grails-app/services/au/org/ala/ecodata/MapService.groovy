@@ -25,7 +25,6 @@ class MapService {
     def grailsApplication
     def webService
     ElasticSearchService elasticSearchService
-    HubService hubService
     CacheService cacheService
 
     boolean enabled = false
@@ -37,7 +36,6 @@ class MapService {
     public static final String TIMESERIES_LAYER = '_time'
     public static final String PROJECT_ACTIVITY_TYPE = 'pa'
     public static final String PROJECT_TYPE = 'project'
-
     List datastores = [PROJECT_ACTIVITY_INDEX, HOMEPAGE_INDEX]
 
     @Autowired
@@ -53,7 +51,6 @@ class MapService {
             log.info("GeoServer integration disabled.")
         }
     }
-
 
     def createWorkspace() {
         if (enabled) {
@@ -146,21 +143,15 @@ class MapService {
             requestJSON = requestJSON.replaceAll(',', '\\\\,')
             requestJSON = URLEncoder.encode(requestJSON, "utf-8")
             Map wmsParams = whiteListWMSParams(params)
-            if (params.VIEWPARAMS) {
-                wmsParams.VIEWPARAMS = params.VIEWPARAMS + ';'
-            } else {
-                wmsParams.VIEWPARAMS = ""
-            }
-
-            wmsParams.VIEWPARAMS += "q:${requestJSON}"
-
+            wmsParams.VIEWPARAMS = "q:${requestJSON}"
             List requestParams = []
             wmsParams.each { key, value ->
                 requestParams << key + "=" + value
             }
 
             String url = "${grailsApplication.config.geoServer.baseURL}/${grailsApplication.config.geoServer.workspace}/wms?${requestParams.join('&')}"
-            webService.proxyGetRequest(response, url, false, false,  [HttpHeaders.EXPIRES, HttpHeaders.CACHE_CONTROL, HttpHeaders.CONTENT_DISPOSITION, HttpHeaders.CONTENT_TYPE])
+            int readTimeout = "${grailsApplication.config.geoServer.readTimeout}".toInteger()
+            webService.proxyGetRequest(response, url, false, false,  [HttpHeaders.EXPIRES, HttpHeaders.CACHE_CONTROL, HttpHeaders.CONTENT_DISPOSITION, HttpHeaders.CONTENT_TYPE], readTimeout)
         }
     }
 
@@ -293,13 +284,13 @@ class MapService {
     def createLayer(String name, String dataStore, List indices, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
         if (enabled) {
             String url = "${grailsApplication.config.geoServer.baseURL}/rest/workspaces/${grailsApplication.config.geoServer.workspace}/datastores/${dataStore}/featuretypes"
-            Map layerConfig = getLayerConfiguration(name, indices, dataStore, enableTimeDimension, timeSeriesIndex)
-            String content = getLayerDefinition(layerConfig)
-            log.debug("Creating layer (${layerConfig.name}) on GeoServer with content: ${content}")
+            Map layerSettings = getLayerSettings(name, indices, dataStore, enableTimeDimension, timeSeriesIndex)
+            String content = getLayerXMLDefinition(layerSettings)
+            log.debug("Creating layer (${layerSettings.name}) on GeoServer with content: ${content}")
             Map response = webService.doPost(url, content, false, getHeaders())
             if(!response.error) {
                 response.success = 'Created'
-                response.layerName = layerConfig.name
+                response.layerName = layerSettings.name
                 response.location = response.headers.location
             }
 
@@ -307,7 +298,7 @@ class MapService {
         }
     }
 
-    Map getLayerConfiguration (String name, List indices, String dataStore, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
+    Map getLayerSettings(String name, List indices, String dataStore, Boolean enableTimeDimension = false, String timeSeriesIndex = '') {
         // deep copy configuration
         String configSerialized = (grailsApplication.config.geoServer.layerConfiguration[dataStore] as JSON).toString()
         Map config = JSON.parse(configSerialized)
@@ -516,7 +507,7 @@ class MapService {
         boolean isCreated = checkIfLayerExists(name, dataStore)
         if (!isCreated) {
             Map response = createLayer(name, dataStore, indices, enableTimeDimension, timeSeriesIndex)
-            if (response.error) {
+            if (!response || response.error) {
                 log.warn("Could not create ${name} on GeoServer.")
                 return
             }
@@ -584,7 +575,7 @@ class MapService {
      * @param layerConfig
      * @return
      */
-    String getLayerDefinition (Map layerConfig) {
+    String getLayerXMLDefinition(Map layerConfig) {
         def files = resourceResolver.getResources("classpath:data/templates/layer.template")
         def engine = new groovy.text.XmlTemplateEngine()
         engine.setIndentation('')
@@ -665,7 +656,7 @@ class MapService {
         bindDataToXMLTemplate("classpath:data/templates/colour_by_term.template", dataBinding)
     }
 
-    def buildStyleForRangeFacet(String field, List terms, String style) {
+    def buildStyleForRangeFacet(String field, List terms, String style, String dataStore) {
         int cIndex = 0
         List colour = grailsApplication.config.geoserver.facetRangeColour
 
@@ -681,12 +672,18 @@ class MapService {
                 namespace: grailsApplication.config.geoServer.workspace,
                 field: field,
                 terms: terms,
-                style: style
+                style: style,
+                geometryTypeField: grailsApplication.config.geoServer[dataStore].geometryTypeField
         ]
 
         bindDataToXMLTemplate("classpath:data/templates/colour_by_range.template", dataBinding)
     }
 
+    /**
+     * Filter out parameters in request like VIEWPARAMS. VIEWPARAMS is used to send query to ES.
+     * @param params
+     * @return
+     */
     def whiteListWMSParams(params) {
         List whitelist = [
                 'SERVICE', 'VERSION', 'REQUEST', 'FORMAT', 'TRANSPARENT', 'STYLES', 'LAYERS', 'SRS', 'CRS', 'WIDTH', 'LAYER',
