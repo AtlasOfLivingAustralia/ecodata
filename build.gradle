@@ -11,6 +11,7 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
+        classpath 'com.bmuschko:gradle-clover-plugin:2.1.0'
        // classpath "org.grails.plugins:hibernate"
       //   classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
     }
@@ -28,9 +29,11 @@ description "Ecodata"
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"war"
+apply plugin: "groovy"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
+apply plugin: 'com.bmuschko.clover'
 apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
 
 repositories {
@@ -159,6 +162,7 @@ dependencies {
     testCompile "org.grails:grails-web-testing-support"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+    clover 'org.openclover:clover:4.2.0'
 
  //   testCompile "com.github.fakemongo:fongo:2.1.0"
  //   testCompile "org.grails:grails-test-mixins:3.3.0"
@@ -167,6 +171,29 @@ dependencies {
    /* testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy'
     }*/
+}
+clover {
+    // Although Clover is now open source the plugin
+    // still expects to find the license file.
+    // Any file will work.
+    licenseLocation = File.createTempFile('clover', '.license').absolutePath
+    targetPercentage = "100%"
+    excludes = ['**/Application.groovy',
+                '**/BootStrap.groovy',
+                '**/UrlMappings.groovy',
+                '**/*GrailsPlugin.groovy',
+                '**/*Mock.groovy',
+    ]
+    // This is neededed to see which tests targeted code
+    // In this particular project I'm only using Spock
+    // specifications
+    testIncludes = ['**/*Spec.groovy']
+
+    // I would like to have both html and xml report
+    report {
+        html = true
+        xml = true
+    }
 }
 
 springBoot {
@@ -209,5 +236,4 @@ bootRepackage {
 publish {
     dependsOn assemble
 }
-
 
