@@ -12,7 +12,6 @@ import org.elasticsearch.client.Client
 import spock.lang.Specification
 
 import javax.servlet.http.HttpServletRequest
-
 /**
  * Created by sat01a on 24/11/15.
  */
@@ -240,6 +239,19 @@ class ElasticSearchServiceSpec extends Specification {
         then:
         noExceptionThrown()
 
+    }
+
+    def  "the aggs parameters is optional"() {
+        setup:
+        String queryString = ""
+        Map params = new GrailsParameterMap(["aggs":'[{"type": "geohash", "field": "geoPoint", "precision": 4}]'], null)
+        String index = ElasticIndex.HOMEPAGE_INDEX
+
+        when:
+        service.buildSearchRequest(queryString, params, index)
+
+        then:
+        noExceptionThrown()
     }
 
     def "A project can be prepared with extra information for use in the main project finder/project explorer index"() {
