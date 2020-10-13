@@ -53,8 +53,9 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
+    String managementUnitId
 	Map custom
-	Map risks
+	Risks risks
 	Date dateCreated
     Date lastUpdated
 	String promoteOnHomepage = 'no'
@@ -93,7 +94,7 @@ class Project {
     /** The program of work this project is a part of, if any */
     String programId
 
-    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig']
+    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig', 'risks']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
@@ -201,6 +202,7 @@ class Project {
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
         mapDisplays nullable: true
+        managementUnitId nullable: true
     }
 }
 

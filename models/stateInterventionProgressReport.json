@@ -7,8 +7,8 @@
   "dateCreated": "2020-06-30T22:21:48Z",
   "formVersion": 1,
   "gmsId": null,
-  "lastUpdated": "2020-06-30T22:25:45Z",
-  "lastUpdatedUserId": "1493",
+  "lastUpdated": "2020-07-23T01:35:05Z",
+  "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
   "name": "State Intervention Progress Report",
   "publicationStatus": "published",
@@ -59,7 +59,10 @@
             "dataType": "text",
             "name": "issuesEncountered",
             "validate": "required",
-            "constraints": ["Yes", "No"]
+            "constraints": [
+              "Yes",
+              "No"
+            ]
           },
           {
             "dataType": "list",
@@ -328,6 +331,15 @@
               }
             ],
             "type": "row"
+          },
+          {
+            "items": [
+              {
+                "source": "</br><strong>Note:</strong> Please de-select <strong>‘Not applicable’</strong> for activities that were undertaken during the reporting period and complete the required fields",
+                "type": "literal"
+              }
+            ],
+            "type": "row"
           }
         ]
       },
@@ -391,49 +403,6 @@
                     "type": "textarea",
                     "rows": 4,
                     "css": "span8"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -553,58 +522,6 @@
                 "userAddedRows": true,
                 "source": "communicationMaterials",
                 "type": "table"
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "source": "<i>Note: to upload a communication material refer to the documents tab.</i>",
-                    "type": "literal"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -778,49 +695,6 @@
                     "type": "image"
                   }
                 ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -991,32 +865,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaInstalledHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthInstalledKm, 2) != roundTo(lengthInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "feature",
                 "name": "protectedSites"
               },
@@ -1103,7 +951,7 @@
                     "title": "Number of structures installed"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "type": "col",
                     "title": "Site/s where access has been controlled",
                     "items": [
@@ -1151,7 +999,7 @@
                   },
                   {
                     "helpText": "May be changed manually if different to the calculated areas",
-                    "width": "15%",
+                    "width": "20%",
                     "type": "col",
                     "title": "Actual length (km) / area (ha) where access has been controlled",
                     "items": [
@@ -1193,50 +1041,7 @@
                     ]
                   },
                   {
-                    "helpText": "May be changed manually if different to the calculated areas",
                     "width": "15%",
-                    "type": "col",
-                    "title": "Area (ha) / Length (km) invoiced",
-                    "items": [
-                      {
-                        "source": "areaInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "source": "lengthInvoicedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
                     "type": "col",
                     "title": "Site/s protected by access control structures",
                     "items": [
@@ -1287,49 +1092,6 @@
                     "preLabel": "Optionally attach photos of the access control work performed",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -1518,32 +1280,6 @@
                     "condition": "not (within(lengthControlledKm, siteCalculatedLengthKm, 0.1)) and \"Other\" == mappingLengthNotAlignedReason"
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "if"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "if",
-                    "condition": "roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2) and \"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "text",
@@ -1758,7 +1494,7 @@
                             "type": "row",
                             "items": [
                               {
-                                "preLabel": "Actual area (ha) created for pest animals",
+                                "preLabel": "Actual area (ha) treated for pest animals",
                                 "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                                 "source": "areaControlledHa",
                                 "type": "number",
@@ -1793,7 +1529,7 @@
                             "type": "row",
                             "items": [
                               {
-                                "preLabel": "Actual length (km) created for pest animals",
+                                "preLabel": "Actual length (km) treated for pest animals",
                                 "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                                 "source": "lengthControlledKm",
                                 "type": "number",
@@ -1820,82 +1556,6 @@
                               {
                                 "placeholder": "Please enter the reason/s the mapping length didn't align with the invoiced amount",
                                 "source": "mappingLengthNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "col",
-                        "css": "span4",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) treated for pest animals",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced length (km) treated for pest animals",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "lengthInvoicedKm",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedLengthNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedLengthNotActualComments",
                                 "type": "textarea",
                                 "rows": 5
                               }
@@ -1963,49 +1623,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -2169,32 +1786,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaCoveredByPlanHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "speciesOrTECCoveredByPlan",
                 "description": "This free text field allows multiple species and/or TECs to be entered. For Species: Use Scientific names with (common name in brackets), TECs should be written as listed in EPBC. Species or TECs should be separated by commas.",
                 "validate": "required,maxSize[300]"
@@ -2261,13 +1852,13 @@
                     ]
                   },
                   {
-                    "width": "6%",
+                    "width": "10%",
                     "source": "numberOfPlansDeveloped",
                     "title": "Number of plans developed",
                     "type": "number"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "type": "col",
                     "title": "Sites/s covered by plan/s",
                     "items": [
@@ -2296,7 +1887,7 @@
                     ]
                   },
                   {
-                    "width": "17%",
+                    "width": "20%",
                     "title": "Actual area (ha) covered by plan/s",
                     "type": "col",
                     "items": [
@@ -2331,43 +1922,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) covered by the plan",
-                    "items": [
-                      {
-                        "source": "areaInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "20%",
+                    "width": "22%",
                     "source": "speciesOrTECCoveredByPlan",
                     "type": "textarea",
                     "title": "Species and/or Threatened ecological communities covered in plan"
@@ -2376,49 +1931,6 @@
                 "userAddedRows": true,
                 "source": "managementPlans",
                 "type": "table"
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -2570,32 +2082,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(debrisRemovedHa, 2) != roundTo(areaOfRemovedDebrisInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "visible",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "debrisType",
                 "description": "",
                 "constraints": [
@@ -2664,7 +2150,7 @@
               {
                 "columns": [
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "source": "initialOrFollowup",
                     "title": "Initial or follow-up activity?",
                     "type": "selectOne"
@@ -2707,7 +2193,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Actual area (ha) / length (km) of debris removed",
                     "helpText": "Enter the amount which were actually removed during this reporting period.",
@@ -2750,42 +2236,6 @@
                     ]
                   },
                   {
-                    "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) of debris removed",
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "items": [
-                      {
-                        "source": "areaOfRemovedDebrisInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
                     "width": "20%",
                     "title": "Type of debris removed",
                     "type": "col",
@@ -2807,13 +2257,13 @@
                     ]
                   },
                   {
-                    "width": "10%",
+                    "width": "12%",
                     "source": "weightOfDebrisTonnes",
                     "title": "Weight (tonnes) of debris removed",
                     "type": "number"
                   },
                   {
-                    "width": "10%",
+                    "width": "12%",
                     "source": "volumeRemovedM3",
                     "title": "Volume (m3) of debris removed",
                     "type": "number"
@@ -2830,49 +2280,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -3064,32 +2471,6 @@
                 "validate": "required,maxSize[300]"
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaOfErosionControlHa, 2) != roundTo(areaOfErosionControlInvoicedHa, 2) or roundTo(lengthOfErosionControlKm, 2) != roundTo(lengthOfErosionControlInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberInstalled",
                 "validate": "required,min[0]"
@@ -3181,7 +2562,7 @@
                     "type": "selectOne"
                   },
                   {
-                    "width": "5%",
+                    "width": "7%",
                     "title": "Site/s where erosion is evident",
                     "type": "col",
                     "items": [
@@ -3199,7 +2580,7 @@
                     ]
                   },
                   {
-                    "width": "6%",
+                    "width": "10%",
                     "type": "col",
                     "title": "Site/s of erosion control",
                     "items": [
@@ -3237,7 +2618,7 @@
                   },
                   {
                     "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
-                    "width": "17%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Actual area (ha) / length (km) of erosion control",
                     "items": [
@@ -3279,50 +2660,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) / length (km) of erosion control",
-                    "items": [
-                      {
-                        "source": "areaOfErosionControlInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "source": "lengthOfErosionControlInvoicedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "5%",
+                    "width": "10%",
                     "source": "numberInstalled",
                     "title": "Number of erosion control structures installed",
                     "type": "number"
@@ -3393,49 +2731,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -3554,32 +2849,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaOfEnclosuresHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -3767,46 +3036,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) of feral-free enclosures",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -3851,49 +3080,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -4172,49 +3358,6 @@
                     "type": "image"
                   }
                 ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -4373,32 +3516,6 @@
                   }
                 ],
                 "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaOfCoveredByAgreementsInvoicedHa, 2) != roundTo(areaCoveredByAgreementsHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               }
             ],
             "dataType": "list",
@@ -4462,13 +3579,13 @@
                     "title": "Established or maintained?"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "source": "numberOfAgreements",
                     "type": "number",
                     "title": "Number of agreements"
                   },
                   {
-                    "width": "10%",
+                    "width": "20%",
                     "source": "numberOfDaysMaintainingAgreements",
                     "type": "number",
                     "title": "Number of days maintaining agreements (if applicable)"
@@ -4537,90 +3654,11 @@
                         ]
                       }
                     ]
-                  },
-                  {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) of site/s agreements",
-                    "items": [
-                      {
-                        "source": "areaOfCoveredByAgreementsInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
                   }
                 ],
                 "userAddedRows": true,
                 "source": "agreements",
                 "type": "table"
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -4758,49 +3796,6 @@
                     "preLabel": "Optionally attach photos"
                   }
                 ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -4905,49 +3900,6 @@
                 ],
                 "userAddedRows": true,
                 "type": "table"
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ],
             "type": "section"
@@ -5066,32 +4018,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -5279,48 +4205,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) covered by fauna surveys",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -5365,49 +4249,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -5560,32 +4401,6 @@
                 ]
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "visible",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "defaultValue": {
                   "type": "computed",
                   "expression": "$geom.lengthKm(sitesTreated)"
@@ -5710,7 +4525,7 @@
                     "title": "Initial or follow-up control?"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "title": "Area (ha) treated by fire management action",
                     "type": "col",
                     "items": [
@@ -5791,42 +4606,6 @@
                   },
                   {
                     "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) treated by management action",
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "items": [
-                      {
-                        "source": "areaInvoicedTreatedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "15%",
                     "title": "Type of fire management action",
                     "type": "col",
                     "items": [
@@ -5846,7 +4625,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "type": "col",
                     "title": "Please map any off-site area/s if they benefitted from this fire management action",
                     "items": [
@@ -5864,7 +4643,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "source": "evidenceOfBenefit",
                     "type": "textarea",
                     "rows": 3,
@@ -5882,49 +4661,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -6044,32 +4780,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -6262,48 +4972,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) covered by flora surveys",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -6353,49 +5021,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -6549,32 +5174,6 @@
                     }
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "visible",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "number",
@@ -6763,42 +5362,6 @@
                   },
                   {
                     "width": "10%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) habitat augmentation",
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "items": [
-                      {
-                        "source": "areaInvoicedAumentationHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "5%",
                     "source": "numberOfStructuresInstalled",
                     "type": "number",
                     "title": "Number of structures installed"
@@ -6829,7 +5392,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "source": "habitatAugmentationObjective",
                     "title": "Purpose of habitat augmentation",
                     "type": "textarea"
@@ -6854,7 +5417,7 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "20%",
                     "source": "evidenceOfBenefit",
                     "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
                     "type": "textarea"
@@ -6863,49 +5426,6 @@
                 "userAddedRows": true,
                 "source": "habitatAugmentationDetails",
                 "type": "table"
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -6986,49 +5506,6 @@
                     "type": "image",
                     "source": "photographicEvidence",
                     "preLabel": "Optionally attach photos"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -7192,32 +5669,6 @@
               },
               {
                 "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaCoveringRegimeChangeHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
                 "name": "treatmentType",
                 "description": "",
                 "constraints": [
@@ -7299,7 +5750,7 @@
                     "title": "Installed or maintained?"
                   },
                   {
-                    "width": "6%",
+                    "width": "10%",
                     "source": "numberOfTreatmentsImplemented",
                     "title": "Number of treatments implemented to improve water management",
                     "type": "number"
@@ -7352,7 +5803,7 @@
                     "title": "Site/s where hydrological regimes are being improved"
                   },
                   {
-                    "width": "10%",
+                    "width": "15%",
                     "title": "Actual area (ha) / length (km) covering the hydrological regime change",
                     "type": "col",
                     "items": [
@@ -7404,47 +5855,7 @@
                     ]
                   },
                   {
-                    "width": "10%",
-                    "title": "Invoiced area (ha) covering the hydrological regime change",
-                    "type": "col",
-                    "items": [
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "source": "areaInvoicedHa",
-                            "type": "number",
-                            "displayOptions": {
-                              "displayUnits": true
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "25%",
+                    "width": "30%",
                     "title": "Type of treatment implemented to improve water management",
                     "type": "col",
                     "items": [
@@ -7510,49 +5921,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -7705,32 +6073,6 @@
                     "rule": "max"
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaImplementedHa, 2) != roundTo(areaImplementedInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "text",
@@ -7933,43 +6275,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) covered by practice change",
-                    "items": [
-                      {
-                        "source": "areaImplementedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "15%",
+                    "width": "20%",
                     "title": "Type of action",
                     "type": "col",
                     "items": [
@@ -8002,7 +6308,7 @@
                     "type": "textarea"
                   },
                   {
-                    "width": "15%",
+                    "width": "25%",
                     "title": "Please map any off-site area/s if they benefitted from this practice change",
                     "type": "col",
                     "items": [
@@ -8036,49 +6342,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -8230,32 +6493,6 @@
                     "rule": "max"
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaTreatedInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "text",
@@ -8448,49 +6685,13 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
                     "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) treated for disease",
-                    "items": [
-                      {
-                        "source": "areaTreatedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
                     "source": "targetDisease",
                     "title": "Disease treated",
                     "type": "text"
                   },
                   {
-                    "width": "12%",
+                    "width": "15%",
                     "type": "col",
                     "title": "Type of management method / treatment",
                     "items": [
@@ -8558,49 +6759,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -8707,49 +6865,6 @@
                 "userAddedRows": true,
                 "source": "negotiations",
                 "type": "table"
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -8816,49 +6931,6 @@
                     "type": "textarea",
                     "rows": 3,
                     "css": "span9"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -8979,32 +7051,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -9214,48 +7260,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) surveyed for pest animals",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -9315,49 +7319,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -9477,32 +7438,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -9700,48 +7635,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) surveyed for plant survival",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -9794,49 +7687,6 @@
                     "type": "image"
                   }
                 ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -9854,7 +7704,7 @@
       "optional": true,
       "optionalQuestionText": null,
       "template": {
-        "title": "Project planning and delivery of documents as required for the delivery of the Project Services and monitoring",
+        "title": "Project planning and delivery of documents as required for the delivery of the Project and monitoring",
         "modelName": "RLP - Project planning",
         "dataModel": [
           {
@@ -9907,7 +7757,7 @@
                 "columns": [
                   {
                     "source": "numberPlanningDocuments",
-                    "title": "Number of planning and delivery documents for delivery of the project services and monitoring",
+                    "title": "Number of planning and delivery documents for delivery of the project and monitoring",
                     "type": "number",
                     "width": "15%"
                   },
@@ -9923,49 +7773,6 @@
                     "type": "textarea",
                     "rows": 3,
                     "width": "70%"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -10137,32 +7944,6 @@
                 ]
               },
               {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaRemediatedHa, 2) != roundTo(areaRemediatedInvoicedHa, 2) or roundTo(lengthRemediatedKm, 2) != roundTo(lengthRemediatedInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfStructuresInstalled",
                 "validate": "required,min[0]"
@@ -10292,7 +8073,7 @@
                   },
                   {
                     "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Actual area (ha) / length (km) being remediated",
                     "items": [
@@ -10334,50 +8115,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
-                    "width": "17%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) / length (km) being remediated",
-                    "items": [
-                      {
-                        "source": "areaRemediatedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "source": "lengthRemediatedInvoicedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
+                    "width": "15%",
                     "source": "numberOfStructuresInstalled",
                     "type": "number",
                     "title": "Number of structures installed"
@@ -10404,7 +8142,7 @@
                     ]
                   },
                   {
-                    "width": "17%",
+                    "width": "22%",
                     "type": "col",
                     "title": "Please identify any area/s that have shown evidence of off-site benefits",
                     "items": [
@@ -10439,49 +8177,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -10640,32 +8335,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthTreatedKm, 2) != roundTo(lengthInvoicedKm, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -10905,56 +8574,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) / length (km) treated for weed removal",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "source": "lengthInvoicedKm",
-                            "type": "number",
-                            "validate": "required",
-                            "displayOptions": {
-                              "displayUnits": true
-                            }
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -11004,49 +8623,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -11188,32 +8764,6 @@
                     "condition": "\"Other\" == mappingNotAlignedReason"
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaRevegetatedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "type": "if",
-                    "condition": "\"Other\" == invoicedNotActualReason"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "document",
@@ -11475,48 +9025,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "type": "col",
-                        "css": "span4",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) of habitat revegetated",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -11614,49 +9122,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -11799,32 +9264,6 @@
                     "rule": "max"
                   }
                 ]
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaPreparedHa, 2) != roundTo(areaPreparedInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
-                    "type": "visible"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
               },
               {
                 "dataType": "number",
@@ -12014,43 +9453,7 @@
                     ]
                   },
                   {
-                    "helpText": "Enter the amount you will invoice for during this reporting period.",
                     "width": "15%",
-                    "type": "col",
-                    "title": "Invoiced area (ha) of site preparation",
-                    "items": [
-                      {
-                        "source": "areaPreparedInvoicedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "preLabel": "Reason for invoiced amount being different to actual amount",
-                            "source": "invoicedNotActualReason",
-                            "type": "selectOne"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "row",
-                        "items": [
-                          {
-                            "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                            "source": "invoicedNotActualComments",
-                            "type": "textarea",
-                            "rows": 5
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
                     "source": "numberOfDaysPreparingSite",
                     "title": "Number of days in preparing site",
                     "type": "number"
@@ -12062,7 +9465,7 @@
                     "type": "select2"
                   },
                   {
-                    "width": "15%",
+                    "width": "16%",
                     "type": "col",
                     "title": "Type of action",
                     "items": [
@@ -12083,13 +9486,13 @@
                     ]
                   },
                   {
-                    "width": "15%",
+                    "width": "17%",
                     "source": "purposeOfSitePreparation",
                     "title": "Aim of site preparation",
                     "type": "textarea"
                   },
                   {
-                    "width": "15%",
+                    "width": "17%",
                     "source": "threatenedEcologicalCommunity",
                     "title": "Threatened ecological community (if applicable)",
                     "type": "text"
@@ -12106,49 +9509,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -12308,49 +9668,6 @@
                     "preLabel": "Optionally attach photos"
                   }
                 ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ],
             "type": "section"
@@ -12403,6 +9720,7 @@
                 },
                 "dataType": "number",
                 "name": "areaTestedHa",
+                "units": "Ha",
                 "validate": [
                   {
                     "rule": "min",
@@ -12427,12 +9745,14 @@
                 },
                 "dataType": "number",
                 "name": "lengthTestedKm",
+                "units": "Km",
                 "validate": [
                   {
                     "rule": "min",
                     "param": {
                       "type": "computed",
-                      "expression": "$geom.lengthKm(sitesTested)*0.9"
+                      "expression": "$geom.lengthKm(sitesTested)*0.9",
+                      "errorMessages": "Please Select"
                     }
                   },
                   {
@@ -12443,6 +9763,28 @@
                     }
                   }
                 ]
+              },
+              {
+                "defaultValue": {
+                  "type": "computed",
+                  "expression": "areaTestedHa"
+                },
+                "dataType": "number",
+                "name": "areaTestedChangeHa",
+                "validate": "min[0]",
+                "decimalPlaces": 3,
+                "units": "ha"
+              },
+              {
+                "defaultValue": {
+                  "type": "computed",
+                  "expression": "lengthTestedKm"
+                },
+                "dataType": "number",
+                "name": "lengthTestedChangeKm",
+                "validate": "min[0]",
+                "decimalPlaces": 3,
+                "units": "km"
               },
               {
                 "dataType": "text",
@@ -12508,22 +9850,73 @@
                     "type": "text"
                   },
                   {
-                    "width": "5%",
-                    "source": "sitesTested",
-                    "type": "feature",
+                    "width": "10%",
+                    "type": "col",
+                    "items": [
+                      {
+                        "type": "feature",
+                        "source": "sitesTested"
+                      },
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "type": "number",
+                            "source": "areaTestedHa",
+                            "displayOptions": {
+                              "displayUnits": true
+                            },
+                            "readonly": true
+                          }
+                        ]
+                      },
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "type": "number",
+                            "source": "lengthTestedKm",
+                            "displayOptions": {
+                              "displayUnits": true
+                            },
+                            "readonly": true
+                          }
+                        ]
+                      }
+                    ],
                     "title": "Project site/s where soil tests were conducted"
                   },
                   {
-                    "width": "10%",
-                    "source": "areaTestedHa",
-                    "type": "number",
-                    "title": "Area (ha) where soil tests were conducted"
-                  },
-                  {
-                    "width": "10%",
-                    "source": "lengthTestedKm",
-                    "type": "number",
-                    "title": "Length (km) where soil tests were conducted"
+                    "width": "15%",
+                    "title": "Actual Area (ha) / length (km) where soil tests were conducted",
+                    "helpText": "Manually enter correct figure if different to mapped value.",
+                    "type": "col",
+                    "items": [
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "source": "areaTestedChangeHa",
+                            "type": "number",
+                            "displayOptions": {
+                              "displayUnits": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "row",
+                        "items": [
+                          {
+                            "source": "lengthTestedChangeKm",
+                            "type": "number",
+                            "displayOptions": {
+                              "displayUnits": true
+                            }
+                          }
+                        ]
+                      }
+                    ]
                   },
                   {
                     "width": "18%",
@@ -12549,49 +9942,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -12940,49 +10290,6 @@
                     "type": "image"
                   }
                 ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
-                  }
-                ]
               }
             ]
           }
@@ -13100,32 +10407,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -13329,48 +10610,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) covered by water quality surveys",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -13421,49 +10660,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
@@ -13583,32 +10779,6 @@
                 "behaviour": [
                   {
                     "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualReason",
-                "behaviour": [
-                  {
-                    "condition": "roundTo(areaSurveyedHa, 2) != roundTo(areaInvoicedHa, 2)",
-                    "type": "visible"
-                  }
-                ],
-                "constraints": [
-                  "Work was undertaken over a greater area than will be invoiced for",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "invoicedNotActualComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == invoicedNotActualReason",
                     "type": "if"
                   }
                 ],
@@ -13793,48 +10963,6 @@
                             ]
                           }
                         ]
-                      },
-                      {
-                        "css": "span4",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Invoiced area (ha) surveyed for weed distribution",
-                                "helpText": "Enter the amount you will invoice for during this reporting period.",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for invoiced amount being different to actual amount",
-                                "source": "invoicedNotActualReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "invoicedNotActualComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
                       }
                     ]
                   },
@@ -13879,49 +11007,6 @@
                     "preLabel": "Optionally attach photos",
                     "source": "photographicEvidence",
                     "type": "image"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Available Evidence</b></p>This field is mandatory for all <u>Environment</u> projects but optional for Agriculture projects. This field identifies what evidence you have available for this service and where the evidence is stored. This helps the Department and Service Providers during future assurance activities. Refer to the <a href=\"http://nrm.gov.au/publications/rlp-merit-user-guide\" target=\"_evidence\">Evidence Guide</a> for details of the types of acceptable evidence."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "",
-                    "source": "projectAssuranceDetails",
-                    "type": "textarea",
-                    "rows": 4,
-                    "placeholder": "List the documentary evidence you have available for this project service. Include specifically, the document titles and location (e.g. internal IT network pathway, URLs) to assist with locating this material for future audits/assurance purposes."
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "type": "literal",
-                    "source": "<p><b>Evidence of Service Delivery</b></p>This field is mandatory for all <u>Agriculture</u> projects as part of the invoicing process, as well as any environment projects where you have been notified as undergoing an <u>audit or quarterly assurance check</u>. The field allows you to attach evidence against a specific service."
-                  }
-                ]
-              },
-              {
-                "type": "table",
-                "source": "assuranceDocuments",
-                "userAddedRows": true,
-                "disableTableUpload": true,
-                "columns": [
-                  {
-                    "title": "Attached documents",
-                    "source": "attachments",
-                    "type": "document"
                   }
                 ]
               }
