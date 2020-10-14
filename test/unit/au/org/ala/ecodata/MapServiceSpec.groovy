@@ -257,7 +257,7 @@ class MapServiceSpec extends Specification {
         service.wms(params, response)
 
         then:
-        1 * webService.proxyGetRequest(response, "http://localhost:8081/geoserver/ecodata/wms?VIEWPARAMS=q:%7B%22query_string%22%3A%7B%22query%22%3A%22difficulty%3A%5C%5C%5C%22Easy%5C%5C%5C%22%22%5C%2C%22fields%22%3A%5B%22name%5E50.0%22%5C%2C%22description%5E30.0%22%5C%2C%22organisationName%5E30.0%22%5C%2C%22_all%22%5D%7D%7D", false, false, ['Expires', 'Cache-Control', 'Content-Disposition', 'Content-Type']) >> [image: true]
+        1 * webService.proxyGetRequest(response, "http://localhost:8081/geoserver/ecodata/wms?VIEWPARAMS=q:%7B%22query_string%22%3A%7B%22query%22%3A%22difficulty%3A%5C%5C%5C%22Easy%5C%5C%5C%22%22%5C%2C%22fields%22%3A%5B%22name%5E50.0%22%5C%2C%22description%5E30.0%22%5C%2C%22organisationName%5E30.0%22%5C%2C%22_all%22%5D%7D%7D", false, false, ['Expires', 'Cache-Control', 'Content-Disposition', 'Content-Type'], 600000) >> [image: true]
         params.query == "difficulty:\\\"Easy\\\""
 
         when:
@@ -265,7 +265,7 @@ class MapServiceSpec extends Specification {
         service.wms(params, response)
 
         then:
-        1 * webService.proxyGetRequest(response, "http://localhost:8081/geoserver/ecodata/wms?VIEWPARAMS=q:%7B%22query_string%22%3A%7B%22query%22%3A%22%28docType%3Aactivity+AND+projectActivity.embargoed%3Afalse%29%22%7D%7D", false, false, ['Expires', 'Cache-Control', 'Content-Disposition', 'Content-Type']) >> [image: true]
+        1 * webService.proxyGetRequest(response, "http://localhost:8081/geoserver/ecodata/wms?VIEWPARAMS=q:%7B%22query_string%22%3A%7B%22query%22%3A%22%28docType%3Aactivity+AND+projectActivity.embargoed%3Afalse%29%22%7D%7D", false, false, ['Expires', 'Cache-Control', 'Content-Disposition', 'Content-Type'], 600000) >> [image: true]
 
     }
 
