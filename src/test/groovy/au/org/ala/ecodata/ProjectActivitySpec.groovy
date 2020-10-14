@@ -3,10 +3,12 @@ package au.org.ala.ecodata
 import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
+import spock.lang.Stepwise
 import spock.lang.Unroll
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+
 
 class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectActivityService>, DomainUnitTest<ProjectActivity> {
 
@@ -64,7 +66,7 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
     }
 
     private def createProjectActivity(props) {
-        ProjectActivity.withTransaction {
+        ProjectActivity.withNewTransaction {
             ProjectActivity projectActivity = new ProjectActivity(props)
             projectActivity.save(failOnError: true, flush: true)
         }
@@ -76,7 +78,7 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
         when:
         def results
 
-        ProjectActivity.withTransaction {
+        ProjectActivity.withNewTransaction {
             results = service.search(criteria, LevelOfDetail.flat.name())
         }
         results.sort { a1, a2 -> a1.projectActivityId <=> a2.projectActivityId }
@@ -96,7 +98,7 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
     def "when a project activity is deleted, it should not be returned"(criteria, expectedProjectActivityIds) {
         when:
         def results
-        ProjectActivity.withTransaction {
+        ProjectActivity.withNewTransaction {
             results = service.search(criteria, LevelOfDetail.flat.name())
         }
         results.sort { a1, a2 -> a1.projectActivityId <=> a2.projectActivityId }
