@@ -84,7 +84,6 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
         results.sort { a1, a2 -> a1.projectActivityId <=> a2.projectActivityId }
 
         then:
-        sleep(2000)
         results.collect { it.projectActivityId } == expectedActivityIds
 
         where:
