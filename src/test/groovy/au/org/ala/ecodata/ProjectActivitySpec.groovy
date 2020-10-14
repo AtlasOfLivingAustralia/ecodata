@@ -78,7 +78,7 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
         when:
         def results
 
-        ProjectActivity.withNewTransaction {
+        ProjectActivity.withNewSession {
             results = service.search(criteria, LevelOfDetail.flat.name())
         }
         results.sort { a1, a2 -> a1.projectActivityId <=> a2.projectActivityId }

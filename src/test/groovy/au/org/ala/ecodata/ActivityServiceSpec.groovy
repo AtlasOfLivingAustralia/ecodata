@@ -26,13 +26,7 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
     /** Insert some activities into the database to work with */
     def setup() {
 
-      //  Activity.withNewTransaction {
-            Activity.findAll().each {
-                it.delete()
-            }
-       // }
-
-/*        DateFormat format = new SimpleDateFormat('yyyy/MM/dd')
+        DateFormat format = new SimpleDateFormat('yyyy/MM/dd')
         def types = ['type 1', 'type 1', 'type 2', 'type 3', 'type 3', 'type 3']
         def plannedStartDates = ['2014/01/01', '2014/07/01', '2014/01/01', '2014/07/01', '2015/01/01', '2015/07/01']
         def plannedEndDates = ['2014/07/01', '2015/01/01', '2014/07/01', '2015/01/01', '2015/07/01', '2015/12/31']
@@ -46,7 +40,10 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
                          startDate:format.parse(startDates[i]),
                          endDate:format.parse(endDates[i])]
             createActivity(props)
-        }*/
+        }
+        Activity.metaClass.getDbo = {
+            delegate.properties
+        }
 
         service.lockService = Stub(LockService)
         service.outputService = outputService
@@ -56,18 +53,30 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
         service.commonService = commonService
     }
 
-    private def createActivity(props) {
-        Activity activity = new Activity(props)
-        activity.save(failOnError: true, flush:true)
+    void cleanup() {
+        Activity.withNewTransaction {
+            Activity.findAll().each {
+                it.delete()
+            }
+
+            Activity.metaClass.getDbo = null
+        }
     }
 
-/*
+    private def createActivity(props) {
+        Activity.withNewTransaction {
+            Activity activity = new Activity(props)
+            activity.save(failOnError: true, flush: true)
+        }
+    }
+
+
     @Unroll
     def "activities can be searched for without supplying dates"(criteria, expectedActivityIds) {
 
         when:
         def results
-        Activity.withNewTransaction {
+        Activity.withNewSession {
             results = service.search(criteria, LevelOfDetail.NO_OUTPUTS.name())
             results.sort { a1, a2 -> a1.activityId <=> a2.activityId }
         }
@@ -158,7 +167,6 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
         '2014/01/01' | '2016/01/02' | Boolean.TRUE  | [:] | ['activity0', 'activity1', 'activity2', 'activity3', 'activity4', 'activity5']
 
     }
-*/
 
     def "when an activity is cancelled or deferred, existing Output data should be deleted"(String progressToAssign, boolean shouldBeDeleted) {
         setup:
