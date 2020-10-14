@@ -1179,6 +1179,10 @@ security {
     }
 }
 
+// elasticsearch cluster setting
+// can transport layer connection be made from apps outside JVM
+elasticsearch.local = true
+
 // geo server config
 geoServer.enabled = false
 geoServer.baseURL = "http://localhost:8081/geoserver"

@@ -102,9 +102,9 @@ class ElasticSearchService {
     @PostConstruct
     def initialize() {
         log.info "Setting-up elasticsearch node and client"
+        boolean isLocal = grailsApplication.config.elasticsearch.local.toBoolean()
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
-        node = nodeBuilder().local(false).settings(settings).node();
-//        node = nodeBuilder().local(true).settings(settings).node();
+        node = nodeBuilder().local(isLocal).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
 
