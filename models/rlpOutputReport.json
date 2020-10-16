@@ -5816,28 +5816,11 @@
                 "name": "sitesBenefittedByFireAction"
               },
               {
-                "defaultValue": {
-                  "type": "computed",
+                "computed": {
                   "expression": "$geom.areaHa(sitesBenefittedByFireAction)"
                 },
                 "dataType": "number",
-                "name": "areaBenefittedByFireActionHa",
-                "validate": [
-                  {
-                    "rule": "min",
-                    "param": {
-                      "type": "computed",
-                      "expression": "$geom.areaHa(sitesBenefittedByFireAction)*0.9"
-                    }
-                  },
-                  {
-                    "rule": "max",
-                    "param": {
-                      "type": "computed",
-                      "expression": "$geom.areaHa(sitesBenefittedByFireAction)*1.1"
-                    }
-                  }
-                ]
+                "name": "areaBenefittedByFireActionHa"
               },
               {
                 "dataType": "text",
