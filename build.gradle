@@ -177,7 +177,7 @@ clover {
     // still expects to find the license file.
     // Any file will work.
     licenseLocation = File.createTempFile('clover', '.license').absolutePath
-    targetPercentage = "100%"
+    //targetPercentage = "100%"
     excludes = ['**/Application.groovy',
                 '**/BootStrap.groovy',
                 '**/UrlMappings.groovy',
