@@ -83,7 +83,7 @@
                     <gsp:scriptlet>if (style == 'line_sites') {</gsp:scriptlet>
                     <ogc:Filter>
                         <ogc:And>
-                            <ogc:PropertyIsEqualTo  matchCase="false">
+                            <ogc:PropertyIsEqualTo matchCase="false">
                                 <ogc:PropertyName>$field</ogc:PropertyName>
                                 <ogc:Literal>${it.term}</ogc:Literal>
                             </ogc:PropertyIsEqualTo>
@@ -118,17 +118,19 @@
                     <Title>Others</Title>
                     <gsp:scriptlet>if (style in ['point_circle', 'point_circle_project']) {</gsp:scriptlet>
                     <ogc:Filter>
-                        <gsp:scriptlet>terms?.each {</gsp:scriptlet>
-                        <ogc:PropertyIsNotEqualTo matchCase="false">
-                            <ogc:PropertyName>$field</ogc:PropertyName>
-                            <ogc:Literal>${it.term}</ogc:Literal>
-                        </ogc:PropertyIsNotEqualTo>
-                        <gsp:scriptlet>}</gsp:scriptlet>
-                        <ogc:Not>
-                            <ogc:PropertyIsNull>
+                        <ogc:And>
+                            <gsp:scriptlet>terms?.each {</gsp:scriptlet>
+                            <ogc:PropertyIsNotEqualTo matchCase="false">
                                 <ogc:PropertyName>$field</ogc:PropertyName>
-                            </ogc:PropertyIsNull>
-                        </ogc:Not>
+                                <ogc:Literal>${it.term}</ogc:Literal>
+                            </ogc:PropertyIsNotEqualTo>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                            <ogc:Not>
+                                <ogc:PropertyIsNull>
+                                    <ogc:PropertyName>$field</ogc:PropertyName>
+                                </ogc:PropertyIsNull>
+                            </ogc:Not>
+                        </ogc:And>
                     </ogc:Filter>
                     <PointSymbolizer>
                         <Graphic>
