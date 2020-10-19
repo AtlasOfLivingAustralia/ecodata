@@ -52,7 +52,7 @@ environments {
                     //println "Applying UNACKNOWLDEGED WriteConcern"
                     //if (mongo.readonly) {
                         println "Applying UNACKNOWLDEGED WriteConcern"
-                        writeConcern = com.mongodb.WriteConcern.UNACKNOWLEDGED
+                    writeNumber = 0
                     //}
                 }
             }
