@@ -51,7 +51,7 @@ environments {
                     connectionsPerHost = 100
                     //println "Applying UNACKNOWLDEGED WriteConcern"
                     //if (mongo.readonly) {
-                        println "Applying UNACKNOWLDEGED WriteConcern"
+                    //    println "Applying UNACKNOWLDEGED WriteConcern"
                     writeNumber = 0
                     //}
                 }
