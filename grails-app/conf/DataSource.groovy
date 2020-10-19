@@ -49,10 +49,11 @@ environments {
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
-                    if (mongo.readonly) {
+                    //println "Applying UNACKNOWLDEGED WriteConcern"
+                    //if (mongo.readonly) {
                         println "Applying UNACKNOWLDEGED WriteConcern"
                         writeConcern = com.mongodb.WriteConcern.UNACKNOWLEDGED
-                    }
+                    //}
                 }
             }
         }
