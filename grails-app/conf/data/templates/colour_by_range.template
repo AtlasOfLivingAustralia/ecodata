@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<StyledLayerDescriptor version="1.0.0"
+                       xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
+                       xmlns="http://www.opengis.net/sld"
+                       xmlns:ogc="http://www.opengis.net/ogc"
+                       xmlns:xlink="http://www.w3.org/1999/xlink"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xmlns:gsp="http://groovy.codehaus.org/2005/gsp">
+    <NamedLayer>
+        <Name>$namespace:${field}_${style}</Name>
+        <UserStyle>
+            <Title>Colour map by range $field</Title>
+            <Abstract>Colour map by range $field</Abstract>
+            <FeatureTypeStyle>
+                <Name>rules</Name>
+                <gsp:scriptlet>terms?.each {</gsp:scriptlet>
+                <Rule>
+                    <Title>${it.displayName}</Title>
+                    <gsp:scriptlet>if (style in ['point_circle', 'point_circle_project', '', null]) {</gsp:scriptlet>
+                    <ogc:Filter>
+                        <ogc:And>
+                            <gsp:scriptlet>if (it.from != null) {</gsp:scriptlet>
+                            <ogc:PropertyIsGreaterThanOrEqualTo>
+                                <ogc:PropertyName>$field</ogc:PropertyName>
+                                <ogc:Literal>${it.from}</ogc:Literal>
+                            </ogc:PropertyIsGreaterThanOrEqualTo>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                            <gsp:scriptlet>if (it.to != null) {</gsp:scriptlet>
+                            <ogc:PropertyIsLessThan>
+                                <ogc:PropertyName>$field</ogc:PropertyName>
+                                <ogc:Literal>${it.to}</ogc:Literal>
+                            </ogc:PropertyIsLessThan>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                        </ogc:And>
+                    </ogc:Filter>
+                    <PointSymbolizer>
+                        <Graphic>
+                            <Mark>
+                                <WellKnownName>circle</WellKnownName>
+                                <Fill>
+                                    <CssParameter name="fill">${it.colour}</CssParameter>
+                                </Fill>
+                            </Mark>
+                            <Size>
+                                <ogc:Function name="env">
+                                    <ogc:Literal>size</ogc:Literal>
+                                    <ogc:Literal>1</ogc:Literal>
+                                </ogc:Function>
+                            </Size>
+                        </Graphic>
+                    </PointSymbolizer>
+                    <gsp:scriptlet>}</gsp:scriptlet>
+                    <gsp:scriptlet>if (style in ['polygon_sites', 'polygon_sites_project']) {</gsp:scriptlet>
+                    <ogc:Filter>
+                        <ogc:And>
+                            <gsp:scriptlet>if (it.from != null) {</gsp:scriptlet>
+                            <ogc:PropertyIsGreaterThanOrEqualTo>
+                                <ogc:PropertyName>$field</ogc:PropertyName>
+                                <ogc:Literal>${it.from}</ogc:Literal>
+                            </ogc:PropertyIsGreaterThanOrEqualTo>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                            <gsp:scriptlet>if (it.to != null) {</gsp:scriptlet>
+                            <ogc:PropertyIsLessThan>
+                                <ogc:PropertyName>$field</ogc:PropertyName>
+                                <ogc:Literal>${it.to}</ogc:Literal>
+                            </ogc:PropertyIsLessThan>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                            <ogc:Or>
+                                <ogc:PropertyIsEqualTo>
+                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:Literal>Polygon</ogc:Literal>
+                                </ogc:PropertyIsEqualTo>
+                                <ogc:PropertyIsEqualTo>
+                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:Literal>MultiPolygon</ogc:Literal>
+                                </ogc:PropertyIsEqualTo>
+                            </ogc:Or>
+                        </ogc:And>
+                    </ogc:Filter>
+                    <PolygonSymbolizer>
+                        <Fill>
+                            <CssParameter name="fill">${it.colour}</CssParameter>
+                            <CssParameter name="opacity">
+                                <ogc:Function name="env">
+                                    <ogc:Literal>opacity</ogc:Literal>
+                                    <ogc:Literal>0.5</ogc:Literal>
+                                </ogc:Function>
+                            </CssParameter>
+                        </Fill>
+                        <Stroke>
+                            <CssParameter name="stroke">${it.colour}</CssParameter>
+                            <CssParameter name="stroke-width">
+                                <ogc:Function name="env">
+                                    <ogc:Literal>size</ogc:Literal>
+                                    <ogc:Literal>1</ogc:Literal>
+                                </ogc:Function>
+                            </CssParameter>
+                        </Stroke>
+                    </PolygonSymbolizer>
+                    <gsp:scriptlet>}</gsp:scriptlet>
+                    <gsp:scriptlet>if (style == 'line_sites') {</gsp:scriptlet>
+                    <ogc:Filter>
+                        <ogc:And>
+                            <gsp:scriptlet>if (it.from != null) {</gsp:scriptlet>
+                            <ogc:PropertyIsGreaterThanOrEqualTo>
+                                <ogc:PropertyName>$field</ogc:PropertyName>
+                                <ogc:Literal>${it.from}</ogc:Literal>
+                            </ogc:PropertyIsGreaterThanOrEqualTo>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                            <gsp:scriptlet>if (it.to != null) {</gsp:scriptlet>
+                            <ogc:PropertyIsLessThan>
+                                <ogc:PropertyName>$field</ogc:PropertyName>
+                                <ogc:Literal>${it.to}</ogc:Literal>
+                            </ogc:PropertyIsLessThan>
+                            <gsp:scriptlet>}</gsp:scriptlet>
+                            <ogc:Or>
+                                <ogc:PropertyIsEqualTo>
+                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:Literal>LineString</ogc:Literal>
+                                </ogc:PropertyIsEqualTo>
+                                <ogc:PropertyIsEqualTo>
+                                    <ogc:PropertyName>sites.geometryType</ogc:PropertyName>
+                                    <ogc:Literal>MultiLineString</ogc:Literal>
+                                </ogc:PropertyIsEqualTo>
+                            </ogc:Or>
+                        </ogc:And>
+                    </ogc:Filter>
+                    <LineSymbolizer>
+                        <Stroke>
+                            <CssParameter name="stroke">${it.colour}</CssParameter>
+                            <CssParameter name="stroke-width">
+                                <ogc:Function name="env">
+                                    <ogc:Literal>size</ogc:Literal>
+                                    <ogc:Literal>1</ogc:Literal>
+                                </ogc:Function>
+                            </CssParameter>
+                        </Stroke>
+                    </LineSymbolizer>
+                    <gsp:scriptlet>}</gsp:scriptlet>
+                </Rule>
+                <gsp:scriptlet>}</gsp:scriptlet>
+            </FeatureTypeStyle>
+        </UserStyle>
+    </NamedLayer>
+</StyledLayerDescriptor>

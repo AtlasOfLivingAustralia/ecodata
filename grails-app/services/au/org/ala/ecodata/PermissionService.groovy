@@ -532,25 +532,16 @@ class PermissionService {
     }
 
     def isProjectMerit(String entityId, String entityType){
-        boolean isMerit = false
-        def results
+        def results = null
         if (entityType == Organisation.class.name){
             results = Project.findAllByOrganisationIdAndIsMERIT(entityId, true)
-            if (results.size() > 0){
-                isMerit = true
-            }
         }else if(entityType == Program.class.name){
              results = Project.findAllByProgramIdAndIsMERIT(entityId, true)
-            if (results.size() > 0){
-                isMerit = true
-            }
         }else if (entityType == Project.class.name){
             results = Project.findAllByProjectIdAndIsMERIT(entityId, true)
-            if (results.size()> 0){
-                isMerit = true
-            }
+        }else if (entityType == ManagementUnit.class.name){
+            results = Project.findAllByManagementUnitIdAndIsMERIT(entityId, true)
         }
-
-        return isMerit
+        return results.size() > 0
     }
 }

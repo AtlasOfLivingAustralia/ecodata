@@ -129,7 +129,7 @@ if (!webservice.connectTimeout) {
     webservice.connectTimeout = 10000
 }
 if (!webservice.readTimeout) {
-    webservice.readTimeout = 20000
+    webservice.readTimeout = 30000
 }
 // spatial services
 if (!spatial.baseUrl) {
@@ -1173,3 +1173,221 @@ security {
         authenticateOnlyIfLoggedInPattern =  ''
     }
 }
+
+// elasticsearch cluster setting
+// can transport layer connection be made from apps outside JVM
+elasticsearch.local = true
+
+// geo server config
+geoServer.enabled = false
+geoServer.baseURL = "http://localhost:8081/geoserver"
+geoServer.workspace = "ecodata"
+geoServer.username = "admin"
+geoServer.password = "geoserver"
+geoServer.datastore = "pasearch"
+geoServer.defaultIndexName = "pasearch"
+geoServer.pasearch.geometryTypeField = "sites.geometryType"
+geoServer.homepage.geometryTypeField = "projectArea.geometryType"
+geoServer.pasearch.geoIndexField = "projectArea.geoIndex"
+geoServer.homepage.geoIndexField = "sites.geoIndex"
+geoServer.defaultDataType = "pa"
+geoServer.elasticHome = "localhost"
+geoServer.elasticPort = "9300"
+geoServer.clusterName = "elasticsearch"
+geoServer.readTimeout = 600000
+geoServer.layerNames = [
+        "_general" : [
+                "pa": [ name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],
+                "project": [ name: "generalproject", attributes: ['projectArea.geoIndex', 'projectArea.geometryType']],
+        ],
+        "_info"    : [
+                "pa": [ name: "layerinfo",
+                                       attributes: [
+                                               'sites.geoIndex',
+                                               'dateCreated',
+                                               'projectId',
+                                               'thumbnailUrl',
+                                               'activityId',
+                                               'recordNameFacet',
+                                               'projectActivityNameFacet',
+                                               'projectNameFacet',
+                                               'surveyMonthFacet',
+                                               'surveyYearFacet',
+                                               'sites.geometryType'
+                                       ]
+                ],
+                "project": [ name: "layerinfoproject",
+                             attributes: [
+                                     'projectArea.geoIndex',
+                                     'projectArea.geometryType',
+                                     'name',
+                                     'aim',
+                                     'projectId',
+                                     'imageUrl',
+                                     'logoAttribution',
+                                     'plannedStartDate',
+                                     'plannedEndDate'
+                             ]
+                ],
+        ],
+        "_time": [
+                "pa": [ name: "time", attributes: ['sites.geoIndex', 'sites.geometryType']]
+        ],
+        "_indices": [
+                "pa": [ name: "colour_by", attributes: ['sites.geometryType']],
+                "project": [ name: "colour_byproject", attributes: ['projectArea.geometryType']],
+        ]
+]
+
+geoServer.layerConfiguration = [
+        "pasearch": [
+                "name": "layerName",
+                "nativeName": "layerNativeName",
+                "title": "BioCollect survey activity",
+                "keywords": ["activity", "survey", "biocollect"],
+                "timeEnabled": false,
+                "timeAttribute": "dateCreated",
+                "attributes": [
+                        [
+                                "name": "sites.geoIndex",
+                                "shortName": "sites.geoIndex",
+                                "useShortName": false,
+                                "type": "com.vividsolutions.jts.geom.Geometry",
+                                "use": true,
+                                "defaultGeometry": true,
+                                "geometryType": "GEO_SHAPE",
+                                "srid": "4326",
+                                "stored": false,
+                                "nested": false,
+                                "binding": "com.vividsolutions.jts.geom.Geometry",
+                                "nillable": true,
+                                "minOccurs": 0,
+                                "maxOccurs": 1
+                        ]
+                ]
+        ],
+        "homepage": [
+                "name": "layerName",
+                "nativeName": "layerNativeName",
+                "title": "BioCollect survey activity",
+                "keywords": ["activity", "survey", "biocollect"],
+                "timeEnabled": false,
+                "timeAttribute": "dateCreated",
+                "attributes": [
+                        [
+                                "name": "projectArea.geoIndex",
+                                "shortName": "projectArea.geoIndex",
+                                "useShortName": false,
+                                "type": "com.vividsolutions.jts.geom.Geometry",
+                                "use": true,
+                                "defaultGeometry": true,
+                                "geometryType": "GEO_SHAPE",
+                                "srid": "4326",
+                                "stored": false,
+                                "nested": false,
+                                "binding": "com.vividsolutions.jts.geom.Geometry",
+                                "nillable": true,
+                                "minOccurs": 0,
+                                "maxOccurs": 1
+                        ]
+                ]
+        ]
+]
+
+if (!geoserver.facetTermColour) {
+    geoserver.facetTermColour = [
+            '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
+            '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000',
+            '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
+    ]
+}
+
+if (!geoserver.facetRangeColour) {
+    geoserver.facetRangeColour = [
+            '#FD3C07', '#FC4606', '#FC5105', '#FC5B05', '#FC6604', '#FC7004', '#FC7B03', '#FC8503', '#FC9002', '#FC9A02',
+            '#FCA501', '#FCB001', '#FCB70C', '#FCBE17', '#FCC523', '#FDCC2E', '#FDD339', '#FDDB45', '#FDE250', '#FEE95B',
+            '#FEF067', '#FEF772', '#FFFF7E'
+    ]
+}
+
+geohash.lookupTable = [
+        [
+                length: 1,
+                width: 5009400,
+                height: 4992600,
+                area:25009930440000
+        ],
+        [
+                length: 2,
+                width: 1252300,
+                height: 624100,
+                area: 781560430000
+        ],
+        [
+                length: 3,
+                width: 156500,
+                height: 156000,
+                area: 24414000000
+        ],
+        [
+                length: 4,
+                width: 39100,
+                height: 19500,
+                area: 762450000
+        ],
+        [
+                length: 5,
+                width: 4900,
+                height: 4900,
+                area: 24010000
+        ],
+        [
+                length: 6,
+                width: 1200,
+                height: 609.4,
+                area: 731280
+        ],
+        [
+                length: 7,
+                width: 152.9,
+                height: 152.4,
+                area: 23301.96
+        ],
+        [
+                length: 8,
+                width: 38.2,
+                height: 19,
+                area: 725.8
+        ],
+        [
+                length: 9,
+                width: 4.8,
+                height: 4.8,
+                area: 23.04
+        ],
+        [
+                length: 10,
+                width: 1.2,
+                height: 0.0595,
+                area: 0.0714
+        ],
+        [
+                length: 11,
+                width: 0.0149,
+                height: 0.0149,
+                area: 0.00022201
+        ],
+        [
+                length: 12,
+                width: 0.0037,
+                height: 0.0019,
+                area: 0.00000703
+        ]
+
+]
+
+geohash.maxNumberOfGrids = 250
+// Sets the maximum precision geohash grid.
+// Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
+// hide exact location.
+geohash.maxLength =  5
