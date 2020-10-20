@@ -43,7 +43,7 @@ class MapService {
 
     @PostConstruct
     def init() {
-        enabled = grailsApplication.config.geoServer.enabled?.toBoolean()
+        enabled = grailsApplication?.config?.geoServer?.enabled?.toBoolean()
 
         if (enabled) {
             log.info("GeoServer integration enabled.")

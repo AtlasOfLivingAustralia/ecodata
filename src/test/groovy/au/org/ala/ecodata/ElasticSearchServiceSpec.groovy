@@ -40,6 +40,13 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
     private int projectId = 0
     private int siteId = 0
 
+    Closure doWithConfig() {{ config ->
+        config.geoServer.enabled = "false"
+    }}
+
+    Closure doWithSpring() {{ ->
+        mapService MapService
+    }}
 
    // @Before
     void setup() {
@@ -53,10 +60,6 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         service.cacheService = cacheService
         service.metadataService = metadataService
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
-        grailsApplication.config.geoServer.enabled = "false"
-        MutablePropertyValues mpv = new MutablePropertyValues()
-        mpv.addPropertyValue('grailsApplication', grailsApplication)
-        grailsApplication.mainContext.registerSingleton('mapService', MapService, mpv)
         service.initialize()
         service.deleteIndex("search") // The elastic search service relies on the search index, this actually forces it to be created.
         service.deleteIndex(INDEX_NAME) // this actually deletes and recreates the index.

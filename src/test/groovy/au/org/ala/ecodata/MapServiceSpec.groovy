@@ -1,12 +1,11 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-
 import grails.testing.services.ServiceUnitTest
-import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid
 import org.grails.plugins.testing.GrailsMockHttpServletResponse
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import spock.lang.Specification
 
@@ -26,7 +25,6 @@ import spock.lang.Specification
  * 
  * Created by Temi on 12/10/20.
  */
-
 
 class MapServiceSpec extends Specification implements ServiceUnitTest<MapService>  {
     WebService webService = Mock(WebService)
