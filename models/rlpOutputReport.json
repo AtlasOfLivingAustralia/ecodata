@@ -7,7 +7,7 @@
   "dateCreated": "2020-06-26T02:29:04Z",
   "formVersion": 5,
   "gmsId": null,
-  "lastUpdated": "2020-09-25T05:13:13Z",
+  "lastUpdated": "2020-10-20T01:08:57Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 0,
   "name": "RLP Output Report",
@@ -117,7 +117,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "<p>This section is applicable to Service Providers that agreed in writing to the alternate payment arrangement due to COVID-19 and either have or intend to invoice for the service 'Maintaining organisational capacity (COVID-19)' in the 2019-20 financial year.</p><h4>Maintaining organisational capacity (COVID-19)</h4>"
+                "source": "<p>This section is applicable to Service Providers that agreed in writing to the alternate payment arrangement due to COVID-19 and either have or intend to invoice for the service 'Maintaining organisational capacity (COVID-19)' in the 2020-21 financial year.</p><h4>Maintaining organisational capacity (COVID-19)</h4>"
               }
             ]
           },
@@ -136,7 +136,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in Quarter 4 of the 2019-20 financial year?</b></p><p>Describe how you have adapted the project to minimise the effects of COVID-19 and maximise the delivery of the project outcomes, including redirection of funds, changes to project services and/or changes to project activities.</p><p>If, as a result of these adaptations, it will not be possible to fully deliver the contracted project services over the life of the project and you are likely to require changes to the project work order, please describe in the project change management section below.</p>"
+                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in the relevant reporting period?</b></p><p>Describe how you have adapted the project to minimise the effects of COVID-19 and maximise the delivery of the project outcomes, including redirection of funds, changes to project services and/or changes to project activities.</p><p>If, as a result of these adaptations, it will not be possible to fully deliver the contracted project services over the life of the project and you are likely to require changes to the project work order, please describe in the project change management section below.</p>"
               }
             ]
           },
