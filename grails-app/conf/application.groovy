@@ -81,6 +81,8 @@ environments {
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
+                    readPreference = com.mongodb.ReadPreference.nearest()
+
                 }
             }
         }
