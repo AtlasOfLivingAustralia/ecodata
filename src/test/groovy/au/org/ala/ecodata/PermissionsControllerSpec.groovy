@@ -2317,10 +2317,6 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         result.recordsTotal == 2
         result.recordsFiltered == 2
         result.data.size() == 2
-        result.data['1'].role == 'admin'
-        result.data['1'].userId == '1'
-        result.data['2'].role == 'editor'
-        result.data['2'].userId == '2'
 
     }
 
@@ -2358,17 +2354,12 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         when:
         params.id = projectId
         controller.getMembersForProject()
-        def result = response.getJson()
 
         then:
         1 * permissionService.getMembersForProject(projectId) >> ['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'editor']].values().toList()
 
         response.status == HttpStatus.SC_OK
-        result.size() == 2
-        result[0].role == 'admin'
-        result[0].userId == '1'
-        result[1].role == 'editor'
-        result[1].userId == '2'
+        response.getJson().size() == 2
     }
 
     void "get editors For project - when no mandatory params" () {
