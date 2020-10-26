@@ -581,7 +581,7 @@ class MapService {
         engine.setIndentation('')
         String content
         files?.each { Resource file ->
-            content = engine.createTemplate(file.getFile()).make(layerConfig).toString()
+            content = engine.createTemplate(file.getURL()).make(layerConfig).toString()
         }
 
         content?.replaceAll('\n', '');
