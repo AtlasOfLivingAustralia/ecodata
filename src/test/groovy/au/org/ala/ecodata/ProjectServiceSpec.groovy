@@ -17,6 +17,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     DocumentService documentService = Mock(DocumentService)
     ActivityService activityService = Mock(ActivityService)
     ReportingService reportingService = Mock(ReportingService)
+    MetadataService metadataService = Mock(MetadataService)
 
     String collectoryBaseUrl = ''
     String meritDataProvider = 'drMerit'
@@ -50,6 +51,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         service.reportingService = reportingService
         service.documentService = documentService
         service.grailsApplication = grailsApplication
+        service.metadataService = metadataService
 
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
         webServiceStub.extractIdFromLocationHeader(_) >> dataResourceId
@@ -63,10 +65,12 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Program.collection.remove(new BasicDBObject())
         Project.collection.remove(new BasicDBObject())
         ManagementUnit.collection.remove(new BasicDBObject())
+        AuditMessage.collection.remove(new BasicDBObject())
     }
 
     def cleanup() {
         Project.findAll().each { it.delete(flush:true) }
+        AuditMessage.findAll().each { it.delete(flush:true) }
     }
 
     def "test create and update project"() {
@@ -240,4 +244,323 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
                 ]]
         [overallRisk:'High', dateUpdated:'2020-07-01T14:00:00Z', rows: risks]
     }
+
+
+    void "Get brief"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", status:  Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+        def listOfIds = ['p1', 'p2']
+
+        when:
+        def response = service.getBrief(listOfIds)
+
+        then:
+        response != null
+        response.size() == 1
+        response[0].projectId == 'p1'
+        response[0].name == 'A project 1'
+    }
+
+    void "Get brief - empty list"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", status:  Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+        def listOfIds = []
+
+        when:
+        def response = service.getBrief(listOfIds)
+
+        then:
+        response != null
+        response.size() == 0
+    }
+
+    void "Get brief - with version"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", status:  Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+       def listOfIds = ['p1', 'p2']
+
+        when:
+        def response = service.getBrief(listOfIds, '1')
+
+        then:
+        response != null
+    }
+
+    void "Get by project id"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.get('p1')
+
+        then:
+        response != null
+        response.projectId == 'p1'
+        response.name == 'A project 1'
+    }
+
+    void "Get by project id -  invalid id"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.get('p2')
+
+        then:
+        response == null
+    }
+
+    void "Get project services"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.getProjectServicesWithTargets('p1')
+        def p = service.get('p1')
+
+        then:
+        1 * metadataService.getProjectServicesWithTargets(service.get('p1')) >> []
+        response != null
+    }
+
+    void "Get project services -  invalid id"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.getProjectServicesWithTargets('p2')
+
+        then:
+        response == null
+    }
+
+    void "Get by data resource id"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1')
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.getByDataResourceId('1')
+
+        then:
+        response != null
+        response.projectId == 'p1'
+        response.name == 'A project 1'
+    }
+
+    void "Get by data resource id -  invalid id"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1')
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.getByDataResourceId('2')
+
+        then:
+        response == null
+    }
+
+    void "list"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.list()
+
+        then:
+        response != null
+        response.projectId == ['p1']
+        response.name == ['A project 1']
+    }
+
+    void "list -  include deleted"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: false, status: Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.list([], true, false)
+
+        then:
+        response != null
+        response.size() == 2
+        response[0].projectId == 'p1'
+        response[0].name == 'A project 1'
+        response[1].projectId == 'p2'
+        response[1].name == 'A project 2'
+    }
+
+    void "list citizen Science projects"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.list([], false, true)
+
+        then:
+        response != null
+        response.projectId == ['p1']
+        response.name == ['A project 1']
+    }
+
+    void "list citizen Science projects -  include deleted"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+        when:
+        def response = service.list([], true, true)
+
+        then:
+        response != null
+        response.size() == 2
+        response[0].projectId == 'p1'
+        response[0].name == 'A project 1'
+        response[1].projectId == 'p2'
+        response[1].name == 'A project 2'
+    }
+
+    void "list - empty"() {
+        setup:
+        when:
+        def response = service.list([], true, true)
+
+        then:
+        response != null
+        response.size() == 0
+    }
+
+    void "list merit projects"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isMERIT: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.listMeritProjects([], false)
+
+        then:
+        response != null
+        response.projectId == ['p1']
+        response.name == ['A project 1']
+    }
+
+    void "list merit projects -  include deleted"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isMERIT: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
+        project2.save(flush: true, failOnError: true)
+        when:
+        def response = service.listMeritProjects([], true)
+
+        then:
+        response != null
+        response.size() == 2
+        response[0].projectId == 'p1'
+        response[0].name == 'A project 1'
+        response[1].projectId == 'p2'
+        response[1].name == 'A project 2'
+    }
+
+    void "list promoted"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', promoteOnHomepage: 'yes')
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', promoteOnHomepage: 'no')
+        project2.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.promoted()
+
+        then:
+        response != null
+        response.projectId == ['p1']
+        response.name == ['A project 1']
+    }
+
+    void "list projects for Ala harvesting"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', alaHarvest: true)
+        project1.save(flush: true, failOnError: true)
+        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', alaHarvest: false)
+        project2.save(flush: true, failOnError: true)
+
+        when:
+        def response = service.listProjectForAlaHarvesting([max : 10, offset: 1, order: 'projectId', sort: 'desc'])
+
+        then:
+        response != null
+        response.total == 1
+    }
+
+    void "list projects for Ala harvesting - empty"() {
+        setup:
+
+        when:
+        def response = service.listProjectForAlaHarvesting([max : 10, offset: 1, order: 'projectId', sort: 'desc'])
+
+        then:
+        response != null
+        response.total == 0
+        response.list.size() == 0
+    }
+
+    void "load all"() {
+        setup:
+        def props = [[projectId: 'p1', name: "A project 1", dataResourceId: '1']]
+
+        when:
+        def response = service.loadAll(props)
+
+        then:
+        response != null
+        response.size() == 1
+        response[0].projectId == 'p1'
+    }
+
+    void "create - invalid"() {
+        setup:
+        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', alaHarvest: true)
+        project1.save(flush: true, failOnError: true)
+        def props = [projectId: 'p1', name: "A project 1", dataResourceId: '1']
+
+        when:
+        def response = service.create(props)
+
+        then:
+        response != null
+        response.status == 'error'
+        response.error == 'Duplicate project id for create p1'
+    }
+
 }
