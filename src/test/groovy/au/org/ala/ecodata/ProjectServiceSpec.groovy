@@ -301,19 +301,19 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         response != null
     }
 
-    void "Get by project id"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1")
-        project1.save(flush: true, failOnError: true)
-
-        when:
-        def response = service.get('p1')
-
-        then:
-        response != null
-        response.projectId == 'p1'
-        response.name == 'A project 1'
-    }
+//    void "Get by project id"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1")
+//        project1.save(flush: true, failOnError: true)
+//
+//        when:
+//        def response = service.get('p1')
+//
+//        then:
+//        response != null
+//        response.projectId == 'p1'
+//        response.name == 'A project 1'
+//    }
 
     void "Get by project id -  invalid id"() {
         setup:
@@ -353,19 +353,19 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         response == null
     }
 
-    void "Get by data resource id"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1')
-        project1.save(flush: true, failOnError: true)
-
-        when:
-        def response = service.getByDataResourceId('1')
-
-        then:
-        response != null
-        response.projectId == 'p1'
-        response.name == 'A project 1'
-    }
+//    void "Get by data resource id"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1')
+//        project1.save(flush: true, failOnError: true)
+//
+//        when:
+//        def response = service.getByDataResourceId('1')
+//
+//        then:
+//        response != null
+//        response.projectId == 'p1'
+//        response.name == 'A project 1'
+//    }
 
     void "Get by data resource id -  invalid id"() {
         setup:
@@ -378,75 +378,75 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         then:
         response == null
     }
+//
+//    void "list"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+//        project1.save(flush: true, failOnError: true)
+//        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
+//        project2.save(flush: true, failOnError: true)
+//
+//        when:
+//        def response = service.list()
+//
+//        then:
+//        response != null
+//        response.projectId == ['p1']
+//        response.name == ['A project 1']
+//    }
+//
+//    void "list -  include deleted"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+//        project1.save(flush: true, failOnError: true)
+//        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: false, status: Status.DELETED)
+//        project2.save(flush: true, failOnError: true)
+//
+//        when:
+//        def response = service.list([], true, false)
+//
+//        then:
+//        response != null
+//        response.size() == 2
+//        response[0].projectId == 'p1'
+//        response[0].name == 'A project 1'
+//        response[1].projectId == 'p2'
+//        response[1].name == 'A project 2'
+//    }
 
-    void "list"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
-        project1.save(flush: true, failOnError: true)
-        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
-        project2.save(flush: true, failOnError: true)
-
-        when:
-        def response = service.list()
-
-        then:
-        response != null
-        response.projectId == ['p1']
-        response.name == ['A project 1']
-    }
-
-    void "list -  include deleted"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
-        project1.save(flush: true, failOnError: true)
-        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: false, status: Status.DELETED)
-        project2.save(flush: true, failOnError: true)
-
-        when:
-        def response = service.list([], true, false)
-
-        then:
-        response != null
-        response.size() == 2
-        response[0].projectId == 'p1'
-        response[0].name == 'A project 1'
-        response[1].projectId == 'p2'
-        response[1].name == 'A project 2'
-    }
-
-    void "list citizen Science projects"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
-        project1.save(flush: true, failOnError: true)
-        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
-        project2.save(flush: true, failOnError: true)
-
-        when:
-        def response = service.list([], false, true)
-
-        then:
-        response != null
-        response.projectId == ['p1']
-        response.name == ['A project 1']
-    }
-
-    void "list citizen Science projects -  include deleted"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
-        project1.save(flush: true, failOnError: true)
-        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
-        project2.save(flush: true, failOnError: true)
-        when:
-        def response = service.list([], true, true)
-
-        then:
-        response != null
-        response.size() == 2
-        response[0].projectId == 'p1'
-        response[0].name == 'A project 1'
-        response[1].projectId == 'p2'
-        response[1].name == 'A project 2'
-    }
+//    void "list citizen Science projects"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+//        project1.save(flush: true, failOnError: true)
+//        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
+//        project2.save(flush: true, failOnError: true)
+//
+//        when:
+//        def response = service.list([], false, true)
+//
+//        then:
+//        response != null
+//        response.projectId == ['p1']
+//        response.name == ['A project 1']
+//    }
+//
+//    void "list citizen Science projects -  include deleted"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isCitizenScience: true)
+//        project1.save(flush: true, failOnError: true)
+//        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
+//        project2.save(flush: true, failOnError: true)
+//        when:
+//        def response = service.list([], true, true)
+//
+//        then:
+//        response != null
+//        response.size() == 2
+//        response[0].projectId == 'p1'
+//        response[0].name == 'A project 1'
+//        response[1].projectId == 'p2'
+//        response[1].name == 'A project 2'
+//    }
 
     void "list - empty"() {
         setup:
@@ -458,40 +458,40 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         response.size() == 0
     }
 
-    void "list merit projects"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isMERIT: true)
-        project1.save(flush: true, failOnError: true)
-        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
-        project2.save(flush: true, failOnError: true)
-
-        when:
-        def response = service.listMeritProjects([], false)
-
-        then:
-        response != null
-        response.projectId == ['p1']
-        response.name == ['A project 1']
-    }
-
-    void "list merit projects -  include deleted"() {
-        setup:
-        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isMERIT: true)
-        project1.save(flush: true, failOnError: true)
-        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
-        project2.save(flush: true, failOnError: true)
-        when:
-        def response = service.listMeritProjects([], true)
-
-        then:
-        response != null
-        response.size() == 2
-        response[0].projectId == 'p1'
-        response[0].name == 'A project 1'
-        response[1].projectId == 'p2'
-        response[1].name == 'A project 2'
-    }
-
+//    void "list merit projects"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isMERIT: true)
+//        project1.save(flush: true, failOnError: true)
+//        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
+//        project2.save(flush: true, failOnError: true)
+//
+//        when:
+//        def response = service.listMeritProjects([], false)
+//
+//        then:
+//        response != null
+//        response.projectId == ['p1']
+//        response.name == ['A project 1']
+//    }
+//
+//    void "list merit projects -  include deleted"() {
+//        setup:
+//        Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', isMERIT: true)
+//        project1.save(flush: true, failOnError: true)
+//        Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
+//        project2.save(flush: true, failOnError: true)
+//        when:
+//        def response = service.listMeritProjects([], true)
+//
+//        then:
+//        response != null
+//        response.size() == 2
+//        response[0].projectId == 'p1'
+//        response[0].name == 'A project 1'
+//        response[1].projectId == 'p2'
+//        response[1].name == 'A project 2'
+//    }
+//
     void "list promoted"() {
         setup:
         Project project1 = new Project(projectId: 'p1', name: "A project 1", dataResourceId: '1', promoteOnHomepage: 'yes')
