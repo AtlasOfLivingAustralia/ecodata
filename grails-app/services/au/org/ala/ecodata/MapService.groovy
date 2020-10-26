@@ -217,7 +217,7 @@ class MapService {
         files?.each { file ->
             def name = getStyleNameFromFileName(file)
             if (name) {
-                styles[name] = file.getFile().getText()
+                styles[name] = file.getURL().getText()
             }
         }
 
@@ -620,7 +620,7 @@ class MapService {
         engine.setIndentation('')
         String content
         files?.each { Resource file ->
-            content = engine.createTemplate(file.getFile()).make(data).toString()
+            content = engine.createTemplate(file.getURL()).make(data).toString()
         }
 
         content?.replaceAll('\n', '');
