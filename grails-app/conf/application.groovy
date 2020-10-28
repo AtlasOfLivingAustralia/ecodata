@@ -82,7 +82,7 @@ environments {
                     autoConnectRetry = true
                     connectionsPerHost = 100
                     readPreference = ReadPreference.nearest()
-                    slaveOk: true
+                    slaveOk = true
 
                 }
             }
