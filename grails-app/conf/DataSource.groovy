@@ -42,7 +42,7 @@ environments {
     production {
         grails {
             mongo {
-                host = "localhost"
+                host = "ecodata-test.ala.org.au"
                 port = "27017"
                 databaseName = "ecodata"
 
