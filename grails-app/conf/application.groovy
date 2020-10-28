@@ -1,3 +1,4 @@
+import com.mongodb.ReadPreference
 
 def appName = 'ecodata'
 
@@ -77,11 +78,10 @@ environments {
                 host = "localhost"
                 port = "27017"
                 databaseName = "ecodata"
-
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
-                    readPreference = com.mongodb.ReadPreference.nearest()
+                    readPreference = ReadPreference.nearest()
                     slaveOk: true
 
                 }
