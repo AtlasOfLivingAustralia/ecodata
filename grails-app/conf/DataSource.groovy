@@ -45,7 +45,7 @@ environments {
                 host = "ecodata-test.ala.org.au"
                 port = "27017"
                 databaseName = "ecodata"
-                replicaSet = ["ecodata-reporting.ala.org.au:27017"]
+                replicaSet = "ecodata-reporting.ala.org.au:27017"
 
                 options {
                     autoConnectRetry = true
