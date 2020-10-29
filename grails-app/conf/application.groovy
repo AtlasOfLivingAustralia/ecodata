@@ -74,15 +74,12 @@ environments {
     production {
         grails {
             mongodb {
-                host = "ecodata-reporting.ala.org.au"
+                url = "mongodb://ecodata-test.ala.org.au, ecodata-reporting.ala.org.au/ecodata?replicaSet=ecodata-reporting.ala.org.au"
+                //host = "ecodata-test.ala.org.au,ecodata-reporting.ala.org.au"
                 port = "27017"
-                databaseName = "ecodata"
-                replicaSet = "ecodata-reporting.ala.org.au:27017"
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
-                    readPreference = ReadPreference.nearest()
-                    slaveOk = true
 
                 }
             }
