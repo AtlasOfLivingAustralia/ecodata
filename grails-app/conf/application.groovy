@@ -74,9 +74,9 @@ environments {
     production {
         grails {
             mongodb {
-                url = "mongodb://ecodata-test.ala.org.au, ecodata-reporting.ala.org.au/ecodata?replicaSet=ecodata-reporting.ala.org.au"
-                //host = "ecodata-test.ala.org.au,ecodata-reporting.ala.org.au"
+                host = "localhost"
                 port = "27017"
+                databaseName = "ecodata"
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
