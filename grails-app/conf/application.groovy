@@ -76,13 +76,15 @@ environments {
         grails {
             mongodb {
                 host = "localhost"
-                replicaSet = "localhost:27017"
+                replicaSet = ["localhost:27017"]
                 port = "27017"
                 databaseName = "ecodata"
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
-                    readPreferance = ReadPreference.nearest()
+                    readPreferance = ReadPreference.secondaryPreferred()
+                    writeConcern = new WriteConcern(0,0,false)
+
                 }
             }
         }
