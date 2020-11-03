@@ -75,8 +75,8 @@ environments {
     production {
         grails {
             mongodb {
-                host = "localhost"
-                replicaSet = ["localhost:27017"]
+                host = "ecodata-reporting.ala.org.au"
+                replicaSet = ["ecodata-reporting.ala.org.au:27017"]
                 port = "27017"
                 databaseName = "ecodata"
                 options {
