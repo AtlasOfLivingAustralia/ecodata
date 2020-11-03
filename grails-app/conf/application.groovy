@@ -1,4 +1,5 @@
 import com.mongodb.ReadPreference
+import com.mongodb.WriteConcern
 
 def appName = 'ecodata'
 
@@ -75,12 +76,13 @@ environments {
         grails {
             mongodb {
                 host = "localhost"
+                replicaSet = "localhost:27017"
                 port = "27017"
                 databaseName = "ecodata"
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
-
+                    readPreferance = ReadPreference.nearest()
                 }
             }
         }
