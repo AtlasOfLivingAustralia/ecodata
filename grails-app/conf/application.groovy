@@ -1,5 +1,6 @@
 import com.mongodb.ReadPreference
 import com.mongodb.WriteConcern
+import com.mongodb.connection.ServerType
 
 def appName = 'ecodata'
 
@@ -82,6 +83,7 @@ environments {
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
+                    serverType = ServerType.REPLICA_SET_SECONDARY
                     readPreferance = ReadPreference.secondaryPreferred()
                     writeConcern = new WriteConcern(0,0,false)
 
