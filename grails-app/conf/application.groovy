@@ -1,6 +1,3 @@
-import com.mongodb.ReadPreference
-import com.mongodb.WriteConcern
-import com.mongodb.connection.ServerType
 
 def appName = 'ecodata'
 
@@ -76,17 +73,12 @@ environments {
     production {
         grails {
             mongodb {
-                host = "ecodata-reporting.ala.org.au"
-                replicaSet = ["ecodata-reporting.ala.org.au:27017"]
+                host = "localhost"
                 port = "27017"
                 databaseName = "ecodata"
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
-                    serverType = ServerType.REPLICA_SET_SECONDARY
-                    readPreferance = ReadPreference.secondaryPreferred()
-                    writeConcern = new WriteConcern(0,0,false)
-
                 }
             }
         }

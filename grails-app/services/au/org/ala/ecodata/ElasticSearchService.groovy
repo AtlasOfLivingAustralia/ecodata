@@ -23,9 +23,11 @@ import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
+import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.node.Node
@@ -105,9 +107,16 @@ class ElasticSearchService {
         boolean isLocal = grailsApplication.config.elasticsearch.local.toBoolean()
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
-        node = nodeBuilder().local(isLocal).settings(settings).node();
-        client = node.client();
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
+        if (!isLocal) {
+            //initialise elasticsearch using a remote connection instead of a local connection
+            settings.put("cluster.name", "elasticsearch").build()
+            client = new TransportClient(settings)
+            client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(grailsApplication.config.elasticsearch.host, 9300))
+        }else{
+            node = nodeBuilder().local(isLocal).settings(settings).node()
+            client = node.client()
+            client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet()
+        }
 
         // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
         // Therefore, calling the below function in a thread.
