@@ -72,6 +72,7 @@ dependencies {
    // compile "org.hibernate:hibernate-ehcache:5.1.16.Final"
     compile "org.grails:grails-plugin-datasource"
     compile "org.grails:grails-plugin-databinding"
+    compile 'org.grails:grails-datastore-gorm:6.1.7.RELEASE'
     compile "org.grails:grails-plugin-codecs"
     //compile 'org.grails.plugins:mongodb:7.0.0'
     compile "org.grails.plugins:mongodb:6.1.7"

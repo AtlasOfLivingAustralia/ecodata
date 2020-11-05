@@ -106,7 +106,7 @@ class ElasticSearchService {
         log.info "Setting-up elasticsearch node and client"
         boolean isLocal = grailsApplication.config.elasticsearch.local.toBoolean()
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
-        settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
+        settings.put("path.home", grailsApplication.config.app.elasticsearch.location)
         boolean isPrimaryServer = grailsApplication.config.elasticsearch.primary.toBoolean()
         if (isPrimaryServer){
             node = nodeBuilder().local(isLocal).settings(settings).node()
