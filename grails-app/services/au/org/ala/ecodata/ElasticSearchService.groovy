@@ -115,9 +115,9 @@ class ElasticSearchService {
         }else{
             //initialise elasticsearch using a remote connection instead of a local connection
             settings.put("cluster.name", "elasticsearch").build()
+            settings.put("client.transport.sniff", true).build()
             client = new TransportClient(settings)
             client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(grailsApplication.config.elasticsearch.host, 9300))
-
         }
         // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
         // Therefore, calling the below function in a thread.
