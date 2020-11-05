@@ -1176,6 +1176,7 @@ security {
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM
 elasticsearch.local = true
+elasticsearch.primary = true
 
 // geo server config
 geoServer.enabled = false

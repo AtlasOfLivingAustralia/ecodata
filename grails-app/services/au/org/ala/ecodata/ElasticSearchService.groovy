@@ -107,17 +107,18 @@ class ElasticSearchService {
         boolean isLocal = grailsApplication.config.elasticsearch.local.toBoolean()
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
-        if (!isLocal) {
+        boolean isPrimaryServer = grailsApplication.config.elasticsearch.primary.toBoolean()
+        if (isPrimaryServer){
+            node = nodeBuilder().local(isLocal).settings(settings).node()
+            client = node.client()
+            client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet()
+        }else{
             //initialise elasticsearch using a remote connection instead of a local connection
             settings.put("cluster.name", "elasticsearch").build()
             client = new TransportClient(settings)
             client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(grailsApplication.config.elasticsearch.host, 9300))
-        }else{
-            node = nodeBuilder().local(isLocal).settings(settings).node()
-            client = node.client()
-            client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet()
-        }
 
+        }
         // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
         // Therefore, calling the below function in a thread.
         task {
