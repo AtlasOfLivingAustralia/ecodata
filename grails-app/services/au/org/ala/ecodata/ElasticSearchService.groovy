@@ -115,7 +115,6 @@ class ElasticSearchService {
         }else{
             //initialise elasticsearch using a remote connection instead of a local connection
             settings.put("cluster.name", "elasticsearch").build()
-            settings.put("client.transport.sniff", true).build()
             client = new TransportClient(settings)
             client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(grailsApplication.config.elasticsearch.host, 9300))
         }
