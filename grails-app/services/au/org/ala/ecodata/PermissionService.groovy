@@ -13,6 +13,7 @@ class PermissionService {
     static transactional = false
     AuthService authService
     UserService userService // found in ala-auth-plugin
+    ProjectController projectController
 
     boolean isUserAlaAdmin(String userId) {
         userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
@@ -501,5 +502,46 @@ class PermissionService {
         }
 
         result
+    }
+
+    Map deleteUserPermissionByUserId(String userId){
+        List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
+        if (permissions.size() > 0) {
+            permissions.each {
+                def isMerit = isProjectMerit(it.entityId, it.entityType)
+                if (isMerit){
+                    try {
+                        it.delete(flush: true, failOnError: true)
+                        log.info("The Permission is removed for this user: " + userId)
+                    } catch (Exception e) {
+                        String msg = "Failed to delete UserPermission: ${e.message}"
+                        log.error msg, e
+                        return [status: 500, error: msg]
+                    }
+                }else{
+                    log.info("This entity Id is not a merit : " + it.entityId)
+                }
+
+            }
+            return [status: 200, error: false]
+
+        } else {
+            return [status: 400, error: "No User Permissions found"]
+        }
+
+    }
+
+    def isProjectMerit(String entityId, String entityType){
+        def results = null
+        if (entityType == Organisation.class.name){
+            results = Project.findAllByOrganisationIdAndIsMERIT(entityId, true)
+        }else if(entityType == Program.class.name){
+             results = Project.findAllByProgramIdAndIsMERIT(entityId, true)
+        }else if (entityType == Project.class.name){
+            results = Project.findAllByProjectIdAndIsMERIT(entityId, true)
+        }else if (entityType == ManagementUnit.class.name){
+            results = Project.findAllByManagementUnitIdAndIsMERIT(entityId, true)
+        }
+        return results.size() > 0
     }
 }

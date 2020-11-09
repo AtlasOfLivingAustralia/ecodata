@@ -78,6 +78,15 @@
                     });
                 });
 
+                $("#btnBuildGeoServerComponents").click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'admin', action:'buildGeoServerDependencies')}").done(function(result) {
+                        document.location.reload();
+                    }).fail(function (resp) {
+                        var result = JSON.parse(resp.responseText)
+                        alert(result.message);
+                    });
+                });
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -153,6 +162,14 @@
                 </td>
                 <td>
                     Forcefully update information in Collectory of internal Biocollect projects. Note: This does not create a new entry since it assumes an entry exists in Collectory.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnBuildGeoServerComponents" class="btn btn-small btn-info" title="Clear GeoServer components.">Built GeoServer</button>
+                </td>
+                <td>
+                    Delete existing layers, store and workspace associates with Ecodata and create new ones.
                 </td>
             </tr>
             </tbody>

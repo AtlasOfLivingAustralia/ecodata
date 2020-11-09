@@ -7,7 +7,7 @@
   "dateCreated": "2020-06-26T02:29:04Z",
   "formVersion": 5,
   "gmsId": null,
-  "lastUpdated": "2020-08-26T03:14:53Z",
+  "lastUpdated": "2020-10-20T01:08:57Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 0,
   "name": "RLP Output Report",
@@ -117,7 +117,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "<p>This section is applicable to Service Providers that agreed in writing to the alternate payment arrangement due to COVID-19 and either have or intend to invoice for the service 'Maintaining organisational capacity (COVID-19)' in the 2019-20 financial year.</p><h4>Maintaining organisational capacity (COVID-19)</h4>"
+                "source": "<p>This section is applicable to Service Providers that agreed in writing to the alternate payment arrangement due to COVID-19 and either have or intend to invoice for the service 'Maintaining organisational capacity (COVID-19)' in the 2020-21 financial year.</p><h4>Maintaining organisational capacity (COVID-19)</h4>"
               }
             ]
           },
@@ -136,7 +136,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in Quarter 4 of the 2019-20 financial year?</b></p><p>Describe how you have adapted the project to minimise the effects of COVID-19 and maximise the delivery of the project outcomes, including redirection of funds, changes to project services and/or changes to project activities.</p><p>If, as a result of these adaptations, it will not be possible to fully deliver the contracted project services over the life of the project and you are likely to require changes to the project work order, please describe in the project change management section below.</p>"
+                "source": "<p><b>What adaptive management actions occurred to address the impacts of COVID-19 on the project in the relevant reporting period?</b></p><p>Describe how you have adapted the project to minimise the effects of COVID-19 and maximise the delivery of the project outcomes, including redirection of funds, changes to project services and/or changes to project activities.</p><p>If, as a result of these adaptations, it will not be possible to fully deliver the contracted project services over the life of the project and you are likely to require changes to the project work order, please describe in the project change management section below.</p>"
               }
             ]
           },
@@ -421,11 +421,6 @@
                 "validate": "required,maxSize[100]"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfCommunicationMaterialsPublished",
                 "description": "Refers to unique publications not number printed",
@@ -439,6 +434,11 @@
             ],
             "dataType": "list",
             "name": "communicationMaterials"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -592,11 +592,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfEvents",
                 "validate": "required"
@@ -644,6 +639,11 @@
             ],
             "dataType": "list",
             "name": "events"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -820,11 +820,6 @@
               {
                 "dataType": "feature",
                 "name": "sitesInstalled"
-              },
-              {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
               },
               {
                 "computed": {
@@ -1042,6 +1037,11 @@
             ],
             "dataType": "list",
             "name": "accessControlDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -1645,6 +1645,11 @@
             "name": "areasControlled"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -2047,11 +2052,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "managementPlanType",
                 "description": "",
                 "constraints": [
@@ -2214,6 +2214,11 @@
             ],
             "dataType": "list",
             "name": "managementPlans"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -2474,11 +2479,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "clearedSites"
               },
@@ -2663,6 +2663,11 @@
             ],
             "dataType": "list",
             "name": "debrisRemovalDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -2948,11 +2953,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "existingErosionSites"
               },
@@ -3192,6 +3192,11 @@
             "dataType": "list",
             "name": "erosionManagementDetails",
             "minSize": 0
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -3529,11 +3534,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfEnclosures",
                 "validate": "required"
@@ -3699,6 +3699,11 @@
             ],
             "dataType": "list",
             "name": "enclosureDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -4006,11 +4011,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "newOrMaintained",
                 "constraints": [
                   "Newly established",
@@ -4121,6 +4121,11 @@
             ],
             "dataType": "list",
             "name": "breedingProgramDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -4348,11 +4353,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "otherAgreementType",
                 "description": "",
                 "behaviour": [
@@ -4505,6 +4505,11 @@
             ],
             "dataType": "list",
             "name": "agreements"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -4775,11 +4780,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "establishedOrMaintained",
                 "validate": "required",
                 "constraints": [
@@ -4805,6 +4805,11 @@
                 "description": "What type of monitoring and reporting is being established/maintained? What information will these monitoring regimes capture?"
               }
             ]
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "name": "photographicEvidence",
@@ -4969,11 +4974,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfFarmManagementSurveys",
                 "validate": "required,min[0]"
@@ -4991,6 +4991,11 @@
                 "description": "What will the survey aim to capture?"
               }
             ]
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -5129,11 +5134,6 @@
                   "Indicator"
                 ],
                 "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
               },
               {
                 "dataType": "number",
@@ -5300,6 +5300,11 @@
             "dataType": "list",
             "name": "faunaSurveys",
             "minSize": 1
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -5609,11 +5614,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "sitesTreated"
               },
@@ -5816,28 +5816,11 @@
                 "name": "sitesBenefittedByFireAction"
               },
               {
-                "defaultValue": {
-                  "type": "computed",
+                "computed": {
                   "expression": "$geom.areaHa(sitesBenefittedByFireAction)"
                 },
                 "dataType": "number",
-                "name": "areaBenefittedByFireActionHa",
-                "validate": [
-                  {
-                    "rule": "min",
-                    "param": {
-                      "type": "computed",
-                      "expression": "$geom.areaHa(sitesBenefittedByFireAction)*0.9"
-                    }
-                  },
-                  {
-                    "rule": "max",
-                    "param": {
-                      "type": "computed",
-                      "expression": "$geom.areaHa(sitesBenefittedByFireAction)*1.1"
-                    }
-                  }
-                ]
+                "name": "areaBenefittedByFireActionHa"
               },
               {
                 "dataType": "text",
@@ -5847,6 +5830,11 @@
             ],
             "dataType": "list",
             "name": "fireManagementDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -6151,11 +6139,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "dateRange",
                 "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
                 "validate": "required,maxSize[300]"
@@ -6319,6 +6302,11 @@
             "dataType": "list",
             "name": "floraSurveys",
             "minSize": 1
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -6637,11 +6625,6 @@
                 "name": "sitesOfAugmentation"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "computed": {
                   "expression": "$geom.areaHa(sitesOfAugmentation)"
                 },
@@ -6859,6 +6842,11 @@
             ],
             "dataType": "list",
             "name": "habitatAugmentationDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -7304,11 +7292,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfTreatmentsImplemented",
                 "validate": "required,min[0]"
@@ -7508,6 +7491,11 @@
             ],
             "dataType": "list",
             "name": "hydrologicalRegimeDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -7844,11 +7832,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "implementationSite"
               },
@@ -8080,6 +8063,11 @@
             ],
             "dataType": "list",
             "name": "landManagementDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -8392,11 +8380,6 @@
                 "name": "siteTreated"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "defaultValue": {
                   "expression": "$geom.areaHa(siteTreated)",
                   "type": "computed"
@@ -8613,6 +8596,11 @@
             ],
             "dataType": "list",
             "name": "diseaseManagementDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -8933,11 +8921,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfGroupsNegotiatedWith",
                 "validate": "required,min[0]"
@@ -8956,6 +8939,11 @@
             ],
             "dataType": "list",
             "name": "negotiations"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -9224,11 +9212,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfPestAnimalSurveys",
                 "validate": "required,min[0]"
@@ -9415,6 +9398,11 @@
             ],
             "dataType": "list",
             "name": "pestAnimalSurveys"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -9746,11 +9734,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "dateRange",
                 "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
                 "validate": "required,maxSize[100]"
@@ -9919,6 +9902,11 @@
             ],
             "dataType": "list",
             "name": "plantSurvivalSurveys"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -10234,11 +10222,6 @@
                 "validate": "required,min[0]"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "number",
                 "name": "numberOfDaysAdministeringProjectPlans",
                 "validate": "required,min[0]",
@@ -10251,6 +10234,11 @@
                 "description": "Please identify why these plans and/or documents were needed"
               }
             ]
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "text",
@@ -10382,11 +10370,6 @@
                   "Follow-up"
                 ],
                 "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
               },
               {
                 "dataType": "feature",
@@ -10607,6 +10590,11 @@
             ],
             "dataType": "list",
             "name": "remediationDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -10917,11 +10905,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "sitesTreated"
               },
@@ -11159,6 +11142,11 @@
             ],
             "dataType": "list",
             "name": "weedTreatmentSites"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -11500,11 +11488,6 @@
                 "validate": "required"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "sitesRevegetated"
               },
@@ -11757,6 +11740,11 @@
             ],
             "dataType": "list",
             "name": "revegetationArea"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -12123,11 +12111,6 @@
                 "name": "sitesPrepared"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "defaultValue": {
                   "expression": "$geom.areaHa(sitesPrepared)",
                   "type": "computed"
@@ -12347,6 +12330,11 @@
             ],
             "dataType": "list",
             "name": "sitePreparationDetails"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -12649,11 +12637,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "dateRange",
                 "validate": "required,maxSize[100]",
                 "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
@@ -12685,6 +12668,11 @@
                 "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
               }
             ]
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "name": "photographicEvidence",
@@ -12863,11 +12851,6 @@
               },
               {
                 "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
-                "dataType": "text",
                 "name": "dateRange",
                 "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
                 "validate": "required,maxSize[100]"
@@ -12941,6 +12924,11 @@
             "name": "soilTestingDetails"
           },
           {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
+          },
+          {
             "dataType": "image",
             "name": "photographicEvidence"
           },
@@ -12974,6 +12962,11 @@
                     "source": "initialOrFollowup",
                     "title": "Initial or follow-up activity?",
                     "type": "selectOne"
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "comment",
+                    "validate": "maxSize[1500]"
                   },
                   {
                     "width": "10%",
@@ -13454,11 +13447,6 @@
                 "validate": "required,maxSize[100]"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "sitesSurveyed"
               },
@@ -13628,6 +13616,11 @@
             ],
             "dataType": "list",
             "name": "waterQualitySurveySites"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",
@@ -13955,11 +13948,6 @@
                 "validate": "required,maxSize[100]"
               },
               {
-                "dataType": "text",
-                "name": "comments",
-                "validate": "maxSize[1500]"
-              },
-              {
                 "dataType": "feature",
                 "name": "sitesSurveyed"
               },
@@ -14110,6 +14098,11 @@
             ],
             "dataType": "list",
             "name": "weedDistributionSurveySites"
+          },
+          {
+            "dataType": "text",
+            "name": "comments",
+            "validate": "maxSize[1500]"
           },
           {
             "dataType": "image",

@@ -38,13 +38,13 @@ environments {
             }
         }
     }
+
     production {
         grails {
             mongo {
                 host = "localhost"
                 port = "27017"
                 databaseName = "ecodata"
-
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100

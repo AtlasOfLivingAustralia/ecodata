@@ -180,6 +180,18 @@ class SiteServiceSpec extends Specification {
         site.extent.geometry.test == 'test'
     }
 
+    def "must return precision depending on area of bounding box" () {
+        def result
+
+        expect:
+        service.calculateGeohashPrecision(bbox) == precision
+
+        where:
+        precision   | bbox
+        3           | ["type":"Polygon","coordinates":[[[86,-50],[181,-50],[181,1],[86,1],[86,-50]]]]
+        5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
+    }
+
 
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]

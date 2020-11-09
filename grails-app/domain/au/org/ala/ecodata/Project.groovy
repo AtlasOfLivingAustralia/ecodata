@@ -53,6 +53,7 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
+    String managementUnitId
 	Map custom
 	Risks risks
 	Date dateCreated
@@ -81,6 +82,8 @@ class Project {
     String origin = 'atlasoflivingaustralia'
     String baseLayer
     MapLayersConfiguration mapLayersConfig
+    /** configure how activity is displayed on map for example point, heatmap or cluster. */
+    List mapDisplays
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -198,6 +201,8 @@ class Project {
         isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
+        managementUnitId nullable: true
+        mapDisplays nullable: true
     }
 }
 

@@ -1,0 +1,16 @@
+<dataStore>
+    <name>$datastoreName</name>
+    <type>Elasticsearch</type>
+    <enabled>true</enabled>
+    <connectionParameters>
+        <entry key="cluster_name">$clusterName</entry>
+        <entry key="scroll_time">120</entry>
+        <entry key="elasticsearch_port">$elasticPort</entry>
+        <entry key="store_data">false</entry>
+        <entry key="scroll_enabled">false</entry>
+        <entry key="scroll_size">20</entry>
+        <entry key="index_name">$indexName</entry>
+        <entry key="elasticsearch_host">$elasticHome</entry>
+        <entry key="use_local_node">false</entry>
+    </connectionParameters>
+</dataStore>
