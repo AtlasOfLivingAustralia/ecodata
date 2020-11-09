@@ -16,7 +16,7 @@ function audit(entity, entityId, type) {
 for (var i =0; i<projectData.length; i++) {
     var project = db.project.find({projectId:projectData[i]});
     if (project.hasNext()){
-        db.project.update({projectId:projectData[i]}, {$set:{workOrderId:projectData[i+1]}});
+        db.project.update({projectId:projectData[i]}, {$set:{internalOrderId:projectData[i+1]}});
         var p = db.project.find({projectId:projectData[i]}).next();
         audit(p, p.projectId, "au.org.ala.ecodata.Project");
 
