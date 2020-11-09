@@ -28,7 +28,7 @@ function updateActivity(report)  {
     audit(activity, activity.activityId, 'au.org.ala.ecodata.Activity');
 }
 
-var projectId = 'd31e6101-2d60-4351-b1ee-64f689f1d48f';
+var projectId = '0a8957b9-1eb5-4777-8dae-13187c313687';
 /*
 var report = db.report.find({reportId:'a875fa51-c64e-47e0-a9f5-b64700f36ece'}).next();
 report.name = 'Year 2018/2019 Quarter 2 Outputs Report';
@@ -139,8 +139,20 @@ while (reports.hasNext()) {
     currentActivity = copyOfPreviousActivity;
 }
 
-var toDeleteReport = db.report.find({reportId:'eb290d93-f30e-4094-821d-ce5d98b7428f'}).next();
-db.report.update({reportId:'eb290d93-f30e-4094-821d-ce5d98b7428f'},{$set:{status:'deleted'}});
+var reportToFixStartDate = db.report.find({reportId:'adecebd2-5e94-4565-a49f-b667cdb18992'}).next();
+reportToFixStartDate.fromDate = ISODate('2020-03-29T13:00:00Z');
+reportToFixStartDate.toDate = ISODate('2020-03-31T13:00:00Z');
+reportToFixStartDate.name = 'Year 2019/2020 - Quarter 4 Outputs Report';
+reportToFixStartDate.description = 'Year 2019/2020 - Quarter 4 Outputs Report';
+reportToFixStartDate.submissionDate = ISODate('2020-03-29T13:00:00Z');
+reportToFixStartDate.lastUpdated = ISODate();
+db.report.save(reportToFixStartDate);
+audit(reportToFixStartDate, reportToFixStartDate.reportId, 'au.org.ala.ecodata.Report');
+updateActivity(reportToFixStartDate);
 
-db.activity.update({activityId:toDeleteReport.activityId},{$set:{status:'deleted'}});
-db.output.update({activityId:toDeleteReport.activityId},{$set:{status:'deleted'}});
+
+//var toDeleteReport = db.report.find({reportId:'0ead7d81-10a9-4e1d-8897-870797810061'}).next();
+//db.report.update({reportId:'0ead7d81-10a9-4e1d-8897-870797810061'},{$set:{status:'deleted'}});
+
+//db.activity.update({activityId:toDeleteReport.activityId},{$set:{status:'deleted'}});
+//db.output.update({activityId:toDeleteReport.activityId},{$set:{status:'deleted'}});
