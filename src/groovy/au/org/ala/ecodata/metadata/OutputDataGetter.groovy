@@ -123,16 +123,10 @@ class OutputDataGetter extends OutputModelProcessor implements OutputModelProces
     @Override
     def document(Object node, Value outputValue) {
         def val = outputValue.value
-        if (val != null){
-            if (val?.documentId){
-                val = val?.documentId
-                return val ?: ""
-            }else{
-                return val ?: ""
-            }
-        }else{
-            return val ?: ""
+        if (val instanceof Map) {
+            val = val?.documentId
         }
+        return val ?: ""
     }
 
     @Override
