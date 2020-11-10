@@ -79,9 +79,9 @@ class MapService {
                 Map data = [
                         datastoreName: name,
                         indexName: name,
-                        elasticHome: "localhost",
-                        elasticPort: "9300",
-                        clusterName: "elasticsearch"
+                        elasticHome: grailsApplication.config.geoServer.elasticHome,
+                        elasticPort: grailsApplication.config.geoServer.elasticPort,
+                        clusterName: grailsApplication.config.geoServer.clusterName
                 ]
 
                 String body = bindDataToXMLTemplate("classpath:data/templates/datastore.template", data)
