@@ -58,6 +58,8 @@ class Document {
 
     Date dateCreated
     Date lastUpdated
+
+    Date dateTaken
 	boolean isPrimaryProjectImage = false
 
     def isImage() {
@@ -133,6 +135,7 @@ class Document {
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
+        dateTaken nullable: true
 		isPrimaryProjectImage nullable: true
         thirdPartyConsentDeclarationMade nullable: true
         thirdPartyConsentDeclarationText nullable: true
