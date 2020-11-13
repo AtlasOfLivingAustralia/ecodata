@@ -4,14 +4,50 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.operation.valid.IsValidOp
 import com.vividsolutions.jts.operation.valid.TopologyValidationError
 import grails.converters.JSON
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetchingEnvironment
 import org.bson.types.ObjectId
 import org.geotools.geojson.geom.GeometryJSON
+import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 class Site {
 
     static String TYPE_COMPOUND = 'compound'
     static String TYPE_PROJECT_AREA = 'projectArea'
     static String TYPE_WORKS_AREA = 'worksArea'
+
+    static graphql = GraphQLMapping.lazy {
+        // Disable default operations, including get as we only want to expose UUIDs in the API not internal ones
+        operations.get.enabled false
+        operations.list.enabled true
+        operations.count.enabled false
+        operations.create.enabled false
+        operations.update.enabled false
+        operations.delete.enabled false
+
+        exclude 'extent', 'features', 'projects'
+
+        add('geometry', 'Geometry') {
+            type {
+                field('type', String)
+                field('coordinates', [Object])
+            }
+            dataFetcher { Site site ->
+                site.extent.geometry
+            }
+        }
+
+        query('sites', [Site]) {
+            argument('term', String)
+            dataFetcher(new DataFetcher() {
+                @Override
+                Object get(DataFetchingEnvironment environment) throws Exception {
+                    environment.context.grailsApplication.mainContext.sitesFetcher.get(environment)
+                }
+            })
+        }
+
+    }
 
     def siteService
 

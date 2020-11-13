@@ -20,6 +20,7 @@ import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.geo.ShapeRelation
@@ -39,6 +40,7 @@ import org.grails.datastore.mapping.engine.event.EventType
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
+import javax.naming.directory.SearchResult
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
@@ -701,56 +703,56 @@ class ElasticSearchService {
             }
         }
 
-        log.info "Indexing all sites"
-        int count = 0
-        Site.withNewSession { session ->
-            siteService.doWithAllSites { def siteMap ->
-                siteMap["className"] = Site.class.name
-                try {
-                    siteMap = prepareSiteForIndexing(siteMap, false)
-                    indexDoc(siteMap, DEFAULT_INDEX)
-                }
-                catch (Exception e) {
-                    log.error("Unable index site: "+siteMap?.siteId, e)
-                }
-                count++
-                if (count % 1000 == 0) {
-                    session.clear()
-                    log.info("Indexed "+count+" sites")
-                }
-            }
-        }
-
-        log.info "Indexing all activities"
-        count = 0;
-        Activity.withNewSession { session ->
-            activityService.doWithAllActivities { Map activity ->
-                try {
-                    activity = prepareActivityForIndexing(activity)
-                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
-                }
-                catch (Exception e) {
-                    log.error("Unable to index activity: " + activity?.activityId, e)
-                }
-
-                count++
-                if (count % 1000 == 0) {
-                    session.clear()
-                    log.info("Indexed " + count + " activities")
-                }
-            }
-        }
-
-        log.info "Indexing all organisations"
-        organisationService.doWithAllOrganisations { Map org ->
-            try {
-                prepareOrganisationForIndexing(org)
-                indexDoc(org, DEFAULT_INDEX)
-            }
-            catch (Exception e) {
-                log.error("Unable to index organisation: "+org?.organisationId, e)
-            }
-        }
+//        log.info "Indexing all sites"
+//        int count = 0
+//        Site.withNewSession { session ->
+//            siteService.doWithAllSites { def siteMap ->
+//                siteMap["className"] = Site.class.name
+//                try {
+//                    siteMap = prepareSiteForIndexing(siteMap, false)
+//                    indexDoc(siteMap, DEFAULT_INDEX)
+//                }
+//                catch (Exception e) {
+//                    log.error("Unable index site: "+siteMap?.siteId, e)
+//                }
+//                count++
+//                if (count % 1000 == 0) {
+//                    session.clear()
+//                    log.info("Indexed "+count+" sites")
+//                }
+//            }
+//        }
+//
+//        log.info "Indexing all activities"
+//        count = 0;
+//        Activity.withNewSession { session ->
+//            activityService.doWithAllActivities { Map activity ->
+//                try {
+//                    activity = prepareActivityForIndexing(activity)
+//                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+//                }
+//                catch (Exception e) {
+//                    log.error("Unable to index activity: " + activity?.activityId, e)
+//                }
+//
+//                count++
+//                if (count % 1000 == 0) {
+//                    session.clear()
+//                    log.info("Indexed " + count + " activities")
+//                }
+//            }
+//        }
+//
+//        log.info "Indexing all organisations"
+//        organisationService.doWithAllOrganisations { Map org ->
+//            try {
+//                prepareOrganisationForIndexing(org)
+//                indexDoc(org, DEFAULT_INDEX)
+//            }
+//            catch (Exception e) {
+//                log.error("Unable to index organisation: "+org?.organisationId, e)
+//            }
+//        }
 
         log.info "Indexing complete"
     }
@@ -1115,12 +1117,17 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    def search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControlFilter = false) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
-        def request = buildSearchRequest(query, params, index, geoSearchCriteria)
+        def request = buildSearchRequest(query, params, index, geoSearchCriteria, applyAccessControlFilter)
         client.search(request).actionGet()
+    }
+
+    SearchResponse searchWithSecurity(String userId, String query, Map params, String index = HOMEPAGE_INDEX, Map geoSearchCriteria = [:]) {
+
+        search(query, params, index, geoSearchCriteria, true)
     }
 
     /**
@@ -1270,7 +1277,7 @@ class ElasticSearchService {
      * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:]) {
+    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControl = false) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
@@ -1282,7 +1289,7 @@ class ElasticSearchService {
         }
         request.types(types as String[])
 
-        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index)
+        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index, applyAccessControl)
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params).query(query)
 
@@ -1354,9 +1361,25 @@ class ElasticSearchService {
         hubFilters
     }
 
-    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index) {
+    private FilterBuilder buildAccessControlFilter() {
+        String userId = UserService.currentUser()?.userId
+
+        FilterBuilder filter = FilterBuilders.termFilter("allParticipants", userId)
+        List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
+        if (permissions) {
+            FilterBuilder hubs = FilterBuilders.termsFilter("hubId", permissions.collect { it.entityId})
+            filter = FilterBuilders.boolFilter().should(filter).should(hubs)
+        }
+        filter
+    }
+
+    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index, boolean applyAccessControlFilters = false) {
         QueryBuilder queryBuilder
         List filters = []
+
+        if (applyAccessControlFilters) {
+            filters << buildAccessControlFilter()
+        }
 
         List hubFilters = extractHubFilterParameters(params)
         if (hubFilters) {

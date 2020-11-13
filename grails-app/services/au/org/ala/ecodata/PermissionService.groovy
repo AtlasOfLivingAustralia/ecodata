@@ -502,4 +502,180 @@ class PermissionService {
 
         result
     }
+
+    // Permission:
+    // create / read / update / delete
+    // read_children / update_children / delete_children?
+    // query_children /
+    // view_reports?  (this is specific to QLD hubs, might be useful for DoEE)
+
+    // schema options: (non-relational)
+    // entityId / entityType? / owner (dbRef)
+    // embeddedCollection: [userId, [permissions]]
+
+    // More relationalish? - might be better as embedded collection will get very big for some projects (e.g. sightings)
+    // EntityId, entity type, owner. _id (is this optional?), public?, viewableInOtherHubs...?, etc
+    // keep existing.
+    // Role / permission mapping. (for convenience of role / permission assignment)
+    boolean checkUserPermission(String userId, String entityId, String entityType, String permission) {
+        UserPermission userPermission = UserPermission.findByUserIdAndEntityIdAndEntityType(userId, entityId, entityType)
+
+        // How many queries... 1. To get UserPermission 2. To see if public (if read) 3. To get owner...  Fair bit of overhead, could add an extra table to contain owner/visiblity which would reduce this to 2?
+
+
+        // Need to check if the entity is "public" - maybe we could have a user permission entry for "all_users" or something for this?
+        // Does this only apply to documents?  Or do we need it on sites etc?  (probably, yes so project areas can be public?)
+
+//        if (permission == 'read' /*&& entity.getVisibility == public*/) {
+//            return true
+//        }
+
+        boolean hasPermission = false
+        if (userPermission && userPermission.hasPermission(permission)) {
+            hasPermission = true
+        }
+        else {
+
+            Owner owner = findOwner(entityId, entityType)  // Do we do an extra query here or update the permission table to directly include an owner reference?
+
+            if (owner) {
+                // Does "read" on an owner automatically give access to children or do we need "read_children"?
+                // Same for "create" / "update" / "delete"
+
+                // Recursively go up the permission tree
+                hasPermission = checkUserPermission(userId, owner.entityId, owner.entityType, permission)
+            }
+        }
+        hasPermission
+    }
+    class Owner {
+        Owner(String entityId, String entityType) {
+            this.entityId = entityId
+            this.entityType = entityType
+        }
+        String entityType
+        String entityId
+    }
+
+    interface HasOwner {
+        Owner getOwner()
+
+    }
+
+    class OwnerFinder {
+
+        Owner getOwner(Project project) {
+            if (project.hubId) {
+                new Owner(project.hubId, Hub.name)
+            }
+        }
+        Owner getOwner(Activity activity) {
+            if (activity.projectId) {
+                new Owner(activity.projectId, Project.name)
+            }
+            else if (activity.projectActivityId) {
+                new Owner(activity.projectActivityId, ProjectActivity.name)
+            }
+            null
+        }
+        Owner getOwner(Organisation organisation) {
+            null
+        }
+        Owner getOwner(Hub hub) {
+            null
+        }
+        Owner getOwner(Output output) {
+            new Owner(output.activityId, Activity.name)
+        }
+        Owner getOwner(ManagementUnit managementUnit) {
+            null
+        }
+        Owner getOwner(ProjectActivity projectActivity) {
+            new Owner(projectActivity.projectId, Project.name)
+        }
+        Owner getOwner(Report report) {
+            if (report.projectId) {
+                return new Owner(report.projectId, Project.name)
+            }
+            else if (report.managementUnitId) {
+                return new Owner(report.managementUnitId, ManagementUnit.name)
+            }
+            else if (report.organisationId) {
+                return new Owner(report.organisationId, Organisation.name)
+            }
+            null
+        }
+
+        Owner getOwner(Document document) {
+            if (document.projectId) {
+                return new Owner(document.projectId, Project.name)
+            }
+            else if (document.activityId) {
+                return new Owner(document.activityId, Activity.name)
+            }
+            else if (document.outputId) {
+                return new Owner(document.outputId, Output.name)
+            }
+            else if (document.managementUnitId) {
+                return new Owner(document.managementUnitId, ManagementUnit.name)
+            }
+            else if (document.programId) {
+                return new Owner(document.programId, ManagementUnit.name)
+            }
+            else if (document.organisationId) {
+                return new Owner(document.organisationId)
+            }
+            else if (document.projectActivityId) {
+                return new Owner(document.projectActivityId, ProjectActivity.name)
+            }
+        }
+
+    }
+
+    private Owner findOwner(String entityId, String entityType) {
+        // Three options.
+        // 1. Denormalise UserPermission and have an owner reference.
+        // 2. Have extra table with this information.
+        // 3. Include a method for finding the owner based on the entity.
+
+        // getOwner method in domain object itself. (could just return id & type to avoid extra query)
+        // entity with owner
+        Object entity = IdentifierHelper.load(entityId, entityType)
+        new OwnerFinder().getOwner(entity)
+
+
+    }
+
+    // e.g for document
+    //@Permission(read, ..)
+    def annotationCheck() {
+        // get entity id, get permission, get entity type?
+
+        // query user permission directly.
+        // if exists continue.
+
+        // if not exists query entity record
+        // if permission is read and entity is public all good.
+
+        // query permissions for user based on owner record, transform permission to "${permission}_children" e.g. read_children
+        // or is this implicit?
+
+
+        // how does role / permission mapping work?  extra level of indirection?
+
+        // Role table, with permissions per role.  do we allow a user to have both a role and an extra permission?  or does that make user admin too complex?
+
+
+        // userId, entity id, role, permissions...?
+
+        checkPermission()
+
+
+    }
+
+    /** Global permission check, used for API permission.  Could also use a hub based check? */
+    boolean checkUserPermission(String userId, String permission) {
+        checkUserPermission(userId, "api", "api", permission)
+    }
+
 }

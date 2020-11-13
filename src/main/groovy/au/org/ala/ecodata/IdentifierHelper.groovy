@@ -10,6 +10,46 @@ class IdentifierHelper {
         getEntityIdentifier(obj, obj.getClass().name)
     }
 
+    static Object load(String id, String className) {
+        Object entity = null
+        switch (className) {
+            case Project.class.name:
+                entity = Project.findByProjectId(id)
+                break
+            case Site.class.name:
+                entity = Site.findBySiteId(id)
+                break
+            case Activity.class.name:
+                entity = Activity.findByActivityId(id)
+                break
+            case Output.class.name:
+                entity = Output.findByOutputId(id)
+                break
+            case Document.class.name:
+                entity = Document.findByDocumentId(id)
+                break
+            case Score.class.name:
+                entity = Score.findByScoreId(id)
+                break
+            case Program.class.name:
+                entity = Program.findByProgramId(id)
+                break
+            case Organisation.class.name:
+                entity = Organisation.findByOrganisationId(id)
+                break
+            case Report.class.name:
+                entity = Report.findByReportId(id)
+                break
+            case Record.class.name:
+                entity = Record.findByRecord(id)
+                break
+            default:
+                throw new IllegalArgumentException("Unsupported entity type: ${entity}")
+                break
+        }
+        return entity
+    }
+
     static String getEntityIdentifier(Object obj, String className) {
         String entityId
         switch (className) {

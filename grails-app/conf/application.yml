@@ -166,7 +166,7 @@ security:
         casServerUrlPrefix: 'https://auth.ala.org.au/cas'
         loginUrl: 'https://auth.ala.org.au/cas/login'
         logoutUrl: 'https://auth.ala.org.au/cas/logout'
-        uriFilterPattern: '/admin/.*,/activityForm/((?!get).)*'
+        uriFilterPattern: '/admin/.*,/activityForm/((?!get).)*,/graphql.*'
         authenticateOnlyIfLoggedInPattern:
         uriExclusionFilterPattern: '/images.*,/css.*,/js.*,/less.*'
 
@@ -203,4 +203,37 @@ grails:
         codecs: au.org.ala.ecodata.customcodec.AccessLevelCodec
         engine: codec
 
+graphql:
+    servlet:
+        mapping: /graphql
+        enabled: true
+        corsEnabled: true
+        # if you want to @ExceptionHandler annotation for custom GraphQLErrors
+        exception-handlers-enabled: true
+        contextSetting: PER_REQUEST_WITH_INSTRUMENTATION
+
+graphiql:
+    mapping: /graphiql
+    endpoint:
+        graphql: /graphql
+        subscriptions: /subscriptions
+    subscriptions:
+        timeout: 30
+        reconnect: false
+    static:
+        basePath: /assets
+    enabled: true
+    pageTitle: GraphiQL
+    cdn:
+        enabled: true
+        version: 0.13.0
+    props:
+        resources:
+            # query: query.graphql
+            # defaultQuery: defaultQuery.graphql
+            # variables: variables.graphql
+        variables:
+            editorTheme: "solarized light"
+    headers:
+        Authorization: "Bearer <your-token>"
 

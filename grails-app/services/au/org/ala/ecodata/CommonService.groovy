@@ -56,7 +56,10 @@ class CommonService {
                 v = null
             }
 
-            o[k] = v
+            // Dynamic properties with a null value result in a NPE when using the GORM mongo codec mapping.
+            if (v != null || domainDescriptor.hasProperty(k)) {
+                o[k] = v
+            }
         }
         // always flush the update so that that any exceptions are caught before the service returns
         o.save(flush:true)

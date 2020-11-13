@@ -1,14 +1,16 @@
 package au.org.ala.ecodata
 
-import static au.org.ala.ecodata.Status.COMPLETED
-
+import au.org.ala.ecodata.graphql.ProjectGraphQLMapper
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.Interval
 
+import static au.org.ala.ecodata.Status.COMPLETED
 
 class Project {
+
+    static graphql = ProjectGraphQLMapper.graphqlMapping()
 
     /*
     Associations:
@@ -87,6 +89,8 @@ class Project {
 
     /** The program of work this project is a part of, if any */
     String programId
+
+    Hub hub
 
     static embedded = ['associatedOrganisations','fundings']
 
@@ -192,6 +196,7 @@ class Project {
         industries nullable: true
         programId nullable: true
         baseLayer nullable: true
+        hub nullable: true
     }
 }
 
