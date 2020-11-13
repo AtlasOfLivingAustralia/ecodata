@@ -81,6 +81,7 @@ dependencies {
     compile "org.grails:grails-plugin-codecs"
     compile "org.grails.plugins:mongodb:7.0.1"
 
+    compile "org.grails.plugins:gorm-graphql:1.0.3.BUILD-SNAPSHOT"
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
     profile "org.grails.profiles:web"
@@ -118,6 +119,12 @@ dependencies {
     }
 
     compile 'org.grails.plugins:excel-export:2.1'
+    compile 'org.apache.poi:ooxml-schemas:1.4'
+    compile 'org.apache.poi:poi:4.1.1'
+    compile 'org.apache.poi:poi-ooxml:4.1.1'
+    compile 'org.apache.poi:poi-ooxml-schemas:4.1.1'
+
+    // https://mvnrepository.com/artifact/com.vividsolutions/jts
     compile group: 'com.vividsolutions', name: 'jts', version: '1.13'
     compile "com.itextpdf:itextpdf:5.5.1"
     compile "org.apache.httpcomponents:httpmime:4.2.1"

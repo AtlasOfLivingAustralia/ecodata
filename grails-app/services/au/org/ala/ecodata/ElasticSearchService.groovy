@@ -1255,12 +1255,17 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControlFilter = false) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
-        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria)
+        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria, applyAccessControlFilter)
         client.search(request, RequestOptions.DEFAULT)
+    }
+
+    SearchResponse searchWithSecurity(String userId, String query, Map params, String index = HOMEPAGE_INDEX, Map geoSearchCriteria = [:]) {
+
+        search(query, params, index, geoSearchCriteria, true)
     }
 
     /**
@@ -1419,12 +1424,12 @@ class ElasticSearchService {
      * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:]) {
+    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControl = false) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
         request.indices(index)
 
-        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index)
+        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index, applyAccessControl)
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params).query(query)
         source.trackTotalHits(true) // Always provide a full count of the number of results for compatibility with current clients
@@ -1505,9 +1510,25 @@ class ElasticSearchService {
         hubFilters
     }
 
-    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index) {
+    private FilterBuilder buildAccessControlFilter() {
+        String userId = UserService.currentUser()?.userId
+
+        FilterBuilder filter = FilterBuilders.termFilter("allParticipants", userId)
+        List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
+        if (permissions) {
+            FilterBuilder hubs = FilterBuilders.termsFilter("hubId", permissions.collect { it.entityId})
+            filter = FilterBuilders.boolFilter().should(filter).should(hubs)
+        }
+        filter
+    }
+
+    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index, boolean applyAccessControlFilters = false) {
         QueryBuilder queryBuilder
         List filters = []
+
+        if (applyAccessControlFilters) {
+            filters << buildAccessControlFilter()
+        }
 
         List hubFilters = extractHubFilterParameters(params)
         if (hubFilters) {
