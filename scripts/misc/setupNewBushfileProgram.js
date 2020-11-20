@@ -20,7 +20,43 @@ if (programQuery.hasNext()) {
     db.program.save(program);
 }
 program.config.excludeFinancialYearData = true;
+program.config.activities = [
+    {
+        "name": "Herbivore and/or predator control"
+    },
+    {
+        "name": "Weed control and/or revegetation"
+    },
+    {
+        "name": "Fire management and planning"
+    },
+    {
+        "name": "Species and ecological community specific interventions"
+    },
+    {
+        "name": "Traditional Owner led healing of country"
+    },
+    {
+        "name": "Erosion control"
+    },
+
+    {
+        "name": "Refugia management"
+    },
+    {
+        "name":"Other"
+    }
+];
 program.config.meriPlanContents = [
+    {
+        "template" : "activities",
+        "model" : {
+            "includeOther" : true,
+            "noneSelectedMessage" : "No priority actions have been nominated for this project",
+            "title" : "Priority actions",
+            "explanation" : "Please select from the drop-down options which of the following regional investment strategy objectives are applicable to this project"
+        }
+    },
     {
         "template": "assets",
         "model": {
@@ -30,7 +66,7 @@ program.config.meriPlanContents = [
     {
         "template": "outcomeStatements",
         "model": {
-            "subtitle": "Please provide short term outcome statements. Short term outcomes statements should: <br/>- outline the degree of impact having undertaken the actions within the project timeframe;<br/>- be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
+            "subtitle": "Please provide short term outcome statements. Short term outcomes statements should: <br/>- Contribute to the regional investment strategy;<br/>- Outline the degree of impact having undertaken the actions within the project timeframe;<br/>- Be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- Ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
             "placeholder": "By 30 June 2021, [Free text]",
             "title": "Short term outcome statements"
         }
@@ -40,7 +76,7 @@ program.config.meriPlanContents = [
         "model": {
             "maxSize": "1000",
             "placeholder": "[Free text; limit response to 1000 characters (approx. 150 words)]",
-            "explanation": " Please provide a short description of this project. This project description will be visible on the project overview page in MERIT"
+            "explanation": " Please provide a short description of this project. The project description should be succinct and state what will be done and why it will be done. This project description will be visible on the project overview page in MERIT"
         }
     },
     {
@@ -48,12 +84,9 @@ program.config.meriPlanContents = [
         "model": {
             "maxSize": "4000",
             "title": "Project methodology",
-            "tableHeading": "Please describe the methodology that will be used to achieve the project's short term outcome statements. To help demonstrate best practice delivery approaches and cost effectiveness of methodologies used, include details of the specific delivery mechanisms to leverage change (e.g. delivery method, approach and justification)",
+            "tableHeading": "Please describe the methodology that will be used to achieve the project’s short-term outcome statements.",
             "placeHolder": "[Free text; limit response to 4000 characters (approx. 650 words)]"
         }
-    },
-    {
-        "template": "monitoringBaseline"
     },
     {
         "template": "monitoringIndicators",
@@ -130,6 +163,8 @@ if (programQuery.hasNext()) {
     db.program.save(program);
 }
 program.config.excludeFinancialYearData = true;
+delete program.config.activities;
+
 program.config.meriPlanContents = [
     {
         "template":"programOutcome"
@@ -149,6 +184,12 @@ program.config.meriPlanContents = [
             "subtitle": "Please provide short term outcome statements. Short term outcomes statements should: <br/>- outline the degree of impact having undertaken the actions within the project timeframe;<br/>- be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
             "placeholder": "By 30 June 2021, [Free text]",
             "title": "Short term outcome statements"
+        }
+    },
+    {
+        "template" : "name",
+        "model" : {
+            "placeHolder" : "[150 characters]"
         }
     },
     {
