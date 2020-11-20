@@ -49,18 +49,18 @@ program.config.activities = [
 ];
 program.config.meriPlanContents = [
     {
+        "template": "assets",
+        "model": {
+            "placeHolder": "[Free text; for species please enter common and scientific name; one asset per line]"
+        }
+    },
+    {
         "template" : "activities",
         "model" : {
             "includeOther" : true,
             "noneSelectedMessage" : "No priority actions have been nominated for this project",
             "title" : "Priority actions",
             "explanation" : "Please select from the drop-down options which of the following regional investment strategy objectives are applicable to this project"
-        }
-    },
-    {
-        "template": "assets",
-        "model": {
-            "placeHolder": "[Free text; for species please enter common and scientific name; one asset per line]"
         }
     },
     {
