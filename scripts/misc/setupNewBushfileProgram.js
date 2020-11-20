@@ -39,12 +39,8 @@ program.config.activities = [
     {
         "name": "Erosion control"
     },
-
     {
         "name": "Refugia management"
-    },
-    {
-        "name":"Other"
     }
 ];
 program.config.meriPlanContents = [
