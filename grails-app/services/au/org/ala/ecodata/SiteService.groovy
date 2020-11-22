@@ -285,6 +285,9 @@ class SiteService {
                 populateLocationMetadataForSite(props)
             }
         }
+
+        props.remove("geoPoint")
+        props.remove("geometryType")
         getCommonService().updateProperties(site, props)
     }
 
