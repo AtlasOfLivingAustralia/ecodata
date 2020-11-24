@@ -1,5 +1,28 @@
 load("uuid.js");
 
+var programs = db.program.find({status:{$ne:'deleted'}});
+while (programs.hasNext()) {
+    var program = programs.next();
+    if (!program.config) {
+        program.config = {};
+    }
+    if (!program.config.excludes) {
+        program.config.excludes = [];
+    }
+    if (program.name != 'Regional Land Partnerships') {
+
+        if (program.config.excludes) {
+            program.config.excludes.push('DATA_SETS');
+        }
+        else {
+            program.config.excludes = ['DATA_SETS'];
+        }
+    }
+
+    db.program.save(program);
+}
+
+
 var name = 'Regional Fund for Wildlife and Habitat Bushfire Recovery (the Regional Fund) - States';
 
 var programQuery = db.program.find({name: name});
@@ -19,6 +42,7 @@ if (programQuery.hasNext()) {
 
     db.program.save(program);
 }
+
 program.config.excludeFinancialYearData = true;
 program.config.activities = [
     {
@@ -53,7 +77,7 @@ program.config.meriPlanContents = [
     {
         "template" : "activities",
         "model" : {
-            "includeOther" : true,
+            "singleSelection" : true,
             "noneSelectedMessage" : "No priority actions have been nominated for this project",
             "title" : "Priority actions",
             "explanation" : "Please select from the drop-down options which of the following regional investment strategy objectives are applicable to this project"
