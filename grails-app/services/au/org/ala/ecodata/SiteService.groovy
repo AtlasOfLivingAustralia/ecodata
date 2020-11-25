@@ -290,8 +290,6 @@ class SiteService {
             }
         }
 
-        props.remove("geoPoint")
-        props.remove("geometryType")
         getCommonService().updateProperties(site, props)
     }
 
