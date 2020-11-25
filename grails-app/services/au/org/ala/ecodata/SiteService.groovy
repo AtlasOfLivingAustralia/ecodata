@@ -24,6 +24,7 @@ class SiteService {
     static final RAW = 'raw'
     static final FLAT = 'flat'
     static final PRIVATE = 'private'
+    static final INDEXING = 'indexing'
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -166,8 +167,6 @@ class SiteService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        mapOfProperties.geometryType = site.geometryType
-        mapOfProperties.geoPoint = site.geoPoint
 
         if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
             mapOfProperties.documents = documentService.findAllForSiteId(site.siteId, version)
@@ -179,6 +178,11 @@ class SiteService {
                 mapOfProperties.projects = projects
                 mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail, version)
             }
+        }
+
+        if (levelOfDetail.contains(INDEXING)) {
+            mapOfProperties.geometryType = site.geometryType
+            mapOfProperties.geoPoint = site.geoPoint
         }
 
         mapOfProperties.findAll {k,v -> v != null}
