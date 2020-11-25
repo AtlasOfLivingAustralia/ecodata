@@ -1,11 +1,7 @@
-var program = db.program.find();
+var program = db.program.find({config:{$type: 'undefined'}});
 print(program.count());
 
-program.forEach(function (program){
-    if (program.config === typeof undefined){
-        print("========== updating program config from undefined to null: " + program.programId)
-        db.program.update({$set: {config: null}})
-    }else{
-        print("No update required for this program: " + program.programId)
-    }
-})
+program.forEach(function (pgm){
+        print("========== updating program config from undefined to null: " + pgm.programId)
+         db.program.update({programId: pgm.programId}, {$set: {config: null}})
+});
