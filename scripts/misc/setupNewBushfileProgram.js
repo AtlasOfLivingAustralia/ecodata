@@ -160,6 +160,32 @@ program.config.meriPlanContents = [
         }
     }
 ];
+program.config.projectReports = [
+    {
+        "reportType": "Activity",
+        "reportDescriptionFormat": "Progress Report %1d",
+        "reportNameFormat": "Progress Report %1d",
+        "description": "",
+        "category": "Progress Reports",
+        "reportingPeriodInMonths": 6,
+        "activityType": "State Intervention Progress Report",
+        "reportsAlignedToCalendar": true,
+        "firstReportingPeriodEnd": "2021-06-30T14:00:00Z",
+        "canSubmitDuringReportingPeriod": true
+    },
+    {
+        "reportType": "Single",
+        "firstReportingPeriodEnd": "2022-06-30T14:00:00Z",
+        "reportDescriptionFormat": "Final Report",
+        "reportNameFormat": "Final Report",
+        "reportingPeriodInMonths": 18,
+        "multiple": false,
+        "description": "",
+        "category": "Final Report",
+        "reportsAlignedToCalendar": false,
+        "activityType": "Final Report"
+    }
+];
 
 db.program.save(program);
 
@@ -355,4 +381,5 @@ program.outcomes = [
         "outcome": "6. By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production."
     }
 ];
+program.config.projectReports=[];
 db.program.save(program);
