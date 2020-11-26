@@ -67,6 +67,7 @@ program.config.activities = [
         "name": "Refugia management"
     }
 ];
+program.config.excludes = [];
 program.config.meriPlanContents = [
     {
         "template": "assets",
@@ -184,7 +185,7 @@ if (programQuery.hasNext()) {
 }
 program.config.excludeFinancialYearData = true;
 delete program.config.activities;
-
+program.config.excludes = [];
 program.config.meriPlanContents = [
     {
         "template":"programOutcome"
