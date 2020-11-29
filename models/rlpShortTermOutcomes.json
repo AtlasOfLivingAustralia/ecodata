@@ -773,395 +773,99 @@
               {
                 "name": "programLogic",
                 "dataType": "text",
-                "validate": "required,maxSize[800]"
+                "validate": "required,maxSize[3000]"
               },
               {
                 "name": "keyEnablers",
                 "dataType": "text",
-                "validate": "required,maxSize[800]"
+                "validate": "required,maxSize[3000]"
               },
               {
                 "name": "keyBarriers",
                 "dataType": "text",
-                "validate": "required,maxSize[800]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq1",
-                "validate": "required",
-                "constraints": [
-                   "Significant progression",
-                   "Satisfactory progression",
-                  "Partial progression",
-                "Inadequate progression",
-                "No progression"
-                ]
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq2",
                 "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq3",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq4",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq5",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq6",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq7",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq8",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq9",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq10",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "keq11",
-                "validate": "required,maxSize[3000]"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "caseStudy",
-                "validate": "maxSize[3000]"
-              },
-              {
-                "dataType": "list",
-                "description": "",
-                "name": "relationships",
-                "columns": [
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "relationshipDropdown",
-                    "constraints": [
-                      "Yes",
-                      "No",
-                      "Partially",
-                      "Don't Know",
-                      "To early to say"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "relationshipEvidence"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "relationshipJustification"
-                  }
-                ]
-              },
-              {
-                "dataType": "list",
-                "description": "",
-                "name": "threatenedSpecies",
-                "columns": [
-                  {
-                    "dataType": "text",
-                    "description": "Add a new row for each threatened Species",
-                    "name": "threatenedSpeciesAttributes",
-                    "constraints": [
-                      "Distribution",
-                      "Population Size",
-                      "Habitat Availability",
-                      "Others (Please specify)"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "threatenedSpeciesChanged",
-                    "constraints": [
-                      "Improved",
-                      "Declined",
-                      "Don't Know",
-                      "Too early to say"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "threatenedSpeciesEvidence"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "threatenedSpeciesJustification"
-                  }
-                ]
-              },
-              {
-                "dataType": "list",
-                "description": "",
-                "name": "intspecies",
-                "columns": [
-                  {
-                    "dataType": "text",
-                    "description": "Add a new row for each Species.",
-                    "name": "intspecies1",
-                    "constraints": [
-                      "1 - Monitoring",
-                      "2 - Reintroduction",
-                      "3 - Further protection",
-                      "4 - Habitat improvement/regeneration",
-                      "4A - Debris removal (including marine debris)",
-                      "4B - Improve water quality",
-                      "4C - Erosion control",
-                      "4D - Revegetation",
-                      "4E - Reducing pollution",
-                      "5 - Community/landholder engagement",
-                      "5A - Citizen science",
-                      "5B - Conservation activities (eg. Pest control, land management)",
-                      "5C - Incentives – community/landholder",
-                      "6 - Identifying/prioritising areas",
-                      "7 - Increasing plant diversity",
-                      "8 - Training/extension services",
-                      "9 - Weed control",
-                      "10 - Improved land management",
-                      "10A - Grazing management",
-                      "10B - Farm management practices",
-                      "11 - Fire management plans/burns",
-                      "12 - Restrict access",
-                      "12A - Fencing/barriers",
-                      "13 - Pest/fauna control",
-                      "13A - Culling",
-                      "13B - Baiting",
-                      "13C - Trapping",
-                      "13D - Fencing",
-                      "13E - Monitoring",
-                      "14 - Review of existing data",
-                      "15 - Genetic collections/monitoring",
-                      "16 - Seed collection/storage",
-                      "17 - Ex-situ program",
-                      "17A - Propagation",
-                      "17B - Captive breeding",
-                      "18 - Indigenous knowledge",
-                      "19 - Pathogens/disease control",
-                      "20 - Further research",
-                      "22 - Communication, education and awareness raising",
-                      "22A - Soft communication material (eg. Video)",
-                      "22B - Hard communication material (eg. Signage)",
-                      "22C - Awareness raising program/events",
-                      "23 - Governance",
-                      "24 - Planning/strategy development",
-                      "25 - Aboriginal community engagement",
-                      "26 - Water management",
-                      "27 - Nestbox installation/breeding site improvements"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "intspecies2",
-                    "constraints": [
-                      "Fully",
-                      "Partially",
-                      "Partially",
-                      "Not Implemented"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "intspecies3"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "intspecies4"
-                  }
-                ]
-              },
-              {
-                "dataType": "list",
-                "description": "",
-                "name": "interventionsOutcome",
-                "columns": [
-                  {
-                    "dataType": "text",
-                    "description": "Add a new row for each Interventions",
-                    "name": "interventionsOutcomeDropdown",
-                    "constraints": [
-                      "1 - Monitoring",
-                      "2 - Reintroduction",
-                      "3 - Further protection",
-                      "4 - Habitat improvement/regeneration",
-                      "4A - Debris removal (including marine debris)",
-                      "4B - Improve water quality",
-                      "4C - Erosion control",
-                      "4D - Revegetation",
-                      "4E - Reducing pollution",
-                      "5 - Community/landholder engagement",
-                      "5A - Citizen science",
-                      "5B - Conservation activities (eg. Pest control, land management)",
-                      "5C - Incentives – community/landholder",
-                      "6 - Identifying/prioritising areas",
-                      "7 - Increasing plant diversity",
-                      "8 - Training/extension services",
-                      "9 - Weed control",
-                      "10 - Improved land management",
-                      "10A - Grazing management",
-                      "10B - Farm management practices",
-                      "11 - Fire management plans/burns",
-                      "12 - Restrict access",
-                      "12A - Fencing/barriers",
-                      "13 - Pest/fauna control",
-                      "13A - Culling",
-                      "13B - Baiting",
-                      "13C - Trapping",
-                      "13D - Fencing",
-                      "13E - Monitoring",
-                      "14 - Review of existing data",
-                      "15 - Genetic collections/monitoring",
-                      "16 - Seed collection/storage",
-                      "17 - Ex-situ program",
-                      "17A - Propagation",
-                      "17B - Captive breeding",
-                      "18 - Indigenous knowledge",
-                      "19 - Pathogens/disease control",
-                      "20 - Further research",
-                      "22 - Communication, education and awareness raising",
-                      "22A - Soft communication material (eg. Video)",
-                      "22B - Hard communication material (eg. Signage)",
-                      "22C - Awareness raising program/events",
-                      "23 - Governance",
-                      "24 - Planning/strategy development",
-                      "25 - Aboriginal community engagement",
-                      "26 - Water management",
-                      "27 - Nestbox installation/breeding site improvements"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "interventionsOutcomeEvidence"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "interventionsOutcomeJustification"
-                  }
-                ]
-              },
-              {
-                "dataType": "list",
-                "description": "",
-                "name": "shortTerms",
-                "columns": [
-                  {
-                    "dataType": "text",
-                    "description": "SMART outcome being reported against, as per the MERI Plan.",
-                    "name": "shortTermAchieved"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "shortTermResponsive",
-                    "constraints": [
-                      "Yes",
-                      "No",
-                      "Partially",
-                      "Don't Know"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "shortTermEvidence"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "shortTermJustification"
-                  }
-                ]
-              },
-              {
-                "dataType": "list",
-                "description": "",
-                "name": "mediumTerms",
-                "columns": [
-                  {
-                    "dataType": "text",
-                    "description": "SMART outcome being reported against, as per the MERI Plan.",
-                    "name": "mediumTermAchieved"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "mediumTermResponsive",
-                    "constraints": [
-                      "Yes",
-                      "No",
-                      "Partially",
-                      "Don't Know"
-                    ]
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "mediumTermEvidence"
-                  },
-                  {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "mediumTermJustification"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "newThreatsSpeciesEvidence"
-              },
-              {
-                "dataType": "text",
-                "description": "",
-                "name": "newThreatsSpeciesJustification"
               }
+
             ]
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq1",
+            "validate": "required",
+            "constraints": [
+              "Significant progression",
+              "Satisfactory progression",
+              "Partial progression",
+              "Inadequate progression",
+              "No progression"
+            ]
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq2",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq3",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq4",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq5",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq6",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq7",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq8",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq9",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq10",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq11",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "caseStudy",
+            "validate": "maxSize[3000]"
           }
         ],
         "pre-populate": [
@@ -1198,6 +902,7 @@
           {
             "source": "projectOutcomes",
             "type": "repeat",
+            "collapsable": true,
             "title": "Outcome",
             "items": [
               {
@@ -1218,7 +923,7 @@
                   {
                     "computed": null,
                     "type": "literal",
-                    "source": "<strong>2. Investment priorities - indicators, threats and interventions</strong><p>For each investment priority relevant to this project outcome, please answer the following questions.   You can add another investment priority using the button at the end of the investment priority questions. <ul><li>Select an investment priority</li><li>Select the relevant outcome indicator</li><li>Select key threats</li><li>Select additional threats</li><li>Select key agricultural categories</li><li>Select project services, activities or interventions</li><li>Can you quantify the level of achievement &gt Yes &gt</li></ul></p>"
+                    "source": "<strong>2. Investment priorities - indicators, threats and interventions</strong><p>For each investment priority relevant to this project outcome, please answer the following questions.   You can add another investment priority using the button at the end of the investment priority questions.</p>"
                   }
                 ]
               },
@@ -1233,7 +938,7 @@
                     "type": "row",
                     "items": [
                       {
-                        "preLabel": "Investment priority",
+                        "preLabel": "Select an investment priority",
                         "type": "select2",
                         "source": "investmentPriority"
                       }
@@ -1243,7 +948,7 @@
                     "type": "row",
                     "items": [
                       {
-                        "preLabel": "Outcome indicator",
+                        "preLabel": "Select the relevant outcome indicator (project monitoring indicator in your MERI plan)",
                         "type": "select2",
                         "source": "outcomeIndicator",
                         "displayOptions": {
@@ -1257,7 +962,7 @@
                     "items": [
                       {
                         "type": "table",
-                        "title": "<b>Key threats</b>",
+                        "title": "<b>Select key threats</b>",
                         "source": "keyThreats",
                         "userAddedRows": true,
                         "disableTableUpload": true,
@@ -1281,7 +986,7 @@
                     "items": [
                       {
                         "type": "table",
-                        "title": "<b>Additional threats</b>",
+                        "title": "<b>Select additional threats</b>",
                         "source": "additionalThreats",
                         "userAddedRows": true,
                         "disableTableUpload": true,
@@ -1304,12 +1009,12 @@
                     "type": "row",
                     "items": [
                       {
-                        "preLabel": "Key project service, intervention or activity",
+                        "preLabel": "Select project services, activities, or interventions",
                         "type": "select2Many",
                         "source": "keyInterventions"
                       },
                       {
-                        "preLabel": "Additional services, interventions or activities",
+                        "preLabel": "Select additional services, activities, or interventions",
                         "type": "select2Many",
                         "source": "additionalInterventions"
                       }
@@ -1464,7 +1169,7 @@
             "items": [
               {
                 "preLabel": "KEQ1 - To what extent are you progressing towards the medium-term outcomes of the program?",
-                "type": "textarea",
+                "type": "selectOne",
                 "rows": 5,
                 "source": "keq1"
               }
