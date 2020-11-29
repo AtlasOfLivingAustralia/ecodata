@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 import org.springframework.validation.Errors
 
 import static au.org.ala.ecodata.Status.COMPLETED
@@ -211,6 +213,17 @@ class Project {
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }
+    }
+
+    MeriPlan getMeriPlan() {
+        if(!custom) {
+            return null
+        }
+
+        MeriPlan meriPlan = new MeriPlan()
+        meriPlan.details = custom.get("details")
+        meriPlan.outputTargets = this.outputTargets
+        return meriPlan
     }
 }
 

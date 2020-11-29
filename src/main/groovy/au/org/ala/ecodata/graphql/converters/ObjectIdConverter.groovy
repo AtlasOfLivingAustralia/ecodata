@@ -1,4 +1,4 @@
-package au.org.ala.ecodata.graphql
+package au.org.ala.ecodata.graphql.converters
 
 import graphql.language.StringValue
 import graphql.schema.Coercing

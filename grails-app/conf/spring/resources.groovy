@@ -1,8 +1,9 @@
-import au.org.ala.ecodata.graphql.ActivityFetcher
+import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
 import au.org.ala.ecodata.graphql.EcodataGraphQLCustomiser
-import au.org.ala.ecodata.graphql.ProjectsFetcher
-import au.org.ala.ecodata.graphql.SitesFetcher
+import au.org.ala.ecodata.graphql.fetchers.OutputFetcher
+import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
+import au.org.ala.ecodata.graphql.fetchers.SitesFetcher
 
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 
@@ -12,6 +13,7 @@ beans = {
     projectsFetcher(ProjectsFetcher)
     sitesFetcher(SitesFetcher)
     activitiesFetcher(ActivityFetcher)
+    outputFetcher(OutputFetcher)
     graphQLContextBuilder(EcodataGraphQLContextBuilder)
     formattedStringConverter ISODateBindingConverter
 }
