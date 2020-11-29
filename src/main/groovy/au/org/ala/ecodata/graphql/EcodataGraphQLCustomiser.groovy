@@ -1,6 +1,17 @@
 package au.org.ala.ecodata.graphql
 
-import graphql.schema.Coercing
+import au.org.ala.ecodata.graphql.converters.MeriPlanConverter
+import au.org.ala.ecodata.graphql.converters.ObjectConverter
+import au.org.ala.ecodata.graphql.converters.ObjectIdConverter
+import au.org.ala.ecodata.graphql.converters.OutputDataConverter
+import au.org.ala.ecodata.graphql.converters.SchemaConverter
+import au.org.ala.ecodata.graphql.converters.SectionTemplateConverter
+import au.org.ala.ecodata.graphql.converters.SummaryConverter
+import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.graphql.models.OutputData
+import au.org.ala.ecodata.graphql.models.Schema
+import au.org.ala.ecodata.graphql.models.SectionTemplate
+import au.org.ala.ecodata.graphql.models.Summary
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLInterfaceType
@@ -25,6 +36,11 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
         graphQLTypeManager.registerType(ObjectId, new GraphQLScalarType("ObjectId", "Hex representation of a Mongo object id", new ObjectIdConverter()))
         graphQLTypeManager.registerType(Object, new GraphQLScalarType("object", "", new ObjectConverter()))
         //graphQLTypeManager.registerType(Map, GraphQLInterfaceType.newInterface().)
+        graphQLTypeManager.registerType(MeriPlan, new GraphQLScalarType("MeriPlan", "", new MeriPlanConverter()))
+        graphQLTypeManager.registerType(OutputData, new GraphQLScalarType("OutputData", "", new OutputDataConverter()))
+        graphQLTypeManager.registerType(SectionTemplate, new GraphQLScalarType("SectionTemplate", "", new SectionTemplateConverter()))
+        graphQLTypeManager.registerType(Summary, new GraphQLScalarType("Summary", "", new SummaryConverter()))
+        graphQLTypeManager.registerType(Schema, new GraphQLScalarType("Schema", "", new SchemaConverter()))
     }
 
     @Override

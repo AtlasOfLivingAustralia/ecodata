@@ -1,10 +1,12 @@
-package au.org.ala.ecodata.graphql
+package au.org.ala.ecodata.graphql.mappers
 
 import au.org.ala.ecodata.Document
 import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.Status
+import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
+import au.org.ala.ecodata.graphql.models.MeriPlan
 import grails.gorm.DetachedCriteria
 import grails.util.Holders
 import graphql.schema.DataFetcher
@@ -26,6 +28,7 @@ class ProjectGraphQLMapper {
             operations.update.enabled false
             operations.delete.enabled false
 
+            exclude("custom")
 
             List<String> restrictedProperties = []
             restrictedProperties.each { String prop ->
@@ -40,9 +43,12 @@ class ProjectGraphQLMapper {
                 }
             }
 
-//            property('meriPlan') { Project project ->
-//
-//            }
+            add('meriPlan', MeriPlan) {
+                dataFetcher { Project project ->
+                    project.getMeriPlan()
+                }
+            }
+
             add('documents', [Document]) {
                 dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
                     Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED)

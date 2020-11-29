@@ -1,6 +1,6 @@
-package au.org.ala.ecodata.graphql
+package au.org.ala.ecodata.graphql.converters
 
-import graphql.language.StringValue
+
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseValueException
 import graphql.schema.CoercingSerializeException
@@ -15,16 +15,16 @@ class ObjectConverter implements Coercing<Object, Object> {
     }
 
     @Override
-    ObjectId serialize(Object input) {
+    Object serialize(Object input) {
         convert(input).orElseThrow( {
-            throw new CoercingSerializeException("Could not convert ${input.class.name} to an ObjectId")
+            throw new CoercingSerializeException("Could not convert ${input.class.name} to an Object")
         })
     }
 
     @Override
     Object parseValue(Object input) {
         convert(input).orElseThrow( {
-            throw new CoercingParseValueException("Could not convert ${input.class.name} to an ObjectId")
+            throw new CoercingParseValueException("Could not convert ${input.class.name} to an Object")
         })
     }
 
