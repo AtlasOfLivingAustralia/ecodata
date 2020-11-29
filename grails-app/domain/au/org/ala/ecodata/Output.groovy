@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.OutputGraphQLMapper
+import au.org.ala.ecodata.graphql.models.OutputData
+import au.org.ala.ecodata.graphql.models.KeyValue
 import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
@@ -8,29 +11,7 @@ import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 class Output {
 
-    static graphql = GraphQLMapping.lazy {
-        // Disable default operations, including get as we only want to expose UUIDs in the API not internal ones
-        operations.get.enabled false
-        operations.list.enabled true
-        operations.count.enabled false
-        operations.create.enabled false
-        operations.update.enabled false
-        operations.delete.enabled false
-
-
-//        add('data', Map) {
-//            dataFetcher { Output output ->
-//                Activity activity = Activity.findByActivityId(output.activityId)
-//                ActivityForm form = Holders.grailsApplication.mainContext.activityFormService.findActivityForm(activity.type, activity.formVersion)
-//                form.sections.each { FormSection section ->
-//                    section.template.dataModel.each {
-//
-//                    }
-//                }
-//            }
-//            input false
-//        }
-    }
+    static graphql = OutputGraphQLMapper.graphqlMapping()
 
     /*
     Associations:
@@ -57,5 +38,15 @@ class Output {
     static constraints = {
         assessmentDate nullable: true
         name nullable: true
+    }
+
+    OutputData getData(def data) {
+        OutputData outputData = new OutputData(dataList: new ArrayList<KeyValue>())
+        if(data) {
+            data.each() {
+                outputData.dataList.add(new KeyValue(key: it.key, value: it.value))
+            }
+        }
+         return outputData
     }
 }

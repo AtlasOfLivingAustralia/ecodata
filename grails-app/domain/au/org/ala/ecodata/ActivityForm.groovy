@@ -1,11 +1,14 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.ActivityFormGraphQLMapper
 import org.bson.types.ObjectId
 
 /**
  * Describes the data and layout for a form that can be rendered to collect activity data.
  */
 class ActivityForm {
+
+    static graphql = ActivityFormGraphQLMapper.graphqlMapping()
 
     /** The list of properties to be used when binding request data to an ActivityForm */
     static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections']

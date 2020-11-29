@@ -1,4 +1,4 @@
-package au.org.ala.ecodata.graphql
+package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
 import com.mongodb.client.FindIterable

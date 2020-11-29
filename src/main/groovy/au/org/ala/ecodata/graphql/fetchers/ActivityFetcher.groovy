@@ -1,0 +1,94 @@
+package au.org.ala.ecodata.graphql.fetchers
+
+import au.org.ala.ecodata.*
+import au.org.ala.ecodata.graphql.models.Schema
+import au.org.ala.ecodata.graphql.models.Summary
+import grails.core.GrailsApplication
+import graphql.schema.DataFetchingEnvironment
+import org.elasticsearch.action.search.SearchResponse
+import org.springframework.context.MessageSource
+
+class ActivityFetcher implements graphql.schema.DataFetcher<List<Activity>> {
+
+    public ActivityFetcher(ElasticSearchService elasticSearchService, PermissionService permissionService, MetadataService metadataService, MessageSource messageSource, GrailsApplication grailsApplication) {
+
+        this.elasticSearchService = elasticSearchService
+        this.permissionService = permissionService
+        this.metadataService = metadataService
+        this.messageSource = messageSource
+        this.grailsApplication = grailsApplication
+    }
+
+
+    PermissionService permissionService
+    ElasticSearchService elasticSearchService
+    ActivityService activityService
+    MetadataService metadataService
+    MessageSource messageSource
+    GrailsApplication grailsApplication
+
+
+    @Override
+    List<Activity> get(DataFetchingEnvironment environment) throws Exception {
+
+        String userId = environment.context.user?.userId
+        String query = environment.arguments.term ?:"*:*"
+        SearchResponse searchResponse = elasticSearchService.searchWithSecurity(null, query, [include:'projectId', max:65000], ElasticIndex.HOMEPAGE_INDEX)
+
+        List<String> projectIds = searchResponse.hits.hits.collect{it.source.projectId}
+
+
+        Activity.findAllByProjectIdInList(projectIds, [max:10])
+
+        // Do we want to restrict API use based on hubs?
+//        if (!userId || !environment.context.permissionService.checkUserPermission(userId, environment.fieldDefinition.name, "API", "read")) {
+//            throw new GraphQLException("No permission")
+//        }
+
+        // Search ES, applying the user role in the process...
+
+
+        // What should happen if we get a "show me all" type query?
+
+        // Should we return the public view for all public projects (is that all projects?) we have data for?
+
+        // e.g. should the role check only apply during the mapping phase?  In which case we need a bulk query of permissions to determine a list of project ids we can get full resolution data for?
+        // Or do we do two queries, one for full resolution, one for the rest (how do we sort/page if we do two queries?)
+
+
+
+
+    }
+
+    List<Summary> getActivitySummaryList(DataFetchingEnvironment environment) {
+
+        List<Summary> activityList = new ArrayList<Summary>()
+        def activeActivities = metadataService.buildActivityModel()["activities"].findAll{!it.status || it.status == 'active'}
+        if(activeActivities) {
+            activeActivities.each() {
+                Summary summary = new Summary(name: it.name, definition: messageSource.getMessage("api.${it.name}.description", null, "", Locale.default))
+                activityList << summary
+            }
+        }
+
+        return activityList
+    }
+
+    Schema getActivityByName(String name) {
+
+        def activitiesModel = metadataService.activitiesModel()
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config, activitiesModel)
+        if (!name) {
+            return null
+        }
+
+        def activityModel = activitiesModel.activities.find{it.name == name}
+        def schema = schemaGenerator.schemaForActivity(activityModel)
+
+        Schema schemaEntity = new Schema()
+        schemaEntity.type = schema.type
+        schemaEntity.id = schema.id
+        schemaEntity.propertyList = schema.properties
+        return schemaEntity
+    }
+}

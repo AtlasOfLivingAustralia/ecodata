@@ -1,11 +1,8 @@
-package au.org.ala.ecodata.graphql
+package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
-import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
-
-import java.security.AccessControlException
 
 class SitesFetcher implements graphql.schema.DataFetcher<List<Site>> {
 
