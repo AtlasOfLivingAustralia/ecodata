@@ -122,6 +122,9 @@ program.config.meriPlanContents = [
         }
     },
     {
+        "template": "keyThreats"
+    },
+    {
         "template": "adaptiveManagement",
         "model": {
             "title": "Project Review, Evaluation and Improvement Methodology and Approach",
@@ -136,26 +139,16 @@ program.config.meriPlanContents = [
         }
     },
     {
-        "template": "consultation",
-        "model": {
-            "title":"Consultation",
-            "placeHolder": "[Free text]",
-            "explanation": "Please provide details of consultation with relevant state / territory agencies and NRM organisations to identify any duplication between activities proposed in the Activity and any other government-funded actions already underway in the project location. Where duplication has been identified, please describe how this has been resolved. If a modification to the Activity is required, you must submit a written request for a variation to the Department."
-        }
-    },
-    {
         "template": "serviceTargets",
         "model": {
-            "title":"Activities and minimum targets",
-            "serviceName": "Activity"
+            "title":"Services and Targets Table",
+            "serviceName": "Service"
         }
     },
     {
         "template": "meriBudget",
         "model": {
-            "title":"Activities and minimum targets",
-            "serviceName": "Activity",
-            "showActivityColumn": true,
+            "showActivityColumn": false,
             "itemName": "Budget item"
         }
     }
@@ -210,6 +203,7 @@ if (programQuery.hasNext()) {
     db.program.save(program);
 }
 program.config.excludeFinancialYearData = true;
+program.config.organisationRelationship = "Service Provider";
 delete program.config.activities;
 program.config.excludes = [];
 program.config.meriPlanContents = [
@@ -272,6 +266,9 @@ program.config.meriPlanContents = [
         }
     },
     {
+        "template": "keyThreats"
+    },
+    {
         "template": "adaptiveManagement",
         "model": {
             "title": "Project Review, Evaluation and Improvement Methodology and Approach",
@@ -286,27 +283,10 @@ program.config.meriPlanContents = [
         }
     },
     {
-        "template": "consultation",
-        "model": {
-            "title":"Consultation",
-            "placeHolder": "[Free text]",
-            "explanation": "Please provide details of consultation with relevant state / territory agencies and NRM organisations to identify any duplication between activities proposed in the Activity and any other government-funded actions already underway in the project location. Where duplication has been identified, please describe how this has been resolved. If a modification to the Activity is required, you must submit a written request for a variation to the Department."
-        }
-    },
-    {
         "template": "serviceTargets",
         "model": {
-            "title":"Activities and minimum targets",
-            "serviceName": "Activity"
-        }
-    },
-    {
-        "template": "meriBudget",
-        "model": {
-            "title":"Activities and minimum targets",
-            "serviceName": "Activity",
-            "showActivityColumn": true,
-            "itemName": "Budget item"
+            "title":"Services and Targets Table",
+            "serviceName": "Service"
         }
     }
 ];
@@ -322,7 +302,7 @@ program.outcomes = [
         "targeted": true,
         "shortDescription": "Ramsar Sites",
         "category": "environment",
-        "outcome": "1. By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions"
+        "outcome": "1. By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions"
     },
     {
         "priorities": [
@@ -333,7 +313,7 @@ program.outcomes = [
         "targeted": true,
         "shortDescription": "Threatened Species Strategy",
         "category": "environment",
-        "outcome": "2. By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved."
+        "outcome": "2. By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved."
     },
     {
         "priorities": [
@@ -344,7 +324,7 @@ program.outcomes = [
         "targeted": true,
         "shortDescription": "World Heritage Areas",
         "category": "environment",
-        "outcome": "3. By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions."
+        "outcome": "3. By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions."
     },
     {
         "priorities": [
@@ -355,7 +335,7 @@ program.outcomes = [
         "targeted": true,
         "shortDescription": "Threatened Ecological Communities",
         "category": "environment",
-        "outcome": "4. By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities."
+        "outcome": "4. By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities."
     },
     {
         "priorities": [
