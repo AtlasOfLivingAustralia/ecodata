@@ -5,6 +5,8 @@ import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.Status
+import au.org.ala.ecodata.graphql.enums.DateRange
+import au.org.ala.ecodata.graphql.enums.YesNo
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.MeriPlan
 import grails.gorm.DetachedCriteria
@@ -83,6 +85,43 @@ class ProjectGraphQLMapper {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {
                         ProjectGraphQLMapper.buildTestFetcher().get(environment)
+                    }
+                })
+            }
+
+            query('searchMeritProject', [Project]) {
+                argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
+                argument('toDate', String){ nullable true description "yyyy-mm-dd" }
+                argument('dateRange', DateRange){ nullable true }
+                argument('status', [String]){ nullable true }
+                argument('organisation', [String]){ nullable true }
+                argument('associatedProgram', [String]){ nullable true  }
+                argument('associatedSubProgram', [String]){ nullable true }
+                argument('mainTheme', [String]){ nullable true }
+                argument('state', [String]){ nullable true }
+                argument('lga', [String]){ nullable true }
+                argument('cmz', [String]){ nullable true }
+                argument('partnerOrganisationType', [String]){ nullable true  }
+                argument('associatedSubProgram', [String]){ nullable true }
+                argument('primaryOutcome', [String]){ nullable true }
+                argument('secondaryOutcomes', [String]){ nullable true }
+                argument('tags', [String]){ nullable true }
+
+                argument('managementArea', [String]){ nullable true }
+                argument('majorVegetationGroup', [String]){ nullable true  }
+                argument('biogeographicRegion', [String]){ nullable true }
+                argument('marineRegion', [String]){ nullable true }
+                argument('otherRegion', [String]){ nullable true }
+                argument('grantManagerNominatedProject', [YesNo]){ nullable true }
+                argument('federalElectorate', [String]){ nullable true }
+                argument('assetsAddressed', [String]){ nullable true }
+                argument('userNominatedProject', [String]){ nullable true }
+                argument('managementUnit', [String]){ nullable true }
+
+                dataFetcher(new DataFetcher() {
+                    @Override
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        ProjectGraphQLMapper.buildTestFetcher().searchMeritProject(environment)
                     }
                 })
             }
