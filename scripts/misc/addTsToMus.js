@@ -5,28 +5,26 @@ function addTsToMus(managementUnit, ts, category) {
     }
 
     managementUnit.forEach(function (management) {
-        category.forEach(function (cat) {
-            var muExist = db.managementUnit.find({name: management, "priorities.category": {$eq: cat}});
+            var muExist = db.managementUnit.find({name: management, "priorities.category": {$eq: category}});
             while (muExist.hasNext()) {
                 var mgUnit = muExist.next();
                 ts.forEach(function (species) {
                     var isPrioritiesExist = false;
                     for (i=0; i<mgUnit.priorities.length; i++){
-                     if (mgUnit.priorities[i].category === cat && mgUnit.priorities[i].priority === species ){
+                     if (mgUnit.priorities[i].category === category && mgUnit.priorities[i].priority === species ){
                          isPrioritiesExist = true
                      }
                  }
                 if (isPrioritiesExist){
-                    print("This " + species + " Already exist in the mangement unit: "+ management+ " under this category: " + cat)
+                    print("This " + species + " Already exist in the mangement unit: "+ management+ " under this category: " + category)
                 }else{
-                     mgUnit.priorities.push({category:cat, priority: species});
+                     mgUnit.priorities.push({category:category, priority: species});
                      db.managementUnit.save(mgUnit);
-                    print("Saving this " + species + " to the mangement unit: "+ management+ " under this category: " + cat)
+                    print("Saving this " + species + " to the mangement unit: "+ management+ " under this category: " + category)
 
                 }
                 });
             }
-        });
     });
 }
 
@@ -42,8 +40,6 @@ var ts = [
     "Notamacropus parma (Parma Wallaby)",
     "Dasyyurus maculatus (Tiger Quoll)",
     "Pteropus poliocephalus (Grey-Headed Flying-Fox)",
-    "Calyptorhynchus (Calyptorhynchus) lathami (Glossy Black-Cockatoo)",
-    "Menura (Menura) novaehollandia (Superb Lyrebird)",
     "Aepyprymnus rufescens (Rufous Bettong)",
     "Planigale maculate (Common Planigale)",
     "Petaurus norfolcensis (Squirrel Glider)",
@@ -51,18 +47,23 @@ var ts = [
     "Phascogale tapoatafa (Brush-Tailed Phascogale)",
     "Pseudomys gracilicaudatus (Eastern Chestnut Mouse)",
     "Thylogale stigmatica (Red-legged Pademelon)",
-    "New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands",
-    "Lowland Rainforest of Subtropical Australia",
-    "Coastal Swamp Oak (Casuarina glauca) Forest of New South Wales",
-    "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia",
     "Sminthopsis aitkeni (Kangaroo Island Dunnart)",
     "Tachyglossus aculeatus (KI Echidna)",
     "Stipiturus malachurus intermedius (KI Southern Emu-wren)",
     "Psophodes nigrogularis leucogaster/lashmari (KI White-bellied Whipbird)",
     "Zoothera lunulate (Bassian Thrush)"
 ];
-var ct = ["Threatened Species", "Ramsar", "Threatened Ecological Communities", "World Heritage Sites", "Soil Quality", "Sustainable Agriculture"];  // category
+var tsCat = "Threatened Species";  // category
+
+var TEC = [
+    "New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands",
+    "Lowland Rainforest of Subtropical Australia",
+    "Coastal Swamp Oak (Casuarina glauca) Forest of New South Wales",
+    "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia",
+];
+var TECCat = "Threatened Ecological Communities" //Threatened Ecological Communities category
 
 var mu = ['ACT','Murray','North East', 'Riverina','South East NSW', 'East Gippsland', 'Kangaroo Island',
     'South East Queensland','North Coast', 'Northern Tablelands','Central Tablelands','Greater Sydney','Hunter'];    // management unit
-addTsToMus(mu, ts, ct);
+addTsToMus(mu, ts, tsCat);
+addTsToMus(mu, TEC, TECCat);
