@@ -466,7 +466,7 @@
                             {
                               "condition": "threatCategory == \"Human interferences/disturbance\"",
                               "value": [
-                                "14 - Human interferences/disturbance"
+                                "Human interferences/disturbance"
                               ]
                             },
                             {
@@ -624,7 +624,7 @@
                             {
                               "condition": "threatCategory == \"Human interferences/disturbance\"",
                               "value": [
-                                "14 - Human interferences/disturbance"
+                                "Human interferences/disturbance"
                               ]
                             },
                             {
@@ -1225,7 +1225,7 @@
                     "items": [
                       {
                         "type": "literal",
-                        "source": "What level of change has been achieved against the project baseline?"
+                        "source": "What level of change has been achieved against the project baseline?<br/>Refer to the criteria matrix in the <a href=\"http://www.nrm.gov.au/publications/rlp-merit-user-guide\">RLP Outcomes Reporting Guide</a>."
                       }
                     ]
                   },
