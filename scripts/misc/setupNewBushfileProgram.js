@@ -1,6 +1,42 @@
 load("uuid.js");
 
-var programs = db.program.find({status:{$ne:'deleted'}});
+/** Adds a priority to a management unit, defaulting to a threatened species */
+function addTsToMus(managementUnit, ts, category) {
+    if (!category) {
+        category = 'Threatened Species';
+    }
+
+    managementUnit.forEach(function (managementUnitName) {
+
+        var muExist = db.managementUnit.find({name: managementUnitName});
+        while (muExist.hasNext()) {
+            var mgUnit = muExist.next();
+            var changed = false;
+            ts.forEach(function (species) {
+                var isPrioritiesExist = false;
+                for (i = 0; i < mgUnit.priorities.length; i++) {
+                    if (mgUnit.priorities[i].category === category && mgUnit.priorities[i].priority === species) {
+                        isPrioritiesExist = true
+                    }
+                }
+                if (isPrioritiesExist) {
+                    print("This " + species + " Already exist in the mangement unit: " + managementUnitName + " under this category: " + category)
+                } else {
+                    mgUnit.priorities.push({category: category, priority: species});
+                    changed = true;
+                    print("Saving this " + species + " to the mangement unit: " + managementUnitName + " under this category: " + category)
+
+                }
+            });
+            if (changed) {
+                db.managementUnit.save(mgUnit);
+            }
+        }
+
+    });
+}
+
+var programs = db.program.find({status: {$ne: 'deleted'}});
 while (programs.hasNext()) {
     var program = programs.next();
     if (!program.config) {
@@ -13,8 +49,7 @@ while (programs.hasNext()) {
 
         if (program.config.excludes) {
             program.config.excludes.push('DATA_SETS');
-        }
-        else {
+        } else {
             program.config.excludes = ['DATA_SETS'];
         }
     }
@@ -29,10 +64,10 @@ var programQuery = db.program.find({name: name});
 var program;
 if (programQuery.hasNext()) {
     program = programQuery.next();
-    print("Program "+name+" already exists")
+    print("Program " + name + " already exists")
 } else {
-    print("Creating program "+name)
-    var parent = db.program.find({name:'Bushfire Recovery for Species and Landscapes Program'}).next();
+    print("Creating program " + name)
+    var parent = db.program.find({name: 'Bushfire Recovery for Species and Landscapes Program'}).next();
     program = db.program.find({name: 'Competitive Grants Tranche 1'}).next();
     delete program._id;
     program.parent = parent._id;
@@ -76,12 +111,12 @@ program.config.meriPlanContents = [
         }
     },
     {
-        "template" : "activities",
-        "model" : {
-            "singleSelection" : true,
-            "noneSelectedMessage" : "No priority actions have been nominated for this project",
-            "title" : "Priority actions",
-            "explanation" : "Please select from the drop-down options which of the following regional investment strategy objectives are applicable to this project"
+        "template": "activities",
+        "model": {
+            "singleSelection": true,
+            "noneSelectedMessage": "No priority actions have been nominated for this project",
+            "title": "Priority actions",
+            "explanation": "Please select from the drop-down options which of the following regional investment strategy objectives are applicable to this project"
         }
     },
     {
@@ -139,9 +174,17 @@ program.config.meriPlanContents = [
         }
     },
     {
+        "template": "consultation",
+        "model": {
+            "title":"Consultation",
+            "placeHolder": "[Free text]",
+            "explanation": "Please provide details of consultation with relevant state / territory agencies and NRM organisations to identify any duplication between activities proposed in the Activity and any other government-funded actions already underway in the project location. Where duplication has been identified, please describe how this has been resolved. If a modification to the Activity is required, you must submit a written request for a variation to the Department."
+        }
+    },
+    {
         "template": "serviceTargets",
         "model": {
-            "title":"Services and Targets Table",
+            "title": "Services and Targets Table",
             "serviceName": "Service"
         }
     },
@@ -189,10 +232,10 @@ var programQuery = db.program.find({name: name});
 var program;
 if (programQuery.hasNext()) {
     program = programQuery.next();
-    print("Program "+name+" already exists")
+    print("Program " + name + " already exists")
 } else {
-    print("Creating program "+name)
-    var parent = db.program.find({name:'Bushfire Recovery for Species and Landscapes Program'}).next();
+    print("Creating program " + name)
+    var parent = db.program.find({name: 'Bushfire Recovery for Species and Landscapes Program'}).next();
     program = db.program.find({name: 'Regional Fund for Wildlife and Habitat Bushfire Recovery (the Regional Fund) - States'}).next();
     delete program._id;
     program.parent = parent._id;
@@ -208,10 +251,10 @@ delete program.config.activities;
 program.config.excludes = [];
 program.config.meriPlanContents = [
     {
-        "template":"programOutcome"
+        "template": "programOutcome"
     },
     {
-        "template":"additionalOutcomes"
+        "template": "additionalOutcomes"
     },
     {
         "template": "assets",
@@ -228,9 +271,9 @@ program.config.meriPlanContents = [
         }
     },
     {
-        "template" : "name",
-        "model" : {
-            "placeHolder" : "[150 characters]"
+        "template": "name",
+        "model": {
+            "placeHolder": "[150 characters]"
         }
     },
     {
@@ -285,7 +328,7 @@ program.config.meriPlanContents = [
     {
         "template": "serviceTargets",
         "model": {
-            "title":"Services and Targets Table",
+            "title": "Services and Targets Table",
             "serviceName": "Service"
         }
     }
@@ -298,7 +341,7 @@ program.outcomes = [
             }
         ],
 
-        "type":"secondary",
+        "type": "secondary",
         "targeted": true,
         "shortDescription": "Ramsar Sites",
         "category": "environment",
@@ -310,6 +353,7 @@ program.outcomes = [
                 "category": "Threatened Species"
             }
         ],
+        "supportsMultiplePriorities":true,
         "targeted": true,
         "shortDescription": "Threatened Species Strategy",
         "category": "environment",
@@ -324,6 +368,7 @@ program.outcomes = [
         "targeted": true,
         "shortDescription": "World Heritage Areas",
         "category": "environment",
+        "supportsMultiplePriorities":true,
         "outcome": "3. By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions."
     },
     {
@@ -333,6 +378,7 @@ program.outcomes = [
             }
         ],
         "targeted": true,
+        "supportsMultiplePriorities":true,
         "shortDescription": "Threatened Ecological Communities",
         "category": "environment",
         "outcome": "4. By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities."
@@ -343,7 +389,7 @@ program.outcomes = [
                 "category": "Land Management"
             }
         ],
-        "type":"secondary",
+        "type": "secondary",
         "targeted": true,
         "shortDescription": "Soil Condition",
         "category": "agriculture",
@@ -355,11 +401,37 @@ program.outcomes = [
                 "category": "Sustainable Agriculture"
             }
         ],
-        "type":"secondary",
+        "type": "secondary",
         "shortDescription": "Climate / Weather Adaption",
         "category": "agriculture",
         "outcome": "6. By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production."
+    },
+    {
+        "outcome": "The recovery and resilience of priority species, ecological communities, heritage places and other natural assets in bushfire affected regions is secured and maintained by June 2022",
+        "type": "secondary",
+        "category": "bushfires",
+        "shortDescription": "Bushfire Recovery",
+        "priorities": [
+            {
+                "category": "Bushfires"
+            }
+        ]
     }
 ];
-program.config.projectReports=[];
+
+program.config.projectReports = [];
 db.program.save(program);
+
+var priorities = [
+    "Herbivore and/or predator control",
+    "Weed control and/or revegetation",
+    "Fire management and planning",
+    "Species and ecological community specific interventions",
+    "Traditional Owner led healing of country",
+    "Erosion control",
+    "Refugia management"
+];
+var mus = ['ACT', 'Murray', 'North East', 'Riverina', 'South East NSW', 'East Gippsland', 'Kangaroo Island',
+    'South East Queensland', 'North Coast', 'Northern Tablelands', 'Central Tablelands', 'Greater Sydney', 'Hunter'];    // management unit
+
+addTsToMus(mus, priorities, "Bushfires")
