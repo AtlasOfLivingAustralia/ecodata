@@ -114,7 +114,11 @@ class ElasticSearchService {
         task {
             // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
             // The below code recreates the connectors.
-            getMapService()?.buildGeoServerDependencies()
+            if(getMapService().enabled) {
+                log.info("Starting to build GeoServer dependencies")
+                getMapService()?.buildGeoServerDependencies()
+                log.info("Completed building GeoServer dependencies")
+            }
         }
     }
 
