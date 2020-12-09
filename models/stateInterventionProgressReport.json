@@ -1,13 +1,13 @@
 {
   "class": "au.org.ala.ecodata.ActivityForm",
-  "id": "5efbbafcc2dcee3c85444059",
+  "id": "5f362a01c2dc7eba0f107d4a",
   "activationDate": null,
   "category": "Reports",
   "createdUserId": "1493",
-  "dateCreated": "2020-06-30T22:21:48Z",
+  "dateCreated": "2020-08-14T06:06:57Z",
   "formVersion": 1,
   "gmsId": null,
-  "lastUpdated": "2020-07-23T01:35:05Z",
+  "lastUpdated": "2020-12-03T04:22:54Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
   "name": "State Intervention Progress Report",
@@ -53,7 +53,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[5000]"
           },
           {
             "dataType": "text",
@@ -111,7 +111,7 @@
                 "dataType": "text",
                 "description": "",
                 "name": "storyDetails",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               },
               {
                 "dataType": "image",
@@ -123,7 +123,7 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[5000]"
           },
           {
             "dataType": "stringList",
@@ -344,7 +344,7 @@
         ]
       },
       "templateName": "stateGovernmentInterventionFinalReport",
-      "title": "State and Territory Reporting"
+      "title": null
     },
     {
       "class": "au.org.ala.ecodata.FormSection",
@@ -4668,7 +4668,7 @@
           }
         ]
       },
-      "templateName": "siFireManagement",
+      "templateName": "isiFireManagement",
       "title": null
     },
     {
@@ -5936,7 +5936,7 @@
       "id": null,
       "collapsedByDefault": true,
       "modelName": null,
-      "name": "mproving land management practices",
+      "name": "Improving land management practices",
       "optional": true,
       "optionalQuestionText": null,
       "template": {
@@ -11015,6 +11015,264 @@
         ]
       },
       "templateName": "siWeedDistributionSurvey",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": false,
+      "modelName": null,
+      "name": "Seed Collecting - Bushfire Program",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "dataModel": [
+          {
+            "columns": [
+              {
+                "dataType": "text",
+                "name": "initialOrMaintenance",
+                "constraints": [
+                  "Initial",
+                  "Maintenance"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "feature",
+                "name": "siteSeedCollected",
+                "validate": "required"
+              },
+              {
+                "defaultValue": {
+                  "expression": "$geom.areaHa(siteSeedCollected)",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "calculatedAreaHabitatRevegetedHa",
+                "units": "ha",
+                "decimalPlaces": 3
+              },
+              {
+                "computed": {
+                  "expression": "$geom.lengthKm(siteSeedCollected)"
+                },
+                "dataType": "number",
+                "name": "calculatedLengthHabitatRevegetedKm",
+                "units": "km",
+                "decimalPlaces": 3
+              },
+              {
+                "defaultValue": {
+                  "expression": "calculatedAreaHabitatRevegetedHa",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "areaHabitatRevegetedHa",
+                "units": "ha",
+                "decimalPlaces": 3,
+                "validate": "required,min[0]"
+              },
+              {
+                "defaultValue": {
+                  "expression": "calculatedLengthHabitatRevegetedKm",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "lengthHabitatRevegetedKm",
+                "units": "km",
+                "decimalPlaces": 3,
+                "validate": "required,min[0]"
+              },
+              {
+                "dataType": "text",
+                "name": "species",
+                "constraints": [
+                  "Test Species",
+                  "Test"
+                ],
+                "validate": "required"
+              },
+              {
+                "name": "noOfDaysSeedCollected",
+                "dataType": "number"
+              },
+              {
+                "dataType": "text",
+                "name": "inKgSeedCollected",
+                "constraints": [
+                  "Individuals",
+                  "Kilograms"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "number",
+                "name": "amountSeedCollected"
+              },
+              {
+                "dataType": "number",
+                "name": "numberOfSourcePlants"
+              },
+              {
+                "dataType": "text",
+                "name": "storingFacility"
+              },
+              {
+                "dataType": "text",
+                "name": "noOfPlantsPropogated"
+              },
+              {
+                "dataType": "text",
+                "name": "threatEcoCommunity",
+                "validate": "maxSize[100]"
+              }
+            ],
+            "dataType": "list",
+            "name": "seedCollectionDetails"
+          },
+          {
+            "computed": {
+              "expression": "amountSeedCollected"
+            },
+            "dataType": "number",
+            "name": "totalSeedCollected"
+          },
+          {
+            "computed": {
+              "expression": "numberOfSourcePlants"
+            },
+            "dataType": "number",
+            "name": "totalPlantsPropogated"
+          }
+        ],
+        "modelName": "Seed Collecting - Bushfire Program",
+        "title": "Seed Collecting - Bushfire Program",
+        "viewModel": [
+          {
+            "type": "section",
+            "items": [
+              {
+                "columns": [
+                  {
+                    "width": "5%",
+                    "source": "initialOrMaintenance",
+                    "title": "Initial or Maintenance activity?",
+                    "type": "selectOne"
+                  },
+                  {
+                    "width": "5%",
+                    "type": "col",
+                    "title": "Site/s where collection was undertaken",
+                    "items": [
+                      {
+                        "source": "siteSeedCollected",
+                        "type": "feature"
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedAreaHabitatRevegetedHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedLengthHabitatRevegetedKm",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Area (ha) of habitat revegated",
+                    "items": [
+                      {
+                        "source": "areaHabitatRevegetedHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Length (km) of habitat revegeted",
+                    "items": [
+                      {
+                        "source": "lengthHabitatRevegetedKm",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": "7%",
+                    "source": "species",
+                    "title": "Species",
+                    "type": "selectOne"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "noOfDaysSeedCollected",
+                    "title": "Number of days collecting Seed",
+                    "type": "number"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "inKgSeedCollected",
+                    "title": "Individuals / Kilograms collected",
+                    "type": "selectOne"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "amountSeedCollected",
+                    "title": "Amount collected",
+                    "type": "number"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "numberOfSourcePlants",
+                    "title": "Number of Source plants",
+                    "type": "number"
+                  },
+                  {
+                    "width": "12%",
+                    "source": "storingFacility",
+                    "title": "Storing facility",
+                    "type": "textarea"
+                  },
+                  {
+                    "width": "12%",
+                    "source": "noOfPlantsPropogated",
+                    "title": "Number of plants propogated",
+                    "type": "textarea"
+                  },
+                  {
+                    "width": "12%",
+                    "source": "threatEcoCommunity",
+                    "title": "Threatened ecological community (if applicable)",
+                    "type": "textarea"
+                  }
+                ],
+                "userAddedRows": true,
+                "source": "seedCollectionDetails",
+                "type": "table"
+              }
+            ]
+          }
+        ]
+      },
+      "templateName": "siSeedCollecting",
       "title": null
     }
   ],

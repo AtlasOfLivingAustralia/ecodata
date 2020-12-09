@@ -123,7 +123,11 @@ class ElasticSearchService {
         task {
             // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
             // The below code recreates the connectors.
-            getMapService()?.buildGeoServerDependencies()
+            if(getMapService().enabled) {
+                log.info("Starting to build GeoServer dependencies")
+                getMapService()?.buildGeoServerDependencies()
+                log.info("Completed building GeoServer dependencies")
+            }
         }
     }
 
@@ -852,7 +856,7 @@ class ElasticSearchService {
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
             // all sites associated with project.
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
-            projectMap.projectArea = siteService.get(project.projectSiteId, SiteService.FLAT)
+            projectMap.projectArea = siteService.get(project.projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -1026,7 +1030,7 @@ class ElasticSearchService {
         }
 
         if (activity.siteId) {
-            def site = siteService.get(activity.siteId, SiteService.FLAT, version)
+            def site = siteService.get(activity.siteId, [SiteService.FLAT, SiteService.INDEXING], version)
             if (site) {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
