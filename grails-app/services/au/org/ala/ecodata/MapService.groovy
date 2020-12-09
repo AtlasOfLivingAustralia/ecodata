@@ -103,13 +103,17 @@ class MapService {
 
     boolean buildGeoServerDependencies () {
         if (enabled) {
+            log.info("Starting to delete GeoServer artifacts.")
             deleteLayers()
             deleteDatastores()
             deleteWorkspace()
+            log.info("GeoServer artifacts deleted.")
 
+            log.info("Starting to create GeoServer artifacts.")
             createWorkspace()
             createDatastores()
             createPredefinedStyles()
+            log.info("Finished creating GeoServer artifacts.")
         }
     }
 
