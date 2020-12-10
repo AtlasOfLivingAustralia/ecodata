@@ -122,9 +122,15 @@ program.config.meriPlanContents = [
     {
         "template": "outcomeStatements",
         "model": {
-            "subtitle": "Please provide short term outcome statements. Short term outcomes statements should: <br/>- Contribute to the regional investment strategy;<br/>- Outline the degree of impact having undertaken the actions within the project timeframe;<br/>- Be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- Ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
+            "subtitle": "Please provide outcome statements. Outcomes statements should: <br/>- Contribute to the regional investment strategy;<br/>- Outline the degree of impact having undertaken the actions within the project timeframe;<br/>- Be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- Ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
             "placeholder": "By 30 June 2021, [Free text]",
             "title": "Short term outcome statements"
+        }
+    },
+    {
+        "template":"sectionHeading",
+        "model":{
+            "heading":"Project Details"
         }
     },
     {
@@ -210,6 +216,16 @@ program.config.projectReports = [
         "canSubmitDuringReportingPeriod": true
     },
     {
+        "firstReportingPeriodEnd": "2021-06-30T14:00:00Z",
+        "reportType": "Administrative",
+        "reportDescriptionFormat": "Annual Progress Report %2$tY - %3$tY for %4$s",
+        "reportNameFormat": "Annual Progress Report %2$tY - %3$tY",
+        "reportingPeriodInMonths": 12,
+        "description": "",
+        "category": "Annual Progress Reporting",
+        "activityType": "Bushfires Annual Report"
+    },
+    {
         "reportType": "Single",
         "firstReportingPeriodEnd": "2022-06-30T14:00:00Z",
         "reportDescriptionFormat": "Final Report",
@@ -251,38 +267,55 @@ delete program.config.activities;
 program.config.excludes = [];
 program.config.meriPlanContents = [
     {
-        "template": "programOutcome"
+        "template": "programOutcome",
+        "model":{
+            "maximumPriorities":1000
+        }
     },
     {
-        "template": "additionalOutcomes"
+        "template": "additionalOutcomes",
+        "model":{
+            "maxAdditionalOutcomes":15
+        }
     },
     {
         "template": "assets",
         "model": {
+            "explanation":"[Precise wording TBA] List assets such as non-EPBC listed species that will also benefit from this project.",
             "placeHolder": "[Free text; for species please enter common and scientific name; one asset per line]"
         }
     },
     {
         "template": "outcomeStatements",
         "model": {
-            "subtitle": "Please provide short term outcome statements. Short term outcomes statements should: <br/>- outline the degree of impact having undertaken the actions within the project timeframe;<br/>- be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
+            "subtitle": "Please provide outcome statements. Outcomes statements should: <br/>- outline the degree of impact having undertaken the actions within the project timeframe;<br/>- be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
             "placeholder": "By 30 June 2021, [Free text]",
             "title": "Short term outcome statements"
         }
     },
     {
+        "template":"sectionHeading",
+        "model":{
+            "heading":"Project Details"
+        }
+    },
+    {
         "template": "name",
         "model": {
-            "placeHolder": "[150 characters]"
+            "placeHolder": "[150 characters]",
+            "tableFormatting":true
         }
     },
     {
         "template": "description",
         "model": {
             "maxSize": "1000",
-            "placeholder": "[Free text; limit response to 1000 characters (approx. 150 words)]",
-            "explanation": " Please provide a short description of this project. This project description will be visible on the project overview page in MERIT"
+            "tableFormatting":true,
+            "placeholder": "Please provide a short description of this project. This project description will be visible on the project overview page in MERIT [Free text; limit response to 1000 characters (approx. 150 words)]"
         }
+    },
+    {
+        "template": "keyThreats"
     },
     {
         "template": "projectMethodology",
@@ -300,23 +333,16 @@ program.config.meriPlanContents = [
         "template": "monitoringIndicators",
         "model": {
             "approachHeading": "Describe the project monitoring indicator(s) approach",
-            "indicatorHeading": "Identify the project monitoring indicator(s)",
+            "indicatorHeading": "Project monitoring indicators",
             "indicatorHelpText": "List the measurable indicators of project success that will be monitored. Indicators should link back to the outcome statements and have units of measure. Indicators should measure both project outputs (e.g. area (ha) of rabbit control, length (km) of predator proof fencing) and change the project is aiming to achieve (e.g. Change in abundance of X threatened species at Y location, Change in vegetation cover (%), etc).",
             "approachHelpText": "How will the indicator be monitored? Briefly describe the method to be used to monitor the indicator (including timing of monitoring, who will collect/collate / analyse data, etc)",
             "indicatorPlaceHolder": "[Free text]",
-            "approachPlaceHolder": "[Free text]",
-            "title": "Project Monitoring Indicators"
+            "approachPlaceHolder": "[Free text]"
         }
     },
+
     {
-        "template": "keyThreats"
-    },
-    {
-        "template": "adaptiveManagement",
-        "model": {
-            "title": "Project Review, Evaluation and Improvement Methodology and Approach",
-            "explanation": "Outline the methods and processes that will enable adaptive management during the lifetime of this project"
-        }
+        "template": "projectReview"
     },
     {
         "template": "projectPartnerships",
@@ -324,6 +350,9 @@ program.config.meriPlanContents = [
             "namePlaceHolder": "[Free text]",
             "partnershipPlaceHolder": "[Free text]"
         }
+    },
+    {
+        "template":"nationalAndRegionalPlans"
     },
     {
         "template": "serviceTargets",
@@ -342,6 +371,7 @@ program.outcomes = [
         ],
 
         "type": "secondary",
+        "supportsMultiplePrioritiesAsSecondary":true,
         "targeted": true,
         "shortDescription": "Ramsar Sites",
         "category": "environment",
@@ -353,7 +383,8 @@ program.outcomes = [
                 "category": "Threatened Species"
             }
         ],
-        "supportsMultiplePriorities":true,
+        "supportsMultiplePrioritiesAsPrimary":true,
+        "supportsMultiplePrioritiesAsSecondary":true,
         "targeted": true,
         "shortDescription": "Threatened Species Strategy",
         "category": "environment",
@@ -368,7 +399,8 @@ program.outcomes = [
         "targeted": true,
         "shortDescription": "World Heritage Areas",
         "category": "environment",
-        "supportsMultiplePriorities":true,
+        "supportsMultiplePrioritiesAsPrimary":true,
+        "supportsMultiplePrioritiesAsSecondary":true,
         "outcome": "3. By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions."
     },
     {
@@ -378,7 +410,8 @@ program.outcomes = [
             }
         ],
         "targeted": true,
-        "supportsMultiplePriorities":true,
+        "supportsMultiplePrioritiesAsPrimary":true,
+        "supportsMultiplePrioritiesAsSecondary":true,
         "shortDescription": "Threatened Ecological Communities",
         "category": "environment",
         "outcome": "4. By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities."
@@ -390,6 +423,7 @@ program.outcomes = [
             }
         ],
         "type": "secondary",
+        "supportsMultiplePrioritiesAsSecondary":true,
         "targeted": true,
         "shortDescription": "Soil Condition",
         "category": "agriculture",
@@ -402,6 +436,7 @@ program.outcomes = [
             }
         ],
         "type": "secondary",
+        "supportsMultiplePrioritiesAsSecondary":true,
         "shortDescription": "Climate / Weather Adaption",
         "category": "agriculture",
         "outcome": "6. By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production."
@@ -409,6 +444,7 @@ program.outcomes = [
     {
         "outcome": "The recovery and resilience of priority species, ecological communities, heritage places and other natural assets in bushfire affected regions is secured and maintained by June 2022",
         "type": "secondary",
+        "supportsMultiplePrioritiesAsSecondary":true,
         "category": "bushfires",
         "shortDescription": "Bushfire Recovery",
         "priorities": [
