@@ -124,7 +124,7 @@ program.config.meriPlanContents = [
         "model": {
             "subtitle": "Please provide outcome statements. Outcomes statements should: <br/>- Contribute to the regional investment strategy;<br/>- Outline the degree of impact having undertaken the actions within the project timeframe;<br/>- Be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- Ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
             "placeholder": "By 30 June 2021, [Free text]",
-            "title": "Short term outcome statements"
+            "title": "Outcome statements"
         }
     },
     {
@@ -146,7 +146,7 @@ program.config.meriPlanContents = [
         "model": {
             "maxSize": "4000",
             "title": "Project methodology",
-            "tableHeading": "Please describe the methodology that will be used to achieve the project’s short-term outcome statements.",
+            "tableHeading": "Please describe the methodology that will be used to achieve the project’s outcome statements.",
             "placeHolder": "[Free text; limit response to 4000 characters (approx. 650 words)]"
         }
     },
@@ -269,13 +269,14 @@ program.config.meriPlanContents = [
     {
         "template": "programOutcome",
         "model":{
-            "maximumPriorities":1000
+            "maximumPriorities":"1000"
         }
     },
     {
         "template": "additionalOutcomes",
         "model":{
-            "maxAdditionalOutcomes":15
+            "maxAdditionalOutcomes":15,
+            "maximumPriorities":1000
         }
     },
     {
@@ -290,7 +291,7 @@ program.config.meriPlanContents = [
         "model": {
             "subtitle": "Please provide outcome statements. Outcomes statements should: <br/>- outline the degree of impact having undertaken the actions within the project timeframe;<br/>- be expressed as a SMART statement (Specific, Measurable, Attainable, Realistic and Time-bound); and<br/>- ensure the outcomes are measurable with consideration to the monitoring methodology provided below.",
             "placeholder": "By 30 June 2021, [Free text]",
-            "title": "Short term outcome statements"
+            "title": "Outcome statements"
         }
     },
     {
@@ -315,6 +316,13 @@ program.config.meriPlanContents = [
         }
     },
     {
+        "template": "projectPartnerships",
+        "model": {
+            "namePlaceHolder": "[Free text]",
+            "partnershipPlaceHolder": "[Free text]"
+        }
+    },
+    {
         "template": "keyThreats"
     },
     {
@@ -322,7 +330,7 @@ program.config.meriPlanContents = [
         "model": {
             "maxSize": "4000",
             "title": "Project methodology",
-            "tableHeading": "Please describe the methodology that will be used to achieve the project's short term outcome statements. To help demonstrate best practice delivery approaches and cost effectiveness of methodologies used, include details of the specific delivery mechanisms to leverage change (e.g. delivery method, approach and justification)",
+            "tableHeading": "Please describe the methodology that will be used to achieve the project's outcome statements. To help demonstrate best practice delivery approaches and cost effectiveness of methodologies used, include details of the specific delivery mechanisms to leverage change (e.g. delivery method, approach and justification)",
             "placeHolder": "[Free text; limit response to 4000 characters (approx. 650 words)]"
         }
     },
@@ -343,13 +351,6 @@ program.config.meriPlanContents = [
 
     {
         "template": "projectReview"
-    },
-    {
-        "template": "projectPartnerships",
-        "model": {
-            "namePlaceHolder": "[Free text]",
-            "partnershipPlaceHolder": "[Free text]"
-        }
     },
     {
         "template":"nationalAndRegionalPlans"
