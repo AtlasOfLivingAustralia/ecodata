@@ -42,6 +42,10 @@
             }
           },
           {
+            "dataType": "stringList",
+            "name": "availablePriorities"
+          },
+          {
             "dataType": "list",
             "description": "",
             "name": "projectOutcomes",
@@ -466,12 +470,6 @@
                             {
                               "condition": "threatCategory == \"Human interferences/disturbance\"",
                               "value": [
-                                "Human interferences/disturbance"
-                              ]
-                            },
-                            {
-                              "condition": "threatCategory == \"Human interferences/disturbance\"",
-                              "value": [
                                 "Flow-on effects of housing development",
                                 "Road/vehicle strike",
                                 "Recreational pressures",
@@ -495,7 +493,7 @@
                     "columns": [
                       {
                         "dataType": "text",
-                        "name": "threatCategory",
+                        "name": "additionalThreatCategory",
                         "validate": "required",
                         "constraints": [
                           "Native fauna (disturbance)",
@@ -516,20 +514,20 @@
                       {
                         "dataType": "text",
                         "description": "",
-                        "name": "keyThreat",
+                        "name": "additionalKeyThreat",
                         "constraints": {
                           "type": "computed",
                           "default": [],
                           "options": [
                             {
-                              "condition": "threatCategory == \"Native fauna (disturbance)\"",
+                              "condition": "additionalThreatCategory == \"Native fauna (disturbance)\"",
                               "value": [
                                 "Competition",
                                 "Predation"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Habitat loss\"",
+                              "condition": "additionalThreatCategory == \"Habitat loss\"",
                               "value": [
                                 "Dieback/senescence",
                                 "Habitat fragmentation",
@@ -540,7 +538,7 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Land management practices\"",
+                              "condition": "additionalThreatCategory == \"Land management practices\"",
                               "value": [
                                 "Domestic grazing/stock impacts",
                                 "Runoff",
@@ -551,7 +549,7 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Weeds\"",
+                              "condition": "additionalThreatCategory == \"Weeds\"",
                               "value": [
                                 "Control/spraying",
                                 "Competition",
@@ -560,14 +558,14 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Low population\"",
+                              "condition": "additionalThreatCategory == \"Low population\"",
                               "value": [
                                 "Low population numbers",
                                 "Low area of habitat"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Pest animals (disturbance)\"",
+                              "condition": "additionalThreatCategory == \"Pest animals (disturbance)\"",
                               "value": [
                                 "Competition/exclusion",
                                 "Predation",
@@ -577,21 +575,21 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Fire\"",
+                              "condition": "additionalThreatCategory == \"Fire\"",
                               "value": [
                                 "Lack of protection for ecological assets during fire control activities",
                                 "Lack of/inappropriate fire regime"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Disease/pathogens\"",
+                              "condition": "additionalThreatCategory == \"Disease/pathogens\"",
                               "value": [
                                 "Areas that are infected",
                                 "Possible infection of disease free areas"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Pollution\"",
+                              "condition": "additionalThreatCategory == \"Pollution\"",
                               "value": [
                                 "Chemical",
                                 "Eutrophication/algal blooms",
@@ -600,7 +598,7 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Climate change and severe weather\"",
+                              "condition": "additionalThreatCategory == \"Climate change and severe weather\"",
                               "value": [
                                 "Sea level rises",
                                 "Unexpected seasonal/temperature extremes",
@@ -610,25 +608,19 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Genetic bottleneck/inbreeding\"",
+                              "condition": "additionalThreatCategory == \"Genetic bottleneck/inbreeding\"",
                               "value": [
                                 "n/a"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Data deficiency/lack of ecological data\"",
+                              "condition": "additionalThreatCategory == \"Data deficiency/lack of ecological data\"",
                               "value": [
                                 "n/a"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Human interferences/disturbance\"",
-                              "value": [
-                                "Human interferences/disturbance"
-                              ]
-                            },
-                            {
-                              "condition": "threatCategory == \"Human interferences/disturbance\"",
+                              "condition": "additionalThreatCategory == \"Human interferences/disturbance\"",
                               "value": [
                                 "Flow-on effects of housing development",
                                 "Road/vehicle strike",
@@ -1011,6 +1003,24 @@
                 "source-path": "custom.details.outcomes.shortTermOutcomes"
               }
             ]
+          },
+          {
+            "source": {
+              "params": [
+                {
+                  "expression": "owner.projectId",
+                  "name": "id",
+                  "type": "computed"
+                }
+              ],
+              "url": "/project/listProjectInvestmentPriorities/"
+            },
+            "mapping": [
+              {
+                "target":"availablePriorities",
+                "source-path": ""
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -1175,13 +1185,13 @@
                           {
                             "title": "Major threats",
                             "type": "select2",
-                            "source": "threatCategory",
+                            "source": "additionalThreatCategory",
                             "width": "50%"
                           },
                           {
                             "title": "Threat",
                             "type": "select2",
-                            "source": "keyThreat",
+                            "source": "additionalKeyThreat",
                             "width": "50%"
                           }
                         ]
@@ -1292,8 +1302,9 @@
               {
                 "type": "table",
                 "source": "dataSets",
-                "userAddedRows": false,
-                "tableDataUpload": false,
+                "userAddedRows": true,
+                "disableTableDownload": true,
+                "disableTableUpload": true,
                 "columns": [
                   {
                     "source": "dataSetName",
