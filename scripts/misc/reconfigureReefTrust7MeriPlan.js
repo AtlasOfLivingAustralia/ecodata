@@ -47,14 +47,19 @@ var meriPlanContent = [
     {
         "template": "description",
         "model": {
-            "placeHolder": "Please provide a short description of this project. This project description will be visible on the project overview page in MERIT [Free text, limit response to 1000 characters (approx. 150 words)]",
-            "maxSize":"1000",
+            "placeHolder": "Please provide a short description of this project. This project description will be visible on the project overview page in MERIT [Free text, limit response to 1500 characters (approx. 150 words)]",
+            "maxSize":"1500",
             "tableFormatting": true
 
         }
     },
     {
-        "template": "rationale"
+        "template": "rationale",
+        "model": {
+            "tableFormatting": true,
+            "maxSize": "1500",
+            "placeHolder": "[Free text, limit response to 1500 characters (approx. 150 words)]"
+        }
     },
     {
         "template": "keyThreats"
