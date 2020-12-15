@@ -301,7 +301,7 @@ var alpineSpecies = [
 "Elbow Orchid (Thynninorchis huntianus)",
 "Dwarf Violet (Viola improcera)"
 ];
-var greaterTEC = ["Upland Basalt Eucalypt Forests of the Sydney Basin Bioregion", "Temperate Highland Peat Swamps on Sandstone", "Lowland Rainforest of Subtropical Australia", "Coastal Swamp Oak (Casuarina glauca) Forest of New South Wales and South East Queensland", "Montane Peatlands and Swamps of the New England Tableland, NSW North Coast, Sydney Basin, South East Corner, South Eastern Highlands and Australian Alps bioregion", "Kurri Sand Swamp Woodland in the Sydney Basin Bioregion", "Lower Hunter Spotted Gum Ironbark Forest in the Sydney Basin and NSW North Coast Bioregions", "Turpentine-Ironbark Forest of the Sydney Basin Bioregion", "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia", "Castlereagh Scribbly Gum and Agnes Banks Woodlands of the Sydney Basin Bioregion"];
+var greaterTEC = ["Greater Blue Mountains World Heritage Area", "Gondwana Rainforests of Australia World Heritage Area","Upland Basalt Eucalypt Forests of the Sydney Basin Bioregion", "Temperate Highland Peat Swamps on Sandstone", "Lowland Rainforest of Subtropical Australia", "Coastal Swamp Oak (Casuarina glauca) Forest of New South Wales and South East Queensland", "Montane Peatlands and Swamps of the New England Tableland, NSW North Coast, Sydney Basin, South East Corner, South Eastern Highlands and Australian Alps bioregion", "Kurri Sand Swamp Woodland in the Sydney Basin Bioregion", "Lower Hunter Spotted Gum Ironbark Forest in the Sydney Basin and NSW North Coast Bioregions", "Turpentine-Ironbark Forest of the Sydney Basin Bioregion", "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia", "Castlereagh Scribbly Gum and Agnes Banks Woodlands of the Sydney Basin Bioregion"];
 var greaterSpecies = [
 "Blue Mountains Water Skink (Eulamprus leuraensis)",
 "Broad-headed Snake (Hoplocephalus bungaroides)",
@@ -704,7 +704,7 @@ var kangarooIslandSpecies = [
 "Kangaroo Island Pink-eyes (Tetratheca insularis)",
 "Pink Zieria (Zieria veronicea subsp. insularis)",
 ]
-var northCoastAndTableLandsTEC = ["New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands", "Lowland Rainforest of Subtropical Australia", "Coastal Swamp Oak (Casuarina glauca) Forest of New South Wales and South East Queensland ecological community"]
+var northCoastAndTableLandsTEC = ["Gondwana Rainforests of Australia World Heritage Area", "New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands", "Lowland Rainforest of Subtropical Australia", "Coastal Swamp Oak (Casuarina glauca) Forest of New South Wales and South East Queensland ecological community"]
 var northCoastAndTableLandsSpecies = [
 "Hastings River Mouse, Koontoo (Pseudomys oralis)",
 "Parma Wallaby (Notamacropus parma)",
@@ -1135,7 +1135,7 @@ var nswSouthCoastSpecies = [
 "(Zieria citriodora)"
 ];
 var SEQLDTEC = ["Lowland Rainforest of Subtropical Australia",
-    "White Box-Yellow Box-Blakely's Red Gum Grassy Woodland and Derived Native Grassland"
+    "White Box-Yellow Box-Blakely's Red Gum Grassy Woodland and Derived Native Grassland", "Gondwana Rainforests of Australia World Heritage Area", "Moreton Bay Ramsar Wetland", "Great Sandy National Park"
     ]
 var SEQLDSpecies = [
 "Honey Blue-eye (Pseudomugil mellis)",
@@ -1265,4 +1265,3 @@ addTsToMus(["Northern Tablelands"], northCoastAndTableLandsSpecies, "Other Speci
 
 addTsToMus(["South East Queensland"], SEQLDTEC, "Other TEC");
 addTsToMus(["South East Queensland"], SEQLDSpecies, "Other Species");
-
