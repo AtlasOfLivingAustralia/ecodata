@@ -1220,10 +1220,10 @@ addTsToMus(["NSW South Coast Bushfire"], nswSouthCoastTEC, "Other TEC")
 // NSW South Coast Species
 addTsToMus(["NSW South Coast Bushfire"], nswSouthCoastSpecies, "Other Species")
 // SEQLD TEC
-addTsToMus(["South East Queensland Bushfire"], SEQLDTEC, "Other TEC")
+addTsToMus(["South-East Queensland Bushfire"], SEQLDTEC, "Other TEC")
 
 // SEQLD Species
-addTsToMus(["South East Queensland Bushfire"], SEQLDSpecies, "Other Species")
+addTsToMus(["South-East Queensland Bushfire"], SEQLDSpecies, "Other Species")
 
 
 
