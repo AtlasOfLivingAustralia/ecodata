@@ -107,7 +107,10 @@ program.config.meriPlanContents = [
     {
         "template": "assets",
         "model": {
-            "placeHolder": "[Free text; for species please enter common and scientific name; one asset per line]"
+            "explanation":"List assets such as non-EPBC listed species that will also benefit from this project.",
+            "placeHolder": "Please select",
+            "fromPriorities":true,
+            "priorityCategories":["Other TEC", "Other Species"]
         }
     },
     {
@@ -282,8 +285,10 @@ program.config.meriPlanContents = [
     {
         "template": "assets",
         "model": {
-            "explanation":"[Precise wording TBA] List assets such as non-EPBC listed species that will also benefit from this project.",
-            "placeHolder": "[Free text; for species please enter common and scientific name; one asset per line]"
+            "explanation":"List assets such as non-EPBC listed species that will also benefit from this project.",
+            "placeHolder": "Please select",
+            "fromPriorities":true,
+            "priorityCategories":["Other TEC", "Other Species"]
         }
     },
     {
@@ -443,7 +448,7 @@ program.outcomes = [
         "outcome": "6. By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production."
     },
     {
-        "outcome": "The recovery and resilience of priority species, ecological communities, heritage places and other natural assets in bushfire affected regions is secured and maintained by June 2022",
+        "outcome": "Enhance the recovery and maximise the resilience of fire affected priority species, ecological communities and other natural assets within the seven regions impacted by the 2019-20 bushfires",
         "type": "secondary",
         "supportsMultiplePrioritiesAsSecondary":true,
         "category": "bushfires",
