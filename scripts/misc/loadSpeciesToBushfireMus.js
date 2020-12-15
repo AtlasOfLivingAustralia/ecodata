@@ -1198,6 +1198,7 @@ var SEQLDSpecies = [
 "(Zieria montana)"
 ];
 
+// Loading to new Mus
 addTsToMus(["Alpine Bushfire"], alpineTEC, "Other TEC");
 // Alpine species
 addTsToMus(["Alpine Bushfire"], alpineSpecies, "Other Species");
@@ -1207,26 +1208,61 @@ addTsToMus(["Greater Blue Mountains Bushfire"], greaterTEC, "Other TEC");
 addTsToMus(["Greater Blue Mountains Bushfire"], greaterSpecies, "Other Species");
 // East Gippsland Species
 addTsToMus(["East Gippsland Bushfire"], eastGippslandSpecies, "Other Species");
-//addTsToMus(["East Gippsland"], eastGippslandSpecies, "Other Species");
 // Kangaroo island Species
 addTsToMus(["Kangaroo Island Bushfire"], kangarooIslandSpecies, "Other Species");
-//addTsToMus(["Kangaroo Island"], kangarooIslandSpecies, "Other Species");
 
 // NSW North Coast And TableLand TEC
 addTsToMus(["NSW North Coast And Tablelands Bushfire"], northCoastAndTableLandsTEC, "Other TEC");
-//addTsToMus(["North Coast"], northCoastAndTableLandsTEC, "Other TEC");
-//addTsToMus(["Northern Tablelands"], northCoastAndTableLandsTEC, "Other TEC");
 // NSW North Coast And TableLand Species
 addTsToMus(["NSW North Coast And Tablelands Bushfire"], northCoastAndTableLandsSpecies, "Other Species")
-//addTsToMus(["North Coast"], northCoastAndTableLandsSpecies, "Other Species");
-//addTsToMus(["Northern Tablelands"], northCoastAndTableLandsSpecies, "Other Species");
 // NSW South Coast TEC
 addTsToMus(["NSW South Coast Bushfire"], nswSouthCoastTEC, "Other TEC")
 // NSW South Coast Species
 addTsToMus(["NSW South Coast Bushfire"], nswSouthCoastSpecies, "Other Species")
 // SEQLD TEC
 addTsToMus(["South East Queensland Bushfire"], SEQLDTEC, "Other TEC")
-//addTsToMus(["South East Queensland"], SEQLDTEC, "Other TEC")
+
 // SEQLD Species
 addTsToMus(["South East Queensland Bushfire"], SEQLDSpecies, "Other Species")
-//addTsToMus(["South East Queensland"], SEQLDSpecies, "Other Species")
+
+
+
+// Loading to RLP Mu's
+
+addTsToMus(["Riverina"], alpineTEC, "Other TEC");
+addTsToMus(["Riverina"], alpineSpecies, "Other Species");
+
+addTsToMus(["South East NSW"], alpineTEC, "Other TEC");
+addTsToMus(["South East NSW"], alpineSpecies, "Other Species");
+
+addTsToMus(["ACT"], alpineTEC, "Other TEC");
+addTsToMus(["ACT"], alpineSpecies, "Other Species");
+
+addTsToMus(["Murray"], alpineTEC, "Other TEC");
+addTsToMus(["Murray"], alpineSpecies, "Other Species");
+
+addTsToMus(["North East"], alpineTEC, "Other TEC");
+addTsToMus(["North East"], alpineSpecies, "Other Species");
+
+addTsToMus(["Hunter"], greaterTEC, "Other TEC");
+addTsToMus(["Hunter"], greaterSpecies, "Other Species");
+
+addTsToMus(["Central Tablelands"], greaterTEC, "Other TEC");
+addTsToMus(["Central Tablelands"], greaterSpecies, "Other Species");
+
+addTsToMus(["Greater Sydney"], greaterTEC, "Other TEC");
+addTsToMus(["Greater Sydney"], greaterSpecies, "Other Species");
+
+addTsToMus(["East Gippsland"], eastGippslandSpecies, "Other Species");
+
+addTsToMus(["Kangaroo Island"], kangarooIslandSpecies, "Other Species");
+
+addTsToMus(["North Coast"], northCoastAndTableLandsTEC, "Other TEC");
+addTsToMus(["North Coast"], northCoastAndTableLandsSpecies, "Other Species");
+
+addTsToMus(["Northern Tablelands"], northCoastAndTableLandsTEC, "Other TEC");
+addTsToMus(["Northern Tablelands"], northCoastAndTableLandsSpecies, "Other Species");
+
+addTsToMus(["South East Queensland"], SEQLDTEC, "Other TEC");
+addTsToMus(["South East Queensland"], SEQLDSpecies, "Other Species");
+
