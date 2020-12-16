@@ -107,7 +107,7 @@ program.config.meriPlanContents = [
     {
         "template": "assets",
         "model": {
-            "explanation":"List assets such as non-EPBC listed species that will also benefit from this project.",
+            "explanation":"List the natural assets within the bushfire region that will benefit from this project",
             "placeHolder": "Please select",
             "fromPriorities":true,
             "priorityCategories":["Other TEC", "Other Species"]
@@ -285,7 +285,7 @@ program.config.meriPlanContents = [
     {
         "template": "assets",
         "model": {
-            "explanation":"List assets such as non-EPBC listed species that will also benefit from this project.",
+            "explanation":"List the natural assets within the bushfire region that will benefit from this project",
             "placeHolder": "Please select",
             "fromPriorities":true,
             "priorityCategories":["Other TEC", "Other Species"]
