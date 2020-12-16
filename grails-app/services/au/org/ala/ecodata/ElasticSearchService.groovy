@@ -833,6 +833,9 @@ class ElasticSearchService {
             if (projectMap.custom?.details?.outcomes?.secondaryOutcomes?.size()) {
                 projectMap.secondaryOutcomes = projectMap.custom.details.outcomes.secondaryOutcomes.collect({it.description})
             }
+            if (projectMap.custom?.dataSets) {
+                projectMap.custom.remove('dataSets')
+            }
 
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
