@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.graphql.mappers
 
+import au.org.ala.ecodata.Activity
 import au.org.ala.ecodata.Document
 import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.Report
@@ -7,6 +8,7 @@ import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.Status
 import au.org.ala.ecodata.graphql.enums.DateRange
 import au.org.ala.ecodata.graphql.enums.YesNo
+import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.MeriPlan
 import grails.gorm.DetachedCriteria
@@ -68,6 +70,13 @@ class ProjectGraphQLMapper {
                 }
             }
 
+            add('activities', [Activity]) {
+                dataFetcher { Project project ->
+                    new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                            Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
+                }
+            }
+
             // get project by ID
             query('project', Project) {
                 argument('projectId', String)
@@ -90,6 +99,7 @@ class ProjectGraphQLMapper {
             }
 
             query('searchMeritProject', [Project]) {
+                argument('projectId', String) { nullable true }
                 argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
                 argument('toDate', String){ nullable true description "yyyy-mm-dd" }
                 argument('dateRange', DateRange){ nullable true }
@@ -117,6 +127,23 @@ class ProjectGraphQLMapper {
                 argument('assetsAddressed', [String]){ nullable true }
                 argument('userNominatedProject', [String]){ nullable true }
                 argument('managementUnit', [String]){ nullable true }
+
+                //activities filter
+                argument('activities', 'activities') {
+                    accepts {
+                        field('activityType', String) {nullable true}
+                        field('output', 'output') {
+                            field('outputType', String) {nullable false}
+                            field('fields', [String]) {nullable true}
+                            nullable true
+                            //one activity can have zero or more output
+                            collection true
+                        }
+                        //one project can have many activities
+                        collection true
+                    }
+                    nullable true
+                }
 
                 dataFetcher(new DataFetcher() {
                     @Override

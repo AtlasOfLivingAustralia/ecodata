@@ -81,6 +81,7 @@ class Activity {
     Date lastUpdated
     String userId
     Boolean embargoed
+    List tempArgs = []
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -93,7 +94,7 @@ class Activity {
         return progress in [PLANNED, STARTED, FINISHED]
     }
 
-    static transients = ['complete']
+    static transients = ['complete', 'tempArgs']
 
     static constraints = {
         siteId nullable: true

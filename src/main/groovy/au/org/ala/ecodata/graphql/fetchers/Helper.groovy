@@ -1,0 +1,67 @@
+package au.org.ala.ecodata.graphql.fetchers
+
+import au.org.ala.ecodata.MetadataService
+import graphql.GraphQLException
+
+class Helper {
+
+    MetadataService metadataService
+
+    Helper(MetadataService metadataService) {
+        this.metadataService = metadataService
+    }
+    /**
+     * This can be used to validate the given activity types and the output types
+     */
+    def validateActivityData(List args) {
+
+        def metadata = metadataService.buildActivityModel()
+        List activities = metadata["activities"].findAll{!it.status || it.status == 'active'}
+        List outputs = metadata["outputs"]
+
+        if(!args["activities"].contains(null)) {
+            args["activities"].each { activity ->
+                activity.each {  prop ->
+                    //validate activity type
+                    if (prop["activityType"] && !activities.name.contains(prop["activityType"])) {
+                        throw new GraphQLException('Invalid Activity Type: ' + prop["activityType"] + ' , suggested values are : ' + activities.name)
+                    }
+                    if(prop["output"]) {
+                        List outputNameList = prop["activityType"] ? activities.find{it.name == prop["activityType"]}.outputs : outputs.name
+                        prop["output"].each { output ->
+                            //validate output types against the output types of the activity
+                            validateOutputs(output, outputs, outputNameList)
+
+                        }
+                    }
+                }
+            }
+        }
+        else if(!args["outputs"].contains(null)) {
+            args["outputs"].each{ output ->
+                //validate output types
+                output.each {
+                    validateOutputs(it, outputs, outputs.name)
+                }
+            }
+        }
+
+    }
+
+    void validateOutputs(def output, List outputs, List outputNameList) {
+        //validate output types
+        if(output["outputType"] && !outputNameList.contains(output["outputType"])) {
+            throw new GraphQLException('Invalid Output Type: ' + output["outputType"] + ' , suggested values are : ' + outputNameList)
+        }
+
+        //validate fields
+        if(output["fields"] && output["fields"].size() > 0 && !output["fields"].contains(null)) {
+            def templateName = outputs.find { it.name == output["outputType"] }.template
+            List fieldNames = metadataService.getOutputDataModel(templateName)?.dataModel?.name
+
+            if (!fieldNames.containsAll(output["fields"])) {
+                throw new GraphQLException('Invalid Field: ' + output["fields"] + ' , suggested values are : ' + fieldNames)
+            }
+        }
+    }
+}
