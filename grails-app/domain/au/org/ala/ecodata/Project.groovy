@@ -89,6 +89,7 @@ class Project {
     MapLayersConfiguration mapLayersConfig
     /** configure how activity is displayed on map for example point, heatmap or cluster. */
     List mapDisplays
+    List tempArgs = []
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -107,7 +108,7 @@ class Project {
 
     static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
 
-    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
 
     Date getActualStartDate() {
         if (actualStartDate) {

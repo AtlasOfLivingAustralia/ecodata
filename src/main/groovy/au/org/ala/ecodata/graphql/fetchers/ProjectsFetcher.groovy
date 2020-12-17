@@ -3,6 +3,7 @@ package au.org.ala.ecodata.graphql.fetchers
 import au.org.ala.ecodata.*
 import com.mongodb.client.FindIterable
 import com.mongodb.client.model.Filters
+import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
@@ -53,7 +54,8 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         // add pagination results.
         String userId = environment.context.userId ?: '1493'
         String query = queryString ?:"*:*"
-        SearchResponse searchResponse = elasticSearchService.searchWithSecurity(userId, query, params, HOMEPAGE_INDEX)
+        //SearchResponse searchResponse = elasticSearchService.searchWithSecurity(userId, query, params, HOMEPAGE_INDEX)
+        SearchResponse searchResponse = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
 
         List<String> projectIds = searchResponse.hits.hits.collect{it.source.projectId}
 
@@ -98,7 +100,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
                              "federalElectorate": "electFacet:", "assetsAddressed": "meriPlanAssetFacet:", "userNominatedProject": "custom.details.caseStudy:", "managementUnit": "muFacet:"]
 
         environment.arguments.each {
-            if(it.key in ["fromDate", "toDate", "dateRange"]) {
+            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId"]) {
                 return
             }
 
@@ -150,7 +152,16 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
             params["toDate"] = environment.arguments.get("dateRange").to
         }
 
-        return queryElasticSearch(environment, "docType: project", params)
+        String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
+        List<Project> projects =  queryElasticSearch(environment, query, params)
+
+        projects.each {
+            if(environment.arguments.get("activities")) {
+                it.tempArgs = environment.arguments.get("activities") as List
+            }
+        }
+
+        return projects
     }
 
     void validateSearchQuery (DataFetchingEnvironment environment, List fqList) {
@@ -167,7 +178,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         def datePattern = /\d{4}\-\d{2}\-\d{2}/
 
-        //validate the format of the from anf to dates
+        //validate the format of the from and to dates
         if(environment.arguments.get("fromDate")) {
             if(!(environment.arguments.get("fromDate") ==~ datePattern)){
                 throw new GraphQLException('Invalid fromDate: fromDate should match yyyy-mm-dd')
@@ -178,6 +189,14 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
             if(!(environment.arguments.get("fromDate") ==~ datePattern)){
                 throw new GraphQLException('Invalid toDate: toDate should match yyyy-mm-dd')
             }
+        }
+
+        //validate activity types and output types
+        if(environment.arguments.get("activities")){
+            List args = []
+            args.add(["activities":environment.arguments.get("activities")])
+
+            new Helper(Holders.applicationContext.metadataService).validateActivityData(args)
         }
 
     }

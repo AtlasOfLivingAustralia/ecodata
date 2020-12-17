@@ -10,6 +10,7 @@ import au.org.ala.ecodata.SchemaBuilder
 import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.Summary
 import grails.core.GrailsApplication
+import grails.util.Holders
 import graphql.schema.DataFetchingEnvironment
 import org.springframework.context.MessageSource
 
@@ -66,5 +67,63 @@ class OutputFetcher implements graphql.schema.DataFetcher<List<Output>> {
     @Override
     List<Output> get(DataFetchingEnvironment environment) {
         Output.findAll([max:10])
+    }
+
+    List<Output> getFilteredOutput(List args, String activityType = null, String activityId = null)
+    {
+        //validate inputs
+        if(args){
+            List arguments = []
+            arguments.add(["outputs":args])
+            new Helper(Holders.applicationContext.metadataService).validateActivityData(arguments)
+        }
+
+        List requestedOutput = []
+        def outputArgs = []
+
+        args.each {
+            if(activityType && it["activityType"] == activityType && it["output"]){
+                requestedOutput = it["output"]["outputType"].flatten()
+            }
+            else if(!activityType && it["outputType"]) {
+                requestedOutput.add(it["outputType"])
+            }
+        }
+
+        if(args) {
+            if (activityType) {
+                outputArgs = args["output"]
+            } else {
+                outputArgs.add(args)
+            }
+        }
+
+        def outputList = Output.where {
+            //get requested output types
+            if(requestedOutput.size() > 0) {
+                name in requestedOutput
+            }
+            if(activityId) {
+                activityId == activityId
+            }
+        }.each {
+            if (outputArgs) {
+                it.tempArgs.add(["output": outputArgs])
+            }
+        }.sort{it.name}.findAll()
+
+        //remove empty outputs
+        if(outputArgs) {
+            outputArgs.each { y ->
+                y.each {
+                    if (it["fields"] && !it["fields"].contains(null)) {
+                        outputList.removeAll { x ->
+                            (!x.data || x.data.size() == 0) && x.name == it["outputType"]
+                        }
+                    }
+                }
+            }
+        }
+        return outputList
     }
 }
