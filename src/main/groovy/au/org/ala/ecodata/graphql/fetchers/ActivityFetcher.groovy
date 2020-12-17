@@ -4,6 +4,7 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.Summary
 import grails.core.GrailsApplication
+import grails.util.Holders
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.context.MessageSource
@@ -90,5 +91,49 @@ class ActivityFetcher implements graphql.schema.DataFetcher<List<Activity>> {
         schemaEntity.id = schema.id
         schemaEntity.propertyList = schema.properties
         return schemaEntity
+    }
+
+    List<Activity> getFilteredActivities(List args, String givenProjectId = null, String givenActivityId = null)
+    {
+        //validate inputs
+        if(args){
+            List arguments = []
+            arguments.add(["activities":args])
+            new Helper(Holders.applicationContext.metadataService).validateActivityData(arguments)
+        }
+
+        def activityIdList = []
+        if(args) {
+            activityIdList = Output.where { name in args["output"]["outputType"].flatten() }.findAll()
+
+            args.each { arg ->
+                arg["output"].each {
+                    if (it["fields"] && !it["fields"].contains(null)) {
+                        activityIdList.removeAll { x ->
+                            (!x.data || x.data.size() == 0) && x.name == it["outputType"]
+                        }
+                    }
+                }
+            }
+        }
+        def activityList = Activity.where {
+            if(givenProjectId) {
+                projectId == givenProjectId
+            }
+            if(givenActivityId) {
+                activityId == givenActivityId
+            }
+            if(args && args["activityType"]) {
+                type in args["activityType"].flatten()
+            }
+            //get the activities with requested output types
+            if(activityIdList.size() > 0) {
+                activityId in activityIdList.activityId
+            }
+        }.each {
+            it.tempArgs = args ?: []
+        }.sort { it.type}
+
+        return activityList
     }
 }

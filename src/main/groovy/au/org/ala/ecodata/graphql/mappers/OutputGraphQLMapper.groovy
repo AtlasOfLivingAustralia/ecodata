@@ -9,6 +9,7 @@ import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
+import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
 
 class OutputGraphQLMapper {
 
@@ -24,14 +25,44 @@ class OutputGraphQLMapper {
 
 
             add('data', OutputData) {
-                dataFetcher { Output output ->
-                    output.getData(output.data)
+                dataFetcher { Output output, ClosureDataFetchingEnvironment env ->
+                    List fieldList = []
+                    if(output.tempArgs) {
+                        output.tempArgs["output"].each {
+                            it.each { x ->
+                                x.each { y ->
+                                    if (y["outputType"] == output.name && y["fields"]) {
+                                        fieldList = y["fields"] as List
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //get output data with requested fields
+                    output.getData(fieldList)
                 }
                 input false
             }
 
+            query('outputs', [Output]) {
+                argument('output', 'output') {
+                    accepts {
+                        field('outputType', String)
+                        field('fields', [String]) { nullable true }
+                        collection true
+                    }
+                    nullable true
+                }
+                dataFetcher(new DataFetcher() {
+                    @Override
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        new OutputFetcher(Holders.applicationContext.metadataService, Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredOutput(environment.arguments['output'] as List)
+                    }
+                })
+            }
+
             //get the list of output types
-            query('outputs', [Summary]) {
+            query('outputList', [Summary]) {
                 dataFetcher(new DataFetcher() {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {

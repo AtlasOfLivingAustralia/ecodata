@@ -2,6 +2,7 @@ package au.org.ala.ecodata.graphql.mappers
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
+import au.org.ala.ecodata.graphql.fetchers.OutputFetcher
 import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.Summary
 import grails.gorm.DetachedCriteria
@@ -9,6 +10,7 @@ import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
+import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
 import org.grails.gorm.graphql.fetcher.impl.SingleEntityDataFetcher
 
 class ActivityGraphQLMapper {
@@ -24,19 +26,36 @@ class ActivityGraphQLMapper {
             operations.delete.enabled false
 
             add('outputs', [Output]) {
-                dataFetcher { Activity activity ->
-                    Output.findAllByActivityId(activity.activityId)
+                dataFetcher { Activity activity, ClosureDataFetchingEnvironment env ->
+                    new OutputFetcher(Holders.applicationContext.metadataService, Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredOutput(activity.tempArgs as List, activity.type, activity.activityId)
                 }
                 input false
             }
 
             //get activity by activity id
-            query('activity', Activity) {
-                argument('activityId', String)
-                dataFetcher(new SingleEntityDataFetcher<Activity>(Activity.gormPersistentEntity) {
+            query('activity', [Activity]) {
+                argument('activityId', String) { nullable true }
+                argument('activityList', 'activityList') {
+                    accepts {
+                        field('activityType', String) {nullable true}
+                        field('output', 'outputs') {
+                            field('outputType', String) {nullable false}
+                            field('fields', [String]) {nullable true}
+                            nullable true
+                            //one activity can have zero or more output
+                            collection true
+                        }
+                        //one project can have many activities
+                        collection true
+                    }
+                    nullable true
+                }
+
+                dataFetcher(new DataFetcher() {
                     @Override
-                    protected DetachedCriteria buildCriteria(DataFetchingEnvironment environment) {
-                        Activity.where { activityId == environment.getArgument('activityId') }
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                                Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(environment.arguments['activityList'] as List, null, environment.arguments['activityId'] as String)
                     }
                 })
             }

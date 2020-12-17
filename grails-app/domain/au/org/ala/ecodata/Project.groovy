@@ -81,6 +81,7 @@ class Project {
     List<String> industries = []
     String origin = 'atlasoflivingaustralia'
     String baseLayer
+    List tempArgs = []
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -95,7 +96,7 @@ class Project {
 
     static embedded = ['associatedOrganisations','fundings']
 
-    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
 
     Date getActualStartDate() {
         if (actualStartDate) {

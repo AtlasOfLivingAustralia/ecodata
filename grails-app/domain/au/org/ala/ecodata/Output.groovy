@@ -34,17 +34,24 @@ class Output {
     String name
     Date dateCreated
     Date lastUpdated
+    List tempArgs = []
 
     static constraints = {
         assessmentDate nullable: true
         name nullable: true
     }
 
-    OutputData getData(def data) {
+    static transients = ['tempArgs']
+
+    OutputData getData(List fields) {
         OutputData outputData = new OutputData(dataList: new ArrayList<KeyValue>())
-        if(data) {
-            data.each() {
-                outputData.dataList.add(new KeyValue(key: it.key, value: it.value))
+        if(this.data) {
+            this.data.each() {
+                //if no fields, all the fields will be returned
+                //otherwise, only requested fields will be returned
+                if(!fields || (fields && fields.contains(it.key))) {
+                    outputData.dataList.add(new KeyValue(key: it.key, value: it.value))
+                }
             }
         }
          return outputData
