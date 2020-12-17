@@ -156,6 +156,7 @@ class UrlMappings {
         }
         "/ws/program/findByName"(controller:"program"){ action = [GET:"findByName"] }
         "/ws/program/listOfAllPrograms"(controller: "program"){action = [GET: "listOfAllPrograms"]}
+        "/ws/permissions/deleteUserPermission/$id"(controller: "permissions"){action = [POST: "deleteUserPermission"]}
 
         "/ws/managementUnits" {
             controller = 'managementUnit'
@@ -181,7 +182,7 @@ class UrlMappings {
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
         "/ws/$controller/list"() { action = [GET:'list'] }
-
+        "/ws/geoServer/wms"(controller: "geoServer", action: "wms")
 
 
 

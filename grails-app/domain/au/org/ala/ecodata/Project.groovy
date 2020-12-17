@@ -35,6 +35,7 @@ class Project {
     String manager
     String grantId
     String workOrderId
+    String internalOrderId
     Date contractStartDate
     Date contractEndDate
     String groupId
@@ -53,6 +54,7 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
+    String managementUnitId
 	Map custom
 	Risks risks
 	Date dateCreated
@@ -81,6 +83,8 @@ class Project {
     String origin = 'atlasoflivingaustralia'
     String baseLayer
     MapLayersConfiguration mapLayersConfig
+    /** configure how activity is displayed on map for example point, heatmap or cluster. */
+    List mapDisplays
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -144,6 +148,7 @@ class Project {
         externalId nullable:true
         description nullable:true, maxSize: 40000
         workOrderId nullable:true
+        internalOrderId nullable:true
         contractStartDate nullable: true
         contractEndDate nullable: true
         manager nullable:true
@@ -198,6 +203,8 @@ class Project {
         isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
+        managementUnitId nullable: true
+        mapDisplays nullable: true
     }
 }
 

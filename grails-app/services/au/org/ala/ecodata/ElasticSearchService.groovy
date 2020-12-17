@@ -15,6 +15,7 @@
 
 package au.org.ala.ecodata
 
+
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -28,6 +29,8 @@ import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.node.Node
+import org.elasticsearch.search.aggregations.AggregationBuilder
+import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.range.RangeFacetBuilder
@@ -44,11 +47,13 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.Status.DELETED
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.COMPLETED
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
-
+import static grails.async.Promises.task
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -83,7 +88,6 @@ class ElasticSearchService {
     ProgramService programService
     ManagementUnitService managementUnitService
 
-
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
@@ -98,12 +102,31 @@ class ElasticSearchService {
     @PostConstruct
     def initialize() {
         log.info "Setting-up elasticsearch node and client"
+        boolean isLocal = grailsApplication.config.elasticsearch.local.toBoolean()
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
-        node = nodeBuilder().local(true).settings(settings).node();
+        node = nodeBuilder().local(isLocal).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
+
+        // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
+        // Therefore, calling the below function in a thread.
+        task {
+            // Most of the time GeoServer starts before Ecodata. ES data connectors in GeoServer cannot connect to ES.
+            // The below code recreates the connectors.
+            if(getMapService().enabled) {
+                log.info("Starting to build GeoServer dependencies")
+                getMapService()?.buildGeoServerDependencies()
+                log.info("Completed building GeoServer dependencies")
+            }
+        }
     }
+
+    // Used to avoid a circular dependency during initialisation
+    def getMapService() {
+        return grailsApplication.mainContext.mapService
+    }
+
 
     /**
      * Index a single document (toMap representation not domain class)
@@ -295,8 +318,8 @@ class ElasticSearchService {
             Map parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
             def facetMappings = buildFacetMapping()
             // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
-            parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
-            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
+            parsedJson.mappings.doc["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
+            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
             parsedJson
         })
     }
@@ -810,10 +833,17 @@ class ElasticSearchService {
             if (projectMap.custom?.details?.outcomes?.secondaryOutcomes?.size()) {
                 projectMap.secondaryOutcomes = projectMap.custom.details.outcomes.secondaryOutcomes.collect({it.description})
             }
+            if (projectMap.custom?.dataSets) {
+                projectMap.custom.remove('dataSets')
+            }
 
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
+            // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
+            // all sites associated with project.
+            // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
+            projectMap.projectArea = siteService.get(project.projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -987,7 +1017,7 @@ class ElasticSearchService {
         }
 
         if (activity.siteId) {
-            def site = siteService.get(activity.siteId, SiteService.FLAT, version)
+            def site = siteService.get(activity.siteId, [SiteService.FLAT, SiteService.INDEXING], version)
             if (site) {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
@@ -1126,6 +1156,16 @@ class ElasticSearchService {
         return response
     }
 
+    def searchAndAggregateOnGeohash(String query, Map params = [:], geohashField = "sites.geoPoint", boundingBoxField = "geoIndex", String index = PROJECT_ACTIVITY_INDEX) {
+        String aggName = "heatmap"
+        Map boundingBox = params.geoSearchJSON instanceof Map ? params.geoSearchJSON : JSON.parse(params.geoSearchJSON)
+        int precision = siteService.calculateGeohashPrecision(boundingBox)
+
+        params.max = "0"
+        params.geoSearchField = boundingBoxField
+        params.aggs = ([[type: "geohash", precision: precision, name: aggName, field: geohashField]] as JSON).toString()
+        search(query, params, index, boundingBox)
+    }
 
     def searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {
         SearchRequest request = new SearchRequest()
@@ -1294,6 +1334,18 @@ class ElasticSearchService {
             }
         }
 
+        if(params.statFacets){
+            addStatFacets(params.statFacets).each {
+                source.facet(it)
+            }
+        }
+
+        if (params.aggs) {
+            addAggregation(params.aggs).each {
+                source.aggregation(it)
+            }
+        }
+
         if (params.highlight) {
             source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
         }
@@ -1358,10 +1410,16 @@ class ElasticSearchService {
             filters << buildFilters(params.fq)
         }
         if (geoSearchCriteria) {
-            filters << buildGeoFilter(geoSearchCriteria)
+            filters << buildGeoFilter(geoSearchCriteria, params.geoSearchField)
         }
         if (params.terms) {
             filters << FilterBuilders.termsFilter(params.terms.field, params.terms.values)
+        }
+
+        if (params.exists) {
+            params.exists.split (',').each {
+                filters << FilterBuilders.existsFilter(it)
+            }
         }
 
         QueryStringQueryBuilder qsQuery = queryStringQuery(query)
@@ -1416,7 +1474,7 @@ class ElasticSearchService {
 
     }
 
-    private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria) {
+    private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "geoIndex") {
         GeoShapeFilterBuilder filter = null
 
         ShapeBuilder shape = null
@@ -1435,7 +1493,7 @@ class ElasticSearchService {
         }
 
         if (shape) {
-            filter = geoShapeFilter("geoIndex", shape, ShapeRelation.INTERSECTS)
+            filter = geoShapeFilter(field, shape, ShapeRelation.INTERSECTS)
         }
 
         filter
@@ -1517,6 +1575,24 @@ class ElasticSearchService {
     }
 
     /**
+     * Create statistical facets. Coma separated field names are required.
+     * Example usage - 'individualCount,count'
+     * @param facets
+     * @return
+     */
+    List addStatFacets(String facets){
+        List facetList = []
+
+        if (facets) {
+            facets.split(",").each { facet ->
+                facetList.add(FacetBuilders.statisticalFacet(facet).field(facet))
+            }
+        }
+
+        return facetList
+    }
+
+    /**
      * Generate list of facets for search request
      *
      * @param facets
@@ -1549,6 +1625,40 @@ class ElasticSearchService {
         }
 
         return facetList
+    }
+
+    List addAggregation (String aggs) {
+        List aggsList =  aggs ? JSON.parse(aggs) : []
+        List result = []
+        aggsList?.each {
+            result.add(addAggregation(it))
+        }
+
+        result
+    }
+
+    AggregationBuilder addAggregation (Map aggs) {
+        AggregationBuilder builder
+        switch (aggs.type) {
+            case "geohash":
+                builder = AggregationBuilders.geohashGrid(getNameOfAggregation(aggs)).field(aggs.field).precision(aggs.precision)
+                aggs.subAggs?.each { subAgg ->
+                    AggregationBuilder subAggBuilder = addAggregation(subAgg)
+                    if (subAggBuilder) {
+                        builder.subAggregation(subAggBuilder)
+                    }
+                }
+                break;
+            case "geobound":
+                builder = AggregationBuilders.geoBounds(getNameOfAggregation(aggs)).field(aggs.field)
+                break;
+        }
+
+        builder
+    }
+
+    String getNameOfAggregation(Map agg) {
+        agg.name ?: agg.field
     }
 
     private List parseFilter(String fq) {

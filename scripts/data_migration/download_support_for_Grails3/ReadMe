@@ -1,0 +1,13 @@
+@Author: Thakur
+This branch is created to update the some value types in ecodata for to resolved download xlsx. To resolved some issue while downloading using grails3 in reporting server.
+
+For the Document domain object - I have added Date dateTaken field. To support the grails3 I have added a dateTaken field into the document object in dev branch.
+
+In the database we are currently saving dateTaken field as in String format. I have written a script that changes string date to Date format.
+
+For Score domain object,  currently Score _Id is stored as Long format. Since in grails3 we have change that to ObjectId. So I have changed the from Long id to Object id
+Even for that I have added a script to convert Long id to Object Id.
+other scripts update the Types of the object. eg. Double to Int, Undefined Value to null
+You may need to require to run the updateValueTypesToSupportDownload.js script to update the database.
+
+

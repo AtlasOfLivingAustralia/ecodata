@@ -1,11 +1,7 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.reporting.OrganisationXlsExporter
-import au.org.ala.ecodata.reporting.ProjectExporter
-import au.org.ala.ecodata.reporting.ProjectXlsExporter
-import au.org.ala.ecodata.reporting.SummaryXlsExporter
-import au.org.ala.ecodata.reporting.WorksProjectXlsExporter
-import au.org.ala.ecodata.reporting.XlsExporter
+
+import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import groovyx.net.http.ContentType
@@ -13,9 +9,9 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
+import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import java.text.SimpleDateFormat
 
 class SearchController {
 
@@ -35,6 +31,7 @@ class SearchController {
     SensitiveSpeciesService sensitiveSpeciesService
     ReportingService reportingService
     OrganisationService organisationService
+    MapService mapService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -77,6 +74,30 @@ class SearchController {
         }
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
+    }
+
+    def getHeatmap () {
+        def res, index, geohashField, boundingBoxField
+        switch (params.dataType) {
+            case MapService.PROJECT_TYPE:
+                geohashField = "projectArea.geoPoint"
+                boundingBoxField = "projectArea.geoIndex"
+                index = HOMEPAGE_INDEX
+                break
+            default:
+                elasticSearchService.buildProjectActivityQuery(params)
+                geohashField = "sites.geoPoint"
+                boundingBoxField = "sites.geoIndex"
+                index = PROJECT_ACTIVITY_INDEX
+                break
+        }
+
+
+        res = elasticSearchService.searchAndAggregateOnGeohash(params.query, params, geohashField, boundingBoxField, index)
+        Map features = mapService.getFeatureCollectionFromSearchResult(res)
+        features = mapService.setHeatmapColour(features)
+        response.setContentType("application/json; charset=\"UTF-8\"")
+        render features as JSON
     }
 
     /*
