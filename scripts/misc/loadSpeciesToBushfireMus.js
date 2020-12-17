@@ -1226,7 +1226,7 @@ addTsToMus(["South-East Queensland Bushfires"], SEQLDSpecies, "Other Species")
 
 
 
-// Loading to RLP Mu's
+// Loading to Species to exiting RLP Mu's
 
 addTsToMus(["Riverina"], alpineTEC, "Other TEC");
 addTsToMus(["Riverina"], alpineSpecies, "Other Species");
