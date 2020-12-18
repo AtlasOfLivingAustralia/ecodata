@@ -108,9 +108,21 @@ program.config.meriPlanContents = [
         "template": "assets",
         "model": {
             "explanation":"List the natural assets within the bushfire region that will benefit from this project",
+            "viewExplanation":"Species, ecological community or environmental asset(s) the project is targeting",
+            "assetHeading":"Asset",
             "placeHolder": "Please select",
             "fromPriorities":true,
-            "priorityCategories":["Other TEC", "Other Species"]
+            "useCategorySelection":true,
+            "priorityCategories":[
+                "Priority Vertebrate Animals",
+                "Additional Priority Species",
+                "Priority Invertebrate Species",
+                "Priority Natural Asset",
+                "Priority Plants",
+                "Additional Priority Plants",
+                "Threatened Ecological Community",
+                "Additional Priority Natural Asset",
+                "Additional Threatened Ecological Community"]
         }
     },
     {
@@ -286,9 +298,20 @@ program.config.meriPlanContents = [
         "template": "assets",
         "model": {
             "explanation":"List the natural assets within the bushfire region that will benefit from this project",
+            "viewExplanation":"Species, ecological community or environmental asset(s) the project is targeting",
+            "assetHeading":"Asset",
             "placeHolder": "Please select",
             "fromPriorities":true,
-            "priorityCategories":["Other TEC", "Other Species"]
+            "useCategorySelection":true,
+            "priorityCategories":["Priority Vertebrate Animals",
+                "Additional Priority Species",
+                "Priority Invertebrate Species",
+                "Priority Natural Asset",
+                "Priority Plants",
+                "Additional Priority Plants",
+                "Threatened Ecological Community",
+                "Additional Priority Natural Asset",
+                "Additional Threatened Ecological Community"]
         }
     },
     {
