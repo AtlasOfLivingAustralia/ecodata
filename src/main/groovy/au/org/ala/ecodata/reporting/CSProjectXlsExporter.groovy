@@ -226,17 +226,11 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                         if (rowSets.size() == 1 && rows.size() > 1) {
                             rows.each {
-                                // TODO: check this after remerge code from dev
-                                if (rowSets[0] instanceof BasicDBObject) {
-                                    it.putAll(rowSets[0].toMap())
-                                }
+                                it.putAll(rowSets[0])
                             }
                         } else {
                             rowSets.eachWithIndex { outputFields, index ->
-                                // TODO: check this after remerge code from dev again
-                                    if (outputFields instanceof BasicDBObject) {
-                                    rows[index].putAll(outputFields.toMap())
-                                }
+                                rows[index].putAll(outputFields)
                             }
                         }
 
