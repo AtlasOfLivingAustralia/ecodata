@@ -157,6 +157,24 @@ program.config.meriPlanContents = [
         }
     },
     {
+        "template": "projectPartnerships",
+        "model": {
+            "namePlaceHolder": "[Free text]",
+            "partnershipPlaceHolder": "[Free text]"
+        }
+    },
+    {
+        "template": "consultation",
+        "model": {
+            "title":"Consultation",
+            "placeHolder": "[Free text]",
+            "explanation": "Please provide details of consultation with relevant state / territory agencies and NRM organisations to identify any duplication between activities proposed in the Activity and any other government-funded actions already underway in the project location. Where duplication has been identified, please describe how this has been resolved. If a modification to the Activity is required, you must submit a written request for a variation to the Department."
+        }
+    },
+    {
+        "template": "keyThreats"
+    },
+    {
         "template": "projectMethodology",
         "model": {
             "maxSize": "4000",
@@ -177,9 +195,7 @@ program.config.meriPlanContents = [
             "title": "Project Monitoring Indicators"
         }
     },
-    {
-        "template": "keyThreats"
-    },
+
     {
         "template": "adaptiveManagement",
         "model": {
@@ -187,20 +203,10 @@ program.config.meriPlanContents = [
             "explanation": "Outline the methods and processes that will enable adaptive management during the lifetime of this project"
         }
     },
+
+
     {
-        "template": "projectPartnerships",
-        "model": {
-            "namePlaceHolder": "[Free text]",
-            "partnershipPlaceHolder": "[Free text]"
-        }
-    },
-    {
-        "template": "consultation",
-        "model": {
-            "title":"Consultation",
-            "placeHolder": "[Free text]",
-            "explanation": "Please provide details of consultation with relevant state / territory agencies and NRM organisations to identify any duplication between activities proposed in the Activity and any other government-funded actions already underway in the project location. Where duplication has been identified, please describe how this has been resolved. If a modification to the Activity is required, you must submit a written request for a variation to the Department."
-        }
+        "template":"nationalAndRegionalPlans"
     },
     {
         "template": "serviceTargets",
@@ -239,6 +245,18 @@ program.config.projectReports = [
         "description": "",
         "category": "Annual Progress Reporting",
         "activityType": "Bushfires Annual Report"
+    },
+    {
+        "reportType": "Single",
+        "firstReportingPeriodEnd": "2021-06-30T14:00:00Z",
+        "reportDescriptionFormat": "Outcomes Report 1 for %4$s",
+        "reportNameFormat": "Outcomes Report 1",
+        "reportingPeriodInMonths": 36,
+        "multiple": false,
+        "description": "Before beginning Outcomes Report 1, please go to the Data set summary tab and complete a form for each data set collected for this project. Help with completing this form can be found in Section 10 of the [RLP MERIT User Guide](http://www.nrm.gov.au/my-project/monitoring-and-reporting-plan/merit)",
+        "category": "Outcomes Report 1",
+        "reportsAlignedToCalendar": false,
+        "activityType": "RLP Short term project outcomes"
     },
     {
         "reportType": "Single",
