@@ -79,6 +79,7 @@ class Site {
     String landTenure
     String protectionMechanism
     String notes
+    String catchment
     Date dateCreated
     Date lastUpdated
     Boolean isSciStarter = false
@@ -105,6 +106,7 @@ class Site {
         isSciStarter nullable: true
         extent nullable: true
         features nullable: true
+        catchment nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
             if(value){
@@ -141,5 +143,20 @@ class Site {
      */
     boolean isCompoundSite() {
         return type == TYPE_COMPOUND
+    }
+
+    String getGeometryType() {
+        geoIndex?.type
+    }
+
+    List getGeoPoint() {
+        if ( extent?.geometry?.centre ) {
+            if (extent.geometry.centre.getClass().isArray() || (extent.geometry.centre instanceof List)) {
+                List coords = extent.geometry.centre
+                if (coords) {
+                    [coords[0] as Double, coords[1] as Double]
+                }
+            }
+        }
     }
 }

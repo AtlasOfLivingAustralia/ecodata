@@ -1,9 +1,8 @@
+os: linux
 dist: xenial
 language: groovy
-sudo: false
 jdk:
-- openjdk8
-
+  - openjdk8
 branches:
   only:
   - master
@@ -11,6 +10,7 @@ branches:
   - hot-fix
   - /^feature\/.*$/
   - grails3
+  - /^hotfix\/.*$/
 
 services:
   - mongodb
@@ -25,6 +25,8 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+script:
+  - ./gradlew cloverGenerateReport
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish'

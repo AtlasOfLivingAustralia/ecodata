@@ -13,6 +13,7 @@ import grails.test.mixin.TestMixin
 import grails.test.mixin.web.ControllerUnitTestMixin*/
 import org.junit.Before
 import spock.lang.Specification
+import org.springframework.beans.MutablePropertyValues
 
 /**
  * Tests the ElasticSearchService
@@ -39,6 +40,13 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
     private int projectId = 0
     private int siteId = 0
 
+    Closure doWithConfig() {{ config ->
+        config.geoServer.enabled = "false"
+    }}
+
+    Closure doWithSpring() {{ ->
+        mapService MapService
+    }}
 
    // @Before
     void setup() {

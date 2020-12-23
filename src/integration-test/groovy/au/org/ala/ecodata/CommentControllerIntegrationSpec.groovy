@@ -13,7 +13,7 @@ import org.grails.plugins.testing.GrailsMockHttpServletRequest
 import org.grails.plugins.testing.GrailsMockHttpServletResponse
 
 @Integration
-class CommentControllerSpec extends Specification {
+class CommentControllerIntegrationSpec extends Specification {
 
     @Autowired
     CommentController commentController

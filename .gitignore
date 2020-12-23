@@ -39,3 +39,6 @@
 /.slcache
 
 out
+/.gradle/
+/build/
+/. /logs/

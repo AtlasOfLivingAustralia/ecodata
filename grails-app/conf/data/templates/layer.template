@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<featureType xmlns:gsp='http://groovy.codehaus.org/2005/gsp'>
+    <name>$name</name>
+    <nativeName>$nativeName</nativeName>
+    <title>$title</title>
+    <keywords>
+        <gsp:scriptlet>keywords?.each {</gsp:scriptlet>
+        <string>$it</string>
+        <gsp:scriptlet>}</gsp:scriptlet>
+    </keywords>
+    <nativeCRS>GEOGCS[&quot;WGS 84&quot;,
+        DATUM[&quot;World Geodetic System 1984&quot;,
+        SPHEROID[&quot;WGS 84&quot;, 6378137.0, 298.257223563, AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],
+        AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],
+        PRIMEM[&quot;Greenwich&quot;, 0.0, AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],
+        UNIT[&quot;degree&quot;, 0.017453292519943295],
+        AXIS[&quot;Geodetic longitude&quot;, EAST],
+        AXIS[&quot;Geodetic latitude&quot;, NORTH],
+        AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]
+    </nativeCRS>
+    <srs>EPSG:4326</srs>
+    <nativeBoundingBox>
+        <minx>-180.0</minx>
+        <maxx>180.0</maxx>
+        <miny>-90.0</miny>
+        <maxy>90.0</maxy>
+    </nativeBoundingBox>
+    <latLonBoundingBox>
+        <minx>-180.0</minx>
+        <maxx>180.0</maxx>
+        <miny>-90.0</miny>
+        <maxy>90.0</maxy>
+    </latLonBoundingBox>
+    <projectionPolicy>FORCE_DECLARED</projectionPolicy>
+    <enabled>true</enabled>
+    <advertised>false</advertised>
+    <metadata>
+        <entry key="cacheAgeMax">300</entry>
+        <entry key="cachingEnabled">true</entry>
+        <entry key="elevation">
+            <dimensionInfo>
+                <enabled>false</enabled>
+            </dimensionInfo>
+        </entry>
+        <entry key="time">
+            <dimensionInfo>
+                <enabled>$timeEnabled</enabled>
+                <gsp:scriptlet>if (timeEnabled) {</gsp:scriptlet>
+                <attribute>$timeAttribute</attribute>
+                <presentation>LIST</presentation>
+                <units>ISO8601</units>
+                <defaultValue>
+                    <strategy>MINIMUM</strategy>
+                </defaultValue>
+                <gsp:scriptlet>}</gsp:scriptlet>
+            </dimensionInfo>
+        </entry>
+        <entry key="ElasticLayerConfiguration">
+            <elasticLayerConfiguration>
+                <docType>doc</docType>
+                <layerName>$name</layerName>
+                <attributes>
+                    <gsp:scriptlet>attributes.each {</gsp:scriptlet>
+                    <esAttribute>
+                        <gsp:scriptlet>if (it.name != null) {</gsp:scriptlet>
+                        <name>${it.name}</name>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.shortName != null) {</gsp:scriptlet>
+                        <shortName>${it.shortName}</shortName>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.useShortName != null) {</gsp:scriptlet>
+                        <useShortName>${it.useShortName}</useShortName>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.type != null) {</gsp:scriptlet>
+                        <type>${it.type}</type>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.geometryType != null) {</gsp:scriptlet>
+                        <geometryType>${it.geometryType}</geometryType>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.use != null) {</gsp:scriptlet>
+                        <use>${it.use}</use>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.defaultGeometry != null) {</gsp:scriptlet>
+                        <defaultGeometry>${it.defaultGeometry}</defaultGeometry>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.dateFormat != null) {</gsp:scriptlet>
+                        <dateFormat>${it.dateFormat}</dateFormat>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.srid != null) {</gsp:scriptlet>
+                        <srid>${it.srid}</srid>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.stored != null) {</gsp:scriptlet>
+                        <stored>${it.stored}</stored>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                        <gsp:scriptlet>if (it.nested != null) {</gsp:scriptlet>
+                        <nested>${it.nested}</nested>
+                        <gsp:scriptlet>}</gsp:scriptlet>
+                    </esAttribute>
+                    <gsp:scriptlet>}</gsp:scriptlet>
+                </attributes>
+            </elasticLayerConfiguration>
+        </entry>
+        <entry key="cachingEnabled">true</entry>
+    </metadata>
+    <maxFeatures>0</maxFeatures>
+    <numDecimals>0</numDecimals>
+    <overridingServiceSRS>false</overridingServiceSRS>
+    <skipNumberMatched>false</skipNumberMatched>
+    <circularArcPresent>false</circularArcPresent>
+    <attributes>
+        <gsp:scriptlet>attributes.each {</gsp:scriptlet>
+        <attribute>
+            <gsp:scriptlet>if (it.name != null) {</gsp:scriptlet>
+            <name>${it.name}</name>
+            <gsp:scriptlet>}</gsp:scriptlet>
+            <gsp:scriptlet>if (it.minOccurs != null) {</gsp:scriptlet>
+            <minOccurs>${it.minOccurs}</minOccurs>
+            <gsp:scriptlet>}</gsp:scriptlet>
+            <gsp:scriptlet>if (it.maxOccurs != null) {</gsp:scriptlet>
+            <maxOccurs>${it.maxOccurs}</maxOccurs>
+            <gsp:scriptlet>}</gsp:scriptlet>
+            <gsp:scriptlet>if (it.nillable != null) {</gsp:scriptlet>
+            <nillable>${it.nillable}</nillable>
+            <gsp:scriptlet>}</gsp:scriptlet>
+            <gsp:scriptlet>if (it.binding != null) {</gsp:scriptlet>
+            <binding>${it.binding}</binding>
+            <gsp:scriptlet>}</gsp:scriptlet>
+        </attribute>
+        <gsp:scriptlet>}</gsp:scriptlet>
+    </attributes>
+</featureType>

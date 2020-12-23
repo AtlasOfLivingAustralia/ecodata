@@ -76,14 +76,13 @@ class WebService {
      * Proxies a request URL but doesn't assume the response is text based. (Used for proxying requests to
      * ecodata for excel-based reports)
      */
-    def proxyGetRequest(HttpServletResponse response, String url, boolean includeUserId = true, boolean includeApiKey = false) {
+    def proxyGetRequest(HttpServletResponse response, String url, boolean includeUserId = true, boolean includeApiKey = false, List headers = [HttpHeaders.CONTENT_DISPOSITION], int readTimeout) {
 
-        HttpURLConnection conn = configureConnection(url, includeUserId)
+        HttpURLConnection conn = configureConnection(url, includeUserId, readTimeout)
         if (includeApiKey) {
             conn.setRequestProperty("Authorization", grailsApplication.config.api_key);
         }
 
-        def headers = [HttpHeaders.CONTENT_DISPOSITION]
         response.setContentType(conn.getContentType())
         response.setContentLength(conn.getContentLength())
 
@@ -100,10 +99,16 @@ class WebService {
     }
 
 
-    def getJson(String url, Integer timeout = null) {
+    def getJson(String url, Integer timeout = null, Map headers = null) {
         def conn = null
         try {
             conn = configureConnection(url, false, timeout)
+            if (headers) {
+                headers.each {key, value  ->
+                    conn.setRequestProperty(key, value)
+                }
+            }
+
             def json = responseText(conn)
             return JSON.parse(json)
         } catch (ConverterException e) {
@@ -235,7 +240,7 @@ class WebService {
         }
     }
 
-    Map doPost(String url, String postBody, boolean includeAuthKey = true) {
+    Map doPost(String url, String postBody, boolean includeAuthKey = true, Map headers = null, boolean addALACookie = true) {
         HttpURLConnection conn = null
         def charEncoding = 'utf-8'
         try {
@@ -248,11 +253,20 @@ class WebService {
 
             }
 
-            def user = getUserService().getCurrentUserDetails()
-            if (user && user.userId) {
-                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
-                conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding))
+            if (addALACookie) {
+                def user = getUserService().getCurrentUserDetails()
+                if (user && user.userId) {
+                    conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                    conn.setRequestProperty("Cookie", "ALA-Auth=" + java.net.URLEncoder.encode(user.userName, charEncoding))
+                }
             }
+
+            if (headers) {
+                headers.each {key, value  ->
+                    conn.setRequestProperty(key, value)
+                }
+            }
+
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
             wr.write(postBody)
             wr.flush()
@@ -283,6 +297,28 @@ class WebService {
             if (user) {
                 conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
             }
+            return conn.getResponseCode()
+        } catch(Exception e){
+            println e.message
+            return 500
+        } finally {
+            if (conn != null){
+                conn?.disconnect()
+            }
+        }
+    }
+
+    def doDelete(String url, Map headers) {
+        def conn = null
+        try {
+            conn = new URL(url).openConnection()
+            conn.setRequestMethod("DELETE")
+            if(headers) {
+                headers.each {key, value  ->
+                    conn.setRequestProperty(key, value)
+                }
+            }
+
             return conn.getResponseCode()
         } catch(Exception e){
             println e.message

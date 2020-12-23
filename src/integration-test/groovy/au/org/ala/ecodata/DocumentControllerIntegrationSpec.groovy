@@ -17,7 +17,7 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 @Integration
-class DocumentControllerSpec extends Specification {
+class DocumentControllerIntegrationSpec extends Specification {
 
     @Autowired
     DocumentController documentController

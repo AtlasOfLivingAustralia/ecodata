@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.COMPLETED
 import au.org.ala.ecodata.graphql.models.MeriPlan
 import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
+
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
@@ -38,6 +40,7 @@ class Project {
     String manager
     String grantId
     String workOrderId
+    String internalOrderId
     Date contractStartDate
     Date contractEndDate
     String groupId
@@ -56,8 +59,9 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
+    String managementUnitId
 	Map custom
-	Map risks
+	Risks risks
 	Date dateCreated
     Date lastUpdated
 	String promoteOnHomepage = 'no'
@@ -79,8 +83,13 @@ class Project {
     List<String> uNRegions = []
     List<String> countries = []
     List<String> industries = []
+    List<String> bushfireCategories = []
+    boolean isBushfire
     String origin = 'atlasoflivingaustralia'
     String baseLayer
+    MapLayersConfiguration mapLayersConfig
+    /** configure how activity is displayed on map for example point, heatmap or cluster. */
+    List mapDisplays
     List tempArgs = []
 
     boolean alaHarvest = false
@@ -91,10 +100,9 @@ class Project {
 
     /** The program of work this project is a part of, if any */
     String programId
-
     Hub hub
 
-    static embedded = ['associatedOrganisations','fundings']
+    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig', 'risks']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
 
@@ -147,6 +155,7 @@ class Project {
         externalId nullable:true
         description nullable:true, maxSize: 40000
         workOrderId nullable:true
+        internalOrderId nullable:true
         contractStartDate nullable: true
         contractEndDate nullable: true
         manager nullable:true
@@ -198,6 +207,11 @@ class Project {
         industries nullable: true
         programId nullable: true
         baseLayer nullable: true
+        isBushfire nullable: true
+        bushfireCategories nullable: true
+        mapLayersConfig nullable: true
+        managementUnitId nullable: true
+        mapDisplays nullable: true
         hub nullable: true
     }
 

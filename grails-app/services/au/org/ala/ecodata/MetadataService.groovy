@@ -336,10 +336,15 @@ class MetadataService {
     def getLocationMetadataForPoint(lat, lng) {
 
         def features = performLayerIntersect(lat, lng)
+        def localityValue = ''
+        if(grailsApplication.config.google.api.key) {
+            def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}&key=${grailsApplication.config.google.api.key}"
+            def result = webService.getJson(localityUrl)
+            localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
+        }
+        else
+            log.warn ('Config google.api.key is missing. Cannot access Google services without api key.')
 
-        def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
-        def result = webService.getJson(localityUrl)
-        def localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
         features << [locality: localityValue]
 
         // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
@@ -606,9 +611,16 @@ class MetadataService {
 
             def features = [:]
             if (includeLocality) {
-                def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
-                def result = webService.getJson(localityUrl)
-                def localityValue = (result?.results && result.results) ? result.results[0].formatted_address : ''
+                def localityValue = ''
+                if(grailsApplication.config.google.api.key) {
+                    def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}&key=${grailsApplication.config.google.api.key}"
+                    def result = webService.getJson(localityUrl)
+                    localityValue = (result?.results && result.results) ? result.results[0].formatted_address : ''
+                }
+                else {
+                    log.warn ('Config google.api.key is missing. Cannot access Google services without api key.')
+                }
+
                 features << [locality: localityValue]
             }
             features << getNvisClassesForPoint(lat as Double, lng as Double)

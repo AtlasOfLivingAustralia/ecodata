@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.AggregationResult
 import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.*
@@ -13,6 +13,7 @@ import static au.org.ala.ecodata.Status.*
  */
 @Transactional
 class ReportingService {
+    static transactional = true
 
     def permissionService, userService, activityService, commonService
 
