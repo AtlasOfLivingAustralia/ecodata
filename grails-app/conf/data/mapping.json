@@ -248,7 +248,7 @@
           }
         },
         "isBushfire":{
-          "type":"string",
+          "type":"boolean",
           "index":"not_analyzed"
         },
         "difficulty":{
@@ -268,7 +268,7 @@
           "index":"not_analyzed"
         },
         "isExternal":{
-          "type":"string",
+          "type":"boolean",
           "index":"not_analyzed"
         },
         "externalId": {

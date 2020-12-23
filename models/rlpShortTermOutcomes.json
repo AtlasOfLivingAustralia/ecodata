@@ -42,6 +42,10 @@
             }
           },
           {
+            "dataType": "stringList",
+            "name": "availablePriorities"
+          },
+          {
             "dataType": "list",
             "description": "",
             "name": "projectOutcomes",
@@ -307,7 +311,35 @@
                         "validate": "required",
                         "constraints": {
                           "type": "computed",
-                          "default": [],
+                          "default": [
+                            "Native fauna (disturbance)",
+                            "Habitat loss",
+                            "Land management practices",
+                            "Weeds",
+                            "Low population",
+                            "Pest animals (disturbance)",
+                            "Fire",
+                            "Disease/pathogens",
+                            "Pollution",
+                            "Climate change and severe weather",
+                            "Genetic bottleneck/inbreeding",
+                            "Data deficiency/lack of ecological data",
+                            "Human interferences/disturbance",
+                            "Livestock",
+                            "Weeding",
+                            "Fencing",
+                            "Climate change adaptation",
+                            "Improving market access opportunities through sustainability credentials",
+                            "Food security",
+                            "Comprehensive regenerative agricultural practices",
+                            "Feral animal management",
+                            "Water management",
+                            "Native vegetation management",
+                            "Ground cover management",
+                            "Fire management",
+                            "Farm Production management",
+                            "Soil Management"
+                          ],
                           "options": [
                             {
                               "condition": "otherAgOrEnv == \"Environment\" or agOrEnv == \"Env\"",
@@ -361,7 +393,57 @@
                         ],
                         "constraints": {
                           "type": "computed",
-                          "default": [],
+                          "default": [
+                            "Competition",
+                            "Predation",
+                            "Dieback/senescence",
+                            "Habitat fragmentation",
+                            "Land clearing",
+                            "Breeding place disturbance",
+                            "Feeding habitat loss/interference",
+                            "Loss of critical ecosystem service supporting habitat",
+                            "Domestic grazing/stock impacts",
+                            "Runoff",
+                            "Excessive fertiliser use",
+                            "Changes to hydrology and aquatic systems",
+                            "Excess recharge of groundwater",
+                            "Excess use of groundwater",
+                            "Control/spraying",
+                            "Competition",
+                            "Spread of weeds from surrounding areas",
+                            "Introduction of new weed",
+                            "Low population numbers",
+                            "Low area of habitat",
+                            "Competition/exclusion",
+                            "Predation",
+                            "Habitat degradation",
+                            "Disease transmission",
+                            "Introduction of new pest animals",
+                            "Lack of protection for ecological assets during fire control activities",
+                            "Lack of/inappropriate fire regime",
+                            "Areas that are infected",
+                            "Possible infection of disease free areas",
+                            "Chemical",
+                            "Eutrophication/algal blooms",
+                            "Inappropriate waste disposal",
+                            "Sediment",
+                            "Sea level rises",
+                            "Unexpected seasonal/temperature extremes",
+                            "Changed flooding regime",
+                            "Changed rainfall patterns",
+                            "Wildfire",
+                            "Flow-on effects of housing development",
+                            "Road/vehicle strike",
+                            "Recreational pressures",
+                            "Illegal activities",
+                            "Fish and harvesting aquatic resources (commercial)",
+                            "Recreational fishing",
+                            "Lack of strategic and statutory planning consideration for ecological assets",
+                            "Lack of knowledge and understanding",
+                            "Land use intensification",
+                            "Industrial development",
+                            "n/a"
+                          ],
                           "options": [
                             {
                               "condition": "threatCategory == \"Native fauna (disturbance)\"",
@@ -461,12 +543,6 @@
                               "condition": "threatCategory == \"Data deficiency/lack of ecological data\"",
                               "value": [
                                 "n/a"
-                              ]
-                            },
-                            {
-                              "condition": "threatCategory == \"Human interferences/disturbance\"",
-                              "value": [
-                                "14 - Human interferences/disturbance"
                               ]
                             },
                             {
@@ -495,7 +571,7 @@
                     "columns": [
                       {
                         "dataType": "text",
-                        "name": "threatCategory",
+                        "name": "additionalThreatCategory",
                         "validate": "required",
                         "constraints": [
                           "Native fauna (disturbance)",
@@ -516,20 +592,70 @@
                       {
                         "dataType": "text",
                         "description": "",
-                        "name": "keyThreat",
+                        "name": "additionalKeyThreat",
                         "constraints": {
                           "type": "computed",
-                          "default": [],
+                          "default": [
+                            "Competition",
+                            "Predation",
+                            "Dieback/senescence",
+                            "Habitat fragmentation",
+                            "Land clearing",
+                            "Breeding place disturbance",
+                            "Feeding habitat loss/interference",
+                            "Loss of critical ecosystem service supporting habitat",
+                            "Domestic grazing/stock impacts",
+                            "Runoff",
+                            "Excessive fertiliser use",
+                            "Changes to hydrology and aquatic systems",
+                            "Excess recharge of groundwater",
+                            "Excess use of groundwater",
+                            "Control/spraying",
+                            "Competition",
+                            "Spread of weeds from surrounding areas",
+                            "Introduction of new weed",
+                            "Low population numbers",
+                            "Low area of habitat",
+                            "Competition/exclusion",
+                            "Predation",
+                            "Habitat degradation",
+                            "Disease transmission",
+                            "Introduction of new pest animals",
+                            "Lack of protection for ecological assets during fire control activities",
+                            "Lack of/inappropriate fire regime",
+                            "Areas that are infected",
+                            "Possible infection of disease free areas",
+                            "Chemical",
+                            "Eutrophication/algal blooms",
+                            "Inappropriate waste disposal",
+                            "Sediment",
+                            "Sea level rises",
+                            "Unexpected seasonal/temperature extremes",
+                            "Changed flooding regime",
+                            "Changed rainfall patterns",
+                            "Wildfire",
+                            "Flow-on effects of housing development",
+                            "Road/vehicle strike",
+                            "Recreational pressures",
+                            "Illegal activities",
+                            "Fish and harvesting aquatic resources (commercial)",
+                            "Recreational fishing",
+                            "Lack of strategic and statutory planning consideration for ecological assets",
+                            "Lack of knowledge and understanding",
+                            "Land use intensification",
+                            "Industrial development",
+                            "n/a"
+                          ],
                           "options": [
                             {
-                              "condition": "threatCategory == \"Native fauna (disturbance)\"",
+                              "condition": "additionalThreatCategory == \"Native fauna (disturbance)\"",
                               "value": [
                                 "Competition",
                                 "Predation"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Habitat loss\"",
+                              "condition": "additionalThreatCategory == \"Habitat loss\"",
                               "value": [
                                 "Dieback/senescence",
                                 "Habitat fragmentation",
@@ -540,7 +666,7 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Land management practices\"",
+                              "condition": "additionalThreatCategory == \"Land management practices\"",
                               "value": [
                                 "Domestic grazing/stock impacts",
                                 "Runoff",
@@ -551,7 +677,7 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Weeds\"",
+                              "condition": "additionalThreatCategory == \"Weeds\"",
                               "value": [
                                 "Control/spraying",
                                 "Competition",
@@ -560,14 +686,14 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Low population\"",
+                              "condition": "additionalThreatCategory == \"Low population\"",
                               "value": [
                                 "Low population numbers",
                                 "Low area of habitat"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Pest animals (disturbance)\"",
+                              "condition": "additionalThreatCategory == \"Pest animals (disturbance)\"",
                               "value": [
                                 "Competition/exclusion",
                                 "Predation",
@@ -577,21 +703,21 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Fire\"",
+                              "condition": "additionalThreatCategory == \"Fire\"",
                               "value": [
                                 "Lack of protection for ecological assets during fire control activities",
                                 "Lack of/inappropriate fire regime"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Disease/pathogens\"",
+                              "condition": "additionalThreatCategory == \"Disease/pathogens\"",
                               "value": [
                                 "Areas that are infected",
                                 "Possible infection of disease free areas"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Pollution\"",
+                              "condition": "additionalThreatCategory == \"Pollution\"",
                               "value": [
                                 "Chemical",
                                 "Eutrophication/algal blooms",
@@ -600,7 +726,7 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Climate change and severe weather\"",
+                              "condition": "additionalThreatCategory == \"Climate change and severe weather\"",
                               "value": [
                                 "Sea level rises",
                                 "Unexpected seasonal/temperature extremes",
@@ -610,25 +736,19 @@
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Genetic bottleneck/inbreeding\"",
+                              "condition": "additionalThreatCategory == \"Genetic bottleneck/inbreeding\"",
                               "value": [
                                 "n/a"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Data deficiency/lack of ecological data\"",
+                              "condition": "additionalThreatCategory == \"Data deficiency/lack of ecological data\"",
                               "value": [
                                 "n/a"
                               ]
                             },
                             {
-                              "condition": "threatCategory == \"Human interferences/disturbance\"",
-                              "value": [
-                                "14 - Human interferences/disturbance"
-                              ]
-                            },
-                            {
-                              "condition": "threatCategory == \"Human interferences/disturbance\"",
+                              "condition": "additionalThreatCategory == \"Human interferences/disturbance\"",
                               "value": [
                                 "Flow-on effects of housing development",
                                 "Road/vehicle strike",
@@ -1011,6 +1131,24 @@
                 "source-path": "custom.details.outcomes.shortTermOutcomes"
               }
             ]
+          },
+          {
+            "source": {
+              "params": [
+                {
+                  "expression": "owner.projectId",
+                  "name": "id",
+                  "type": "computed"
+                }
+              ],
+              "url": "/project/listProjectInvestmentPriorities/"
+            },
+            "mapping": [
+              {
+                "target":"availablePriorities",
+                "source-path": ""
+              }
+            ]
           }
         ],
         "viewModel": [
@@ -1175,13 +1313,13 @@
                           {
                             "title": "Major threats",
                             "type": "select2",
-                            "source": "threatCategory",
+                            "source": "additionalThreatCategory",
                             "width": "50%"
                           },
                           {
                             "title": "Threat",
                             "type": "select2",
-                            "source": "keyThreat",
+                            "source": "additionalKeyThreat",
                             "width": "50%"
                           }
                         ]
@@ -1225,7 +1363,7 @@
                     "items": [
                       {
                         "type": "literal",
-                        "source": "What level of change has been achieved against the project baseline?"
+                        "source": "What level of change has been achieved against the project baseline?<br/>Refer to the criteria matrix in the <a href=\"http://www.nrm.gov.au/publications/rlp-merit-user-guide\">RLP Outcomes Reporting Guide</a>."
                       }
                     ]
                   },
@@ -1292,8 +1430,9 @@
               {
                 "type": "table",
                 "source": "dataSets",
-                "userAddedRows": false,
-                "tableDataUpload": false,
+                "userAddedRows": true,
+                "disableTableDownload": true,
+                "disableTableUpload": true,
                 "columns": [
                   {
                     "source": "dataSetName",
