@@ -96,4 +96,30 @@ class FilteredAggregatorSpec extends Specification {
 
         result.result == 5+6+7+8
     }
+
+    def "Outputs can be filtered by type and formVersion for scoring purposes"() {
+        given:
+        Aggregation score = new Aggregation(property:"data.details.area", type:"SUM")
+        GroupingConfig outputTypeFilter = new GroupingConfig(property:"name", filterValue: "RLP - Improving hydrological regimes", type:"filter")
+        GroupingConfig outputVersionFilter = new GroupingConfig("property":"formVersion", filterValue:1, type:"filter")
+
+        FilteredAggregationConfig versionFilter = new FilteredAggregationConfig(label:"Version filter", childAggregations: [score], filter:outputVersionFilter)
+        FilteredAggregationConfig aggregationConfig = new FilteredAggregationConfig(label:"Output type filter", childAggregations: [versionFilter], filter:outputTypeFilter)
+        FilteredAggregator filteredAggregator = new FilteredAggregator(aggregationConfig)
+
+        List<Map> data = [
+                ["name":"RLP - Improving hydrological regimes", formVersion: 1, data:[details:[area:3]]],
+                ["name":"RLP - Improving hydrological regimes", formVersion: 2, data:[details:[area:5]]]
+        ]
+
+        when:
+        data.each {
+            filteredAggregator.aggregate(it)
+        }
+        SingleResult result = filteredAggregator.result()
+
+        then: "Only formVersion 1 is included in the result"
+        result.result == 3
+
+    }
 }

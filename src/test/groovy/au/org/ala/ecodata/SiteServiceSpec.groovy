@@ -190,6 +190,18 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         site.extent.geometry.test == 'test'
     }
 
+    def "must return precision depending on area of bounding box" () {
+        def result
+
+        expect:
+        service.calculateGeohashPrecision(bbox) == precision
+
+        where:
+        precision   | bbox
+        4           | ["type":"Polygon","coordinates":[[[132.890625,-31.53076171875],[156.796875,-31.53076171875],[156.796875,-16.435546875],[132.890625,-16.435546875],[132.890625,-31.53076171875]]]]
+        5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
+    }
+
 
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]

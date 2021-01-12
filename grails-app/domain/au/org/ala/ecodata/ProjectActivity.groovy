@@ -12,6 +12,7 @@ class ProjectActivity {
     String status
     String pActivityFormName
     String methodType
+    String methodName
     boolean commentsAllowed
     Date startDate
     Date endDate
@@ -19,7 +20,9 @@ class ProjectActivity {
     List sites = [] // list of sites associated to the survey
     boolean restrictRecordToSites
     boolean allowAdditionalSurveySites
-    boolean selectFromSitesOnly
+    /**
+     * Removed selectFromSitesOnly
+     */
     String baseLayersName
     String excludeProjectSite // Exclude projectsite from site selection dropdown
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
@@ -38,10 +41,14 @@ class ProjectActivity {
     String dataManagementPolicyDescription
     String dataManagementPolicyURL
     String dataManagementPolicyDocument
+    String dataSharingLicense
+    MapLayersConfiguration mapLayersConfig
+    String surveySiteOption
+    boolean canEditAdminSelectedSites
     Date dateCreated
     Date lastUpdated
 
-    static embedded = ['visibility']
+    static embedded = ['visibility', 'mapLayersConfig']
 
     static hasMany = [submissionRecords: SubmissionRecord]
 
@@ -63,7 +70,6 @@ class ProjectActivity {
         sites nullable: true
         restrictRecordToSites nullable: true
         allowAdditionalSurveySites nullable: true
-        selectFromSitesOnly nullable: true
         baseLayersName nullable: true
         publicAccess nullable: true
         visibility nullable: true
@@ -75,6 +81,9 @@ class ProjectActivity {
         dataManagementPolicyURL nullable: true
         dataManagementPolicyDocument nullable: true
         excludeProjectSite nullable: true
+        mapLayersConfig nullable: true
+        surveySiteOption nullable: true, inList: ['sitepick','sitecreate', 'sitepickcreate']
+        canEditAdminSelectedSites nullable: true
     }
 
     static mapping = {

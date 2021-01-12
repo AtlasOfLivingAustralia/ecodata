@@ -55,4 +55,4 @@ ecodata depends on a running instance of CAS and the API Key service so ensure t
 ```
 grails run-app 
 ```
-Because of the embedded elasticsearch index and the creation of in-memory spreadsheets for download, ecodata can benefit from a larger heap.  If you encounter OutOfMemoryErrors, increase the application heap size with -Xmx4G
+Because of the embedded elasticsearch index and the creation of in-memory spreadsheets for download, ecodata can benefit from a larger heap.  If you encounter OutOfMemoryErrors, increase the application heap size with -Xmx4G. 

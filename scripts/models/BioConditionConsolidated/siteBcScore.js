@@ -25,6 +25,27 @@ self.initialiseBenchmarkTable = function () {
     }
 };
 
+
+self.updateScore = function(){
+    // Calculate
+   /* var avg = 0;
+    var total = (parseFloat(self.data.largeTreesScore()) +
+        parseFloat(self.data.aveCanopyHeightScore()) +
+        parseFloat(self.data.emergentHeightScore()) +
+        parseFloat(self.data.edlCanopyHeightScore()) +
+        parseFloat(self.data.edlRecruitmentScore()) +
+        parseFloat(self.data.siteBcScore()) +
+        parseFloat(self.data.numTreeSpeciesTotal()) +
+        parseFloat(self.data.numShrubSpeciesTotal()) +
+        parseFloat(self.data.numGrassSpeciesTotal()) +
+        parseFloat(self.data.numForbSpeciesTotal));
+
+    // TODO Fix this
+    self.data.siteBcScore(total > 0 ? parseFloat(total)/10 : 0);
+    */
+};
+
+
 // Example keys: Recruitment of dominant canopy species (%)
 self.lookupBenchmarkValues = function(key) {
     var value = '';
@@ -83,8 +104,6 @@ self.data.siteBcScore = ko.observable().extend({numericString: 2});
 
 // Populate Benchmark value.
 self.data.bioregion.subscribe(function (obj) {
-
-
     var table;
     if ($.isEmptyObject(self.supportedBioregions)) {
         self.supportedBioregions = self.loadLookups('BioConditionAssessmentBioRegions');
@@ -109,18 +128,23 @@ self.data.bioregion.subscribe(function (obj) {
         ecoSystemsArray.push({text: value, value: value});
     });
 
-    bootbox.prompt({
-        title: "<h1>Select regional ecosystem / landscape<h1>",
-        inputType: 'select',
-        inputOptions: ecoSystemsArray,
-        callback: function (result) {
-            if(result === null) {
-                // Cancel button pressed.
-            } else {
-                self.setBenchmarkValues(result);
+    //TODO
+    var pathname = window.location.pathname;
+    if(pathname.includes("create")){
+        bootbox.prompt({
+            title: "<h1>Select regional ecosystem / landscape<h1>",
+            inputType: 'select',
+            inputOptions: ecoSystemsArray,
+            callback: function (result) {
+                if(result === null) {
+                    // Cancel button pressed.
+                } else {
+                    self.setBenchmarkValues(result);
+                }
             }
-        }
-    });
+        });
+    }
+
 });
 
 self.setBenchmarkValues = function(benchmarkCode){
@@ -252,6 +276,8 @@ self.transients.emergentHeightInMetres = ko.computed(function () {
 
     self.data.emergentHeightScore(score);
     self.transients.aveCanopyHeightScore();
+
+    self.updateScore();
 });
 
 self.transients.edlCanopyHeightScore = ko.computed(function () {
@@ -287,6 +313,7 @@ self.transients.edlCanopyHeightScore = ko.computed(function () {
 
     self.data.edlCanopyHeightScore(score);
     self.transients.aveCanopyHeightScore();
+    self.updateScore();
 });
 
 self.transients.subcanopyHeightScore = ko.computed(function () {
@@ -318,6 +345,7 @@ self.transients.subcanopyHeightScore = ko.computed(function () {
 
     self.data.subcanopyHeightScore(score);
     self.transients.aveCanopyHeightScore();
+    self.updateScore();
 });
 
 
@@ -351,6 +379,7 @@ self.transients.edlRecruitmentScore  = ko.computed(function () {
     }
 
     self.data.edlRecruitmentScore(score);
+    self.updateScore();
 });
 
 // 5.1.4 Native tree species richness - Page 18 - Table 11
@@ -404,6 +433,8 @@ self.data.treeSpeciesRichness.subscribe(function (obj) {
 
     // TODO: Check whether we need to calculate number of unknown species.
     self.data.numTreeSpeciesTotal(score);
+
+    self.updateScore();
 });
 // << END OF 100 x 50m Area
 
@@ -441,6 +472,7 @@ self.data.shrubSpeciesRichness.subscribe(function (obj) {
 
     // TODO: Check whether we need to calculate number of unknown species.
     self.data.numShrubSpeciesTotal(score);
+    self.updateScore();
 });
 
 self.data.grassSpeciesRichness.subscribe(function (obj) {
@@ -475,6 +507,7 @@ self.data.grassSpeciesRichness.subscribe(function (obj) {
 
     // TODO: Check whether we need to calculate number of unknown species.
     self.data.numGrassSpeciesTotal(score);
+    self.updateScore();
 });
 
 
@@ -509,6 +542,7 @@ self.data.forbsAndOtherNonGrassGroundSpeciesRichness.subscribe(function (obj) {
     }
     // TODO: Check whether we need to calculate number of unknown species.
     self.data.numForbSpeciesTotal(score);
+    self.updateScore();
 });
 
 // 5.4.2 Non-native plant cover
@@ -545,7 +579,7 @@ self.data.nonNativeSpeciesRichness.subscribe(function (obj) {
     }
 
     self.data.nonNativePlantCoverPercent(score);
-
+    self.updateScore();
     // TODO: Check whether we need to calculate number of unknown species.
     // TODO: self.data.numNonNativeSpeciesTotal(score); - Benchmark not available.
 });
@@ -589,8 +623,125 @@ self.data.totalCwdLength.subscribe(function (obj){
 // Refer groundCover.js
 // << End of Five 1x1m plots - Ground Cover
 
+// Calculate - 100m Transect
+// 5.2.1 Tree Canopy Cover
+self.data.treeCanopyRecords.subscribe(function (obj){
+    var percentCoverC = 0;
+    var percentCoverS = 0;
+    var percentCoverE = 0;
+    var cCount = 0;
+    var sCount = 0;
+    var eCount = 0;
+    // TODO : Does type of tree matter ie; exotic and native?
+    $.each(self.data.treeCanopyRecords(), function( index, value ) {
+        if(value.treeOrTreeGroup() == 'C') {
+            percentCoverC = parseFloat(percentCoverC) + parseFloat(value.distance()) - parseFloat(value.totalTCCover());
+            cCount++;
+        } else if(value.treeOrTreeGroup() == 'S') {
+            percentCoverS = parseFloat(percentCoverS) + parseFloat(value.distance()) - parseFloat(value.totalTCCover());
+            sCount++;
+        } else if (value.treeOrTreeGroup() == 'E') {
+            percentCoverE = parseFloat(percentCoverE) + parseFloat(value.distance()) - parseFloat(value.totalTCCover());
+            eCount++;
+        }
+    });
 
-// TODO: Calculate - 100m Transect
+    self.data.percentCoverC(percentCoverC);
+    self.data.percentCoverS(percentCoverS);
+    self.data.percentCoverE(percentCoverE);
+
+    var benchmarkTreeCanapyCover = self.lookupBenchmarkValues('Trees - Tree canopy - Tree canopy cover (%)');
+    var benchmarkTreeSubCanapyCover = self.lookupBenchmarkValues('Trees - Tree sub-canopy - Tree sub-canopy cover (%)');
+    var benchmarkTreeEmergentCover = self.lookupBenchmarkValues('Trees - Emergent canopy - Tree emergent canopy cover (%)');
+
+    var assessmentPercentage = 0;
+    if(benchmarkTreeCanapyCover != 'na' && !isNaN(percentCoverC) && !isNaN(benchmarkTreeCanapyCover) && benchmarkTreeCanapyCover > 0) {
+        assessmentPercentage = parseInt(parseInt(percentCoverC)/parseInt(benchmarkTreeCanapyCover)) * 100;
+    }
+    self.data.coverScoreC(self.genericTableLookupScore('table_8',assessmentPercentage));
+
+    assessmentPercentage = 0;
+    if(benchmarkTreeSubCanapyCover != 'na' && !isNaN(percentCoverS) && !isNaN(benchmarkTreeSubCanapyCover) && benchmarkTreeSubCanapyCover > 0) {
+        assessmentPercentage = parseInt(parseInt(percentCoverS)/parseInt(benchmarkTreeSubCanapyCover)) * 100;
+    }
+    self.data.coverScoreS(self.genericTableLookupScore('table_8',assessmentPercentage));
+
+    assessmentPercentage = 0;
+    if(benchmarkTreeEmergentCover != 'na' && !isNaN(percentCoverE) && !isNaN(benchmarkTreeEmergentCover) && benchmarkTreeEmergentCover > 0) {
+        assessmentPercentage = parseInt(parseInt(percentCoverE)/parseInt(benchmarkTreeEmergentCover)) * 100;
+    }
+    self.data.coverScoreE(self.genericTableLookupScore('table_8',assessmentPercentage));
+
+    var treeCanopyCoverScoreAve = (cCount+sCount+eCount)/3; // TODO divided by 2 or 3? Should we include 0 entry?
+    self.data.treeCanopyCoverScoreAve(treeCanopyCoverScoreAve);
+    self.updateScore();
+});
+
+// 5.2.2 Shrub Cover
+self.data.shrubCanopyRecords.subscribe(function (obj){
+    var percentCoverNative = 0;
+    var percentCoverExotic = 0;
+
+    // TODO : Does type of tree matter ie; exotic and native?
+    $.each(self.data.shrubCanopyRecords(), function( index, value ) {
+        if(value.shrubType() == 'native') {
+            percentCoverNative = parseFloat(percentCoverNative) + parseFloat(value.distance()) - parseFloat(value.totalSCCover());
+        } else if(value.shrubType() == 'exotic') {
+            percentCoverExotic = parseFloat(percentCoverExotic) + parseFloat(value.distance()) - parseFloat(value.totalSCCover());
+        }
+    });
+
+    self.data.percentCoverNative(percentCoverNative);
+    self.data.percentCoverExotic(percentCoverExotic);
+
+    var benchmarkShrubCoverNative = self.lookupBenchmarkValues('Shrubs - Native shrub cover (%)');
+    var assessmentPercentage = 0;
+    if(benchmarkShrubCoverNative != 'na' && !isNaN(percentCoverNative) && !isNaN(benchmarkShrubCoverNative) && benchmarkShrubCoverNative > 0) {
+        assessmentPercentage = parseInt(parseInt(percentCoverNative)/parseInt(benchmarkShrubCoverNative)) * 100;
+    }
+
+    self.data.shrubCanopyCoverScoreN(self.genericTableLookupScore('table_9',assessmentPercentage));
+    self.updateScore();
+});
+
+self.genericTableLookupScore = function(tableName, assessmentPercentage) {
+    var score = 0;
+    var table;
+    // Get the table value
+    $.grep(!$.isEmptyObject(self.bioConditionAssessmentTableReference) ? self.bioConditionAssessmentTableReference.value : [], function (row) {
+        if (row.key == tableName) {
+            table = row;
+        }
+    });
+
+
+    if(tableName == 'table_8' && table && table.value && table.value.length == 4) {
+        if (table.value[0].name == '<10' && assessmentPercentage < 10) {
+            score = table.value[0].value;
+        } else if (table.value[1].name == '>=10% and <50%' && assessmentPercentage >= 10 && assessmentPercentage < 50) {
+            score = table.value[1].value;
+        } else if (table.value[2].name == '>=50% or <=200%' && assessmentPercentage >= 50 && assessmentPercentage <= 200) {
+            score = table.value[2].value;
+        } else if (table.value[3].name == '>200%' && assessmentPercentage > 200) {
+            score = table.value[3].value;
+        }
+    }
+
+    if(tableName == 'table_9' && table && table.value && table.value.length == 3) {
+        if (table.value[0].name == '<10% of benchmark shrub cover' && assessmentPercentage < 10) {
+            score = table.value[0].value;
+        } else if (table.value[1].name == '>/= 10 to <50% or >200% of benchmark shrub cover' && ((assessmentPercentage >= 10 && assessmentPercentage < 50) || assessmentPercentage >= 200)) {
+            score = table.value[1].value;
+        } else if (table.value[2].name == '≥50% or ≤200% of benchmark shrub cover' && assessmentPercentage >= 50 && assessmentPercentage <= 200) {
+            score = table.value[2].value;
+        }
+    }
+
+    return score;
+};
+
+
+
 
 // Calculate - Assessment - Landscape Attributes
 // Start of 6.1 Landscaping
@@ -621,6 +772,8 @@ self.data.connectivity.subscribe(function (obj) {
             self.data.connectivityScore(row.value);
         }
     });
+
+    self.updateScore();
 });
 
 self.data.landscapeContext.subscribe(function (obj) {
@@ -637,6 +790,8 @@ self.data.landscapeContext.subscribe(function (obj) {
             self.data.landscapeContextScore(row.value);
         }
     });
+
+    self.updateScore();
 });
 
 self.data.distanceFromWater.subscribe(function (obj) {
@@ -652,6 +807,7 @@ self.data.distanceFromWater.subscribe(function (obj) {
             self.data.distanceFromWaterScore(row.value);
         }
     });
+    self.updateScore();
 });
 // End of 6.1 Landscaping
 

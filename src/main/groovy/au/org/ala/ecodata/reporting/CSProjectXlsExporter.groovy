@@ -42,8 +42,8 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
 
-    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
-    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
+    List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
+    List<String> recordProperties = ["occurrenceID", "guid", "activityId", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
 
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
@@ -226,17 +226,11 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                         if (rowSets.size() == 1 && rows.size() > 1) {
                             rows.each {
-                                // TODO: check this after remerge code from dev
-                                if (rowSets[0] instanceof BasicDBObject) {
-                                    it.putAll(rowSets[0].toMap())
-                                }
+                                it.putAll(rowSets[0])
                             }
                         } else {
                             rowSets.eachWithIndex { outputFields, index ->
-                                // TODO: check this after remerge code from dev again
-                                    if (outputFields instanceof BasicDBObject) {
-                                    rows[index].putAll(outputFields.toMap())
-                                }
+                                rows[index].putAll(outputFields)
                             }
                         }
 

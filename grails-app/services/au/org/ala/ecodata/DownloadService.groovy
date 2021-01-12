@@ -4,6 +4,7 @@ import au.org.ala.ecodata.reporting.CSProjectXlsExporter
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ShapefileBuilder
 import au.org.ala.ecodata.reporting.XlsExporter
+import grails.async.Promise
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -43,13 +44,14 @@ class DownloadService {
         String fileExtension = params.fileExtension?:'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
 
-        task {
+        Promise p = task {
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
-            Project.withNewSession {
-                downloadAction(outputStream, params)
-            }
-        }.onComplete {
+               Project.withNewSession {
+                   downloadAction(outputStream, params)
+               }
+        }
+        p.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
             String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
@@ -59,8 +61,9 @@ class DownloadService {
                 outputStream.flush()
                 outputStream.close()
             }
-        }.onError { Throwable error ->
-            log.error("Failed to generate zip file for download.", error)
+        }
+        p.onError { Throwable error ->
+            log.error("Failed to generate file for download.", error)
             String body = groovyPageRenderer.render(template: "/email/downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {

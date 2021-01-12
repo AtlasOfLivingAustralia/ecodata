@@ -341,7 +341,7 @@ class ProjectActivityService {
 
     boolean isProjectActivityDataPublic (Map projectActivity) {
         EmbargoOption option = projectActivity.visibility?.embargoOption as EmbargoOption
-        if ((option != EmbargoOption.NONE) && (!projectActivity?.visibility?.embargoUntil.after(new Date()) )) {
+        if ((option != EmbargoOption.NONE) && (!projectActivity?.visibility?.embargoUntil?.after(new Date()) )) {
             if ( Activity.countByProjectActivityIdAndStatus(projectActivity.projectActivityId, ACTIVE) > 0 ) {
                 return true
             }
@@ -411,5 +411,47 @@ class ProjectActivityService {
         }
 
         ""
+    }
+
+    String generateCollectoryAttributionText (ProjectActivity projectActivity) {
+        def name = projectActivity?.name
+        String attribution = ""
+        Project project = Project.findByProjectId(projectActivity?.projectId)
+        if (projectActivity && name && project) {
+            def orgName = project.organisationName
+            if (orgName) {
+                def calendar = Calendar.getInstance()
+                def year = calendar.get(Calendar.YEAR).toString()
+                attribution = [orgName, " (", year, ") ", name, " dataset"].join()
+                return attribution
+            }
+        }
+
+        attribution
+    }
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a list of the project activity that match the supplied criteria
+     */
+    List<Map> search(Map searchCriteria, levelOfDetail = []) {
+
+        def criteria = ProjectActivity.createCriteria()
+        def projectActivities = criteria.list {
+            ne("status", DELETED)
+            searchCriteria.each { prop, value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                } else {
+                    eq(prop, value)
+                }
+            }
+
+        }
+
+        projectActivities.collect { toMap(it, levelOfDetail) }
     }
 }

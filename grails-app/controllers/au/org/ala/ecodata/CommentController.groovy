@@ -92,7 +92,7 @@ class CommentController {
             response.sendError(SC_BAD_REQUEST, 'Missing text');
         } else {
             Map result
-            json.isALAAdmin = (json.isALAAdmin?:false) as Boolean;
+            json.isALAAdmin = (json?.isALAAdmin != null ? json?.isALAAdmin?.toString()?.toBoolean() : false)
             Comment comment = commentService.update(json);
             if(comment){
                 if ((comment.userId == json.userId) || json.isALAAdmin) {
@@ -120,7 +120,7 @@ class CommentController {
         if (!params.id) {
             response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
-            params.isALAAdmin = (params.isALAAdmin?:false) as Boolean;
+            params.isALAAdmin = params.boolean('isALAAdmin');
 
             boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
 

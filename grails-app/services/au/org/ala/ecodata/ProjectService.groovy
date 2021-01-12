@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
@@ -22,7 +23,7 @@ class ProjectService {
     static final PROMO = 'promo'
     static final OUTPUT_SUMMARY = 'outputs'
     static final ENHANCED = 'enhanced'
-    static final PRIVATE_SITES_REMOVED  = 'privatesitesremoved'
+    static final PRIVATE_SITES_REMOVED = 'privatesitesremoved'
 
     def grailsApplication
     MessageSource messageSource
@@ -82,7 +83,7 @@ class ProjectService {
      * @param projectId the projectId of the project
      * @return
      */
-    List<Map> getProjectServicesWithTargets(String projectId){
+    List<Map> getProjectServicesWithTargets(String projectId) {
         def project = get(projectId)
         if (project)
             return metadataService.getProjectServicesWithTargets(project)
@@ -122,7 +123,7 @@ class ProjectService {
         list.collect { toMap(it, PROMO) }
     }
 
-    def listProjectForAlaHarvesting (Map params, List status = ['active']){
+    def listProjectForAlaHarvesting(Map params, List status = ['active']) {
 
         def list = Project.createCriteria().list(max: params.max, offset: params.offset) {
             and {
@@ -145,21 +146,21 @@ class ProjectService {
     Map toMap(project, levelOfDetail = [], includeDeletedActivities = false, version = null) {
         Map result
 
-        Map mapOfProperties = project instanceof Project ? GormMongoUtil.extractDboProperties(project.getProperty("dbo")) : project //[*:GormMongoUtil.extractDboProperties(project.getProperty("dbo"))] : project
+        Map mapOfProperties = project instanceof Project ? GormMongoUtil.extractDboProperties(project.getProperty("dbo")) : project
 
-        if(levelOfDetail instanceof  List){
+        if (levelOfDetail instanceof List) {
             levelOfDetail = levelOfDetail[0]
         }
 
         if (levelOfDetail == BASIC) {
             result = [
-                    projectId           : project.projectId,
-                    name                : project.name,
-                    dataResourceId      : project.dataResourceId,
-                    dataProviderId      : project.dataProviderId,
-                    status              : project.status,
-                    alaHarvest          : project.alaHarvest
-                    ]
+                    projectId     : project.projectId,
+                    name          : project.name,
+                    dataResourceId: project.dataResourceId,
+                    dataProviderId: project.dataProviderId,
+                    status        : project.status,
+                    alaHarvest    : project.alaHarvest
+            ]
         } else if (levelOfDetail == BRIEF) {
             result = [
                     projectId           : project.projectId,
@@ -190,7 +191,7 @@ class ProjectService {
 
             if (levelOfDetail != FLAT) {
                 mapOfProperties.remove("sites")
-                if(levelOfDetail == PRIVATE_SITES_REMOVED){
+                if (levelOfDetail == PRIVATE_SITES_REMOVED) {
                     mapOfProperties.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, [SiteService.FLAT])
                 } else {
                     mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
@@ -223,17 +224,28 @@ class ProjectService {
             //result = GormMongoUtil.deepPrune(mapOfProperties)
 
             //Fetch name of MU
-            if(result?.managementUnitId){
-                ManagementUnit mu =  ManagementUnit.findByManagementUnitId(result.managementUnitId)
-                result['managementUnitName'] =mu?.name
+            if (result?.managementUnitId) {
+                ManagementUnit mu = ManagementUnit.findByManagementUnitId(result.managementUnitId)
+                result['managementUnitName'] = mu?.name
             }
-
+            // Populate the associatedProgram and associatedSubProgram properties if the programId exists.
+            if (result?.programId) {
+                Program program = Program.findByProgramId(result.programId)
+                if (program) {
+                    if (program.parent) {
+                        result['associatedProgram'] = program.parent.name
+                        result['associatedSubProgram'] = program.name
+                    } else {
+                        result['associatedProgram'] = program.name
+                    }
+                }
+            }
 
             // look up current associated organisation details
             result.associatedOrgs?.each {
                 if (it.organisationId) {
                     Organisation org = Organisation.findByOrganisationId(it.organisationId)
-                    if(org){
+                    if (org) {
                         it.name = org.name
                         it.url = org.url
                         it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
@@ -271,7 +283,7 @@ class ProjectService {
     }
 
     def create(props, boolean collectoryLink = true, boolean overrideUpdateDate = false) {
-      //  assert getCommonService()
+
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
@@ -279,7 +291,7 @@ class ProjectService {
                 return [status: 'error', error: 'Duplicate project id for create ' + props.projectId]
             }
 
-            props = prepareProject(props)
+            props = includeProjectFundings(props)
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             Project project = new Project(projectId: props.projectId ?: Identifiers.getNew(true, ''), name: props.name)
             // Not flushing on create was causing that further updates to fields were overriden by old values
@@ -289,7 +301,9 @@ class ProjectService {
             props.remove('id')
 
             if (collectoryLink) {
-                establishCollectoryLinkForProject(project, props)
+                List projectActivities = projectActivityService.getAllByProject(props.projectId)
+                props = includeProjectActivities(props, projectActivities)
+                updateCollectoryLinkForProject(project, props)
             }
 
             commonService.updateProperties(project, props, overrideUpdateDate)
@@ -303,13 +317,14 @@ class ProjectService {
         }
     }
 
-    /*Fundings in project passed from POST is an array of JSON objects
-    *it needs to be covnerted to Grail object to use embedded field
-    * Remove unnecceary fields of JSON
-    */
 
-    private prepareProject(Map props){
-        if(props.fundings){
+    /**
+     * Include project funding data.
+     * @param props Project properties
+     * @return
+     */
+    private Map includeProjectFundings(Map props) {
+        if (props?.fundings) {
             List fundings = []
             props.fundings.each {
                 fundings.add(new Funding(it));
@@ -320,43 +335,79 @@ class ProjectService {
     }
 
 
-
-    /*
-     * Async task for establishing the Collectory data resource - this is because it could be relatively slow and we do
-     * not want to delay the project creation process for the user.
+    /**
+     * Include project activities specific to BioCollect projects.
+     * @param props Project properties
+     * @param projectActivities Project Activity/ Survey data
+     * @return
      */
-
-    private establishCollectoryLinkForProject(Project project, Map props) {
-        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
-
-            task {
-                Map collectoryProps = [:]
-                collectoryProps << collectoryService.createDataResource(props)
-
-                Project.withSession {
-                    commonService.updateProperties(project, collectoryProps)
-                }
-            }.onComplete {
-                log.info("Collectory link established for project ${project.name} (id = ${project.projectId})")
-            }.onError { Throwable error ->
-                if (error instanceof UndeclaredThrowableException) {
-                    error = error.undeclaredThrowable
-                }
-                String message = "Failed to establish collectory link for project ${project.name} (id = ${project.projectId})"
-                log.error(message, error)
-                emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
-            }
+    private Map includeProjectActivities(Map props, List projectActivities) {
+        if (props && projectActivities) {
+            props.citation = buildProjectCitation(projectActivities)
+            props.methodStepDescription = buildMethodDescription(projectActivities)
+            props.qualityControlDescription = buildQualityControlDescription(projectActivities)
         }
+        return props
+    }
+
+    private buildProjectCitation(List projectActivities) {
+
+        String citation = ""
+        projectActivities.each {
+            citation += it.name + ": " + projectActivityService.generateCollectoryAttributionText(it as ProjectActivity) + "\n"
+        }
+        return citation
+    }
+
+    private buildMethodDescription(List projectActivities) {
+        String method = ""
+        projectActivities.each {
+            String name = it.name + " method:"
+            method = [method, name, it.methodType, it.methodName, it.methodUrl].findAll({ it != null }).join("\n")
+        }
+        return method
+    }
+
+    private buildQualityControlDescription(List projectActivities) {
+        String qualityDescription = ""
+        String assurance_methods = null
+        String assurance_description = null
+        String policy_description = null
+        String policy_url = null
+
+        projectActivities.each {
+            String name = it.name + " data quality description:"
+
+            if (it.dataQualityAssuranceMethods) {
+                String method_string = it.dataQualityAssuranceMethods.join(", ")
+                assurance_methods = "Data quality assurance methods: " + method_string
+            }
+            if (it.dataQualityAssuranceDescription) {
+                assurance_description = "Data quality assurance description: " + it.dataQualityAssuranceDescription
+            }
+
+            if (it.dataManagementPolicyDescription) {
+                policy_description = "Data Management policy description: " + it.dataManagementPolicyDescription
+            }
+
+            if (it.dataManagementPolicyURL) {
+                policy_url = "Data Management policy url: " + it.dataManagementPolicyURL
+            }
+            qualityDescription = [qualityDescription, name, assurance_methods, assurance_description, policy_description, policy_url].findAll({ it != null }).join("\n")
+        }
+        return qualityDescription
     }
 
     private updateCollectoryLinkForProject(Project project, Map props) {
+
+
         if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             Map projectProps = toMap(project, FLAT)
             task {
                 collectoryService.updateDataResource(projectProps, props)
             }.onComplete {
-                log.info("Collectory link updated for project ${project.name} (id = ${project.projectId})")
+                log.info("Completed task to link project with collectory - ${project.name} (id = ${project.projectId})")
             }.onError { Throwable error ->
                 if (error instanceof UndeclaredThrowableException) {
                     error = error.undeclaredThrowable
@@ -368,13 +419,18 @@ class ProjectService {
         }
     }
 
-    def update(Map props, String id) {
+    def update(Map props, String id, Boolean shouldUpdateCollectory = true) {
         Project project = Project.findByProjectId(id)
         if (project) {
-            props = prepareProject(props)
+            // retrieve any project activities associated with the project
+            List projectActivities = projectActivityService.getAllByProject(id)
+            props = includeProjectFundings(props)
+            props = includeProjectActivities(props, projectActivities)
             try {
                 commonService.updateProperties(project, props)
-                updateCollectoryLinkForProject(project, props)
+                if (shouldUpdateCollectory) {
+                    updateCollectoryLinkForProject(project, props)
+                }
                 return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
@@ -452,11 +508,9 @@ class ProjectService {
             List toAggregate
             if (scoreIds && targetsOnly) {
                 toAggregate = Score.findAllByScoreIdInListAndIsOutputTarget(scoreIds, true)
-            }
-            else if (scoreIds) {
+            } else if (scoreIds) {
                 toAggregate = Score.findAllByScoreIdInList(scoreIds)
-            }
-            else {
+            } else {
                 toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
             }
 
@@ -481,7 +535,7 @@ class ProjectService {
                         // one in containing the target.
                         def score = toAggregate.find { it.scoreId == target.scoreId }
                         if (score) {
-                            outputSummary << [scoreId:score.scoreId, label: score.label, target: target.target, isOutputTarget:score.isOutputTarget, description: score.description, outputType:score.outputType, category:score.category]
+                            outputSummary << [scoreId: score.scoreId, label: score.label, target: target.target, isOutputTarget: score.isOutputTarget, description: score.description, outputType: score.outputType, category: score.category]
                         } else {
                             // This can happen if the meta-model is changed after targets have already been defined for a project.
                             // Once the project output targets are re-edited and saved, the old targets will be deleted.
@@ -559,7 +613,7 @@ class ProjectService {
      * @return a List of projects matching the supplied property
      */
     List<Map> findAllByAssociation(String property, String id, levelOfDetail = []) {
-        search([(property):id], levelOfDetail)
+        search([(property): id], levelOfDetail)
     }
 
     /**
@@ -587,6 +641,7 @@ class ProjectService {
         int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0
         log.info("Starting SciStarter import")
         try {
+            JsonSlurper jsonSlurper = new JsonSlurper()
             String sciStarterProjectUrl
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
@@ -596,12 +651,11 @@ class ProjectService {
                 if (project && project.title && project.id) {
                     Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
                     // get more details about the project
-                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    String text = webService.get(sciStarterProjectUrl, false);
-                    if(text instanceof String) {
-                        ObjectMapper mapper = new ObjectMapper()
-                        Map projectDetails = mapper.readValue(text, Map.class)
-                        if (!projectDetails.error) {
+                    try {
+                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                        String text = webService.get(sciStarterProjectUrl, false);
+                        if (text instanceof String) {
+                            Map projectDetails = jsonSlurper.parseText(text)
                             if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
                                 // ignore projects SciStarter imported from Biocollect
                                 log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
@@ -621,11 +675,10 @@ class ProjectService {
                                     updatedProjects++
                                 }
                             }
-                        } else {
-                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                            ignoredProjects++
                         }
-
+                    } catch (Exception e) {
+                        log.error("Error processing project - ${sciStarterProjectUrl}. Ignoring it. ${e.message}", e);
+                        ignoredProjects++
                     }
                 }
             }
@@ -650,9 +703,9 @@ class ProjectService {
     List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception {
         String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
         String responseText = webService.get(scistarterFinderUrl, false)
-        if(responseText instanceof String){
+        if (responseText instanceof String) {
             ObjectMapper mapper = new ObjectMapper()
-            Map response = mapper.readValue(responseText,  Map.class)
+            Map response = mapper.readValue(responseText, Map.class)
             return response.results
         }
     }
@@ -753,7 +806,7 @@ class ProjectService {
             // if no region, then create world extent.
             String siteId = getWorldExtent()
             if (siteId) {
-                result.siteIds = [ siteId ]
+                result.siteIds = [siteId]
             }
         }
 
@@ -799,8 +852,8 @@ class ProjectService {
         Document doc = Document.findByProjectIdAndIsPrimaryProjectImageAndRole(projectId, true, "logo")
         if (doc) {
             commonService.updateProperties(doc, [
-                    "externalUrl"                         : imageUrl,
-                    "attribution"                         : attribution
+                    "externalUrl": imageUrl,
+                    "attribution": attribution
             ])
         } else if (imageUrl) {
             // create if image not present
@@ -850,14 +903,14 @@ class ProjectService {
      * There is a ticket to have a single field - https://github.com/AtlasOfLivingAustralia/biocollect/issues/655
      * This method will become redundant when the above is implemented.
      */
-    String getTypeOfProject(Map projectMap){
-        if(projectMap.isWorks){
+    String getTypeOfProject(Map projectMap) {
+        if (projectMap.isWorks) {
             return "works"
-        } else if(projectMap.isMERIT){
+        } else if (projectMap.isMERIT) {
             return "merit"
-        } else if(projectMap.isCitizenScience){
+        } else if (projectMap.isCitizenScience) {
             return "citizenScience"
-        } else if(projectMap.isEcoScience){
+        } else if (projectMap.isEcoScience) {
             return "ecoScience"
         }
     }

@@ -1,0 +1,1640 @@
+{
+  "class": "au.org.ala.ecodata.ActivityForm",
+  "id": "5e617e5ec2dc6d6406a85eed",
+  "activationDate": null,
+  "category": "RLP Reports",
+  "createdUserId": "1493",
+  "dateCreated": "2020-03-05T22:34:06Z",
+  "formVersion": 1,
+  "gmsId": null,
+  "lastUpdated": "2020-03-11T02:18:01Z",
+  "lastUpdatedUserId": "1493",
+  "minOptionalSectionsCompleted": 1,
+  "name": "RLP Short term project outcomes",
+  "publicationStatus": "published",
+  "sections": [
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": false,
+      "modelName": null,
+      "name": "RLP Short-term outcomes",
+      "optional": false,
+      "optionalQuestionText": null,
+      "template": {
+        "title": "Short-term project outcomes",
+        "modelName": "RLP Short-term outcomes",
+        "dataModel": [
+          {
+            "dataType": "lookupTable",
+            "name": "priorityByOutcomeType",
+            "config": {
+              "source": {
+                "url": "/project/projectPrioritiesByOutcomeType",
+                "params": [
+                  {
+                    "expression": "owner.projectId",
+                    "name": "id",
+                    "type": "computed"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "dataType": "stringList",
+            "name": "availablePriorities"
+          },
+          {
+            "dataType": "list",
+            "description": "",
+            "name": "projectOutcomes",
+            "columns": [
+              {
+                "dataType": "text",
+                "description": "",
+                "name": "outcomeStatement"
+              },
+              {
+                "dataType": "list",
+                "description": "",
+                "name": "investmentPriorities",
+                "columns": [
+                  {
+                    "name": "investmentPriority",
+                    "dataType": "text",
+                    "validate": "required",
+                    "constraints": {
+                      "type": "pre-populated",
+                      "config": {
+                        "source": {
+                          "params": [
+                            {
+                              "expression": "owner.projectId",
+                              "name": "id",
+                              "type": "computed"
+                            }
+                          ],
+                          "url": "/project/listProjectInvestmentPriorities/"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "otherInvestmentPriority",
+                    "behaviour": [
+                      {
+                        "type": "enable",
+                        "condition": "investmentPriority == \"Other\""
+                      }
+                    ]
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "otherAgOrEnv",
+                    "behaviour": [
+                      {
+                        "type": "enable",
+                        "condition": "investmentPriority == \"Other\""
+                      }
+                    ],
+                    "constraints": [
+                      "Environment",
+                      "Agriculture"
+                    ]
+                  },
+                  {
+                    "dataType": "lookupTable",
+                    "name": "agOrEnvByOutcome",
+                    "config": {
+                      "source": {
+                        "type": "literal",
+                        "literal": [
+                          {
+                            "input": "Ramsar Sites",
+                            "output": "Env"
+                          },
+                          {
+                            "input": "Threatened Species Strategy",
+                            "output": "Env"
+                          },
+                          {
+                            "input": "World Heritage Areas",
+                            "output": "Env"
+                          },
+                          {
+                            "input": "Threatened Ecological Communities",
+                            "output": "Env"
+                          },
+                          {
+                            "input": "Climate / Weather Adaption",
+                            "output": "Ag"
+                          },
+                          {
+                            "input": "Soil Condition",
+                            "output": "Ag"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "name": "outcome",
+                    "dataType": "text",
+                    "computed": {
+                      "expression": "priorityByOutcomeType.lookupValue(investmentPriority)"
+                    }
+                  },
+                  {
+                    "name": "agOrEnv",
+                    "dataType": "text",
+                    "computed": {
+                      "expression": "agOrEnvByOutcome.lookupValue(outcome)"
+                    }
+                  },
+                  {
+                    "name": "outcomeIndicator",
+                    "dataType": "text",
+                    "validate": "required",
+                    "constraints": {
+                      "type": "computed",
+                      "default": [
+                        "Ramsar - Control of pest, predator and competitor species",
+                        "Ramsar - Decrease in inappropriate land management practices within the catchment area",
+                        "Ramsar - Creation or enhancement of ecological niches",
+                        "Ramsar - Increase in recruitment/survival of plants/food sources",
+                        "Ramsar - Improved habitat connectivity",
+                        "Ramsar - Stabilised or improved water quality",
+                        "Ramsar - Restoration of hydrology to more natural regimes",
+                        "Ramsar - Other (please specify)",
+                        "Threatened species - Control of pest, predator and competitor species",
+                        "Threatened species - Disease threats contained, reduced or excluded",
+                        "Threatened species - Increased area of suitable habitat",
+                        "Threatened species - Improved quality of habitat",
+                        "Threatened species - Protection of existing populations",
+                        "Threatened species - Enhancement of wild populations with re-introductions",
+                        "Threatened species - Other (please specify)",
+                        "World heritage - Control of pest, predator and competitor species",
+                        "World heritage - Disease threats contained, reduced or excluded",
+                        "World heritage - Reduction or halting of inappropriate fire regimes",
+                        "World heritage - Reduction of the unsustainable use of land within or surrounding the property",
+                        "World heritage - Stabilisation or improvement of nutrient levels",
+                        "World heritage - Other (please specify)",
+                        "Threatened Ecological Community - Control of pest, predator and competitor species",
+                        "Threatened Ecological Community - Disease threats contained, reduced or excluded",
+                        "Threatened Ecological Community - Improved/increased faunal habitat values or related floral features",
+                        "Threatened Ecological Community - Increased area of relevant vegetation types",
+                        "Threatened Ecological Community - Improved connectivity between patches",
+                        "Threatened Ecological Community - Improved projected foliage cover of over-storey",
+                        "Threatened Ecological Community - Improved composition and cover of understorey",
+                        "Threatened Ecological Community - Other (please specify)",
+                        "Sustainable agriculture - Increase in knowledge and awareness among landholders of sustainable agricultural practices.",
+                        "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve climate resilience.",
+                        "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve market access based on sustainability credentials.",
+                        "Other (please specify)"
+                      ],
+                      "options": [
+                        {
+                          "condition": "otherAgOrEnv == \"Environment\"",
+                          "value": [
+                            "Ramsar - Control of pest, predator and competitor species",
+                            "Ramsar - Decrease in inappropriate land management practices within the catchment area",
+                            "Ramsar - Creation or enhancement of ecological niches",
+                            "Ramsar - Increase in recruitment/survival of plants/food sources",
+                            "Ramsar - Improved habitat connectivity",
+                            "Ramsar - Stabilised or improved water quality",
+                            "Ramsar - Restoration of hydrology to more natural regimes",
+                            "Ramsar - Other (please specify)",
+                            "Threatened species - Control of pest, predator and competitor species",
+                            "Threatened species - Disease threats contained, reduced or excluded",
+                            "Threatened species - Increased area of suitable habitat",
+                            "Threatened species - Improved quality of habitat",
+                            "Threatened species - Protection of existing populations",
+                            "Threatened species - Enhancement of wild populations with re-introductions",
+                            "Threatened species - Other (please specify)",
+                            "World heritage - Control of pest, predator and competitor species",
+                            "World heritage - Disease threats contained, reduced or excluded",
+                            "World heritage - Reduction or halting of inappropriate fire regimes",
+                            "World heritage - Reduction of the unsustainable use of land within or surrounding the property",
+                            "World heritage - Stabilisation or improvement of nutrient levels",
+                            "World heritage - Other (please specify)",
+                            "Threatened Ecological Community - Control of pest, predator and competitor species",
+                            "Threatened Ecological Community - Disease threats contained, reduced or excluded",
+                            "Threatened Ecological Community - Improved/increased faunal habitat values or related floral features",
+                            "Threatened Ecological Community - Increased area of relevant vegetation types",
+                            "Threatened Ecological Community - Improved connectivity between patches",
+                            "Threatened Ecological Community - Improved projected foliage cover of over-storey",
+                            "Threatened Ecological Community - Improved composition and cover of understorey",
+                            "Threatened Ecological Community - Other (please specify)"
+                          ]
+                        },
+                        {
+                          "condition": "outcome == \"Ramsar Sites\"",
+                          "value": [
+                            "Ramsar - Control of pest, predator and competitor species",
+                            "Ramsar - Decrease in inappropriate land management practices within the catchment area",
+                            "Ramsar - Creation or enhancement of ecological niches",
+                            "Ramsar - Increase in recruitment/survival of plants/food sources",
+                            "Ramsar - Improved habitat connectivity",
+                            "Ramsar - Stabilised or improved water quality",
+                            "Ramsar - Restoration of hydrology to more natural regimes",
+                            "Ramsar - Other (please specify)"
+                          ]
+                        },
+                        {
+                          "condition": "outcome == \"Threatened Species Strategy\"",
+                          "value": [
+                            "Threatened species - Control of pest, predator and competitor species",
+                            "Threatened species - Disease threats contained, reduced or excluded",
+                            "Threatened species - Increased area of suitable habitat",
+                            "Threatened species - Improved quality of habitat",
+                            "Threatened species - Protection of existing populations",
+                            "Threatened species - Enhancement of wild populations with re-introductions",
+                            "Threatened species - Other (please specify)"
+                          ]
+                        },
+                        {
+                          "condition": "outcome == \"World Heritage Areas\"",
+                          "value": [
+                            "World heritage - Control of pest, predator and competitor species",
+                            "World heritage - Disease threats contained, reduced or excluded",
+                            "World heritage - Reduction or halting of inappropriate fire regimes",
+                            "World heritage - Reduction of the unsustainable use of land within or surrounding the property",
+                            "World heritage - Stabilisation or improvement of nutrient levels",
+                            "World heritage - Other (please specify)"
+                          ]
+                        },
+                        {
+                          "condition": "outcome == \"Threatened Ecological Communities\"",
+                          "value": [
+                            "Threatened Ecological Community - Control of pest, predator and competitor species",
+                            "Threatened Ecological Community - Disease threats contained, reduced or excluded",
+                            "Threatened Ecological Community - Improved/increased faunal habitat values or related floral features",
+                            "Threatened Ecological Community - Increased area of relevant vegetation types",
+                            "Threatened Ecological Community - Improved connectivity between patches",
+                            "Threatened Ecological Community - Improved projected foliage cover of over-storey",
+                            "Threatened Ecological Community - Improved composition and cover of understorey",
+                            "Threatened Ecological Community - Other (please specify)"
+                          ]
+                        },
+                        {
+                          "condition": "outcome == \"Climate / Weather Adaption\" or outcome == \"Soil Condition\" or otherAgOrEnv == \"Agriculture\"",
+                          "value": [
+                            "Sustainable agriculture - Increase in knowledge and awareness among landholders of sustainable agricultural practices.",
+                            "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve climate resilience.",
+                            "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve market access based on sustainability credentials.",
+                            "Other (please specify)"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "otherOutcomeIndicator",
+                    "validate": "required,maxSize[500]",
+                    "behaviour": [
+                      {
+                        "type": "enable",
+                        "condition": "outcomeIndicator == \"Other (please specify)\" or outcomeIndicator == \"Threatened Ecological Community - Other (please specify)\" or outcomeIndicator == \"World heritage - Other (please specify)\" or outcomeIndicator == \"Threatened species - Other (please specify)\" or outcomeIndicator == \"\" or outcomeIndicator == \"Ramsar - Other (please specify)\""
+                      }
+                    ]
+                  },
+                  {
+                    "dataType": "list",
+                    "name": "keyThreats",
+                    "columns": [
+                      {
+                        "dataType": "text",
+                        "name": "threatCategory",
+                        "validate": "required",
+                        "constraints": {
+                          "type": "computed",
+                          "default": [
+                            "Native fauna (disturbance)",
+                            "Habitat loss",
+                            "Land management practices",
+                            "Weeds",
+                            "Low population",
+                            "Pest animals (disturbance)",
+                            "Fire",
+                            "Disease/pathogens",
+                            "Pollution",
+                            "Climate change and severe weather",
+                            "Genetic bottleneck/inbreeding",
+                            "Data deficiency/lack of ecological data",
+                            "Human interferences/disturbance",
+                            "Livestock",
+                            "Weeding",
+                            "Fencing",
+                            "Climate change adaptation",
+                            "Improving market access opportunities through sustainability credentials",
+                            "Food security",
+                            "Comprehensive regenerative agricultural practices",
+                            "Feral animal management",
+                            "Water management",
+                            "Native vegetation management",
+                            "Ground cover management",
+                            "Fire management",
+                            "Farm Production management",
+                            "Soil Management"
+                          ],
+                          "options": [
+                            {
+                              "condition": "otherAgOrEnv == \"Environment\" or agOrEnv == \"Env\"",
+                              "value": [
+                                "Native fauna (disturbance)",
+                                "Habitat loss",
+                                "Land management practices",
+                                "Weeds",
+                                "Low population",
+                                "Pest animals (disturbance)",
+                                "Fire",
+                                "Disease/pathogens",
+                                "Pollution",
+                                "Climate change and severe weather",
+                                "Genetic bottleneck/inbreeding",
+                                "Data deficiency/lack of ecological data",
+                                "Human interferences/disturbance"
+                              ]
+                            },
+                            {
+                              "condition": "otherAgOrEnv == \"Agriculture\" or agOrEnv == \"Ag\"",
+                              "value": [
+                                "Livestock",
+                                "Weeding",
+                                "Fencing",
+                                "Climate change adaptation",
+                                "Improving market access opportunities through sustainability credentials",
+                                "Food security",
+                                "Comprehensive regenerative agricultural practices",
+                                "Feral animal management",
+                                "Water management",
+                                "Native vegetation management",
+                                "Ground cover management",
+                                "Fire management",
+                                "Farm Production management",
+                                "Soil Management"
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "dataType": "text",
+                        "description": "",
+                        "name": "keyThreat",
+                        "behaviour": [
+                          {
+                            "type": "visible",
+                            "condition": "otherAgOrEnv == \"Environment\" or agOrEnv == \"Env\""
+                          }
+                        ],
+                        "constraints": {
+                          "type": "computed",
+                          "default": [
+                            "Competition",
+                            "Predation",
+                            "Dieback/senescence",
+                            "Habitat fragmentation",
+                            "Land clearing",
+                            "Breeding place disturbance",
+                            "Feeding habitat loss/interference",
+                            "Loss of critical ecosystem service supporting habitat",
+                            "Domestic grazing/stock impacts",
+                            "Runoff",
+                            "Excessive fertiliser use",
+                            "Changes to hydrology and aquatic systems",
+                            "Excess recharge of groundwater",
+                            "Excess use of groundwater",
+                            "Control/spraying",
+                            "Competition",
+                            "Spread of weeds from surrounding areas",
+                            "Introduction of new weed",
+                            "Low population numbers",
+                            "Low area of habitat",
+                            "Competition/exclusion",
+                            "Predation",
+                            "Habitat degradation",
+                            "Disease transmission",
+                            "Introduction of new pest animals",
+                            "Lack of protection for ecological assets during fire control activities",
+                            "Lack of/inappropriate fire regime",
+                            "Areas that are infected",
+                            "Possible infection of disease free areas",
+                            "Chemical",
+                            "Eutrophication/algal blooms",
+                            "Inappropriate waste disposal",
+                            "Sediment",
+                            "Sea level rises",
+                            "Unexpected seasonal/temperature extremes",
+                            "Changed flooding regime",
+                            "Changed rainfall patterns",
+                            "Wildfire",
+                            "Flow-on effects of housing development",
+                            "Road/vehicle strike",
+                            "Recreational pressures",
+                            "Illegal activities",
+                            "Fish and harvesting aquatic resources (commercial)",
+                            "Recreational fishing",
+                            "Lack of strategic and statutory planning consideration for ecological assets",
+                            "Lack of knowledge and understanding",
+                            "Land use intensification",
+                            "Industrial development",
+                            "n/a"
+                          ],
+                          "options": [
+                            {
+                              "condition": "threatCategory == \"Native fauna (disturbance)\"",
+                              "value": [
+                                "Competition",
+                                "Predation"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Habitat loss\"",
+                              "value": [
+                                "Dieback/senescence",
+                                "Habitat fragmentation",
+                                "Land clearing",
+                                "Breeding place disturbance",
+                                "Feeding habitat loss/interference",
+                                "Loss of critical ecosystem service supporting habitat"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Land management practices\"",
+                              "value": [
+                                "Domestic grazing/stock impacts",
+                                "Runoff",
+                                "Excessive fertiliser use",
+                                "Changes to hydrology and aquatic systems",
+                                "Excess recharge of groundwater",
+                                "Excess use of groundwater"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Weeds\"",
+                              "value": [
+                                "Control/spraying",
+                                "Competition",
+                                "Spread of weeds from surrounding areas",
+                                "Introduction of new weed"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Low population\"",
+                              "value": [
+                                "Low population numbers",
+                                "Low area of habitat"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Pest animals (disturbance)\"",
+                              "value": [
+                                "Competition/exclusion",
+                                "Predation",
+                                "Habitat degradation",
+                                "Disease transmission",
+                                "Introduction of new pest animals"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Fire\"",
+                              "value": [
+                                "Lack of protection for ecological assets during fire control activities",
+                                "Lack of/inappropriate fire regime"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Disease/pathogens\"",
+                              "value": [
+                                "Areas that are infected",
+                                "Possible infection of disease free areas"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Pollution\"",
+                              "value": [
+                                "Chemical",
+                                "Eutrophication/algal blooms",
+                                "Inappropriate waste disposal",
+                                "Sediment"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Climate change and severe weather\"",
+                              "value": [
+                                "Sea level rises",
+                                "Unexpected seasonal/temperature extremes",
+                                "Changed flooding regime",
+                                "Changed rainfall patterns",
+                                "Wildfire"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Genetic bottleneck/inbreeding\"",
+                              "value": [
+                                "n/a"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Data deficiency/lack of ecological data\"",
+                              "value": [
+                                "n/a"
+                              ]
+                            },
+                            {
+                              "condition": "threatCategory == \"Human interferences/disturbance\"",
+                              "value": [
+                                "Flow-on effects of housing development",
+                                "Road/vehicle strike",
+                                "Recreational pressures",
+                                "Illegal activities",
+                                "Fish and harvesting aquatic resources (commercial)",
+                                "Recreational fishing",
+                                "Lack of strategic and statutory planning consideration for ecological assets",
+                                "Lack of knowledge and understanding",
+                                "Land use intensification",
+                                "Industrial development"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "dataType": "list",
+                    "name": "additionalThreats",
+                    "columns": [
+                      {
+                        "dataType": "text",
+                        "name": "additionalThreatCategory",
+                        "validate": "required",
+                        "constraints": [
+                          "Native fauna (disturbance)",
+                          "Habitat loss",
+                          "Land management practices",
+                          "Weeds",
+                          "Low population",
+                          "Pest animals (disturbance)",
+                          "Fire",
+                          "Disease/pathogens",
+                          "Pollution",
+                          "Climate change and severe weather",
+                          "Genetic bottleneck/inbreeding",
+                          "Data deficiency/lack of ecological data",
+                          "Human interferences/disturbance"
+                        ]
+                      },
+                      {
+                        "dataType": "text",
+                        "description": "",
+                        "name": "additionalKeyThreat",
+                        "constraints": {
+                          "type": "computed",
+                          "default": [
+                            "Competition",
+                            "Predation",
+                            "Dieback/senescence",
+                            "Habitat fragmentation",
+                            "Land clearing",
+                            "Breeding place disturbance",
+                            "Feeding habitat loss/interference",
+                            "Loss of critical ecosystem service supporting habitat",
+                            "Domestic grazing/stock impacts",
+                            "Runoff",
+                            "Excessive fertiliser use",
+                            "Changes to hydrology and aquatic systems",
+                            "Excess recharge of groundwater",
+                            "Excess use of groundwater",
+                            "Control/spraying",
+                            "Competition",
+                            "Spread of weeds from surrounding areas",
+                            "Introduction of new weed",
+                            "Low population numbers",
+                            "Low area of habitat",
+                            "Competition/exclusion",
+                            "Predation",
+                            "Habitat degradation",
+                            "Disease transmission",
+                            "Introduction of new pest animals",
+                            "Lack of protection for ecological assets during fire control activities",
+                            "Lack of/inappropriate fire regime",
+                            "Areas that are infected",
+                            "Possible infection of disease free areas",
+                            "Chemical",
+                            "Eutrophication/algal blooms",
+                            "Inappropriate waste disposal",
+                            "Sediment",
+                            "Sea level rises",
+                            "Unexpected seasonal/temperature extremes",
+                            "Changed flooding regime",
+                            "Changed rainfall patterns",
+                            "Wildfire",
+                            "Flow-on effects of housing development",
+                            "Road/vehicle strike",
+                            "Recreational pressures",
+                            "Illegal activities",
+                            "Fish and harvesting aquatic resources (commercial)",
+                            "Recreational fishing",
+                            "Lack of strategic and statutory planning consideration for ecological assets",
+                            "Lack of knowledge and understanding",
+                            "Land use intensification",
+                            "Industrial development",
+                            "n/a"
+                          ],
+                          "options": [
+                            {
+                              "condition": "additionalThreatCategory == \"Native fauna (disturbance)\"",
+                              "value": [
+                                "Competition",
+                                "Predation"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Habitat loss\"",
+                              "value": [
+                                "Dieback/senescence",
+                                "Habitat fragmentation",
+                                "Land clearing",
+                                "Breeding place disturbance",
+                                "Feeding habitat loss/interference",
+                                "Loss of critical ecosystem service supporting habitat"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Land management practices\"",
+                              "value": [
+                                "Domestic grazing/stock impacts",
+                                "Runoff",
+                                "Excessive fertiliser use",
+                                "Changes to hydrology and aquatic systems",
+                                "Excess recharge of groundwater",
+                                "Excess use of groundwater"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Weeds\"",
+                              "value": [
+                                "Control/spraying",
+                                "Competition",
+                                "Spread of weeds from surrounding areas",
+                                "Introduction of new weed"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Low population\"",
+                              "value": [
+                                "Low population numbers",
+                                "Low area of habitat"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Pest animals (disturbance)\"",
+                              "value": [
+                                "Competition/exclusion",
+                                "Predation",
+                                "Habitat degradation",
+                                "Disease transmission",
+                                "Introduction of new pest animals"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Fire\"",
+                              "value": [
+                                "Lack of protection for ecological assets during fire control activities",
+                                "Lack of/inappropriate fire regime"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Disease/pathogens\"",
+                              "value": [
+                                "Areas that are infected",
+                                "Possible infection of disease free areas"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Pollution\"",
+                              "value": [
+                                "Chemical",
+                                "Eutrophication/algal blooms",
+                                "Inappropriate waste disposal",
+                                "Sediment"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Climate change and severe weather\"",
+                              "value": [
+                                "Sea level rises",
+                                "Unexpected seasonal/temperature extremes",
+                                "Changed flooding regime",
+                                "Changed rainfall patterns",
+                                "Wildfire"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Genetic bottleneck/inbreeding\"",
+                              "value": [
+                                "n/a"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Data deficiency/lack of ecological data\"",
+                              "value": [
+                                "n/a"
+                              ]
+                            },
+                            {
+                              "condition": "additionalThreatCategory == \"Human interferences/disturbance\"",
+                              "value": [
+                                "Flow-on effects of housing development",
+                                "Road/vehicle strike",
+                                "Recreational pressures",
+                                "Illegal activities",
+                                "Fish and harvesting aquatic resources (commercial)",
+                                "Recreational fishing",
+                                "Lack of strategic and statutory planning consideration for ecological assets",
+                                "Lack of knowledge and understanding",
+                                "Land use intensification",
+                                "Industrial development"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "keyInterventions",
+                    "dataType": "stringList",
+                    "constraints": [
+                      "Agreement establishment - on-title in-perpetuity conservation covenant",
+                      "Agreement establishment - wildfire prevention/response management prescriptions to protect species or ecological communities e.g. alpine bogs",
+                      "Agreement establishment - land management agreement (10 years +)",
+                      "Agreement establishment - pest animal management or weed management agreement",
+                      "Agreement establishment - conservation agreement (other than covenant)",
+                      "Communication, education and awareness raising - further applied research",
+                      "Communication, education and awareness raising - hard communication material (eg. Signage)",
+                      "Communication, education and awareness raising - soft communication material (eg. Video, field guide, newsletters, websites, emails, social media)",
+                      "Communication, education and awareness raising - training for climate change adaptation (or another topic)",
+                      "Community/stakeholder engagement - citizen science",
+                      "Community/stakeholder engagement - conferences/seminars",
+                      "Community/stakeholder engagement - voluntary conservation activities (eg. tree planting)",
+                      "Community/stakeholder engagement - farmer discussion groups, peer to peer learning",
+                      "Community/stakeholder engagement - field days/study tours/roadshows",
+                      "Community/stakeholder engagement - formation and ongoing support for landholder groups",
+                      "Community/stakeholder engagement - incentives",
+                      "Community/stakeholder engagement - industry round tables",
+                      "Community/stakeholder engagement - negotiation with the community, landholders, farmers, Traditional Owner groups, agriculture industry groups",
+                      "Community/stakeholder engagement - on-the-job training program",
+                      "Community/stakeholder engagement - one-on-one technical advice",
+                      "Community/stakeholder engagement - on-ground trials/demonstrations/pilot farms",
+                      "Community/stakeholder engagement - reference group/steering group/working group",
+                      "Community/stakeholder engagement - support communities of practice",
+                      "Community/stakeholder engagement - training/workshops",
+                      "Controlling access - fencing (feral-free enclosure)",
+                      "Controlling access - fencing (general exclusion/access control)",
+                      "Controlling pest animals - baiting/fumigating/poisoning",
+                      "Controlling pest animals - trapping/shooting",
+                      "Controlling pest animals - netting/electro fishing",
+                      "Controlling pest animals - pest surveillance/biosecurity",
+                      "Controlling weeds - physical removal",
+                      "Controlling weeds - spraying",
+                      "Controlling weeds - pest surveillance/biosecurity",
+                      "Habitat augmentation - nestbox installation/artificial  tree hollow/'stag' tree creation",
+                      "Habitat augmentation - vegetation corridor/patch establishment to improve connectivity",
+                      "Habitat augmentation - increased seed collection and storage",
+                      "Habitat augmentation - instream habitat improvement eg. Log/snag reinstatement, fish 'hotels'",
+                      "Habitat augmentation - wetland creation",
+                      "Habitat augmentation - fishway creation",
+                      "Habitat improvement/regeneration - cultural burning",
+                      "Habitat improvement/regeneration - rubbish/debris removal",
+                      "Habitat improvement/regeneration - disease management",
+                      "Habitat improvement/regeneration - erosion control and prevention",
+                      "Habitat improvement/regeneration - ecological prescribed burning",
+                      "Habitat improvement/regeneration - revegetation and 'infill' planting",
+                      "Habitat improvement/regeneration - grazing management to improve groundcover",
+                      "Habitat improvement/regeneration - assisted natural regeneration",
+                      "Hydrology improvement/remediation - barrier removal and natural flow/tidal movement re-instated",
+                      "Hydrology improvement/remediation - water control/retention",
+                      "Land improvement - erosion management",
+                      "Land improvement - grazing management",
+                      "Land improvement - recharge zones",
+                      "Planning - development of farm/project/site management plan",
+                      "Planning - improved farm management",
+                      "Planning - improved species or ecological community conservation management",
+                      "Planning - improved fire management",
+                      "Planning - improved Grazing management Plans",
+                      "Planning - improved coastal, estuary or nearshore marine management",
+                      "Planning - improved catchment management",
+                      "Planning - vegetation management",
+                      "Planning - water management",
+                      "Planning - soil management",
+                      "Species management - emergency interventions to prevent extinction",
+                      "Species management - establishing and maintaining captive breeding programs",
+                      "Species management - reintroduction",
+                      "Support development of market access plans, opportunities",
+                      "Support infrastructure mapping activities",
+                      "Support uptake of new tools and technologies - climate adaptation",
+                      "Support uptake of new tools and technologies - market access",
+                      "Support uptake of new tools and technologies - sustainable agriculture",
+                      "Support use of weather and climate adaptation information",
+                      "Supporting capacity of NRM groups",
+                      "Supporting the capacity of Indigenous land groups"
+                    ]
+                  },
+                  {
+                    "name": "additionalInterventions",
+                    "dataType": "stringList",
+                    "constraints": [
+                      "Agreement establishment - on-title in-perpetuity conservation covenant",
+                      "Agreement establishment - wildfire prevention/response management prescriptions to protect species or ecological communities e.g. alpine bogs",
+                      "Agreement establishment - land management agreement (10 years +)",
+                      "Agreement establishment - pest animal management or weed management agreement",
+                      "Agreement establishment - conservation agreement (other than covenant)",
+                      "Communication, education and awareness raising - further applied research",
+                      "Communication, education and awareness raising - hard communication material (eg. Signage)",
+                      "Communication, education and awareness raising - soft communication material (eg. Video, field guide, newsletters, websites, emails, social media)",
+                      "Communication, education and awareness raising - training for climate change adaptation (or another topic)",
+                      "Community/stakeholder engagement - citizen science",
+                      "Community/stakeholder engagement - conferences/seminars",
+                      "Community/stakeholder engagement - voluntary conservation activities (eg. tree planting)",
+                      "Community/stakeholder engagement - farmer discussion groups, peer to peer learning",
+                      "Community/stakeholder engagement - field days/study tours/roadshows",
+                      "Community/stakeholder engagement - formation and ongoing support for landholder groups",
+                      "Community/stakeholder engagement - incentives",
+                      "Community/stakeholder engagement - industry round tables",
+                      "Community/stakeholder engagement - negotiation with the community, landholders, farmers, Traditional Owner groups, agriculture industry groups",
+                      "Community/stakeholder engagement - on-the-job training program",
+                      "Community/stakeholder engagement - one-on-one technical advice",
+                      "Community/stakeholder engagement - on-ground trials/demonstrations/pilot farms",
+                      "Community/stakeholder engagement - reference group/steering group/working group",
+                      "Community/stakeholder engagement - support communities of practice",
+                      "Community/stakeholder engagement - training/workshops",
+                      "Controlling access - fencing (feral-free enclosure)",
+                      "Controlling access - fencing (general exclusion/access control)",
+                      "Controlling pest animals - baiting/fumigating/poisoning",
+                      "Controlling pest animals - trapping/shooting",
+                      "Controlling pest animals - netting/electro fishing",
+                      "Controlling pest animals - pest surveillance/biosecurity",
+                      "Controlling weeds - physical removal",
+                      "Controlling weeds - spraying",
+                      "Controlling weeds - pest surveillance/biosecurity",
+                      "Habitat augmentation - nestbox installation/artificial  tree hollow/'stag' tree creation",
+                      "Habitat augmentation - vegetation corridor/patch establishment to improve connectivity",
+                      "Habitat augmentation - increased seed collection and storage",
+                      "Habitat augmentation - instream habitat improvement eg. Log/snag reinstatement, fish 'hotels'",
+                      "Habitat augmentation - wetland creation",
+                      "Habitat augmentation - fishway creation",
+                      "Habitat improvement/regeneration - cultural burning",
+                      "Habitat improvement/regeneration - rubbish/debris removal",
+                      "Habitat improvement/regeneration - disease management",
+                      "Habitat improvement/regeneration - erosion control and prevention",
+                      "Habitat improvement/regeneration - ecological prescribed burning",
+                      "Habitat improvement/regeneration - revegetation and 'infill' planting",
+                      "Habitat improvement/regeneration - grazing management to improve groundcover",
+                      "Habitat improvement/regeneration - assisted natural regeneration",
+                      "Hydrology improvement/remediation - barrier removal and natural flow/tidal movement re-instated",
+                      "Hydrology improvement/remediation - water control/retention",
+                      "Land improvement - erosion management",
+                      "Land improvement - grazing management",
+                      "Land improvement - recharge zones",
+                      "Planning - development of farm/project/site management plan",
+                      "Planning - improved farm management",
+                      "Planning - improved species or ecological community conservation management",
+                      "Planning - improved fire management",
+                      "Planning - improved Grazing management Plans",
+                      "Planning - improved coastal, estuary or nearshore marine management",
+                      "Planning - improved catchment management",
+                      "Planning - vegetation management",
+                      "Planning - water management",
+                      "Planning - soil management",
+                      "Species management - emergency interventions to prevent extinction",
+                      "Species management - establishing and maintaining captive breeding programs",
+                      "Species management - reintroduction",
+                      "Support development of market access plans, opportunities",
+                      "Support infrastructure mapping activities",
+                      "Support uptake of new tools and technologies - climate adaptation",
+                      "Support uptake of new tools and technologies - market access",
+                      "Support uptake of new tools and technologies - sustainable agriculture",
+                      "Support use of weather and climate adaptation information",
+                      "Supporting capacity of NRM groups",
+                      "Supporting the capacity of Indigenous land groups"
+                    ]
+                  },
+                  {
+                    "name": "canQuantifyOutcomeAgainstBaseline",
+                    "dataType": "text",
+                    "constraints": [
+                      "Yes",
+                      "No"
+                    ],
+                    "validate": "required"
+                  },
+                  {
+                    "name": "effectiveness",
+                    "dataType": "text",
+                    "constraints": [
+                      "100 – 76%",
+                      "75 – 51%",
+                      "50 – 26%",
+                      "25 – 1%",
+                      "0 %"
+                    ],
+                    "validate": "required"
+                  },
+                  {
+                    "name": "efficiency",
+                    "dataType": "text",
+                    "constraints": [
+                      "100 – 76%",
+                      "75 – 51%",
+                      "50 – 26%",
+                      "25 – 1%",
+                      "0 %"
+                    ],
+                    "validate": "required"
+                  },
+                  {
+                    "name": "legacy",
+                    "dataType": "text",
+                    "constraints": [
+                      "100 – 76%",
+                      "75 – 51%",
+                      "50 – 26%",
+                      "25 – 1%",
+                      "0 %"
+                    ],
+                    "validate": "required"
+                  },
+                  {
+                    "name": "appropriateness",
+                    "dataType": "text",
+                    "constraints": [
+                      "100 – 76%",
+                      "75 – 51%",
+                      "50 – 26%",
+                      "25 – 1%",
+                      "0 %"
+                    ],
+                    "validate": "required"
+                  },
+                  {
+                    "name": "unableToQuantifyOutcomeReason",
+                    "dataType": "text",
+                    "validate": "required,maxSize[800]"
+                  }
+                ]
+              },
+              {
+                "dataType": "list",
+                "description": "",
+                "name": "dataSets",
+                "columns": [
+                  {
+                    "name": "dataSetName",
+                    "dataType": "text",
+                    "validate": "required",
+                    "constraints": {
+                      "textProperty": "name",
+                      "valueProperty": "dataSetId",
+                      "type": "pre-populated",
+                      "config": {
+                        "source": {
+                          "context-path": "owner.custom.dataSets"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "focus",
+                    "dataType": "text",
+                    "validate": "required"
+                  }
+                ]
+              },
+              {
+                "name": "programLogic",
+                "dataType": "text",
+                "validate": "required,maxSize[3000]"
+              },
+              {
+                "name": "keyEnablers",
+                "dataType": "text",
+                "validate": "required,maxSize[3000]"
+              },
+              {
+                "name": "keyBarriers",
+                "dataType": "text",
+                "validate": "required,maxSize[3000]"
+              }
+            ]
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq1",
+            "validate": "required",
+            "constraints": [
+              "Significant progression",
+              "Satisfactory progression",
+              "Partial progression",
+              "Inadequate progression",
+              "No progression"
+            ]
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq2",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq3",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq4",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq5",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq6",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq7",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq8",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq9",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq10",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "keq11",
+            "validate": "required,maxSize[3000]"
+          },
+          {
+            "dataType": "text",
+            "description": "",
+            "name": "caseStudy",
+            "validate": "maxSize[3000]"
+          }
+        ],
+        "pre-populate": [
+          {
+            "source": {
+              "context-path": "owner"
+            },
+            "merge": true,
+            "mapping": [
+              {
+                "target": "projectOutcomes",
+                "mapping": [
+                  {
+                    "target": "outcomeStatement",
+                    "source-path": "description"
+                  }
+                ],
+                "source-path": "custom.details.outcomes.shortTermOutcomes"
+              }
+            ]
+          },
+          {
+            "source": {
+              "params": [
+                {
+                  "expression": "owner.projectId",
+                  "name": "id",
+                  "type": "computed"
+                }
+              ],
+              "url": "/project/listProjectInvestmentPriorities/"
+            },
+            "mapping": [
+              {
+                "target":"availablePriorities",
+                "source-path": ""
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "computed": null,
+                "type": "literal",
+                "source": "Please complete the questions in this form for each short term outcome statement in the project MERI plan"
+              }
+            ]
+          },
+          {
+            "source": "projectOutcomes",
+            "type": "repeat",
+            "collapsable": true,
+            "title": "Outcome",
+            "items": [
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "1. Outcome Statement",
+                    "type": "textarea",
+                    "readonly": true,
+                    "source": "outcomeStatement",
+                    "rows": 4
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "computed": null,
+                    "type": "literal",
+                    "source": "<strong>2. Investment priorities - indicators, threats and interventions</strong><p>For each investment priority relevant to this project outcome, please answer the following questions.   You can add another investment priority using the button at the end of the investment priority questions.</p>"
+                  }
+                ]
+              },
+              {
+                "type": "repeat",
+                "source": "investmentPriorities",
+                "userAddedRows": true,
+                "addRowText": "Add investment priority",
+                "removeRowText": "Remove investment priority",
+                "items": [
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "Select an investment priority",
+                        "type": "select2",
+                        "source": "investmentPriority"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "behaviour": [
+                      {
+                        "type": "if_expression",
+                        "condition": "investmentPriority == \"Other\""
+                      }
+                    ],
+                    "items": [
+                      {
+                        "type": "col",
+                        "items": [
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "preLabel": "Investment priority (if Other)",
+                                "type": "text",
+                                "source": "otherInvestmentPriority",
+                                "width": "100%"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "preLabel": "Does this investment priority relate to an Environment or Agriculture outcome",
+                        "type": "selectOne",
+                        "source": "otherAgOrEnv"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "Select the relevant outcome indicator (project monitoring indicator in your MERI plan)",
+                        "type": "select2",
+                        "source": "outcomeIndicator",
+                        "displayOptions": {
+                          "tags": false
+                        }
+                      },
+                      {
+                        "type": "col",
+                        "items": [
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "preLabel": "Outcome indicator (if Other)",
+                                "type": "text",
+                                "source": "otherOutcomeIndicator",
+                                "width": "100%"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "type": "table",
+                        "title": "<b>Select key threats (outcomes 1-4) or key agricultural categories  (outcomes 5-6)</b><br/>Select a maximum of 3 key threats or categories",
+                        "source": "keyThreats",
+                        "userAddedRows": true,
+                        "disableTableUpload": true,
+                        "columns": [
+                          {
+                            "width": "50%",
+                            "title": "Major threats (outcomes 1-4) or key agricultural categories (outcomes 5-6)",
+                            "type": "select2",
+                            "source": "threatCategory"
+                          },
+                          {
+                            "width": "50%",
+                            "title": "Threat (outcomes 1-4)",
+                            "type": "select2",
+                            "source": "keyThreat"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "behaviour": [
+                      {
+                        "type": "if_expression",
+                        "condition": "otherAgOrEnv == \"Environment\" or agOrEnv == \"Env\""
+                      }
+                    ],
+                    "items": [
+                      {
+                        "type": "table",
+                        "title": "<b>Select additional threats</b><br/>Select a maximum of 5 additional threats or categories.",
+                        "source": "additionalThreats",
+                        "userAddedRows": true,
+                        "disableTableUpload": true,
+                        "columns": [
+                          {
+                            "title": "Major threats",
+                            "type": "select2",
+                            "source": "additionalThreatCategory",
+                            "width": "50%"
+                          },
+                          {
+                            "title": "Threat",
+                            "type": "select2",
+                            "source": "additionalKeyThreat",
+                            "width": "50%"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "Select project services, activities, or interventions<br/><div style=\"font-weight:normal;\">Select a maximum of 3</div>",
+                        "type": "select2Many",
+                        "source": "keyInterventions"
+                      },
+                      {
+                        "preLabel": "Select additional services, activities, or interventions<br/><div style=\"font-weight:normal;\">Select a maximum of 5</div>",
+                        "type": "select2Many",
+                        "source": "additionalInterventions"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "Can you quantify the level of achievement of your outcome statement against a baseline?",
+                        "source": "canQuantifyOutcomeAgainstBaseline",
+                        "validate": "required",
+                        "type": "selectOne"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "behaviour": [
+                      {
+                        "type": "if_expression",
+                        "condition": "canQuantifyOutcomeAgainstBaseline == \"Yes\""
+                      }
+                    ],
+                    "items": [
+                      {
+                        "type": "literal",
+                        "source": "What level of change has been achieved against the project baseline?<br/>Refer to the criteria matrix in the <a href=\"http://www.nrm.gov.au/publications/rlp-merit-user-guide\">RLP Outcomes Reporting Guide</a>."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "behaviour": [
+                      {
+                        "type": "if_expression",
+                        "condition": "canQuantifyOutcomeAgainstBaseline == \"Yes\""
+                      }
+                    ],
+                    "items": [
+                      {
+                        "preLabel": "Effectiveness",
+                        "type": "selectOne",
+                        "source": "effectiveness"
+                      },
+                      {
+                        "preLabel": "Efficiency",
+                        "type": "selectOne",
+                        "source": "efficiency"
+                      },
+                      {
+                        "preLabel": "Legacy",
+                        "type": "selectOne",
+                        "source": "legacy"
+                      },
+                      {
+                        "preLabel": "Appropriateness",
+                        "type": "selectOne",
+                        "source": "appropriateness"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "behaviour": [
+                      {
+                        "type": "if_expression",
+                        "condition": "canQuantifyOutcomeAgainstBaseline == \"No\""
+                      }
+                    ],
+                    "items": [
+                      {
+                        "preLabel": "Explain why not",
+                        "type": "textarea",
+                        "rows": 4,
+                        "source": "unableToQuantifyOutcomeReason"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "computed": null,
+                    "type": "literal",
+                    "source": "<strong>3. What data supports the response to Question 2?</strong><p>Provide a data summary for each data set that supports your selected level of change against a baseline in Question 2.  Only provide a summary for data sets collected under the outcome statement selected in Question 1 and the investment priority/s relevant to that outcome statement. You can provide data sets from multiple sources to support your level of change.  Any data set summaries added after Outcomes Report 1 form has been opened will not appear in this list. To update the list, hit the ‘Save changes’ button at the bottom of screen and then ‘Exit report’. You can then re-open Outcomes Report 1 and the list will be updated.</p>"
+                  }
+                ]
+              },
+              {
+                "type": "table",
+                "source": "dataSets",
+                "userAddedRows": true,
+                "disableTableDownload": true,
+                "disableTableUpload": true,
+                "columns": [
+                  {
+                    "source": "dataSetName",
+                    "type": "selectOne",
+                    "title": "Data set name"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "4. To what extent were the Program Logic assumptions underpinning the outcome statement accurate and/or inaccurate?",
+                    "type": "textarea",
+                    "rows": 4,
+                    "source": "programLogic"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "5. What have been the key enablers to achieving this outcome statement?",
+                    "type": "textarea",
+                    "rows": 4,
+                    "source": "keyEnablers"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "6. What have been the key barriers to achieving this outcome statement?",
+                    "type": "textarea",
+                    "rows": 4,
+                    "source": "keyBarriers"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "computed": null,
+                "type": "literal",
+                "source": "<h3>Key Evaluation Questions</h3>"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ1 - To what extent are you progressing towards the medium-term outcomes of the program?",
+                "type": "selectOne",
+                "rows": 5,
+                "source": "keq1"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ2 - How and to what extent has the project increased knowledge of best practice NRM for the investment priority?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq2"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ3 - Were the methods/strategies used the best way to achieve/maximise the outcomes or are there other methods/strategies that might be more effective?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq3"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ4 - To what extent has the project risk assessment and risk management been appropriate and effective?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq4"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ5 - If your project engages with Traditional Owners, how and by what means has this project improved the capacity of Traditional Owners to lead or assist with the management of the investment priority?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq5"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ6 - Have there been any unexpected or unintended (positive or negative) changes or other outcomes delivered by this project and what are they?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq6"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ7 - What elements of the project could be improved to maximise efficiency (and value for money)?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq7"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ8 - Did this project receive funding from any other sources apart from the RLP Program? If yes, please specify and the proportion of funding contributed to the project.",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq8"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ9 - How and to what extent has the project achieved the desired behavioural change and ongoing commitment among the participating land managers towards the investment priority?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq9"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ10 - What evidence is there that the outcomes will be maintained? How will they be maintained and by whom?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq10"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "KEQ11 - Is there any additional information or data you wish to provide that you have used to evaluate the success of the project?",
+                "type": "textarea",
+                "rows": 5,
+                "source": "keq11"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "type": "literal",
+                "source": "<b>Project case study</b><br/>Describe your project and its major achievements"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "",
+                "type": "textarea",
+                "rows": 5,
+                "source": "caseStudy",
+                "placeholder": "Provide a brief description of your project and its major achievements"
+              }
+            ]
+          }
+        ],
+        "templateName": "rlpShortTermOutcomes"
+      }
+    }
+  ],
+  "status": "active",
+  "supportsPhotoPoints": false,
+  "supportsSites": false,
+  "type": "Report"
+}
