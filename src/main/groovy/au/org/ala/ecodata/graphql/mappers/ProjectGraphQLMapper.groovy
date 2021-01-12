@@ -11,6 +11,7 @@ import au.org.ala.ecodata.graphql.enums.YesNo
 import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.graphql.models.OutputData
 import grails.gorm.DetachedCriteria
 import grails.util.Holders
 import graphql.schema.DataFetcher
@@ -153,13 +154,140 @@ class ProjectGraphQLMapper {
                 })
             }
 
+            query('activityOutput', "activityOutput") {
+                argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
+                argument('toDate', String){ nullable true description "yyyy-mm-dd" }
+                argument('dateRange', DateRange){ nullable true }
+                argument('status', [String]){ nullable true }
+                argument('organisation', [String]){ nullable true }
+                argument('associatedProgram', [String]){ nullable true  }
+                argument('associatedSubProgram', [String]){ nullable true }
+                argument('mainTheme', [String]){ nullable true }
+                argument('state', [String]){ nullable true }
+                argument('lga', [String]){ nullable true }
+                argument('cmz', [String]){ nullable true }
+                argument('partnerOrganisationType', [String]){ nullable true  }
+                argument('associatedSubProgram', [String]){ nullable true }
+                argument('primaryOutcome', [String]){ nullable true }
+                argument('secondaryOutcomes', [String]){ nullable true }
+                argument('tags', [String]){ nullable true }
+
+                argument('managementArea', [String]){ nullable true }
+                argument('majorVegetationGroup', [String]){ nullable true  }
+                argument('biogeographicRegion', [String]){ nullable true }
+                argument('marineRegion', [String]){ nullable true }
+                argument('otherRegion', [String]){ nullable true }
+                argument('grantManagerNominatedProject', [YesNo]){ nullable true }
+                argument('federalElectorate', [String]){ nullable true }
+                argument('assetsAddressed', [String]){ nullable true }
+                argument('userNominatedProject', [String]){ nullable true }
+                argument('managementUnit', [String]){ nullable true }
+
+                argument('activityOutputs', 'activityOutputs') {
+                    accepts {
+                        field('category', String) {nullable false}
+                        field('outputs', 'outputList') {
+                            field('outputType', String) {nullable false}
+                            field('labels', [String]) {nullable true}
+                            nullable true
+                            collection true
+                        }
+                        collection true
+                    }
+                    nullable true
+                }
+
+                dataFetcher(new DataFetcher() {
+                    @Override
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        ProjectGraphQLMapper.buildTestFetcher().searchActivityOutput(environment)
+                    }
+                })
+                returns {
+                    field('outputData', 'outputData') {
+                        field('category', String)
+                        field('outputType', String)
+                        field('result', 'result') {
+                            field('label', String)
+                            field('result', double) {nullable true}
+                            field('resultList', OutputData) {nullable true}
+                            field('groups', 'groups') {
+                                field('group', String)
+                                field('results', 'results') {
+                                    field('count', int)
+                                    field('result', double)
+                                    collection true
+                                }
+                                nullable true
+                                collection true
+                            }
+                        }
+                        collection true
+                    }
+                }
+            }
+
+            query('outputTargetsByProgram', "outputTargetsByProgram") {
+                argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
+                argument('toDate', String){ nullable true description "yyyy-mm-dd" }
+                argument('dateRange', DateRange){ nullable true }
+                argument('status', [String]){ nullable true }
+                argument('organisation', [String]){ nullable true }
+                argument('associatedProgram', [String]){ nullable true  }
+                argument('associatedSubProgram', [String]){ nullable true }
+                argument('mainTheme', [String]){ nullable true }
+                argument('state', [String]){ nullable true }
+                argument('lga', [String]){ nullable true }
+                argument('cmz', [String]){ nullable true }
+                argument('partnerOrganisationType', [String]){ nullable true  }
+                argument('associatedSubProgram', [String]){ nullable true }
+                argument('primaryOutcome', [String]){ nullable true }
+                argument('secondaryOutcomes', [String]){ nullable true }
+                argument('tags', [String]){ nullable true }
+
+                argument('managementArea', [String]){ nullable true }
+                argument('majorVegetationGroup', [String]){ nullable true  }
+                argument('biogeographicRegion', [String]){ nullable true }
+                argument('marineRegion', [String]){ nullable true }
+                argument('otherRegion', [String]){ nullable true }
+                argument('grantManagerNominatedProject', [YesNo]){ nullable true }
+                argument('federalElectorate', [String]){ nullable true }
+                argument('assetsAddressed', [String]){ nullable true }
+                argument('userNominatedProject', [String]){ nullable true }
+                argument('managementUnit', [String]){ nullable true }
+
+                argument('programs', [String]) {nullable true}
+                argument('outputTargetMeasures', [String]) {nullable true}
+
+                dataFetcher(new DataFetcher() {
+                    @Override
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        ProjectGraphQLMapper.buildTestFetcher().searchOutputTargetsByProgram(environment)
+                    }
+                })
+                returns {
+                    field('targets', 'targets') {
+                        field('program', String)
+                        field('outputTargetMeasure', 'outputTargetMeasure') {
+                            field('outputTarget', String)
+                            field('count', int)
+                            field('total', double)
+                            collection true
+                        }
+                        nullable true
+                        collection true
+                    }
+                }
+            }
+
         }
     }
 
 
     static ProjectsFetcher buildTestFetcher() {
 
-        new ProjectsFetcher(Holders.applicationContext.projectService, Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService)
+        new ProjectsFetcher(Holders.applicationContext.projectService, Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.reportService,
+        Holders.applicationContext.cacheService)
 
     }
 }
