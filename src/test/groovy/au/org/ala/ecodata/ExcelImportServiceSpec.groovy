@@ -1,15 +1,11 @@
 package au.org.ala.ecodata
 
-import grails.test.mixin.TestFor
+import grails.testing.services.ServiceUnitTest
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import spock.lang.Specification
 
-/**
- * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
- */
-@TestFor(ExcelImportService)
-class ExcelImportServiceSpec extends Specification {
+class ExcelImportServiceSpec extends Specification  implements ServiceUnitTest<ExcelImportService>  {
 
     def setup() {
     }
@@ -17,9 +13,9 @@ class ExcelImportServiceSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
+    void "test simple export"() {
         setup:
-        InputStream input = getClass().getResourceAsStream("/resources/Community_stakeholder_engagement.xlsx")
+        InputStream input = new File("src/test/resources/Community_stakeholder_engagement.xlsx").newInputStream()
         Workbook workbook = WorkbookFactory.create(input)
 
         when:

@@ -1,24 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.ReportingService
-import au.org.ala.ecodata.UserService
-import grails.testing.web.GrailsWebUnitTest
 import au.org.ala.ecodata.*
-import grails.test.mixin.Mock
-import grails.test.mixin.TestMixin
-import grails.test.mixin.support.GrailsUnitTestMixin
-import groovy.json.JsonSlurper
-import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.apache.poi.ss.util.CellReference
-import org.grails.plugins.excelimport.ExcelImportService
-import org.grails.testing.GrailsUnitTest
+import grails.converters.JSON
+import grails.testing.web.GrailsWebUnitTest
 import grails.util.Holders
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellReference
 import spock.lang.Specification
 
 /**
@@ -43,6 +30,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             metadataService(MetadataService)
             userService(UserService)
             reportingService(ReportingService)
+            activityFormService(ActivityFormService)
         }
         outputFile = File.createTempFile('test', '.xlsx')
         String name = outputFile.absolutePath
@@ -146,9 +134,9 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     void "Activities can be exported as a spreadsheet"() {
         setup:
         String activityToExport = "RLP Annual Report"
-        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel.json")
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel")
         Map project = project()
-        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[new JsonSlurper().parse(getClass().getResource("/resources/singleSampleNestedDataModel.json"))]]]
+        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[getJsonResource("singleSampleNestedDataModel")]]]
 
         when:
         projectXlsExporter.tabsToExport = [activityToExport]
@@ -182,9 +170,9 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     void "Activities with deeply nested data can be exported as a spreadsheet"() {
         setup:
         String activityToExport = "RLP Annual Report"
-        ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel.json")
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel")
         Map project = project()
-        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[new JsonSlurper().parse(getClass().getResource("/resources/sampleNestedDataModel.json"))]]]
+        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[getJsonResource("sampleNestedDataModel")]]]
 
         when:
         projectXlsExporter.tabsToExport = [activityToExport]
@@ -237,7 +225,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     }
 
     private ActivityForm createActivityForm(String name, int formVersion, String templateFileName) {
-        Map formTemplate = new JsonSlurper().parse(getClass().getResource("/resources/$templateFileName"), "UTF-8")
+        Map formTemplate = getJsonResource(templateFileName)
         ActivityForm activityForm = new ActivityForm(name:name, formVersion: formVersion)
         activityForm.sections << new FormSection(name:formTemplate.modelName, template:formTemplate)
         activityForm
@@ -263,6 +251,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     private Map project() {
         new groovy.json.JsonSlurper().parseText(projectJson)
+    }
+
+    private Map getJsonResource(name) {
+        JSON.parse(new File("src/test/resources/${name}.json").newInputStream(), 'UTF-8')
     }
 
     private String projectJson = "{\n" +

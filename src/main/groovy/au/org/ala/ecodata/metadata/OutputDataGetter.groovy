@@ -147,7 +147,7 @@ class OutputDataGetter extends OutputModelProcessor implements OutputModelProces
             result = processNode(this, dataNode, getValue(output))
         }
         catch (Exception e) {
-            log.error("Error getting value from output: ${output?.outputId}, property: ${propertyName}", e)
+            OutputModelProcessor.log.error("Error getting value from output: ${output?.outputId}, property: ${propertyName}", e)
         }
         result
     }

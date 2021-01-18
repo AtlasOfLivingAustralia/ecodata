@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import groovyx.net.http.ContentType
-
 class DownloadController {
     def get(String id) {
         if (!id) {
@@ -11,7 +9,7 @@ class DownloadController {
             String extension = params.format ?: 'zip'
             File file = new File("${grailsApplication.config.temp.dir}${File.separator}${id}.${extension}")
             if (file.exists()) {
-                response.setContentType(ContentType.BINARY.toString())
+                response.setContentType("application/zip")
                 response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')
                 file.withInputStream { i -> response.outputStream << i }
             } else {
