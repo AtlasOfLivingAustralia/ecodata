@@ -1,9 +1,8 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
+
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
-import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -16,7 +15,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
-    // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
+    // Avoids name clashes for fields that appear in activities and projects (such as name / description)
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String PROJECT_DATA_PREFIX = 'project_'
 
@@ -34,8 +33,11 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
 
-    List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
-    List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
+    List<String> projectApprovalHeaders = ['MERI plan status','Last approval Date', 'Last approved by']
+    List<String> projectApprovalProperties = ['planStatus','approvalDate', 'approvedBy']
+
+    List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
+    List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
     List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders
     List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties
@@ -74,6 +76,10 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3']
     List<String> whsAndCaseStudyHeaders = commonProjectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
     List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
+
+    List<String> approvalsHeaders = commonProjectHeaders + ['Date / Time Approved', 'Change Order Numbers','Comment','Approved by']
+    List<String> approvalsProperties = commonProjectProperties + ['approvalDate', 'changeOrderNumber', 'comment','approvedBy']
+
     List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
@@ -103,9 +109,6 @@ class ProjectXlsExporter extends ProjectExporter {
     AdditionalSheet outputTargetsSheet
     AdditionalSheet risksAndThreatsSheet
 
-    // These fields map full activity names to shortened names that are compatible with Excel tabs.
-    Map<String, String> activitySheetNames = [:]
-    Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
     Map<String, String> outputSheetNames = [:]
     Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
@@ -116,13 +119,13 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Enables us to pre-create headers for each electorate that will appear in the result set */
     List<String> distinctElectorates
 
-    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter ) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter ) {
         super(exporter)
         this.projectService = projectService
         distinctElectorates = new ArrayList()
     }
 
-    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, Map<String, Object> documentMap = [:]) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, Map<String, Object> documentMap = [:]) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
         distinctElectorates = new ArrayList(electorates?:[])
@@ -131,27 +134,28 @@ class ProjectXlsExporter extends ProjectExporter {
         projectProperties += distinctElectorates
     }
 
-    public void export(Map project) {
+    void export(Map project) {
 
         commonProjectPropertiesRaw.each {
             project[PROJECT_DATA_PREFIX+it] = project.remove(it)
         }
 
-        Map activitiesModel = metadataService.activitiesModel()
-
         addProjectGeo(project)
-
         exportProject(project)
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
-        exportActivities(project, activitiesModel)
-        exportOutputs(project, activitiesModel)
+        exportActivities(project )
+        exportParticipantInfo(project)
         exportRisks(project)
         exportMeriPlan(project)
         exportReports(project)
         exportReportSummary(project)
         exportBlog(project)
+
+        if(exporter.workbook.numberOfSheets == 0){
+            createEmptySheet()
+        }
     }
 
     private addProjectGeo(Map project) {
@@ -185,104 +189,90 @@ class ProjectXlsExporter extends ProjectExporter {
         activityData
     }
 
-    /** Matches the status string supplied for a Report (which is determined via the status change history) */
-    private String translatePublicationStatus(String status) {
+     void exportActivities(Map project) {
+         // if tabs to export not given, export all activities
+         if (!tabsToExport){
+             project?.activities?.each { activity ->
+                 if(activity.type=="Activity Summary")
+                     exportActivitySummary(project)
+                 else
+                    exportActivity(project, activity)
+             }
+         }else{
+             tabsToExport.each{ tab ->
+                 if(tab =="Activity Summary"){
+                     exportActivitySummary(project)
+                 } else {
+                     List activities = project?.activities?.findAll{it.type == tab}
+                     if(activities) {
+                         activities.each {
+                             exportActivity(project, it)
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
-        String translated
-        switch (status) {
-            case Report.REPORT_APPROVED:
-                translated = 'Approved'
-                break
-            case Report.REPORT_NOT_APPROVED:
-                translated = 'Returned'
-                break
-            case Report.REPORT_SUBMITTED:
-                translated = 'Submitted'
-                break
-            default:
-                translated = 'Unpublished (no action – never been submitted)'
-                break
-
-        }
-        translated
-    }
-
-    private void exportActivities(Map project, Map activitiesModel) {
-        if (project.activities) {
-            project.activities.each { activity ->
-                if (shouldExport('Activity Summary')) {
-                    AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
-                    Map activityData = commonActivityData(project, activity)
-                    sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
-                }
-                if (shouldExport(activity.type)) {
-                    exportActivity(project, activitiesModel, activity)
-                }
-            }
-        }
-    }
-
-    private void exportOutputs(Map project, Map activitiesModel) {
-        List exportableOutputs = ['Participant Information']
-        if (project.activities) {
-            activitiesModel.outputs.each { outputConfig ->
-                if ((!tabsToExport && outputConfig.name in exportableOutputs) || tabsToExport.contains(outputConfig.name)) {
-                    project.activities.each { activity ->
-                        exportOutput(outputConfig.name, project, activity)
-                    }
-                }
-            }
-        }
-    }
-
-    private void exportOutput(String outputName, Map project, Map activity) {
-        Map output = activity.outputs?.find{it.name == outputName}
-        if (output) {
-            List outputGetters = activityProperties + outputProperties(outputName).propertyGetters
-            Map commonData = commonActivityData(project, activity)
-            List outputData = getOutputData(outputName, activity, commonData)
-
-            AdditionalSheet outputSheet = getOutputSheet(outputName)
-            int outputRow = outputSheet.sheet.lastRowNum
-            outputSheet.add(outputData, outputGetters, outputRow + 1)
-        }
-
-    }
-
-    private List getOutputData(String outputName, Map activity, Map commonData) {
-        List flatData = []
-
-        OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(outputName))
-        Map outputData = activity.outputs?.find { it.name == outputName }
-        if (outputData) {
-            flatData = processor.flatten(outputData, outputModel, false)
-            flatData = flatData.collect { commonData + it }
-        }
-        flatData
-    }
-
-    private void exportActivity(Map project, Map activitiesModel, Map activity) {
-
+    private void exportActivity(Map project, Map activity) {
         Map commonData = commonActivityData(project, activity)
-        List activityData = []
-        List activityGetters = []
+        String activityType = activity.type
+        Integer formVersion = activity.formVersion  //Use Integer to deal with null
 
-        activityGetters += activityProperties
+        String sheetName = activityType +  (formVersion? "_V" + formVersion: "")
 
-        Map activityModel = activitiesModel.activities.find { it.name == activity.type }
-        if (activityModel) {
-            activityModel.outputs?.each { output ->
-                if (activityModel.outputs.contains(output)) {
-                    activityGetters += outputProperties(output).propertyGetters
-                    activityData += getOutputData(output, activity, commonData)
+        Map sheetData = buildOutputSheetData(activity)
+
+        //Combine data from output with  header,getter and  common data
+        List outputGetters = activityProperties + sheetData.getters
+        List headers = commonActivityHeaders + sheetData.headers
+        List outputData = sheetData.data.collect { commonData + it }
+
+        AdditionalSheet outputSheet = createSheet(sheetName, headers)
+        int outputRow = outputSheet.sheet.lastRowNum
+        outputSheet.add(outputData, outputGetters, outputRow + 1)
+    }
+
+    private void exportActivitySummary(Map project){
+        def activity = project?.activities.find{ it.type == 'Activity Summary'}
+        AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
+        if(activity){
+            Map activityData = commonActivityData(project, activity)
+            sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+        }else{
+            sheet.add([], activityProperties, sheet.getSheet().lastRowNum + 1)
+        }
+
+    }
+
+    /**
+     * Collect participant info cross multi activities to one tab sheet
+     * @param project
+     */
+    private void exportParticipantInfo(Map project) {
+        String tab = 'Participant Information'
+        if (shouldExport(tab)){
+            List outputGetters =[]
+            List headers = []
+            List outputData = []
+
+            project?.activities.each{activity->
+                    Map commonData = commonActivityData(project, activity)
+                    Map sheetData = buildOutputSheetData(activity, tab)
+                    //Combine data from output with  header,getter and  common data
+                    outputGetters += sheetData.getters
+                    headers += sheetData.headers
+                    List currentData = sheetData.data.collect { commonData + it }
+                    outputData += currentData
                 }
-            }
-            AdditionalSheet activitySheet = getActivitySheet(activityModel)
-            int activityRow = activitySheet.sheet.lastRowNum
-            activitySheet.add(activityData, activityGetters, activityRow + 1)
+            //Remove duplicated headers and getters
+            //getter is an object. Need to Stringfy to unique
+            outputGetters = activityProperties + outputGetters.unique{it.toString()}
+            headers = commonActivityHeaders + headers.unique()
+            AdditionalSheet outputSheet = createSheet(tab, headers)
+            int outputRow = outputSheet.sheet.lastRowNum
 
-        } else {
-            log.error("Found activity not in model: " + activity.type)
+            outputSheet.add(outputData, outputGetters, outputRow + 1)
         }
     }
 
@@ -347,6 +337,19 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportMeriPlan(Map project) {
+        String[] meriPlanTabs = [
+                "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
+                "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
+                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+        ]
+        //Add extra info about approval status if any MERI plan information is to be exported.
+        if (shouldExport(meriPlanTabs)){
+            Map approval  = projectService.getMostRecentMeriPlanApproval(project.projectId)
+            if (approval) {
+                project['approvalDate'] = approval.approvalDate
+                project['approvedBy'] =  approval.approvedBy
+            }
+        }
 
         exportBudget(project)
         exportOutcomes(project)
@@ -359,12 +362,11 @@ class ProjectXlsExporter extends ProjectExporter {
         exportAttachments(project)
         exportBaseline(project)
         exportEvents(project)
+        exportApprovals(project)
         exportRLPOutcomes(project)
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
-        //exportRLPBaselinesIndicators(project)
         exportRLPServicesTargets(project)
-
     }
 
     private void exportBudget(Map project) {
@@ -490,12 +492,26 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportRisks(Map project) {
-        if (tabsToExport && tabsToExport.contains('MERI_Risks and Threats')) {
+        if (shouldExport('MERI_Risks and Threats')) {
             risksAndThreatsSheet()
             int row = risksAndThreatsSheet.getSheet().lastRowNum
             if (project.risks && project.risks.rows) {
                 List data = project.risks.rows.collect { it + project }
                 risksAndThreatsSheet.add(data, risksAndThreatsProperties, row + 1)
+            }
+
+        }
+    }
+
+    private void exportApprovals(Map project) {
+        if (shouldExport('MERI_Approvals')) {
+            AdditionalSheet sheet = getSheet("MERI_Approvals", approvalsHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            List approvals  = projectService.getMeriPlanApprovalHistory(project.projectId)
+             if (approvals && approvals.size()>0) {
+                List data = approvals.collect { it + project }
+                sheet.add(data, approvalsProperties, row + 1)
             }
 
         }
@@ -534,7 +550,7 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private  void exportRLPProjectDetails(Map project){
+    private void exportRLPProjectDetails(Map project){
         if (shouldExport("RLP_Project_Details")) {
             /**
              * RLP outcome does not use HEADERs from DB
@@ -639,49 +655,6 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-/***
- * Deprecated
- * @param project
- */
-    private  void exportRLPBaselinesIndicators(Map project){
-        List<String> rlpBaseLineHeaders =commonProjectHeaders + ["Baseline/Indicator","Project baseline",	"Baseline method"]
-        List<String> rlpBaseLineProperties = commonProjectProperties + ["biType","baseline",	"baselineMethod"]
-
-        if (shouldExport("RLP_Baselines")) {
-            /**
-             * RLP outcome does not use HEADERs from DB
-             */
-            AdditionalSheet sheet = getSheet("RLP Monitoring methodology", rlpBaseLineHeaders)
-            int row = sheet.getSheet().lastRowNum
-
-            List data = []
-
-            if (project?.custom?.details?.baseline?.rows){
-                def items = project?.custom?.details?.baseline?.rows
-                items.each{ Map item ->
-                    Map baseline = [:]
-                    baseline["biType"] = "Baseline"
-                    baseline["baseline"] = item.baseline
-                    baseline["baselineMethod"] = item.method
-                    data.add(baseline)
-                }
-            }
-            //Reuse custom.details.keq
-            if (project?.custom?.details?.keq?.rows){
-                def items = project?.custom?.details?.keq?.rows
-                items.each{ Map item ->
-                    Map baseline = [:]
-                    baseline["biType"] = "Indicator"
-                    baseline["baseline"] = item.data1
-                    baseline["baselineMethod"] = item.data2
-                    data.add(project+baseline)
-                }
-            }
-
-            sheet.add(data?:[], rlpBaseLineProperties, row+1)
-        }
-    }
-
     private void exportRLPServicesTargets(project){
         if (!shouldExport("RLP_Services_and_Targets"))
             return
@@ -766,6 +739,8 @@ class ProjectXlsExporter extends ProjectExporter {
         }
         typedActivitySheets[activityType]
     }
+
+
 
     AdditionalSheet getOutputSheet(String outputName) {
 

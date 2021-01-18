@@ -55,8 +55,10 @@ class XlsExporter extends XlsxExporter {
             styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
 
         } else {
-            sheet.fillHeader(headers)
-            styleRow(sheet, 0, headerStyle(getWorkbook()))
+            if(headers) {
+                sheet.fillHeader(headers)
+                styleRow(sheet, 0, headerStyle(getWorkbook()))
+            }
         }
 
 
@@ -117,7 +119,6 @@ class XlsExporter extends XlsxExporter {
         //font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         font.setBold(true)
         font.setColor(HSSFColor.HSSFColorPredefined.WHITE.index);
-        //font.setColor(HSSFColor.WHITE.index);
         headerStyle.setFont(font);
         return headerStyle
     }

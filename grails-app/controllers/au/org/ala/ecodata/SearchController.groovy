@@ -4,9 +4,8 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-
-import grails.web.servlet.mvc.GrailsParameterMap
-
+import groovyx.net.http.ContentType
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
@@ -385,6 +384,12 @@ class SearchController {
         def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, approvedOnly)
         render results as JSON
     }
+
+
+    @Deprecated
+    /**
+     *  Use DownloadController instead
+    */
 
     def downloadProjectDataFile() {
         if (!params.id) {

@@ -84,10 +84,107 @@ class OutputMetadataSpec extends Specification {
         postLabelTest.label == 'Post label'
     }
 
+    void "Nested properties can be identified in the data model"() {
+        setup:
+        def model = getJsonResource('revegetationDetailsMetadata')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getNestedPropertyNames()
+
+        then:
+        names == ['planting']
+    }
+
+    void "More than one level of nesting can be identified in the data model"() {
+        setup:
+        def model = getJsonResource('nestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getNestedPropertyNames()
+
+        then:
+        names == ['list', 'list.nestedList']
+    }
+
+    void "The property names from the data model can be returned as a list"() {
+        setup:
+        def model = getJsonResource('nestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.propertyNamesAsList()
+
+        then:
+        names == ['number1', 'list', 'list.value1', 'list.nestedList', 'list.nestedList.value2', 'list.afterNestedList', 'notes']
+    }
+
+    void "test model iterator"() {
+        setup:
+        def model = getJsonResource('nestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = []
+        outputMetadata.modelIterator { path, view, data ->
+            names << [path:path, view:view.type, data:data.name]
+        }
+
+        then:
+        names == [[path:'number1', view:'number', data:'number1'],
+                  [path:'list', view:'repeat', data:'list'],
+                  [path:'list.value1', view:'text', data:'value1'],
+                  [path:'list.nestedList', view:'table', data:'nestedList'],
+                  [path:'list.nestedList.value2', view:'text', data:'value2'],
+                  [path:'list.afterNestedList', view:'text', data:'afterNestedList'],
+                  [path:'notes', view:'textarea', data:'notes']
+        ]
+    }
+
+    void "Data model properties marked with the memberOnlyView attribute can be identified"() {
+        setup:
+        Map model = getJsonResource("modelWithMemberOnlyProperties")
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getMemberOnlyPropertyNames()
+
+        then:
+        names.size() == 3
+        names.containsAll(['notes', 'list.value1', 'list.nestedList.value2'])
+
+        when:
+        model = getJsonResource("sampleNestedDataModel")
+        outputMetadata = new OutputMetadata(model)
+        names = outputMetadata.getMemberOnlyPropertyNames()
+
+        then:
+        names.isEmpty()
+    }
+
+    void "Data model properties representing a specific Darwin Core attribute can be identified"() {
+        setup:
+        Map model = getJsonResource("actwwWaterBugSurvey")
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = outputMetadata.getPropertyNamesByDwcAttribute("individualCount")
+
+        then:
+        names == ['taxaObservations.individualCount']
+
+        when:
+        model = getJsonResource("sampleNestedDataModel")
+        outputMetadata = new OutputMetadata(model)
+        names = outputMetadata.getPropertyNamesByDwcAttribute("individualCount")
+
+        then:
+        names.isEmpty()
+    }
 
     private List annotatedRevegetationModel() {
         def model = getJsonResource('revegetationDetailsMetadata')
-        println model.toString(2)
         OutputMetadata outputMetadata = new OutputMetadata(model)
 
         List annotated = outputMetadata.annotateDataModel()

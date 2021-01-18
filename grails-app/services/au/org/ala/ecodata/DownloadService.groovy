@@ -28,6 +28,7 @@ class DownloadService {
 
     def grailsApplication
     def groovyPageRenderer
+    def grailsLinkGenerator
 
     /**
      * Produces the same file as {@link #downloadProjectData(java.io.OutputStream, org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap)}
@@ -78,6 +79,39 @@ class DownloadService {
         downloadProjectDataAsync(map, doDownload)
     }
 
+    def generateReports(Map params, Closure downloadAction) {
+        String downloadId = UUID.randomUUID().toString()
+        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        directoryPath.mkdirs()
+        String fileExtension = params.fileExtension?:'zip'
+        File file = new File(directoryPath, "${downloadId}.${fileExtension}")
+
+        task {
+                downloadAction(file)
+        }.onComplete {
+            int days = grailsApplication.config.temp.file.cleanup.days as int
+            String url = ''
+            // if report url is not supply by FieldCapture, then create a url based on ecodata
+            if (!params.reportDownloadBaseUrl)
+                url = grailsLinkGenerator.link(controller:'download', action:'get', params:[id: downloadId, fileExtension: fileExtension])
+            else
+                url = params.reportDownloadBaseUrl+'/' + downloadId+'.'+fileExtension
+
+            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            if(params.email && params.systemEmail && params.senderEmail)
+                emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
+            else
+                log.error('Email system is missing sender/receiver')
+
+        }.onError { Throwable error ->
+            log.error("Failed to generate zip file for download.", error)
+            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
+        }
+
+        return downloadId+'.'+fileExtension
+    }
+
     /**
      * Constructs a zip file with the following structure:
      * |- data.xls --> spreadsheet as per {@link au.org.ala.ecodata.reporting.CSProjectXlsExporter}
@@ -120,7 +154,7 @@ class DownloadService {
                 log.debug("Images added")
 
                 XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
-                zip.putNextEntry(new ZipEntry("data.xls"))
+                zip.putNextEntry(new ZipEntry("data.xlsx"))
                 ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
                 xlsExporter.save(xslFile)
                 xslFile.flush()

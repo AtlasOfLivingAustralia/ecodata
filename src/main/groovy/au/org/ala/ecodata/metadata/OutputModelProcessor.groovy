@@ -48,6 +48,11 @@ class OutputModelProcessor {
             return
         }
 
+        if (context == null){
+            log.warn("Found node without value" +node)
+            return
+        }
+
         switch(type) {
             case 'number':
                 processor.number(node, context);
@@ -132,6 +137,66 @@ class OutputModelProcessor {
             }
         }
         rows
+    }
+
+    /**
+     * Takes an output containing potentially nested values and produces a flat List of stuff.
+     * If the output contains more than one set of nested properties, the number of items returned will
+     * be the sum of the nested properties - any particular row will only contain values from one of the
+     * nested rows.
+     * @param output the data to flatten
+     * @param outputMetadata description of the output to flatten
+     * @param duplicationNonNestedValues true if each item in the returned list contains all of the non-nested data in the output
+     */
+    List flatten2(Map output, OutputMetadata outputMetadata) {
+        Map data = output.remove('data') ?: [:]
+        data += output
+
+        flattenNode(data, '', outputMetadata.getNestedPropertyNames())
+    }
+
+    private List flattenList(String path, List values, List nestedPropertyNames) {
+        List results = []
+
+        values.each { Map node ->
+           results.addAll(flattenNode(node, path, nestedPropertyNames))
+        }
+        results
+    }
+
+    private String fullPath(String path, String propertyName) {
+        path ? path+'.'+propertyName : propertyName
+    }
+    private Map nestedPropertiesByName(Map node, String path, List nestedPropertyNames) {
+       node.findAll{key, value -> fullPath(path, key) in nestedPropertyNames}
+    }
+
+    private List flattenNode(Map node, String path, List nestedPropertyNames) {
+
+        List results = []
+        nestedPropertiesByName(node, path, nestedPropertyNames).each { String property, List nestedList ->
+            node.remove(property)
+            List nestedResults = flattenList(property, nestedList, nestedPropertyNames)
+
+            // Prepend the current path to the keys in the returned list if necessary.
+            if (path) {
+                nestedResults = nestedResults.collect {Map result ->
+                    result.collectEntries{k, v -> [(path+'.'+k), v]}
+                }
+            }
+            results.addAll(nestedResults)
+        }
+        // If there are nested properties, combine the results of flattening the list with the
+        // non-nested values of this node, otherwise just return a single result containing the node
+        Map nonNestedData = node
+        if (path) {
+            nonNestedData = node.collectEntries {k, v -> [(fullPath(path, k)):v]}
+        }
+        results = results.collect{ it+nonNestedData }
+        if (!results) {
+            results << nonNestedData
+        }
+        results
     }
 
     def hideMemberOnlyAttributes(Map output, OutputMetadata outputMetadata, boolean userIsProjectMember = false) {

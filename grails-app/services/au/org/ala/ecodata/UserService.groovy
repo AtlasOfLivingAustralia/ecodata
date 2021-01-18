@@ -119,4 +119,9 @@ class UserService {
     def getUserKey(String username, String password) {
         webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password], true)
     }
+
+    def getAllUsers() {
+        return authService.getAllUserNameList()
+    }
+
 }
