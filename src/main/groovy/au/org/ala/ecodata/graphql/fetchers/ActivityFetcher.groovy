@@ -6,6 +6,7 @@ import au.org.ala.ecodata.graphql.models.Summary
 import grails.core.GrailsApplication
 import grails.util.Holders
 import graphql.schema.DataFetchingEnvironment
+import org.apache.commons.lang.WordUtils
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.context.MessageSource
 
@@ -135,5 +136,55 @@ class ActivityFetcher implements graphql.schema.DataFetcher<List<Activity>> {
         }.sort { it.type}
 
         return activityList
+    }
+
+    /***
+     * This method is used to get the activity output data of a given project
+     * @param args
+     * @param givenProjectId
+     * @param activityName
+     * @param outputTypes
+     * @param modifiedColumns
+     * @return
+     */
+    def getActivityData(List args, String givenProjectId, String activityName, List outputTypes,List modifiedColumns)
+    {
+        //get the activity list of a given project
+        List<Activity> projectActivities = getFilteredActivities(args, givenProjectId)
+
+        //get the activity Id of the activities of the given activity type
+        List activityIds = projectActivities.findAll{ WordUtils.capitalize(it.type).replaceAll("\\W", "") == activityName}.activityId
+
+        //get output data
+        List<Output> outputList = new OutputFetcher(Holders.applicationContext.metadataService, Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredOutput(args)
+
+        //get the output data of the activities of the project
+        def outputs = outputList.findAll {it.activityId in activityIds}
+
+        def activities = [:]
+        outputTypes.each{
+            activities."$it" = []
+        }
+        //format the output data to match the graphql type format
+        outputs.each{
+            String name = "OutputType_" + WordUtils.capitalize(it.name).replaceAll("\\W", "")
+            if(!(name in outputTypes)){
+                name = "OutputType_" + activityName + "_" + WordUtils.capitalize(it.name).replaceAll("\\W", "")
+            }
+            if(name in outputTypes) {
+                def dataList = [:]
+                it.data.each { d ->
+                    if (d.key in modifiedColumns) {
+                        dataList.put(name + "_" + d.key, d.value)
+                    }
+                    else{
+                        dataList.put(d.key, d.value);
+                    }
+                }
+                activities."$name" << dataList
+            }
+        }
+
+        return activities
     }
 }
