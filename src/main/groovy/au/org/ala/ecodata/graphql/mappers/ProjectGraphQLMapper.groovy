@@ -9,6 +9,7 @@ import au.org.ala.ecodata.Status
 import au.org.ala.ecodata.graphql.enums.DateRange
 import au.org.ala.ecodata.graphql.enums.YesNo
 import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
+import au.org.ala.ecodata.graphql.fetchers.Helper
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.MeriPlan
 import au.org.ala.ecodata.graphql.models.OutputData
@@ -16,6 +17,7 @@ import grails.gorm.DetachedCriteria
 import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import org.apache.commons.lang.WordUtils
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
 import org.grails.gorm.graphql.fetcher.impl.SingleEntityDataFetcher
@@ -34,6 +36,9 @@ class ProjectGraphQLMapper {
             operations.delete.enabled false
 
             exclude("custom")
+
+            Map activityModel = new Helper().getActivityOutputModels()
+            String[] duplicateOutputs = activityModel["activities"].outputs.name.flatten().groupBy { it }.findAll { it.value.size() > 1}.keySet()
 
             List<String> restrictedProperties = []
             restrictedProperties.each { String prop ->
@@ -75,6 +80,66 @@ class ProjectGraphQLMapper {
                 dataFetcher { Project project ->
                     new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
                             Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
+                }
+            }
+
+            //add graphql type for each activity type
+            activityModel["activities"].each {
+                if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
+                    def outputTypes = it.outputs
+                    String activityName = WordUtils.capitalize(it.name).replaceAll("\\W", "")
+                    String name = "Activity_" + activityName
+                    List outputList = []
+                    List modifiedColumns = []
+                    //define activity type
+                    add(name, name) {
+                        type {
+                            outputTypes.each { outputType ->
+                                String outputName = WordUtils.capitalize(outputType.name).replaceAll("\\W", "")
+                                String outputTypeName = "OutputType_" + outputName
+                                if(outputType.fields?.size() > 0 && !(outputTypeName in outputList)) {
+                                    if(duplicateOutputs.contains(outputType.name)){
+                                        outputTypeName = "OutputType_" + activityName + "_" + outputName
+                                    }
+                                    outputList << outputTypeName
+                                    //define output types and fields of the activity
+                                    field(outputTypeName, outputTypeName) {
+                                        String[] fieldList = outputType.fields.name.unique()
+                                        for(int t=0; t<fieldList.size(); t++){
+                                            def outputField = outputType.fields.find{ b -> b.name == fieldList[t]}
+                                            if(outputField.dataType == "number") {
+                                                field(fieldList[t].toString(), double)
+                                            }
+                                            else if(outputField.dataType == "text") {
+                                                field(fieldList[t].toString(), String)
+                                            }
+                                            else if(outputField.dataType == "list") {
+                                                modifiedColumns << fieldList[t].toString()
+                                                field(outputTypeName + "_" + fieldList[t].toString(), outputTypeName + "_" + fieldList[t].toString()){
+                                                    String[] columnList = outputField.columns.name.unique()
+                                                    for(int y=0; y<columnList.size(); y++){
+                                                        def column = outputField.columns.find{ b -> b.name == columnList[y]}
+                                                        field(column.name.toString(), column.dataType == "number" ? double : String)
+                                                    }
+                                                    collection true
+                                                }
+                                            }
+                                            else {
+                                                field(fieldList[t].toString(), String)
+                                            }
+                                        }
+                                        nullable true
+                                        collection true
+                                    }
+                                }
+                            }
+                        }
+                        dataFetcher { Project project ->
+                            def s=new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                                    Holders.applicationContext.messageSource, Holders.grailsApplication).getActivityData(project.tempArgs, project.projectId, activityName, outputList, modifiedColumns)
+                            return s
+                        }
+                    }
                 }
             }
 
