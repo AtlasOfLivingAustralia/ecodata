@@ -1,6 +1,10 @@
 package au.org.ala.ecodata.graphql.fetchers
 
+import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.MetadataService
+import au.org.ala.ecodata.PublicationStatus
+import au.org.ala.ecodata.Status
 import graphql.GraphQLException
 
 class Helper {
@@ -9,6 +13,9 @@ class Helper {
 
     Helper(MetadataService metadataService) {
         this.metadataService = metadataService
+    }
+
+    Helper() {
     }
     /**
      * This can be used to validate the given activity types and the output types
@@ -63,5 +70,41 @@ class Helper {
                 throw new GraphQLException('Invalid Field: ' + output["fields"] + ' , suggested values are : ' + fieldNames)
             }
         }
+    }
+
+    /***
+     * This method is used to get activity output model
+     * @return
+     */
+    Map getActivityOutputModels(){
+        Map activitiesModel = [activities:[]]
+
+        Map maxVersionsByName = [:]
+        Map activitiesByName = [:]
+
+        ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED).each { ActivityForm activityForm ->
+            Map activityModel = [
+                    name: activityForm.name,
+                    outputs: []
+            ]
+
+            activityForm.sections.unique().each { FormSection section ->
+                activityModel.outputs << [
+                        name: section.name,
+                        fields: section.template.dataModel != null ? section.template.dataModel : []
+                ]
+            }
+
+            if (!maxVersionsByName[activityForm.name] || (maxVersionsByName[activityForm.name] < activityForm.formVersion)) {
+                maxVersionsByName[activityForm.name] = activityForm.formVersion
+                activitiesByName[activityForm.name] = activityModel
+            }
+        }
+        // Assemble the latest version of each activity into the model.
+        activitiesByName.each { String name, Map activityModel ->
+            activitiesModel.activities << activityModel
+        }
+
+        activitiesModel
     }
 }
