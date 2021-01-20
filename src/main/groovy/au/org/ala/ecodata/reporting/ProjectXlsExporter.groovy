@@ -162,15 +162,15 @@ class ProjectXlsExporter extends ProjectExporter {
         List geo = ['state',  'elect']
         Map geoData = [:].withDefault{[]}
         project.sites?.each { site ->
-            Map props = site?.extent?.geometry ?: [:]
-
-            geo.each { facet ->
-                Object value = props[facet]
-                if (value instanceof List) {
-                    geoData[facet].addAll(value)
-                }
-                else {
-                    geoData[facet] << value
+            if (site?.extent?.geometry instanceof Map) {
+                Map props = site?.extent?.geometry ?: [:]
+                geo.each { facet ->
+                    Object value = props[facet]
+                    if (value instanceof List) {
+                        geoData[facet].addAll(value)
+                    } else {
+                        geoData[facet] << value
+                    }
                 }
             }
         }
@@ -190,28 +190,19 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
      void exportActivities(Map project) {
-         // if tabs to export not given, export all activities
-         if (!tabsToExport){
-             project?.activities?.each { activity ->
-                 if(activity.type=="Activity Summary")
-                     exportActivitySummary(project)
-                 else
-                    exportActivity(project, activity)
-             }
-         }else{
-             tabsToExport.each{ tab ->
-                 if(tab =="Activity Summary"){
-                     exportActivitySummary(project)
-                 } else {
-                     List activities = project?.activities?.findAll{it.type == tab}
-                     if(activities) {
-                         activities.each {
-                             exportActivity(project, it)
-                         }
+         tabsToExport.each{ tab ->
+             if(tab =="Activity Summary"){
+                 exportActivitySummary(project)
+             } else {
+                 List activities = project?.activities?.findAll{it.type == tab}
+                 if(activities) {
+                     activities.each {
+                         exportActivity(project, it)
                      }
                  }
              }
          }
+
      }
 
     private void exportActivity(Map project, Map activity) {
@@ -233,16 +224,12 @@ class ProjectXlsExporter extends ProjectExporter {
         outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
-    private void exportActivitySummary(Map project){
-        def activity = project?.activities.find{ it.type == 'Activity Summary'}
+    private void exportActivitySummary(Map project) {
         AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
-        if(activity){
+        project.activities.each { activity ->
             Map activityData = commonActivityData(project, activity)
             sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
-        }else{
-            sheet.add([], activityProperties, sheet.getSheet().lastRowNum + 1)
         }
-
     }
 
     /**
