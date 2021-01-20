@@ -7,6 +7,7 @@ import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Output
 import au.org.ala.ecodata.PermissionService
 import au.org.ala.ecodata.SchemaBuilder
+import au.org.ala.ecodata.Status
 import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.Summary
 import grails.core.GrailsApplication
@@ -106,6 +107,7 @@ class OutputFetcher implements graphql.schema.DataFetcher<List<Output>> {
             if(activityId) {
                 activityId == activityId
             }
+            status != Status.DELETED
         }.each {
             if (outputArgs) {
                 it.tempArgs.add(["output": outputArgs])

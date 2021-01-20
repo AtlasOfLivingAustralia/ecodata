@@ -76,13 +76,6 @@ class ProjectGraphQLMapper {
                 }
             }
 
-            add('activities', [Activity]) {
-                dataFetcher { Project project ->
-                    new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
-                            Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
-                }
-            }
-
             //add graphql type for each activity type
             activityModel["activities"].each {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
@@ -200,7 +193,6 @@ class ProjectGraphQLMapper {
                         field('activityType', String) {nullable true}
                         field('output', 'output') {
                             field('outputType', String) {nullable false}
-                            field('fields', [String]) {nullable true}
                             nullable true
                             //one activity can have zero or more output
                             collection true

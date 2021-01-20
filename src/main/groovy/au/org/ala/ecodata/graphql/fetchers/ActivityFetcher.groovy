@@ -131,6 +131,7 @@ class ActivityFetcher implements graphql.schema.DataFetcher<List<Activity>> {
             if(activityIdList.size() > 0) {
                 activityId in activityIdList.activityId
             }
+            status != Status.DELETED
         }.each {
             it.tempArgs = args ?: []
         }.sort { it.type}
