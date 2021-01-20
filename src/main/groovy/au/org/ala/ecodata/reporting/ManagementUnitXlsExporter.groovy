@@ -16,6 +16,7 @@ class ManagementUnitXlsExporter extends TabbedExporter {
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String  REPORT_PREFIX = 'report_'
 
+    List<String> reportProperties = ['reportId', 'name', 'description', 'fromDate', 'toDate']
     List<String> activityHeaders = ['Activity Type','Activity Description','Activity Progress', 'Activity Last Updated' ]
     List<String> activityProperties =  ['type','description','progress', 'lastUpdated']
     List<String> commonActivityHeaders =  ["Management Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Current Report Status', 'Date of status change', 'Changed by'] + activityHeaders
@@ -37,9 +38,13 @@ class ManagementUnitXlsExporter extends TabbedExporter {
                         activity['managementUnitId'] = mu.managementUnitId
                         activity['managementUnitName'] = mu.name
 
-                        Map reportData = report.properties.collectEntries{k,v -> [REPORT_PREFIX+k, v]}
-                        reportData.putAll(extractCurrentReportStatus(report).collectEntries{k,v -> [REPORT_PREFIX+k, v]})
+                        Map reportData = [:]
+                        reportProperties.each { String prop ->
+                            reportData[REPORT_PREFIX + prop] = report[prop]
+                        }
+                        reportData.putAll(extractCurrentReportStatus(report).collectEntries { k, v -> [REPORT_PREFIX + k, v] })
                         activity.putAll(reportData)
+
                     }
                     exportReport(activity)
                 }
