@@ -28,7 +28,7 @@ class MetadataService {
 
     private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
-    def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService, commonService
+    def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -666,10 +666,10 @@ class MetadataService {
                 columnMap:columnMap
         ]
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
-
-        excelImportService.convertColumnMapConfigManyRows(workbook, config)
-
+        excelImportService.mapSheet(workbook, config)
     }
+
+
 
     /**
      * Converts a Score domain object to a Map.

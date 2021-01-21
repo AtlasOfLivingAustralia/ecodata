@@ -335,4 +335,37 @@ class ReportService {
         }
         builder.writeShapefile(outputStream)
     }
+
+    /**
+     *
+     * @param id management unit Id
+     * @return
+     */
+    List getReportsOfManagementUnit(String id){
+        List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(id,Status.DELETED)
+        List<Map> activities = activityService.getAll(reports.activityId,['all'])
+
+        List hasReports = activities.findAll{
+            it.outputs?.size()>0
+        }
+        hasReports.each{
+            def report = reports.find {it.activityId == it.activityId}
+            if (report){
+                it['reportId'] = report['reportId']
+                it['reportName'] = report['name']
+                it['reportDesc'] = report['description']
+            }
+        }
+        return hasReports
+    }
+
+    /**
+     *
+     * @param muIds a list of management unit Ids
+     * @return
+     */
+    Date[] getPeriodOfManagmentUnitReport(String[] muIds ){
+        List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
+        Date[] period = activityService.getPeriod(activityIds)
+    }
 }

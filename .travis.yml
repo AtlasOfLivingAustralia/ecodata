@@ -10,6 +10,7 @@ branches:
   - hot-fix
   - /^feature\/.*$/
   - grails3
+  - grails3-dev
   - /^hotfix\/.*$/
 
 services:

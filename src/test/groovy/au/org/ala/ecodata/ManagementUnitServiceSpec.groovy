@@ -12,6 +12,7 @@ class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<Man
 
     CommonService commonService = new CommonService()
     SiteService siteService = Mock(SiteService)
+    ReportService reportService = Mock(ReportService)
 
     def setup() {
         JSON.registerObjectMarshaller(new MapMarshaller())
@@ -21,6 +22,7 @@ class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<Man
         commonService.messageSource = Mock(MessageSource)
         service.commonService = commonService
         service.siteService = siteService
+        service.reportService = reportService
 
         ManagementUnit.findAll().each { it.delete(flush:true) }
     }
@@ -60,6 +62,20 @@ class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<Man
         featureCollection.features.size() == 10
     }
 
+    def "The service calculates report periods "() {
+        setup:
+        (1..2).each {setupMu(it)}
+
+        when:
+        int[] years = service.getFinancialYearPeriods()
+
+        then:
+        1 * reportService.getPeriodOfManagmentUnitReport(['m1','m2']) >> [ new Date(2009,1,1), new Date(2010,8,1)]
+
+        then:
+        years.size() == 3
+    }
+
 
     private void setupMu(int count) {
         ManagementUnit mu = new ManagementUnit(
@@ -69,6 +85,24 @@ class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<Man
                 status:Status.ACTIVE,
                 managementUnitSiteId:'muSite'+count)
         mu.save(flush:true)
+
+        Report report = new Report(
+                managementUnitId: 'm'+count,
+                name: 'report'+count,
+                activityId: 'a'+count,
+                reportId: 'r'+count
+        )
+
+        report.save(flush: true)
+
+        Activity activity = new Activity(
+                reportId: 'r'+count,
+                name: 'activity'+count,
+                activityId: 'a'+count,
+                plannedStartDate: new Date(2008,1,1) ,
+                plannedEndDate: new Date(2010,1,1)
+        )
+        activity.save(flush: true)
     }
 
     private Map squareFeature(String id, int x, int y) {

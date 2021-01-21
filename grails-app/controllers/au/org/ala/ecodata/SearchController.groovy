@@ -3,10 +3,8 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
-import groovy.json.JsonSlurper
-
 import grails.web.servlet.mvc.GrailsParameterMap
-
+import groovy.json.JsonSlurper
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
@@ -386,6 +384,12 @@ class SearchController {
         render results as JSON
     }
 
+
+    @Deprecated
+    /**
+     *  Use DownloadController instead
+    */
+
     def downloadProjectDataFile() {
         if (!params.id) {
             response.setStatus(400)
@@ -666,7 +670,7 @@ class SearchController {
             }
         }
 
-        Closure doDownload = {  OutputStream outputStream, GrailsParameterMap paramMap ->
+        Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
             SimpleDateFormat format = new SimpleDateFormat('yyyy-MM-dd')
             def name = 'meritSites-' + format.format(new Date())
 

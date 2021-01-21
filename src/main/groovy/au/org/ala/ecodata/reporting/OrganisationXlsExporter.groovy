@@ -1,11 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.metadata.OutputMetadata
-import au.org.ala.ecodata.metadata.OutputModelProcessor
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
+
 /**
  * Exports organisation related information to an Excel spreadsheet
  */
@@ -74,32 +74,24 @@ class OrganisationXlsExporter extends TabbedExporter {
         String reportOutput = "Performance Self Assessment"
 
         if (shouldExport(reportOutput)) {
-            OutputModelProcessor processor = new OutputModelProcessor()
-            Map config = outputProperties(reportOutput)
-
-            List properties = reportDataProperties + config.propertyGetters
-            List headers = reportDataHeaders + config.headers
-            AdditionalSheet sheet = getSheet(reportOutput, headers)
-            int row = sheet.getSheet().lastRowNum
-
-            OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModel(reportOutput))
 
             List results = []
+            Map reportHeaderData = buildOutputSheetData([type:reportOutput, formVersion:1, outputs:[]])
+
             organisation.reports.each {report ->
 
                 if (report.type == "Performance Management Framework - Self Assessment") {
-                    Map outputData = [data:report.data]
-                    if (outputData) {
-                        List reportData = processor.flatten(outputData, outputModel, false)
 
-                        results += reportData.collect { it + organisation + [reportName:report.name, fromDate:report.fromDate, toDate:report.toDate, progress: report.progress, publicationStatus: report.publicationStatus] }
-
+                    Map reportData = buildOutputSheetData([type:reportOutput, formVersion:1, outputs:[[name:reportOutput, data:report.data]]])
+                    if (reportData.data) {
+                        results += reportData.data.collect { it + organisation + [reportName:report.name, fromDate:report.fromDate, toDate:report.toDate, progress: report.progress, publicationStatus: report.publicationStatus] }
                     }
                 }
             }
 
-
-            sheet.add([results], properties, row + 1)
+            AdditionalSheet sheet = getSheet(reportOutput, reportHeaderData.headers)
+            int row = sheet.getSheet().lastRowNum
+            sheet.add([results], reportHeaderData.getters, row + 1)
         }
     }
 }

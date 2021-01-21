@@ -6,6 +6,7 @@ import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import groovy.json.JsonSlurper
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
@@ -231,6 +232,8 @@ class DocumentController {
 
         return null
     }
+
+
 
     /**
      * Creates and returns a thumbnail of the supplied image.  The image orientation will be automatically corrected if needed.

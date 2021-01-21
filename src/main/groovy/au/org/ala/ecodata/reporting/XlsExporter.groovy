@@ -55,8 +55,10 @@ class XlsExporter extends XlsxExporter {
             styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
 
         } else {
-            sheet.fillHeader(headers)
-            styleRow(sheet, 0, headerStyle(getWorkbook()))
+            if(headers) {
+                sheet.fillHeader(headers)
+                styleRow(sheet, 0, headerStyle(getWorkbook()))
+            }
         }
 
 
@@ -101,9 +103,8 @@ class XlsExporter extends XlsxExporter {
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         headerStyle.setFillForegroundColor(backgroundColorIndex);
         Font font = workbook.createFont();
-        //font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         font.setBold(true)
-        font.setColor(HSSFColor.HSSFColorPredefined.BLACK.index);
+        font.setColor(HSSFColor.HSSFColorPredefined.BLACK.index)
         headerStyle.setFont(font);
         return headerStyle
     }
@@ -112,12 +113,10 @@ class XlsExporter extends XlsxExporter {
     CellStyle headerStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        Font font = workbook.createFont();
-        //font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+        Font font = workbook.createFont()
         font.setBold(true)
-        font.setColor(HSSFColor.HSSFColorPredefined.WHITE.index);
-        //font.setColor(HSSFColor.WHITE.index);
+        font.setColor(HSSFColor.HSSFColorPredefined.WHITE.index)
         headerStyle.setFont(font);
         return headerStyle
     }
