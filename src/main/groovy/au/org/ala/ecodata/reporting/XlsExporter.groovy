@@ -21,17 +21,6 @@ class XlsExporter extends XlsxExporter {
         this.fileName = fileName
     }
 
-    /**
-     * Override the parent method to ignore the workbook and create one of the type we want (to use the streaming
-     * API).  The default workbook XSSFWorkbook uses too much memory when large downloads are requested.
-     * @param workbook ignored.
-     */
-    protected setUp(Workbook workbook) {
-        // Ignore the workbook param to create a streaming version to manage memory use better.
-        this.workbook = new SXSSFWorkbook(100)
-        super.setUp(this.workbook)
-    }
-
     public static String sheetName(String name) {
         int end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH) - 1
         def shortName = name[0..end]

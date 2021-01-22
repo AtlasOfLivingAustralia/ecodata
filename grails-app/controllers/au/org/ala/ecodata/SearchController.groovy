@@ -459,12 +459,14 @@ class SearchController {
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
             File file = File.createTempFile("download", "xlsx")
-            XlsExporter xlsExporter = new XlsExporter(file.name)
+            XlsExporter xlsExporter
             ProjectExporter projectExporter
             if (params.reportType == 'works') {
+                xlsExporter = new XlsExporter(file.name)
                 projectExporter = worksProjectExporter(xlsExporter, params)
             }
             else {
+                xlsExporter = new StreamingXlsExporter(file.name)
                 projectExporter = meritProjectExporter(xlsExporter, params)
             }
             exportProjectsToXls(ids, projectExporter)

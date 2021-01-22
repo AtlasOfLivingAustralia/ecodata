@@ -8,7 +8,7 @@ import spock.lang.Specification
  * an environment that had existing data in /data/ecodata/elasticsearch/.. which doesn't work in the CI environment.
  */
 
-class SearchControllerSpec extends Specification {
+class SearchControllerIntegrationSpec extends Specification {
     Map params
     def searchController = new SearchController()
 
