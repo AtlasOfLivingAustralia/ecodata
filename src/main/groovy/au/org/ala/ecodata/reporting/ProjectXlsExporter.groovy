@@ -100,8 +100,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority']
     List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority']
 
-    List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology"]
-    List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI"]
+    List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
+    List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI", "relatedProjects"]
 
 
     AdditionalSheet projectSheet
@@ -563,6 +563,9 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project?.custom?.details?.projectEvaluationApproach){
                 item["projectREI"]=project?.custom?.details?.projectEvaluationApproach
             }
+            if (project?.custom?.details?.relatedProjects){
+                item["relatedProjects"] = project?.custom?.details?.relatedProjects
+            }
 
             item.putAll(project)
 
@@ -584,7 +587,6 @@ class ProjectXlsExporter extends ProjectExporter {
             fields["secondaryOutcomes"] = "Secondary Outcome/s"
             fields["shortTermOutcomes"] = "Short-term"
             fields["midTermOutcomes"] = "Medium-term"
-
             List data = []
             //['outcomeType', 'outcome','priority']
 
@@ -593,10 +595,19 @@ class ProjectXlsExporter extends ProjectExporter {
                 Map outcome = [:]
                 outcome.put('outcomeType',"Primary outcome")
                 outcome.put('outcome',po.description)
-                String assets = po.assets?.join(",")
+                String assets = po.assets?.join(", ")
                 outcome.put('priority',assets)
                 data.add(project+outcome)
             }
+            if (project?.custom?.details?.outcomes?.otherOutcomes){
+                def oo = project?.custom?.details?.outcomes?.otherOutcomes
+                Map outcome = [:]
+                outcome.put("outcomeType", "Other Outcomes")
+                String otherOutcome = oo.join(",")
+                outcome.put("outcome", otherOutcome)
+                data.add(project + outcome)
+            }
+
             fields.each{ocitem, desc->
                 List oocs = project?.custom?.details?.outcomes?.get(ocitem)
                 oocs?.collect{ Map oc ->
@@ -646,8 +657,8 @@ class ProjectXlsExporter extends ProjectExporter {
         if (!shouldExport("RLP_Services_and_Targets"))
             return
 
-        List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
-        List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
+        List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
+        List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
         def results = metadataService.getProjectServicesWithTargets(project)
 
         AdditionalSheet sheet = getSheet("Project services and targets", rlpSTHeaders)
@@ -661,6 +672,7 @@ class ProjectXlsExporter extends ProjectExporter {
                     st['service'] = serviceName
                     st['targetMeasure'] = it.label
                     st['total'] = it.target
+                    st['targetDate'] = it.targetDate
                     it.periodTargets.each { pt ->
                         st[pt.period] = pt.target
                     }

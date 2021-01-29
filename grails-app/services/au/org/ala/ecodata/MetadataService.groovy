@@ -980,6 +980,7 @@ class MetadataService {
                 if (target){
                     score.target = target?.target
                     score.periodTargets = target?.periodTargets
+                    score.targetDate = target?.targetDate
                 }else
                     score.delete = true //prepare for delete
             }
