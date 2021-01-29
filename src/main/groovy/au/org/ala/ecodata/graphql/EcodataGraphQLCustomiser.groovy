@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.graphql
 
+import au.org.ala.ecodata.graphql.converters.DateFormatting
 import au.org.ala.ecodata.graphql.converters.MeriPlanConverter
 import au.org.ala.ecodata.graphql.converters.ObjectConverter
 import au.org.ala.ecodata.graphql.converters.ObjectIdConverter
@@ -14,14 +15,12 @@ import au.org.ala.ecodata.graphql.models.SectionTemplate
 import au.org.ala.ecodata.graphql.models.Summary
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLFieldDefinition
-import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
 import org.bson.types.ObjectId
 import org.grails.datastore.mapping.model.PersistentEntity
 import org.grails.gorm.graphql.fetcher.GraphQLDataFetcherType
-import org.grails.gorm.graphql.fetcher.manager.GraphQLDataFetcherManager
 import org.grails.gorm.graphql.interceptor.GraphQLFetcherInterceptor
 import org.grails.gorm.graphql.interceptor.GraphQLSchemaInterceptor
 import org.grails.gorm.graphql.interceptor.manager.GraphQLInterceptorManager
@@ -41,6 +40,7 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
         graphQLTypeManager.registerType(SectionTemplate, new GraphQLScalarType("SectionTemplate", "", new SectionTemplateConverter()))
         graphQLTypeManager.registerType(Summary, new GraphQLScalarType("Summary", "", new SummaryConverter()))
         graphQLTypeManager.registerType(Schema, new GraphQLScalarType("Schema", "", new SchemaConverter()))
+        graphQLTypeManager.registerType(Date, new GraphQLScalarType("Date", "", new DateFormatting()))
     }
 
     @Override
