@@ -1,14 +1,18 @@
 package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
+import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.models.KeyValue
 import au.org.ala.ecodata.graphql.models.OutputData
 import com.mongodb.client.FindIterable
 import com.mongodb.client.model.Filters
+import com.sun.xml.internal.bind.v2.TODO
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
+
+import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
@@ -32,7 +36,12 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
     static String meritFacets = "status,organisationFacet,associatedProgramFacet,associatedSubProgramFacet,mainThemeFacet,stateFacet,nrmFacet,lgaFacet,mvgFacet,ibraFacet,imcra4_pbFacet,otherFacet,electFacet,meriPlanAssetFacet," +
             "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet"
-    static Map meritParams = [hubFq:"isMERIT:true", controller:"search", flimit:1500, fsort:"term", query:"docType:project", action:"elasticHome", facets:meritFacets, format:null]
+    static Map meritParams = [hubFq:"isMERIT:true", flimit:1500, fsort:"term", query:"docType:project", facets:meritFacets, format:null, max:20]
+
+    static String bioCollectFacets = "scienceType,tags,countries,ecoScienceType,difficulty,origin,status,organisationFacet,associatedProgramFacet,isExternal,isBushfire,typeOfProject"
+    static Map bioCollectParams = [hub:"ala",hubFq:"isCitizenScience:true", initiator:"biocollect", flimit:500, fsort:"term",
+                                   query:"docType: project AND (isCitizenScience:true) AND countries:(Australia OR Worldwide)",
+                                   facets:bioCollectFacets, format:null, offset:0, max:20, skipDefaultFilters:false]
 
     @Override
     List<Project> get(DataFetchingEnvironment environment) throws Exception {
@@ -104,10 +113,18 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         def fqList = mapFq(environment)
 
         //validate the query
-        validateSearchQuery(environment, fqList)
+        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
 
         Map params = meritParams
         params["fq"] = fqList
+
+        //offset for elastic search
+        if(environment.arguments.get("page")) {
+            params["offset"] = 20*(Integer.parseInt(environment.arguments.get("page") as String)-1)
+        }
+        else{
+            params["offset"] = 0
+        }
 
         if(environment.arguments.get("fromDate")) {
             params["fromDate"] = environment.arguments.get("fromDate").toString()
@@ -141,15 +158,17 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         return projects
     }
 
-    void validateSearchQuery (DataFetchingEnvironment environment, List fqList) {
+    void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {
 
-        def searchDetails = elasticSearchService.search("docType: project", meritParams, HOMEPAGE_INDEX)
+        def searchDetails = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
 
         fqList.each {
             List fq = it.toString().split(":")
-            List<String> lookUps = searchDetails.facets.getFacets().get(fq.first()).entries.term as String[]
-            if(!lookUps.contains(fq.last())) {
-                throw new GraphQLException('Invalid ' +  fq.first() +' : suggested values are : ' + lookUps)
+            if(!enumList.contains(fq.first())) {
+                List<String> lookUps = searchDetails.facets.getFacets().get(fq.first()).entries.term as String[]
+                if (!lookUps.contains(fq.last())) {
+                    throw new GraphQLException('Invalid ' + fq.first() + ' : suggested values are : ' + lookUps)
+                }
             }
         }
 
@@ -165,6 +184,18 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         if(environment.arguments.get("toDate")) {
             if(!(environment.arguments.get("fromDate") ==~ datePattern)){
                 throw new GraphQLException('Invalid toDate: toDate should match yyyy-mm-dd')
+            }
+        }
+
+        if(environment.arguments.get("projectStartFromDate")) {
+            if(!(environment.arguments.get("projectStartFromDate") ==~ datePattern)){
+                throw new GraphQLException('Invalid projectStartFromDate: projectStartFromDate should match yyyy-mm-dd')
+            }
+        }
+
+        if(environment.arguments.get("projectStartToDate")) {
+            if(!(environment.arguments.get("projectStartToDate") ==~ datePattern)){
+                throw new GraphQLException('Invalid projectStartToDate: projectStartToDate should match yyyy-mm-dd')
             }
         }
 
@@ -186,7 +217,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         def fqList = mapFq(environment)
 
-        validateSearchQuery(environment, fqList)
+        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
 
         List<Score> scores = Score.findAll()
         def results = getActivityOutputs(fqList, scores)
@@ -239,7 +270,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         def fqList = mapFq(environment)
 
-        validateSearchQuery(environment, fqList)
+        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
 
         Map params = [hubFq:"isMERIT:true", controller:"search", showOrganisations:true, report:"outputTargets", action:"targetsReport", fq:fqList, format:null]
 
@@ -281,7 +312,8 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
                              "federalElectorate": "electFacet:", "assetsAddressed": "meriPlanAssetFacet:", "userNominatedProject": "custom.details.caseStudy:", "managementUnit": "muFacet:"]
 
         environment.arguments.each {
-            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs", "outputTargetMeasures"]) {
+            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs",
+                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page"]) {
                 return
             }
 
@@ -291,6 +323,13 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
                 switch (it.key) {
                     case "status":
                     case "tags":
+                    case "scienceType":
+                    case "countries":
+                    case "ecoScienceType":
+                    case "difficulty":
+                    case "origin":
+                    case "isBushfire":
+                    case "typeOfProject":
                         key = it.key + ":"
                         break;
                     case "managementArea" :
@@ -357,5 +396,134 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
                 }
             }
         }
+    }
+
+    List<Project> searchBioCollectProject (DataFetchingEnvironment environment) {
+
+        def fqList = mapFq(environment)
+
+        //validate the query
+        validateSearchQuery(environment, fqList, bioCollectParams,
+                "docType: project AND (isCitizenScience:true) AND countries:(Australia OR Worldwide)", ["status"])
+
+        Map queryParams =  buildBioCollectProjectSearchQuery(environment.arguments, fqList)
+        List<Project> projects =  queryElasticSearch(environment, queryParams["query"] as String, queryParams)
+
+        if(environment.arguments.get("activities")) {
+            List projectIdList = projects.projectId
+
+            List activities = new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                    Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(environment.arguments.get("activities") as List)
+
+            //get projects with requested activity output types
+            List projectIds = activities.findAll { it.projectId in projectIdList }.projectId.unique()
+
+            projects =  projects.findAll{ it.projectId in projectIds}
+        }
+
+        return projects
+    }
+
+    static Map buildBioCollectProjectSearchQuery(Map params, List fqList){
+
+        List difficulty = [], status =[]
+        Map trimmedParams = [:]
+        trimmedParams = [hub:"ala",hubFq:"isCitizenScience:true", initiator:"biocollect", flimit:500, fsort:"term",
+        facets:bioCollectFacets, format:null, offset:0, max:20, skipDefaultFilters:false]
+        trimmedParams.isCitizenScience = true
+        trimmedParams.isWorks = false
+        trimmedParams.query = "docType:project" + (params.get("projectId") ? " AND projectId:" + params.get("projectId") : "")
+        trimmedParams.difficulty = params.get('difficulty')
+        trimmedParams.isWorldWide = params.get('isWorldWide') ?: false
+
+        List fq = [], projectType = []
+        List immutableFq = fqList
+        immutableFq.each {
+            if(!it?.startsWith('status:')) {
+                it ? fq.push(it) : null
+            }
+        }
+
+        if(params.projectStartFromDate) {
+            if(params.projectStartToDate) {
+                fq.push("plannedStartDate:[" + params.projectStartFromDate + " TO " + params.projectStartToDate + "}")
+            }
+            else {
+                fq.push("plannedStartDate:[" + params.projectStartFromDate + " TO *}")
+            }
+        }
+        else{
+            if(params.projectStartToDate) {
+                fq.push("plannedStartDate:[* TO " + params.projectStartToDate + "}")
+            }
+        }
+
+        trimmedParams.fq = fq;
+
+        if(trimmedParams.isCitizenScience){
+            projectType.push('isCitizenScience:true')
+            trimmedParams.isCitizenScience = null
+        }
+
+        if(trimmedParams.difficulty){
+            trimmedParams.difficulty.each{
+                difficulty.push("difficulty:${it}")
+            }
+            trimmedParams.query += " AND (${difficulty.join(' OR ')})"
+            trimmedParams.difficulty = null
+        }
+
+        if (projectType) {
+            // append projectType to query. this is used by organisation page.
+            trimmedParams.query += ' AND (' + projectType.join(' OR ') + ')'
+        }
+
+        if(params.status){
+            SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
+            // Do not execute when both active and completed facets are checked.
+            if(params.status.unique().size() == 1){
+                params.status.unique().each{
+                    switch (it){
+                        case ProjectStatus.Active:
+                            status.push("-(plannedEndDate:[* TO *] AND -plannedEndDate:>=${sdf.format( new Date())})")
+                            break;
+                        case ProjectStatus.Completed:
+                            status.push("(plannedEndDate:<${sdf.format( new Date())})")
+                            break;
+                    }
+                }
+                trimmedParams.query += " AND (${status.join(' OR ')})";
+            }
+            else if(params.status.unique().size() == 2 && params.status.unique() == [ProjectStatus.Active, ProjectStatus.Completed]){
+
+                status.push("status:(\"active\")");
+                status.push("(plannedEndDate:<${sdf.format( new Date())})");
+
+                trimmedParams.query += " AND ${status.join(' AND ')}";
+            }
+        }
+
+        if (trimmedParams.isWorldWide) {
+            trimmedParams.isWorldWide = null
+        } else if (trimmedParams.isWorldWide == false) {
+            trimmedParams.query += " AND countries:(Australia OR Worldwide)"
+            trimmedParams.isWorldWide = null
+        }
+
+        //offset for elastic search
+        if(params.get("page")) {
+            trimmedParams["offset"] = 20*(Integer.parseInt(params.get("page") as String)-1)
+        }
+        else{
+            trimmedParams["offset"] = 0
+        }
+
+        Map queryParams = [:]
+        trimmedParams.each { key, value ->
+            if (value != null) {
+                queryParams.put(key, value)
+            }
+        }
+        queryParams
     }
 }

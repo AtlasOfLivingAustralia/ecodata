@@ -7,6 +7,7 @@ import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.Status
 import au.org.ala.ecodata.graphql.enums.DateRange
+import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.enums.YesNo
 import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
 import au.org.ala.ecodata.graphql.fetchers.Helper
@@ -187,6 +188,8 @@ class ProjectGraphQLMapper {
                 argument('userNominatedProject', [String]){ nullable true }
                 argument('managementUnit', [String]){ nullable true }
 
+                argument('page', int){ nullable true }
+
                 //activities filter
                 argument('activities', 'activities') {
                     accepts {
@@ -335,6 +338,49 @@ class ProjectGraphQLMapper {
                         collection true
                     }
                 }
+            }
+
+            query('searchBioCollectProject', [Project]) {
+                argument('projectId', String) { nullable true }
+                argument('isWorldWide', Boolean){ nullable true }
+                argument('projectStartFromDate', String){ nullable true description "yyyy-mm-dd"  }
+                argument('projectStartToDate', String){ nullable true description "yyyy-mm-dd" }
+                argument('scienceType', [String]){ nullable true }
+                argument('tags', [String]){ nullable true }
+                argument('countries', [String]){ nullable true }
+                argument('ecoScienceType', [String]){ nullable true }
+                argument('status', [ProjectStatus]){ nullable true }
+                argument('difficulty', [String]){ nullable true }
+                argument('organisation', [String]){ nullable true }
+                argument('origin', [String]){ nullable true }
+                argument('isBushfire', [Boolean]){ nullable true }
+                argument('associatedProgram', [String]){ nullable true }
+                argument('typeOfProject', [String]){ nullable true }
+
+                argument('page', int){ nullable true }
+
+                //activities filter
+                argument('activities', 'activitiesList') {
+                    accepts {
+                        field('activityType', String) {nullable true}
+                        field('output', 'outputsList') {
+                            field('outputType', String) {nullable false}
+                            nullable true
+                            //one activity can have zero or more output
+                            collection true
+                        }
+                        //one project can have many activities
+                        collection true
+                    }
+                    nullable true
+                }
+
+                dataFetcher(new DataFetcher() {
+                    @Override
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        ProjectGraphQLMapper.buildTestFetcher().searchBioCollectProject(environment)
+                    }
+                })
             }
 
         }
