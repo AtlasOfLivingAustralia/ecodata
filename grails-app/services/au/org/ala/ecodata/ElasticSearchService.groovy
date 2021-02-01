@@ -149,7 +149,7 @@ class ElasticSearchService {
             return
         }
         def docId = getEntityId(doc)
-        def docMap = GormMongoUtil.extractDboProperties(doc)//doc as JSON
+        def docMap = GormMongoUtil.extractDboProperties(doc)
         index = index ?: DEFAULT_INDEX
 
         // Delete index if it exists and doc.status == 'deleted'
@@ -160,24 +160,22 @@ class ElasticSearchService {
             return null;
         }
 
-        addCustomFields(docMap)
-        //def docJson = groovy.json.JsonOutput.toJson(docMap)
-        def docJson = docMap as JSON
-
         try {
+            addCustomFields(docMap)
+            def docJson = docMap as JSON
             IndexRequestBuilder builder = client.prepareIndex(index, DEFAULT_TYPE, docId)
             builder.setSource(docJson.toString(false)).execute().actionGet()
 
         } catch (Exception e) {
             log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e
-           // throw e
-/*            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+
+            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
             String body = "Type: "+getDocType(doc)+"\n"
             body += "Index: "+index+"\n"
             body += "Error: "+e.getMessage()+"\n"
             body += "Document: "+docJson.toString(true)
 
-            emailService.emailSupport(subject, body)*/
+            emailService.emailSupport(subject, body)
         }
     }
 
