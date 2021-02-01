@@ -68,6 +68,33 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     }
 
 
+    void "Dataset data can be exported"() {
+        setup:
+        String sheet = 'Dataset'
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = projectDataSet()
+
+        when:
+       // projectXlsExporter.export([projectId:'1234', workOrderId:'work order 1', "custom": [dataSets])
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet(sheet, projectXlsExporter.datasetHeader)
+        results.size() == 1
+        results[0]['Project ID'] == '152e096f-899b-42d0-a52d-3e5eb3c92fbd'
+        results[0]["What primary or secondary investment priority or asset does this dataset relate to?"] == "Grevillea calliantha (Foote's Grevillea, Cataby Grevillea, Black Magic Grevillea)"
+        results[0]['Describe the method used to collect the data in detail'] == 'Testing'
+        results[0]['Dataset Title'] == "Title"
+        results[0]["Primary source of data (organisation or individual that owns or maintains the dataset)"] == "test"
+
+
+    }
+
+
+
+
     void "RLP Merit Baseline exported to XSLS"() {
         setup:
         String sheet = 'MERI_Baseline'
@@ -1051,4 +1078,11 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"workOrderId\" : \"1234565\",\n" +
             "    \"blog\" : []\n" +
             "}"
+
+private Map projectDataSet(){
+    new groovy.json.JsonSlurper().parseText(projectDataSet)
 }
+
+    private String projectDataSet = "{\"alaHarvest\":false,\"bushfireCategories\":[],\"countries\":[],\"ecoScienceType\":[],\"funding\":0,\"industries\":[],\"isBushfire\":false,\"isCitizenScience\":false,\"isExternal\":false,\"isMERIT\":true,\"isSciStarter\":false,,\"name\":\"Beyond Reasonable Drought\",\"origin\":\"merit\",\"projectId\":\"152e096f-899b-42d0-a52d-3e5eb3c92fbd\",\"promoteOnHomepage\":\"no\",\"scienceType\":[],\"status\":\"application\",\"tags\":[\"\"],\"uNRegions\":[],\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"description\":\"The ans\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"test\",\"methodDescription\":\"Testing\",\"custodian\":\"test\",\"investmentPriority\":\"Grevillea calliantha (Foote's Grevillea, Cataby Grevillea, Black Magic Grevillea)\",\"endDate\":\"2021-02-01T13:00:00Z\",\"methods\":[\"Genetic sampling\",\"Hair, track, dung sampling\"],\"format\":\"XML\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Project progress dataset that is tracking change against an established project baseline dataset\",\"collectionApp\":\"test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"No\",\"dataSetId\":\"eb2012ef-f281-433a-a6fb-b600cbbf7656\",\"name\":\"Title\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"External Hard Drive\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"test\",\"startDate\":\"2021-02-01T13:00:00Z\",\"addition\":\"Yes\"}]}}"
+}
+
