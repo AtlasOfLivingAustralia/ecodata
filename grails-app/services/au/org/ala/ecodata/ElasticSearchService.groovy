@@ -167,13 +167,14 @@ class ElasticSearchService {
             builder.setSource(docJson.toString(false)).execute().actionGet()
 
         } catch (Exception e) {
-            log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e
+            String documentString = (docMap as JSON).toString(true)
+            log.error "Error indexing document: ${documentString}\nError: ${e}", e
 
             String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
             String body = "Type: "+getDocType(doc)+"\n"
             body += "Index: "+index+"\n"
             body += "Error: "+e.getMessage()+"\n"
-            body += "Document: "+docJson.toString(true)
+            body += "Document: "+documentString
 
             emailService.emailSupport(subject, body)
         }
