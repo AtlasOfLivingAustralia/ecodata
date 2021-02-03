@@ -154,10 +154,8 @@ class ProjectXlsExporter extends ProjectExporter {
         exportReports(project)
         exportReportSummary(project)
         exportBlog(project)
-        if(project?.custom?.dataSets){
-            log.debug("Data Exist on this project: " + project?.projectId)
-            exportDataSet(project)
-        }
+        exportDataSet(project)
+
 
         if(exporter.workbook.numberOfSheets == 0){
             createEmptySheet()
@@ -334,12 +332,11 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("Dataset", datasetHeader)
             int row = sheet.getSheet().lastRowNum
 
-            log.debug("data Set Size: " + project?.custom?.dataSets?.size() + project?.projectId)
             List data = project?.custom?.dataSets?.collect { Map dataValue ->
                 Map dataSets = [:]
                 dataValue.each{k, v -> dataSets.put(k,v)}
-                log.debug("checking value" + dataValue)
                 dataSets.putAll(project)
+                log.debug("Exporting data set for this projectId: " + dataSets.projectId)
                 dataSets
             }
             sheet.add(data ?: [], datasetProperties, row + 1)
