@@ -104,7 +104,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI", "relatedProjects"]
 
     List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)"]
-    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriority","otherInvestmentPriorities", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian"]
+    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian"]
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -338,8 +338,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
                 // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
 
-                if (dataSets?.investmentPriority){
-                    dataSets["investmentPriority"] = dataValue?.investmentPriority?.join(", ")
+                if (dataSets?.investmentPriorities){
+                    dataSets["investmentPriorities"] = dataValue?.investmentPriorities?.join(", ")
                 }
 
                 if (dataSets?.methods){
