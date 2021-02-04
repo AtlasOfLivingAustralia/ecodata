@@ -14,8 +14,8 @@ import spock.lang.Specification
 class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest {
 
     def projectService = Mock(ProjectService)
-    def metadataService = Mock (MetadataService)
-    def userService = Mock (UserService)
+    def metadataService = Mock(MetadataService)
+    def userService = Mock(UserService)
     def reportingService = Mock(ReportingService)
     def xlsExporter
     ProjectXlsExporter projectXlsExporter
@@ -53,7 +53,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId:'1234', workOrderId:'work order 1', contractStartDate:'2019-06-30T14:00:00Z', contractEndDate:'2022-06-30T14:00:00Z', funding:1000])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
         xlsExporter.save()
 
         then:
@@ -70,7 +70,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     void "Dataset data can be exported"() {
         setup:
-        String sheet = 'Dataset'
+        String sheet = "Dataset"
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = projectDataSet()
@@ -80,19 +80,20 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         xlsExporter.save()
 
         then:
-        List<Map> results = readSheet(sheet, projectXlsExporter.datasetHeader)
+        List<Map> results = readSheet("Data_set_Summary", projectXlsExporter.datasetHeader)
         results.size() == 1
-        results[0]['Project ID'] == '152e096f-899b-42d0-a52d-3e5eb3c92fbd'
-        results[0]["What primary or secondary investment priority or asset does this dataset relate to?"] == "Grevillea calliantha (Foote's Grevillea, Cataby Grevillea, Black Magic Grevillea)"
+        results[0]['Project ID'] == '1dda8202-cbf1-45d8-965c-9b93306aaeaf'
+        results[0]["What primary or secondary investment priorities or assets does this dataset relate to?"] == "Testing, Other"
         results[0]['Describe the method used to collect the data in detail'] == 'Testing'
-        results[0]['Dataset Title'] == "Title"
-        results[0]["Primary source of data (organisation or individual that owns or maintains the dataset)"] == "test"
+        results[0]['Dataset Title'] == "Testing Data Set"
+        results[0]["Primary source of data (organisation or individual that owns or maintains the dataset)"] == "na"
+        results[0]["Other Investment Priority"] == "Other Priorities, other priorities"
     }
 
     void "RLP Merit Baseline exported to XSLS"() {
         setup:
         String sheet = 'MERI_Baseline'
-        List<String> properties = ['Baseline Method','Baseline']
+        List<String> properties = ['Baseline Method', 'Baseline']
         Map project = project()
 
         when:
@@ -100,12 +101,12 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         xlsExporter.save()
 
         then:
-        outputFile.withInputStream {fileIn ->
+        outputFile.withInputStream { fileIn ->
             Workbook workbook = WorkbookFactory.create(fileIn)
             Sheet testSheet = workbook.getSheet(sheet)
             testSheet.physicalNumberOfRows == 3
 
-            Cell baselineCell = testSheet.getRow(0).find{it.stringCellValue == 'Baseline'}
+            Cell baselineCell = testSheet.getRow(0).find { it.stringCellValue == 'Baseline' }
             baselineCell != null
             testSheet.getRow(1).getCell(baselineCell.getColumnIndex()).stringCellValue == 'Test'
 
@@ -117,9 +118,9 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         setup:
         String sheet = 'MERI_Approvals'
         Map recentApproval = [
-                approvalDate:"2018-10-23T23:47:28.263Z",
-                approvedBy:"Test User",
-                comment: "Test purpose",
+                approvalDate     : "2018-10-23T23:47:28.263Z",
+                approvedBy       : "Test User",
+                comment          : "Test purpose",
                 changeOrderNumber: "Test 2"
         ]
         List approvals = [recentApproval]
@@ -134,16 +135,16 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         1 * projectService.getMostRecentMeriPlanApproval(_) >> recentApproval
         1 * projectService.getMeriPlanApprovalHistory(_) >> approvals
 
-        outputFile.withInputStream {fileIn ->
+        outputFile.withInputStream { fileIn ->
             Workbook workbook = WorkbookFactory.create(fileIn)
             Sheet testSheet = workbook.getSheet(sheet)
             testSheet.physicalNumberOfRows == 2
 
-            Cell approvedDateCell = testSheet.getRow(0).find{it.stringCellValue == 'Date / Time Approved'}
+            Cell approvedDateCell = testSheet.getRow(0).find { it.stringCellValue == 'Date / Time Approved' }
             approvedDateCell != null
             testSheet.getRow(1).getCell(approvedDateCell.getColumnIndex()).stringCellValue == '2018-10-23T23:47:28.263Z'
 
-            Cell conDateCell = testSheet.getRow(0).find{it.stringCellValue == 'Change Order Numbers'}
+            Cell conDateCell = testSheet.getRow(0).find { it.stringCellValue == 'Change Order Numbers' }
             conDateCell != null
             testSheet.getRow(1).getCell(conDateCell.getColumnIndex()).stringCellValue == 'Test 2'
 
@@ -157,7 +158,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         String activityToExport = "RLP Annual Report"
         ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel")
         Map project = project()
-        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[getJsonResource("singleSampleNestedDataModel")]]]
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("singleSampleNestedDataModel")]]]
 
         when:
         projectXlsExporter.tabsToExport = [activityToExport]
@@ -171,7 +172,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
         and: "There is a single sheet exported with the name identifying the activity type and form version"
         workbook.numberOfSheets == 1
-        Sheet activitySheet = workbook.getSheet(activityToExport+"_V1")
+        Sheet activitySheet = workbook.getSheet(activityToExport + "_V1")
 
         and: "There is a header row and 2 data rows"
         activitySheet.physicalNumberOfRows == 3
@@ -193,7 +194,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         String activityToExport = "RLP Annual Report"
         ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel")
         Map project = project()
-        project.activities = [[type:activityToExport, name:activityToExport, formVersion: activityForm.formVersion, outputs:[getJsonResource("sampleNestedDataModel")]]]
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleNestedDataModel")]]]
 
         when:
         projectXlsExporter.tabsToExport = [activityToExport]
@@ -207,7 +208,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
         and: "There is a single sheet exported with the name identifying the activity type and form version"
         workbook.numberOfSheets == 1
-        Sheet activitySheet = workbook.getSheet(activityToExport+"_V1")
+        Sheet activitySheet = workbook.getSheet(activityToExport + "_V1")
 
         and: "There is a header row and 5 data rows"
         activitySheet.physicalNumberOfRows == 6
@@ -247,8 +248,8 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     private ActivityForm createActivityForm(String name, int formVersion, String templateFileName) {
         Map formTemplate = getJsonResource(templateFileName)
-        ActivityForm activityForm = new ActivityForm(name:name, formVersion: formVersion)
-        activityForm.sections << new FormSection(name:formTemplate.modelName, template:formTemplate)
+        ActivityForm activityForm = new ActivityForm(name: name, formVersion: formVersion)
+        activityForm.sections << new FormSection(name: formTemplate.modelName, template: formTemplate)
         activityForm
     }
 
@@ -259,11 +260,11 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             columnMap[colString] = prop
         }
         def config = [
-                sheet:sheet,
-                startRow:1,
-                columnMap:columnMap
+                sheet    : sheet,
+                startRow : 1,
+                columnMap: columnMap
         ]
-        outputFile.withInputStream {fileIn ->
+        outputFile.withInputStream { fileIn ->
             Workbook workbook = WorkbookFactory.create(fileIn)
             excelImportService.mapSheet(workbook, config)
         }
@@ -274,7 +275,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         new groovy.json.JsonSlurper().parseText(projectJson)
     }
 
-    private Map projectDataSet(){
+    private Map projectDataSet() {
         new groovy.json.JsonSlurper().parseText(projectDataSet)
     }
 
@@ -1078,6 +1079,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"blog\" : []\n" +
             "}"
 
-    private String projectDataSet = "{\"alaHarvest\":false,\"bushfireCategories\":[],\"countries\":[],\"ecoScienceType\":[],\"funding\":0,\"industries\":[],\"isBushfire\":false,\"isCitizenScience\":false,\"isExternal\":false,\"isMERIT\":true,\"isSciStarter\":false,,\"name\":\"Beyond Reasonable Drought\",\"origin\":\"merit\",\"projectId\":\"152e096f-899b-42d0-a52d-3e5eb3c92fbd\",\"promoteOnHomepage\":\"no\",\"scienceType\":[],\"status\":\"application\",\"tags\":[\"\"],\"uNRegions\":[],\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"description\":\"The ans\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"test\",\"methodDescription\":\"Testing\",\"custodian\":\"test\",\"investmentPriority\":\"Grevillea calliantha (Foote's Grevillea, Cataby Grevillea, Black Magic Grevillea)\",\"endDate\":\"2021-02-01T13:00:00Z\",\"methods\":[\"Genetic sampling\",\"Hair, track, dung sampling\"],\"format\":\"XML\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Project progress dataset that is tracking change against an established project baseline dataset\",\"collectionApp\":\"test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"No\",\"dataSetId\":\"eb2012ef-f281-433a-a6fb-b600cbbf7656\",\"name\":\"Title\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"External Hard Drive\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"test\",\"startDate\":\"2021-02-01T13:00:00Z\",\"addition\":\"Yes\"}]}}"
-}
+    private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriority\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriorities\":\"Other Priorities, other priorities\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"
 
+
+
+
+
+}
