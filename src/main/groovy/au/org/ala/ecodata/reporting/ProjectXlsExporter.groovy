@@ -640,10 +640,10 @@ class ProjectXlsExporter extends ProjectExporter {
                 data.add(project+outcome)
             }
             if (project?.custom?.details?.outcomes?.otherOutcomes){
-                def oo = project?.custom?.details?.outcomes?.otherOutcomes
+                def assets = project?.custom?.details?.outcomes?.otherOutcomes
                 Map outcome = [:]
                 outcome.put("outcomeType", "Other Outcomes")
-                String otherOutcome = oo.join(",")
+                String otherOutcome = assets.join(",")
                 outcome.put("outcome", otherOutcome)
                 data.add(project + outcome)
             }
