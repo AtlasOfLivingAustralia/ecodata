@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.reporting
 
-
+import au.org.ala.ecodata.ManagementUnit
+import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.metadata.OutputModelProcessor
@@ -28,8 +29,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Last Modified']
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
 
     List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
 
@@ -121,26 +122,37 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Enables us to pre-create headers for each electorate that will appear in the result set */
     List<String> distinctElectorates
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter ) {
+    /** Map of key: management unit id, value: management unit name */
+    Map<String, String> managementUnitNames
+
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
         super(exporter)
         this.projectService = projectService
         distinctElectorates = new ArrayList()
+        setupManagementUnits(managementUnitService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, Map<String, Object> documentMap = [:]) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:]) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
         distinctElectorates = new ArrayList(electorates?:[])
         distinctElectorates.sort()
         projectHeaders += distinctElectorates
         projectProperties += distinctElectorates
+        setupManagementUnits(managementUnitService)
+    }
+
+    /** This sets up a lazy Map that will query and cache management uints names on demand. */
+    private Map setupManagementUnits(ManagementUnitService managementUnitService) {
+        managementUnitNames = [:].withDefault { String managementUnitId ->
+            ManagementUnit mu = managementUnitService.get(managementUnitId)
+            mu?.name
+        }
     }
 
     void export(Map project) {
 
-        commonProjectPropertiesRaw.each {
-            project[PROJECT_DATA_PREFIX+it] = project.remove(it)
-        }
+        addCommonProjectData(project)
 
         addProjectGeo(project)
         exportProject(project)
@@ -159,6 +171,19 @@ class ProjectXlsExporter extends ProjectExporter {
 
         if(exporter.workbook.numberOfSheets == 0){
             createEmptySheet()
+        }
+    }
+
+    /**
+     * Sets up / populates common data that is displayed on every tab.
+     * @param project the project being exported.
+     */
+    private addCommonProjectData(Map project) {
+        commonProjectPropertiesRaw.each {
+            project[PROJECT_DATA_PREFIX+it] = project.remove(it)
+        }
+        if (project.managementUnitId) {
+            project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
     }
 

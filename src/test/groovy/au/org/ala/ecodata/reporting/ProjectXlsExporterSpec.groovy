@@ -18,6 +18,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     def userService = Mock(UserService)
     def reportingService = Mock(ReportingService)
     def xlsExporter
+    ManagementUnitService managementUnitService = Stub(ManagementUnitService)
     ProjectXlsExporter projectXlsExporter
     ExcelImportService excelImportService
     ActivityFormService activityFormService = Mock(ActivityFormService)
@@ -36,10 +37,11 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, managementUnitService)
         projectXlsExporter.activityFormService = activityFormService
         projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
+        managementUnitService.get("mu1") >> new ManagementUnit(managementUnitId:"mu1", name:"Management Unit 1")
     }
 
     void teardown() {
@@ -49,7 +51,29 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     void "project details can be exported"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+
+        when:
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
+        results.size() == 1
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
+        results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == "Management Unit 1"
+
+    }
+
+    void "Projects don't have to have a managemeent unit id to be exported correctly"() {
+        setup:
+        String sheet = 'Projects'
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -64,14 +88,14 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == ""
 
     }
-
 
     void "Dataset data can be exported"() {
         setup:
         String sheet = "Dataset"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = projectDataSet()
 
@@ -93,7 +117,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     void "RLP outcomes data can be exported"() {
         setup:
         String sheet = "RLP_Outcomes"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = rlpProject()
 
@@ -1096,6 +1120,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    },\n" +
             "    \"scienceType\" : [],\n" +
             "    \"serviceProviderName\" : \"\",\n" +
+            "    \"managementUnitId\" : \"mu1\",\n" +
             "    \"status\" : \"active\",\n" +
             "    \"tags\" : [],\n" +
             "    \"uNRegions\" : [],\n" +

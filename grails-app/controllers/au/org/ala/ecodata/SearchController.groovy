@@ -31,6 +31,7 @@ class SearchController {
     ReportingService reportingService
     OrganisationService organisationService
     MapService mapService
+    ManagementUnitService managementUnitService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -482,7 +483,8 @@ class SearchController {
         List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
 
         List tabsToExport = params.getList('tabs')
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
+
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
