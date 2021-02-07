@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.metadata.OutputMetadata
 
 /**
- * Builds a JSON schema from a data model definition.
+ * Builds a JSON schema from a data model definition.  <b>This class is not thread safe.</b>
  * @link http://json-schema.org/
  */
 
@@ -23,6 +23,7 @@ class SchemaBuilder {
     /**
      * Temp storage for properties that reference nested object structures.  Used to separate those structures into
      * references in the schema (instead of embedded/nested objects) to simplify producing the documentation
+     * <b>This is not thread safe.  Each Thread must create a new instance of SchemaBuilder</b>
      */
     def referencedDefinitions = [:]
 
@@ -109,6 +110,8 @@ class SchemaBuilder {
      */
     def schemaForOutput(name, output) {
 
+        // Reset the temporary storage for nested object definitions.
+        referencedDefinitions = [:]
         def outputProperties = [:]
         outputProperties << [name:[enum:[name]]]
         outputProperties << [data:objectSchema(output.dataModel)]
@@ -116,12 +119,16 @@ class SchemaBuilder {
 
         def definitions = [:]
 
-        if (referencedDefinitions.size() > 0) {
-            referencedDefinitions.each { key, value ->
+        // Produce a sub-shema for each nested object, deferring the production of any nested objects encountered.
+        while (referencedDefinitions.size() > 0) {
+            Map currentNestingLevel = referencedDefinitions
+            referencedDefinitions = [:]
+            currentNestingLevel.each { key, value ->
                 definitions << [(key):objectSchema(value)]
             }
             schema << [definitions:definitions]
         }
+
         schema
     }
 
