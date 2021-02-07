@@ -86,7 +86,8 @@ class OutputModelProcessor {
                 processor.booleanType(node, context)
                 break;
             case 'lookupRange':
-            case 'lookupByDiscreteValues': // These types exist in data but are not supported.
+            case 'lookupTable':
+            case 'lookupByDiscreteValues':
                 break; // do nothing
             case 'document':
                 processor.document(node, context)
