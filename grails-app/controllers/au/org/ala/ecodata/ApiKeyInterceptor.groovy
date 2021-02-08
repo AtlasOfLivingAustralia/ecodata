@@ -15,7 +15,7 @@ class ApiKeyInterceptor {
     def LOCALHOST_IP = '127.0.0.1'
 
     public ApiKeyInterceptor() {
-        matchAll()
+        matchAll().excludes(controller: 'graphql')
     }
 
     boolean before() {

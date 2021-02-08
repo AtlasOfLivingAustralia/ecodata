@@ -77,6 +77,13 @@ class ProjectGraphQLMapper {
                 }
             }
 
+            add('activities', [Activity]) {
+                dataFetcher { Project project ->
+                    new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                            Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
+                }
+            }
+
             //add graphql type for each activity type
             activityModel["activities"].each {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
@@ -189,6 +196,7 @@ class ProjectGraphQLMapper {
                 argument('managementUnit', [String]){ nullable true }
 
                 argument('page', int){ nullable true }
+                argument('max', int){ nullable true }
 
                 //activities filter
                 argument('activities', 'activities') {
@@ -342,6 +350,7 @@ class ProjectGraphQLMapper {
 
             query('searchBioCollectProject', [Project]) {
                 argument('projectId', String) { nullable true }
+                //argument('hub', String) { nullable false }
                 argument('isWorldWide', Boolean){ nullable true }
                 argument('projectStartFromDate', String){ nullable true description "yyyy-mm-dd"  }
                 argument('projectStartToDate', String){ nullable true description "yyyy-mm-dd" }
@@ -358,6 +367,7 @@ class ProjectGraphQLMapper {
                 argument('typeOfProject', [String]){ nullable true }
 
                 argument('page', int){ nullable true }
+                argument('max', int){ nullable true }
 
                 //activities filter
                 argument('activities', 'activitiesList') {

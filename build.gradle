@@ -75,6 +75,7 @@ dependencies {
     compile "org.grails.plugins:mongodb:6.1.7"
     compile "org.mongodb:mongodb-driver:3.9.1"
     compile "org.grails.plugins:gorm-graphql:1.0.3.BUILD-SNAPSHOT"
+    compile 'org.grails:grails-datastore-rest-client'
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
     profile "org.grails.profiles:web"

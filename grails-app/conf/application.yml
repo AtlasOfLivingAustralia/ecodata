@@ -166,7 +166,7 @@ security:
         casServerUrlPrefix: 'https://auth.ala.org.au/cas'
         loginUrl: 'https://auth.ala.org.au/cas/login'
         logoutUrl: 'https://auth.ala.org.au/cas/logout'
-        uriFilterPattern: '/admin/.*,/activityForm/((?!get).)*,/graphql.*'
+        uriFilterPattern: '/admin/.*,/activityForm/((?!get).)*'
         authenticateOnlyIfLoggedInPattern:
         uriExclusionFilterPattern: '/images.*,/css.*,/js.*,/less.*'
 
