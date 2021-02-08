@@ -126,6 +126,13 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
             params["offset"] = 0
         }
 
+        if(environment.arguments.get("max")) {
+            params["max"] = environment.arguments.get("max")
+        }
+        else{
+            params["max"] = 20
+        }
+
         if(environment.arguments.get("fromDate")) {
             params["fromDate"] = environment.arguments.get("fromDate").toString()
         }
@@ -313,7 +320,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         environment.arguments.each {
             if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs",
-                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page"]) {
+                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page", "max"]) {
                 return
             }
 
@@ -517,6 +524,14 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         else{
             trimmedParams["offset"] = 0
         }
+
+        if(params.get("max")) {
+            trimmedParams["max"] = params.get("max")
+        }
+        else{
+            trimmedParams["max"] = 20
+        }
+
 
         Map queryParams = [:]
         trimmedParams.each { key, value ->
