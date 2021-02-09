@@ -3,7 +3,7 @@
   "dateCreated": "2019-06-26T08:56:25Z",
   "minOptionalSectionsCompleted": 1,
   "supportsSites": false,
-  "lastUpdated": "2021-02-09T01:02:11Z",
+  "lastUpdated": "2021-02-09T03:29:28Z",
   "createdUserId": "<anon>",
   "activationDate": null,
   "supportsPhotoPoints": false,
@@ -154,7 +154,6 @@
                     "name": "outcomeIndicator",
                     "dataType": "text",
                     "validate": "required",
-                    "description": "If it has been agreed that your project will measure against Services rather than Outcomes, select ‘Other (please specify)’ from the bottom of the drop-down list and list the Services in the free-text box.",
                     "constraints": {
                       "type": "computed",
                       "default": [
@@ -1204,7 +1203,16 @@
                     "type": "row",
                     "items": [
                       {
-                        "preLabel": "Select the relevant outcome indicator (project monitoring indicator in your MERI plan)",
+                        "type": "literal",
+                        "source": "<span class=\"preLabel required\"><label><b>Select the relevant outcome indicator (project monitoring indicator in your MERI plan)</b></label></span><span>If it has been agreed that your project will measure against Services rather than Outcomes,</span><span> select ‘Other (please specify)’ from the bottom of the drop-down list and list the Services in the free-text box.</span>"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "",
                         "type": "select2",
                         "source": "outcomeIndicator",
                         "displayOptions": {
@@ -1572,7 +1580,16 @@
             "type": "row",
             "items": [
               {
-                "preLabel": "Project case study",
+                "type": "literal",
+                "source": "<span class=\"preLabel required\"><label><b>Project case study</b></label></span><span>Describe your project and its major achievements</span>"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "",
                 "type": "textarea",
                 "rows": 5,
                 "source": "caseStudy",
