@@ -85,6 +85,7 @@ class Helper {
         ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED).each { ActivityForm activityForm ->
             Map activityModel = [
                     name: activityForm.name,
+                    formVersion: activityForm.formVersion,
                     outputs: []
             ]
 
