@@ -72,6 +72,13 @@ class OuptutModelProcessorSpec extends Specification {
 
     }
 
+    def "The lookupTable data type is supported"() {
+        when:
+        outputModelProcessor.processNode(null, ["dataType":"lookupTable"], null)
+
+        then:
+        noExceptionThrown()
+    }
 
    private Map getJsonResource(name) {
         JSON.parse(new File("src/test/resources/${name}.json").newInputStream(),'UTF-8')

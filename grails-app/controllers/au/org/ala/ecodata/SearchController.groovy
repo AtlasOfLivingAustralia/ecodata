@@ -31,6 +31,7 @@ class SearchController {
     ReportingService reportingService
     OrganisationService organisationService
     MapService mapService
+    ManagementUnitService managementUnitService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -459,12 +460,14 @@ class SearchController {
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
             File file = File.createTempFile("download", "xlsx")
-            XlsExporter xlsExporter = new XlsExporter(file.name)
+            XlsExporter xlsExporter
             ProjectExporter projectExporter
             if (params.reportType == 'works') {
+                xlsExporter = new XlsExporter(file.name)
                 projectExporter = worksProjectExporter(xlsExporter, params)
             }
             else {
+                xlsExporter = new StreamingXlsExporter(file.name)
                 projectExporter = meritProjectExporter(xlsExporter, params)
             }
             exportProjectsToXls(ids, projectExporter)
@@ -480,7 +483,8 @@ class SearchController {
         List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
 
         List tabsToExport = params.getList('tabs')
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
+
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {

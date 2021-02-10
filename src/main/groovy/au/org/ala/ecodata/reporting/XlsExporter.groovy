@@ -1,12 +1,8 @@
 package au.org.ala.ecodata.reporting
 
 import org.apache.poi.hssf.util.HSSFColor
-import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.ss.usermodel.FillPatternType
-import org.apache.poi.ss.usermodel.Font
-import org.apache.poi.ss.usermodel.IndexedColors
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
