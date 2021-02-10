@@ -89,7 +89,7 @@ class ProjectGraphQLMapper {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
                     def outputTypes = it.outputs
                     String activityName = WordUtils.capitalize(it.name).replaceAll("\\W", "")
-                    String name = "Activity_" + activityName
+                    String name = "Activity_" + activityName + "_" + it.formVersion
                     List outputList = []
                     List modifiedColumns = []
                     //define activity type
@@ -197,6 +197,7 @@ class ProjectGraphQLMapper {
 
                 argument('page', int){ nullable true }
                 argument('max', int){ nullable true }
+                //argument('myProjects', Boolean){ nullable true }
 
                 //activities filter
                 argument('activities', 'activities') {
@@ -368,6 +369,7 @@ class ProjectGraphQLMapper {
 
                 argument('page', int){ nullable true }
                 argument('max', int){ nullable true }
+                //argument('myProjects', Boolean){ nullable true }
 
                 //activities filter
                 argument('activities', 'activitiesList') {
