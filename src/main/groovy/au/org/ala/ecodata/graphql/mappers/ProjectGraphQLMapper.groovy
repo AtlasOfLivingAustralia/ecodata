@@ -89,7 +89,7 @@ class ProjectGraphQLMapper {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
                     def outputTypes = it.outputs
                     String activityName = WordUtils.capitalize(it.name).replaceAll("\\W", "")
-                    String name = "Activity_" + activityName + "_" + it.formVersion
+                    String name = "Activity_" + activityName
                     List outputList = []
                     List modifiedColumns = []
                     //define activity type
@@ -197,7 +197,7 @@ class ProjectGraphQLMapper {
 
                 argument('page', int){ nullable true }
                 argument('max', int){ nullable true }
-                //argument('myProjects', Boolean){ nullable true }
+                argument('myProjects', Boolean){ nullable true }
 
                 //activities filter
                 argument('activities', 'activities') {
@@ -351,7 +351,7 @@ class ProjectGraphQLMapper {
 
             query('searchBioCollectProject', [Project]) {
                 argument('projectId', String) { nullable true }
-                //argument('hub', String) { nullable false }
+                argument('hub', String) { nullable false }
                 argument('isWorldWide', Boolean){ nullable true }
                 argument('projectStartFromDate', String){ nullable true description "yyyy-mm-dd"  }
                 argument('projectStartToDate', String){ nullable true description "yyyy-mm-dd" }
@@ -369,7 +369,7 @@ class ProjectGraphQLMapper {
 
                 argument('page', int){ nullable true }
                 argument('max', int){ nullable true }
-                //argument('myProjects', Boolean){ nullable true }
+                argument('myProjects', Boolean){ nullable true }
 
                 //activities filter
                 argument('activities', 'activitiesList') {
@@ -402,7 +402,7 @@ class ProjectGraphQLMapper {
     static ProjectsFetcher buildTestFetcher() {
 
         new ProjectsFetcher(Holders.applicationContext.projectService, Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.reportService,
-        Holders.applicationContext.cacheService)
+        Holders.applicationContext.cacheService, Holders.applicationContext.hubService)
 
     }
 }

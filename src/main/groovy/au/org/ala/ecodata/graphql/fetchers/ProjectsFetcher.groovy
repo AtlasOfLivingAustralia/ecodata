@@ -19,12 +19,14 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
-    public ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService, ReportService reportService, CacheService cacheService) {
+    public ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
+                           ReportService reportService, CacheService cacheService, HubService hubService) {
         this.projectService = projectService
         this.elasticSearchService = elasticSearchService
         this.permissionService = permissionService
         this.reportService  = reportService
         this.cacheService = cacheService
+        this.hubService = hubService
     }
 
 
@@ -33,15 +35,14 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
     ReportService reportService
     ProjectService projectService
     CacheService cacheService
+    HubService hubService
 
     static String meritFacets = "status,organisationFacet,associatedProgramFacet,associatedSubProgramFacet,mainThemeFacet,stateFacet,nrmFacet,lgaFacet,mvgFacet,ibraFacet,imcra4_pbFacet,otherFacet,electFacet,meriPlanAssetFacet," +
             "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet"
     static Map meritParams = [hubFq:"isMERIT:true", flimit:1500, fsort:"term", query:"docType:project", facets:meritFacets, format:null, max:20]
 
-    static String bioCollectFacets = "scienceType,tags,countries,ecoScienceType,difficulty,origin,status,organisationFacet,associatedProgramFacet,isExternal,isBushfire,typeOfProject"
-    static Map bioCollectParams = [hub:"ala",hubFq:"isCitizenScience:true", initiator:"biocollect", flimit:500, fsort:"term",
-                                   query:"docType: project AND (isCitizenScience:true) AND countries:(Australia OR Worldwide)",
-                                   facets:bioCollectFacets, format:null, offset:0, max:20, skipDefaultFilters:false]
+    static  Map paramList = [flimit:1500, fsort:"term", query:"docType: project", format:null, offset:0, max:20, skipDefaultFilters:false,
+                             hubFq:null, facets: null]
 
     @Override
     List<Project> get(DataFetchingEnvironment environment) throws Exception {
@@ -67,10 +68,17 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
 
         // add pagination results.
-        String userId = environment.context.userId ?: '1493'
+        String userId = environment.context.user?.userId ?: '1493'
         String query = queryString ?:"*:*"
-        //SearchResponse searchResponse = elasticSearchService.searchWithSecurity(userId, query, params, HOMEPAGE_INDEX)
-        SearchResponse searchResponse = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
+        Boolean myProjects = environment.arguments.get("myProjects") != null ? environment.arguments.get("myProjects") : true
+        SearchResponse searchResponse
+
+        if(myProjects) {
+            searchResponse = elasticSearchService.searchWithSecurity(userId, query, params, HOMEPAGE_INDEX)
+        }
+        else {
+            searchResponse = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
+        }
 
         List<String> projectIds = searchResponse.hits.hits.collect{it.source.projectId}
 
@@ -78,14 +86,21 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         List publicProjectIds = []
         List fullProjectIds = []
 
+        if(myProjects) {
+            fullProjectIds = projectIds
+        }
+        else {
+            publicProjectIds = projectIds
+        }
+
 
         // Alternative here is to also return the userIds from the ES query and see if the user is in the result.
         // we could also map directly from the ES, but this would require a different approach (maybe creating
         // and binding the domain objects from the ES data?)
-        projectIds.each {
-            boolean readable = permissionService.checkUserPermission(userId, it, Project.name, "read")
-            readable ? publicProjectIds << it : publicProjectIds << it
-        }
+//        projectIds.each {
+//            boolean readable = permissionService.checkUserPermission(userId, it, Project.name, "read")
+//            readable ? publicProjectIds << it : publicProjectIds << it
+//        }
 
         Map publicView = [name:true, description:true, projectId:true]
 
@@ -102,7 +117,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         }
 
         List projects = projectIds.collect {
-            publicProjects.containsKey(it) ? publicProjects[it] : fullProjects[it]
+            !myProjects ? publicProjects[it] : fullProjects[it]
         }
 
         projects
@@ -320,7 +335,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         environment.arguments.each {
             if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs",
-                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page", "max"]) {
+                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page", "max", "myProjects", "hub"]) {
                 return
             }
 
@@ -409,9 +424,17 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         def fqList = mapFq(environment)
 
+        Map hub = hubService.findByUrlPath(environment.arguments.get("hub"))
+        if(!hub) {
+            List hubList = Hub.findAll().collect{ it.urlPath}.unique()
+            throw new GraphQLException('Invalid hub, suggested values are : ' + hubList)
+        }
+
+        paramList.hubFq = hub.defaultFacetQuery
+        paramList.facets = hub.availableFacets.join(",")
+
         //validate the query
-        validateSearchQuery(environment, fqList, bioCollectParams,
-                "docType: project AND (isCitizenScience:true) AND countries:(Australia OR Worldwide)", ["status"])
+        validateSearchQuery(environment, fqList, paramList, "docType: project", ["status"])
 
         Map queryParams =  buildBioCollectProjectSearchQuery(environment.arguments, fqList)
         List<Project> projects =  queryElasticSearch(environment, queryParams["query"] as String, queryParams)
@@ -434,11 +457,9 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
     static Map buildBioCollectProjectSearchQuery(Map params, List fqList){
 
         List difficulty = [], status =[]
+        Boolean isMerit
         Map trimmedParams = [:]
-        trimmedParams = [hub:"ala",hubFq:"isCitizenScience:true", initiator:"biocollect", flimit:500, fsort:"term",
-        facets:bioCollectFacets, format:null, offset:0, max:20, skipDefaultFilters:false]
-        trimmedParams.isCitizenScience = true
-        trimmedParams.isWorks = false
+        trimmedParams = paramList
         trimmedParams.query = "docType:project" + (params.get("projectId") ? " AND projectId:" + params.get("projectId") : "")
         trimmedParams.difficulty = params.get('difficulty')
         trimmedParams.isWorldWide = params.get('isWorldWide') ?: false
@@ -467,9 +488,17 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         trimmedParams.fq = fq;
 
-        if(trimmedParams.isCitizenScience){
-            projectType.push('isCitizenScience:true')
-            trimmedParams.isCitizenScience = null
+        String hubFq = paramList.hubFq
+
+        if(hubFq.contains("isCitizenScience:true")) {
+            projectType.push('isCitizenScience:true') }
+        else if(hubFq.contains("isWorks:true")) {
+            projectType.push('(projectType:works AND isMERIT:false)')}
+        else if(hubFq.contains("isEcoScience:true")) {
+            projectType.push('(projectType:ecoScience)')}
+        else if(hubFq.contains("isMERIT:true")) {
+            projectType.push('isMERIT:true')
+            isMerit = true
         }
 
         if(trimmedParams.difficulty){
@@ -481,7 +510,6 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         }
 
         if (projectType) {
-            // append projectType to query. this is used by organisation page.
             trimmedParams.query += ' AND (' + projectType.join(' OR ') + ')'
         }
 
@@ -510,11 +538,13 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
             }
         }
 
-        if (trimmedParams.isWorldWide) {
-            trimmedParams.isWorldWide = null
-        } else if (trimmedParams.isWorldWide == false) {
-            trimmedParams.query += " AND countries:(Australia OR Worldwide)"
-            trimmedParams.isWorldWide = null
+        if(!isMerit) {
+            if (trimmedParams.isWorldWide) {
+                trimmedParams.isWorldWide = null
+            } else if (trimmedParams.isWorldWide == false) {
+                trimmedParams.query += " AND countries:(Australia OR Worldwide)"
+                trimmedParams.isWorldWide = null
+            }
         }
 
         //offset for elastic search
