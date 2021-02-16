@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.graphql
 
+import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.graphql.converters.DateFormatting
 import au.org.ala.ecodata.graphql.converters.MeriPlanConverter
 import au.org.ala.ecodata.graphql.converters.ObjectConverter
@@ -18,6 +19,7 @@ import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
+import org.apache.log4j.Logger
 import org.bson.types.ObjectId
 import org.grails.datastore.mapping.model.PersistentEntity
 import org.grails.gorm.graphql.fetcher.GraphQLDataFetcherType
@@ -28,6 +30,8 @@ import org.grails.gorm.graphql.plugin.GraphQLPostProcessor
 import org.grails.gorm.graphql.types.GraphQLTypeManager
 
 class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
+
+    static Logger log = Logger.getLogger(EcodataGraphQLCustomiser.class)
 
     @Override
     void doWith(GraphQLTypeManager graphQLTypeManager) {
@@ -81,7 +85,11 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
 
             @Override
             boolean onCustomQuery(String name, DataFetchingEnvironment environment) {
-                println name
+                Map query = [:]
+                query.name = environment.selectionSet.fields.name
+                query.arguments = environment.selectionSet.fields.arguments
+                query.selections = environment.selectionSet.fields.selectionSet.selections
+                log.info ('GrapqhQl API request, UserId: ' + UserService.currentUser().userName + ", Query: " + query)
                 return true
             }
 
