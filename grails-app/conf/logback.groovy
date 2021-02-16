@@ -43,6 +43,15 @@ if (targetDir != null) {
         }
     }
     logger("EsIndexing", INFO, ['ES-INDEXING'], false)
+
+    appender("GRAPHQL", FileAppender) {
+        file = "${targetDir}/graphql.log"
+        append = true
+        encoder(PatternLayoutEncoder) {
+            pattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} %level - %msg%n"
+        }
+    }
+    logger("graphql", INFO, ['GRAPHQL'], false)
 }
 root(ERROR, ['STDOUT'])
 
@@ -93,9 +102,14 @@ final trace = [
 //        'org.hibernate.type'
 ]
 
+final graphql  = [
+        'au.org.ala.ecodata.GraphqlInterceptor', 'au.org.ala.ecodata.graphql.EcodataGraphQLCustomiser'
+]
+
 for (def name : error) logger(name, ERROR)
 for (def name : warn) logger(name, WARN)
 for (def name: info) logger(name, INFO)
 for (def name: debug) logger(name, DEBUG)
 for (def name: trace) logger(name, TRACE)
 for (def name: esInfo) logger(name, INFO, ["ES-INDEXING"])
+for (def name: graphql) logger(name, INFO, ["GRAPHQL"])
