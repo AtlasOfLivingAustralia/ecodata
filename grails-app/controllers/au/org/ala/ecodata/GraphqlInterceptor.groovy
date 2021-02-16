@@ -27,16 +27,15 @@ class GraphqlInterceptor {
             if (!result?.resp?.statusCode && result.resp?.status == 'success') {
                 //and also, only the ala admins are permitted to do graphql searches
                 if (permissionService.isUserAlaAdmin(userName)) {
-                    log.info ('GrapqhQl API request, UserId: ' + userName)
-                    true
+                    return true
                 }
                 else{
                     accessDeniedError('Invalid GrapqhQl API usage: Access denied, userId: ' + userName)
-                    false
+                    return false
                 }
             } else {
-                accessDeniedError('Invalid GrapqhQl API usage: Access denied, userId: ' + userName)
-                false
+                accessDeniedError('Invalid GrapqhQl API usage: Invalid username or api key, userId: ' + userName)
+                return false
             }
         }
         // This is to validate graphql browser user
@@ -49,13 +48,13 @@ class GraphqlInterceptor {
             UserDetails user = null
 
             if (userCookie) {
-                String username = java.net.URLDecoder.decode(userCookie.getValue(), 'utf-8')
+                String username = URLDecoder.decode(userCookie.getValue(), 'utf-8')
                 //test to see that the user is valid
                 user = authService.getUserForEmailAddress(username)
 
                 if(!user){
                     accessDeniedError('Invalid GrapqhQl API usage: Access denied, userId: ' + username)
-                    false
+                    return false
                 }
                 else{
                     def whiteList = buildWhiteList()
@@ -64,21 +63,20 @@ class GraphqlInterceptor {
 
                     if(ipOk) {
                         userService.setCurrentUser(username)
-                        log.info('GrapqhQl API request, UserId: ' + username)
-                        true
+                        return true
                     }
                     else {
                         accessDeniedError('Invalid GrapqhQl API usage: Access denied, userId: ' + username)
-                        false
+                        return false
                     }
                 }
             }
             else{
                 accessDeniedError('Invalid GrapqhQl API usage: Access denied')
-                false
+                return false
             }
 
-            true
+            false
         }
     }
 
