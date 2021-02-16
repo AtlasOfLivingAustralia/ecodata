@@ -1,17 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.ReportingService
-import au.org.ala.ecodata.UserService
+import au.org.ala.ecodata.*
+import grails.converters.JSON
 import grails.testing.web.GrailsWebUnitTest
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.ss.usermodel.*
-import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.apache.poi.ss.util.CellReference
-import org.grails.plugins.excelimport.ExcelImportService
-import org.grails.testing.GrailsUnitTest
 import grails.util.Holders
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellReference
 import spock.lang.Specification
 
 /**
@@ -20,28 +14,34 @@ import spock.lang.Specification
 class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest {
 
     def projectService = Mock(ProjectService)
-    def metadataService = Mock (MetadataService)
-    def userService = Mock (UserService)
+    def metadataService = Mock(MetadataService)
+    def userService = Mock(UserService)
     def reportingService = Mock(ReportingService)
     def xlsExporter
+    ManagementUnitService managementUnitService = Stub(ManagementUnitService)
     ProjectXlsExporter projectXlsExporter
     ExcelImportService excelImportService
+    ActivityFormService activityFormService = Mock(ActivityFormService)
+
     File outputFile
 
-   // @Before
     void setup() {
         Holders.grailsApplication = grailsApplication
         defineBeans {
             metadataService(MetadataService)
             userService(UserService)
             reportingService(ReportingService)
+            activityFormService(ActivityFormService)
         }
-
-        outputFile = new File('test.xlsx')
-        outputFile.deleteOnExit()
-        xlsExporter = new XlsExporter(outputFile.name)
-
+        outputFile = File.createTempFile('test', '.xlsx')
+        String name = outputFile.absolutePath
+        outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
+        xlsExporter = new XlsExporter(name)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, managementUnitService)
+        projectXlsExporter.activityFormService = activityFormService
+        projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
+        managementUnitService.get("mu1") >> new ManagementUnit(managementUnitId:"mu1", name:"Management Unit 1")
     }
 
     void teardown() {
@@ -51,11 +51,11 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
     void "project details can be exported"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId:'1234', workOrderId:'work order 1', contractStartDate:'2019-06-30T14:00:00Z', contractEndDate:'2022-06-30T14:00:00Z', funding:1000])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
         xlsExporter.save()
 
         then:
@@ -66,29 +66,92 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == "Management Unit 1"
 
     }
 
-
-    void "RLP Merit Baseline exported to XSLS"() {
+    void "Projects don't have to have a managemeent unit id to be exported correctly"() {
         setup:
-        String sheet = 'MERI_Baseline'
-        List<String> properties = ['Baseline Method','Baseline']
-        Map project = new groovy.json.JsonSlurper().parseText(projectJson)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter)
+        String sheet = 'Projects'
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
+
+        when:
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
+        results.size() == 1
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
+        results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == ""
+
+    }
+
+    void "Dataset data can be exported"() {
+        setup:
+        String sheet = "Dataset"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = projectDataSet()
 
         when:
         projectXlsExporter.export(project)
         xlsExporter.save()
 
         then:
-        outputFile.withInputStream {fileIn ->
+        List<Map> results = readSheet("Data_set_Summary", projectXlsExporter.datasetHeader)
+        results.size() == 1
+        results[0]['Project ID'] == '1dda8202-cbf1-45d8-965c-9b93306aaeaf'
+        results[0]["What primary or secondary investment priorities or assets does this dataset relate to?"] == "Testing, Other"
+        results[0]['Describe the method used to collect the data in detail'] == 'Testing'
+        results[0]['Dataset Title'] == "Testing Data Set"
+        results[0]["Primary source of data (organisation or individual that owns or maintains the dataset)"] == "na"
+        results[0]["Other Investment Priority"] == "Other Priorities, other priorities"
+    }
+
+    void "RLP outcomes data can be exported"() {
+        setup:
+        String sheet = "RLP_Outcomes"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = rlpProject()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet("RLP Outcomes", projectXlsExporter.rlpOutcomeHeaders)
+        results.size() == 5
+        results[1]['Outcome'] == 'More primary producers preserve natural capital while also improving productivity and profitability,More primary producers adopt risk management practices to improve their sustainability and resilience,More primary producers and agricultural communities are experimenting with adaptive or transformative NRM practices, systems and approaches that link and contribute to building drought resilience,Partnerships and engagement is built between stakeholders responsible for managing natural resources'
+        results[1]["Type of outcomes"] == "Other Outcomes"
+        results[0]["Type of outcomes"] == "Primary outcome"
+        results[0]['Outcome'] == "5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation."
+        results[0]["Investment Priority"] == "Hillslope erosion, Wind erosion"
+    }
+
+    void "RLP Merit Baseline exported to XSLS"() {
+        setup:
+        String sheet = 'MERI_Baseline'
+        List<String> properties = ['Baseline Method', 'Baseline']
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        outputFile.withInputStream { fileIn ->
             Workbook workbook = WorkbookFactory.create(fileIn)
             Sheet testSheet = workbook.getSheet(sheet)
             testSheet.physicalNumberOfRows == 3
 
-            Cell baselineCell = testSheet.getRow(0).find{it.stringCellValue == 'Baseline'}
+            Cell baselineCell = testSheet.getRow(0).find { it.stringCellValue == 'Baseline' }
             baselineCell != null
             testSheet.getRow(1).getCell(baselineCell.getColumnIndex()).stringCellValue == 'Test'
 
@@ -96,6 +159,144 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+    void "RLP Merit approvals exported to XSLS"() {
+        setup:
+        String sheet = 'MERI_Approvals'
+        Map recentApproval = [
+                approvalDate     : "2018-10-23T23:47:28.263Z",
+                approvedBy       : "Test User",
+                comment          : "Test purpose",
+                changeOrderNumber: "Test 2"
+        ]
+        List approvals = [recentApproval]
+
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        1 * projectService.getMostRecentMeriPlanApproval(_) >> recentApproval
+        1 * projectService.getMeriPlanApprovalHistory(_) >> approvals
+
+        outputFile.withInputStream { fileIn ->
+            Workbook workbook = WorkbookFactory.create(fileIn)
+            Sheet testSheet = workbook.getSheet(sheet)
+            testSheet.physicalNumberOfRows == 2
+
+            Cell approvedDateCell = testSheet.getRow(0).find { it.stringCellValue == 'Date / Time Approved' }
+            approvedDateCell != null
+            testSheet.getRow(1).getCell(approvedDateCell.getColumnIndex()).stringCellValue == '2018-10-23T23:47:28.263Z'
+
+            Cell conDateCell = testSheet.getRow(0).find { it.stringCellValue == 'Change Order Numbers' }
+            conDateCell != null
+            testSheet.getRow(1).getCell(conDateCell.getColumnIndex()).stringCellValue == 'Test 2'
+
+        }
+
+
+    }
+
+    void "Activities can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("singleSampleNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport + "_V1")
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 3
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(1, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["3", "0.value1", "", "notes"]
+        List dataRow2 = readRow(2, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["3", "1.value1", "", "notes"]
+
+    }
+
+    void "Activities with deeply nested data can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport + "_V1")
+
+        and: "There is a header row and 5 data rows"
+        activitySheet.physicalNumberOfRows == 6
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "Value 2", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(1, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["3", "0.value1", "0.0.value2", "", "notes"]
+        List dataRow2 = readRow(2, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["3", "0.value1", "0.1.value2", "", "notes"]
+        List dataRow3 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["3", "1.value1", "1.0.value2", "", "notes"]
+        List dataRow4 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["3", "1.value1", "1.1.value2", "", "notes"]
+        List dataRow5 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["3", "1.value1", "1.2.value2", "", "notes"]
+
+    }
+
+    private List readRow(int index, Sheet sheet) {
+        Row row = sheet.getRow(index)
+        row.cellIterator().collect { Cell cell ->
+            cell.getStringCellValue()
+        }
+    }
+
+    private Workbook readWorkbook() {
+        Workbook workbook = null
+        outputFile.withInputStream { fileIn ->
+            workbook = WorkbookFactory.create(fileIn)
+        }
+        workbook
+    }
+
+    private ActivityForm createActivityForm(String name, int formVersion, String templateFileName) {
+        Map formTemplate = getJsonResource(templateFileName)
+        ActivityForm activityForm = new ActivityForm(name: name, formVersion: formVersion)
+        activityForm.sections << new FormSection(name: formTemplate.modelName, template: formTemplate)
+        activityForm
+    }
 
     private List readSheet(String sheet, List properties) {
         def columnMap = [:]
@@ -104,15 +305,31 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             columnMap[colString] = prop
         }
         def config = [
-                sheet:sheet,
-                startRow:1,
-                columnMap:columnMap
+                sheet    : sheet,
+                startRow : 1,
+                columnMap: columnMap
         ]
-        outputFile.withInputStream {fileIn ->
+        outputFile.withInputStream { fileIn ->
             Workbook workbook = WorkbookFactory.create(fileIn)
-            excelImportService.convertColumnMapConfigManyRows(workbook, config)
+            excelImportService.mapSheet(workbook, config)
         }
 
+    }
+
+    private Map project() {
+        new groovy.json.JsonSlurper().parseText(projectJson)
+    }
+
+    private Map rlpProject(){
+        new groovy.json.JsonSlurper().parseText(rlpPlan)
+    }
+    private Map projectDataSet() {
+        new groovy.json.JsonSlurper().parseText(projectDataSet)
+    }
+
+
+    private Map getJsonResource(name) {
+        JSON.parse(new File("src/test/resources/${name}.json").newInputStream(), 'UTF-8')
     }
 
     private String projectJson = "{\n" +
@@ -903,10 +1120,16 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    },\n" +
             "    \"scienceType\" : [],\n" +
             "    \"serviceProviderName\" : \"\",\n" +
+            "    \"managementUnitId\" : \"mu1\",\n" +
             "    \"status\" : \"active\",\n" +
             "    \"tags\" : [],\n" +
             "    \"uNRegions\" : [],\n" +
             "    \"workOrderId\" : \"1234565\",\n" +
             "    \"blog\" : []\n" +
             "}"
+
+    private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriorities\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriority\":\"Other Priorities, other priorities\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"
+
+    private String rlpPlan = "{\"bushfireCategories\":[],\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"ecoScienceType\":[],\"countries\":[],\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"scienceType\":[],\"isMERIT\":true,\"status\":\"application\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"5a80f409-0b27-480a-9938-340aa48cc947\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"The project will work with beef and sheep farmers to build their knowledge and understanding of the options for using different pasture/forage crop varieties to manage drought and build resilience into their farming operations.  A key strength of the project is that during the most recent drought there were local farmers who managed to retain groundcover and pastures, retain their core breeding stock, and will recover more quickly once drought conditions ease. This project will draw on those lessons to co-design local research trials of plant varieties and to demonstrate drought adaptation practices through peer learning. \\nThe project design and delivery is farmer-led, with local facilitation, through resourcing of existing trusted facilitators and contractors. It also involves collaboration with subject experts (consultants and researchers) to ensure the best science and measurable results are achieved from the project.\",\"externalId\":\"\",\"managementUnitId\":\"82c15908-04ab-4e49-bd43-9616a6dcb528\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"\",\"custom\":{\"details\":{\"communityEngagement\":\"\",\"obligations\":\"\",\"policies\":\"\",\"description\":\"The project will work with beef and sheep farmers to build their knowledge and understanding of the options for using different pasture/forage crop varieties to manage drought and build resilience into their farming operations.  A key strength of the project is that during the most recent drought there were local farmers who managed to retain groundcover and pastures, retain their core breeding stock, and will recover more quickly once drought conditions ease. This project will draw on those lessons to co-design local research trials of plant varieties and to demonstrate drought adaptation practices through peer learning. \\nThe project design and delivery is farmer-led, with local facilitation, through resourcing of existing trusted facilitators and contractors. It also involves collaboration with subject experts (consultants and researchers) to ensure the best science and measurable results are achieved from the project.\",\"lastUpdated\":\"2021-02-04T23:57:56Z\",\"priorities\":{\"description\":\"\",\"rows\":[{\"data3\":\"The project will work with beef and sheep farmer\",\"data2\":\"The project will work with beef and sheep farmer\",\"data1\":\"The project will work with beef and sheep farmer\"}]},\"assets\":[{\"description\":\"\",\"category\":\"\"}],\"outcomes\":{\"secondaryOutcomes\":[{}],\"otherOutcomes\":[\"More primary producers preserve natural capital while also improving productivity and profitability\",\"More primary producers adopt risk management practices to improve their sustainability and resilience\",\"More primary producers and agricultural communities are experimenting with adaptive or transformative NRM practices, systems and approaches that link and contribute to building drought resilience\",\"Partnerships and engagement is built between stakeholders responsible for managing natural resources\"],\"shortTermOutcomes\":[{\"assets\":[],\"description\":\"Test\"}],\"midTermOutcomes\":[{\"assets\":[],\"description\":\"test\"}],\"primaryOutcome\":{\"assets\":[\"Hillslope erosion\",\"Wind erosion\"],\"description\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\"}},\"programName\":\"Natural Resource Management - Landscape\",\"keq\":{\"description\":\"\",\"rows\":[{\"data3\":\"\",\"data2\":\"\",\"data1\":\"\"},{\"data3\":\"\",\"data2\":\"\",\"data1\":\"\"}]},\"threats\":{\"description\":\"\",\"rows\":[{\"threat\":\"\",\"intervention\":\"\"}]},\"adaptiveManagement\":\"\",\"events\":[{\"funding\":\"\",\"name\":\"\",\"description\":\"\",\"scheduledDate\":\"\",\"media\":\"\",\"grantAnnouncementDate\":\"\",\"type\":\"\"}],\"budget\":{\"overallTotal\":0,\"headers\":[{\"data\":\"2020/2021\"},{\"data\":\"2021/2022\"}],\"rows\":[{\"costs\":[{\"dollar\":\"0\"},{\"dollar\":\"0\"}],\"rowTotal\":0,\"activities\":[],\"description\":\"\",\"shortLabel\":\"\"}],\"columnTotal\":[{\"data\":0},{\"data\":0}]},\"partnership\":{\"description\":\"\",\"rows\":[{\"data3\":\"\",\"data2\":\"\",\"data1\":\"\"}]},\"projectEvaluationApproach\":\"The project will work with beef and sheep farmer\",\"implementation\":{\"description\":\"The project will work with beef and sheep farmer\"},\"baseline\":{\"description\":\"\",\"rows\":[{\"method\":\"The project will work with beef and sheep farmer\",\"baseline\":\"The project will work with beef and sheep farmer\"}]},\"rationale\":\"The project will work with beef and sheep farmer\",\"caseStudy\":false,\"relatedProjects\":\"\",\"serviceIds\":[2],\"activities\":{\"activities\":[]},\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"objectives\":{\"rows1\":[{\"assets\":[],\"description\":\"\"}],\"rows\":[{\"data3\":\"\",\"data2\":\"The project will work with beef and sheep farmer\",\"data1\":\"The project will work with beef and sheep farmer\"}]},\"consultation\":\"\",\"status\":\"active\"}},\"outputTargets\":[{\"scoreId\":\"7abd62ba-2e44-4318-800b-b659c73dc12b\",\"targetDate\":\"2021-02-21\",\"periodTargets\":[{\"period\":\"2020/2021\",\"target\":\"50\"},{\"period\":\"2021/2022\",\"target\":\"50\"}],\"target\":\"100\"}]}"
+
 }

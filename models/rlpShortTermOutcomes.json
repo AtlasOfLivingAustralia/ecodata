@@ -1,29 +1,21 @@
 {
-  "class": "au.org.ala.ecodata.ActivityForm",
-  "id": "5e617e5ec2dc6d6406a85eed",
-  "activationDate": null,
-  "category": "RLP Reports",
-  "createdUserId": "1493",
-  "dateCreated": "2020-03-05T22:34:06Z",
-  "formVersion": 1,
-  "gmsId": null,
-  "lastUpdated": "2020-03-11T02:18:01Z",
-  "lastUpdatedUserId": "1493",
+  "id": "5d133339e4b00a475b28e296",
+  "dateCreated": "2019-06-26T08:56:25Z",
   "minOptionalSectionsCompleted": 1,
-  "name": "RLP Short term project outcomes",
+  "supportsSites": false,
+  "lastUpdated": "2021-02-09T03:29:28Z",
+  "createdUserId": "<anon>",
+  "activationDate": null,
+  "supportsPhotoPoints": false,
   "publicationStatus": "published",
+  "gmsId": null,
+  "name": "RLP Short term project outcomes",
   "sections": [
     {
-      "class": "au.org.ala.ecodata.FormSection",
-      "id": null,
       "collapsedByDefault": false,
-      "modelName": null,
-      "name": "RLP Short-term outcomes",
-      "optional": false,
-      "optionalQuestionText": null,
       "template": {
-        "title": "Short-term project outcomes",
         "modelName": "RLP Short-term outcomes",
+        "templateName": "rlpShortTermOutcomes",
         "dataModel": [
           {
             "dataType": "lookupTable",
@@ -44,6 +36,11 @@
           {
             "dataType": "stringList",
             "name": "availablePriorities"
+          },
+          {
+            "dataType": "text",
+            "name": "additionalThreatsQ2",
+            "description": "This is test"
           },
           {
             "dataType": "list",
@@ -1043,7 +1040,8 @@
               "Satisfactory progression",
               "Partial progression",
               "Inadequate progression",
-              "No progression"
+              "No progression",
+              "Not applicable "
             ]
           },
           {
@@ -1108,47 +1106,9 @@
           },
           {
             "dataType": "text",
-            "description": "",
+            "description": "Describe your project and its major achievements",
             "name": "caseStudy",
-            "validate": "maxSize[3000]"
-          }
-        ],
-        "pre-populate": [
-          {
-            "source": {
-              "context-path": "owner"
-            },
-            "merge": true,
-            "mapping": [
-              {
-                "target": "projectOutcomes",
-                "mapping": [
-                  {
-                    "target": "outcomeStatement",
-                    "source-path": "description"
-                  }
-                ],
-                "source-path": "custom.details.outcomes.shortTermOutcomes"
-              }
-            ]
-          },
-          {
-            "source": {
-              "params": [
-                {
-                  "expression": "owner.projectId",
-                  "name": "id",
-                  "type": "computed"
-                }
-              ],
-              "url": "/project/listProjectInvestmentPriorities/"
-            },
-            "mapping": [
-              {
-                "target":"availablePriorities",
-                "source-path": ""
-              }
-            ]
+            "validate": "required,maxSize[3000]"
           }
         ],
         "viewModel": [
@@ -1186,7 +1146,7 @@
                   {
                     "computed": null,
                     "type": "literal",
-                    "source": "<strong>2. Investment priorities - indicators, threats and interventions</strong><p>For each investment priority relevant to this project outcome, please answer the following questions.   You can add another investment priority using the button at the end of the investment priority questions.</p>"
+                    "source": "<strong>2. Investment priorities - indicators, threats and interventions </strong><span data-bind=\"popover:{content:'Hit the bold X at the end of the row if you don’t have any additional threats. This will allow you to mark the report as complete'}\" data-original-title=\"\" title=\"\"><i class=\"fa fa-question-circle\">&nbsp;</i></span><p>For each investment priority relevant to this project outcome, please answer the following questions.   You can add another investment priority using the button at the end of the investment priority questions.</p>"
                   }
                 ]
               },
@@ -1243,7 +1203,16 @@
                     "type": "row",
                     "items": [
                       {
-                        "preLabel": "Select the relevant outcome indicator (project monitoring indicator in your MERI plan)",
+                        "type": "literal",
+                        "source": "<span class=\"preLabel required\"><label><b>Select the relevant outcome indicator (project monitoring indicator in your MERI plan)</b></label></span><span>If it has been agreed that your project will measure against Services rather than Outcomes,</span><span> select ‘Other (please specify)’ from the bottom of the drop-down list and list the Services in the free-text box.</span>"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "",
                         "type": "select2",
                         "source": "outcomeIndicator",
                         "displayOptions": {
@@ -1423,7 +1392,7 @@
                   {
                     "computed": null,
                     "type": "literal",
-                    "source": "<strong>3. What data supports the response to Question 2?</strong><p>Provide a data summary for each data set that supports your selected level of change against a baseline in Question 2.  Only provide a summary for data sets collected under the outcome statement selected in Question 1 and the investment priority/s relevant to that outcome statement. You can provide data sets from multiple sources to support your level of change.  Any data set summaries added after Outcomes Report 1 form has been opened will not appear in this list. To update the list, hit the ‘Save changes’ button at the bottom of screen and then ‘Exit report’. You can then re-open Outcomes Report 1 and the list will be updated.</p>"
+                    "source": "<strong>3. What data supports the response to Question 2? </strong><span data-bind=\"popover:{content:'Hit the bold X at the end of the row if you don’t have any data set summaries. This will allow you to mark the report as complete'}\" data-original-title=\"\" title=\"\"><i class=\"fa fa-question-circle\">&nbsp;</i></span><p>Provide a data summary for each data set that supports your selected level of change against a baseline in Question 2.  Only provide a summary for data sets collected under the outcome statement selected in Question 1 and the investment priority/s relevant to that outcome statement. You can provide data sets from multiple sources to support your level of change.  Any data set summaries added after Outcomes Report 1 form has been opened will not appear in this list. To update the list, hit the ‘Save changes’ button at the bottom of screen and then ‘Exit report’. You can then re-open Outcomes Report 1 and the list will be updated.</p>"
                   }
                 ]
               },
@@ -1612,7 +1581,7 @@
             "items": [
               {
                 "type": "literal",
-                "source": "<b>Project case study</b><br/>Describe your project and its major achievements"
+                "source": "<span class=\"preLabel required\"><label><b>Project case study</b></label></span><span>Describe your project and its major achievements</span>"
               }
             ]
           },
@@ -1629,12 +1598,57 @@
             ]
           }
         ],
-        "templateName": "rlpShortTermOutcomes"
-      }
+        "title": "Short-term project outcomes",
+        "pre-populate": [
+          {
+            "source": {
+              "context-path": "owner"
+            },
+            "merge": true,
+            "mapping": [
+              {
+                "target": "projectOutcomes",
+                "mapping": [
+                  {
+                    "target": "outcomeStatement",
+                    "source-path": "description"
+                  }
+                ],
+                "source-path": "custom.details.outcomes.shortTermOutcomes"
+              }
+            ]
+          },
+          {
+            "source": {
+              "params": [
+                {
+                  "expression": "owner.projectId",
+                  "name": "id",
+                  "type": "computed"
+                }
+              ],
+              "url": "/project/listProjectInvestmentPriorities/"
+            },
+            "mapping": [
+              {
+                "target": "availablePriorities",
+                "source-path": ""
+              }
+            ]
+          }
+        ]
+      },
+      "modelName": null,
+      "templateName": null,
+      "optional": false,
+      "optionalQuestionText": null,
+      "title": null,
+      "name": "RLP Short-term outcomes"
     }
   ],
+  "type": "Report",
+  "category": "RLP Reports",
   "status": "active",
-  "supportsPhotoPoints": false,
-  "supportsSites": false,
-  "type": "Report"
+  "lastUpdatedUserId": "1493",
+  "formVersion": 1
 }

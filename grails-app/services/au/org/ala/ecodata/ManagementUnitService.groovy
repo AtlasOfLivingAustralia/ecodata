@@ -1,14 +1,19 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
+import au.org.ala.ecodata.reporting.XlsExporter
 import grails.validation.ValidationException
-import javassist.NotFoundException
 
 import static au.org.ala.ecodata.Status.DELETED
 
 class ManagementUnitService {
     
-    def commonService
-    def siteService
+    CommonService commonService
+    SiteService siteService
+    ReportService reportService
+    ReportingService reportingService
+    ActivityService activityService
+    DownloadService downloadService
 
     ManagementUnit get(String muId, includeDeleted = false) {
         if (includeDeleted) {
@@ -47,8 +52,6 @@ class ManagementUnitService {
         for(ManagementUnit mu in mues){
             Map muInfo = mu.toMap()
             if (mu.managementUnitSiteId){
-                //Not work
-                //Map site = siteService.getSiteWithLimitedFields(mu.managementUnitSiteId,["siteId","name","extent.geometry.state"])
                 Site site = Site.findBySiteId(mu.managementUnitSiteId)
 
                 muInfo['site'] = ["siteId":site.siteId,
@@ -153,5 +156,138 @@ class ManagementUnitService {
         GeometryUtils.assignDistinctValuesToNeighbouringFeatures(featureCollection.features, "type")
         featureCollection
     }
+    /**
+     * Get reports of a management unit
+     * @param id
+     * @return
+     */
+    List<Map> getReports(String id){
+        ManagementUnit mu = get(id, false)
+        List reports = reportService.getReportsOfManagementUnit(id)
+        reports.collect{
+            it['managementUnitId'] = mu['managementUnitId']
+            it['managementUnitName'] = mu['name']
+        }
+        return reports
+    }
+    /**
+     * Generate MU reports in a given period
+     * @param startDate
+     * @param endDate
+     * @return count of reports and downloadId
+     */
+    Map generateReports(Date startDate, Date endDate){
+        List<Map> managementUnits = getReportingActivities(startDate,endDate)
+        int countOfReports = managementUnits.activities?.findAll{it.progress && it.progress != Activity.PLANNED}
+        Map params =  [fileExtension :"xlsx"]
+
+        Closure doDownload = { File file ->
+            XlsExporter exporter = new XlsExporter(file.absolutePath)
+            ManagementUnitXlsExporter muXlsExporter = new ManagementUnitXlsExporter(exporter)
+            muXlsExporter.export(managementUnits)
+            exporter.sizeColumns()
+            exporter.save()
+        }
+        String downloadId = downloadService.generateReports(params, doDownload)
+        return [count: countOfReports, downloadId: downloadId]
+    }
+
+    /**
+     *
+     * @param startDate
+     * @param endDate
+     * @param reportDownloadBaseUrl  Base url of downloading generated report
+     * @param senderEmail
+     * @param systemEmail
+     * @param receiverEmail
+     * @return
+     */
+    Map generateReportsInPeriods(String startDate, String endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
+        List<Map> reports =  getReportingActivities(startDate,endDate)
+        int countOfReports = reports.sum{it.activities?.count{it.progress!=Activity.PLANNED}}
+
+        Map params = [:]
+        params.fileExtension = "xlsx"
+        params.reportDownloadBaseUrl = reportDownloadBaseUrl
+        params.senderEmail = senderEmail
+        params.systemEmail = systemEmail
+        params.email = receiverEmail
+
+        Closure doDownload = { File file ->
+            XlsExporter exporter = new XlsExporter(file.absolutePath)
+            ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
+            muXlsExporter.export(reports)
+            exporter.sizeColumns()
+            exporter.save()
+        }
+        String downloadId = downloadService.generateReports(params, doDownload)
+        Map message =[:]
+        if (countOfReports>0){
+            message = [message:"Your will receive an email notification when report is generated", details:downloadId]
+        }else{
+            message = [message:"Your download will be emailed to you when it is complete. <p> WARNING, the period you requested may not have reports.", details: downloadId]
+        }
+        return message
+    }
+
+
+    /**
+     *  Get reports of all management units in a period
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    List<Map> getReportingActivities(String startDate, String endDate){
+        ManagementUnit[] mus =  ManagementUnit.findAll().toArray()
+
+        List<Map> managementUnitDetails = []
+        mus.each { mu ->
+
+            List<Report> reports = reportingService.search([managementUnitId:mu.managementUnitId, dateProperty:'toDate', startDate:startDate, endDate:endDate])
+
+            List<Map> activities = activityService.search([activityId:reports.activityId], ['all'])
+
+            Map result = new HashMap(mu.properties)
+            result.reports = reports
+            result.activities = activities
+
+            managementUnitDetails << result
+        }
+        managementUnitDetails
+
+    }
+
+    int[] getFinancialYearPeriods(){
+        String[] muIds = ManagementUnit.findAll().toArray().managementUnitId
+        Date[] periods = reportService.getPeriodOfManagmentUnitReport(muIds)
+        int[] finacialYears = []
+        if (periods && periods[0] && periods[1]){
+            finacialYears = calculateFinancialYear(periods[0],periods[1])
+        }
+
+        return finacialYears
+    }
+
+    private int[] calculateFinancialYear(Date startDate, Date endDate){
+        // idx starts from 0
+        int startMonth = startDate.getAt(Calendar.MONTH)
+        int startYear = startDate.getAt(Calendar.YEAR)
+        if (startMonth < 6) {
+            startYear --
+        }
+
+        int endMonth = endDate.getAt(Calendar.MONTH)
+        int endYear = endDate.getAt(Calendar.YEAR)
+        if (endMonth >= 6)
+            endYear ++
+        List periods = []
+        for(startYear; startYear<endYear; startYear++){
+            periods<<startYear
+        }
+
+        return periods
+    }
+
 
 }

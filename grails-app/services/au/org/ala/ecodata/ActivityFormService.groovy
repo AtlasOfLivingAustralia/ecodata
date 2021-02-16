@@ -1,4 +1,5 @@
 package au.org.ala.ecodata
+
 /**
  * Processes requests related to activity forms.
  */
@@ -25,6 +26,11 @@ class ActivityFormService {
             form = forms.max{it.formVersion}
         }
         form
+    }
+
+    ActivityForm[] findVersionedActivityForm(String name) {
+        ActivityForm[] forms = ActivityForm.findAllByNameAndPublicationStatusAndStatusNotEqual(name, PublicationStatus.PUBLISHED, Status.DELETED)
+        forms
     }
 
     /**

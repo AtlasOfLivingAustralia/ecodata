@@ -200,5 +200,4 @@ class SearchActivityServiceSpec extends Specification {
     }
 */
 
-
 }

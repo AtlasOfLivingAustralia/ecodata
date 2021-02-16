@@ -1,12 +1,8 @@
 package au.org.ala.ecodata.reporting
 
 import org.apache.poi.hssf.util.HSSFColor
-import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.ss.usermodel.FillPatternType
-import org.apache.poi.ss.usermodel.Font
-import org.apache.poi.ss.usermodel.IndexedColors
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
@@ -55,8 +51,10 @@ class XlsExporter extends XlsxExporter {
             styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
 
         } else {
-            sheet.fillHeader(headers)
-            styleRow(sheet, 0, headerStyle(getWorkbook()))
+            if(headers) {
+                sheet.fillHeader(headers)
+                styleRow(sheet, 0, headerStyle(getWorkbook()))
+            }
         }
 
 
@@ -101,9 +99,8 @@ class XlsExporter extends XlsxExporter {
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         headerStyle.setFillForegroundColor(backgroundColorIndex);
         Font font = workbook.createFont();
-        //font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         font.setBold(true)
-        font.setColor(HSSFColor.HSSFColorPredefined.BLACK.index);
+        font.setColor(HSSFColor.HSSFColorPredefined.BLACK.index)
         headerStyle.setFont(font);
         return headerStyle
     }
@@ -112,12 +109,10 @@ class XlsExporter extends XlsxExporter {
     CellStyle headerStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        Font font = workbook.createFont();
-        //font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+        Font font = workbook.createFont()
         font.setBold(true)
-        font.setColor(HSSFColor.HSSFColorPredefined.WHITE.index);
-        //font.setColor(HSSFColor.WHITE.index);
+        font.setColor(HSSFColor.HSSFColorPredefined.WHITE.index)
         headerStyle.setFont(font);
         return headerStyle
     }

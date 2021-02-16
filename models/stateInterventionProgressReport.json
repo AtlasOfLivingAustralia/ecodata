@@ -7,7 +7,7 @@
   "dateCreated": "2020-08-14T06:06:57Z",
   "formVersion": 1,
   "gmsId": null,
-  "lastUpdated": "2020-12-03T04:22:54Z",
+  "lastUpdated": "2021-01-05T00:40:11Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
   "name": "State Intervention Progress Report",
@@ -5957,9 +5957,8 @@
                 "name": "implementationSite"
               },
               {
-                "defaultValue": {
-                  "expression": "$geom.areaHa(implementationSite)",
-                  "type": "computed"
+                "computed": {
+                  "expression": "$geom.areaHa(implementationSite)"
                 },
                 "dataType": "number",
                 "name": "calculatedAreaImplementedHa",
@@ -5977,9 +5976,8 @@
                 ]
               },
               {
-                "defaultValue": {
-                  "expression": "$geom.lengthKm(implementationSite)",
-                  "type": "computed"
+                "computed": {
+                  "expression": "$geom.lengthKm(implementationSite)"
                 },
                 "dataType": "number",
                 "name": "calculatedLengthImplementedKm",
@@ -8192,452 +8190,6 @@
       "id": null,
       "collapsedByDefault": true,
       "modelName": null,
-      "name": "Weed treatment",
-      "optional": true,
-      "optionalQuestionText": null,
-      "template": {
-        "dataModel": [
-          {
-            "columns": [
-              {
-                "dataType": "text",
-                "name": "initialOrFollowup",
-                "constraints": [
-                  "Initial",
-                  "Follow-up"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "feature",
-                "name": "sitesTreated"
-              },
-              {
-                "computed": {
-                  "expression": "$geom.areaHa(sitesTreated)"
-                },
-                "dataType": "number",
-                "name": "siteCalculatedAreaHa",
-                "units": "ha",
-                "decimalPlaces": 3,
-                "behaviour": [
-                  {
-                    "condition": "areaInvoicedHa > 0",
-                    "type": "conditional_validation",
-                    "value": {
-                      "message": "The treated area must be mapped",
-                      "validate": "required,min[0.0001]"
-                    }
-                  }
-                ]
-              },
-              {
-                "computed": {
-                  "expression": "$geom.lengthKm(sitesTreated)"
-                },
-                "dataType": "number",
-                "name": "siteCalculatedLengthKm",
-                "units": "km",
-                "decimalPlaces": 3,
-                "behaviour": [
-                  {
-                    "condition": "lengthInvoicedKm > 0",
-                    "type": "conditional_validation",
-                    "value": {
-                      "message": "The treated length must be mapped",
-                      "validate": "required,min[0.0001]"
-                    }
-                  }
-                ]
-              },
-              {
-                "defaultValue": {
-                  "expression": "$geom.areaHa(sitesTreated)",
-                  "type": "computed"
-                },
-                "dataType": "number",
-                "name": "areaTreatedHa",
-                "units": "ha",
-                "decimalPlaces": 3,
-                "validate": "required,min[0]"
-              },
-              {
-                "defaultValue": {
-                  "expression": "$geom.lengthKm(sitesTreated)",
-                  "type": "computed"
-                },
-                "dataType": "number",
-                "name": "lengthTreatedKm",
-                "units": "km",
-                "decimalPlaces": 3,
-                "validate": "required,min[0]"
-              },
-              {
-                "dataType": "number",
-                "name": "areaInvoicedHa",
-                "units": "ha",
-                "decimalPlaces": 3,
-                "validate": [
-                  {
-                    "rule": "required"
-                  },
-                  {
-                    "rule": "min[0]"
-                  },
-                  {
-                    "param": {
-                      "expression": "areaTreatedHa",
-                      "type": "computed"
-                    },
-                    "rule": "max"
-                  }
-                ]
-              },
-              {
-                "dataType": "number",
-                "name": "lengthInvoicedKm",
-                "units": "km",
-                "decimalPlaces": 3,
-                "validate": [
-                  {
-                    "rule": "required"
-                  },
-                  {
-                    "rule": "min[0]"
-                  },
-                  {
-                    "param": {
-                      "expression": "lengthTreatedKm",
-                      "type": "computed"
-                    },
-                    "rule": "max"
-                  }
-                ]
-              },
-              {
-                "dataType": "text",
-                "name": "mappingNotAlignedReason",
-                "behaviour": [
-                  {
-                    "condition": "not (within(areaTreatedHa, siteCalculatedAreaHa, 0.1) and within(lengthTreatedKm, siteCalculatedLengthKm, 0.1))",
-                    "type": "if"
-                  }
-                ],
-                "constraints": [
-                  "Mapped area simplifies more complex area/s where work was undertaken during this period",
-                  "Other"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "text",
-                "name": "mappingNotAlignedComments",
-                "behaviour": [
-                  {
-                    "condition": "\"Other\" == mappingNotAlignedReason",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required,maxSize[300]"
-              },
-              {
-                "dataType": "document",
-                "name": "extraMappingDetails",
-                "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
-                "behaviour": [
-                  {
-                    "condition": "not (within(areaTreatedHa, siteCalculatedAreaHa, 0.1) and within(lengthTreatedKm, siteCalculatedLengthKm, 0.1)) or roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthTreatedKm, 2) != roundTo(lengthInvoicedKm, 2)",
-                    "type": "if"
-                  }
-                ],
-                "validate": "required"
-              },
-              {
-                "columns": [
-                  {
-                    "dataType": "species",
-                    "name": "weedTargetSpecies",
-                    "dwcAttribute": "scientificName",
-                    "description": "Weed species targeted for treatment (start typing a  scientific or common name for a species)",
-                    "validate": "required"
-                  },
-                  {
-                    "dataType": "text",
-                    "name": "threatenedEcologicalCommunity",
-                    "validate": "maxSize[100]"
-                  },
-                  {
-                    "dataType": "text",
-                    "name": "treatmentMethod",
-                    "description": "The primary method used to treat the patch of the target species",
-                    "constraints": [
-                      "Basal bark spraying",
-                      "Biological agents",
-                      "Cut stump",
-                      "Cut and swab",
-                      "Dozing",
-                      "Felling",
-                      "Fire",
-                      "Foliar spraying",
-                      "Grubbing / chipping",
-                      "Hand pulling",
-                      "Moisture and nutrient control",
-                      "Mowing",
-                      "Overplanting",
-                      "Pushing",
-                      "Slashing",
-                      "Spot spraying",
-                      "Splatter gun",
-                      "Stem injection",
-                      "Stem scraper",
-                      "Wick applicators",
-                      "Other"
-                    ],
-                    "validate": "required"
-                  },
-                  {
-                    "dataType": "text",
-                    "name": "otherTreatmentMethod",
-                    "description": "Please specify the method of treatment used if Other was selected in the Type of treatment column.",
-                    "behaviour": [
-                      {
-                        "condition": "treatmentMethod == \"Other\"",
-                        "type": "enable"
-                      }
-                    ],
-                    "validate": "required,maxSize[100]"
-                  },
-                  {
-                    "dataType": "text",
-                    "name": "treatmentObjective",
-                    "description": "How will the work contribute to protecting the area",
-                    "validate": "required,maxSize[300]"
-                  }
-                ],
-                "dataType": "list",
-                "name": "weedSpeciesTreated"
-              }
-            ],
-            "dataType": "list",
-            "name": "weedTreatmentSites"
-          },
-          {
-            "dataType": "image",
-            "name": "photographicEvidence"
-          },
-          {
-            "dataType": "text",
-            "name": "projectAssuranceDetails",
-            "description": ""
-          },
-          {
-            "dataType": "list",
-            "name": "assuranceDocuments",
-            "columns": [
-              {
-                "dataType": "document",
-                "name": "attachments",
-                "description": "Please attach any Evidence of Service Delivery here"
-              }
-            ]
-          }
-        ],
-        "modelName": "RLP - Weed treatment",
-        "title": "Removing weeds",
-        "viewModel": [
-          {
-            "type": "section",
-            "items": [
-              {
-                "addRowText": "New weed removal site",
-                "userAddedRows": true,
-                "source": "weedTreatmentSites",
-                "type": "repeat",
-                "items": [
-                  {
-                    "css": "border-bottom",
-                    "type": "row",
-                    "items": [
-                      {
-                        "preLabel": "Initial or follow-up treatment",
-                        "css": "span3",
-                        "source": "initialOrFollowup",
-                        "type": "selectOne"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "row",
-                    "items": [
-                      {
-                        "css": "span3 col-border-right",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Site/s where weed treatment was undertaken",
-                                "source": "sitesTreated",
-                                "type": "feature"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "readonly": true,
-                                "source": "siteCalculatedAreaHa",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "readonly": true,
-                                "source": "siteCalculatedLengthKm",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Please attach mapping details",
-                                "source": "extraMappingDetails",
-                                "type": "document"
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "css": "span4 col-border-right",
-                        "type": "col",
-                        "items": [
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Actual area (ha) / length (km) treated for weed removal",
-                                "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
-                                "source": "areaTreatedHa",
-                                "type": "number",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "source": "lengthTreatedKm",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                  "displayUnits": true
-                                }
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "preLabel": "Reason for actual being different to mapped amount",
-                                "source": "mappingNotAlignedReason",
-                                "type": "selectOne"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "row",
-                            "items": [
-                              {
-                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "columns": [
-                      {
-                        "width": "20%",
-                        "source": "weedTargetSpecies",
-                        "title": "Target weed species",
-                        "type": "speciesSelect"
-                      },
-                      {
-                        "width": "22%",
-                        "source": "threatenedEcologicalCommunity",
-                        "title": "Threatened Ecological Community (if applicable)",
-                        "type": "text"
-                      },
-                      {
-                        "width": "15%",
-                        "source": "treatmentMethod",
-                        "title": "Type of treatment",
-                        "type": "select2"
-                      },
-                      {
-                        "width": "20%",
-                        "source": "otherTreatmentMethod",
-                        "title": "Type of treatment (if other)",
-                        "type": "text"
-                      },
-                      {
-                        "width": "23%",
-                        "source": "treatmentObjective",
-                        "title": "Treatment objective",
-                        "type": "textarea"
-                      }
-                    ],
-                    "userAddedRows": true,
-                    "source": "weedSpeciesTreated",
-                    "type": "table"
-                  }
-                ]
-              },
-              {
-                "type": "row",
-                "items": [
-                  {
-                    "preLabel": "Optionally attach photos",
-                    "source": "photographicEvidence",
-                    "type": "image"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "templateName": "siWeedTreatment",
-      "title": null
-    },
-    {
-      "class": "au.org.ala.ecodata.FormSection",
-      "id": null,
-      "collapsedByDefault": true,
-      "modelName": null,
       "name": "Revegetating habitat",
       "optional": true,
       "optionalQuestionText": null,
@@ -9130,6 +8682,706 @@
         ]
       },
       "templateName": "siRevegetatingHabitat",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": null,
+      "name": "Weed treatment",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "dataModel": [
+          {
+            "columns": [
+              {
+                "dataType": "text",
+                "name": "initialOrFollowup",
+                "constraints": [
+                  "Initial",
+                  "Follow-up"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "feature",
+                "name": "sitesTreated"
+              },
+              {
+                "computed": {
+                  "expression": "$geom.areaHa(sitesTreated)"
+                },
+                "dataType": "number",
+                "name": "siteCalculatedAreaHa",
+                "units": "ha",
+                "decimalPlaces": 3,
+                "behaviour": [
+                  {
+                    "condition": "areaInvoicedHa > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The treated area must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
+              },
+              {
+                "computed": {
+                  "expression": "$geom.lengthKm(sitesTreated)"
+                },
+                "dataType": "number",
+                "name": "siteCalculatedLengthKm",
+                "units": "km",
+                "decimalPlaces": 3,
+                "behaviour": [
+                  {
+                    "condition": "lengthInvoicedKm > 0",
+                    "type": "conditional_validation",
+                    "value": {
+                      "message": "The treated length must be mapped",
+                      "validate": "required,min[0.0001]"
+                    }
+                  }
+                ]
+              },
+              {
+                "defaultValue": {
+                  "expression": "$geom.areaHa(sitesTreated)",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "areaTreatedHa",
+                "units": "ha",
+                "decimalPlaces": 3,
+                "validate": "required,min[0]"
+              },
+              {
+                "defaultValue": {
+                  "expression": "$geom.lengthKm(sitesTreated)",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "lengthTreatedKm",
+                "units": "km",
+                "decimalPlaces": 3,
+                "validate": "required,min[0]"
+              },
+              {
+                "dataType": "number",
+                "name": "areaInvoicedHa",
+                "units": "ha",
+                "decimalPlaces": 3,
+                "validate": [
+                  {
+                    "rule": "required"
+                  },
+                  {
+                    "rule": "min[0]"
+                  },
+                  {
+                    "param": {
+                      "expression": "areaTreatedHa",
+                      "type": "computed"
+                    },
+                    "rule": "max"
+                  }
+                ]
+              },
+              {
+                "dataType": "number",
+                "name": "lengthInvoicedKm",
+                "units": "km",
+                "decimalPlaces": 3,
+                "validate": [
+                  {
+                    "rule": "required"
+                  },
+                  {
+                    "rule": "min[0]"
+                  },
+                  {
+                    "param": {
+                      "expression": "lengthTreatedKm",
+                      "type": "computed"
+                    },
+                    "rule": "max"
+                  }
+                ]
+              },
+              {
+                "dataType": "text",
+                "name": "mappingNotAlignedReason",
+                "behaviour": [
+                  {
+                    "condition": "not (within(areaTreatedHa, siteCalculatedAreaHa, 0.1) and within(lengthTreatedKm, siteCalculatedLengthKm, 0.1))",
+                    "type": "if"
+                  }
+                ],
+                "constraints": [
+                  "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                  "Other"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "text",
+                "name": "mappingNotAlignedComments",
+                "behaviour": [
+                  {
+                    "condition": "\"Other\" == mappingNotAlignedReason",
+                    "type": "if"
+                  }
+                ],
+                "validate": "required,maxSize[300]"
+              },
+              {
+                "dataType": "document",
+                "name": "extraMappingDetails",
+                "description": "Please fill in the Mapped/Actual/Invoice fields before attaching a document here. If those fields match this field will be void. <br/>If any of these fields differ please attach your organisation's detailed map for the area, covered by this project service - during reporting period (include the scale measure for each map).",
+                "behaviour": [
+                  {
+                    "condition": "not (within(areaTreatedHa, siteCalculatedAreaHa, 0.1) and within(lengthTreatedKm, siteCalculatedLengthKm, 0.1)) or roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthTreatedKm, 2) != roundTo(lengthInvoicedKm, 2)",
+                    "type": "if"
+                  }
+                ],
+                "validate": "required"
+              },
+              {
+                "columns": [
+                  {
+                    "dataType": "species",
+                    "name": "weedTargetSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": "Weed species targeted for treatment (start typing a  scientific or common name for a species)",
+                    "validate": "required"
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "threatenedEcologicalCommunity",
+                    "validate": "maxSize[100]"
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "treatmentMethod",
+                    "description": "The primary method used to treat the patch of the target species",
+                    "constraints": [
+                      "Basal bark spraying",
+                      "Biological agents",
+                      "Cut stump",
+                      "Cut and swab",
+                      "Dozing",
+                      "Felling",
+                      "Fire",
+                      "Foliar spraying",
+                      "Grubbing / chipping",
+                      "Hand pulling",
+                      "Moisture and nutrient control",
+                      "Mowing",
+                      "Overplanting",
+                      "Pushing",
+                      "Slashing",
+                      "Spot spraying",
+                      "Splatter gun",
+                      "Stem injection",
+                      "Stem scraper",
+                      "Wick applicators",
+                      "Other"
+                    ],
+                    "validate": "required"
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "otherTreatmentMethod",
+                    "description": "Please specify the method of treatment used if Other was selected in the Type of treatment column.",
+                    "behaviour": [
+                      {
+                        "condition": "treatmentMethod == \"Other\"",
+                        "type": "enable"
+                      }
+                    ],
+                    "validate": "required,maxSize[100]"
+                  },
+                  {
+                    "dataType": "text",
+                    "name": "treatmentObjective",
+                    "description": "How will the work contribute to protecting the area",
+                    "validate": "required,maxSize[300]"
+                  }
+                ],
+                "dataType": "list",
+                "name": "weedSpeciesTreated"
+              }
+            ],
+            "dataType": "list",
+            "name": "weedTreatmentSites"
+          },
+          {
+            "dataType": "image",
+            "name": "photographicEvidence"
+          },
+          {
+            "dataType": "text",
+            "name": "projectAssuranceDetails",
+            "description": ""
+          },
+          {
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
+          }
+        ],
+        "modelName": "RLP - Weed treatment",
+        "title": "Removing weeds",
+        "viewModel": [
+          {
+            "type": "section",
+            "items": [
+              {
+                "addRowText": "New weed removal site",
+                "userAddedRows": true,
+                "source": "weedTreatmentSites",
+                "type": "repeat",
+                "items": [
+                  {
+                    "css": "border-bottom",
+                    "type": "row",
+                    "items": [
+                      {
+                        "preLabel": "Initial or follow-up treatment",
+                        "css": "span3",
+                        "source": "initialOrFollowup",
+                        "type": "selectOne"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "row",
+                    "items": [
+                      {
+                        "css": "span3 col-border-right",
+                        "type": "col",
+                        "items": [
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "preLabel": "Site/s where weed treatment was undertaken",
+                                "source": "sitesTreated",
+                                "type": "feature"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "readonly": true,
+                                "source": "siteCalculatedAreaHa",
+                                "type": "number",
+                                "displayOptions": {
+                                  "displayUnits": true
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "readonly": true,
+                                "source": "siteCalculatedLengthKm",
+                                "type": "number",
+                                "displayOptions": {
+                                  "displayUnits": true
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "preLabel": "Please attach mapping details",
+                                "source": "extraMappingDetails",
+                                "type": "document"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "css": "span4 col-border-right",
+                        "type": "col",
+                        "items": [
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "preLabel": "Actual area (ha) / length (km) treated for weed removal",
+                                "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
+                                "source": "areaTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                  "displayUnits": true
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "source": "lengthTreatedKm",
+                                "type": "number",
+                                "validate": "required",
+                                "displayOptions": {
+                                  "displayUnits": true
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "preLabel": "Reason for actual being different to mapped amount",
+                                "source": "mappingNotAlignedReason",
+                                "type": "selectOne"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "row",
+                            "items": [
+                              {
+                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                "source": "mappingNotAlignedComments",
+                                "type": "textarea",
+                                "rows": 5
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "columns": [
+                      {
+                        "width": "20%",
+                        "source": "weedTargetSpecies",
+                        "title": "Target weed species",
+                        "type": "speciesSelect"
+                      },
+                      {
+                        "width": "22%",
+                        "source": "threatenedEcologicalCommunity",
+                        "title": "Threatened Ecological Community (if applicable)",
+                        "type": "text"
+                      },
+                      {
+                        "width": "15%",
+                        "source": "treatmentMethod",
+                        "title": "Type of treatment",
+                        "type": "select2"
+                      },
+                      {
+                        "width": "20%",
+                        "source": "otherTreatmentMethod",
+                        "title": "Type of treatment (if other)",
+                        "type": "text"
+                      },
+                      {
+                        "width": "23%",
+                        "source": "treatmentObjective",
+                        "title": "Treatment objective",
+                        "type": "textarea"
+                      }
+                    ],
+                    "userAddedRows": true,
+                    "source": "weedSpeciesTreated",
+                    "type": "table"
+                  }
+                ]
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "templateName": "siWeedTreatment",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": null,
+      "name": "Seed Collecting - Bushfire Program",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "dataModel": [
+          {
+            "columns": [
+              {
+                "dataType": "text",
+                "name": "initialOrMaintenance",
+                "constraints": [
+                  "Initial",
+                  "Maintenance"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "feature",
+                "name": "siteSeedCollected",
+                "validate": "required"
+              },
+              {
+                "defaultValue": {
+                  "expression": "$geom.areaHa(siteSeedCollected)",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "calculatedAreaHabitatRevegetedHa",
+                "units": "ha",
+                "decimalPlaces": 3
+              },
+              {
+                "computed": {
+                  "expression": "$geom.lengthKm(siteSeedCollected)"
+                },
+                "dataType": "number",
+                "name": "calculatedLengthHabitatRevegetedKm",
+                "units": "km",
+                "decimalPlaces": 3
+              },
+              {
+                "defaultValue": {
+                  "expression": "calculatedAreaHabitatRevegetedHa",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "areaHabitatRevegetedHa",
+                "units": "ha",
+                "decimalPlaces": 3,
+                "validate": "required,min[0]"
+              },
+              {
+                "defaultValue": {
+                  "expression": "calculatedLengthHabitatRevegetedKm",
+                  "type": "computed"
+                },
+                "dataType": "number",
+                "name": "lengthHabitatRevegetedKm",
+                "units": "km",
+                "decimalPlaces": 3,
+                "validate": "required,min[0]"
+              },
+              {
+                "dataType": "species",
+                "name": "species",
+                "validate": "required"
+              },
+              {
+                "name": "noOfDaysSeedCollected",
+                "dataType": "number"
+              },
+              {
+                "dataType": "text",
+                "name": "inKgSeedCollected",
+                "constraints": [
+                  "Individuals",
+                  "Kilograms"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "number",
+                "name": "amountSeedCollected"
+              },
+              {
+                "dataType": "number",
+                "name": "numberOfSourcePlants"
+              },
+              {
+                "dataType": "text",
+                "name": "storingFacility"
+              },
+              {
+                "dataType": "number",
+                "name": "noOfPlantsPropogated"
+              },
+              {
+                "dataType": "text",
+                "name": "threatEcoCommunity",
+                "validate": "maxSize[100]"
+              }
+            ],
+            "dataType": "list",
+            "name": "seedCollectionDetails"
+          },
+          {
+            "computed": {
+              "expression": "amountSeedCollected"
+            },
+            "dataType": "number",
+            "name": "totalSeedCollected"
+          },
+          {
+            "computed": {
+              "expression": "numberOfSourcePlants"
+            },
+            "dataType": "number",
+            "name": "totalPlantsPropogated"
+          }
+        ],
+        "modelName": "Seed Collecting - Bushfire Program",
+        "title": "Seed Collecting",
+        "viewModel": [
+          {
+            "type": "section",
+            "items": [
+              {
+                "columns": [
+                  {
+                    "width": "5%",
+                    "source": "initialOrMaintenance",
+                    "title": "Initial or Maintenance activity?",
+                    "type": "selectOne"
+                  },
+                  {
+                    "width": "5%",
+                    "type": "col",
+                    "title": "Site/s where collection was undertaken",
+                    "items": [
+                      {
+                        "source": "siteSeedCollected",
+                        "type": "feature"
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedAreaHabitatRevegetedHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedLengthHabitatRevegetedKm",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Area (ha) of habitat revegated",
+                    "items": [
+                      {
+                        "source": "areaHabitatRevegetedHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Length (km) of habitat revegeted",
+                    "items": [
+                      {
+                        "source": "lengthHabitatRevegetedKm",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "width": "7%",
+                    "source": "species",
+                    "title": "Species",
+                    "type": "speciesSelect"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "noOfDaysSeedCollected",
+                    "title": "Number of days collecting Seed",
+                    "type": "number"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "inKgSeedCollected",
+                    "title": "Individuals / Kilograms collected",
+                    "type": "selectOne"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "amountSeedCollected",
+                    "title": "Amount collected",
+                    "type": "number"
+                  },
+                  {
+                    "width": "7%",
+                    "source": "numberOfSourcePlants",
+                    "title": "Number of Source plants",
+                    "type": "number"
+                  },
+                  {
+                    "width": "12%",
+                    "source": "storingFacility",
+                    "title": "Storing facility",
+                    "type": "textarea"
+                  },
+                  {
+                    "width": "12%",
+                    "source": "noOfPlantsPropogated",
+                    "title": "Number of plants propogated",
+                    "type": "number"
+                  },
+                  {
+                    "width": "12%",
+                    "source": "threatEcoCommunity",
+                    "title": "Threatened ecological community (if applicable)",
+                    "type": "textarea"
+                  }
+                ],
+                "userAddedRows": true,
+                "source": "seedCollectionDetails",
+                "type": "table"
+              }
+            ]
+          }
+        ]
+      },
+      "templateName": "siSeedCollecting",
       "title": null
     },
     {
@@ -11015,264 +11267,6 @@
         ]
       },
       "templateName": "siWeedDistributionSurvey",
-      "title": null
-    },
-    {
-      "class": "au.org.ala.ecodata.FormSection",
-      "id": null,
-      "collapsedByDefault": false,
-      "modelName": null,
-      "name": "Seed Collecting - Bushfire Program",
-      "optional": true,
-      "optionalQuestionText": null,
-      "template": {
-        "dataModel": [
-          {
-            "columns": [
-              {
-                "dataType": "text",
-                "name": "initialOrMaintenance",
-                "constraints": [
-                  "Initial",
-                  "Maintenance"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "feature",
-                "name": "siteSeedCollected",
-                "validate": "required"
-              },
-              {
-                "defaultValue": {
-                  "expression": "$geom.areaHa(siteSeedCollected)",
-                  "type": "computed"
-                },
-                "dataType": "number",
-                "name": "calculatedAreaHabitatRevegetedHa",
-                "units": "ha",
-                "decimalPlaces": 3
-              },
-              {
-                "computed": {
-                  "expression": "$geom.lengthKm(siteSeedCollected)"
-                },
-                "dataType": "number",
-                "name": "calculatedLengthHabitatRevegetedKm",
-                "units": "km",
-                "decimalPlaces": 3
-              },
-              {
-                "defaultValue": {
-                  "expression": "calculatedAreaHabitatRevegetedHa",
-                  "type": "computed"
-                },
-                "dataType": "number",
-                "name": "areaHabitatRevegetedHa",
-                "units": "ha",
-                "decimalPlaces": 3,
-                "validate": "required,min[0]"
-              },
-              {
-                "defaultValue": {
-                  "expression": "calculatedLengthHabitatRevegetedKm",
-                  "type": "computed"
-                },
-                "dataType": "number",
-                "name": "lengthHabitatRevegetedKm",
-                "units": "km",
-                "decimalPlaces": 3,
-                "validate": "required,min[0]"
-              },
-              {
-                "dataType": "text",
-                "name": "species",
-                "constraints": [
-                  "Test Species",
-                  "Test"
-                ],
-                "validate": "required"
-              },
-              {
-                "name": "noOfDaysSeedCollected",
-                "dataType": "number"
-              },
-              {
-                "dataType": "text",
-                "name": "inKgSeedCollected",
-                "constraints": [
-                  "Individuals",
-                  "Kilograms"
-                ],
-                "validate": "required"
-              },
-              {
-                "dataType": "number",
-                "name": "amountSeedCollected"
-              },
-              {
-                "dataType": "number",
-                "name": "numberOfSourcePlants"
-              },
-              {
-                "dataType": "text",
-                "name": "storingFacility"
-              },
-              {
-                "dataType": "text",
-                "name": "noOfPlantsPropogated"
-              },
-              {
-                "dataType": "text",
-                "name": "threatEcoCommunity",
-                "validate": "maxSize[100]"
-              }
-            ],
-            "dataType": "list",
-            "name": "seedCollectionDetails"
-          },
-          {
-            "computed": {
-              "expression": "amountSeedCollected"
-            },
-            "dataType": "number",
-            "name": "totalSeedCollected"
-          },
-          {
-            "computed": {
-              "expression": "numberOfSourcePlants"
-            },
-            "dataType": "number",
-            "name": "totalPlantsPropogated"
-          }
-        ],
-        "modelName": "Seed Collecting - Bushfire Program",
-        "title": "Seed Collecting - Bushfire Program",
-        "viewModel": [
-          {
-            "type": "section",
-            "items": [
-              {
-                "columns": [
-                  {
-                    "width": "5%",
-                    "source": "initialOrMaintenance",
-                    "title": "Initial or Maintenance activity?",
-                    "type": "selectOne"
-                  },
-                  {
-                    "width": "5%",
-                    "type": "col",
-                    "title": "Site/s where collection was undertaken",
-                    "items": [
-                      {
-                        "source": "siteSeedCollected",
-                        "type": "feature"
-                      },
-                      {
-                        "readonly": "readonly",
-                        "source": "calculatedAreaHabitatRevegetedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      },
-                      {
-                        "readonly": "readonly",
-                        "source": "calculatedLengthHabitatRevegetedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
-                    "type": "col",
-                    "title": "Area (ha) of habitat revegated",
-                    "items": [
-                      {
-                        "source": "areaHabitatRevegetedHa",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "width": "10%",
-                    "type": "col",
-                    "title": "Length (km) of habitat revegeted",
-                    "items": [
-                      {
-                        "source": "lengthHabitatRevegetedKm",
-                        "type": "number",
-                        "displayOptions": {
-                          "displayUnits": true
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "width": "7%",
-                    "source": "species",
-                    "title": "Species",
-                    "type": "selectOne"
-                  },
-                  {
-                    "width": "7%",
-                    "source": "noOfDaysSeedCollected",
-                    "title": "Number of days collecting Seed",
-                    "type": "number"
-                  },
-                  {
-                    "width": "7%",
-                    "source": "inKgSeedCollected",
-                    "title": "Individuals / Kilograms collected",
-                    "type": "selectOne"
-                  },
-                  {
-                    "width": "7%",
-                    "source": "amountSeedCollected",
-                    "title": "Amount collected",
-                    "type": "number"
-                  },
-                  {
-                    "width": "7%",
-                    "source": "numberOfSourcePlants",
-                    "title": "Number of Source plants",
-                    "type": "number"
-                  },
-                  {
-                    "width": "12%",
-                    "source": "storingFacility",
-                    "title": "Storing facility",
-                    "type": "textarea"
-                  },
-                  {
-                    "width": "12%",
-                    "source": "noOfPlantsPropogated",
-                    "title": "Number of plants propogated",
-                    "type": "textarea"
-                  },
-                  {
-                    "width": "12%",
-                    "source": "threatEcoCommunity",
-                    "title": "Threatened ecological community (if applicable)",
-                    "type": "textarea"
-                  }
-                ],
-                "userAddedRows": true,
-                "source": "seedCollectionDetails",
-                "type": "table"
-              }
-            ]
-          }
-        ]
-      },
-      "templateName": "siSeedCollecting",
       "title": null
     }
   ],

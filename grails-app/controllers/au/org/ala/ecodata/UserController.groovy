@@ -39,4 +39,8 @@ class UserController {
         result.statusCode ? response.setStatus(result.statusCode) : ''
         render result as JSON
     }
+
+    def getAllUsers(){
+        render userService.getAllUsers() as JSON
+    }
 }

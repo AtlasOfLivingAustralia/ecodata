@@ -1,11 +1,22 @@
 package au.org.ala.ecodata.metadata
+
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+
 /**
  * Works with the Output metadata.
  */
 class OutputMetadata {
 
-    private def metadata
-    public OutputMetadata(metadata) {
+    static Log log = LogFactory.getLog(OutputMetadata.class)
+
+    /** Used to construct property names to nested model items */
+    String pathSeparator = '.'
+
+    /** The metadata template associated with this output type */
+    private Map metadata
+
+    OutputMetadata(Map metadata) {
         this.metadata = metadata
     }
 
@@ -90,27 +101,137 @@ class OutputMetadata {
     }
 
     def getNestedPropertyNames() {
-        def props = []
-        metadata.dataModel.each { property ->
-            if (isNestedDataModelType(property)) {
-                props << property.name
+        List propertyNames = []
+        dataModelIterator { String path, Map node ->
+            if (isNestedDataModelType(node)) {
+                propertyNames << path
             }
         }
-        props
+        propertyNames
     }
 
-    def getMemberOnlyPropertyNames() {
-        def props = []
 
-        metadata.dataModel.each { property ->
-            def viewNode = findViewByName(property.name)
+    List propertyNamesAsList() {
+        List propertyNames = []
+        dataModelIterator{ String path, Map node ->
+            propertyNames << path
+        }
+        propertyNames
+    }
+
+    /** Builds a property name from the current path and node name.  e.g. list.value.nestedList */
+    private String fullPathToNode(String currentPath, Object node) {
+        String name = node.name
+        currentPath ? currentPath + pathSeparator + name : name
+    }
+
+
+    void dataModelIterator(Closure callback) {
+        dataModelIterator('', metadata.dataModel, callback)
+    }
+
+
+    /**
+     * Iterates over the dataModel in this model, invoking the callback for each node.
+     * Handles nested properties by building a '.' separated path.
+     * @param path the starting path.
+     * @param nodes the nodes to iterate over
+     * @param callback a closure accepting a String (the path to the data model item relative to the original path) and the current data model item
+     */
+    void dataModelIterator(String path, List nodes, Closure callback) {
+        nodes.each { Map node ->
+            String nodePath = fullPathToNode(path, node)
+            callback(nodePath, node)
+            if (isNestedDataModelType(node)) {
+                dataModelIterator(nodePath, getNestedDataModelNodes(node), callback)
+            }
+        }
+    }
+
+    String getLabel(Map viewNode, Map dataNode) {
+        String label = null
+        if (viewNode) {
+            label = viewNode.preLabel?:(viewNode.title?:viewNode.postLabel)
+        }
+        label ?: (dataNode.description ?: dataNode.name)
+    }
+
+    void modelIterator(Closure callback) {
+        Set visitedDataNodes = new HashSet()
+        visitedDataNodes = modelIteratorInternal('', metadata.viewModel, metadata.dataModel, visitedDataNodes, callback)
+
+        // The iteration is done via matching view nodes to data nodes, so after it's complete ensure any
+        // data nodes not associated with a view node are visited as well.
+        dataModelIterator { path, node ->
+            if (!visitedDataNodes.contains(node)) {
+                println "Warning: node ${path} is not refernced by the view model"
+                callback(fullPathToNode(path, node), null, node)
+            }
+        }
+    }
+
+    /**
+     * Returns true if the supplied view node is referencing a node from the dataModel.
+     * Not all view model nodes need to do this (e.g. rows, columns etc)
+     */
+    private boolean referencesDataModel(Map viewNode) {
+        viewNode.source && viewNode.type != 'literal'
+    }
+
+    private Set modelIteratorInternal(String path, List viewNodes, List dataModelNodes, Set visitedDataNodes, Closure callback) {
+        viewNodes.each { Map node ->
+            String nestedPath = path
+            List dataModelContext = dataModelNodes
+            if (referencesDataModel(node)) {
+                Map dataNode = findDataModelItemByName(node.source, dataModelContext)
+
+                if (dataNode) {
+                    visitedDataNodes.add(dataNode)
+                    String dataNodePath = fullPathToNode(path, dataNode)
+                    callback(dataNodePath, node, dataNode)
+
+                    if (isNestedDataModelType(dataNode)) {
+                        dataModelContext = getNestedDataModelNodes(dataNode)
+                        nestedPath = dataNodePath
+                    }
+                }
+                else {
+                    log.warn("View node: "+node+" references missing dataModel node")
+                }
+            }
+
+            if (isNestedViewModelType(node)) {
+                modelIteratorInternal(nestedPath, getNestedViewNodes(node), dataModelContext, visitedDataNodes, callback)
+            }
+        }
+
+        visitedDataNodes
+    }
+
+
+
+
+    List<String> getMemberOnlyPropertyNames() {
+        List memberOnlyNames = []
+        modelIterator { String path, Map viewNode, Map dataNode ->
             if (viewNode?.memberOnlyView) {
-                props << property.name
+                memberOnlyNames << path
             }
         }
-
-        props
+        memberOnlyNames
     }
+
+
+    List<String> getPropertyNamesByDwcAttribute(String dwcAttribute) {
+        List matchingNames = []
+        dataModelIterator {String path, Map node ->
+            if (node.dwcAttribute == dwcAttribute) {
+                matchingNames << path
+            }
+        }
+        matchingNames
+    }
+
 
     def getNestedViewNodes(node) {
         return (node.type in ['table', 'photoPoints', 'grid'] ) ? node.columns: node.items

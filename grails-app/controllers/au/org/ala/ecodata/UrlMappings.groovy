@@ -72,6 +72,10 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
+        "/ws/managementunit/$action" {
+            controller = 'managementUnit'
+        }
+
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
@@ -183,9 +187,10 @@ class UrlMappings {
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
+        "/ws/document/download"(controller:"document", action:"download")
+
         "/ws/$controller/list"() { action = [GET:'list'] }
         "/ws/geoServer/wms"(controller: "geoServer", action: "wms")
-
 
 
         "/"(redirect:[controller:"documentation"])

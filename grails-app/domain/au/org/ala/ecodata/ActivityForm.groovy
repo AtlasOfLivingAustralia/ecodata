@@ -110,4 +110,10 @@ class ActivityForm {
     def beforeUpdate() {
         lastUpdatedUserId = currentUserId()
     }
+
+    FormSection getFormSection(String name) {
+        sections.find{it.name == name}
+    }
+
+
 }

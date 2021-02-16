@@ -116,31 +116,6 @@ class SiteService {
         Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
     }
 
-    /**
-     * Not working
-     * Works by given ["siteId","name"]
-     * return empty result by given ["siteId","name","extent"]
-     * Error in projecting unknown field - "siteId","name","extent.geometry.state"
-     * @param siteId
-     * @param fields
-     * @return
-     */
-
-    def getSiteWithLimitedFields(String siteId, List<String> fields) {
-        List results = Site.withCriteria {
-            eq ("siteId", siteId)
-            projections {
-                fields.each{
-                    property(it)
-                }
-            }
-        }
-        if(results){
-            print result
-        }
-     }
-
-
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
     }
