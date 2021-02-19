@@ -188,12 +188,32 @@
           {
             "dataType": "text",
             "name": "notes",
-            "description": ""
+            "description": "",
+            "validate": "required"
           }
         ],
         "modelName": "ESP Overview",
         "title": "Submission",
         "viewModel": [
+          {
+            "type": "row",
+            "items": [
+              {
+                "source": "<h4>General Observations</h4>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "Please provide any additional comments on your project site over the last 12 months (for example, general seasonal conditions, vegetation health, native animals, any other factors that affected your management of the site)",
+                "source": "notes",
+                "type": "textarea"
+              }
+            ]
+          },
           {
             "type": "row",
             "items": [
@@ -320,25 +340,7 @@
               }
             ]
           },
-          {
-            "type": "row",
-            "items": [
-              {
-                "source": "<h4>General Observations</h4>",
-                "type": "literal"
-              }
-            ]
-          },
-          {
-            "type": "row",
-            "items": [
-              {
-                "preLabel": "Please provide any additional comments on your project site over the last 12 months (for example, general seasonal conditions, vegetation health, native animals, any other factors that affected your management of the site)",
-                "source": "notes",
-                "type": "textarea"
-              }
-            ]
-          },
+
           {
             "type": "row",
             "items": [

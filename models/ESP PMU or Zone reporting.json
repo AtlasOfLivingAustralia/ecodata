@@ -504,7 +504,16 @@
             "type": "row",
             "items": [
               {
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "",
                 "source": "notes",
                 "type": "textarea",
                 "rows": 5
@@ -805,7 +814,16 @@
             "type": "row",
             "items": [
               {
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "",
                 "source": "notes",
                 "type": "textarea"
               }
@@ -977,7 +995,16 @@
             "type": "row",
             "items": [
               {
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
+            "type": "row",
+            "items": [
+              {
+                "preLabel": "",
                 "source": "notes",
                 "type": "textarea"
               }
@@ -1290,10 +1317,19 @@
             "type": "row"
           },
           {
+            "type": "row",
+            "items": [
+              {
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
             "items": [
               {
                 "source": "notes",
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "preLabel": "",
                 "type": "textarea"
               }
             ],
@@ -1417,10 +1453,19 @@
             "type": "row"
           },
           {
+            "type": "row",
+            "items": [
+              {
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
             "items": [
               {
                 "source": "notes",
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "preLabel": "",
                 "type": "textarea"
               }
             ],
@@ -1621,10 +1666,19 @@
             "type": "table"
           },
           {
+            "type": "row",
+            "items": [
+              {
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
             "items": [
               {
                 "source": "notes",
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "preLabel": "",
                 "type": "textarea"
               }
             ],
@@ -1740,10 +1794,19 @@
             "type": "row"
           },
           {
+            "type": "row",
+            "items": [
+              {
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
             "items": [
               {
                 "source": "notes",
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "preLabel": "",
                 "type": "textarea"
               }
             ],
@@ -1865,10 +1928,19 @@
             "type": "row"
           },
           {
+            "type": "row",
+            "items": [
+              {
+                "source": "<span class=\"preLabel required\"><label>Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why</label></span><div>If the management action was not undertaken and you are explaining why, delete all rows in the above table by hitting the bold 'x' in the last column.  If you don't delete the empty rows you will be unable to submit your report.</div>",
+                "type": "literal"
+              }
+            ]
+          },
+          {
             "items": [
               {
                 "source": "notes",
-                "preLabel": "Please provide comment on the effectiveness of the above management this year, or if the management was not undertaken, please state the reason why",
+                "preLabel": "",
                 "type": "textarea"
               }
             ],
