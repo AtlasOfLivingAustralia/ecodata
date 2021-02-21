@@ -21,10 +21,15 @@ import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexAction
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.delete.DeleteResponse
+import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexAction
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.RequestOptions
@@ -199,15 +204,16 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId, String index = DEFAULT_INDEX) {
         def isDeleted = false
-        def resp
+        GetResponse resp
 
         try {
-            resp = client.prepareGet(index, DEFAULT_TYPE, docId).execute().actionGet();
+            GetRequest request = new GetRequest(index, DEFAULT_TYPE, docId)
+            resp = client.get(request, RequestOptions.DEFAULT)
         } catch (Exception e) {
             log.error "ES prepareGet error: ${e}", e
         }
 
-        if (resp && doc.status?.toLowerCase() == DELETED) {
+        if (resp.exists && doc.status?.toLowerCase() == DELETED) {
             try {
                 deleteDocById(docId, index)
                 isDeleted = true
@@ -298,7 +304,10 @@ class ElasticSearchService {
         def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
         indexes.each {
             CreateIndexRequest request = new CreateIndexRequest(it)
-            request.mapping(parsedJson)
+            request.mapping([mappings:parsedJson.mappings])
+            // Neither of the settings currently configured are working correctly in ES 7.11
+            // Temporarily disabling them.
+            // request.settings([settings:parsedJson.settings])
             client.indices().create(request, RequestOptions.DEFAULT)
         }
     }
@@ -1159,9 +1168,8 @@ class ElasticSearchService {
      * @param request
      * @return IndexResponse
      */
-    def doSearch(SearchRequest request) {
-        def response = client.search(request).actionGet()
-        return response
+    SearchResponse doSearch(SearchRequest request) {
+        client.search(request)
     }
 
     def searchAndAggregateOnGeohash(String query, Map params = [:], geohashField = "sites.geoPoint", boundingBoxField = "geoIndex", String index = PROJECT_ACTIVITY_INDEX) {
@@ -1175,7 +1183,7 @@ class ElasticSearchService {
         search(query, params, index, boundingBox)
     }
 
-    def searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {
+    SearchResponse searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {
         SearchRequest request = new SearchRequest()
         request.indices(index)
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
@@ -1190,7 +1198,7 @@ class ElasticSearchService {
         SearchSourceBuilder source = pagenateQuery(paginationParams).(queryBuilder)
         request.source(source)
 
-        client.search(request).actionGet()
+        client.search(request)
     }
 
     /*
@@ -1852,8 +1860,9 @@ class ElasticSearchService {
      * @param id
      * @return
      */
-    def deleteDocById(id, String index = DEFAULT_INDEX) {
-        client.prepareDelete(index, DEFAULT_TYPE, id).execute().actionGet();
+    DeleteResponse deleteDocById(String id, String index = DEFAULT_INDEX) {
+        DeleteRequest request = new DeleteRequest(index, DEFAULT_TYPE, id)
+        client.delete(request, RequestOptions.DEFAULT)
     }
 
     /**
