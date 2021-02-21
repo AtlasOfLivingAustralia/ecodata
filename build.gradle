@@ -79,18 +79,9 @@ dependencies {
     compile 'org.grails.plugins:external-config:1.2.2'
     runtime 'com.bertramlabs.plugins:asset-pipeline-grails:3.0.10'
 
-    compile "org.elasticsearch:elasticsearch:1.7.1"
-
-    // https://mvnrepository.com/artifact/org.elasticsearch.client/transport
-   // compile group: 'org.elasticsearch.client', name: 'transport', version: '7.0.0'
-
-    // https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client
-  //  compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.0.0'
-    /*compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:7.0.0" {
-        exclude module: "elasticsearch"
-    }*/
-
-  //  compile 'org.elasticsearch:elasticsearch:7.0.0'
+    compile "org.elasticsearch:elasticsearch:7.11.1"
+    compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:7.11.1"
+    compile "com.spatial4j:spatial4j:0.5"
 
     compile group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.7'
     compile group: 'org.locationtech.jts', name: 'jts-core', version: '1.15.0'
