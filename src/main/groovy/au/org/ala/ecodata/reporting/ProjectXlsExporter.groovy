@@ -52,8 +52,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
-    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -234,19 +234,16 @@ class ProjectXlsExporter extends ProjectExporter {
 
      }
 
-    private void exportActivity(Map project, Map activity) {
+    private void exportActivity(Map project, Map activity, boolean sheetPerOutput = false) {
         Map commonData = commonActivityData(project, activity)
         String activityType = activity.type
         Integer formVersion = activity.formVersion  //Use Integer to deal with null
 
         String sheetName = activityType //+  (formVersion? "_V" + formVersion: "")
-        List sheetData = prepareActivityDataForExport(activity)
+
         List exportConfig = getActivityExportConfig(activityType)
 
-
-        List outputData = sheetData.collect { commonData + it }
-
-        if (false) {
+        if (sheetPerOutput) {
             // Split into all the bits.
             Map<List> configPerSection = exportConfig.groupBy{it.section}
             // We are relying on the grouping preserving order here....
@@ -262,6 +259,10 @@ class ProjectXlsExporter extends ProjectExporter {
 
                 AdditionalSheet outputSheet = createSheet(section, [propertyHeaders, versionHeaders, headers])
                 int outputRow = outputSheet.sheet.lastRowNum
+
+                List sheetData = prepareActivityDataForExport(activity, section)
+                List outputData = sheetData.collect { commonData + it }
+
                 outputSheet.add(outputData, outputGetters, outputRow + 1)
             }
         }
@@ -277,12 +278,10 @@ class ProjectXlsExporter extends ProjectExporter {
 
             AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
             int outputRow = outputSheet.sheet.lastRowNum
+            List sheetData = prepareActivityDataForExport(activity)
+            List outputData = sheetData.collect { commonData + it }
             outputSheet.add(outputData, outputGetters, outputRow + 1)
         }
-
-
-
-
     }
 
     private void exportActivitySummary(Map project) {
