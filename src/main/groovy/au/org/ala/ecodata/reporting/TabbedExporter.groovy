@@ -219,12 +219,12 @@ class TabbedExporter {
             // If the sheets are named similarly, they may end up the same after being changed to excel
             // tab compatible strings
             int i = 1
-            while (activitySheetNames[sheetName]) {
-                sheetName = sheetName.substring(0, name.length()-1)
-                sheetName = sheetName + Integer.toString(i)
+            while (activitySheetNames[name]) {
+                name = name.substring(0, name.length()-3)
+                name = name + "("+Integer.toString(i)+")"
             }
 
-            activitySheetNames[sheetName] = sheetName
+            activitySheetNames[name] = sheetName
             typedActivitySheets[sheetName] = exporter.addSheet(name, headers)
         }
         typedActivitySheets[sheetName]

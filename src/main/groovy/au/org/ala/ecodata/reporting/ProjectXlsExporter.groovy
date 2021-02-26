@@ -783,66 +783,6 @@ class ProjectXlsExporter extends ProjectExporter {
         report ? report.name : ''
     }
 
-    AdditionalSheet getActivitySheet(Map activityModel) {
-        String activityType = activityModel.name
-
-        if (!typedActivitySheets[activityType]) {
-            String name = XlsExporter.sheetName(activityType)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (activitySheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            activitySheetNames[name] = activityType
-            List<String> headers = buildActivityHeaders(activityModel)
-            typedActivitySheets[activityType] = exporter.addSheet(name, headers)
-        }
-        typedActivitySheets[activityType]
-    }
-
-
-
-    AdditionalSheet getOutputSheet(String outputName) {
-
-        if (!typedOutputSheets[outputName]) {
-            String name = XlsExporter.sheetName(outputName)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (outputSheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            outputSheetNames[name] = outputName
-            List<String> headers = buildOutputHeaders(outputName)
-            typedOutputSheets[outputName] = exporter.addSheet(name, headers)
-        }
-        typedOutputSheets[outputName]
-    }
-
-    List<String> buildActivityHeaders(Map activityModel) {
-        List<String> activityHeaders = [] + commonActivityHeaders
-
-        activityModel.outputs?.each { output ->
-            Map config = outputProperties(output)
-            activityHeaders += config.headers
-        }
-
-        activityHeaders
-    }
-
-    List<String> buildOutputHeaders(String outputName) {
-        List<String> outputHeaders = [] + commonActivityHeaders
-        outputHeaders += outputProperties(outputName).headers
-        outputHeaders
-    }
-
     AdditionalSheet projectSheet() {
         if (!projectSheet) {
             projectSheet = exporter.addSheet('Projects', projectHeaders)
