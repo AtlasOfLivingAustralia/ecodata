@@ -11707,7 +11707,7 @@
                   {
                     "width": "15%",
                     "type": "col",
-                    "title": "Area where cultural site management work or planning has occurred",
+                    "title": "Area where the visit has occurred",
                     "items": [
                       {
                         "source": "areaOfVisit",
