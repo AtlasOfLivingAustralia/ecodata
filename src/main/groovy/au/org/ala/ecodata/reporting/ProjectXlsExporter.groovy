@@ -239,18 +239,50 @@ class ProjectXlsExporter extends ProjectExporter {
         String activityType = activity.type
         Integer formVersion = activity.formVersion  //Use Integer to deal with null
 
-        String sheetName = activityType +  (formVersion? "_V" + formVersion: "")
+        String sheetName = activityType //+  (formVersion? "_V" + formVersion: "")
+        List sheetData = prepareActivityDataForExport(activity)
+        List exportConfig = getActivityExportConfig(activityType)
 
-        Map sheetData = buildOutputSheetData(activity)
 
-        //Combine data from output with  header,getter and  common data
-        List outputGetters = activityProperties + sheetData.getters
-        List headers = commonActivityHeaders + sheetData.headers
-        List outputData = sheetData.data.collect { commonData + it }
+        List outputData = sheetData.collect { commonData + it }
 
-        AdditionalSheet outputSheet = createSheet(sheetName, headers)
-        int outputRow = outputSheet.sheet.lastRowNum
-        outputSheet.add(outputData, outputGetters, outputRow + 1)
+        if (false) {
+            // Split into all the bits.
+            Map<List> configPerSection = exportConfig.groupBy{it.section}
+            // We are relying on the grouping preserving order here....
+            // (it should do, the grouping uses a LinkedHashMap)
+            configPerSection.each { String section, List sectionConfig ->
+                List blank = commonActivityHeaders.collect{""}
+                List versionHeaders = blank + sectionConfig.collect{ it.formVersion }
+                List propertyHeaders = blank + sectionConfig.collect{ it.property }
+
+                //Combine data from output with  header,getter and  common data
+                List outputGetters = activityProperties + sectionConfig.collect{ it.getter }
+                List headers = commonActivityHeaders + sectionConfig.collect{ it.header }
+
+                AdditionalSheet outputSheet = createSheet(section, [propertyHeaders, versionHeaders, headers])
+                int outputRow = outputSheet.sheet.lastRowNum
+                outputSheet.add(outputData, outputGetters, outputRow + 1)
+            }
+        }
+        else {
+
+            List blank = commonData.collect{""}
+            List versionHeaders = blank + exportConfig.collect{ it.formVersion }
+            List propertyHeaders = blank + exportConfig.collect{ it.property }
+
+            //Combine data from output with  header,getter and  common data
+            List outputGetters = activityProperties + exportConfig.collect{ it.getter }
+            List headers = commonActivityHeaders + exportConfig.collect{ it.header }
+
+            AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
+            int outputRow = outputSheet.sheet.lastRowNum
+            outputSheet.add(outputData, outputGetters, outputRow + 1)
+        }
+
+
+
+
     }
 
     private void exportActivitySummary(Map project) {
@@ -781,66 +813,6 @@ class ProjectXlsExporter extends ProjectExporter {
         Report report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
 
         report ? report.name : ''
-    }
-
-    AdditionalSheet getActivitySheet(Map activityModel) {
-        String activityType = activityModel.name
-
-        if (!typedActivitySheets[activityType]) {
-            String name = XlsExporter.sheetName(activityType)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (activitySheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            activitySheetNames[name] = activityType
-            List<String> headers = buildActivityHeaders(activityModel)
-            typedActivitySheets[activityType] = exporter.addSheet(name, headers)
-        }
-        typedActivitySheets[activityType]
-    }
-
-
-
-    AdditionalSheet getOutputSheet(String outputName) {
-
-        if (!typedOutputSheets[outputName]) {
-            String name = XlsExporter.sheetName(outputName)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (outputSheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            outputSheetNames[name] = outputName
-            List<String> headers = buildOutputHeaders(outputName)
-            typedOutputSheets[outputName] = exporter.addSheet(name, headers)
-        }
-        typedOutputSheets[outputName]
-    }
-
-    List<String> buildActivityHeaders(Map activityModel) {
-        List<String> activityHeaders = [] + commonActivityHeaders
-
-        activityModel.outputs?.each { output ->
-            Map config = outputProperties(output)
-            activityHeaders += config.headers
-        }
-
-        activityHeaders
-    }
-
-    List<String> buildOutputHeaders(String outputName) {
-        List<String> outputHeaders = [] + commonActivityHeaders
-        outputHeaders += outputProperties(outputName).headers
-        outputHeaders
     }
 
     AdditionalSheet projectSheet() {
