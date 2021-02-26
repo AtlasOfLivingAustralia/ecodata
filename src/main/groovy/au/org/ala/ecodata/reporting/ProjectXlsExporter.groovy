@@ -104,8 +104,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
     List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI", "relatedProjects"]
 
-    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)"]
-    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian"]
+    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress"]
+    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "term", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian", "progress"]
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -781,66 +781,6 @@ class ProjectXlsExporter extends ProjectExporter {
         Report report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
 
         report ? report.name : ''
-    }
-
-    AdditionalSheet getActivitySheet(Map activityModel) {
-        String activityType = activityModel.name
-
-        if (!typedActivitySheets[activityType]) {
-            String name = XlsExporter.sheetName(activityType)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (activitySheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            activitySheetNames[name] = activityType
-            List<String> headers = buildActivityHeaders(activityModel)
-            typedActivitySheets[activityType] = exporter.addSheet(name, headers)
-        }
-        typedActivitySheets[activityType]
-    }
-
-
-
-    AdditionalSheet getOutputSheet(String outputName) {
-
-        if (!typedOutputSheets[outputName]) {
-            String name = XlsExporter.sheetName(outputName)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (outputSheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            outputSheetNames[name] = outputName
-            List<String> headers = buildOutputHeaders(outputName)
-            typedOutputSheets[outputName] = exporter.addSheet(name, headers)
-        }
-        typedOutputSheets[outputName]
-    }
-
-    List<String> buildActivityHeaders(Map activityModel) {
-        List<String> activityHeaders = [] + commonActivityHeaders
-
-        activityModel.outputs?.each { output ->
-            Map config = outputProperties(output)
-            activityHeaders += config.headers
-        }
-
-        activityHeaders
-    }
-
-    List<String> buildOutputHeaders(String outputName) {
-        List<String> outputHeaders = [] + commonActivityHeaders
-        outputHeaders += outputProperties(outputName).headers
-        outputHeaders
     }
 
     AdditionalSheet projectSheet() {

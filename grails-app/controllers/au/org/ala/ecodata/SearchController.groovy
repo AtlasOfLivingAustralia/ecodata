@@ -456,6 +456,7 @@ class SearchController {
         if (!params.email) {
             params.email = userService.getCurrentUserDetails().userName
         }
+        log.info("Download requested: "+params.email+", Project count: "+ids?.size()+", Tabs: "+params.tabs)
         params.fileExtension = "xlsx"
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
