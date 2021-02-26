@@ -343,7 +343,7 @@
           }
         ]
       },
-      "templateName": "stateGovernmentInterventionFinalReport",
+      "templateName": "bushfiresStatesProgressReport",
       "title": null
     },
     {
@@ -411,7 +411,7 @@
           }
         ]
       },
-      "templateName": "siBaselineData",
+      "templateName": "statesBaselineData",
       "title": null
     },
     {
@@ -527,7 +527,7 @@
           }
         ]
       },
-      "templateName": "siCommunicationMaterials",
+      "templateName": "statesCommunicationMaterials",
       "title": null
     },
     {
@@ -700,7 +700,7 @@
           }
         ]
       },
-      "templateName": "siCommunityEngagement",
+      "templateName": "statesCommunityEngagement",
       "title": null
     },
     {
@@ -1099,7 +1099,7 @@
           }
         ]
       },
-      "templateName": "siControllingAccess",
+      "templateName": "statesControllingAccess",
       "title": null
     },
     {
@@ -1630,7 +1630,7 @@
           }
         ]
       },
-      "templateName": "siPestAnimalManagement",
+      "templateName": "statesPestAnimalManagement",
       "title": null
     },
     {
@@ -1936,7 +1936,7 @@
           }
         ]
       },
-      "templateName": "siManagementPlanDevelopment",
+      "templateName": "statesManagementPlanDevelopment",
       "title": null
     },
     {
@@ -2287,7 +2287,7 @@
           }
         ]
       },
-      "templateName": "siDebrisRemoval",
+      "templateName": "statesDebrisRemoval",
       "title": null
     },
     {
@@ -2738,7 +2738,7 @@
           }
         ]
       },
-      "templateName": "siErosionManagement",
+      "templateName": "statesErosionManagement",
       "title": null
     },
     {
@@ -3087,7 +3087,7 @@
           }
         ]
       },
-      "templateName": "siFeralFreeEnclosures",
+      "templateName": "statesFeralFreeEnclosures",
       "title": null
     },
     {
@@ -3363,7 +3363,7 @@
           }
         ]
       },
-      "templateName": "siExSituBreedingSites",
+      "templateName": "statesExSituBreedingSites",
       "title": null
     },
     {
@@ -3664,7 +3664,7 @@
           }
         ]
       },
-      "templateName": "siEstablishingAgreements",
+      "templateName": "statesEstablishingAgreements",
       "title": null
     },
     {
@@ -3801,7 +3801,7 @@
           }
         ]
       },
-      "templateName": "siMonitoringRegimes",
+      "templateName": "statesMonitoringRegimes",
       "title": null
     },
     {
@@ -3906,7 +3906,7 @@
           }
         ]
       },
-      "templateName": "siFarmManagementSurvey",
+      "templateName": "statesFarmManagementSurvey",
       "title": null
     },
     {
@@ -4256,7 +4256,7 @@
           }
         ]
       },
-      "templateName": "siFaunaSurvey",
+      "templateName": "statesFaunaSurvey",
       "title": null
     },
     {
@@ -5028,7 +5028,7 @@
           }
         ]
       },
-      "templateName": "siFloraSurvey",
+      "templateName": "statesFloraSurvey",
       "title": null
     },
     {
@@ -5431,7 +5431,7 @@
           }
         ]
       },
-      "templateName": "siHabitatAugmentation",
+      "templateName": "statesHabitatAugmentation",
       "title": null
     },
     {
@@ -5514,7 +5514,7 @@
           }
         ]
       },
-      "templateName": "siIdentifyingSites",
+      "templateName": "statesIdentifyingSites",
       "title": null
     },
     {
@@ -5928,7 +5928,7 @@
           }
         ]
       },
-      "templateName": "siImprovingHydrologicalRegimes",
+      "templateName": "statesImprovingHydrologicalRegimes",
       "title": null
     },
     {
@@ -6347,7 +6347,7 @@
           }
         ]
       },
-      "templateName": "siLandManagementPractices",
+      "templateName": "statesLandManagementPractices",
       "title": null
     },
     {
@@ -6764,7 +6764,7 @@
           }
         ]
       },
-      "templateName": "siDiseaseManagement",
+      "templateName": "statesDiseaseManagement",
       "title": null
     },
     {
@@ -6868,7 +6868,7 @@
           }
         ]
       },
-      "templateName": "siNegotiations",
+      "templateName": "statesNegotiations",
       "title": null
     },
     {
@@ -6937,7 +6937,7 @@
           }
         ]
       },
-      "templateName": "siObtainingApprovals",
+      "templateName": "statesObtainingApprovals",
       "title": null
     },
     {
@@ -7324,7 +7324,7 @@
           }
         ]
       },
-      "templateName": "siPestAnimalSurvey",
+      "templateName": "statesPestAnimalSurvey",
       "title": null
     },
     {
@@ -7690,7 +7690,7 @@
           }
         ]
       },
-      "templateName": "siPlantSurvivalSurvey",
+      "templateName": "statesPlantSurvivalSurvey",
       "title": null
     },
     {
@@ -7779,7 +7779,7 @@
           }
         ]
       },
-      "templateName": "siProjectPlanning",
+      "templateName": "statesProjectPlanning",
       "title": null
     },
     {
@@ -8182,7 +8182,7 @@
           }
         ]
       },
-      "templateName": "siRemediatingRiparianAndAquaticAreas",
+      "templateName": "statesRemediatingRiparianAndAquaticAreas",
       "title": null
     },
     {
@@ -8681,7 +8681,7 @@
           }
         ]
       },
-      "templateName": "siRevegetatingHabitat",
+      "templateName": "statesRevegetatingHabitat",
       "title": null
     },
     {
@@ -9127,7 +9127,7 @@
           }
         ]
       },
-      "templateName": "siWeedTreatment",
+      "templateName": "statesWeedTreatment",
       "title": null
     },
     {
@@ -9381,7 +9381,7 @@
           }
         ]
       },
-      "templateName": "siSeedCollecting",
+      "templateName": "statesSeedCollecting",
       "title": null
     },
     {
@@ -9768,7 +9768,7 @@
           }
         ]
       },
-      "templateName": "siSitePreparation",
+      "templateName": "statesSitePreparation",
       "title": null
     },
     {
@@ -9926,7 +9926,7 @@
           }
         ]
       },
-      "templateName": "siSkillsAndKnowledgeSurvey",
+      "templateName": "statesSkillsAndKnowledgeSurvey",
       "title": null
     },
     {
@@ -10201,7 +10201,7 @@
           }
         ]
       },
-      "templateName": "siSoilTesting",
+      "templateName": "statesSoilTesting",
       "title": null
     },
     {
@@ -10266,7 +10266,7 @@
         ],
         "title": "Supplementary food and water"
       },
-      "templateName": "siSupplementaryFoodAndWater",
+      "templateName": "statesSupplementaryFoodAndWater",
       "title": null
     },
     {
@@ -10547,7 +10547,7 @@
           }
         ]
       },
-      "templateName": "siEmergencyInterventions",
+      "templateName": "statesEmergencyInterventions",
       "title": null
     },
     {
@@ -10919,7 +10919,7 @@
           }
         ]
       },
-      "templateName": "siWaterQualitySurvey",
+      "templateName": "statesWaterQualitySurvey",
       "title": null
     },
     {
@@ -11266,7 +11266,7 @@
           }
         ]
       },
-      "templateName": "siWeedDistributionSurvey",
+      "templateName": "statesWeedDistributionSurvey",
       "title": null
     },
     {
@@ -11554,7 +11554,7 @@
           {
             "items": [
               {
-                "source": "culturalSitePlans",
+                "source": "culturalSites",
                 "columns": [
                   {
                     "title": "Number of sites where work has occurred",
