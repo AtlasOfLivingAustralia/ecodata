@@ -207,6 +207,10 @@ class TabbedExporter {
         List headers = results.collect{it.header}
         List outputGetters = results.collect{ it.getter}
 
+        return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(mctivity, outputName)]
+    }
+
+    protected List prepareActivityDataForExport(Map activity, String outputName = null) {
         List outputData = []
         ActivityForm activityForm = activityFormService.findActivityForm(activity.type, activity.formVersion)
 
@@ -221,7 +225,7 @@ class TabbedExporter {
                 }
             }
         }
-        return [headers: headers, getters: outputGetters, data: outputData]
+        outputData
     }
 
     /**
