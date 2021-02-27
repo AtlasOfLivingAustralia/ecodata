@@ -96,7 +96,6 @@ class ElasticSearchService {
     RestHighLevelClient client
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
-    def DEFAULT_TYPE = "doc"
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
     private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
@@ -202,7 +201,7 @@ class ElasticSearchService {
         GetResponse resp
 
         try {
-            GetRequest request = new GetRequest(index, DEFAULT_TYPE, docId)
+            GetRequest request = new GetRequest(index, docId)
             resp = client.get(request, RequestOptions.DEFAULT)
 
             if (resp.exists && doc.status?.toLowerCase() == DELETED) {
@@ -1856,7 +1855,7 @@ class ElasticSearchService {
      * @return
      */
     DeleteResponse deleteDocById(String id, String index = DEFAULT_INDEX) {
-        DeleteRequest request = new DeleteRequest(index, DEFAULT_TYPE, id)
+        DeleteRequest request = new DeleteRequest(index, id)
         client.delete(request, RequestOptions.DEFAULT)
     }
 
