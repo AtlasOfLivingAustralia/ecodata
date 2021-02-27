@@ -19,23 +19,19 @@ import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexAction
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
-import org.elasticsearch.action.index.IndexAction
 import org.elasticsearch.action.index.IndexRequest
-import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
-import org.elasticsearch.client.Client
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.client.core.AcknowledgedResponse
+import org.elasticsearch.action.support.master.AcknowledgedResponse
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
@@ -46,7 +42,6 @@ import org.elasticsearch.search.aggregations.AggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.aggregations.BucketOrder
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder
-import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
@@ -161,12 +156,12 @@ class ElasticSearchService {
         try {
             addCustomFields(docMap)
 
-            IndexRequest indexRequest = new IndexRequest(index, DEFAULT_TYPE, docId)
+            IndexRequest indexRequest = new IndexRequest(index).id(docId)
             indexRequest.source(docMap)
             client.index(indexRequest, RequestOptions.DEFAULT)
         } catch (Exception e) {
             String documentString = (docMap as JSON).toString(true)
-            log.error "Error indexing document: ${documentString}\nError: ${e}", e
+            log.error "Error: ${e.getMessage()}\nDocument:Error indexing document: ${docId}, type:${docMap['className']}"
 
             String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
             String body = "Type: "+getDocType(doc)+"\n"
@@ -174,7 +169,7 @@ class ElasticSearchService {
             body += "Error: "+e.getMessage()+"\n"
             body += "Document: "+documentString
 
-            emailService.emailSupport(subject, body)
+            //emailService.emailSupport(subject, body)
         }
     }
 
@@ -209,17 +204,17 @@ class ElasticSearchService {
         try {
             GetRequest request = new GetRequest(index, DEFAULT_TYPE, docId)
             resp = client.get(request, RequestOptions.DEFAULT)
+
+            if (resp.exists && doc.status?.toLowerCase() == DELETED) {
+                try {
+                    deleteDocById(docId, index)
+                    isDeleted = true
+                } catch (Exception e) {
+                    log.error "Error deleting doc with ID ${docId}: ${e.message}"
+                }
+            }
         } catch (Exception e) {
             log.error "ES prepareGet error: ${e}", e
-        }
-
-        if (resp.exists && doc.status?.toLowerCase() == DELETED) {
-            try {
-                deleteDocById(docId, index)
-                isDeleted = true
-            } catch (Exception e) {
-                log.error "Error deleting doc with ID ${docId}: ${e.message}"
-            }
         }
 
         return isDeleted
@@ -304,10 +299,8 @@ class ElasticSearchService {
         def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
         indexes.each {
             CreateIndexRequest request = new CreateIndexRequest(it)
-            request.mapping([mappings:parsedJson.mappings])
-            // Neither of the settings currently configured are working correctly in ES 7.11
-            // Temporarily disabling them.
-            // request.settings([settings:parsedJson.settings])
+            request.mapping(parsedJson.mappings)
+            request.settings(parsedJson.settings)
             client.indices().create(request, RequestOptions.DEFAULT)
         }
     }
@@ -331,8 +324,9 @@ class ElasticSearchService {
             Map parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
             def facetMappings = buildFacetMapping()
             // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
-            parsedJson.mappings.doc["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
-            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
+            parsedJson.mappings["properties"].extent["properties"].geometry["properties"].putAll(facetMappings.properties)
+            parsedJson.mappings["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings.properties)
+            parsedJson.mappings["properties"].putAll(facetMappings.facets)
             parsedJson
         })
     }
@@ -375,18 +369,17 @@ class ElasticSearchService {
             case 'Image':
             case 'document':
             case 'stringList':
-                mapping?.mappings.doc["properties"].put(field.indexName, [
-                        "type" : "string",
-                        "index" : "not_analyzed"
+                mapping?.mappings["properties"].put(field.indexName, [
+                        "type" : "text"
                 ])
                 break
             case 'number':
-                mapping?.mappings.doc["properties"].put(field.indexName, [
+                mapping?.mappings["properties"].put(field.indexName, [
                         "type" : "double"
                 ])
                 break
             case 'date':
-                mapping?.mappings.doc["properties"].put(field.indexName, [
+                mapping?.mappings["properties"].put(field.indexName, [
                         "type" : "date"
                 ])
                 break
@@ -396,7 +389,7 @@ class ElasticSearchService {
     }
 
     boolean doesIndexExist(String index, Map mapping){
-        if(mapping?.mappings.doc["properties"].hasProperty(index)){
+        if(mapping?.mappings["properties"].hasProperty(index)){
             return true
         }
 
@@ -412,11 +405,13 @@ class ElasticSearchService {
             facetList.addAll(facetConfig[it].collect { k, v -> k })
         }
 
-        def properties = [:]
+        Map properties = [:]
+        Map facets = [:]
         facetList.each { facetName ->
-            properties << [(facetName): [type: 'multi_field', path: 'just_name', fields: [(facetName): [type: "string", index: "analyzed"], (facetName + "Facet"): [type: "string", index: "not_analyzed"]]]]
+            properties << [(facetName): [type: 'text', copy_to:facetName+"Facet"]]
+            facets << [(facetName + "Facet"): [type: "keyword"]]
         }
-        properties
+        [properties:properties, facets:facets]
     }
 
     /**
