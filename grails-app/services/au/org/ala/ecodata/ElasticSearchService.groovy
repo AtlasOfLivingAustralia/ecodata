@@ -34,7 +34,11 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.action.support.master.AcknowledgedResponse
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.common.geo.ShapeRelation
+import org.elasticsearch.common.geo.builders.CoordinatesBuilder
+import org.elasticsearch.common.geo.builders.PolygonBuilder
 import org.elasticsearch.common.geo.builders.ShapeBuilder
+import org.elasticsearch.geometry.Circle
+import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.node.Node
@@ -1314,14 +1318,7 @@ class ElasticSearchService {
     def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
-
-        // set indices and types
         request.indices(index)
-        def types = []
-        if (params.types && params.types instanceof Collection<String>) {
-            types = params.types
-        }
-        request.types(types as String[])
 
         QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index)
         // set pagination stuff
@@ -1491,23 +1488,26 @@ class ElasticSearchService {
     private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "geoIndex") {
         GeoShapeQueryBuilder filter = null
 
-        ShapeBuilder shape = null
+        Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                shape = ShapeBuilder.newPolygon()
-                shape.points(geographicSearchCriteria.coordinates[0].collect { coordinate ->
+                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder().points(geographicSearchCriteria.coordinates[0].collect { coordinate ->
                     new Coordinate(coordinate[0] as double, coordinate[1] as double)
                 } as Coordinate[])
+                shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
                 break;
             case "Circle":
-                shape = ShapeBuilder.newCircleBuilder()
-                        .radius(geographicSearchCriteria.radius?.toString())
-                        .center(geographicSearchCriteria.coordinates[0] as double, geographicSearchCriteria.coordinates[1] as double)
+                shape = new Circle(
+                        geographicSearchCriteria.coordinates[0] as double,
+                        geographicSearchCriteria.coordinates[1] as double,
+                        geographicSearchCriteria.radius as double
+                )
+
                 break
         }
 
         if (shape) {
-            filter = geoShapeFilter(field, shape, ShapeRelation.INTERSECTS)
+            filter = geoIntersectionQuery(field, shape)
         }
 
         filter
@@ -1581,7 +1581,7 @@ class ElasticSearchService {
         if (facets) {
             facets.split(",").each { facet ->
                 List parts = facet.split(':')
-                facetList.add(FacetBuilders.histogramFacet(parts[0]).field(parts[0]).interval(Long.parseLong(parts[1])))
+                facetList.add(AggregationBuilders.histogram(parts[0]).field(parts[0]).interval(Long.parseLong(parts[1])))
             }
         }
 
@@ -1704,8 +1704,6 @@ class ElasticSearchService {
      * @return
      */
     BoolQueryBuilder buildFilters(filters) {
-        // see http://www.elasticsearch.org/guide/reference/java-api/query-dsl-filters/
-        //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
 
         List filterList = getFilterList(filters) // allow for multiple fq params
 
@@ -1715,7 +1713,7 @@ class ElasticSearchService {
         facets.each { String facetName, List<String> facetValues ->
 
             if (facetValues.size() == 0) {
-                boolFilter.must(FilterBuilders.missingFilter(facetName).nullValue(true))
+                boolFilter.must(QueryBuilders.missingFilter(facetName).nullValue(true))
             }
             else {
                 // support SOLR style filters (-) for exclude
