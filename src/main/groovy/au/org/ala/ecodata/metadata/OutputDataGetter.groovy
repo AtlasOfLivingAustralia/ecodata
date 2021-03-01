@@ -6,6 +6,7 @@ import pl.touk.excel.export.getters.Getter
 class OutputDataGetter extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
     static DateTimeParser TIME_PARSER = new DateTimeParser(DateTimeParser.Style.TIME)
     private DateTimeParser DATE_PARSER = new DateTimeParser(DateTimeParser.Style.DATE, timeZone)
+    private static final int MAX_CELL_LENGTH = 32767
 
     private String propertyName
     private String constraint
@@ -52,7 +53,7 @@ class OutputDataGetter extends OutputModelProcessor implements OutputModelProces
     @Override
     def text(Object node, Value outputValue) {
         def val = outputValue.value
-        return val ? val as String : ""
+        return val ? truncate(val as String) : ""
     }
 
     @Override
@@ -108,7 +109,7 @@ class OutputDataGetter extends OutputModelProcessor implements OutputModelProces
                 val = val.join(',')
             }
         }
-        return val ?: ""
+        return val ? truncate(val) : ""
     }
 
     @Override
@@ -159,6 +160,13 @@ class OutputDataGetter extends OutputModelProcessor implements OutputModelProces
 
     String toString() {
         return propertyName
+    }
+
+    private String truncate(String value) {
+        if (value.size() > MAX_CELL_LENGTH) {
+            value = value.substring(0, MAX_CELL_LENGTH)
+        }
+        value
     }
 
     static class Value implements OutputModelProcessor.ProcessingContext {
