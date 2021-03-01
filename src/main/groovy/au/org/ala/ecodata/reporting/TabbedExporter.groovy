@@ -176,14 +176,14 @@ class TabbedExporter {
                         String propertyPath = path + '[' + constraint + ']'
                         fieldConfiguration << [
                                 header:header,
-                                property:propertyPath+dataNode.name,
+                                property:propertyPath,
                                 getter:new OutputDataGetter(path, dataNode, documentMap, timeZone)]
                     }
                 }
                 else {
                     fieldConfiguration << [
                             header:outputMetadata.getLabel(viewNode, dataNode),
-                            property:path+dataNode.name,
+                            property:path,
                             getter:new OutputDataGetter(path, dataNode, documentMap, timeZone)]
                 }
             }

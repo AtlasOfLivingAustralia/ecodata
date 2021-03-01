@@ -268,7 +268,7 @@ class ProjectXlsExporter extends ProjectExporter {
         }
         else {
 
-            List blank = commonData.collect{""}
+            List blank = commonActivityHeaders.collect{""}
             List versionHeaders = blank + exportConfig.collect{ it.formVersion }
             List propertyHeaders = blank + exportConfig.collect{ it.property }
 
