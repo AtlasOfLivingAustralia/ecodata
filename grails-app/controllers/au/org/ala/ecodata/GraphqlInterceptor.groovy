@@ -61,7 +61,7 @@ class GraphqlInterceptor {
                     def clientIp = request.getHeader("X-Forwarded-For") ?: request.getRemoteHost()
                     def ipOk = whiteList.contains(clientIp) || (whiteList.size() == 1 && whiteList[0] == LOCALHOST_IP)
 
-                    if(ipOk) {
+                    if(ipOk && permissionService.isUserAlaAdmin(username)) {
                         userService.setCurrentUser(username)
                         return true
                     }
