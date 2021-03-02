@@ -289,6 +289,63 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+    void "Data created from different versions of the same activity form will be exported to the same sheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel")
+        ActivityForm activityForm_v2 = createActivityForm(activityToExport, 2, "nestedDataModel_v2")
+        Map project = project()
+        project.activities = [
+                [type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleNestedDataModel")]],
+                [type: activityToExport, name: activityToExport, formVersion: activityForm_v2.formVersion, outputs: [getJsonResource("sampleNestedDataModel_v2")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findActivityForm(activityToExport, 2) >> activityForm_v2
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm, activityForm_v2]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There are 3 header rows and 5 data rows"
+        activitySheet.physicalNumberOfRows == 12
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["number1", "list.value1", "list.nestedList.value2", "list.afterNestedList", "notes", "list.nestedList.value3", "extraNotes"]
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1, 2, 2]
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "Value 2", "After list", "Notes", "Value 3", "Extra Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["3", "0.value1", "0.0.value2", "", "notes", "", ""]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["3", "0.value1", "0.1.value2", "", "notes", "", ""]
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["3", "1.value1", "1.0.value2", "", "notes", "", ""]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["3", "1.value1", "1.1.value2", "", "notes", "", ""]
+        List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["3", "1.value1", "1.2.value2", "", "notes", "", ""]
+
+        List dataRow7 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow7 == ["3", "0.value1", "", "", "notes", "0.0.value3", "extra notes"]
+        List dataRow8 = readRow(9, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow8 == ["3", "0.value1", "", "", "notes", "0.1.value3", "extra notes"]
+        List dataRow9 = readRow(10, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow9 == ["3", "1.value1", "", "", "notes", "1.0.value3", "extra notes"]
+        List dataRow10 = readRow(11, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow10 == ["3", "1.value1", "", "", "notes", "1.1.value3", "extra notes"]
+    }
+
     private List readRow(int index, Sheet sheet) {
         Row row = sheet.getRow(index)
         row.cellIterator().collect { Cell cell ->
