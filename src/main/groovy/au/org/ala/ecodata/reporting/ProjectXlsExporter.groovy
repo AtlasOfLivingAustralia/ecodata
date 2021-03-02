@@ -125,6 +125,8 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Map of key: management unit id, value: management unit name */
     Map<String, String> managementUnitNames
 
+    boolean tabPerFormSection = false
+
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
         super(exporter)
         this.projectService = projectService
@@ -226,7 +228,7 @@ class ProjectXlsExporter extends ProjectExporter {
                  List activities = project?.activities?.findAll{it.type == tab}
                  if(activities) {
                      activities.each {
-                         exportActivity(project, it)
+                         exportActivity(project, it, tabPerFormSection)
                      }
                  }
              }
@@ -234,54 +236,38 @@ class ProjectXlsExporter extends ProjectExporter {
 
      }
 
-    private void exportActivity(Map project, Map activity, boolean sheetPerOutput = false) {
+    private void exportActivity(Map project, Map activity, boolean tabPerFormSection = false) {
         Map commonData = commonActivityData(project, activity)
         String activityType = activity.type
-        Integer formVersion = activity.formVersion  //Use Integer to deal with null
-
-        String sheetName = activityType //+  (formVersion? "_V" + formVersion: "")
-
         List exportConfig = getActivityExportConfig(activityType)
 
-        if (sheetPerOutput) {
+        if (tabPerFormSection) {
             // Split into all the bits.
             Map<List> configPerSection = exportConfig.groupBy{it.section}
             // We are relying on the grouping preserving order here....
-            // (it should do, the grouping uses a LinkedHashMap)
             configPerSection.each { String section, List sectionConfig ->
-                List blank = commonActivityHeaders.collect{""}
-                List versionHeaders = blank + sectionConfig.collect{ it.formVersion }
-                List propertyHeaders = blank + sectionConfig.collect{ it.property }
-
-                //Combine data from output with  header,getter and  common data
-                List outputGetters = activityProperties + sectionConfig.collect{ it.getter }
-                List headers = commonActivityHeaders + sectionConfig.collect{ it.header }
-
-                AdditionalSheet outputSheet = createSheet(section, [propertyHeaders, versionHeaders, headers])
-                int outputRow = outputSheet.sheet.lastRowNum
-
                 List sheetData = prepareActivityDataForExport(activity, section)
-                List outputData = sheetData.collect { commonData + it }
-
-                outputSheet.add(outputData, outputGetters, outputRow + 1)
+                exportActivityOrOutput(section, sectionConfig, commonData, sheetData)
             }
         }
         else {
-
-            List blank = commonActivityHeaders.collect{""}
-            List versionHeaders = blank + exportConfig.collect{ it.formVersion }
-            List propertyHeaders = blank + exportConfig.collect{ it.property }
-
-            //Combine data from output with  header,getter and  common data
-            List outputGetters = activityProperties + exportConfig.collect{ it.getter }
-            List headers = commonActivityHeaders + exportConfig.collect{ it.header }
-
-            AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
-            int outputRow = outputSheet.sheet.lastRowNum
             List sheetData = prepareActivityDataForExport(activity)
-            List outputData = sheetData.collect { commonData + it }
-            outputSheet.add(outputData, outputGetters, outputRow + 1)
+            exportActivityOrOutput(activityType, exportConfig, commonData, sheetData)
         }
+    }
+
+    private void exportActivityOrOutput(String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {
+        List blank = commonActivityHeaders.collect{""}
+        List versionHeaders = blank + exportConfig.collect{ it.formVersion }
+        List propertyHeaders = blank + exportConfig.collect{ it.property }
+
+        List outputGetters = activityProperties + exportConfig.collect{ it.getter }
+        List headers = commonActivityHeaders + exportConfig.collect{ it.header }
+
+        AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
+        int outputRow = outputSheet.sheet.lastRowNum
+        List outputData = activityOrOutputData.collect { commonData + it }
+        outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
     private void exportActivitySummary(Map project) {

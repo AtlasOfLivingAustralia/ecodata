@@ -23,8 +23,8 @@
       "name": "notes"
     }
   ],
-  "modelName": "Nested lists",
-  "title": "Nested lists",
+  "modelName": "Single Nested lists",
+  "title": "Single Nested lists",
   "viewModel": [
     {
       "type": "row",
