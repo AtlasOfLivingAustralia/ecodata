@@ -49,5 +49,22 @@ class TabbedExporterSpec extends Specification implements GrailsWebUnitTest {
         tabbedExporter.activitySheetNames == ["Test a name above...e same name":"Test a name above 31 characters which will be shortened to the same name",
                                               "Test a name above...e same n(1)":"Test a name above 31 characters which will also be shortened to the same name"]
 
+        when: "we add another name that will become a duplicate when shortened to 31 characters"
+        tabbedExporter.createSheet("Test a name above 31 characters which will be another one that has to be shortened to the same name", [])
+
+        then:
+        tabbedExporter.activitySheetNames == ["Test a name above...e same name":"Test a name above 31 characters which will be shortened to the same name",
+                                              "Test a name above...e same n(1)":"Test a name above 31 characters which will also be shortened to the same name",
+                                              "Test a name above...e same n(2)":"Test a name above 31 characters which will be another one that has to be shortened to the same name"]
+
+        when: "we add another name that will become a duplicate when shortened to 31 characters"
+        tabbedExporter.createSheet("Test a name above 31 characters which will be another one (2) that has to be shortened to the same name", [])
+
+        then:
+        tabbedExporter.activitySheetNames == ["Test a name above...e same name":"Test a name above 31 characters which will be shortened to the same name",
+                                              "Test a name above...e same n(1)":"Test a name above 31 characters which will also be shortened to the same name",
+                                              "Test a name above...e same n(2)":"Test a name above 31 characters which will be another one that has to be shortened to the same name",
+                                              "Test a name above...e same n(3)":"Test a name above 31 characters which will be another one (2) that has to be shortened to the same name"]
+
     }
 }

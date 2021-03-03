@@ -253,6 +253,7 @@ class TabbedExporter {
             while (activitySheetNames[name]) {
                 name = name.substring(0, name.length()-3)
                 name = name + "("+Integer.toString(i)+")"
+                i++
             }
 
             activitySheetNames[name] = sheetName
