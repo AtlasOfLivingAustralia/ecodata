@@ -221,6 +221,10 @@
         "externalId": {
           "type":"keyword"
         },
+        "promoteOnHomepage": {
+          "type": "keyword"
+        },
+
         "projectActivity":{
           "properties":{
             "embargoUntil":{
@@ -396,6 +400,9 @@
                       }
                     }
                   }
+                },
+                "caseStudy": {
+                  "type": "keyword"
                 }
               }
             }

@@ -1440,7 +1440,10 @@ class ElasticSearchService {
 
         if (filters) {
             BoolQueryBuilder builder = QueryBuilders.boolQuery()
-            builder.must(*filters)
+            filters.each {
+                builder.filter(it)
+            }
+
             builder.should(qsQuery)
             queryBuilder = builder
         }
@@ -1645,7 +1648,7 @@ class ElasticSearchService {
 
         if (facets) {
             facets.split(",").each {
-                facetList.add(AggregationBuilders.terms(it).size(flimit).order(sortOrder))
+                facetList.add(AggregationBuilders.terms(it).field(it).size(flimit).order(sortOrder))
             }
         }
 
