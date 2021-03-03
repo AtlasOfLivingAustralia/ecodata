@@ -4,9 +4,11 @@ import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
+import au.org.ala.ecodata.metadata.OutputDataGetter
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 /**
@@ -52,8 +54,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
-    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -111,10 +113,6 @@ class ProjectXlsExporter extends ProjectExporter {
     AdditionalSheet sitesSheet
     AdditionalSheet outputTargetsSheet
     AdditionalSheet risksAndThreatsSheet
-
-
-    Map<String, String> outputSheetNames = [:]
-    Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
 
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
@@ -237,19 +235,33 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportActivity(Map project, Map activity) {
         Map commonData = commonActivityData(project, activity)
         String activityType = activity.type
-        Integer formVersion = activity.formVersion  //Use Integer to deal with null
+        List exportConfig = getActivityExportConfig(activityType)
 
-        String sheetName = activityType +  (formVersion? "_V" + formVersion: "")
+        // Split into all the bits.
+        Map<List> configPerSection = exportConfig.groupBy{it.section}
+        // We are relying on the grouping preserving order here....
+        configPerSection.each { String section, List sectionConfig ->
+            String sheetName = activityType
+            if (configPerSection.size() > 1){
+                sheetName = section +' '+activityType
+            }
+            List sheetData = prepareActivityDataForExport(activity, section)
+            exportActivityOrOutput(sheetName, sectionConfig, commonData, sheetData)
+        }
 
-        Map sheetData = buildOutputSheetData(activity)
+    }
 
-        //Combine data from output with  header,getter and  common data
-        List outputGetters = activityProperties + sheetData.getters
-        List headers = commonActivityHeaders + sheetData.headers
-        List outputData = sheetData.data.collect { commonData + it }
+    private void exportActivityOrOutput(String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {
+        List blank = commonActivityHeaders.collect{""}
+        List versionHeaders = blank + exportConfig.collect{ it.formVersion }
+        List propertyHeaders = blank + exportConfig.collect{ it.property }
 
-        AdditionalSheet outputSheet = createSheet(sheetName, headers)
+        List outputGetters = activityProperties + exportConfig.collect{ it.getter }
+        List headers = commonActivityHeaders + exportConfig.collect{ it.header }
+
+        AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
         int outputRow = outputSheet.sheet.lastRowNum
+        List outputData = activityOrOutputData.collect { commonData + it }
         outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 

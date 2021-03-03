@@ -54,9 +54,21 @@ class XlsExporter extends XlsxExporter {
             styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
 
         } else {
-            if(headers) {
-                sheet.fillHeader(headers)
-                styleRow(sheet, 0, headerStyle(getWorkbook()))
+            if (headers) {
+                if (!(headers[0] instanceof List)) {
+                    headers = [headers]
+                }
+                headers.eachWithIndex { List row, int i ->
+                    if (i == 0) {
+                        sheet.fillHeader(row)
+                    }
+                    else {
+                        sheet.fillRow(row, i)
+                    }
+
+                    styleRow(sheet, i, headerStyle(getWorkbook()))
+                }
+
             }
         }
 
