@@ -4,9 +4,11 @@ import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
+import au.org.ala.ecodata.metadata.OutputDataGetter
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 /**
@@ -112,10 +114,6 @@ class ProjectXlsExporter extends ProjectExporter {
     AdditionalSheet outputTargetsSheet
     AdditionalSheet risksAndThreatsSheet
 
-
-    Map<String, String> outputSheetNames = [:]
-    Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
-
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
 
@@ -124,8 +122,6 @@ class ProjectXlsExporter extends ProjectExporter {
 
     /** Map of key: management unit id, value: management unit name */
     Map<String, String> managementUnitNames
-
-    boolean tabPerFormSection = false
 
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
         super(exporter)
@@ -228,7 +224,7 @@ class ProjectXlsExporter extends ProjectExporter {
                  List activities = project?.activities?.findAll{it.type == tab}
                  if(activities) {
                      activities.each {
-                         exportActivity(project, it, tabPerFormSection)
+                         exportActivity(project, it)
                      }
                  }
              }
@@ -236,24 +232,23 @@ class ProjectXlsExporter extends ProjectExporter {
 
      }
 
-    private void exportActivity(Map project, Map activity, boolean tabPerFormSection = false) {
+    private void exportActivity(Map project, Map activity) {
         Map commonData = commonActivityData(project, activity)
         String activityType = activity.type
         List exportConfig = getActivityExportConfig(activityType)
 
-        if (tabPerFormSection) {
-            // Split into all the bits.
-            Map<List> configPerSection = exportConfig.groupBy{it.section}
-            // We are relying on the grouping preserving order here....
-            configPerSection.each { String section, List sectionConfig ->
-                List sheetData = prepareActivityDataForExport(activity, section)
-                exportActivityOrOutput(section, sectionConfig, commonData, sheetData)
+        // Split into all the bits.
+        Map<List> configPerSection = exportConfig.groupBy{it.section}
+        // We are relying on the grouping preserving order here....
+        configPerSection.each { String section, List sectionConfig ->
+            String sheetName = activityType
+            if (configPerSection.size() > 1){
+                sheetName = section +' '+activityType
             }
+            List sheetData = prepareActivityDataForExport(activity, section)
+            exportActivityOrOutput(sheetName, sectionConfig, commonData, sheetData)
         }
-        else {
-            List sheetData = prepareActivityDataForExport(activity)
-            exportActivityOrOutput(activityType, exportConfig, commonData, sheetData)
-        }
+
     }
 
     private void exportActivityOrOutput(String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {

@@ -1,14 +1,14 @@
 {
   "name": "Single Nested lists",
   "data": {
-    "number1": "3",
-    "notes": "notes",
+    "number1": "33",
+    "notes": "single notes",
     "list": [
       {
-        "value1": "0.value1"
+        "value1": "single.0.value1"
       },
       {
-        "value1": "1.value1"
+        "value1": "single.1.value1"
       }
     ]
   }

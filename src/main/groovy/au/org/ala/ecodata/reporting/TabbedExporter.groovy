@@ -168,6 +168,11 @@ class TabbedExporter {
     private List<Map> buildOutputExportConfiguration(OutputMetadata outputMetadata) {
 
         List<Map> fieldConfiguration = []
+        fieldConfiguration << [
+                header:"Not applicable",
+                property:'outputNotCompleted',
+                getter:new OutputDataGetter("outputNotCompleted", [dataType:'boolean', name:"outputNotCompleted"], documentMap, timeZone)]
+
         outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
             if (isExportableType(dataNode)) {
                 if (dataNode.dataType == 'stringList' && dataNode.constraints) {
@@ -201,13 +206,13 @@ class TabbedExporter {
      * @param tabPerVersion true if there should be a different tab for each version of an activity
      * @return  Sheet headers, Getter of data model, data itself
      */
-    protected buildOutputSheetData(Map activity,String outputName=null, boolean tabPerVersion=false){
+    protected buildOutputSheetData(Map activity,String outputName=null){
 
         List results = getActivityExportConfig(activity.type)
         List headers = results.collect{it.header}
         List outputGetters = results.collect{ it.getter}
 
-        return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(mctivity, outputName)]
+        return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(activity, outputName)]
     }
 
     protected List prepareActivityDataForExport(Map activity, String outputName = null) {
