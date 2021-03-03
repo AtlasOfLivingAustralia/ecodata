@@ -40,8 +40,8 @@ class OuptutModelProcessorSpec extends Specification {
         then:
         flat.size() == 2
 
-        flat[0] == [name:"Single Nested lists", number1:"3", notes:"notes", "list.value1":"0.value1"]
-        flat[1] == [name:"Single Nested lists", number1:"3", notes:"notes", "list.value1":"1.value1"]
+        flat[0] == [name:"Single Nested lists", number1:"33", notes:"single notes", "list.value1":"single.0.value1"]
+        flat[1] == [name:"Single Nested lists", number1:"33", notes:"single notes", "list.value1":"single.1.value1"]
     }
 
     void "Data models containing nested lists can be flattened"() {
