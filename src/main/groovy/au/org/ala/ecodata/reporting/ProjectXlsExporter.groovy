@@ -238,7 +238,7 @@ class ProjectXlsExporter extends ProjectExporter {
         List exportConfig = getActivityExportConfig(activityType)
 
         // Split into all the bits.
-        Map<List> configPerSection = exportConfig.groupBy{it.section}
+        Map<String, List> configPerSection = exportConfig.groupBy{it.section}
         // We are relying on the grouping preserving order here....
         configPerSection.each { String section, List sectionConfig ->
             String sheetName = activityType

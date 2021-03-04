@@ -1,6 +1,6 @@
 package au.org.ala.ecodata.reporting
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -11,7 +11,7 @@ import java.text.ParseException
  */
 class PropertyAccessor {
 
-    static def log = Logger.getLogger(getClass())
+    static def log = LoggerFactory.getLogger(getClass())
 
     static ThreadLocal<NumberFormat> numberFormat = new ThreadLocal<NumberFormat>()
 

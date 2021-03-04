@@ -1,9 +1,7 @@
 package au.org.ala.ecodata
 
-import grails.gorm.CriteriaBuilder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
-import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.util.concurrent.ConcurrentLinkedQueue

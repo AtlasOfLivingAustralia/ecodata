@@ -1,10 +1,11 @@
 package au.org.ala.ecodata.metadata
 
 import au.org.ala.ecodata.reporting.XlsExporter
-import org.apache.log4j.Logger
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.ss.util.CellReference
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 class OutputUploadTemplateBuilder extends XlsExporter {
@@ -135,7 +136,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 }
 
 class OutputDataProcessor {
-    static Logger log = Logger.getLogger(getClass())
+    static Logger log = LoggerFactory.getLogger(getClass())
 
     private Workbook workbook
     private Sheet sheet

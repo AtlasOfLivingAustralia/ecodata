@@ -10,7 +10,7 @@ import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
-import org.grails.datastore.mapping.mongo.MongoSession
+import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.web.json.JSONObject
 
@@ -251,7 +251,7 @@ class SiteService {
                 String userId = props.remove('userId')
                 String siteId = site.siteId
                 task {
-                    Site.withNewSession { MongoSession session ->
+                    Site.withNewSession { Session session ->
                         Site createdSite = Site.findBySiteId(siteId)
                         addSpatialPortalPID(clonedProps, userId)
                         populateLocationMetadataForSite(clonedProps)

@@ -22,8 +22,10 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.slf4j.Logger;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Copied from layers-store project. Original location is
@@ -49,7 +51,7 @@ public class IniReader {
     /**
      * Log4j instance
      */
-    protected Logger logger = Logger.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * store for ini data after loading
      * <li>map key is concat of section_name + "\\" + key_name

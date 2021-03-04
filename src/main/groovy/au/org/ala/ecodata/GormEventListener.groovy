@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import groovy.util.logging.Log4j
 import org.grails.datastore.mapping.core.Datastore
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEventListener
@@ -17,7 +16,7 @@ import org.springframework.context.ApplicationEvent
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
-@Log4j
+
 class GormEventListener extends AbstractPersistenceEventListener {
 
     ElasticSearchService elasticSearchService

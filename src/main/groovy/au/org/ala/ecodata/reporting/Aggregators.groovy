@@ -1,7 +1,5 @@
 package au.org.ala.ecodata.reporting
 
-import org.apache.log4j.Logger
-
 
 interface AggregatorIf {
     void aggregate(Map data)

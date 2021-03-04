@@ -6,8 +6,9 @@ import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.ProjectActivity
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.Site
-import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Utility for converting the data submitted for an Output into one or more Records with the correct Darwin Core fields
@@ -41,8 +42,9 @@ import org.apache.commons.lang.StringUtils
  *   ...
  *}* </pre>
  */
-@Log4j
+
 class RecordConverter {
+    static Logger log = LoggerFactory.getLogger(RecordConverter.class)
 
     static final List MULTI_ITEM_DATA_TYPES = ["list", "masterDetail"]
     static final String DELIMITER = ";"

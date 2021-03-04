@@ -706,7 +706,7 @@ if (!new File(loggingDir).exists()) {
 }
 
 println "[${appName}] Logging to ${loggingDir}"
-
+/*
 log4j = {
     appenders {
         environments {
@@ -787,7 +787,7 @@ log4j = {
                     'grails.app.taglib.au.org.ala.ecodata',
                     'grails.app.conf.au.org.ala.ecodata',
                     'grails.app.filters.au.org.ala.ecodata',
-//                    'au.org.ala.cas.client'*/
+//                    'au.org.ala.cas.client'
             ]
         }
     }
@@ -821,7 +821,7 @@ log4j = {
             'org.hibernate',
             'net.sf.ehcache.hibernate'
 }
-
+*/
 
 facets.data = [
         [

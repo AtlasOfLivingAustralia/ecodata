@@ -1,7 +1,8 @@
 package au.org.ala.ecodata
 
 import com.vividsolutions.jts.geom.Geometry
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
+
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
 import grails.core.GrailsApplication
