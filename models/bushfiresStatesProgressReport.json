@@ -10,7 +10,7 @@
   "lastUpdated": "2021-01-05T00:40:11Z",
   "lastUpdatedUserId": "94320",
   "minOptionalSectionsCompleted": 1,
-  "name": "State Intervention Progress Report",
+  "name": "Bushfires States Progress Report",
   "publicationStatus": "published",
   "sections": [
     {
@@ -18,7 +18,7 @@
       "id": null,
       "collapsedByDefault": false,
       "modelName": null,
-      "name": "State Government Emergency Progress Report",
+      "name": "Bushfires States Progress Report",
       "optional": false,
       "optionalQuestionText": null,
       "template": {
@@ -343,7 +343,7 @@
           }
         ]
       },
-      "templateName": "stateGovernmentInterventionFinalReport",
+      "templateName": "bushfiresStatesProgressReport",
       "title": null
     },
     {
@@ -411,7 +411,7 @@
           }
         ]
       },
-      "templateName": "siBaselineData",
+      "templateName": "statesBaselineData",
       "title": null
     },
     {
@@ -527,7 +527,7 @@
           }
         ]
       },
-      "templateName": "siCommunicationMaterials",
+      "templateName": "statesCommunicationMaterials",
       "title": null
     },
     {
@@ -700,7 +700,7 @@
           }
         ]
       },
-      "templateName": "siCommunityEngagement",
+      "templateName": "statesCommunityEngagement",
       "title": null
     },
     {
@@ -1099,7 +1099,7 @@
           }
         ]
       },
-      "templateName": "siControllingAccess",
+      "templateName": "statesControllingAccess",
       "title": null
     },
     {
@@ -1630,7 +1630,7 @@
           }
         ]
       },
-      "templateName": "siPestAnimalManagement",
+      "templateName": "statesPestAnimalManagement",
       "title": null
     },
     {
@@ -1936,7 +1936,7 @@
           }
         ]
       },
-      "templateName": "siManagementPlanDevelopment",
+      "templateName": "statesManagementPlanDevelopment",
       "title": null
     },
     {
@@ -2287,7 +2287,7 @@
           }
         ]
       },
-      "templateName": "siDebrisRemoval",
+      "templateName": "statesDebrisRemoval",
       "title": null
     },
     {
@@ -2738,7 +2738,7 @@
           }
         ]
       },
-      "templateName": "siErosionManagement",
+      "templateName": "statesErosionManagement",
       "title": null
     },
     {
@@ -3087,7 +3087,7 @@
           }
         ]
       },
-      "templateName": "siFeralFreeEnclosures",
+      "templateName": "statesFeralFreeEnclosures",
       "title": null
     },
     {
@@ -3363,7 +3363,7 @@
           }
         ]
       },
-      "templateName": "siExSituBreedingSites",
+      "templateName": "statesExSituBreedingSites",
       "title": null
     },
     {
@@ -3664,7 +3664,7 @@
           }
         ]
       },
-      "templateName": "siEstablishingAgreements",
+      "templateName": "statesEstablishingAgreements",
       "title": null
     },
     {
@@ -3801,7 +3801,7 @@
           }
         ]
       },
-      "templateName": "siMonitoringRegimes",
+      "templateName": "statesMonitoringRegimes",
       "title": null
     },
     {
@@ -3906,7 +3906,7 @@
           }
         ]
       },
-      "templateName": "siFarmManagementSurvey",
+      "templateName": "statesFarmManagementSurvey",
       "title": null
     },
     {
@@ -4256,7 +4256,7 @@
           }
         ]
       },
-      "templateName": "siFaunaSurvey",
+      "templateName": "statesFaunaSurvey",
       "title": null
     },
     {
@@ -5028,7 +5028,7 @@
           }
         ]
       },
-      "templateName": "siFloraSurvey",
+      "templateName": "statesFloraSurvey",
       "title": null
     },
     {
@@ -5431,7 +5431,7 @@
           }
         ]
       },
-      "templateName": "siHabitatAugmentation",
+      "templateName": "statesHabitatAugmentation",
       "title": null
     },
     {
@@ -5514,7 +5514,7 @@
           }
         ]
       },
-      "templateName": "siIdentifyingSites",
+      "templateName": "statesIdentifyingSites",
       "title": null
     },
     {
@@ -5928,7 +5928,7 @@
           }
         ]
       },
-      "templateName": "siImprovingHydrologicalRegimes",
+      "templateName": "statesImprovingHydrologicalRegimes",
       "title": null
     },
     {
@@ -6347,7 +6347,7 @@
           }
         ]
       },
-      "templateName": "siLandManagementPractices",
+      "templateName": "statesLandManagementPractices",
       "title": null
     },
     {
@@ -6764,7 +6764,7 @@
           }
         ]
       },
-      "templateName": "siDiseaseManagement",
+      "templateName": "statesDiseaseManagement",
       "title": null
     },
     {
@@ -6868,7 +6868,7 @@
           }
         ]
       },
-      "templateName": "siNegotiations",
+      "templateName": "statesNegotiations",
       "title": null
     },
     {
@@ -6937,7 +6937,7 @@
           }
         ]
       },
-      "templateName": "siObtainingApprovals",
+      "templateName": "statesObtainingApprovals",
       "title": null
     },
     {
@@ -7324,7 +7324,7 @@
           }
         ]
       },
-      "templateName": "siPestAnimalSurvey",
+      "templateName": "statesPestAnimalSurvey",
       "title": null
     },
     {
@@ -7690,7 +7690,7 @@
           }
         ]
       },
-      "templateName": "siPlantSurvivalSurvey",
+      "templateName": "statesPlantSurvivalSurvey",
       "title": null
     },
     {
@@ -7779,7 +7779,7 @@
           }
         ]
       },
-      "templateName": "siProjectPlanning",
+      "templateName": "statesProjectPlanning",
       "title": null
     },
     {
@@ -8182,7 +8182,7 @@
           }
         ]
       },
-      "templateName": "siRemediatingRiparianAndAquaticAreas",
+      "templateName": "statesRemediatingRiparianAndAquaticAreas",
       "title": null
     },
     {
@@ -8681,7 +8681,7 @@
           }
         ]
       },
-      "templateName": "siRevegetatingHabitat",
+      "templateName": "statesRevegetatingHabitat",
       "title": null
     },
     {
@@ -9127,7 +9127,7 @@
           }
         ]
       },
-      "templateName": "siWeedTreatment",
+      "templateName": "statesWeedTreatment",
       "title": null
     },
     {
@@ -9381,7 +9381,7 @@
           }
         ]
       },
-      "templateName": "siSeedCollecting",
+      "templateName": "statesSeedCollecting",
       "title": null
     },
     {
@@ -9768,7 +9768,7 @@
           }
         ]
       },
-      "templateName": "siSitePreparation",
+      "templateName": "statesSitePreparation",
       "title": null
     },
     {
@@ -9926,7 +9926,7 @@
           }
         ]
       },
-      "templateName": "siSkillsAndKnowledgeSurvey",
+      "templateName": "statesSkillsAndKnowledgeSurvey",
       "title": null
     },
     {
@@ -10201,7 +10201,7 @@
           }
         ]
       },
-      "templateName": "siSoilTesting",
+      "templateName": "statesSoilTesting",
       "title": null
     },
     {
@@ -10266,7 +10266,7 @@
         ],
         "title": "Supplementary food and water"
       },
-      "templateName": "siSupplementaryFoodAndWater",
+      "templateName": "statesSupplementaryFoodAndWater",
       "title": null
     },
     {
@@ -10547,7 +10547,7 @@
           }
         ]
       },
-      "templateName": "siEmergencyInterventions",
+      "templateName": "statesEmergencyInterventions",
       "title": null
     },
     {
@@ -10919,7 +10919,7 @@
           }
         ]
       },
-      "templateName": "siWaterQualitySurvey",
+      "templateName": "statesWaterQualitySurvey",
       "title": null
     },
     {
@@ -11266,7 +11266,743 @@
           }
         ]
       },
-      "templateName": "siWeedDistributionSurvey",
+      "templateName": "statesWeedDistributionSurvey",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": null,
+      "name": "Cultural value survey and/or assessment",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "title": "Cultural value survey and/or assessment",
+        "modelName": "Cultural value survey and or assessment",
+        "dataModel": [
+          {
+            "dataType": "list",
+            "name": "culturalValueSurveysAndAssessments",
+            "columns": [
+              {
+                "dataType": "text",
+                "description": "",
+                "name": "baselineOrIndicatorSurvey",
+                "constraints": [
+                  "Baseline",
+                  "Indicator"
+                ],
+                "validate": "required"
+              },
+              {
+                "dataType": "text",
+                "name": "typeOfActivity",
+                "validate": "required",
+                "constraints": [
+                  "Survey",
+                  "Assessment",
+                  "Other"
+                ],
+                "description": ""
+              },
+              {
+                "dataType": "text",
+                "name": "otherActivityType",
+                "validate": "required,max[300]",
+                "behaviour": [ {
+                  "condition":"typeOfActivity == \"Other\"",
+                  "type":"enable_and_clear"
+                }]
+              },
+              {
+                "dataType": "number",
+                "name": "numberOfActivitiesConducted",
+                "validate": "required,min[0]"
+              },
+              {
+                "dataType": "text",
+                "name": "surveyObjective",
+                "validate": "required,maxSize[300]",
+                "description": "How will the information obtained from the surveys be used"
+              },
+              {
+                "dataType": "text",
+                "name": "surveyTechnique",
+                "validate": "required,maxSize[300]",
+                "description": "How will the information obtained from the surveys be used"
+              },
+              {
+                "dataType": "feature",
+                "name": "surveyArea"
+              },
+              {
+                "computed": {
+                  "expression": "$geom.areaHa(surveyArea)"
+                },
+                "dataType": "number",
+                "name": "calculatedAreaHa",
+                "units": "ha",
+                "decimalPlaces": 3
+              },
+              {
+                "dataType": "number",
+                "name": "numberOfDaysAdministeringSurveys",
+                "validate": "required,min[0]",
+                "description": ""
+              }
+            ]
+          },
+          {
+            "name": "photographicEvidence",
+            "dataType": "image"
+          },
+          {
+            "dataType": "text",
+            "name": "projectAssuranceDetails",
+            "description": ""
+          },
+          {
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "items": [
+              {
+                "source": "culturalValueSurveysAndAssessments",
+                "columns": [
+                  {
+                    "title": "Baseline survey or indicator (follow-up) survey?",
+                    "source": "baselineOrIndicatorSurvey",
+                    "type": "selectOne",
+                    "width": "15%"
+                  },
+                  {
+                    "type": "col",
+                    "width": "20%",
+                    "title": "Type of cultural activity",
+                    "css": "required",
+                    "items": [
+                      {
+                        "source": "typeOfActivity",
+                        "type":"selectOne"
+
+                      },
+                      {
+                        "placeholder": "Type of activity (if Other)",
+                        "source": "otherActivityType",
+                        "type":"text"
+
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Number of activities conducted",
+                    "source": "numberOfActivitiesConducted",
+                    "type": "number",
+                    "width": "10%"
+                  },
+                  {
+                    "title": "Survey objective",
+                    "source": "surveyObjective",
+                    "type": "textarea",
+                    "width": "20%",
+                    "helpText": "Survey objective should outline aim of the survey and how the data will be used",
+                    "rows": 3
+                  },
+                  {
+                    "title": "Survey technique",
+                    "source": "surveyTechnique",
+                    "type": "textarea",
+                    "width": "20%",
+                    "helpText": "Survey technique refers to the survey design, data you will capture and how it will be used",
+                    "rows": 3
+                  },
+                  {
+                    "width": "5%",
+                    "type": "col",
+                    "title": "Area which has been surveyed",
+                    "items": [
+                      {
+                        "source": "surveyArea",
+                        "type": "feature"
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedAreaHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Number of days spent on administering survey/s",
+                    "source": "numberOfDaysAdministeringSurveys",
+                    "type": "number",
+                    "width": "10%"
+                  }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "type": "image",
+                    "source": "photographicEvidence",
+                    "preLabel": "Optionally attach photos"
+                  }
+                ]
+              }
+            ],
+            "type": "section"
+          }
+        ]
+      },
+      "templateName": "culturalValueSurveysAndAssessments",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": null,
+      "name": "Cultural Site Management",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "title": "Cultural Site Management",
+        "modelName": "Cultural Site Management",
+        "dataModel": [
+          {
+            "dataType": "list",
+            "name": "culturalSites",
+            "columns": [
+              {
+                "dataType": "number",
+                "name": "numberOfSitesWhereWorkHasOccurred",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              },
+              {
+                "dataType": "feature",
+                "name": "planOrWorkArea"
+              },
+              {
+                "computed": {
+                  "expression": "$geom.areaHa(planOrWorkArea)"
+                },
+                "dataType": "number",
+                "name": "calculatedAreaHa",
+                "units": "ha",
+                "decimalPlaces": 3
+              },
+              {
+                "dataType": "text",
+                "name": "typeOfSite",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              },
+              {
+                "dataType": "text",
+                "name": "typeOfActivity",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              },
+              {
+                "dataType": "text",
+                "name": "purposeOfActivity",
+                "validate": "required",
+                "description": ""
+              }
+            ]
+          },
+          {
+            "name": "photographicEvidence",
+            "dataType": "image"
+          },
+          {
+            "dataType": "text",
+            "name": "projectAssuranceDetails",
+            "description": ""
+          },
+          {
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "items": [
+              {
+                "source": "culturalSites",
+                "columns": [
+                  {
+                    "title": "Number of sites where work has occurred",
+                    "source": "numberOfSitesWhereWorkHasOccurred",
+                    "type": "number",
+                    "width": "10%"
+                  },
+                  {
+                    "width": "10%",
+                    "type": "col",
+                    "title": "Area where cultural site management work or planning has occurred",
+                    "items": [
+                      {
+                        "source": "planOrWorkArea",
+                        "type": "feature"
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedAreaHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Type of site",
+                    "source": "typeOfSite",
+                    "type": "text",
+                    "width": "25%"
+                  },
+                  {
+                    "title": "Type of activity",
+                    "source": "typeOfActivity",
+                    "type": "text",
+                    "width": "25%"
+                  },
+
+                  {
+                    "title": "Purpose of activity",
+                    "source": "purposeOfActivity",
+                    "type": "textarea",
+                    "width": "30%"
+                  }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "type": "image",
+                    "source": "photographicEvidence",
+                    "preLabel": "Optionally attach photos"
+                  }
+                ]
+              }
+            ],
+            "type": "section"
+          }
+        ]
+      },
+      "templateName": "culturalSiteManagement",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": null,
+      "name": "On Country Visits",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "title": "On Country Visits",
+        "modelName": "On Country Visits",
+        "dataModel": [
+          {
+            "dataType": "list",
+            "name": "onCountryVisits",
+            "columns": [
+              {
+                "dataType": "feature",
+                "name": "areaOfVisit"
+              },
+              {
+                "computed": {
+                  "expression": "$geom.areaHa(areaOfVisit)"
+                },
+                "dataType": "number",
+                "name": "calculatedVisitedAreaHa",
+                "units": "ha",
+                "decimalPlaces": 3
+              },
+              {
+                "dataType": "number",
+                "name": "numberOfVisits",
+                "validate": "required,min[0]"
+              },
+              {
+                "dataType": "number",
+                "name": "numberIndigenousCommunityInvolved",
+                "validate": "required,min[0]"
+              },
+
+              {
+                "dataType": "text",
+                "name": "purposeOfVisits",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              },
+
+              {
+                "dataType": "text",
+                "name": "activitiesUndertaken",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              }
+            ]
+          },
+          {
+            "name": "photographicEvidence",
+            "dataType": "image"
+          },
+          {
+            "dataType": "text",
+            "name": "projectAssuranceDetails",
+            "description": ""
+          },
+          {
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "items": [
+              {
+                "source": "onCountryVisits",
+                "columns": [
+                  {
+                    "width": "15%",
+                    "type": "col",
+                    "title": "Area where the visit has occurred",
+                    "items": [
+                      {
+                        "source": "areaOfVisit",
+                        "type": "feature"
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedVisitedAreaHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Number of visits",
+                    "source": "numberOfVisits",
+                    "type": "number",
+                    "width": "15%"
+                  },
+                  {
+                    "title": "Number of Indigenous community members involved",
+                    "source": "numberIndigenousCommunityInvolved",
+                    "type": "number",
+                    "width": "15%"
+                  },
+                  {
+                    "title": "Purpose of visits",
+                    "source": "purposeOfVisits",
+                    "type": "textarea",
+                    "width": "32%",
+                    "rows": 3
+                  },
+                  {
+                    "title": "Activities undertaken",
+                    "source": "activitiesUndertaken",
+                    "type": "textarea",
+                    "width": "32%",
+                    "rows": 3
+                  }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "type": "image",
+                    "source": "photographicEvidence",
+                    "preLabel": "Optionally attach photos"
+                  }
+                ]
+              }
+            ],
+            "type": "section"
+          }
+        ]
+      },
+      "templateName": "onCountryVisits",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": "Cultural Practices",
+      "name": "Cultural Practices",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "title": "Cultural Practices",
+        "modelName": "Cultural Practices",
+        "dataModel": [
+          {
+            "dataType": "list",
+            "name": "culturalPractices",
+            "columns": [
+              {
+                "dataType": "feature",
+                "name": "sitesCoveredByCulturalPractice"
+              },
+              {
+                "computed": {
+                  "expression": "$geom.areaHa(sitesCoveredByCulturalPractice)"
+                },
+                "dataType": "number",
+                "name": "calculatedAreaHa",
+                "units": "ha",
+                "decimalPlaces": 3
+              },
+              {
+                "dataType": "text",
+                "name": "typeOfCulturalPractice",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              },
+              {
+
+                "dataType": "number",
+                "name": "numberOfIndigenousCommunityMembers",
+                "validate": "required,min[0]"
+
+              },
+              {
+                "dataType": "text",
+                "name": "purposeOfCulturalPractice",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              }
+            ]
+          },
+          {
+            "name": "photographicEvidence",
+            "dataType": "image"
+          },
+          {
+            "dataType": "text",
+            "name": "projectAssuranceDetails",
+            "description": ""
+          },
+          {
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "items": [
+              {
+                "source": "culturalPractices",
+                "columns": [
+                  {
+                    "width": "15%",
+                    "type": "col",
+                    "title": "Site/s covered by cultural practice",
+                    "items": [
+                      {
+                        "source": "sitesCoveredByCulturalPractice",
+                        "type": "feature"
+                      },
+                      {
+                        "readonly": "readonly",
+                        "source": "calculatedAreaHa",
+                        "type": "number",
+                        "displayOptions": {
+                          "displayUnits": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Type of cultural practice",
+                    "source": "typeOfCulturalPractice",
+                    "type": "textarea",
+                    "width": "35%",
+                    "rows": 3
+                  },
+                  {
+                    "title": "Number of Indigenous community members involved",
+                    "source": "numberOfIndigenousCommunityMembers",
+                    "type": "number",
+                    "width": "15%"
+                  },
+                  {
+                    "title": "Purpose of cultural practice",
+                    "source": "purposeOfCulturalPractice",
+                    "type": "textarea",
+                    "width": "35%",
+                    "rows": 3
+                  }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+              },
+              {
+                "type": "row",
+                "items": [
+                  {
+                    "type": "image",
+                    "source": "photographicEvidence",
+                    "preLabel": "Optionally attach photos"
+                  }
+                ]
+              }
+            ],
+            "type": "section"
+          }
+        ]
+      },
+      "templateName": "culturalPractices",
+      "title": null
+    },
+    {
+      "class": "au.org.ala.ecodata.FormSection",
+      "id": null,
+      "collapsedByDefault": true,
+      "modelName": "Developing/updating Guidelines/Protocols/Plans",
+      "name": "Developing/updating Guidelines/Protocols/Plans",
+      "optional": true,
+      "optionalQuestionText": null,
+      "template": {
+        "title": "Developing/updating Guidelines/Protocols/Plans",
+        "modelName": "Developing/updating Guidelines/Protocols/Plans",
+        "dataModel": [
+          {
+            "dataType": "list",
+            "name": "guidelinesProtocolsAndPlans",
+            "columns": [
+              {
+                "dataType": "text",
+                "name": "developingOrUpdating",
+                "validate": "required",
+                "constraints": [
+                  "Developing",
+                  "Updating"
+                ]
+              },
+              {
+                "dataType": "text",
+                "name": "typeOfDocument",
+                "validate": "required,maxSize[300]",
+                "description": ""
+              },
+              {
+                "dataType": "number",
+                "name": "numberOfDocuments",
+                "validate": "required,min[0]",
+                "description": ""
+              }
+            ]
+          },
+          {
+            "name": "photographicEvidence",
+            "dataType": "image"
+          },
+          {
+            "dataType": "text",
+            "name": "projectAssuranceDetails",
+            "description": ""
+          },
+          {
+            "dataType": "list",
+            "name": "assuranceDocuments",
+            "columns": [
+              {
+                "dataType": "document",
+                "name": "attachments",
+                "description": "Please attach any Evidence of Service Delivery here"
+              }
+            ]
+          }
+        ],
+        "viewModel": [
+          {
+            "items": [
+              {
+                "source": "guidelinesProtocolsAndPlans",
+                "columns": [
+                  {
+                    "title": "Developing or updating?",
+                    "source": "developingOrUpdating",
+                    "type": "selectOne",
+                    "width": "30%"
+                  },
+                  {
+                    "title": "Type of document",
+                    "source": "typeOfDocument",
+                    "type": "text",
+                    "width": "50%"
+                  },
+                  {
+                    "title": "No. of document/guidelines/protocols/plans",
+                    "source": "numberOfDocuments",
+                    "type": "number",
+                    "width": "20%"
+                  }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+              }
+            ],
+            "type": "section"
+          }
+        ]
+      },
+      "templateName": "guidelinesProtocolsAndPlans",
       "title": null
     }
   ],

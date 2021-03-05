@@ -48,8 +48,6 @@ import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
-import static au.org.ala.ecodata.Status.ACTIVE
-import static au.org.ala.ecodata.Status.COMPLETED
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
@@ -705,7 +703,7 @@ class ElasticSearchService {
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
         Project.withNewSession {
             def batchParams = [offset: 0, max: 50, limit: 200]
-            def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
+            def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
             while (projects) {
                 projects.each { project ->
@@ -719,7 +717,7 @@ class ElasticSearchService {
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
+                projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
             }
         }
 

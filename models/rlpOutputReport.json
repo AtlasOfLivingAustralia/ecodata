@@ -7743,9 +7743,8 @@
                 "name": "implementationSite"
               },
               {
-                "defaultValue": {
-                  "expression": "$geom.areaHa(implementationSite)",
-                  "type": "computed"
+                "computed": {
+                  "expression": "$geom.areaHa(implementationSite)"
                 },
                 "dataType": "number",
                 "name": "calculatedAreaImplementedHa",
@@ -7763,9 +7762,8 @@
                 ]
               },
               {
-                "defaultValue": {
-                  "expression": "$geom.lengthKm(implementationSite)",
-                  "type": "computed"
+                "computed": {
+                  "expression": "$geom.lengthKm(implementationSite)"
                 },
                 "dataType": "number",
                 "name": "calculatedLengthImplementedKm",

@@ -1202,7 +1202,7 @@ addTsToMus(["Alpine Bushfires"], alpineTEC, "Other TEC");
 // Alpine species
 addTsToMus(["Alpine Bushfires"], alpineSpecies, "Other Species");
 // Greater Blue Mountains TEC
-addTsToMus(["Greater Blue Mountains Bushfire"], greaterTEC, "Other TEC");
+addTsToMus(["Greater Blue Mountains Bushfires"], greaterTEC, "Other TEC");
 // Geater Blue Mountains Species
 addTsToMus(["Greater Blue Mountains Bushfires"], greaterSpecies, "Other Species");
 // East Gippsland Species
@@ -1226,7 +1226,7 @@ addTsToMus(["South-East Queensland Bushfires"], SEQLDSpecies, "Other Species")
 
 
 
-// Loading to RLP Mu's
+// Loading to Species to exiting RLP Mu's
 
 addTsToMus(["Riverina"], alpineTEC, "Other TEC");
 addTsToMus(["Riverina"], alpineSpecies, "Other Species");
