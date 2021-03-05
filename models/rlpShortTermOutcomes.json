@@ -1,10 +1,10 @@
 {
-  "id": "5f629f42c2dc09174919a5be",
-  "dateCreated": "2020-09-16T23:26:58Z",
+  "id": "5d133339e4b00a475b28e296",
+  "dateCreated": "2019-06-26T08:56:25Z",
   "minOptionalSectionsCompleted": 1,
   "supportsSites": false,
-  "lastUpdated": "2021-03-03T21:40:52Z",
-  "createdUserId": "1493",
+  "lastUpdated": "2021-02-09T03:29:28Z",
+  "createdUserId": "<anon>",
   "activationDate": null,
   "supportsPhotoPoints": false,
   "publicationStatus": "published",
@@ -189,13 +189,7 @@
                         "Sustainable agriculture - Increase in knowledge and awareness among landholders of sustainable agricultural practices.",
                         "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve climate resilience.",
                         "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve market access based on sustainability credentials.",
-                        "Other (please specify)",
-                        "Sustainable agriculture - Increase in skills and confidence among landholders in sustainable land management practices.",
-                        "Sustainable agriculture - Increase in adoption among landholders of the tools, technologies and practices that improve sustainable land management practices.",
-                        "Sustainable agriculture - Increase in skills and confidence among landholders in the tools, technologies and practices which promote climate resilience.",
-                        "Sustainable agriculture - Increase in skills and confidence among landholders in the tools, technologies and practices which improve market access based on sustainability credentials.",
-                        "Sustainable agriculture - Increase in the adoption among landholders of climate resilient approaches to sustainable land management.",
-                        "Sustainable agriculture - Increase in the adoption among landholders of tools, technologies and practices which improve market access based on sustainability credentials."
+                        "Other (please specify)"
                       ],
                       "options": [
                         {
@@ -287,13 +281,7 @@
                             "Sustainable agriculture - Increase in knowledge and awareness among landholders of sustainable agricultural practices.",
                             "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve climate resilience.",
                             "Sustainable agriculture - Increase in knowledge and awareness among landholders of the tools, technologies and practices which improve market access based on sustainability credentials.",
-                            "Other (please specify)",
-                            "Sustainable agriculture - Increase in skills and confidence among landholders in sustainable land management practices.",
-                            "Sustainable agriculture - Increase in adoption among landholders of the tools, technologies and practices that improve sustainable land management practices.",
-                            "Sustainable agriculture - Increase in skills and confidence among landholders in the tools, technologies and practices which promote climate resilience.",
-                            "Sustainable agriculture - Increase in skills and confidence among landholders in the tools, technologies and practices which improve market access based on sustainability credentials.",
-                            "Sustainable agriculture - Increase in the adoption among landholders of climate resilient approaches to sustainable land management.",
-                            "Sustainable agriculture - Increase in the adoption among landholders of tools, technologies and practices which improve market access based on sustainability credentials."
+                            "Other (please specify)"
                           ]
                         }
                       ]
@@ -1662,5 +1650,5 @@
   "category": "RLP Reports",
   "status": "active",
   "lastUpdatedUserId": "1493",
-  "formVersion": 3
+  "formVersion": 1
 }

@@ -111,7 +111,7 @@
             "dataType": "text",
             "description": "Summary of Project Progress for the Period",
             "name": "progressSummary",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[5000]"
           },
           {
             "dataType": "list",
@@ -121,19 +121,19 @@
               {
                 "dataType": "text",
                 "name": "nature",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               },
               {
                 "dataType": "text",
                 "description": "How you are managing, or proposing to manage, the issue?",
                 "name": "how",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               },
               {
                 "dataType": "text",
                 "description": "Implications for the project",
                 "name": "implication",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               }
             ]
           },
@@ -155,7 +155,7 @@
                 "dataType": "text",
                 "description": "",
                 "name": "storyDetails",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               },
               {
                 "dataType": "image",
@@ -167,7 +167,7 @@
             "dataType": "text",
             "description": "",
             "name": "projectMonitoringAndLearnings",
-            "validate": "required,maxSize[1000]"
+            "validate": "required,maxSize[5000]"
           },
           {
             "dataType": "document",
