@@ -85,6 +85,7 @@ class Project {
     MapLayersConfiguration mapLayersConfig
     /** configure how activity is displayed on map for example point, heatmap or cluster. */
     List mapDisplays
+    String terminationReason
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -205,6 +206,7 @@ class Project {
         mapLayersConfig nullable: true
         managementUnitId nullable: true
         mapDisplays nullable: true
+        terminationReason nullable: true
     }
 }
 
