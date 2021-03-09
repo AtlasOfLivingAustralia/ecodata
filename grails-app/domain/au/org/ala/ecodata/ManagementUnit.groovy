@@ -1,11 +1,14 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.ManagementUnitGraphQLMapper
 import org.bson.types.ObjectId
 
 /**
  * A mu acts as a container for projects, more or less.
  */
 class ManagementUnit {
+
+    static graphql = ManagementUnitGraphQLMapper.graphqlMapping()
 
     static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
                                 'startDate', 'endDate', 'associatedOrganisations', 'config']
@@ -90,5 +93,29 @@ class ManagementUnit {
 
     String toString() {
         return "Name: "+name+ ", description: "+description
+    }
+
+    def getReportConfig() {
+        def reportConfig = []
+        if(config) {
+            if(config.managementUnitReports) {
+                config.managementUnitReports.each {
+                    it.report = "managementUnitReport"
+                }
+                reportConfig.addAll(config.managementUnitReports)
+            }
+            if(config.projectReports) {
+                config.projectReports.each {
+                    it.report = "projectReport"
+                }
+                reportConfig.addAll(config.projectReports)
+            }
+        }
+        return reportConfig
+    }
+
+    def getActivityData(String managementUnitId) {
+        List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(managementUnitId,Status.DELETED)
+       return Activity.findAll{activityId in reports.activityId}
     }
 }

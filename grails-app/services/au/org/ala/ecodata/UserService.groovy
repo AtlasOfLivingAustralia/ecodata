@@ -91,7 +91,12 @@ class UserService {
         String userId = ""
 
         if (authKey && userName) {
-            def result = validateKey(userName, authKey)
+            String key = new String(authKey)
+            String username = new String(userName)
+
+            def url = grailsApplication.config.authCheckKeyUrl
+            def params = [userName: username, authKey: key]
+            def result = webService.doPostWithParams(url, params, true)
             if (!result?.resp?.statusCode && result.resp?.status == 'success') {
                 params = [userName: username]
                 url = grailsApplication.config.userDetails.url + "getUserDetails"
@@ -103,21 +108,6 @@ class UserService {
         }
 
         return userId
-    }
-
-    def validateKey(userName, authKey) {
-        def result = []
-
-        if (authKey && userName) {
-            String key = new String(authKey)
-            String username = new String(userName)
-
-            def url = grailsApplication.config.authCheckKeyUrl
-            def params = [userName: username, authKey: key]
-            result = webService.doPostWithParams(url, params, true)
-        }
-
-        return result
     }
 
     /**
