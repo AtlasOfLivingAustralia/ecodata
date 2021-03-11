@@ -70,6 +70,31 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+
+    void "project details can be exported with Termination Reason"() {
+        setup:
+        String sheet = 'Projects'
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+
+        when:
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1", status: "Terminated", terminationReason: "Termination Reason"])
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
+        results.size() == 1
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
+        results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == "Management Unit 1"
+        results[0]["Status"] == "Terminated"
+        results[0]["Termination Reason"] == "Termination Reason"
+
+    }
+
     void "Projects don't have to have a managemeent unit id to be exported correctly"() {
         setup:
         String sheet = 'Projects'
