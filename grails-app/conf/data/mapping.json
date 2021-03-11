@@ -99,9 +99,10 @@
         },
         "associatedProgram": {
           "type" : "text",
-          "fields" : {
-            "associatedProgramFacet" : {"type" : "keyword"}
-          }
+          "copy_to": "associatedProgramFacet"
+        },
+        "associatedProgramFacet": {
+          "type": "keyword"
         },
 
         "managementUnitName": {
@@ -124,9 +125,10 @@
         },
         "associatedSubProgram": {
           "type" : "text",
-          "fields" : {
-            "associatedSubProgramFacet" : {"type" : "keyword"}
-          }
+          "copy_to" : "associatedSubProgramFacet"
+        },
+        "associatedSubProgramFacet" : {
+          "type" : "keyword"
         },
         "industries":{
           "type":"text",

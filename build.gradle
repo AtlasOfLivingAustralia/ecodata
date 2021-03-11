@@ -1,6 +1,6 @@
 //import org.apache.tools.ant.filters.ReplaceTokens
 
-import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
+//import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
 
 buildscript {
     repositories {
@@ -12,13 +12,11 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
         classpath 'com.bmuschko:gradle-clover-plugin:2.1.0'
-       // classpath "org.grails.plugins:hibernate"
-      //   classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
+        classpath "org.grails.plugins:views-gradle:1.2.10"
     }
 }
 
 plugins {
-//   id "com.gorylenko.gradle-git.properties" version '1.4.17'
     id "com.gorylenko.gradle-git-properties" version "2.0.0"
 }
 
@@ -32,6 +30,7 @@ apply plugin:"war"
 apply plugin: "groovy"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
+apply plugin: "org.grails.plugins.views-json"
 apply plugin:"asset-pipeline"
 apply plugin: 'com.bmuschko.clover'
 apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
@@ -70,6 +69,8 @@ dependencies {
     compile "org.grails:grails-plugin-databinding"
     compile 'org.grails:grails-datastore-gorm:6.1.7.RELEASE'
     compile "org.grails:grails-plugin-codecs"
+    compile "org.grails.plugins:views-json:1.2.10"
+    compile "org.grails.plugins:views-json-templates:1.2.10"
     compile "org.grails.plugins:mongodb:6.1.7"
     compile "org.mongodb:mongodb-driver:3.9.1"
     compile "org.grails.plugins:gsp"
@@ -135,8 +136,10 @@ dependencies {
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
     testCompile "org.grails:grails-web-testing-support"
+    //testCompile "org.grails:views-json-testing-support:1.2.0"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+
     clover 'org.openclover:clover:4.2.0'
 
 }
@@ -166,7 +169,7 @@ clover {
 
 springBoot {
   //  buildInfo()
-    layout = WAR
+    layout = org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.WAR
 }
 
 bootRun {
