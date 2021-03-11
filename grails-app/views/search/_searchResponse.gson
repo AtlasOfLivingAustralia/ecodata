@@ -9,11 +9,11 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms
 json {
 
     hits {
-        total searchResponse.hits.totalHits.value
-        hits tmpl.searchHit(searchResponse.hits.hits as List)
+        total searchResponse.hits?.totalHits.value
+        hits tmpl.searchHit(searchResponse.hits?.hits as List)
     }
 
-    facets searchResponse.aggregations.collectEntries { Aggregation agg ->
+    facets searchResponse.aggregations?.collectEntries { Aggregation agg ->
         [(agg.name): [terms:((ParsedTerms)agg).buckets.collect { Terms.Bucket bucket ->
             [term: bucket.key, count: bucket.docCount]
         }]]
