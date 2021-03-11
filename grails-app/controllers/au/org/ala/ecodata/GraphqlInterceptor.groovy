@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import au.org.ala.web.CASRoles
 import grails.converters.JSON
 import au.org.ala.web.UserDetails
 
@@ -17,7 +16,7 @@ class GraphqlInterceptor {
 
     boolean before() {
         String userName = request.getHeader(grailsApplication.config.app.http.header.userId) ?:
-                request.cookies.find { it.name == 'ALA-Auth' }.value
+                request.cookies.find { it.name == 'ALA-Auth' }?.value
 
         if (userName) {
             //test to see that the user is valid
