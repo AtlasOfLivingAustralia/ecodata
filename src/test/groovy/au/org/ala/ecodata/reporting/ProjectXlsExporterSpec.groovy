@@ -269,6 +269,51 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+    void "String lists can be expanded into a column per value"() {
+        setup:
+        String activityToExport = "String lists"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "dataModelWithStringList")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDataModelWithStringList")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 5
+
+        and: "The first header row contains the property names from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "stringList1[c1]", "stringList1[c2]", "stringList1[c3]", "list.stringList2[c4]", "list.stringList2[c5]", "list.stringList2[c6]", "list.afterNestedList", "notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1,1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "String list 1 - c1", "String list 1 - c2", "String list 1 - c3",  "String list 2 - c4",  "String list 2 - c5",  "String list 2 - c6", "After list", "Notes"]
+
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "33", "c1", "", "c3", "", "", "", "single.1.value1", "single notes"]
+
+    }
+
+
     void "Activities with deeply nested data can be exported as a spreadsheet"() {
         setup:
         String activityToExport = "RLP Annual Report"
@@ -436,6 +481,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         s2dataRow5 == ["", "3", "1.value1", "1.2.value2", "", "notes"]
 
     }
+
+//    void "Each form section / output will be exported to a separate tab"() {
+//
+//    }
 
 
     private List readRow(int index, Sheet sheet) {
