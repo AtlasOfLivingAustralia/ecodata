@@ -142,6 +142,31 @@ class OutputMetadataSpec extends Specification {
         ]
     }
 
+    void "test model iterator with 3 levels of nesting"() {
+        setup:
+        def model = getJsonResource('deeplyNestedDataModel')
+        OutputMetadata outputMetadata = new OutputMetadata(model)
+
+        when:
+        List names = []
+        outputMetadata.modelIterator { path, view, data ->
+            names << [path:path, view:view.type, data:data.name]
+        }
+
+        then:
+        names == [[path:'number1', view:'number', data:'number1'],
+                  [path:'list', view:'repeat', data:'list'],
+                  [path:'list.value1', view:'text', data:'value1'],
+                  [path:'list.nestedList', view:'repeat', data:'nestedList'],
+                  [path:'list.nestedList.value2', view:'text', data:'value2'],
+                  [path:'list.nestedList.nestedNestedList', view:'table', data:'nestedNestedList'],
+                  [path:'list.nestedList.nestedNestedList.value3', view:'number', data:'value3'],
+                  [path:'list.afterNestedList', view:'text', data:'afterNestedList'],
+                  [path:'notes', view:'textarea', data:'notes']
+        ]
+    }
+
+
     void "Data model properties marked with the memberOnlyView attribute can be identified"() {
         setup:
         Map model = getJsonResource("modelWithMemberOnlyProperties")

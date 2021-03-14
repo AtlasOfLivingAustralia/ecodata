@@ -359,6 +359,53 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+    void "Activities with 3 levels of nested data can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "deeplyNestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDeeplyNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There are 3 header rows and 6 data rows"
+        activitySheet.physicalNumberOfRows == 9
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.nestedList.value2", "list.nestedList.nestedNestedList.value3", "list.afterNestedList", "notes"]
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1, 1, 1, 1, 1, 1]
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "Value 2", "Value 3", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "3", "0.value1", "0.0.value2", "3", "", "notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "3", "0.value1", "0.0.value2", "4", "", "notes"]
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "3", "0.value1", "0.1.value2", "", "", "notes"]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "3", "1.value1", "1.0.value2", "", "", "notes"]
+        List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "3", "1.value1", "1.1.value2", "", "", "notes"]
+        List dataRow6 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow6 == ["", "3", "1.value1", "1.2.value2", "", "", "notes"]
+
+    }
+
     void "Data created from different versions of the same activity form will be exported to the same sheet"() {
         setup:
         String activityToExport = "RLP Annual Report"
