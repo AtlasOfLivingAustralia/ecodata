@@ -1294,7 +1294,7 @@
                     "items": [
                       {
                         "type": "table",
-                        "title": "<b>Select additional threats</b><br/>Select a maximum of 5 additional threats or categories.",
+                        "title": "<b>Select additional threats</b><br/>Select a maximum of 5 additional threats or categories. If you don’t have any additional threats to report, delete all rows in the above table by hitting the bold 'x' in the last column",
                         "source": "additionalThreats",
                         "userAddedRows": true,
                         "disableTableUpload": true,
