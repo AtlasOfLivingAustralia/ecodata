@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.converter
 
 import grails.util.Holders
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang.StringUtils
 
 import java.text.SimpleDateFormat
@@ -33,7 +34,7 @@ import java.text.SimpleDateFormat
                         }]]
  */
 
-
+@Slf4j
 class SciStarterConverter {
 
     public static final String NO_ORGANISATION_NAME = "Organisation not provided"

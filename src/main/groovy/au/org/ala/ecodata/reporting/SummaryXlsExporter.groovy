@@ -1,10 +1,12 @@
 package au.org.ala.ecodata.reporting
 
+import groovy.util.logging.Slf4j
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 /**
  * Created by sat01a on 26/09/2014.
  */
+@Slf4j
 class SummaryXlsExporter {
 
     def scoreHeaders = ['Category','Title', 'GMS ID','Description','List name','Score Name','Score OutputName', 'Score Units']

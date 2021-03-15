@@ -1,13 +1,13 @@
 package au.org.ala.ecodata.metadata
 
 import au.org.ala.ecodata.reporting.XlsExporter
+import groovy.util.logging.Slf4j
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.ss.util.CellReference
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
+@Slf4j
 class OutputUploadTemplateBuilder extends XlsExporter {
 
     def model
@@ -135,8 +135,8 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
 }
 
+@Slf4j
 class OutputDataProcessor {
-    static Logger log = LoggerFactory.getLogger(getClass())
 
     private Workbook workbook
     private Sheet sheet

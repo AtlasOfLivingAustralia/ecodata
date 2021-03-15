@@ -1,5 +1,7 @@
 package au.org.ala.ecodata.reporting
 
+import groovy.util.logging.Slf4j
+
 
 interface AggregatorIf {
     void aggregate(Map data)
@@ -30,9 +32,8 @@ public abstract class BaseAggregator implements AggregatorIf {
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
  */
+@Slf4j
 class Aggregators {
-
-    def log = Logger.getLogger(getClass())
 
     public static abstract class OutputAggregator extends BaseAggregator {
 
