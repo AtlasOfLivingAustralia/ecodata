@@ -35,7 +35,7 @@ class OuptutModelProcessorSpec extends Specification {
         def modelData = getJsonResource('singleSampleNestedDataModel')
 
         when:
-        List flat = outputModelProcessor.flatten2(modelData, modelMetadata)
+        List flat = outputModelProcessor.flatten2(modelData, modelMetadata, OutputModelProcessor.FlattenOptions.REPEAT_ALL)
 
         then:
         flat.size() == 2
@@ -50,7 +50,7 @@ class OuptutModelProcessorSpec extends Specification {
         def modelData = getJsonResource('sampleNestedDataModel')
 
         when:
-        List flat = outputModelProcessor.flatten2(modelData, modelMetadata)
+        List flat = outputModelProcessor.flatten2(modelData, modelMetadata, OutputModelProcessor.FlattenOptions.REPEAT_ALL)
 
         then:
         flat.size() == 5
@@ -71,6 +71,34 @@ class OuptutModelProcessorSpec extends Specification {
         // 1.value1,    1.2.value2
 
     }
+
+    void "Data models containing 3 levels of nested lists can be flattened"() {
+        setup:
+        def modelMetadata = new OutputMetadata(getJsonResource('deeplyNestedDataModel'))
+        def modelData = getJsonResource('sampleDeeplyNestedDataModel')
+
+        when:
+        List flat = outputModelProcessor.flatten2(modelData, modelMetadata, OutputModelProcessor.FlattenOptions.REPEAT_ALL)
+
+        then:
+        flat.size() == 6
+
+        flat[0] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"0.value1", "list.nestedList.value2":"0.0.value2", "list.nestedList.nestedNestedList.value3": "3"]
+        flat[1] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"0.value1", "list.nestedList.value2":"0.0.value2", "list.nestedList.nestedNestedList.value3": "4"]
+        flat[2] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"0.value1", "list.nestedList.value2":"0.1.value2"]
+        flat[3] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"1.value1", "list.nestedList.value2":"1.0.value2"]
+        flat[4] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"1.value1", "list.nestedList.value2":"1.1.value2"]
+        flat[5] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"1.value1", "list.nestedList.value2":"1.2.value2"]
+
+        // list.value1, list.nestedList.value2
+        // 0.value1,    0.0.value2
+        // 0.value1,    0.1.value2
+        // 1.value1,    1.0.value2
+        // 1.value1,    1.1.value2
+        // 1.value1,    1.2.value2
+
+    }
+
 
     def "The lookupTable data type is supported"() {
         when:
