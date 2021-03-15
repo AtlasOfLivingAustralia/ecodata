@@ -1,0 +1,82 @@
+{
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "number1"
+    },
+    {
+      "dataType": "stringList",
+      "name": "stringList1",
+      "constraints": ["c1", "c2", "c3"]
+    },
+    {
+      "columns": [
+        {
+          "dataType": "stringList",
+          "name": "stringList2",
+          "constraints": ["c4", "c5", "c6"]
+        },
+        {
+          "dataType": "text",
+          "name": "afterNestedList"
+        }
+      ],
+      "dataType": "list",
+      "name": "list"
+    },
+    {
+      "dataType": "text",
+      "name": "notes"
+    }
+  ],
+  "modelName": "Single Nested lists",
+  "title": "Single Nested lists",
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "number",
+          "source": "number1",
+          "preLabel": "Number 1"
+        },
+        {
+          "type": "selectMany",
+          "source": "stringList1",
+          "preLabel": "String list 1"
+        }
+      ]
+    },
+    {
+      "type": "repeat",
+      "source": "list",
+      "items": [
+        {
+          "type": "selectMany",
+          "source": "stringList2",
+          "preLabel": "String list 2"
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "text",
+              "source": "afterNestedList",
+              "preLabel": "After list"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "Notes"
+        }
+      ]
+    }
+  ]
+}

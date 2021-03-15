@@ -182,7 +182,7 @@ class TabbedExporter {
                         fieldConfiguration << [
                                 header:header,
                                 property:propertyPath,
-                                getter:new OutputDataGetter(path, dataNode, documentMap, timeZone)]
+                                getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
                     }
                 }
                 else {

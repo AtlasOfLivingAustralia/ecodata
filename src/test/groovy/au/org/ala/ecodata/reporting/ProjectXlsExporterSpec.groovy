@@ -70,6 +70,31 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+
+    void "project details can be exported with Termination Reason"() {
+        setup:
+        String sheet = 'Projects'
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+
+        when:
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1", status: "Terminated", terminationReason: "Termination Reason"])
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
+        results.size() == 1
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
+        results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == "Management Unit 1"
+        results[0]["Status"] == "Terminated"
+        results[0]["Termination Reason"] == "Termination Reason"
+
+    }
+
     void "Projects don't have to have a managemeent unit id to be exported correctly"() {
         setup:
         String sheet = 'Projects'
@@ -244,6 +269,51 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
+    void "String lists can be expanded into a column per value"() {
+        setup:
+        String activityToExport = "String lists"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "dataModelWithStringList")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDataModelWithStringList")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 5
+
+        and: "The first header row contains the property names from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "stringList1[c1]", "stringList1[c2]", "stringList1[c3]", "list.stringList2[c4]", "list.stringList2[c5]", "list.stringList2[c6]", "list.afterNestedList", "notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1,1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "String list 1 - c1", "String list 1 - c2", "String list 1 - c3",  "String list 2 - c4",  "String list 2 - c5",  "String list 2 - c6", "After list", "Notes"]
+
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "33", "c1", "", "c3", "", "", "", "single.1.value1", "single notes"]
+
+    }
+
+
     void "Activities with deeply nested data can be exported as a spreadsheet"() {
         setup:
         String activityToExport = "RLP Annual Report"
@@ -286,6 +356,53 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         dataRow4 == ["", "3", "1.value1", "1.1.value2", "", "notes"]
         List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow5 == ["", "3", "1.value1", "1.2.value2", "", "notes"]
+
+    }
+
+    void "Activities with 3 levels of nested data can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "deeplyNestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDeeplyNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There are 3 header rows and 6 data rows"
+        activitySheet.physicalNumberOfRows == 9
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.nestedList.value2", "list.nestedList.nestedNestedList.value3", "list.afterNestedList", "notes"]
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1, 1, 1, 1, 1, 1]
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "Value 2", "Value 3", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "3", "0.value1", "0.0.value2", "3", "", "notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "3", "0.value1", "0.0.value2", "4", "", "notes"]
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "3", "0.value1", "0.1.value2", "", "", "notes"]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "3", "1.value1", "1.0.value2", "", "", "notes"]
+        List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "3", "1.value1", "1.1.value2", "", "", "notes"]
+        List dataRow6 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow6 == ["", "3", "1.value1", "1.2.value2", "", "", "notes"]
 
     }
 
@@ -344,6 +461,62 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         dataRow9 == ["", "3", "1.value1", "", "", "notes", "1.0.value3", "extra notes"]
         List dataRow10 = readRow(11, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow10 == ["", "3", "1.value1", "", "", "notes", "1.1.value3", "extra notes"]
+    }
+
+    void "Versioning of values in constraints are handled correctly"() {
+        setup:
+        String activityToExport = "String lists"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "dataModelWithStringList")
+        ActivityForm activityForm_v2 = createActivityForm(activityToExport, 2, "dataModelWithStringListv2")
+
+        Map project = project()
+        project.activities = [
+                [type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDataModelWithStringList")]],
+                [type: activityToExport, name: activityToExport, formVersion: activityForm_v2.formVersion, outputs: [getJsonResource("sampleDataModelWithStringListv2")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findActivityForm(activityToExport, 2) >> activityForm_v2
+
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm, activityForm_v2]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 7
+
+        and: "The first header row contains the property names from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "stringList1[c1]", "stringList1[c2]", "stringList1[c3]", "list.stringList2[c4]", "list.stringList2[c5]", "list.stringList2[c6]", "list.afterNestedList", "notes", "stringList1[c4]"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1,1,1,1,1,1,2]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "String list 1 - c1", "String list 1 - c2", "String list 1 - c3",  "String list 2 - c4",  "String list 2 - c5",  "String list 2 - c6", "After list", "Notes", "String list 1 - c4"]
+
+
+        and: "The data in the subsequent rows matches the data in the activity v1"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes", ""]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "33", "c1", "", "c3", "", "", "", "single.1.value1", "single notes", ""]
+
+        and: "The data in the subsequent rows matches the data in the activity v2"
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "33", "", "", "c3", "", "c5", "", "", "single notes", "c4"]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "33", "", "", "c3", "", "", "", "single.1.value1", "single notes", "c4"]
+
     }
 
     void "Each form section / output will be exported to a separate tab"() {
@@ -411,6 +584,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         s2dataRow5 == ["", "3", "1.value1", "1.2.value2", "", "notes"]
 
     }
+
+//    void "Each form section / output will be exported to a separate tab"() {
+//
+//    }
 
 
     private List readRow(int index, Sheet sheet) {

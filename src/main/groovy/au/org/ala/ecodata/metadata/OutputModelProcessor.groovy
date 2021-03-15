@@ -156,14 +156,15 @@ class OutputModelProcessor {
         flattenNode(data, '', outputMetadata.getNestedPropertyNames())
     }
 
-    private List flattenList(String path, List values, List nestedPropertyNames) {
+    private List flattenList(String path, String property, List values, List nestedPropertyNames) {
         List results = []
-
+        path = fullPath(path, property)
         values.each { Map node ->
            results.addAll(flattenNode(node, path, nestedPropertyNames))
         }
         results
     }
+
 
     private String fullPath(String path, String propertyName) {
         path ? path+'.'+propertyName : propertyName
@@ -177,14 +178,8 @@ class OutputModelProcessor {
         List results = []
         nestedPropertiesByName(node, path, nestedPropertyNames).each { String property, List nestedList ->
             node.remove(property)
-            List nestedResults = flattenList(property, nestedList, nestedPropertyNames)
 
-            // Prepend the current path to the keys in the returned list if necessary.
-            if (path) {
-                nestedResults = nestedResults.collect {Map result ->
-                    result.collectEntries{k, v -> [(path+'.'+k), v]}
-                }
-            }
+            List nestedResults = flattenList(path, property, nestedList, nestedPropertyNames)
             results.addAll(nestedResults)
         }
         // If there are nested properties, combine the results of flattening the list with the
