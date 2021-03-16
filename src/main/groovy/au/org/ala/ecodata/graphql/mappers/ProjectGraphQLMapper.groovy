@@ -84,6 +84,20 @@ class ProjectGraphQLMapper {
                 }
             }
 
+            add('test', 'test') {
+                type {
+                    field("test1", "test1") {
+                        field("test2", String) {description "test2"}
+                        description "test1"
+                    }
+                }
+                description "test"
+                dataFetcher { Project project ->
+                    new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                            Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
+                }
+            }
+
             //add graphql type for each activity type
             activityModel["activities"].each {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
@@ -92,6 +106,7 @@ class ProjectGraphQLMapper {
                     String name = "Activity_" + activityName
                     List outputList = []
                     List modifiedColumns = []
+                    String desc = it.description
                     //define activity type
                     add(name, name) {
                         type {
@@ -109,10 +124,10 @@ class ProjectGraphQLMapper {
                                         for(int t=0; t<fieldList.size(); t++){
                                             def outputField = outputType.fields.find{ b -> b.name == fieldList[t]}
                                             if(outputField.dataType == "number") {
-                                                field(fieldList[t].toString(), double)
+                                                field(fieldList[t].toString(), double) {description "test1"}
                                             }
                                             else if(outputField.dataType == "text") {
-                                                field(fieldList[t].toString(), String)
+                                                field(fieldList[t].toString(), String) {description "test1"}
                                             }
                                             else if(outputField.dataType == "list") {
                                                 modifiedColumns << fieldList[t].toString()
@@ -120,25 +135,27 @@ class ProjectGraphQLMapper {
                                                     String[] columnList = outputField.columns.name.unique()
                                                     for(int y=0; y<columnList.size(); y++){
                                                         def column = outputField.columns.find{ b -> b.name == columnList[y]}
-                                                        field(column.name.toString(), column.dataType == "number" ? double : String)
+                                                        field(column.name.toString(), column.dataType == "number" ? double : String) {description "test2"}
                                                     }
                                                     collection true
+                                                    description "test1"
                                                 }
                                             }
                                             else {
-                                                field(fieldList[t].toString(), String)
+                                                field(fieldList[t].toString(), String) {description "test1"}
                                             }
                                         }
                                         nullable true
                                         collection true
+                                        description "test0" //outputType.title?.toString()
                                     }
                                 }
                             }
                         }
+                        description desc
                         dataFetcher { Project project ->
-                            def s=new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
+                            return new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
                                     Holders.applicationContext.messageSource, Holders.grailsApplication).getActivityData(project.tempArgs, project.projectId, activityName, outputList, modifiedColumns)
-                            return s
                         }
                     }
                 }
