@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory
 class OutputModelProcessor {
 
     static Log log = LogFactory.getLog(OutputModelProcessor.class)
+    static enum FlattenOptions { REPEAT_ALL, REPEAT_NONE, REPEAT_SELECTIONS }
 
     interface ProcessingContext {}
 
@@ -149,18 +150,19 @@ class OutputModelProcessor {
      * @param outputMetadata description of the output to flatten
      * @param duplicationNonNestedValues true if each item in the returned list contains all of the non-nested data in the output
      */
-    List flatten2(Map output, OutputMetadata outputMetadata) {
-        Map data = output.remove('data') ?: [:]
-        data += output
+    List flatten2(Map output, OutputMetadata outputMetadata, FlattenOptions option = FlattenOptions.REPEAT_SELECTIONS) {
+        Map clone = new LinkedHashMap(output)
+        Map data = clone.remove('data') ?: [:]
+        data += clone
 
-        flattenNode(data, '', outputMetadata.getNestedPropertyNames())
+        flattenNode(data, '', outputMetadata.getNestedPropertyNames(), outputMetadata, option)
     }
 
-    private List flattenList(String path, String property, List values, List nestedPropertyNames) {
+    private List flattenList(String path, String property, List values, List nestedPropertyNames, OutputMetadata outputMetadata, FlattenOptions option) {
         List results = []
         path = fullPath(path, property)
         values.each { Map node ->
-           results.addAll(flattenNode(node, path, nestedPropertyNames))
+           results.addAll(flattenNode(node, path, nestedPropertyNames, outputMetadata, option))
         }
         results
     }
@@ -173,22 +175,42 @@ class OutputModelProcessor {
        node.findAll{key, value -> fullPath(path, key) in nestedPropertyNames}
     }
 
-    private List flattenNode(Map node, String path, List nestedPropertyNames) {
+    private List flattenNode(Map node, String path, List nestedPropertyNames, OutputMetadata outputMetadata, FlattenOptions option) {
 
         List results = []
+        Map clone = new LinkedHashMap(node)
         nestedPropertiesByName(node, path, nestedPropertyNames).each { String property, List nestedList ->
-            node.remove(property)
+            clone.remove(property)
 
-            List nestedResults = flattenList(path, property, nestedList, nestedPropertyNames)
+            List nestedResults = flattenList(path, property, nestedList, nestedPropertyNames, outputMetadata, option)
             results.addAll(nestedResults)
         }
         // If there are nested properties, combine the results of flattening the list with the
         // non-nested values of this node, otherwise just return a single result containing the node
-        Map nonNestedData = node
+        Map nonNestedData = clone
         if (path) {
-            nonNestedData = node.collectEntries {k, v -> [(fullPath(path, k)):v]}
+            nonNestedData = clone.collectEntries {k, v -> [(fullPath(path, k)):v]}
         }
-        results = results.collect{ it+nonNestedData }
+        boolean first = true
+        Map toRepeat
+        switch (option) {
+            case FlattenOptions.REPEAT_NONE:
+                toRepeat = [:]
+                break
+            case FlattenOptions.REPEAT_SELECTIONS:
+                toRepeat = getRepeatingData2(nonNestedData, outputMetadata)
+                break
+            case FlattenOptions.REPEAT_ALL:
+            default:
+                toRepeat = nonNestedData
+                break
+        }
+
+        results = results.collect{
+            Map combinedData = it + (first ? nonNestedData : toRepeat)
+            first = false
+            combinedData
+        }
         if (!results) {
             results << nonNestedData
         }
@@ -208,6 +230,25 @@ class OutputModelProcessor {
                 result[property] = "----"
             }
         }
+    }
+
+    /**
+     * Uses a different algorithm to getRepeatingData which also allows us to only repeat "text" data types when
+     * they are the result of selecting from a list (as opposed to free text, which is less useful for the
+     * purpose this is used for, which is to filter other fields by selected categories.
+     * A new method has been created to avoid impacting BioCollect.
+     */
+    Map getRepeatingData2(Map data, OutputMetadata outputMetadata) {
+        Map result = [:]
+
+        outputMetadata.dataModelIterator { String path, Map dataModelNode ->
+            if (dataModelNode.dataType == "stringList" || dataModelNode.dataType == "text" && dataModelNode.constraints) {
+                if (data[path]) {
+                    result[path] = data[path]
+                }
+            }
+        }
+        result
     }
 
     Map getRepeatingData(Map data, OutputMetadata outputMetadata) {

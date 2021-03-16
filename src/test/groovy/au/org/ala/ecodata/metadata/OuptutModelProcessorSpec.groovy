@@ -99,6 +99,38 @@ class OuptutModelProcessorSpec extends Specification {
 
     }
 
+    void "Data can be flattened differently depending on how data gets repeated when unrolling nested structures"() {
+        setup:
+        def modelMetadata = new OutputMetadata(getJsonResource('deeplyNestedDataModel'))
+        def modelData = getJsonResource('sampleDeeplyNestedDataModel')
+
+        when:
+        List flat = outputModelProcessor.flatten2(modelData, modelMetadata, OutputModelProcessor.FlattenOptions.REPEAT_NONE)
+
+        then:
+        flat.size() == 6
+
+        flat[0] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"0.value1", "list.nestedList.value2":"0.0.value2", "list.nestedList.nestedNestedList.value3": "3"]
+        flat[1] == ["list.nestedList.nestedNestedList.value3": "4"]
+        flat[2] == ["list.nestedList.value2":"0.1.value2"]
+        flat[3] == ["list.value1":"1.value1", "list.nestedList.value2":"1.0.value2"]
+        flat[4] == ["list.nestedList.value2":"1.1.value2"]
+        flat[5] == ["list.nestedList.value2":"1.2.value2"]
+
+        when:
+        flat = outputModelProcessor.flatten2(modelData, modelMetadata, OutputModelProcessor.FlattenOptions.REPEAT_SELECTIONS)
+
+        then:
+        flat.size() == 6
+
+        flat[0] == [name:"Nested lists", number1:"3", notes:"notes", "list.value1":"0.value1", "list.nestedList.value2":"0.0.value2", "list.nestedList.nestedNestedList.value3": "3"]
+        flat[1] == ["list.value1":"0.value1", "list.nestedList.value2":"0.0.value2", "list.nestedList.nestedNestedList.value3": "4"]
+        flat[2] == ["list.value1":"0.value1", "list.nestedList.value2":"0.1.value2"]
+        flat[3] == ["list.value1":"1.value1", "list.nestedList.value2":"1.0.value2"]
+        flat[4] == ["list.value1":"1.value1", "list.nestedList.value2":"1.1.value2"]
+        flat[5] == ["list.value1":"1.value1", "list.nestedList.value2":"1.2.value2"]
+
+    }
 
     def "The lookupTable data type is supported"() {
         when:
