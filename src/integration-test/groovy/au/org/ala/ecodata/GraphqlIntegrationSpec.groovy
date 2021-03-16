@@ -30,34 +30,6 @@ class GraphqlIntegrationSpec extends GraphqlSpecHelper{
         ManagementUnit.findAll().each { it.delete(flush:true) }
     }
 
-    def "Attempt the api as admin"() {
-        setup:
-        Project project = new Project(projectId: "graphqlProject1", name: "graphqlProject1").save(failOnError: true, flush: true)
-
-        when:
-        def bodyContent = """
-            query{
-                project(projectId:"graphqlProject1"){
-                    name
-                }
-            }"""
-        graphqlController.request.contentType = 'application/graphql'
-        graphqlController.request.method = 'POST'
-        graphqlController.request.content = bodyContent.toString().getBytes('UTF-8')
-
-//        def resp = graphqlRequest("""
-//            query{
-//                project(projectId:"graphqlProject1"){
-//                    name
-//                }
-//            }""", "yasima.kankanamge@csiro.au")
-//        def result = resp.json
-
-        then:
-        def resp = graphqlController.index()
-        resp.data.project.name == "graphqlProject1"
-    }
-
     def "Get project by project Id"() {
         setup:
         Project project = new Project(projectId: "graphqlProject1", name: "graphqlProject1").save(failOnError: true, flush: true)
