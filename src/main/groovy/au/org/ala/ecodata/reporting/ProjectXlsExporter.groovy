@@ -54,8 +54,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
-    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -212,7 +212,8 @@ class ProjectXlsExporter extends ProjectExporter {
     private Map commonActivityData(Map project, Map activity) {
         String activityDataPrefix = ACTIVITY_DATA_PREFIX
         Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
-        Map activityData = project + activityBaseData  + [(activityDataPrefix+'stage'): getStage(activity, project)]
+        Map activityData = project + activityBaseData
+        activityData += getReportInfo(activity, project).collectEntries{k, v -> [(activityDataPrefix+k):v]}
         activityData[(activityDataPrefix+'publicationStatus')] = translatePublicationStatus(activity.publicationStatus)
         activityData
     }
@@ -794,7 +795,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportList("Blog", project, project.blog, blogHeaders, blogProperties)
     }
 
-    String getStage(Map activity, project) {
+    private Map getReportInfo(Map activity, project) {
         Date activityEndDate = activity.plannedEndDate
 
         if (!activityEndDate) {
@@ -802,9 +803,13 @@ class ProjectXlsExporter extends ProjectExporter {
             return ''
         }
 
-        Report report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
+        // First try and match the report by activity id
+        Report report = project.reports?.find { it.activityId == activity.activityId }
+        if (!report) {
+            report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
+        }
 
-        report ? report.name : ''
+        [stage:report?.name, reportType:report?.generatedBy]
     }
 
     AdditionalSheet projectSheet() {
