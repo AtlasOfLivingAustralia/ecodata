@@ -55,7 +55,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', status: "active", contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
         xlsExporter.save()
 
         then:
@@ -67,6 +67,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
         results[0]['Management Unit'] == "Management Unit 1"
+        results[0]['Status'] == "active"
 
     }
 
@@ -82,7 +83,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         xlsExporter.save()
 
         then:
-        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
+        List<Map> results = readSheet("Projects", projectXlsExporter.projectHeaderWithTermination)
         results.size() == 1
         results[0]['Project ID'] == '1234'
         results[0]['Internal order number'] == 'work order 1'
@@ -102,7 +103,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', status: "active", contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
         xlsExporter.save()
 
         then:
@@ -658,6 +659,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"alaHarvest\" : false,\n" +
             "    \"associatedProgram\" : \"\",\n" +
             "    \"associatedSubProgram\" : \"\",\n" +
+            "    \"status\": \"active\",\n"+
             "    \"countries\" : [],\n" +
             "    \"custom\" : {\n" +
             "        \"details\" : {\n" +
