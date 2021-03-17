@@ -31,10 +31,14 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Termination Reason', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'terminationReason', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', "Last Modified"]
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status']
 
-    List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
+    List<String> commonProjectHeadersWithoutSitesWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Termination Reason', 'Last Modified']
+    List<String> commonProjectPropertiesRawWithTerminationReason = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
+
+    List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it} + [PROJECT_DATA_PREFIX+"lastUpdated"]
+
 
     List<String> projectApprovalHeaders = ['MERI plan status','Last approval Date', 'Last approved by']
     List<String> projectApprovalProperties = ['planStatus','approvalDate', 'approvedBy']
@@ -44,6 +48,13 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders
     List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties
+
+
+
+
+    List<String> projectHeaderWithTermination = commonProjectHeadersWithoutSitesWithTerminationReason + projectStateHeaders
+    List<String> projectPropertiesWithTermination = commonProjectPropertiesRawWithTerminationReason + projectStateProperties
+
 
     List<String> siteStateHeaders = (1..5).collect{'State '+it}
     List<String> siteStateProperties = (0..4).collect{'state'+it+'-site'}
@@ -362,19 +373,28 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportProject(Map project) {
         if (shouldExport('Projects')) {
-            projectSheet()
-            int row = projectSheet.getSheet().lastRowNum
+            List properties
+            int row
+            String projectStatus = project?.project_status
+            if (projectStatus.toLowerCase() == "terminated") {
+                projectSheet = getSheet("Projects", projectHeaderWithTermination)
+                properties = new ArrayList(projectPropertiesWithTermination)
 
-            List properties = new ArrayList(projectProperties)
+            } else {
+                projectSheet()
+                properties = new ArrayList(projectProperties)
+            }
+            row = projectSheet.getSheet().lastRowNum
 
             List<String> projectElectorates = project.sites?.collect { it?.extent?.geometry?.elect }?.flatten()?.findAll()
 
-            distinctElectorates.each{ electorate ->
-                project[electorate] = projectElectorates.contains(electorate)? 'Y' : 'N'
+            distinctElectorates.each { electorate ->
+                project[electorate] = projectElectorates.contains(electorate) ? 'Y' : 'N'
             }
 
             projectSheet.add([project], properties, row + 1)
         }
+
     }
 
     private exportDataSet(Map project) {
