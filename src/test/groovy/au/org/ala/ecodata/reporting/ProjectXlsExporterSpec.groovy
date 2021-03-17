@@ -83,7 +83,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         xlsExporter.save()
 
         then:
-        List<Map> results = readSheet("Projects", projectXlsExporter.projectHeaderWithTermination)
+        List<Map> results = readSheet("Projects", projectXlsExporter.projectHeaders)
         results.size() == 1
         results[0]['Project ID'] == '1234'
         results[0]['Internal order number'] == 'work order 1'
