@@ -63,6 +63,9 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -277,17 +280,10 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportActivitySummary(Map project) {
         String tab = "Activity Summary"
         if (shouldExport(tab)) {
-            AdditionalSheet sheet = getSheet(tab, commonActivityHeaders)
+            AdditionalSheet sheet = getSheet(tab, activitySummaryHeaders)
             project.activities.each { activity ->
                 Map activityData = commonActivityData(project, activity)
-
-                Report matchingReport = project.reports.find({it.activityId == activity.activityId})
-                if (matchingReport) {
-                    activityData.stage = matchingReport.description ?: matchingReport.name
-                    activityData.reportType = matchingReport.generatedBy
-                }
-
-                sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+                sheet.add(activityData, activitySummaryProperties, sheet.getSheet().lastRowNum + 1)
             }
         }
 
@@ -807,7 +803,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
         if (!activityEndDate) {
             log.error("No end date for activity: ${activity.activityId}, project: ${project.projectId}")
-            return ''
+            return [:]
         }
 
         // First try and match the report by activity id

@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellReference
 import spock.lang.Specification
 
+import java.time.ZoneId
+
 /**
  * Spec for the ProjectXlsExporter
  */
@@ -586,16 +588,49 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
     }
 
-//    void "Each form section / output will be exported to a separate tab"() {
-//
-//    }
+    def "A summary of project activities can be outputted"() {
+        setup:
 
+        Map project = project()
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("UTC")))
+        calendar.set(Calendar.YEAR, 2020)
+        calendar.set(Calendar.MONTH, 1)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+
+        Date endDate = calendar.getTime()
+
+        project.activities = [
+                [activityId:'a1', type: "Activity 1", description: "Activity 1 description", formVersion: 1, plannedEndDate: endDate,outputs: [getJsonResource("singleSampleNestedDataModel"),  getJsonResource("sampleNestedDataModel")]]]
+        project.reports = [
+                new Report([reportId:'r1', activityType:'Activity 1', activityId:'a1', type:"Activity", generatedBy:"Test config", name:"Report 1", toDate:endDate, description:"Report 1 description"])
+        ]
+        when:
+        projectXlsExporter.tabsToExport = ["Activity Summary"]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        workbook.numberOfSheets == 1
+        Sheet summarySheet = workbook.getSheet("Activity Summary")
+        summarySheet.physicalNumberOfRows == 2
+        List summaryRow = readRow(1, summarySheet)
+        List activityInfo = summaryRow.subList(projectXlsExporter.commonProjectHeaders.size(), summaryRow.size())
+        activityInfo == ['a1', '', '', endDate, 'Report 1', 'Test config', 'Activity 1 description', 'Activity 1', '', '', 'Unpublished (no action – never been submitted)', '']
+
+    }
 
     private List readRow(int index, Sheet sheet) {
         Row row = sheet.getRow(index)
         row.cellIterator().collect { Cell cell ->
             if (cell.cellType == CellType.NUMERIC) {
-                cell.getNumericCellValue()
+                if (org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)) {
+                    cell.getDateCellValue()
+                }
+                else {
+                    cell.getNumericCellValue()
+                }
             }
             else {
                 cell.getStringCellValue()
