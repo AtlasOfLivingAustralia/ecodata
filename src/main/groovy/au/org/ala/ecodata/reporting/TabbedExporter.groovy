@@ -111,15 +111,15 @@ class TabbedExporter {
      * @param output
      * @return
      */
-    private List getOutputData(OutputMetadata  outputModel, Map output) {
+    private List getOutputData(OutputMetadata  outputModel, Map output, String namespace) {
         List flatData = []
         if (output) {
-            flatData = processor.flatten2(output, outputModel)
+            flatData = processor.flatten2(output, outputModel, OutputModelProcessor.FlattenOptions.REPEAT_SELECTIONS, namespace)
         }
         flatData
     }
 
-    protected List getActivityExportConfig(String activityType) {
+    protected List getActivityExportConfig(String activityType, boolean namespaceOutputs = false) {
         String key = activityType
 
         if (!activityExportConfig[key]) {
@@ -127,7 +127,7 @@ class TabbedExporter {
             if (forms) {
                 forms = forms.sort{it.formVersion}
                 for (ActivityForm form in forms) {
-                    List<Map> versionedConfig = buildActivityExportConfiguration(form)
+                    List<Map> versionedConfig = buildActivityExportConfiguration(form, namespaceOutputs)
                     if (!activityExportConfig[key]) {
                         activityExportConfig[key] = versionedConfig
                     }
@@ -153,43 +153,47 @@ class TabbedExporter {
         }
     }
 
-    private List<Map> buildActivityExportConfiguration(ActivityForm activityForm) {
+    private List<Map> buildActivityExportConfiguration(ActivityForm activityForm, boolean namespaceOutputs) {
         List config = []
         activityForm.sections.each { FormSection section ->
             OutputMetadata outputModel = new OutputMetadata(section.template)
-
-            List outputConfig = buildOutputExportConfiguration(outputModel)
+            String namespace = namespaceOutputs ? section.name : ''
+            List outputConfig = buildOutputExportConfiguration(outputModel, namespace)
             Map commonProperties = [section: section.name, formVersion: activityForm.formVersion]
             config += outputConfig.collect{it + commonProperties }
         }
+
         config
     }
 
-    private List<Map> buildOutputExportConfiguration(OutputMetadata outputMetadata) {
+    private List<Map> buildOutputExportConfiguration(OutputMetadata outputMetadata, String namespace) {
 
+        String prefix = namespace ? namespace+'.' : ''
         List<Map> fieldConfiguration = []
+        String outputNotCompletedPath = prefix + 'outputNotCompleted'
         fieldConfiguration << [
                 header:"Not applicable",
-                property:'outputNotCompleted',
-                getter:new OutputDataGetter("outputNotCompleted", [dataType:'boolean', name:"outputNotCompleted"], documentMap, timeZone)]
+                property:outputNotCompletedPath,
+                getter:new OutputDataGetter(outputNotCompletedPath, [dataType:'boolean', name:"outputNotCompleted"], documentMap, timeZone)]
 
         outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
             if (isExportableType(dataNode)) {
+                String propertyPath = prefix + path
                 if (dataNode.dataType == 'stringList' && dataNode.constraints) {
                     dataNode.constraints.each { constraint ->
                         String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
-                        String propertyPath = path + '[' + constraint + ']'
+                        String constraintPath = propertyPath + '[' + constraint + ']'
                         fieldConfiguration << [
                                 header:header,
-                                property:propertyPath,
-                                getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
+                                property:constraintPath,
+                                getter:new OutputDataGetter(constraintPath, dataNode, documentMap, timeZone)]
                     }
                 }
                 else {
                     fieldConfiguration << [
                             header:outputMetadata.getLabel(viewNode, dataNode),
-                            property:path,
-                            getter:new OutputDataGetter(path, dataNode, documentMap, timeZone)]
+                            property:propertyPath,
+                            getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
                 }
             }
         }
@@ -215,16 +219,17 @@ class TabbedExporter {
         return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(activity, outputName)]
     }
 
-    protected List prepareActivityDataForExport(Map activity, String outputName = null) {
+    protected List prepareActivityDataForExport(Map activity, boolean namespace = false, String outputName = null) {
         List outputData = []
         ActivityForm activityForm = activityFormService.findActivityForm(activity.type, activity.formVersion)
 
         activity.outputs.each{ output->
             if ( !outputName || outputName == output.name )  {
                 FormSection formSection = activityForm?.getFormSection(output.name)
+                String namespaceStr = namespace ? formSection.name : ''
                 if (formSection && formSection.template) {
                     OutputMetadata outputModel = new OutputMetadata(formSection.template)
-                    outputData += getOutputData(outputModel, output)
+                    outputData += getOutputData(outputModel, output, namespaceStr)
                 } else {
                     log.error("Cannot find template of " + output.name)
                 }

@@ -157,6 +157,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
+        exportActivitySummary(project)
         exportActivities(project )
         exportParticipantInfo(project)
         exportRisks(project)
@@ -217,38 +218,38 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
      void exportActivities(Map project) {
-         tabsToExport.each{ tab ->
-             if(tab =="Activity Summary"){
-                 exportActivitySummary(project)
-             } else {
-                 List activities = project?.activities?.findAll{it.type == tab}
-                 if(activities) {
-                     activities.each {
-                         exportActivity(project, it)
-                     }
+         tabsToExport.each { tab ->
+             List activities = project?.activities?.findAll { it.type == tab }
+             if (activities) {
+                 activities.each {
+                     exportActivity(project, it, true)
                  }
              }
          }
-
      }
 
-    private void exportActivity(Map project, Map activity) {
+    private void exportActivity(Map project, Map activity, boolean sectionPerTab) {
         Map commonData = commonActivityData(project, activity)
         String activityType = activity.type
-        List exportConfig = getActivityExportConfig(activityType)
+        List exportConfig = getActivityExportConfig(activityType, !sectionPerTab)
+        String sheetName = activityType
+        if (sectionPerTab) {
+            // Split into all the bits.
+            Map<String, List> configPerSection = exportConfig.groupBy{it.section}
+            // We are relying on the grouping preserving order here....
+            configPerSection.each { String section, List sectionConfig ->
 
-        // Split into all the bits.
-        Map<String, List> configPerSection = exportConfig.groupBy{it.section}
-        // We are relying on the grouping preserving order here....
-        configPerSection.each { String section, List sectionConfig ->
-            String sheetName = activityType
-            if (configPerSection.size() > 1){
-                sheetName = section +' '+activityType
+                if (configPerSection.size() > 1){
+                    sheetName = section +' '+activityType
+                }
+                List sheetData = prepareActivityDataForExport(activity, false, section)
+                exportActivityOrOutput(sheetName, sectionConfig, commonData, sheetData)
             }
-            List sheetData = prepareActivityDataForExport(activity, section)
-            exportActivityOrOutput(sheetName, sectionConfig, commonData, sheetData)
         }
-
+        else {
+            List sheetData = prepareActivityDataForExport(activity, true)
+            exportActivityOrOutput(sheetName, exportConfig, commonData, sheetData)
+        }
     }
 
     private void exportActivityOrOutput(String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {
@@ -266,11 +267,22 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportActivitySummary(Map project) {
-        AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
-        project.activities.each { activity ->
-            Map activityData = commonActivityData(project, activity)
-            sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+        String tab = "Activity Summary"
+        if (shouldExport(tab)) {
+            AdditionalSheet sheet = getSheet(tab, commonActivityHeaders)
+            project.activities.each { activity ->
+                Map activityData = commonActivityData(project, activity)
+
+                Report matchingReport = project.reports.find({it.activityId == activity.activityId})
+                if (matchingReport) {
+                    activityData.stage = matchingReport.description ?: matchingReport.name
+                    activityData.reportType = matchingReport.generatedBy
+                }
+
+                sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+            }
         }
+
     }
 
     /**

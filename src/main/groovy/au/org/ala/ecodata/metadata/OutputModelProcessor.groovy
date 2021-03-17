@@ -150,12 +150,13 @@ class OutputModelProcessor {
      * @param outputMetadata description of the output to flatten
      * @param duplicationNonNestedValues true if each item in the returned list contains all of the non-nested data in the output
      */
-    List flatten2(Map output, OutputMetadata outputMetadata, FlattenOptions option = FlattenOptions.REPEAT_SELECTIONS) {
+    List flatten2(Map output, OutputMetadata outputMetadata, FlattenOptions option = FlattenOptions.REPEAT_SELECTIONS, String namespace = '') {
         Map clone = new LinkedHashMap(output)
         Map data = clone.remove('data') ?: [:]
         data += clone
 
-        flattenNode(data, '', outputMetadata.getNestedPropertyNames(), outputMetadata, option)
+        List nestedPropertyNames =  outputMetadata.getNestedPropertyNames()?.collect{fullPath(namespace, it)}
+        flattenNode(data, namespace, nestedPropertyNames, outputMetadata, option)
     }
 
     private List flattenList(String path, String property, List values, List nestedPropertyNames, OutputMetadata outputMetadata, FlattenOptions option) {
