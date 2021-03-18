@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
-        classpath 'com.bmuschko:gradle-clover-plugin:2.1.0'
+        //classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
         classpath 'org.grails.plugins:quartz:2.0.13' // Needed to compile *Job classes
     }
 }
@@ -27,7 +27,7 @@ apply plugin: "groovy"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
-apply plugin: 'com.bmuschko.clover'
+//apply from: "${project.projectDir}/gradle/clover.gradle"
 //apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
 
 repositories {
@@ -61,16 +61,14 @@ dependencies {
     compile "org.grails.plugins:events"
     compile "org.grails:grails-plugin-datasource"
     compile "org.grails:grails-plugin-databinding"
-    //compile 'org.grails:grails-datastore-gorm:7.0.2'
     compile "org.grails:grails-plugin-codecs"
-    compile "org.grails.plugins:mongodb:7.0.0"
-    //compile "org.mongodb:mongodb-driver:3.9.1"
+    compile "org.grails.plugins:mongodb:7.0.1"
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
     profile "org.grails.profiles:web"
 
     compile 'org.grails.plugins:external-config:2.0.0'
-    compile 'com.bertramlabs.plugins:asset-pipeline-grails:3.0.10'
+    compile 'com.bertramlabs.plugins:asset-pipeline-grails:3.2.4'
 
     compile "org.elasticsearch:elasticsearch:1.7.1"
 
@@ -129,7 +127,7 @@ dependencies {
 
     // Added due to previous reliance on transitive dependencies from plugins
     compile 'au.com.bytecode:opencsv:2.4'
-    compile 'com.bertramlabs.plugins:asset-pipeline-core:3.0.10'
+    compile 'com.bertramlabs.plugins:asset-pipeline-core:3.2.4'
 
    // compile "org.grails.plugins:jmx:0.9"
 
@@ -141,36 +139,12 @@ dependencies {
     testCompile "org.grails:grails-web-testing-support"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
-    clover 'org.openclover:clover:4.2.0'
+    //clover 'org.openclover:clover:4.4.1'
     compile 'org.apache.logging.log4j:log4j-api:2.14.0'
     compile 'org.apache.logging.log4j:log4j-core:2.14.0'
 
     runtime "org.slf4j:jul-to-slf4j:1.7.7"
-    runtime "org.slf4j:log4j-over-slf4j:1.7.7"
-
-}
-clover {
-    // Although Clover is now open source the plugin
-    // still expects to find the license file.
-    // Any file will work.
-    licenseLocation = File.createTempFile('clover', '.license').absolutePath
-    //targetPercentage = "100%"
-    excludes = ['**/Application.groovy',
-                '**/BootStrap.groovy',
-                '**/UrlMappings.groovy',
-                '**/*GrailsPlugin.groovy',
-                '**/*Mock.groovy',
-    ]
-    // This is neededed to see which tests targeted code
-    // In this particular project I'm only using Spock
-    // specifications
-    testIncludes = ['**/*Spec.groovy']
-
-    // I would like to have both html and xml report
-    report {
-        html = true
-        xml = true
-    }
+    runtime "org.hsqldb:hsqldb:2.3.1"
 }
 
 springBoot {
@@ -191,13 +165,18 @@ bootRun {
   //  systemProperty springProfilesActive, System.getProperty(springProfilesActive)
 }
 
-tasks.withType(Test) {
-    testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat 'full'
+//tasks.withType(Test) {
+//    testLogging {
+//        events "passed", "skipped", "failed"
+//        exceptionFormat 'full'
+//    }
+//}
+
+tasks.withType(GroovyCompile) {
+    configure(groovyOptions) {
+        forkOptions.jvmArgs = ['-Xmx1024m']
     }
 }
-
 
 assets {
     minifyJs = true

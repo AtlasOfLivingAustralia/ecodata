@@ -110,7 +110,7 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
         controller.update('')
 
         then:
-        1 * managementUnitService.create({capturedMu = it})
+        1 * managementUnitService.create(_) >> {capturedMu = it[0]}
         compareMu(props, capturedMu)
     }
 
@@ -144,7 +144,7 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
         controller.update('')
 
         then:
-        1 * managementUnitService.create({capturedMu = it})
+        1 * managementUnitService.create(_) >> { capturedMu = it[0] }
         compareMu(props, capturedMu)
         capturedMu.id == null
         capturedMu.managementUnitId == null

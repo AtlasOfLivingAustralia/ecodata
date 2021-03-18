@@ -6,6 +6,7 @@ import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.ListenableActionFuture
+import org.elasticsearch.action.get.GetRequestBuilder
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.client.Client
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
@@ -39,6 +40,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
     }
 
     def cleanup() {
+        Project.collection.remove([:])
     }
 
     void "View type : Invalid - Build a query that returns only non-embargoed records"() {
@@ -268,7 +270,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         then:
         2 * client.prepareGet(ElasticIndex.HOMEPAGE_INDEX, "doc", project.projectId)
         1 * client.prepareIndex(ElasticIndex.HOMEPAGE_INDEX, "doc", project.projectId) >> builder
-        1 * builder.setSource({result = JSON.parse(it)}) >> builder
+        1 * builder.setSource(_) >> { result = JSON.parse(it[0]); builder }
         1 * builder.execute() >> Mock(ListenableActionFuture)
         1 * projectService.toMap(project, ProjectService.FLAT) >> projectProps
 
@@ -290,6 +292,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         Map biocollectProjectProps = [projectId:'p2', isMERIT:false]
         Project biocollectProject = new Project(biocollectProjectProps)
         IndexRequestBuilder builder = Mock(IndexRequestBuilder)
+        GetRequestBuilder getBuilder = Mock(GetRequestBuilder)
         Map meritResult
         Map biocollectResult
 
@@ -297,9 +300,10 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         service.indexHomePage(meritProject, Project.class.name)
 
         then:
-        2 * client.prepareGet(ElasticIndex.HOMEPAGE_INDEX, "doc", meritProject.projectId)
+        2 * client.prepareGet(ElasticIndex.HOMEPAGE_INDEX, "doc", meritProject.projectId) >> getBuilder
         1 * client.prepareIndex(ElasticIndex.HOMEPAGE_INDEX, "doc", meritProject.projectId) >> builder
-        1 * builder.setSource({meritResult = JSON.parse(it)}) >> builder
+        2 * getBuilder.execute() >> Mock(ListenableActionFuture)
+        1 * builder.setSource(_) >> { meritResult = JSON.parse(it[0]); builder }
         1 * builder.execute() >> Mock(ListenableActionFuture)
         1 * projectService.toMap(meritProject, ProjectService.FLAT) >> meritProjectProps
         1 * siteService.findAllForProjectId(meritProject.projectId, SiteService.FLAT) >> [site1]
@@ -317,7 +321,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         then:
         2 * client.prepareGet(ElasticIndex.HOMEPAGE_INDEX, "doc", biocollectProject.projectId)
         1 * client.prepareIndex(ElasticIndex.HOMEPAGE_INDEX, "doc", biocollectProject.projectId) >> builder
-        1 * builder.setSource({biocollectResult = JSON.parse(it)}) >> builder
+        1 * builder.setSource(_) >> {biocollectResult = JSON.parse(it[0]); builder}
         1 * builder.execute() >> Mock(ListenableActionFuture)
         1 * projectService.toMap(biocollectProject, ProjectService.FLAT) >> biocollectProjectProps
         1 * siteService.findAllNonPrivateSitesForProjectId(biocollectProject.projectId, SiteService.FLAT) >> [site2]

@@ -12,6 +12,7 @@ branches:
   - grails3
   - grails3-dev
   - /^hotfix\/.*$/
+  - grails4
 
 services:
   - mongodb

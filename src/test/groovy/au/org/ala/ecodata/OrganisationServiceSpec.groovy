@@ -14,8 +14,6 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
     def emailService = Mock(EmailService)
 
     def setup() {
-       // Fongo fongo = new Fongo("ecodata-test")
-//        mongoDomain(fongo.mongo, [Organisation])
 
         service.commonService = new CommonService()
         service.commonService.grailsApplication = grailsApplication
