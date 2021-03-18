@@ -133,6 +133,9 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Map of key: management unit id, value: management unit name */
     Map<String, String> managementUnitNames
 
+    /** If set to true, activities containing more than one form section will be split over one tab per form section */
+    boolean formSectionPerTab = false
+
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
         super(exporter)
         this.projectService = projectService
@@ -140,9 +143,10 @@ class ProjectXlsExporter extends ProjectExporter {
         setupManagementUnits(managementUnitService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:]) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
+        this.formSectionPerTab = formSectionPerTab
         distinctElectorates = new ArrayList(electorates?:[])
         distinctElectorates.sort()
         projectHeaders += distinctElectorates
@@ -168,7 +172,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportSites(project)
         exportDocuments(project)
         exportActivitySummary(project)
-        exportActivities(project )
+        exportActivities(project)
         exportParticipantInfo(project)
         exportRisks(project)
         exportMeriPlan(project)
@@ -233,7 +237,7 @@ class ProjectXlsExporter extends ProjectExporter {
              List activities = project?.activities?.findAll { it.type == tab }
              if (activities) {
                  activities.each {
-                     exportActivity(project, it, true)
+                     exportActivity(project, it, formSectionPerTab)
                  }
              }
          }
