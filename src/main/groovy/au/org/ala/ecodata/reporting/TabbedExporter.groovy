@@ -216,7 +216,7 @@ class TabbedExporter {
         List headers = results.collect{it.header}
         List outputGetters = results.collect{ it.getter}
 
-        return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(activity, outputName)]
+        return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(activity, false, outputName)]
     }
 
     protected List prepareActivityDataForExport(Map activity, boolean namespace = false, String outputName = null) {
