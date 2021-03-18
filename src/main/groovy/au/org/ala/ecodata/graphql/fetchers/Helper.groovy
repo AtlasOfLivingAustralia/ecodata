@@ -5,6 +5,7 @@ import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.PublicationStatus
 import au.org.ala.ecodata.Status
+import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.util.Holders
 import graphql.GraphQLException
 
@@ -86,15 +87,26 @@ class Helper {
         ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED).each { ActivityForm activityForm ->
             Map activityModel = [
                     name: activityForm.name,
-                    description: Holders.applicationContext.messageSource.getMessage("api.${activityForm.name}.description", null, "", Locale.default),
                     outputs: []
             ]
 
             activityForm.sections.unique().each { FormSection section ->
+                def fields = section.template.dataModel != null ? section.template.dataModel : []
+                //set field labels
+                OutputMetadata outputModel = new OutputMetadata(section.template)
+                println(activityForm.name + " " + section.name)
+                outputModel.modelIterator { String path, Map viewNode, Map dataNode ->
+                    def field = fields.find { b -> b == dataNode }
+                    if(field) {
+                        def label = outputModel.getLabel(viewNode, dataNode)
+                        field.label = label
+                    }
+                }
+
                 activityModel.outputs << [
                         name: section.name,
-                        title: section.title,
-                        fields: section.template.dataModel != null ? section.template.dataModel : []
+                        title: section.title ?: section.template.modelName,
+                        fields: fields
                 ]
             }
 
