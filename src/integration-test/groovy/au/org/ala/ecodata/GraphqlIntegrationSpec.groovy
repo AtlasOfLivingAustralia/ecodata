@@ -24,10 +24,10 @@ class GraphqlIntegrationSpec extends GraphqlSpecHelper{
     }
 
     def cleanup() {
-        Project.findAll().each { it.delete(flush:true) }
-        Activity.findAll().each { it.delete(flush:true) }
-        Output.findAll().each { it.delete(flush:true) }
-        ManagementUnit.findAll().each { it.delete(flush:true) }
+        Project.findAll{projectId == "graphqlProject1"}.each { it.delete(flush:true) }
+//        Activity.findAll().each { it.delete(flush:true) }
+//        Output.findAll().each { it.delete(flush:true) }
+//        ManagementUnit.findAll().each { it.delete(flush:true) }
     }
 
     def "Get project by project Id"() {
