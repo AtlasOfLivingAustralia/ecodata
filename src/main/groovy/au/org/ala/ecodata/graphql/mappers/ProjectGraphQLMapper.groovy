@@ -84,20 +84,6 @@ class ProjectGraphQLMapper {
                 }
             }
 
-            add('test', 'test') {
-                type {
-                    field("test1", "test1") {
-                        field("test2", String) {description "test2"}
-                        description "test1"
-                    }
-                }
-                description "test"
-                dataFetcher { Project project ->
-                    new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
-                            Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
-                }
-            }
-
             //add graphql type for each activity type
             activityModel["activities"].each {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
@@ -106,12 +92,13 @@ class ProjectGraphQLMapper {
                     String name = "Activity_" + activityName
                     List outputList = []
                     List modifiedColumns = []
-                    String desc = it.description
+                    String desc = it.name
                     //define activity type
                     add(name, name) {
                         type {
                             outputTypes.each { outputType ->
                                 String outputName = WordUtils.capitalize(outputType.name).replaceAll("\\W", "")
+                                String title = outputType.title
                                 String outputTypeName = "OutputType_" + outputName
                                 if(outputType.fields?.size() > 0 && !(outputTypeName in outputList)) {
                                     if(duplicateOutputs.contains(outputType.name)){
@@ -124,10 +111,10 @@ class ProjectGraphQLMapper {
                                         for(int t=0; t<fieldList.size(); t++){
                                             def outputField = outputType.fields.find{ b -> b.name == fieldList[t]}
                                             if(outputField.dataType == "number") {
-                                                field(fieldList[t].toString(), double) {description "test1"}
+                                                field(fieldList[t].toString(), double) {description outputField.label}
                                             }
                                             else if(outputField.dataType == "text") {
-                                                field(fieldList[t].toString(), String) {description "test1"}
+                                                field(fieldList[t].toString(), String) {description outputField.label}
                                             }
                                             else if(outputField.dataType == "list") {
                                                 modifiedColumns << fieldList[t].toString()
@@ -135,19 +122,19 @@ class ProjectGraphQLMapper {
                                                     String[] columnList = outputField.columns.name.unique()
                                                     for(int y=0; y<columnList.size(); y++){
                                                         def column = outputField.columns.find{ b -> b.name == columnList[y]}
-                                                        field(column.name.toString(), column.dataType == "number" ? double : String) {description "test2"}
+                                                        field(column.name.toString(), column.dataType == "number" ? double : String) {description column.description}
                                                     }
                                                     collection true
-                                                    description "test1"
+                                                    description outputField.label
                                                 }
                                             }
                                             else {
-                                                field(fieldList[t].toString(), String) {description "test1"}
+                                                field(fieldList[t].toString(), String) {description outputField.label}
                                             }
                                         }
                                         nullable true
                                         collection true
-                                        description "test0" //outputType.title?.toString()
+                                        description title
                                     }
                                 }
                             }
