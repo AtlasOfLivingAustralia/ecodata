@@ -8,7 +8,8 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "value1"
+          "name": "value1",
+          "constraints": ["0.value1", "1.value1", "2.value1"]
         },
         {
           "dataType": "list",
@@ -16,7 +17,8 @@
           "columns": [
             {
               "dataType": "text",
-              "name": "value2"
+              "name": "value2",
+              "constraints": ["0.0.value2", "0.1.value2", "1.0.value2", "1.1.value2", "1.2.value2"]
             },
             {
               "dataType": "list",

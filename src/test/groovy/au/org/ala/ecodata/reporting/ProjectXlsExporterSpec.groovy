@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellReference
 import spock.lang.Specification
 
+import java.time.ZoneId
+
 /**
  * Spec for the ProjectXlsExporter
  */
@@ -37,7 +39,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, managementUnitService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, [:], true)
         projectXlsExporter.activityFormService = activityFormService
         projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
@@ -55,7 +57,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', status: "active", contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
         xlsExporter.save()
 
         then:
@@ -67,6 +69,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
         results[0]['Management Unit'] == "Management Unit 1"
+        results[0]['Status'] == "active"
 
     }
 
@@ -82,7 +85,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         xlsExporter.save()
 
         then:
-        List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
+        List<Map> results = readSheet("Projects", projectXlsExporter.projectHeaders)
         results.size() == 1
         results[0]['Project ID'] == '1234'
         results[0]['Internal order number'] == 'work order 1'
@@ -102,7 +105,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', status: "active", contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
         xlsExporter.save()
 
         then:
@@ -265,7 +268,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow1 == ["", "33", "single.0.value1", "", "single notes"]
         List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["", "33", "single.1.value1", "", "single notes"]
+        dataRow2 == ["", "", "single.1.value1", "", ""]
 
     }
 
@@ -309,7 +312,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes"]
         List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["", "33", "c1", "", "c3", "", "", "", "single.1.value1", "single notes"]
+        dataRow2 == ["", "", "c1", "", "c3", "", "", "", "single.1.value1", ""]
 
     }
 
@@ -349,13 +352,13 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow1 == ["", "3", "0.value1", "0.0.value2", "", "notes"]
         List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["", "3", "0.value1", "0.1.value2", "", "notes"]
+        dataRow2 == ["", "", "", "0.1.value2", "", ""]
         List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow3 == ["", "3", "1.value1", "1.0.value2", "", "notes"]
+        dataRow3 == ["", "", "1.value1", "1.0.value2", "", ""]
         List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow4 == ["", "3", "1.value1", "1.1.value2", "", "notes"]
+        dataRow4 == ["", "", "", "1.1.value2", "", ""]
         List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow5 == ["", "3", "1.value1", "1.2.value2", "", "notes"]
+        dataRow5 == ["", "", "", "1.2.value2", "", ""]
 
     }
 
@@ -394,15 +397,15 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow1 == ["", "3", "0.value1", "0.0.value2", "3", "", "notes"]
         List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["", "3", "0.value1", "0.0.value2", "4", "", "notes"]
+        dataRow2 == ["", "", "0.value1", "0.0.value2", "4", "", ""]
         List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow3 == ["", "3", "0.value1", "0.1.value2", "", "", "notes"]
+        dataRow3 == ["", "", "0.value1", "0.1.value2", "", "", ""]
         List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow4 == ["", "3", "1.value1", "1.0.value2", "", "", "notes"]
+        dataRow4 == ["", "", "1.value1", "1.0.value2", "", "", ""]
         List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow5 == ["", "3", "1.value1", "1.1.value2", "", "", "notes"]
+        dataRow5 == ["", "", "1.value1", "1.1.value2", "", "", ""]
         List dataRow6 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow6 == ["", "3", "1.value1", "1.2.value2", "", "", "notes"]
+        dataRow6 == ["", "", "1.value1", "1.2.value2", "", "", ""]
 
     }
 
@@ -445,22 +448,22 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow1 == ["", "3", "0.value1", "0.0.value2", "", "notes", "", ""]
         List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["", "3", "0.value1", "0.1.value2", "", "notes", "", ""]
+        dataRow2 == ["", "", "", "0.1.value2", "", "", "", ""]
         List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow3 == ["", "3", "1.value1", "1.0.value2", "", "notes", "", ""]
+        dataRow3 == ["", "", "1.value1", "1.0.value2", "", "", "", ""]
         List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow4 == ["", "3", "1.value1", "1.1.value2", "", "notes", "", ""]
+        dataRow4 == ["", "", "", "1.1.value2", "", "", "", ""]
         List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow5 == ["", "3", "1.value1", "1.2.value2", "", "notes", "", ""]
+        dataRow5 == ["", "", "", "1.2.value2", "", "", "", ""]
 
         List dataRow7 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow7 == ["", "3", "0.value1", "", "", "notes", "0.0.value3", "extra notes"]
         List dataRow8 = readRow(9, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow8 == ["", "3", "0.value1", "", "", "notes", "0.1.value3", "extra notes"]
+        dataRow8 == ["", "", "", "", "", "", "0.1.value3", ""]
         List dataRow9 = readRow(10, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow9 == ["", "3", "1.value1", "", "", "notes", "1.0.value3", "extra notes"]
+        dataRow9 == ["", "", "1.value1", "", "", "", "1.0.value3", ""]
         List dataRow10 = readRow(11, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow10 == ["", "3", "1.value1", "", "", "notes", "1.1.value3", "extra notes"]
+        dataRow10 == ["", "", "", "", "", "", "1.1.value3", ""]
     }
 
     void "Versioning of values in constraints are handled correctly"() {
@@ -509,17 +512,17 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes", ""]
         List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["", "33", "c1", "", "c3", "", "", "", "single.1.value1", "single notes", ""]
+        dataRow2 == ["", "", "c1", "", "c3", "", "", "", "single.1.value1", "", ""]
 
         and: "The data in the subsequent rows matches the data in the activity v2"
         List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
         dataRow3 == ["", "33", "", "", "c3", "", "c5", "", "", "single notes", "c4"]
         List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow4 == ["", "33", "", "", "c3", "", "", "", "single.1.value1", "single notes", "c4"]
+        dataRow4 == ["", "", "", "", "c3", "", "", "", "single.1.value1", "", "c4"]
 
     }
 
-    void "Each form section / output will be exported to a separate tab"() {
+    void "Each form section / output can be exported to a separate tab"() {
         setup:
         String activityToExport = "RLP Annual Report"
         ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel", "nestedDataModel")
@@ -569,32 +572,122 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List dataRow1 = readRow(3, section1).subList(projectXlsExporter.commonActivityHeaders.size(), headers1.size())
         dataRow1 == ["", "33", "single.0.value1", "", "single notes"]
         List dataRow2 = readRow(4, section1).subList(projectXlsExporter.commonActivityHeaders.size(), headers1.size())
-        dataRow2 == ["", "33", "single.1.value1", "", "single notes"]
+        dataRow2 == ["", "", "single.1.value1", "", ""]
 
         and: "The data in the second form section output rows matches the data in the activity"
         List s2dataRow1 = readRow(3, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
         s2dataRow1 == ["", "3", "0.value1", "0.0.value2", "", "notes"]
         List s2dataRow2 = readRow(4, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
-        s2dataRow2 == ["", "3", "0.value1", "0.1.value2", "", "notes"]
+        s2dataRow2 == ["", "", "", "0.1.value2", "", ""]
         List s2dataRow3 = readRow(5, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
-        s2dataRow3 == ["", "3", "1.value1", "1.0.value2", "", "notes"]
+        s2dataRow3 == ["", "", "1.value1", "1.0.value2", "", ""]
         List s2dataRow4 = readRow(6, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
-        s2dataRow4 == ["", "3", "1.value1", "1.1.value2", "", "notes"]
+        s2dataRow4 == ["", "", "", "1.1.value2", "", ""]
         List s2dataRow5 = readRow(7, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
-        s2dataRow5 == ["", "3", "1.value1", "1.2.value2", "", "notes"]
+        s2dataRow5 == ["", "", "", "1.2.value2", "", ""]
 
     }
 
-//    void "Each form section / output will be exported to a separate tab"() {
-//
-//    }
+    void "Each form section / output can optionally be exported to the same tab"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel", "nestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion,
+                               outputs: [getJsonResource("singleSampleNestedDataModel"),
+                                         getJsonResource("sampleNestedDataModel")]]]
 
+        when:
+        projectXlsExporter.formSectionPerTab = false
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is only one sheet exported containing both form sections"
+        workbook.numberOfSheets == 1
+        Sheet sheet = workbook.getSheetAt(0)
+        sheet.sheetName == "RLP Annual Report"
+
+        and: "There are 3 header rows and 8 data rows"
+        sheet.physicalNumberOfRows == 10
+
+        and: "The first header row contains the namespaced property names from the activity form"
+        List headers = readRow(0, sheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["Single Nested lists.outputNotCompleted", "Single Nested lists.number1", "Single Nested lists.list.value1", "Single Nested lists.list.afterNestedList", "Single Nested lists.notes", "Nested lists.outputNotCompleted", "Nested lists.number1", "Nested lists.list.value1", "Nested lists.list.nestedList.value2", "Nested lists.list.afterNestedList", "Nested lists.notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, sheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1,1,1,1, 1, 1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, sheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "After list", "Notes", "Not applicable", "Number 1", "Value 1", "Value 2", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "single.0.value1", "", "single notes", "", "", "", "", "", ""]
+        List dataRow2 = readRow(4, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == [ "", "", "single.1.value1", "", "", "", "", "", "", "", ""]
+        List dataRow3 = readRow(5, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "", "", "", "", "", "3", "0.value1", "0.0.value2", "", "notes"]
+        List dataRow4 = readRow(6, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "", "", "", "", "", "", "", "0.1.value2", "", ""]
+        List dataRow5 = readRow(7, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "", "", "", "", "", "", "1.value1", "1.0.value2", "", ""]
+        List dataRow6 = readRow(8, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow6 == ["", "", "", "", "","", "", "", "1.1.value2", "", ""]
+        List dataRow7 = readRow(9, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow7 == ["", "", "", "", "","", "", "", "1.2.value2", "", ""]
+
+    }
+
+    def "A summary of project activities can be outputted"() {
+        setup:
+
+        Map project = project()
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("UTC")))
+        calendar.set(Calendar.YEAR, 2020)
+        calendar.set(Calendar.MONTH, 1)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+
+        Date endDate = calendar.getTime()
+
+        project.activities = [
+                [activityId:'a1', type: "Activity 1", description: "Activity 1 description", formVersion: 1, plannedEndDate: endDate,outputs: [getJsonResource("singleSampleNestedDataModel"),  getJsonResource("sampleNestedDataModel")]]]
+        project.reports = [
+                new Report([reportId:'r1', activityType:'Activity 1', activityId:'a1', type:"Activity", generatedBy:"Test config", name:"Report 1", toDate:endDate, description:"Report 1 description"])
+        ]
+        when:
+        projectXlsExporter.tabsToExport = ["Activity Summary"]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        workbook.numberOfSheets == 1
+        Sheet summarySheet = workbook.getSheet("Activity Summary")
+        summarySheet.physicalNumberOfRows == 2
+        List summaryRow = readRow(1, summarySheet)
+        List activityInfo = summaryRow.subList(projectXlsExporter.commonProjectHeaders.size(), summaryRow.size())
+        activityInfo == ['a1', '', '', endDate, 'Report 1', 'Test config', 'Activity 1 description', 'Activity 1', '', '', 'Unpublished (no action – never been submitted)', '']
+
+    }
 
     private List readRow(int index, Sheet sheet) {
         Row row = sheet.getRow(index)
         row.cellIterator().collect { Cell cell ->
             if (cell.cellType == CellType.NUMERIC) {
-                cell.getNumericCellValue()
+                if (org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)) {
+                    cell.getDateCellValue()
+                }
+                else {
+                    cell.getNumericCellValue()
+                }
             }
             else {
                 cell.getStringCellValue()
@@ -658,6 +751,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"alaHarvest\" : false,\n" +
             "    \"associatedProgram\" : \"\",\n" +
             "    \"associatedSubProgram\" : \"\",\n" +
+            "    \"status\": \"active\",\n"+
             "    \"countries\" : [],\n" +
             "    \"custom\" : {\n" +
             "        \"details\" : {\n" +
