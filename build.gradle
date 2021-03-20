@@ -29,6 +29,7 @@ apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
 //apply from: "${project.projectDir}/gradle/clover.gradle"
 //apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
+apply from: "${project.projectDir}/gradle/publish.gradle"
 
 repositories {
     mavenLocal()
@@ -185,11 +186,11 @@ assets {
 
 bootJar {
     enabled = true
-    //executable = true
     classifier = 'exec'
 }
 
-//publish {
-//    dependsOn assemble
-//}
+publish {
+    dependsOn assemble
+}
+
 
