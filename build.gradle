@@ -28,6 +28,8 @@ apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
 //apply from: "${project.projectDir}/gradle/clover.gradle"
+apply from: "${project.projectDir}/gradle/jacoco.gradle"
+
 //apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
 apply from: "${project.projectDir}/gradle/publish.gradle"
 
