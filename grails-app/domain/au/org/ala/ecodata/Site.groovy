@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.SiteGraphQLMapper
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.operation.valid.IsValidOp
 import com.vividsolutions.jts.operation.valid.TopologyValidationError
@@ -16,38 +17,7 @@ class Site {
     static String TYPE_PROJECT_AREA = 'projectArea'
     static String TYPE_WORKS_AREA = 'worksArea'
 
-    static graphql = GraphQLMapping.lazy {
-        // Disable default operations, including get as we only want to expose UUIDs in the API not internal ones
-        operations.get.enabled false
-        operations.list.enabled true
-        operations.count.enabled false
-        operations.create.enabled false
-        operations.update.enabled false
-        operations.delete.enabled false
-
-        exclude 'extent', 'features', 'projects'
-
-        add('geometry', 'Geometry') {
-            type {
-                field('type', String)
-                field('coordinates', [Object])
-            }
-            dataFetcher { Site site ->
-                site.extent.geometry
-            }
-        }
-
-        query('sites', [Site]) {
-            argument('term', String)
-            dataFetcher(new DataFetcher() {
-                @Override
-                Object get(DataFetchingEnvironment environment) throws Exception {
-                    environment.context.grailsApplication.mainContext.sitesFetcher.get(environment)
-                }
-            })
-        }
-
-    }
+    static graphql = SiteGraphQLMapper.graphqlMapping()
 
     def siteService
 
