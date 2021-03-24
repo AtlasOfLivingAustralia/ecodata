@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellReference
 import spock.lang.Specification
 
+import java.time.ZoneId
+
 /**
  * Spec for the ProjectXlsExporter
  */
@@ -37,7 +39,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, managementUnitService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, [:], true)
         projectXlsExporter.activityFormService = activityFormService
         projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
@@ -55,7 +57,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', status: "active", contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
         xlsExporter.save()
 
         then:
@@ -67,6 +69,32 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
         results[0]['Management Unit'] == "Management Unit 1"
+        results[0]['Status'] == "active"
+
+    }
+
+
+    void "project details can be exported with Termination Reason"() {
+        setup:
+        String sheet = 'Projects'
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+
+        when:
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1", status: "Terminated", terminationReason: "Termination Reason"])
+        xlsExporter.save()
+
+        then:
+        List<Map> results = readSheet("Projects", projectXlsExporter.projectHeaders)
+        results.size() == 1
+        results[0]['Project ID'] == '1234'
+        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
+        results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
+        results[0]['Funding'] == 1000
+        results[0]['Management Unit'] == "Management Unit 1"
+        results[0]["Status"] == "Terminated"
+        results[0]["Termination Reason"] == "Termination Reason"
 
     }
 
@@ -77,7 +105,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', status: "active", contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
         xlsExporter.save()
 
         then:
@@ -112,6 +140,8 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         results[0]['Dataset Title'] == "Testing Data Set"
         results[0]["Primary source of data (organisation or individual that owns or maintains the dataset)"] == "na"
         results[0]["Other Investment Priority"] == "Other Priorities, other priorities"
+        results[0]["Progress"] == "started"
+        results[0]["Is this data being collected for reporting against short or medium term outcome statements?"] == "Short-term outcome statement"
     }
 
     void "RLP outcomes data can be exported"() {
@@ -213,26 +243,79 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         Workbook workbook = readWorkbook()
 
         then:
-        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
 
         and: "There is a single sheet exported with the name identifying the activity type and form version"
         workbook.numberOfSheets == 1
-        Sheet activitySheet = workbook.getSheet(activityToExport + "_V1")
+        Sheet activitySheet = workbook.getSheet(activityToExport)
 
         and: "There is a header row and 2 data rows"
-        activitySheet.physicalNumberOfRows == 3
+        activitySheet.physicalNumberOfRows == 5
 
-        and: "The header row contains the labels from the activity form"
+        and: "The first header row contains the property names from the activity form"
         List headers = readRow(0, activitySheet)
-        headers == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "After list", "Notes"]
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.afterNestedList", "notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "After list", "Notes"]
+
 
         and: "The data in the subsequent rows matches the data in the activity"
-        List dataRow1 = readRow(1, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow1 == ["3", "0.value1", "", "notes"]
-        List dataRow2 = readRow(2, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["3", "1.value1", "", "notes"]
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "single.0.value1", "", "single notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "", "single.1.value1", "", ""]
 
     }
+
+    void "String lists can be expanded into a column per value"() {
+        setup:
+        String activityToExport = "String lists"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "dataModelWithStringList")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDataModelWithStringList")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 5
+
+        and: "The first header row contains the property names from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "stringList1[c1]", "stringList1[c2]", "stringList1[c3]", "list.stringList2[c4]", "list.stringList2[c5]", "list.stringList2[c6]", "list.afterNestedList", "notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1,1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "String list 1 - c1", "String list 1 - c2", "String list 1 - c3",  "String list 2 - c4",  "String list 2 - c5",  "String list 2 - c6", "After list", "Notes"]
+
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "", "c1", "", "c3", "", "", "", "single.1.value1", ""]
+
+    }
+
 
     void "Activities with deeply nested data can be exported as a spreadsheet"() {
         setup:
@@ -249,37 +332,366 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         Workbook workbook = readWorkbook()
 
         then:
-        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
 
         and: "There is a single sheet exported with the name identifying the activity type and form version"
         workbook.numberOfSheets == 1
-        Sheet activitySheet = workbook.getSheet(activityToExport + "_V1")
+        Sheet activitySheet = workbook.getSheet(activityToExport)
 
-        and: "There is a header row and 5 data rows"
-        activitySheet.physicalNumberOfRows == 6
+        and: "There are 3 header rows and 5 data rows"
+        activitySheet.physicalNumberOfRows == 8
 
         and: "The header row contains the labels from the activity form"
         List headers = readRow(0, activitySheet)
-        headers == projectXlsExporter.commonActivityHeaders + ["Number 1", "Value 1", "Value 2", "After list", "Notes"]
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.nestedList.value2", "list.afterNestedList", "notes"]
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1,1,1,1,1]
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "Value 2", "After list", "Notes"]
 
         and: "The data in the subsequent rows matches the data in the activity"
-        List dataRow1 = readRow(1, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow1 == ["3", "0.value1", "0.0.value2", "", "notes"]
-        List dataRow2 = readRow(2, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow2 == ["3", "0.value1", "0.1.value2", "", "notes"]
-        List dataRow3 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow3 == ["3", "1.value1", "1.0.value2", "", "notes"]
-        List dataRow4 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow4 == ["3", "1.value1", "1.1.value2", "", "notes"]
-        List dataRow5 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
-        dataRow5 == ["3", "1.value1", "1.2.value2", "", "notes"]
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "3", "0.value1", "0.0.value2", "", "notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "", "", "0.1.value2", "", ""]
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "", "1.value1", "1.0.value2", "", ""]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "", "", "1.1.value2", "", ""]
+        List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "", "", "1.2.value2", "", ""]
+
+    }
+
+    void "Activities with 3 levels of nested data can be exported as a spreadsheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "deeplyNestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDeeplyNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There are 3 header rows and 6 data rows"
+        activitySheet.physicalNumberOfRows == 9
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.nestedList.value2", "list.nestedList.nestedNestedList.value3", "list.afterNestedList", "notes"]
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1, 1, 1, 1, 1, 1]
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "Value 2", "Value 3", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "3", "0.value1", "0.0.value2", "3", "", "notes"]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "", "0.value1", "0.0.value2", "4", "", ""]
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "", "0.value1", "0.1.value2", "", "", ""]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "", "1.value1", "1.0.value2", "", "", ""]
+        List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "", "1.value1", "1.1.value2", "", "", ""]
+        List dataRow6 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow6 == ["", "", "1.value1", "1.2.value2", "", "", ""]
+
+    }
+
+    void "Data created from different versions of the same activity form will be exported to the same sheet"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "nestedDataModel")
+        ActivityForm activityForm_v2 = createActivityForm(activityToExport, 2, "nestedDataModel_v2")
+        Map project = project()
+        project.activities = [
+                [type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleNestedDataModel")]],
+                [type: activityToExport, name: activityToExport, formVersion: activityForm_v2.formVersion, outputs: [getJsonResource("sampleNestedDataModel_v2")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findActivityForm(activityToExport, 2) >> activityForm_v2
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm, activityForm_v2]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There are 3 header rows and 5 data rows"
+        activitySheet.physicalNumberOfRows == 12
+
+        and: "The header row contains the labels from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.nestedList.value2", "list.afterNestedList", "notes", "list.nestedList.value3", "extraNotes"]
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1,1,1,1,1, 2, 2]
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "Value 2", "After list", "Notes", "Value 3", "Extra Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "3", "0.value1", "0.0.value2", "", "notes", "", ""]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "", "", "0.1.value2", "", "", "", ""]
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "", "1.value1", "1.0.value2", "", "", "", ""]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "", "", "1.1.value2", "", "", "", ""]
+        List dataRow5 = readRow(7, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "", "", "1.2.value2", "", "", "", ""]
+
+        List dataRow7 = readRow(8, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow7 == ["", "3", "0.value1", "", "", "notes", "0.0.value3", "extra notes"]
+        List dataRow8 = readRow(9, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow8 == ["", "", "", "", "", "", "0.1.value3", ""]
+        List dataRow9 = readRow(10, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow9 == ["", "", "1.value1", "", "", "", "1.0.value3", ""]
+        List dataRow10 = readRow(11, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow10 == ["", "", "", "", "", "", "1.1.value3", ""]
+    }
+
+    void "Versioning of values in constraints are handled correctly"() {
+        setup:
+        String activityToExport = "String lists"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "dataModelWithStringList")
+        ActivityForm activityForm_v2 = createActivityForm(activityToExport, 2, "dataModelWithStringListv2")
+
+        Map project = project()
+        project.activities = [
+                [type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion, outputs: [getJsonResource("sampleDataModelWithStringList")]],
+                [type: activityToExport, name: activityToExport, formVersion: activityForm_v2.formVersion, outputs: [getJsonResource("sampleDataModelWithStringListv2")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findActivityForm(activityToExport, 2) >> activityForm_v2
+
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm, activityForm_v2]
+
+        and: "There is a single sheet exported with the name identifying the activity type and form version"
+        workbook.numberOfSheets == 1
+        Sheet activitySheet = workbook.getSheet(activityToExport)
+
+        and: "There is a header row and 2 data rows"
+        activitySheet.physicalNumberOfRows == 7
+
+        and: "The first header row contains the property names from the activity form"
+        List headers = readRow(0, activitySheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "stringList1[c1]", "stringList1[c2]", "stringList1[c3]", "list.stringList2[c4]", "list.stringList2[c5]", "list.stringList2[c6]", "list.afterNestedList", "notes", "stringList1[c4]"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, activitySheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1,1,1,1,1,1,1,1,1,1,2]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, activitySheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "String list 1 - c1", "String list 1 - c2", "String list 1 - c3",  "String list 2 - c4",  "String list 2 - c5",  "String list 2 - c6", "After list", "Notes", "String list 1 - c4"]
+
+
+        and: "The data in the subsequent rows matches the data in the activity v1"
+        List dataRow1 = readRow(3, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "c1", "", "c3", "c4", "c5", "", "", "single notes", ""]
+        List dataRow2 = readRow(4, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == ["", "", "c1", "", "c3", "", "", "", "single.1.value1", "", ""]
+
+        and: "The data in the subsequent rows matches the data in the activity v2"
+        List dataRow3 = readRow(5, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "33", "", "", "c3", "", "c5", "", "", "single notes", "c4"]
+        List dataRow4 = readRow(6, activitySheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "", "", "", "c3", "", "", "", "single.1.value1", "", "c4"]
+
+    }
+
+    void "Each form section / output can be exported to a separate tab"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel", "nestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion,
+                               outputs: [getJsonResource("singleSampleNestedDataModel"),
+                                         getJsonResource("sampleNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        2 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There are two sheets exported, one per form section"
+        workbook.numberOfSheets == 2
+        Sheet section1 = workbook.getSheetAt(0)
+        Sheet section2 = workbook.getSheetAt(1)
+        section1.sheetName == "Single Nested lis...nual Report"
+        section2.sheetName == "Nested lists RLP Annual Report"
+
+        and: "There are 3 header rows and data rows for each section"
+        section1.physicalNumberOfRows == 5
+        section2.physicalNumberOfRows == 8
+
+        and: "The first header row contains the property names from the activity form"
+        List headers1 = readRow(0, section1)
+        headers1 == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.afterNestedList", "notes"]
+        List headers2 = readRow(0, section2)
+        headers2 == projectXlsExporter.commonActivityHeaders.collect{''} + ["outputNotCompleted", "number1", "list.value1", "list.nestedList.value2", "list.afterNestedList", "notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, section1) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1,1,1,1]
+        readRow(1, section2) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, section1) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "After list", "Notes"]
+        readRow(2, section2) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "Value 2", "After list", "Notes"]
+
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, section1).subList(projectXlsExporter.commonActivityHeaders.size(), headers1.size())
+        dataRow1 == ["", "33", "single.0.value1", "", "single notes"]
+        List dataRow2 = readRow(4, section1).subList(projectXlsExporter.commonActivityHeaders.size(), headers1.size())
+        dataRow2 == ["", "", "single.1.value1", "", ""]
+
+        and: "The data in the second form section output rows matches the data in the activity"
+        List s2dataRow1 = readRow(3, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
+        s2dataRow1 == ["", "3", "0.value1", "0.0.value2", "", "notes"]
+        List s2dataRow2 = readRow(4, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
+        s2dataRow2 == ["", "", "", "0.1.value2", "", ""]
+        List s2dataRow3 = readRow(5, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
+        s2dataRow3 == ["", "", "1.value1", "1.0.value2", "", ""]
+        List s2dataRow4 = readRow(6, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
+        s2dataRow4 == ["", "", "", "1.1.value2", "", ""]
+        List s2dataRow5 = readRow(7, section2).subList(projectXlsExporter.commonActivityHeaders.size(), headers2.size())
+        s2dataRow5 == ["", "", "", "1.2.value2", "", ""]
+
+    }
+
+    void "Each form section / output can optionally be exported to the same tab"() {
+        setup:
+        String activityToExport = "RLP Annual Report"
+        ActivityForm activityForm = createActivityForm(activityToExport, 1, "singleNestedDataModel", "nestedDataModel")
+        Map project = project()
+        project.activities = [[type: activityToExport, name: activityToExport, formVersion: activityForm.formVersion,
+                               outputs: [getJsonResource("singleSampleNestedDataModel"),
+                                         getJsonResource("sampleNestedDataModel")]]]
+
+        when:
+        projectXlsExporter.formSectionPerTab = false
+        projectXlsExporter.tabsToExport = [activityToExport]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        1 * activityFormService.findActivityForm(activityToExport, 1) >> activityForm
+        1 * activityFormService.findVersionedActivityForm(activityToExport) >> [activityForm]
+
+        and: "There is only one sheet exported containing both form sections"
+        workbook.numberOfSheets == 1
+        Sheet sheet = workbook.getSheetAt(0)
+        sheet.sheetName == "RLP Annual Report"
+
+        and: "There are 3 header rows and 8 data rows"
+        sheet.physicalNumberOfRows == 10
+
+        and: "The first header row contains the namespaced property names from the activity form"
+        List headers = readRow(0, sheet)
+        headers == projectXlsExporter.commonActivityHeaders.collect{''} + ["Single Nested lists.outputNotCompleted", "Single Nested lists.number1", "Single Nested lists.list.value1", "Single Nested lists.list.afterNestedList", "Single Nested lists.notes", "Nested lists.outputNotCompleted", "Nested lists.number1", "Nested lists.list.value1", "Nested lists.list.nestedList.value2", "Nested lists.list.afterNestedList", "Nested lists.notes"]
+
+        and: "The second header row contains the version the property was introduced in"
+        readRow(1, sheet) == projectXlsExporter.commonActivityHeaders.collect{''} + [1, 1,1,1,1, 1, 1,1,1,1,1]
+
+        and: "The third header row contains the labels from the activity form"
+        readRow(2, sheet) == projectXlsExporter.commonActivityHeaders + ["Not applicable", "Number 1", "Value 1", "After list", "Notes", "Not applicable", "Number 1", "Value 1", "Value 2", "After list", "Notes"]
+
+        and: "The data in the subsequent rows matches the data in the activity"
+        List dataRow1 = readRow(3, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow1 == ["", "33", "single.0.value1", "", "single notes", "", "", "", "", "", ""]
+        List dataRow2 = readRow(4, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow2 == [ "", "", "single.1.value1", "", "", "", "", "", "", "", ""]
+        List dataRow3 = readRow(5, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow3 == ["", "", "", "", "", "", "3", "0.value1", "0.0.value2", "", "notes"]
+        List dataRow4 = readRow(6, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow4 == ["", "", "", "", "", "", "", "", "0.1.value2", "", ""]
+        List dataRow5 = readRow(7, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow5 == ["", "", "", "", "", "", "", "1.value1", "1.0.value2", "", ""]
+        List dataRow6 = readRow(8, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow6 == ["", "", "", "", "","", "", "", "1.1.value2", "", ""]
+        List dataRow7 = readRow(9, sheet).subList(projectXlsExporter.commonActivityHeaders.size(), headers.size())
+        dataRow7 == ["", "", "", "", "","", "", "", "1.2.value2", "", ""]
+
+    }
+
+    def "A summary of project activities can be outputted"() {
+        setup:
+
+        Map project = project()
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("UTC")))
+        calendar.set(Calendar.YEAR, 2020)
+        calendar.set(Calendar.MONTH, 1)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+
+        Date endDate = calendar.getTime()
+
+        project.activities = [
+                [activityId:'a1', type: "Activity 1", description: "Activity 1 description", formVersion: 1, plannedEndDate: endDate,outputs: [getJsonResource("singleSampleNestedDataModel"),  getJsonResource("sampleNestedDataModel")]]]
+        project.reports = [
+                new Report([reportId:'r1', activityType:'Activity 1', activityId:'a1', type:"Activity", generatedBy:"Test config", name:"Report 1", toDate:endDate, description:"Report 1 description"])
+        ]
+        when:
+        projectXlsExporter.tabsToExport = ["Activity Summary"]
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        Workbook workbook = readWorkbook()
+
+        then:
+        workbook.numberOfSheets == 1
+        Sheet summarySheet = workbook.getSheet("Activity Summary")
+        summarySheet.physicalNumberOfRows == 2
+        List summaryRow = readRow(1, summarySheet)
+        List activityInfo = summaryRow.subList(projectXlsExporter.commonProjectHeaders.size(), summaryRow.size())
+        activityInfo == ['a1', '', '', endDate, 'Report 1', 'Test config', 'Activity 1 description', 'Activity 1', '', '', 'Unpublished (no action – never been submitted)', '']
 
     }
 
     private List readRow(int index, Sheet sheet) {
         Row row = sheet.getRow(index)
         row.cellIterator().collect { Cell cell ->
-            cell.getStringCellValue()
+            if (cell.cellType == CellType.NUMERIC) {
+                if (org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)) {
+                    cell.getDateCellValue()
+                }
+                else {
+                    cell.getNumericCellValue()
+                }
+            }
+            else {
+                cell.getStringCellValue()
+            }
         }
     }
 
@@ -291,10 +703,13 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         workbook
     }
 
-    private ActivityForm createActivityForm(String name, int formVersion, String templateFileName) {
-        Map formTemplate = getJsonResource(templateFileName)
+    private ActivityForm createActivityForm(String name, int formVersion, String... templateFileName) {
         ActivityForm activityForm = new ActivityForm(name: name, formVersion: formVersion)
-        activityForm.sections << new FormSection(name: formTemplate.modelName, template: formTemplate)
+        templateFileName.each {
+            Map formTemplate = getJsonResource(it)
+            activityForm.sections << new FormSection(name: formTemplate.modelName, template: formTemplate)
+        }
+
         activityForm
     }
 
@@ -336,6 +751,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"alaHarvest\" : false,\n" +
             "    \"associatedProgram\" : \"\",\n" +
             "    \"associatedSubProgram\" : \"\",\n" +
+            "    \"status\": \"active\",\n"+
             "    \"countries\" : [],\n" +
             "    \"custom\" : {\n" +
             "        \"details\" : {\n" +
@@ -1128,7 +1544,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"blog\" : []\n" +
             "}"
 
-    private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriorities\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriority\":\"Other Priorities, other priorities\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"
+    private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriorities\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriority\":\"Other Priorities, other priorities\",\"progress\":\"started\",\"term\":\"Short-term outcome statement\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"
 
     private String rlpPlan = "{\"bushfireCategories\":[],\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"ecoScienceType\":[],\"countries\":[],\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"scienceType\":[],\"isMERIT\":true,\"status\":\"application\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"5a80f409-0b27-480a-9938-340aa48cc947\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"The project will work with beef and sheep farmers to build their knowledge and understanding of the options for using different pasture/forage crop varieties to manage drought and build resilience into their farming operations.  A key strength of the project is that during the most recent drought there were local farmers who managed to retain groundcover and pastures, retain their core breeding stock, and will recover more quickly once drought conditions ease. This project will draw on those lessons to co-design local research trials of plant varieties and to demonstrate drought adaptation practices through peer learning. \\nThe project design and delivery is farmer-led, with local facilitation, through resourcing of existing trusted facilitators and contractors. It also involves collaboration with subject experts (consultants and researchers) to ensure the best science and measurable results are achieved from the project.\",\"externalId\":\"\",\"managementUnitId\":\"82c15908-04ab-4e49-bd43-9616a6dcb528\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"\",\"custom\":{\"details\":{\"communityEngagement\":\"\",\"obligations\":\"\",\"policies\":\"\",\"description\":\"The project will work with beef and sheep farmers to build their knowledge and understanding of the options for using different pasture/forage crop varieties to manage drought and build resilience into their farming operations.  A key strength of the project is that during the most recent drought there were local farmers who managed to retain groundcover and pastures, retain their core breeding stock, and will recover more quickly once drought conditions ease. This project will draw on those lessons to co-design local research trials of plant varieties and to demonstrate drought adaptation practices through peer learning. \\nThe project design and delivery is farmer-led, with local facilitation, through resourcing of existing trusted facilitators and contractors. It also involves collaboration with subject experts (consultants and researchers) to ensure the best science and measurable results are achieved from the project.\",\"lastUpdated\":\"2021-02-04T23:57:56Z\",\"priorities\":{\"description\":\"\",\"rows\":[{\"data3\":\"The project will work with beef and sheep farmer\",\"data2\":\"The project will work with beef and sheep farmer\",\"data1\":\"The project will work with beef and sheep farmer\"}]},\"assets\":[{\"description\":\"\",\"category\":\"\"}],\"outcomes\":{\"secondaryOutcomes\":[{}],\"otherOutcomes\":[\"More primary producers preserve natural capital while also improving productivity and profitability\",\"More primary producers adopt risk management practices to improve their sustainability and resilience\",\"More primary producers and agricultural communities are experimenting with adaptive or transformative NRM practices, systems and approaches that link and contribute to building drought resilience\",\"Partnerships and engagement is built between stakeholders responsible for managing natural resources\"],\"shortTermOutcomes\":[{\"assets\":[],\"description\":\"Test\"}],\"midTermOutcomes\":[{\"assets\":[],\"description\":\"test\"}],\"primaryOutcome\":{\"assets\":[\"Hillslope erosion\",\"Wind erosion\"],\"description\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\"}},\"programName\":\"Natural Resource Management - Landscape\",\"keq\":{\"description\":\"\",\"rows\":[{\"data3\":\"\",\"data2\":\"\",\"data1\":\"\"},{\"data3\":\"\",\"data2\":\"\",\"data1\":\"\"}]},\"threats\":{\"description\":\"\",\"rows\":[{\"threat\":\"\",\"intervention\":\"\"}]},\"adaptiveManagement\":\"\",\"events\":[{\"funding\":\"\",\"name\":\"\",\"description\":\"\",\"scheduledDate\":\"\",\"media\":\"\",\"grantAnnouncementDate\":\"\",\"type\":\"\"}],\"budget\":{\"overallTotal\":0,\"headers\":[{\"data\":\"2020/2021\"},{\"data\":\"2021/2022\"}],\"rows\":[{\"costs\":[{\"dollar\":\"0\"},{\"dollar\":\"0\"}],\"rowTotal\":0,\"activities\":[],\"description\":\"\",\"shortLabel\":\"\"}],\"columnTotal\":[{\"data\":0},{\"data\":0}]},\"partnership\":{\"description\":\"\",\"rows\":[{\"data3\":\"\",\"data2\":\"\",\"data1\":\"\"}]},\"projectEvaluationApproach\":\"The project will work with beef and sheep farmer\",\"implementation\":{\"description\":\"The project will work with beef and sheep farmer\"},\"baseline\":{\"description\":\"\",\"rows\":[{\"method\":\"The project will work with beef and sheep farmer\",\"baseline\":\"The project will work with beef and sheep farmer\"}]},\"rationale\":\"The project will work with beef and sheep farmer\",\"caseStudy\":false,\"relatedProjects\":\"\",\"serviceIds\":[2],\"activities\":{\"activities\":[]},\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"objectives\":{\"rows1\":[{\"assets\":[],\"description\":\"\"}],\"rows\":[{\"data3\":\"\",\"data2\":\"The project will work with beef and sheep farmer\",\"data1\":\"The project will work with beef and sheep farmer\"}]},\"consultation\":\"\",\"status\":\"active\"}},\"outputTargets\":[{\"scoreId\":\"7abd62ba-2e44-4318-800b-b659c73dc12b\",\"targetDate\":\"2021-02-21\",\"periodTargets\":[{\"period\":\"2020/2021\",\"target\":\"50\"},{\"period\":\"2021/2022\",\"target\":\"50\"}],\"target\":\"100\"}]}"
 

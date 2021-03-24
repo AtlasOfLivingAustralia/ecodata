@@ -404,7 +404,7 @@
                             "Excessive fertiliser use",
                             "Changes to hydrology and aquatic systems",
                             "Excess recharge of groundwater",
-                            "Excess use of groundwater",
+                            " Excess use (or over use) of surface water or groundwater resources",
                             "Control/spraying",
                             "Competition",
                             "Spread of weeds from surrounding areas",
@@ -468,7 +468,7 @@
                                 "Excessive fertiliser use",
                                 "Changes to hydrology and aquatic systems",
                                 "Excess recharge of groundwater",
-                                "Excess use of groundwater"
+                                " Excess use (or over use) of surface water or groundwater resources"
                               ]
                             },
                             {
@@ -606,7 +606,7 @@
                             "Excessive fertiliser use",
                             "Changes to hydrology and aquatic systems",
                             "Excess recharge of groundwater",
-                            "Excess use of groundwater",
+                            " Excess use (or over use) of surface water or groundwater resources",
                             "Control/spraying",
                             "Competition",
                             "Spread of weeds from surrounding areas",
@@ -670,7 +670,7 @@
                                 "Excessive fertiliser use",
                                 "Changes to hydrology and aquatic systems",
                                 "Excess recharge of groundwater",
-                                "Excess use of groundwater"
+                                " Excess use (or over use) of surface water or groundwater resources"
                               ]
                             },
                             {
@@ -1041,7 +1041,7 @@
               "Partial progression",
               "Inadequate progression",
               "No progression",
-              "Not applicable "
+              "Not applicable"
             ]
           },
           {

@@ -5,10 +5,16 @@
       "name": "number1"
     },
     {
+      "dataType": "stringList",
+      "name": "stringList1",
+      "constraints": ["c1", "c2", "c3"]
+    },
+    {
       "columns": [
         {
-          "dataType": "text",
-          "name": "value1"
+          "dataType": "stringList",
+          "name": "stringList2",
+          "constraints": ["c4", "c5", "c6"]
         },
         {
           "dataType": "text",
@@ -33,6 +39,11 @@
           "type": "number",
           "source": "number1",
           "preLabel": "Number 1"
+        },
+        {
+          "type": "selectMany",
+          "source": "stringList1",
+          "preLabel": "String list 1"
         }
       ]
     },
@@ -41,9 +52,9 @@
       "source": "list",
       "items": [
         {
-          "type": "text",
-          "source": "value1",
-          "preLabel": "Value 1"
+          "type": "selectMany",
+          "source": "stringList2",
+          "preLabel": "String list 2"
         },
         {
           "type": "row",

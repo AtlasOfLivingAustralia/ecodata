@@ -35,10 +35,8 @@ class TabbedExporter {
     protected Map<String, String> activitySheetNames = [:]
     protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
-    /** Cache of headers by activity/version */
-    protected Map<String, List<String>> activityHeaderCache = [:]
-    /** Cache of property getters for an activity type / version */
-    protected Map<String, List> activityDataGetterCache = [:]
+    /** Cache of key: activity type, value: export configuration for that activity */
+    protected Map<String, Map> activityExportConfig = [:]
 
     TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:], TimeZone timeZone = TimeZone.default) {
         this.exporter = exporter
@@ -100,30 +98,10 @@ class TabbedExporter {
         !(dataNode.dataType in ['photoPoints', 'matrix', 'masterDetail', 'list'])
     }
 
-    private void addHeaderAndGetter(String path, String header, Map dataNode, List headers, List outputGetters) {
-        headers << header
-        outputGetters << new OutputDataGetter(path, dataNode, documentMap, timeZone)
-    }
-
-    Map<String, List> getHeadersAndPropertiesForOutput(OutputMetadata outputMetadata) {
-
-        List headers = []
-        List outputPropertyGetters = []
-        outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
-            if (isExportableType(dataNode)) {
-                if (dataNode.dataType == 'stringList' && dataNode.constraints) {
-                    dataNode.constraints.each { constraint ->
-                        String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
-                        addHeaderAndGetter(path + '[' + constraint + ']', header, dataNode, headers, outputPropertyGetters)
-                    }
-                }
-                else {
-                    addHeaderAndGetter(path, outputMetadata.getLabel(viewNode, dataNode), dataNode, headers, outputPropertyGetters)
-                }
-            }
-        }
-
-        [headers: headers, propertyGetters: outputPropertyGetters]
+    /** For compatibility with BioCollect CSProjectXlsExporter */
+    Map getHeadersAndPropertiesForOutput(OutputMetadata outputMetadata) {
+        List<Map> config = buildOutputExportConfiguration(outputMetadata, null)
+        [headers: config.collect{it.header}, propertyGetters: config.collect{it.getter}]
     }
 
     /**
@@ -133,41 +111,93 @@ class TabbedExporter {
      * @param output
      * @return
      */
-    private List getOutputData(OutputMetadata  outputModel, Map output) {
+    private List getOutputData(OutputMetadata  outputModel, Map output, String namespace) {
         List flatData = []
         if (output) {
-            flatData = processor.flatten2(output, outputModel)
+            flatData = processor.flatten2(output, outputModel, OutputModelProcessor.FlattenOptions.REPEAT_SELECTIONS, namespace)
         }
         flatData
     }
 
-    protected Map headersAndPropertyGettersForActivity(String activityType, Integer formVersion) {
-        List activityDataGetters = []
-        List headers = []
-        ActivityForm activityForm = activityFormService.findActivityForm(activityType, formVersion)
-        if (activityForm) {
-            String key = activityType+"_V"+activityForm.formVersion
-            if (activityHeaderCache[key]) {
-                headers = activityHeaderCache[key]
-                activityDataGetters = activityDataGetterCache[key]
-            }
-            else {
-                activityForm.sections.each { FormSection section ->
-                    OutputMetadata outputModel = new OutputMetadata(section.template)
+    protected List getActivityExportConfig(String activityType, boolean namespaceOutputs = false) {
+        String key = activityType
 
-                    Map outputProperty = getHeadersAndPropertiesForOutput(outputModel)
-                    activityDataGetters += outputProperty.propertyGetters
-                    headers += outputProperty.headers
+        if (!activityExportConfig[key]) {
+            ActivityForm[] forms = activityFormService.findVersionedActivityForm(activityType)
+            if (forms) {
+                forms = forms.sort{it.formVersion}
+                for (ActivityForm form in forms) {
+                    List<Map> versionedConfig = buildActivityExportConfiguration(form, namespaceOutputs)
+                    if (!activityExportConfig[key]) {
+                        activityExportConfig[key] = versionedConfig
+                    }
+                    else {
+                        mergeActivityHeadersAndGetters(key, versionedConfig)
+                    }
                 }
-                activityHeaderCache[key] = headers
-                activityDataGetterCache[key] = activityDataGetters
+            } else {
+                log.warn("Cannot export activity of type: ${activityType} - no form found")
             }
         }
-        else {
-            log.warn("Cannot export activity of type: ${activityType} version: ${formVersion} - no form found")
+        activityExportConfig[key]
+    }
+
+    /** Merges headers and getters from multiple form versions into the cache */
+    private void mergeActivityHeadersAndGetters(String key, List<Map> versionedConfig) {
+        List currentConfig = activityExportConfig[key]
+
+        for (int i=0; i<versionedConfig.size(); i++) {
+            if (!currentConfig.find{it.property == versionedConfig[i].property}) {
+                currentConfig << versionedConfig[i]
+            }
+        }
+    }
+
+    private List<Map> buildActivityExportConfiguration(ActivityForm activityForm, boolean namespaceOutputs) {
+        List config = []
+        activityForm.sections.each { FormSection section ->
+            OutputMetadata outputModel = new OutputMetadata(section.template)
+            String namespace = namespaceOutputs ? section.name : ''
+            List outputConfig = buildOutputExportConfiguration(outputModel, namespace)
+            Map commonProperties = [section: section.name, formVersion: activityForm.formVersion]
+            config += outputConfig.collect{it + commonProperties }
         }
 
-        [headers: headers, outputGetters: activityDataGetters]
+        config
+    }
+
+    private List<Map> buildOutputExportConfiguration(OutputMetadata outputMetadata, String namespace) {
+
+        String prefix = namespace ? namespace+'.' : ''
+        List<Map> fieldConfiguration = []
+        String outputNotCompletedPath = prefix + 'outputNotCompleted'
+        fieldConfiguration << [
+                header:"Not applicable",
+                property:outputNotCompletedPath,
+                getter:new OutputDataGetter(outputNotCompletedPath, [dataType:'boolean', name:"outputNotCompleted"], documentMap, timeZone)]
+
+        outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
+            if (isExportableType(dataNode)) {
+                String propertyPath = prefix + path
+                if (dataNode.dataType == 'stringList' && dataNode.constraints) {
+                    dataNode.constraints.each { constraint ->
+                        String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
+                        String constraintPath = propertyPath + '[' + constraint + ']'
+                        fieldConfiguration << [
+                                header:header,
+                                property:constraintPath,
+                                getter:new OutputDataGetter(constraintPath, dataNode, documentMap, timeZone)]
+                    }
+                }
+                else {
+                    fieldConfiguration << [
+                            header:outputMetadata.getLabel(viewNode, dataNode),
+                            property:propertyPath,
+                            getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
+                }
+            }
+        }
+        fieldConfiguration
     }
 
     /**
@@ -176,15 +206,20 @@ class TabbedExporter {
      *
      * including, headers, data cell reader and data itself
      * @param activity
-     * @outputName  About the output name
+     * @param outputName  About the output name
+     * @param tabPerVersion true if there should be a different tab for each version of an activity
      * @return  Sheet headers, Getter of data model, data itself
      */
     protected buildOutputSheetData(Map activity,String outputName=null){
 
-        Map results = headersAndPropertyGettersForActivity(activity.type, activity.formVersion)
-        List headers = results.headers
-        List outputGetters = results.outputGetters
+        List results = getActivityExportConfig(activity.type)
+        List headers = results.collect{it.header}
+        List outputGetters = results.collect{ it.getter}
 
+        return [headers: headers, getters: outputGetters, data: prepareActivityDataForExport(activity, false, outputName)]
+    }
+
+    protected List prepareActivityDataForExport(Map activity, boolean namespace = false, String outputName = null) {
         List outputData = []
         ActivityForm activityForm = activityFormService.findActivityForm(activity.type, activity.formVersion)
 
@@ -192,14 +227,15 @@ class TabbedExporter {
             if ( !outputName || outputName == output.name )  {
                 FormSection formSection = activityForm?.getFormSection(output.name)
                 if (formSection && formSection.template) {
+                    String namespaceStr = namespace ? formSection.name : ''
                     OutputMetadata outputModel = new OutputMetadata(formSection.template)
-                    outputData += getOutputData(outputModel, output)
+                    outputData += getOutputData(outputModel, output, namespaceStr)
                 } else {
                     log.error("Cannot find template of " + output.name)
                 }
             }
         }
-        return [headers: headers, getters: outputGetters, data: outputData]
+        outputData
     }
 
     /**
@@ -219,12 +255,13 @@ class TabbedExporter {
             // If the sheets are named similarly, they may end up the same after being changed to excel
             // tab compatible strings
             int i = 1
-            while (activitySheetNames[sheetName]) {
-                sheetName = sheetName.substring(0, name.length()-1)
-                sheetName = sheetName + Integer.toString(i)
+            while (activitySheetNames[name]) {
+                name = name.substring(0, name.length()-3)
+                name = name + "("+Integer.toString(i)+")"
+                i++
             }
 
-            activitySheetNames[sheetName] = sheetName
+            activitySheetNames[name] = sheetName
             typedActivitySheets[sheetName] = exporter.addSheet(name, headers)
         }
         typedActivitySheets[sheetName]

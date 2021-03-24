@@ -456,6 +456,7 @@ class SearchController {
         if (!params.email) {
             params.email = userService.getCurrentUserDetails().userName
         }
+        log.info("Download requested: "+params.email+", Project count: "+ids?.size()+", Tabs: "+params.tabs)
         params.fileExtension = "xlsx"
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
@@ -476,15 +477,15 @@ class SearchController {
         downloadService.downloadProjectDataAsync(params, doDownload)
     }
 
-    private ProjectExporter meritProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
+    protected ProjectExporter meritProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
         String ELECTORATES = 'electFacet'
         params.facets = ELECTORATES
         SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
         List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
 
         List tabsToExport = params.getList('tabs')
-
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService)
+        boolean formSectionPerTab = params.getBoolean("formSectionPerTab", false)
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, [:], formSectionPerTab)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {

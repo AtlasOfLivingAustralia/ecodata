@@ -29,6 +29,7 @@ class Project {
     String dataProviderId // collectory dataProvider id
     String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
+    String terminationReason
     String externalId
     String name  // required
     String description
@@ -205,6 +206,7 @@ class Project {
         mapLayersConfig nullable: true
         managementUnitId nullable: true
         mapDisplays nullable: true
+        terminationReason nullable: true
     }
 }
 

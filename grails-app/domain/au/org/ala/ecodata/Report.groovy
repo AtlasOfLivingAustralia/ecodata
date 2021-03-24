@@ -44,6 +44,9 @@ class Report {
     String description
     String type // "Activity" for stage/activity progress reporting, "Performance", "Administrative" for organisation performance self assessments
     String category // Client classification for reports
+    /** Name of the report configuration that generated this report */
+    String generatedBy
+
     /**
      * For reports with an activityType specified, this field holds the id of the activity that contains the data for this report.
      * It is unused for other report types.
@@ -243,6 +246,7 @@ class Report {
         activityType nullable:true
         type nullable:false
         category nullable:true
+        generatedBy nullable:true
         adjustedReportId nullable:true, validator: { value, report ->
             // Adjustment reports must reference another report
             if (report.type == TYPE_ADJUSTMENT) {
