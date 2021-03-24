@@ -1,22 +1,34 @@
 package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
+import au.org.ala.ecodata.reporting.ShapefileBuilder
+import grails.core.GrailsApplication
+import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
+import org.springframework.beans.factory.annotation.Autowired
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class SitesFetcher implements graphql.schema.DataFetcher<List<Site>> {
 
-    public SitesFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService) {
+    public SitesFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
+                        SiteService siteService) {
         this.projectService = projectService
         this.elasticSearchService = elasticSearchService
         this.permissionService = permissionService
+        this.siteService = siteService
     }
 
 
     PermissionService permissionService
     ElasticSearchService elasticSearchService
-
+    SiteService siteService
     ProjectService projectService
+
+    @Autowired
+    GrailsApplication grailsApplication
 
     @Override
     List<Site> get(DataFetchingEnvironment environment) throws Exception {
@@ -39,8 +51,12 @@ class SitesFetcher implements graphql.schema.DataFetcher<List<Site>> {
         // Or do we do two queries, one for full resolution, one for the rest (how do we sort/page if we do two queries?)
 
 
-
-        return queryElasticSearch(environment)
+        if(environment.arguments.get("siteIds")) {
+            return Site.findAllBySiteIdInList(environment.arguments.get("siteIds") as List)
+        }
+        else {
+            return queryElasticSearch(environment)
+        }
     }
 
     private List<Site> queryElasticSearch(DataFetchingEnvironment environment) {
@@ -70,6 +86,63 @@ class SitesFetcher implements graphql.schema.DataFetcher<List<Site>> {
 
         List<String> projectIds = searchResponse.hits.hits.collect{it.source.projectId}
 
-        Site.findAllByProjectsInList(projectIds, [max:10])
+        int max = environment.arguments.get("max") ?: 10
+        int page = environment.arguments.get("page") ?: 1
+        int offset =  (page-1)*max
+
+        Site.findAllByProjectsInList(projectIds, [max:max, offset:offset])
+    }
+
+    Map getSitesAsGeojson(String siteId) {
+        def site = siteService.get(siteId, siteService.BRIEF, null)
+        return siteService.toGeoJson(site)
+    }
+
+    String getSiteShapeFileUrl(String siteId) {
+        Closure doDownload = {OutputStream outputStream, String id -> downloadSiteShapeFiles(outputStream, id)}
+        return createSiteShapeFiles(siteId, doDownload)
+    }
+
+    boolean downloadSiteShapeFiles(OutputStream outputStream, String siteId) {
+        new ZipOutputStream(outputStream).withStream { zip ->
+            try{
+                zip.putNextEntry(new ZipEntry("shapefiles/"))
+                Site site = Site.findBySiteId(siteId)
+                if (site) {
+                    zip.putNextEntry(new ZipEntry("shapefiles/${site.name}.zip"))
+                    ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+                    builder.setName(site.name)
+                    builder.addSite(site.siteId)
+                    builder.writeShapefile(zip)
+                }
+            } catch (Exception e){
+                throw new GraphQLException("Error creating download archive" + e)
+            } finally {
+                zip.finish()
+                zip.flush()
+                zip.close()
+            }
+        }
+        true
+    }
+
+    String createSiteShapeFiles(String siteId, Closure downloadAction) {
+        String downloadId = UUID.randomUUID().toString()
+        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        directoryPath.mkdirs()
+        String fileExtension = 'zip'
+        FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
+
+        Site.withNewSession {
+            downloadAction(outputStream, siteId)
+        }
+
+        String urlPrefix = "${grailsApplication.config.grails.serverURL}/download/get/"
+        String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
+        if (outputStream) {
+            outputStream.flush()
+            outputStream.close()
+        }
+        return url
     }
 }

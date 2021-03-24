@@ -70,7 +70,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         // add pagination results.
         String userId = environment.context.user?.userId ?: '1493'
         String query = queryString ?:"*:*"
-        Boolean myProjects = environment.arguments.get("myProjects") != null ? environment.arguments.get("myProjects") : true
+        Boolean myProjects = environment.arguments.get("myProjects") != null ? environment.arguments.get("myProjects") : false
         SearchResponse searchResponse
 
         if(myProjects) {
@@ -106,7 +106,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
 
         Map publicProjects = [:]
         FindIterable findIterable = Project.find(Filters.in("projectId", publicProjectIds))
-        findIterable.projection(publicView).each { Project project ->
+        findIterable.each { Project project ->
             publicProjects.put(project.projectId, project)
         }
 
