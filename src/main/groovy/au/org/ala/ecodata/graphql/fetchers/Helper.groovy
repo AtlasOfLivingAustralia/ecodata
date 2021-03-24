@@ -94,7 +94,6 @@ class Helper {
                 def fields = section.template.dataModel != null ? section.template.dataModel : []
                 //set field labels
                 OutputMetadata outputModel = new OutputMetadata(section.template)
-                println(activityForm.name + " " + section.name)
                 outputModel.modelIterator { String path, Map viewNode, Map dataNode ->
                     def field = fields.find { b -> b == dataNode }
                     if(field) {

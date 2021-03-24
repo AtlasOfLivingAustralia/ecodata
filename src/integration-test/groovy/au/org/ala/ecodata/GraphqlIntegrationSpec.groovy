@@ -27,7 +27,8 @@ class GraphqlIntegrationSpec extends GraphqlSpecHelper{
         Project.findAll{projectId == "graphqlProject1"}.each { it.delete(flush:true) }
 //        Activity.findAll().each { it.delete(flush:true) }
 //        Output.findAll().each { it.delete(flush:true) }
-//        ManagementUnit.findAll().each { it.delete(flush:true) }
+        ManagementUnit.findAll{managementUnitId == "mu1"}.each { it.delete(flush:true) }
+        Site.findAll().each { it.delete(flush:true) }
     }
 
     def "Get project by project Id"() {
@@ -451,5 +452,57 @@ class GraphqlIntegrationSpec extends GraphqlSpecHelper{
         result.data.searchManagementUnits[0].managementUnitId == mu.managementUnitId
     }
 
+    def "Get site details"() {
+        setup:
+        Site site = new Site(siteId: "site1", name: "site1").save(failOnError: true, flush: true)
 
+        when:
+        graphqlController.request.contentType = 'application/graphql'
+        graphqlController.request.method = 'POST'
+        def bodyContent = """
+            query{
+                sites(term:"*.*", siteIds:"site1"){
+                    siteId
+                    name
+                    }
+            }"""
+        graphqlController.request.content = bodyContent.toString().getBytes('UTF-8')
+        def result = graphqlController.index()
+
+        then:
+        result.data.sites != null
+        result.data.sites.size() == 1
+        result.data.sites[0].size() == 2
+        result.data.sites[0].siteId == site.siteId
+        result.data.sites[0].name == site.name
+    }
+
+    def "Get site geojson details"() {
+        setup:
+        Site site = new Site(siteId: "site1", name: "site1", extent: [geometry:[type:"Point", coordinates:["138.343", "29.688"]]] ).save(failOnError: true, flush: true)
+
+        when:
+        graphqlController.request.contentType = 'application/graphql'
+        graphqlController.request.method = 'POST'
+        def bodyContent = """
+            query{
+                sites(term:"*.*", siteIds:"site1"){
+                    siteId
+                    siteGeojson{
+                        type
+                        geometry{
+                            type
+                            coordinates
+                        }
+                    }
+                    }
+            }"""
+        graphqlController.request.content = bodyContent.toString().getBytes('UTF-8')
+        def result = graphqlController.index()
+
+        then:
+        result.data.sites != null
+        result.data.sites.size() == 1
+        result.data.sites[0].siteId == site.siteId
+    }
 }
