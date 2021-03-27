@@ -191,6 +191,14 @@ bootJar {
     classifier = 'exec'
 }
 
+assemble {
+    dependsOn bootJar
+}
+
+bootWar {
+    enabled = false
+}
+
 publish {
     dependsOn assemble
 }
