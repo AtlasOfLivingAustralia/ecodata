@@ -226,8 +226,8 @@ class TabbedExporter {
         activity.outputs.each{ output->
             if ( !outputName || outputName == output.name )  {
                 FormSection formSection = activityForm?.getFormSection(output.name)
-                String namespaceStr = namespace ? formSection.name : ''
                 if (formSection && formSection.template) {
+                    String namespaceStr = namespace ? formSection.name : ''
                     OutputMetadata outputModel = new OutputMetadata(formSection.template)
                     outputData += getOutputData(outputModel, output, namespaceStr)
                 } else {
