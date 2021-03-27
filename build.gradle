@@ -152,7 +152,6 @@ dependencies {
 
 springBoot {
     buildInfo()
-//    layout = WAR
 }
 
 bootRun {
@@ -189,6 +188,7 @@ assets {
 bootJar {
     enabled = true
     classifier = 'exec'
+    launchScript()
 }
 
 assemble {
