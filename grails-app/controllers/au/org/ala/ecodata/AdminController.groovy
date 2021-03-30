@@ -686,7 +686,7 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
-    def getIndexNames() {F
+    def getIndexNames() {
         Map model = [indexNames: metadataService.getIndicesForDataModels()]
         render view: 'indexNames', model: model
     }
