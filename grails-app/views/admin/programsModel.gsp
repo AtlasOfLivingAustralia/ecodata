@@ -142,8 +142,8 @@
         var options = {
             updateProgramsModelUrl:fcConfig.updateProgramsModelUrl
         };
-        var activityTypes = JSON.parse('${(activityTypes as grails.converters.JSON).toString().encodeAsJavaScript()}');
-        var programsModel = JSON.parse('${(programsModel as grails.converters.JSON).toString().encodeAsJavaScript()}');
+        var activityTypes = JSON.parse('${raw((activityTypes as grails.converters.JSON).toString().encodeAsJavaScript())}');
+        var programsModel = JSON.parse('${raw((programsModel as grails.converters.JSON).toString().encodeAsJavaScript())}');
         var viewModel = new ProgramModelViewModel(programsModel, activityTypes, options);
         ko.applyBindings(viewModel);
     });

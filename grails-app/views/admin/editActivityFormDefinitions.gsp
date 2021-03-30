@@ -184,7 +184,7 @@
 <asset:script>
     $(function(){
 
-        var forms = JSON.parse('${(availableActivities as grails.converters.JSON).toString()}');
+        var forms = JSON.parse('${raw((availableActivities as grails.converters.JSON).toString())}');
         var service = new ActivityFormService(fcConfig);
         var selectedForm = "${params.form}";
         var viewModel = new ActivityModelViewModel(forms, selectedForm, service, fcConfig);

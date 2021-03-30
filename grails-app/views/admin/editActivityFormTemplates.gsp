@@ -83,8 +83,8 @@
 <asset:script>
     $(function(){
 
-        var forms = JSON.parse('${(availableActivities as grails.converters.JSON).toString()}');
-        var selectedForm = "${params.form}";
+        var forms = JSON.parse('${raw((availableActivities as grails.converters.JSON).toString())}');
+        var selectedForm = "${raw(params.form)}";
         var service = new ActivityFormService(fcConfig);
         var viewModel = new EditActivityTemplatesViewModel(forms, selectedForm, service, fcConfig);
         ko.applyBindings(viewModel);
