@@ -6,7 +6,7 @@ class ECTagLib {
 
     static namespace = "ec"
 
-    def userService, authService
+    def userService, authService, metadataService
 
     /**
      * @attr active
@@ -204,6 +204,14 @@ class ECTagLib {
                 mkp.yieldUnescaped("&nbsp;")
             }
         }
+    }
+
+    def buildProperty = { attrs ->
+        out << metadataService.getBuildProperty(attrs.name)
+    }
+
+    def gitProperty = { attrs ->
+        out << metadataService.getGitProperty(attrs.name)
     }
 
 }

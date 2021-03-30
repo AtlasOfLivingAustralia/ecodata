@@ -993,6 +993,33 @@ class MetadataService {
         return results
     }
 
+    /** Returns a value from the gradle git plugin generated git.properties */
+    String getGitProperty(String propertyName) {
+        getFromPropertyFile("git.properties", propertyName)
+    }
+
+    /** Returns a value from the gradle/spring boot generated build-info.properties */
+    String getBuildProperty(String propertyName) {
+        getFromPropertyFile("META-INF/build-info.properties", propertyName)
+    }
+    /**
+     * Loads the properties file with the supplied name from the classpath,
+     * then returns the value associated with the supplied name.
+     */
+    private String getFromPropertyFile(String fileName, String propertyName) {
+        cacheService.get(fileName+'.'+propertyName, {
+            String value = ''
+            def classLoader = Thread.currentThread().getContextClassLoader()
+            URL gitProperties = classLoader.getResource(fileName)
+            gitProperties?.withInputStream {
+                Properties props = new Properties()
+                props.load(it)
+                value = props.get(propertyName)
+            }
+            value
+        })
+
+    }
 
 
 
