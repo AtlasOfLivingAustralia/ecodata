@@ -28,28 +28,28 @@ info:
         jdk: '@info.build.jdk@'
         number: '@info.build.number@'
     git:
-        branch: '@info.git.branch@'
-        commit: '@info.git.commit@'
-        slug: '@info.git.slug@'
-        tag: '@info.git.tag@'
-        timestamp: '@info.git.timestamp@'
+        host: '@git.build.host@'
+        commit: '@git.commit.id@'
+        tag: '@git.closest.tag.name@'
+        timestamp: '@git.commit.time@'
 spring:
     main:
         banner-mode: "console"
     groovy:
         template:
           check-template-location: false
-    http:
+    servlet:
         multipart:
-          max-file-size: 5000MB
-          max-request-size: 5000MB
+            max-file-size: 1024MB
+            max-request-size: 1024MB
 server:
-    session:
-        timeout: 7200 # seconds, 2 hours
     tomcat:
         port-header: 'X-Forwarded-Port'
         protocol-header: 'X-Forwarded-Proto'
         remote-ip-header: 'X-Forwarded-For'
+    servlet:
+        session:
+            timeout: 7200
 # Spring Actuator Endpoints are Disabled by Default
 endpoints:
     enabled: true

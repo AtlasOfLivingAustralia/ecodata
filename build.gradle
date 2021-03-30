@@ -13,7 +13,7 @@ buildscript {
 }
 
 plugins {
-    id "com.gorylenko.gradle-git-properties" version "2.0.0"
+    id "com.gorylenko.gradle-git-properties" version "2.2.4"
 }
 
 version "3.0-SNAPSHOT"
@@ -41,9 +41,15 @@ repositories {
     jcenter()
 }
 
-
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
 
 dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.grails:grails-core"
@@ -71,7 +77,7 @@ dependencies {
     profile "org.grails.profiles:web"
 
     compile 'org.grails.plugins:external-config:2.0.0'
-    compile 'com.bertramlabs.plugins:asset-pipeline-grails:3.2.4'
+    compile "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
 
     compile "org.elasticsearch:elasticsearch:1.7.1"
 
@@ -130,13 +136,8 @@ dependencies {
 
     // Added due to previous reliance on transitive dependencies from plugins
     compile 'au.com.bytecode:opencsv:2.4'
-    compile 'com.bertramlabs.plugins:asset-pipeline-core:3.2.4'
+    compile "com.bertramlabs.plugins:asset-pipeline-core:$assetPipelineVersion"
 
-   // compile "org.grails.plugins:jmx:0.9"
-
-    //TODO: including this plugin interferes with debug watch in intellij. Need to look into another way to check MBean
-//    compile 'org.grails.plugins:grails-melody-plugin:1.70.0'
-    
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
     testCompile "org.grails:grails-web-testing-support"
@@ -163,16 +164,10 @@ bootRun {
             println "$k = $v"
         }
     }
-  //  String springProfilesActive = 'spring.profiles.active'
-  //  systemProperty springProfilesActive, System.getProperty(springProfilesActive)
+    String springProfilesActive = 'spring.profiles.active'
+    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
 }
 
-//tasks.withType(Test) {
-//    testLogging {
-//        events "passed", "skipped", "failed"
-//        exceptionFormat 'full'
-//    }
-//}
 
 tasks.withType(GroovyCompile) {
     configure(groovyOptions) {
