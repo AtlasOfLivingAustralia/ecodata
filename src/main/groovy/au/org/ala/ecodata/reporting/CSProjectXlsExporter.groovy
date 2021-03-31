@@ -221,7 +221,7 @@ class CSProjectXlsExporter extends ProjectExporter {
                         properties.addAll(outputConfig.propertyGetters)
 
                         processor.hideMemberOnlyAttributes(output, outputModel, userIsProjectMember)
-                        List rowSets = processor.flatten2(output, outputModel)
+                        List rowSets = processor.flatten2(output, outputModel, OutputModelProcessor.FlattenOptions.REPEAT_ALL)
 
                         // some outputs (e.g. with list datatypes) result in multiple rows in the spreadsheet, so make sure that the existing rows are duplicated
                         while (rows.size() < rowSets.size()) {
