@@ -1,9 +1,20 @@
 apply plugin:"jacoco"
 jacoco {
     toolVersion = "0.8.4"
+    excludes = ['**/TimezoneMapper.java']
 }
 jacocoTestReport {
     dependsOn test
+
+    afterEvaluate {
+        getClassDirectories().setFrom(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            '**/TimezoneMapper.class'
+                    ]
+            )
+        })
+    }
     reports {
         xml.enabled false
         csv.enabled false

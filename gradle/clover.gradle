@@ -21,6 +21,7 @@ clover {
                 '**/UrlMappings.groovy',
                 '**/*GrailsPlugin.groovy',
                 '**/*Mock.groovy',
+                '**/TimezoneMapper.java'
     ]
 
 
@@ -43,4 +44,6 @@ clover {
         html = true
         xml = true
     }
+
+    targetPercentage = '39%'
 }

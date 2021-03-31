@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
-        //classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
+        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
         classpath 'org.grails.plugins:quartz:2.0.13' // Needed to compile *Job classes
     }
 }
@@ -27,8 +27,8 @@ apply plugin: "groovy"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
-//apply from: "${project.projectDir}/gradle/clover.gradle"
-apply from: "${project.projectDir}/gradle/jacoco.gradle"
+apply from: "${project.projectDir}/gradle/clover.gradle"
+//apply from: "${project.projectDir}/gradle/jacoco.gradle"
 
 //apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
 apply from: "${project.projectDir}/gradle/publish.gradle"
@@ -143,7 +143,6 @@ dependencies {
     testCompile "org.grails:grails-web-testing-support"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
-    //clover 'org.openclover:clover:4.4.1'
     compile 'org.apache.logging.log4j:log4j-api:2.14.0'
     compile 'org.apache.logging.log4j:log4j-core:2.14.0'
 
