@@ -64,8 +64,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-text pull-right">
                         <span id="buttonBar">
-                            <ec:currentUserDisplayName/>&nbsp;<hf:loginLogout cssClass="btn btn-small"
-                                                                              logoutUrl="${createLink(controller: 'logout', action: 'logout')}"/>
+                            <ec:currentUserDisplayName/>&nbsp;<auth:loginLogout cssClass="btn btn-small"/>
                             %{--<button class="btn btn-small btn-info" id="btnProfile"><i class="icon-user icon-white"></i>&nbsp;My Profile</button>--}%
                             <button class="btn btn-warning btn-small" id="btnAdministration"><i
                                     class="icon-cog icon-white"></i>&nbsp;Administration</button>
