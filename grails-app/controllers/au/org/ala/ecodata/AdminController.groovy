@@ -20,31 +20,13 @@ import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
 
-    private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
-
-    def outputService, activityService, siteService, projectService, authService,
-        collectoryService, organisationService, hubService,
+    def outputService, siteService, projectService, authService,
+        collectoryService, organisationService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
     MapService mapService
-    def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
-    /**
-     * Triggered by beforeInterceptor, this restricts access to specified (only) actions to ROLE_ADMIN
-     * users.
-     *
-     * @return
-     */
-    private auth() {
-        if (!authService.userInRole(grailsApplication.config.security.cas.adminRole)) {
-            flash.message = "You are not authorised to access the page: Administration."
-            redirect(uri: "/")
-            false
-        } else {
-            true
-        }
-    }
-
+    @AlaSecured("ROLE_ADMIN")
     def index() {}
 
     @AlaSecured("ROLE_ADMIN")
