@@ -199,6 +199,11 @@ publish {
 }
 
 clientDependencies {
+    bower {
+        'jquery-ui'('1.12.1') {
+            include 'jquery-ui.js'
+        }
+    }
     npm {
         'bootstrap'('^5.0.0-beta3', transitive:false)
         'jquery'('3.6.0')
