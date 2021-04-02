@@ -44,10 +44,7 @@
     }
 
     </style>
-    <g:if test="${!grailsApplication.config.headerAndFooter.excludeBootstrapCss}">
-        <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap.min.css" rel="stylesheet" media="screen,print"/>
-        <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap-theme.min.css" rel="stylesheet" media="screen,print"/>
-    </g:if>
+
     <asset:stylesheet src="ecodata.css"/>
     <g:layoutHead/>
 
@@ -55,46 +52,32 @@
 
 <body>
 <div id="fixed-footer-wrapper">
-    <div class="navbar navbar-default navbar-fixed-top">
-        %{--<div class="navbar-inner">--}%
-
+    <div class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <p class="navbar-text brand" style="margin-top: 20px">Ecodata</p>
-
-                <div class="navbar-collapse collapse">
-                    <ul class="navbar-text pull-right">
-                        <span id="buttonBar">
-                            <ec:currentUserDisplayName/>&nbsp;<auth:loginLogout cssClass="btn btn-small"/>
-                            %{--<button class="btn btn-small btn-info" id="btnProfile"><i class="icon-user icon-white"></i>&nbsp;My Profile</button>--}%
-                            <button class="btn btn-warning btn-small" id="btnAdministration"><i
-                                    class="icon-cog icon-white"></i>&nbsp;Administration</button>
+                <p class="nav-item navbar-brand" style="margin-top: 20px">Ecodata</p>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleHeaderContent" aria-controls="collapsibleHeaderContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleHeaderContent">
+                    <div class="d-flex flex-grow-1">
+                        <span id="buttonBar" class="ms-auto">
+                            <ec:currentUserDisplayName/>&nbsp;<auth:loginLogout cssClass="nav-item btn btn-info"/>
+                            <button class="btn btn-warning nav-item" id="btnAdministration"><i class="fa fa-cog"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
                         </span>
-                    </ul>
+                    </div>
                 </div><!--/.nav-collapse -->
             </div>
        %{-- </div>--}%
     </div>
 
     <div class="container-fluid">
-        <legend>
-            <table style="width: 100%; margin-bottom: 30px">
-                <tr>
-                    <td><g:link class="discreet" controller="home" action="index">Home</g:link><fc:navSeparator/><g:link
-                            class="discreet" action="index">Administration</g:link><fc:navSeparator/><g:pageProperty
-                            name="page.pageTitle"/></td>
-
-                </tr>
-            </table>
-        </legend>
-
-        <div class="row-fluid">
+        <div class="row">
             <div class="col-md-3">
-                <ul class="nav nav-list nav-stacked nav-tabs">
-                    %{--<ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'users')}" title="Users" />--}%
+                <ul class="nav flex-column nav-stacked nav-pills">
+
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'tools')}" title="Tools"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'settings')}" title="Settings"/>
-                    %{--<ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}" title="Metadata" />--}%
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'audit')}" title="Audit"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}"
                                        title="Raw activity model"/>

@@ -1,9 +1,7 @@
-//= require jquery/3.3.1/jquery-3.3.1.min
+//= require jquery/3.6.0/jquery-3.6.0.min
 //= require jquery-migrate/1.4.1/jquery-migrate-1.4.1
-// require jquery.autocomplete
-//= require jquery-ui/jquery-ui-1.9.2.custom.min
 // require html5
-//= require bootstrap.min
+//= require bootstrap/5.0.0/js/bootstrap
 // require bootstrap-combobox/bootstrap-combobox
 //= require knockoutjs/knockout-3.3.0.min
 //= require knockoutjs/knockout-sortable.min

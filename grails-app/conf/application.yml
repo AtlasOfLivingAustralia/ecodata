@@ -42,6 +42,12 @@ spring:
         multipart:
             max-file-size: 1024MB
             max-request-size: 1024MB
+    devtools:
+        restart:
+            additional-exclude:
+                - '**/*.gsp'
+                - '**/*.css'
+                - '**/*.js'
 server:
     tomcat:
         port-header: 'X-Forwarded-Port'

@@ -9,8 +9,8 @@
             activityFormUpdateUrl: "${createLink(controller:'activityForm', action:'update')}",
             activityFormCreateUrl: "${createLink(controller:'activityForm', action:'create')}",
             getActivityFormUrl: "${createLink(action:'findActivityForm')}",
-            reloadUrl:"${createLink(controller:'admin', action:'editActivityFormDefinitions')}",
-            findUsersOfFormUrl:"${createLink(controller:'activityForm', action:'findUsesOfForm')}"
+            reloadUrl: "${createLink(controller:'admin', action:'editActivityFormDefinitions')}",
+            findUsersOfFormUrl: "${createLink(controller:'activityForm', action:'findUsesOfForm')}"
         };
     </script>
 
@@ -24,25 +24,31 @@
 </content>
 
 <div class="form-selection" data-bind="with:selectionModel">
-    <div class="row-fluid">
+    <div class="row">
         <div class="alert alert-danger" style="display:none" data-bind="visible:warning()">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong>Warning!</strong> <span data-bind="text:warning"></span>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span10">
-            <label>Activity form: <select style="width:100%" name="formSelector" data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select></label>
+
+    <div class="row">
+        <div class="col-md-10">
+            <label for="formSelector">Activity form:</label><select id="formSelector" name="formSelector"
+                                                                    class="form-control"
+                                                                    data-bind="options:activityForms, optionsCaption:'Select a form to edit', optionsText:'name', value:selectedFormName"></select>
         </div>
-        <div class="span2">
-            <label>Version:<br/> <select style="width:100%" name="versionSelector" data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
+
+        <div class="col-md-2">
+            <label for="formVersion">Version:</label> <select id="formVersion" style="width:100%;" class="form-control"
+                                                              name="versionSelector"
+                                                              data-bind="options:activityFormVersions, value:selectedFormVersion"></select></label>
         </div>
     </div>
 
 </div>
 
-<div class="row-fluid clearfix">
-    <div class="span12">
+<div class="row">
+    <div class="col-12">
         <ul data-bind="with:selectedActivity" class="activityList sortableList">
 
             <li class="item" data-bind="css:{disabled:!enabled()}">
@@ -54,14 +60,19 @@
                 </div>
             </li>
         </ul>
-        <div class="button-bar">
-        <button class="btn" data-bind="click:addActivity, enable:!selectedActivity()" class="clickable"><i class="icon-plus"></i> Add new</button>
 
-        <span class="upload-btn-wrapper">
-            <button type="button" class="btn" data-bind="enable:!selectedActivity()"><i class="icon-upload"></i> Import</button>
-            <input type="file" id="fileinput" accept="application/json" name="myfile" data-bind="enable:!selectedActivity(), event: {change:importActivity}"/>
-        </span>
-        <button type="button" data-bind="click:exportActivity, enable:selectedActivity()" class="btn"><i class="icon-download"></i> Export</button>
+        <div class="button-bar">
+            <button class="btn btn-secondary btn-sm" data-bind="click:addActivity, enable:!selectedActivity()"
+                    class="clickable"><i class="fa fa-plus"></i> Add new</button>
+
+            <span class="upload-btn-wrapper">
+                <button type="button" class="btn btn-secondary btn-sm" data-bind="enable:!selectedActivity()"><i
+                        class="fa fa-upload"></i> Import</button>
+                <input type="file" id="fileinput" accept="application/json" name="myfile"
+                       data-bind="enable:!selectedActivity(), event: {change:importActivity}"/>
+            </span>
+            <button type="button" data-bind="click:exportActivity, enable:selectedActivity()"
+                    class="btn btn-secondary btn-sm"><i class="fa fa-download"></i> Export</button>
         </div>
 
     </div>
@@ -86,98 +97,132 @@
 <div>Form sections: <ul data-bind="foreach:sections">
     <li><span data-bind="text:name"></span><span data-bind="visible:optional">(optional)</span></li>
 </ul></div>
-<button data-bind="click:$root.removeActivity" type="button" class="btn btn-mini pull-right">Remove</button>
-<button data-bind="click:edit" type="button" class="btn btn-mini pull-right">Edit</button>
+
+<div class="section-buttons d-flex justify-content-end">
+    <button data-bind="click:$root.removeActivity" type="button"
+            class="btn btn-outline-secondary btn-sm">Remove</button>
+    <button data-bind="click:edit" type="button" class="btn btn-outline-secondary btn-sm">Edit</button>
+</div>
 </script>
 
 <script id="editActivityTmpl" type="text/html">
 
 <form class="form-horizontal">
-    <div class="control-group">
-        <label class="control-label">Name: </label>
-        <div class="controls">
-            <input type="text" class="input-xxlarge" data-bind="value:name"></div>
-        </div>
+    <div class="row">
+        <label class="col-md-3 col-form-label">Name:</label>
+
+        <div class="col-md-9">
+            <input type="text" class="form-control" data-bind="value:name"></div>
     </div>
-    <div class="control-group">
-        <label class="control-label">Type: </label>
-        <div class="controls">
-            <select data-bind="options:['Activity','Assessment','Report','Milestone'],value:type"></select>
+</div>
+    <div class="row">
+        <label class="col-md-3 col-form-label">Type:</label>
+
+        <div class="col-md-9">
+            <select class="form-select"
+                    data-bind="options:['Activity','Assessment','Report','Milestone'],value:type"></select>
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label">Category: </label>
-        <div class="controls">
-            <input type="text" class="input-xxlarge " data-bind="value:category">
+    <div class="row">
+        <label class="col-md-3 col-form-label">Category:</label>
+
+        <div class="col-md-9">
+            <input type="text" class="form-control" data-bind="value:category">
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">GMS ID: </label>
-        <div class="controls">
-            <input type="text" class="input-xxlarge" data-bind="value:gmsId">
+
+    <div class="row">
+        <label class="col-md-3 col-form-label">GMS ID:</label>
+
+        <div class="col-md-9">
+            <input type="text" class="form-control" data-bind="value:gmsId">
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">Supports sites?: </label>
-        <div class="controls">
-            <input type="checkbox" data-bind="checked:supportsSites">
+
+    <div class="row">
+        <label class="col-md-3 col-form-label form-check-label">Supports sites?:</label>
+
+        <div class="col-md-9">
+            <input type="checkbox" class="form-check-input" data-bind="checked:supportsSites">
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">Supports photo points?: </label>
-        <div class="controls">
-            <input type="checkbox" data-bind="checked:supportsPhotoPoints">
+
+    <div class="row">
+        <label class="col-md-3 col-form-label form-check-label">Supports photo points?:</label>
+
+        <div class="col-md-9">
+            <input type="checkbox" class="form-check-input" data-bind="checked:supportsPhotoPoints">
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">Min. optional sections: </label>
-        <div class="controls">
-            <input type="text" class="input-small" data-bind="value:minOptionalSectionsCompleted">
+
+    <div class="row">
+        <label class="col-md-3 col-form-label">Min. optional sections:</label>
+
+        <div class="col-md-9">
+            <input type="number" class="form-control" data-bind="value:minOptionalSectionsCompleted">
         </div>
     </div>
 </form>
 
-<div>Form sections: <ul data-bind="sortable:{data:sections}" class="output-drop-target sortableList small">
-    <li>
-        <form class="form-horizontal">
-            <span class="pull-right"><i data-bind="click:$parent.removeFormSection" class="icon-remove"></i></span>
-            <div class="control-group">
-                <label class="control-label">Name: </label>
-                <div class="controls">
-                    <input type="text" class="input-xxlarge" data-bind="value:name">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Optional: </label>
-                <div class="controls">
-                    <input type="checkbox" data-bind="checked:optional">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Collapsed by default: </label>
-                <div class="controls">
-                    <input type="checkbox" data-bind="checked:collapsedByDefault">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Question text if optional: </label>
-                <div class="controls">
-                    <input type="text" class="input-xxlarge" data-bind="value:optionalQuestionText, disable:!optional()">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Template name (backwards compatibility only - MUST BE UNIQUE): </label>
-                <div class="controls">
-                    <input type="text" class="input-xxlarge" data-bind="value:templateName">
-                </div>
-            </div>
-        </form>
-    </li>
-</ul></div>
-<button data-bind="click:done" type="button" class="btn btn-mini pull-right">Done</button>
-<button data-bind="click:addSection" type="button" class="btn btn-mini pull-right">Add</button>
+<div>
+    Form sections:
+    <ul data-bind="sortable:{data:sections}" class="output-drop-target sortableList small">
+        <li>
+            <div class="row">
+                <form class="form-horizontal">
+                    <span class="pull-right"><i data-bind="click:$parent.removeFormSection" class="fa fa-remove"></i>
+                    </span>
 
+                    <div class="row">
+                        <label class="col-md-3 col-form-label">Name:</label>
+
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value:name">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-md-3 col-form-label form-check-label">Optional:</label>
+
+                        <div class="col-md-9">
+                            <input type="checkbox" class="form-check-input" data-bind="checked:optional">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-md-3 col-form-label form-check-label">Collapsed by default:</label>
+
+                        <div class="col-md-9">
+                            <input type="checkbox" class="form-check-input" data-bind="checked:collapsedByDefault">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-md-3 col-form-label">Question text if optional:</label>
+
+                        <div class="col-md-9">
+                            <input type="text" class="form-control"
+                                   data-bind="value:optionalQuestionText, disable:!optional()">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-md-3 col-form-label">Template name (backwards compatibility only - MUST BE UNIQUE):</label>
+
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value:templateName">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="section-buttons d-flex justify-content-end">
+    <button data-bind="click:done" type="button" class="btn btn-secondary btn-sm">Done</button>
+    <button data-bind="click:addSection" type="button" class="btn btn-secondary btn-sm">Add</button>
+</div>
 </script>
 
 

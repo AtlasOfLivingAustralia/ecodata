@@ -1,10 +1,8 @@
 /**
  * Manifest for the asset pipeline
  *
- * require bootstrap
- * require bootstrap-responsive
- *= require jquery.autocomplete-1.1/jquery.autocomplete.css
- *
+ *= require bootstrap/5.0.0/css/bootstrap
+ *= require font-awesome/4.4.0/css/font-awesome.css
  *= require bootstrap-datepicker/css/datepicker
  *= require bootstrap-combobox/bootstrap-combobox
  *= require select2/4.0.3/css/select2.css
@@ -464,6 +462,12 @@ a.projectTitle:hover {
 
 ul.sortableList {
     margin-left: 0;
+    padding-left:0;
+    margin-top: 10px;
+}
+
+.section-buttons .btn {
+    margin:3px;
 }
 
 .sortableList  li {
@@ -484,7 +488,6 @@ ul.sortableList {
     background-color: #C2CD8D;
     margin: 3px 0;
     padding: 0 4px;
-    text-align: center;
     border-radius: 5px;
 }
 
@@ -577,90 +580,20 @@ ul.nav-tabs {
     margin-bottom: 0;
 }
 
-.nav-tabs li a, .nav-tabs li a:hover {
+.nav-pills .nav-link {
     background-color: #f0f0e8;
     border: 1px solid #ddd;
     margin-right: 4px;
-    /*padding-top: 6px;*/
-    /*padding-bottom: 6px;*/
     font-weight: bold;
     font-size: 15px;
+    color: #007fb6;
 }
 
-ul#adminNav li a {
-    background-color: #f0f0e8;
-}
-
-ul#adminNav li.active a {
-    background-color: #E3E3DB;
-}
-
-.nav-tabs li a:hover {
-    background-color: #E3E3DB;
-}
-
-.nav-stacked .icon-chevron-right {
+.nav-pills .fa-chevron-right {
     float: right;
     margin-top: 2px;
     margin-right: -6px;
     opacity: .25;
-}
-
-.navbar .dropdown-menu, #header .dropdown-menu {
-    top: 32px;
-    word-wrap: normal;
-    white-space: normal;
-    min-width: 210px;
-    max-width: 280px;
-    padding: 10px;
-    font-size: 13px;
-    line-height: 1.1em;
-}
-
-.navbar .dropdown-menu ul {
-    margin-bottom: 5px;
-    margin-left: 16px;
-}
-
-.navbar .dropdown-menu ul li span {
-    margin-left: -4px;
-}
-
-#header.navbar .btn-navbar {
-    margin: 20px -10px;
-}
-
-.dropdown-menu .listHeading {
-    color: #393124;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-ul.facetValues {
-    margin-bottom: 0px;
-}
-
-.moreFacets {
-    display: inline-block;
-    margin-left: 7px;
-}
-
-#facetsContent i.icon-chevron-down {
-    margin-top:5px;
-}
-#facetsContent i.icon-chevron-right {
-    margin-top:3px;
-}
-
-.currentFilters {
-    background-color: #faf8f1;
-    padding: 1px 5px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    margin-left: -3px;
-    margin-right: -3px;
 }
 
 .icon-flipped180 {
@@ -704,6 +637,11 @@ td.memUserRole select {
 a.btn-primary {
     color: white;
 }
+.btn-info {
+    background-color: #49afcd;
+    color: white;
+}
+
 
 .auto-width {
     width: auto;
@@ -1101,8 +1039,12 @@ textarea.species-settings {
     text-align: start;
 }
 
-.activityList .form-horizontal .control-group {
-    margin-bottom: 10px;
+.activityList .sortableList li {
+    text-align: justify;
+}
+
+.activityList .form-horizontal .form-check-input {
+    margin-top: 10px;
 }
 
 .output-drop-target .form-horizontal {
@@ -1132,4 +1074,8 @@ textarea.species-settings {
 #score-configuration {
     width: 100%;
     height: 1000px;
+}
+
+body {
+    background-color: #fffef7;
 }
