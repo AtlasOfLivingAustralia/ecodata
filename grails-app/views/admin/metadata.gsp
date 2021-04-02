@@ -28,7 +28,7 @@
 
         <asset:script>
             $(function(){
-                $('#activitiesMetadata').html(vkbeautify.json(${activitiesMetadata},2));
+                $('#activitiesMetadata').html(JSON.stringify(${activitiesMetadata},null, 2));
 
                 // assume only one edit field for now
                 var $pre = $('#activitiesMetadata'),

@@ -1,13 +1,9 @@
-//= require jquery/3.6.0/jquery-3.6.0.min
-//= require jquery-migrate/1.4.1/jquery-migrate-1.4.1
-// require html5
-//= require bootstrap/5.0.0/js/bootstrap
-// require bootstrap-combobox/bootstrap-combobox
-//= require knockoutjs/knockout-3.3.0.min
-//= require knockoutjs/knockout-sortable.min
-//= require knockoutjs/knockout.mapping-latest
-//= require vkbeautify/0.99/vkbeautify.0.99.00.beta
-//= require jquery-validation-engine/jquery.validationEngine
+//= require jquery/jquery
+//= require bootstrap/js/bootstrap
+//= require knockout/knockout-latest
+//= require knockout-sortable/knockout-sortable
+//= require knockout-mapping/knockout.mapping
+//= require vendor/jquery-validation-engine/jquery.validationEngine
 //= require knockout-dates
 //= require_self
 

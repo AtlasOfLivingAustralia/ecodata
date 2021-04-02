@@ -1,11 +1,10 @@
 /**
  * Manifest for the asset pipeline
  *
- *= require bootstrap/5.0.0/css/bootstrap
- *= require font-awesome/4.4.0/css/font-awesome.css
- *= require bootstrap-datepicker/css/datepicker
- *= require bootstrap-combobox/bootstrap-combobox
- *= require select2/4.0.3/css/select2.css
+ *= require bootstrap/css/bootstrap
+ *= require font-awesome/css/font-awesome
+ *= require bootstrap-datepicker/css/bootstrap-datepicker
+ *= require select2/css/select2
  *= require jsoneditor/jsoneditor.css
  */
 
