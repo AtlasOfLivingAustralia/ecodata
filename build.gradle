@@ -27,7 +27,6 @@ apply plugin:"war"
 apply plugin: "groovy"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
-apply plugin: "org.grails.plugins.views-json"
 apply plugin:"asset-pipeline"
 apply from: "${project.projectDir}/gradle/clover.gradle"
 //apply from: "${project.projectDir}/gradle/jacoco.gradle"
@@ -79,6 +78,7 @@ dependencies {
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
     profile "org.grails.profiles:web"
+    compile "org.grails.plugins:views-json:2.0.4"
 
     compile 'org.grails.plugins:external-config:2.0.0'
     compile "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
