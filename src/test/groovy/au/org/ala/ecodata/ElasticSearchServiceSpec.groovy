@@ -3,24 +3,20 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
-import grails.testing.web.controllers.ControllerUnitTest
+import org.elasticsearch.action.admin.indices.flush.FlushRequest
+import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 
-/*import grails.test.mixin.Mock
-import grails.test.mixin.TestFor
-import grails.test.mixin.TestMixin
-import grails.test.mixin.web.ControllerUnitTestMixin*/
-import org.junit.Before
 import spock.lang.Specification
-import org.springframework.beans.MutablePropertyValues
 
 /**
  * Tests the ElasticSearchService
  */
-/*@TestFor(ElasticSearchService)
-@TestMixin(ControllerUnitTestMixin) // Used to register JSON converters.
-@Mock(ActivityForm)*/
 class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<ElasticSearchService>, DomainUnitTest<ActivityForm> {
 
     private static final String PROGRAM_1 = "Program1"
@@ -48,7 +44,6 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         mapService MapService
     }}
 
-   // @Before
     void setup() {
 
         JSON.registerObjectMarshaller(new MapMarshaller())
@@ -97,21 +92,40 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         }
 
         // Ensure results are available for searching
-        service.client.admin().indices().prepareFlush().execute().actionGet();
+        FlushRequest request = new FlushRequest(INDEX_NAME)
+        service.client.indices().flush(request, RequestOptions.DEFAULT)
 
+        waitForIndexingToComplete()
+    }
+
+    private void waitForIndexingToComplete() {
+
+        int indexCount = 0
+        int expectedCount = 13 // 10 activities + 3 projects
+        while (indexCount != expectedCount) {
+
+            SearchSourceBuilder builder = new SearchSourceBuilder()
+            builder.query(QueryBuilders.matchAllQuery()).fetchSource(false)
+
+            SearchRequest searchRequest = new SearchRequest()
+            searchRequest.indices(INDEX_NAME).source(builder)
+
+            SearchResponse searchResponse = service.client.search(searchRequest, RequestOptions.DEFAULT)
+            indexCount = searchResponse.hits.totalHits.value
+        }
     }
 
     /**
      * Tests the facet fields are indexed correctly for activities - this is used in particular by the reporting subsystem.
      */
-    public void testActivitySearch() {
+    void testActivitySearch() {
 
         when:
         def activityFilters = ["mainThemeFacet:${THEME1}"]
         def results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
 
         then:
-        results.hits.totalHits == 8
+        results.hits.totalHits.value == 8
 
         when:
         activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}"]
@@ -119,28 +133,28 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         println results
 
         then:
-        results.hits.totalHits == 2
+        results.hits.totalHits.value == 2
 
         when:
         activityFilters = ["stateFacet:ACT"]
         results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
 
         then:
-        assert results.hits.totalHits == 1
+        assert results.hits.totalHits.value == 1
 
         when:
         activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}", "stateFacet:ACT"]
         results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
 
         then:
-        assert results.hits.totalHits == 1
+        assert results.hits.totalHits.value == 1
 
         when:
         activityFilters = ["mainThemeFacet:${THEME1}", "mainThemeFacet:${THEME2}", "stateFacet:ACT", "stateFacet:NSW"]
         results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
 
         then:
-        assert results.hits.totalHits == 4
+        assert results.hits.totalHits.value == 4
 
 
     }

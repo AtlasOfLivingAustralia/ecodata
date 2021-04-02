@@ -1,0 +1,7 @@
+import org.elasticsearch.action.search.SearchResponse
+
+model {
+    SearchResponse searchResponse
+}
+
+json g.render(template:"searchResponse", model:[searchResponse:searchResponse])

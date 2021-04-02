@@ -5,7 +5,7 @@ import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.testing.web.controllers.ControllerUnitTest
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.search.facet.Facets
+import org.elasticsearch.search.aggregations.Aggregations
 import spock.lang.Specification
 
 class SearchControllerSpec extends Specification implements ControllerUnitTest<SearchController> {
@@ -37,8 +37,8 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         params.isMERIT = true
 
         SearchResponse mockResponse = Mock(SearchResponse)
-        Facets facets = Mock(Facets)
-        mockResponse.getFacets() >> facets
+        Aggregations aggregations = Mock(Aggregations)
+        mockResponse.getAggregations() >> aggregations
 
         when:
         params.email = 'test@test.org'

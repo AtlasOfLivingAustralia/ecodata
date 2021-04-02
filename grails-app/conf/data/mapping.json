@@ -1,72 +1,57 @@
 {
   "mappings":{
-    "doc": {
-      "_all": {
-        "enabled": true,
-        "store": "yes"
-      },
+
       "properties": {
         "siteId" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "projectId" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "projects" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "programId" : {
-          "type" : "string",
-          "index": "not_analyzed"
+          "type" : "keyword"
         },
         "managementUnitId" : {
-          "type" : "string",
-          "index": "not_analyzed"
+          "type" : "keyword"
+        },
+        "grantId": {
+          "type": "keyword"
         },
         "grantId" : {
           "type" : "string",
           "index": "not_analyzed"
         },
         "origin" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "countries" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "uNRegions" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "scienceType" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "ecoScienceType" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "typeOfProject" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "tags" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "fundings": {
           "properties": {
             "fundingSource": {
-              "type": "string",
-              "index": "not_analyzed",
+              "type": "keyword",
               "fields": {
                 "fundingSourceFacet": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "keyword"
                 }
               }
             }
@@ -74,122 +59,101 @@
         },
 
         "status": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "status" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "keyword"
         },
         "organisationName": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
-            "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "type" : "text",
+          "copy_to": ["organisationFacet", "organisationSort"]
+        },
+        "organisationFacet": {
+          "type": "keyword"
+        },
+        "organisationSort": {
+          "type": "text",
+          "analyzer" : "case_insensitive_sort"
         },
         "dateCreated": {
           "type" : "date",
-          "path" : "just_name",
-          "fields" : {
-            "dateCreatedSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "copy_to" : "dateCreatedSort"
+        },
+        "dateCreatedSort" : {
+          "type" : "text", "analyzer" : "case_insensitive_sort"
         },
         "serviceProviderName": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "organisationName" : {"type" : "string", "index" : "analyzed"},
-            "organisationFacet" :  {"type" : "string", "index" : "not_analyzed"},
-            "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "type" : "text",
+          "copy_to": ["organisationName","organisationFacet", "organisationSort"]
         },
         "associatedOrgs": {
           "properties" : {
             "name" : {
-              "type" : "string",
-              "path" : "just_name",
-              "fields": {
-                "organisationName": {
-                  "type":"string",
-                  "index":"analyzed"
-                },
-                "organisationFacet": {
-                  "type": "string",
-                  "index": "not_analyzed"
-                },
-                "organisationSort": {
-                  "type": "string",
-                  "analyzer": "case_insensitive_sort"
-                }
-              }
+              "type" : "text",
+              "copy_to": ["organisationName", "organisationFacet", "organisationSort"]
             }
           }
         },
         "type": {
-          "type" : "string",
+          "type" : "text",
           "fields" : {
-            "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
+            "typeFacet" : {"type" : "keyword"}
           }
         },
         "className": {
-          "type":"string",
+          "type":"text",
           "analyzer":"facetKeyword"
         },
         "associatedProgram": {
-          "type" : "string",
-          "fields" : {
-            "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "text",
+          "copy_to": "associatedProgramFacet"
+        },
+        "associatedProgramFacet": {
+          "type": "keyword"
         },
 
         "managementUnitName": {
-          "type" : "string",
+          "type" : "text",
           "fields" : {
-            "muFacet" : {"type" : "string", "index" : "not_analyzed"}
+            "muFacet" : {"type" : "keyword"}
           }
         },
         "primaryOutcome": {
-          "type": "string",
+          "type": "text",
           "fields": {
-            "primaryOutcomeFacet": {"type": "string", "index": "not_analyzed"}
+            "primaryOutcomeFacet": {"type": "keyword"}
           }
         },
         "secondaryOutcomes": {
-          "type": "string",
+          "type": "text",
           "fields": {
-            "secondaryOutcomesFacet": {"type": "string", "index": "not_analyzed"}
+            "secondaryOutcomesFacet": {"type": "keyword"}
           }
         },
         "associatedSubProgram": {
-          "type" : "string",
-          "fields" : {
-            "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "text",
+          "copy_to" : "associatedSubProgramFacet"
+        },
+        "associatedSubProgramFacet" : {
+          "type" : "keyword"
         },
         "industries":{
-          "type":"string",
-          "path":"just_name",
-          "fields" : {
-            "industryFacet":{"type":"string", "index":"not_analyzed"}
-          }
-
+          "type":"text",
+          "copy_to":"industryFacet"
         },
-
+        "industryFacet":{
+          "type":"keyword"
+        },
         "bushfireCategories":{
-          "type":"string",
-          "path":"just_name",
-          "fields" : {
-            "bushfireCategoriesFacet":{"type":"string", "index":"not_analyzed"}
-          }
-
+          "type":"text",
+          "copy_to":"bushfireCategoriesFacet"
         },
-
+        "bushfireCategoriesFacet":{
+          "type":"keyword"
+        },
         "name": {
-          "type" : "string",
-          "fields" : {
-            "nameSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "type" : "text",
+          "copy_to": "nameSort"
+        },
+        "nameSort": {
+          "type" : "keyword", "normalizer" : "lowercase"
         },
         "extent":{
           "properties": {
@@ -212,24 +176,19 @@
                 }
               }
             },
-            "externalId":{"type":"string"},
             "geoIndex": {
               "type": "geo_shape"
             },
             "geoPoint": {
-              "type": "geo_point",
-              "geohash": true,
-              "geohash_precision": "1km",
-              "geohash_prefix": true
+              "type": "geo_point"
             },
             "geometryType": {
-              "type": "string",
-              "index": "not_analyzed"
+              "type": "keyword"
             },
             "name": {
-              "type" : "string",
+              "type" : "text",
               "fields" : {
-                "siteNameFacet" : {"type" : "string", "index" : "not_analyzed"}
+                "siteNameFacet" : {"type" : "keyword"}
               }
             }
           }
@@ -240,150 +199,133 @@
               "type": "geo_shape"
             },
             "geoPoint": {
-              "type": "geo_point",
-              "geohash": true,
-              "geohash_precision": "1km",
-              "geohash_prefix": true
+              "type": "geo_point"
             },
             "geometryType": {
-              "type": "string",
-              "index": "not_analyzed"
+              "type": "keyword"
             }
           }
         },
         "isBushfire":{
-          "type":"boolean",
-          "index":"not_analyzed"
+          "type":"boolean"
         },
         "difficulty":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "fundingSourceFacet":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "reportingThemesFacet":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "assessment":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "isExternal":{
-          "type":"boolean",
-          "index":"not_analyzed"
+          "type":"boolean"
         },
         "externalId": {
-          "type":"string"
+          "type":"keyword"
         },
+        "promoteOnHomepage": {
+          "type": "keyword"
+        },
+
         "projectActivity":{
           "properties":{
             "embargoUntil":{
-              "type":"string"
+              "type":"text"
             },
             "name":{
-              "type":"string",
+              "type":"text",
               "fields": {
-                "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
+                "projectActivityNameFacet":{"type":"keyword"}
               }
             },
             "organisationName":{
-              "type":"string",
+              "type":"text",
               "fields": {
-                "organisationNameFacet":{"type":"string", "index":"not_analyzed"}
+                "organisationNameFacet":{"type":"keyword"}
               }
             },
             "projectName":{
-              "type":"string",
+              "type":"text",
               "fields": {
-                "projectNameFacet":{"type":"string", "index":"not_analyzed"}
+                "projectNameFacet":{"type":"keyword"}
               }
             },
             "projectId":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "embargoed":{
-              "type":"boolean",
-              "index":"not_analyzed"
+              "type":"boolean"
             },
             "activityOwnerName":{
-              "type":"string",
+              "type":"text",
               "fields": {
-                "activityOwnerNameFacet":{"type":"string", "index":"not_analyzed"}
+                "activityOwnerNameFacet":{"type":"keyword"}
               }
             },
             "lastUpdated":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "lastUpdatedYear":{
-              "type":"string",
+              "type":"text",
               "fields": {
-                "activityLastUpdatedYearFacet":{"type":"string", "index":"not_analyzed"}
+                "activityLastUpdatedYearFacet":{"type":"keyword"}
               }
             },
             "lastUpdatedMonth":{
-              "type":"string",
+              "type":"text",
               "fields": {
-                "activityLastUpdatedMonthFacet":{"type":"string", "index":"not_analyzed"}
+                "activityLastUpdatedMonthFacet":{"type":"keyword"}
               }
             },
             "surveyImage": {
-              "type": "boolean",
-              "index": "not_analyzed"
+              "type": "boolean"
             },
             "records":{
               "properties":{
                 "name":{
-                  "type":"string",
+                  "type":"text",
                   "fields": {
-                    "recordNameFacet":{"type":"string", "index":"not_analyzed"}
+                    "recordNameFacet":{"type":"keyword"}
                   }
+                },
+                "eventTime":{
+                  "type": "text"
                 }
-              },
-              "eventTime":{
-                "type": "string"
               }
             },
             "methodType":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "spatialAccuracy":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "speciesIdentification":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "temporalAccuracy":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "nonTaxonomicAccuracy":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "dataQualityAssuranceMethods":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "isDataManagementPolicyDocumented":{
-              "type":"boolean",
-              "index":"not_analyzed"
+              "type":"boolean"
             }
           }
         },
         "projectList":{
           "properties": {
             "projectName": {
-              "type": "string",
+              "type": "text",
               "fields": {
-                "siteProjectNameFacet":{"type":"string", "index":"not_analyzed"}
+                "siteProjectNameFacet":{"type":"keyword"}
               }
             }
           }
@@ -391,37 +333,36 @@
         "surveyList":{
           "properties": {
             "surveyName": {
-              "type": "string",
+              "type": "text",
               "fields": {
-                "siteSurveyNameFacet":{"type":"string", "index":"not_analyzed"}
+                "siteSurveyNameFacet":{"type":"keyword"}
               }
             }
           }
         },
         "photoType":{
-          "type": "string"
+          "type": "text"
         },
         "activities":{
           "properties":{
             "mainTheme": {
-              "type":"string",
-              "path":"just_name",
-              "fields": {
-                "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type":"text",
+              "copy_to": "mainThemeFacet"
             }
           }
         },
         "mainTheme": {
-          "type":"string",
-          "path":"just_name",
-          "fields": {
-            "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-          }
+          "type":"text",
+          "copy_to":"mainThemeFacet"
+        },
+        "mainThemeFacet":{
+          "type":"keyword"
         },
         "publicationStatus":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
+        },
+        "meriPlanAssetFacet": {
+          "type": "keyword"
         },
         "custom": {
           "properties": {
@@ -432,14 +373,8 @@
                     "rows1": {
                       "properties": {
                         "assets": {
-                          "type":"string",
-                          "path":"just_name",
-                          "fields": {
-                            "meriPlanAssetFacet": {
-                              "type":"string",
-                              "index":"not_analyzed"
-                            }
-                          }
+                          "type":"keyword",
+                          "copy_to":"meriPlanAssetFacet"
                         }
                       }
                     }
@@ -450,12 +385,10 @@
                     "rows": {
                       "properties": {
                         "data3": {
-                          "type":"string",
-                          "path":"just_name",
+                          "type":"text",
                           "fields": {
                             "partnerOrganisationTypeFacet": {
-                              "type":"string",
-                              "index":"not_analyzed"
+                              "type":"text"
                             }
                           }
                         }
@@ -468,27 +401,29 @@
                     "rows": {
                       "properties": {
                         "shortLabel": {
-                          "type":"string",
-                          "index":"not_analyzed"
+                          "type":"keyword"
                         }
                       }
                     }
                   }
+                },
+                "caseStudy": {
+                  "type": "keyword"
                 }
               }
             }
           }
         },
         "surveyMonth":{
-          "type":"string",
+          "type":"text",
           "fields": {
-            "surveyMonthFacet":{"type":"string", "index":"not_analyzed"}
+            "surveyMonthFacet":{"type":"keyword"}
           }
         },
         "surveyYear":{
-          "type":"string",
+          "type":"text",
           "fields": {
-            "surveyYearFacet":{"type":"string", "index":"not_analyzed"}
+            "surveyYearFacet":{"type":"keyword"}
           }
         }
       },
@@ -497,8 +432,7 @@
           "output_template": {
             "path_match": "outputTargets.*",
             "mapping": {
-              "type": "string",
-              "index": "analyzed"
+              "type": "text"
             }
           }
         },
@@ -506,8 +440,7 @@
           "custom_dollars_template": {
             "path_match":"custom.details.budget.rows.costs.dollar",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -515,8 +448,7 @@
           "custom_event_date_template": {
             "path_match":"custom.details.events.scheduledDate",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -524,8 +456,7 @@
           "due_date_template": {
             "path_match":"custom.details.budget.rows.dueDate",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -534,8 +465,7 @@
             "path_match":"custom.details.*",
             "match_mapping_type":"date",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -543,8 +473,7 @@
           "pid_template": {
             "path_match":"*.pid",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -552,15 +481,15 @@
           "blog_date_template": {
             "path_match":"blog.date",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         }
       ]
-    }
+
   },
   "settings":{
+    "index.mapping.total_fields.limit": 2000,
     "analysis":{
       "analyzer":{
         "facetKeyword":{

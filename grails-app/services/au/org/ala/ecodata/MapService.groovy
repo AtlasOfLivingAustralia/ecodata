@@ -10,7 +10,7 @@ import grails.web.http.HttpHeaders
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.common.xcontent.XContentHelper
-import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid
+import org.elasticsearch.search.aggregations.bucket.geogrid.GeoGrid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternResolver
@@ -710,9 +710,9 @@ class MapService {
     def getFeatureCollectionFromSearchResult(res, String aggName = "heatmap") {
         Map features = [type: "FeatureCollection", features: []]
         SpatialContext sc = new SpatialContext(true)
-        GeoHashGrid geoHashGridAgg = res.getAggregations().get(aggName)
+        GeoGrid geoHashGridAgg = res.getAggregations().get(aggName)
 
-        for (GeoHashGrid.Bucket entry : geoHashGridAgg.getBuckets()) {
+        for (GeoGrid.Bucket entry : geoHashGridAgg.getBuckets()) {
             Map properties = [:]
             properties.key = entry.getKey()
             properties.count = entry.getDocCount()

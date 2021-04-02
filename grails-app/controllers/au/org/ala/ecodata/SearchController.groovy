@@ -54,8 +54,7 @@ class SearchController {
             geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
         }
         def res = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX, geoSearch)
-        response.setContentType("application/json; charset=\"UTF-8\"")
-        render res
+        respond searchResponse:res
     }
 
     /*

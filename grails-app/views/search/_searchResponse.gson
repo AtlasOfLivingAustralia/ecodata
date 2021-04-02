@@ -1,0 +1,22 @@
+import groovy.transform.Field
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.aggregations.Aggregation
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms
+import org.elasticsearch.search.aggregations.bucket.terms.Terms
+
+@Field SearchResponse searchResponse
+
+json {
+
+    hits {
+        total searchResponse.hits?.totalHits.value
+        hits tmpl.searchHit(searchResponse.hits?.hits as List)
+    }
+
+    facets searchResponse.aggregations?.collectEntries { Aggregation agg ->
+        [(agg.name): [terms:((ParsedTerms)agg).buckets.collect { Terms.Bucket bucket ->
+            [term: bucket.key, count: bucket.docCount]
+        }]]
+    }
+
+}
