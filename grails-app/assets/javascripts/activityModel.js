@@ -341,7 +341,7 @@ var ActivityModelViewModel = function (model, options) {
         var model = ko.toJS(self);
         $.ajax(config.activityModelUpdateUrl, {
             type: 'POST',
-            data: vkbeautify.json(model, 2),
+            data: JSON.stringify(model, null, 2),
             contentType: 'application/json',
             success: function (data) {
                 if (data !== 'error') {

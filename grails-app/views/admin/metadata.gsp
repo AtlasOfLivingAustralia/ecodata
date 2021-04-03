@@ -49,7 +49,7 @@
                         contentType: 'application/json',
                         success: function (data) {
                             if (data !== 'error') {
-                                $pre.html(vkbeautify.json(data,2));
+                                $pre.html(JSON.stringify(data,null,2));
                                 viewMode();
                             } else {
                                 alert(data);
