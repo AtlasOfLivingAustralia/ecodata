@@ -8,12 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><g:layoutTitle /></title>
-
-    <g:if test="${!grailsApplication.config.headerAndFooter.excludeBootstrapCss}">
-        <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap.min.css" rel="stylesheet" media="screen,print"/>
-        <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap-theme.min.css" rel="stylesheet" media="screen,print"/>
-    </g:if>
-
     <asset:stylesheet src="ecodata.css"/>
     <g:layoutHead />
 </head>

@@ -8,30 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><g:layoutTitle /></title>
-    <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap.min.css" rel="stylesheet" media="screen,print"/>
-    <link href="${grailsApplication.config.headerAndFooter.baseURL}/css/bootstrap-theme.min.css" rel="stylesheet" media="screen,print"/>
     <asset:stylesheet src="ecodata.css"/>
     <g:layoutHead />
 </head>
 <body class="${pageProperty(name:'body.class')}" id="${pageProperty(name:'body.id')}" onload="${pageProperty(name:'body.onload')}">
 
-%{--<hf:banner logoutUrl="${grailsApplication.config.grails.serverURL}/logout/logout"/>--}%
-  <div id="fixed-footer-wrapper">
-    <div class="navbar navbar-default navbar-fixed-top">
-        %{--<div class="navbar-inner">--}%
-
-            <div class="container-fluid">
-                <p class="navbar-text brand">Draft MERIT API documentation</p>
-
-
-            </div>
-        %{--</div>--}%
+    <div class="container-fluid">
+        <div class="navbar navbar-light">
+            <a class="navbar-brand">Draft MERIT API documentation</a>
+        </div>
     </div>
 
     <g:layoutBody />
-    <div class="push"></div>
-  </div>
-  %{--<hf:footer/>--}%
 
 <asset:javascript src="application"/>
 <asset:deferredScripts/>

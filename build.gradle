@@ -215,7 +215,6 @@ clientDependencies {
         'underscore'('1.12.1') {
             include 'underscore.js'
         }
-        'vkbeautify'('0.99.3')
         'bootstrap-datepicker'('1.9.0')
         jsoneditor('9.3.0', transitive:false)
     }
