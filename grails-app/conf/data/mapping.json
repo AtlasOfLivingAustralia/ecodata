@@ -20,10 +20,6 @@
         "grantId": {
           "type": "keyword"
         },
-        "grantId" : {
-          "type" : "string",
-          "index": "not_analyzed"
-        },
         "origin" : {
           "type" : "keyword"
         },

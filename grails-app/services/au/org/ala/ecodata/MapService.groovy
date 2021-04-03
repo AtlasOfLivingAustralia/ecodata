@@ -9,7 +9,11 @@ import groovy.json.JsonSlurper
 import grails.web.http.HttpHeaders
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
+import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.common.Strings
+import org.elasticsearch.common.io.stream.OutputStreamStreamOutput
 import org.elasticsearch.common.xcontent.XContentHelper
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoGrid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -141,9 +145,9 @@ class MapService {
                 params.query = params.query.replaceAll('"', '\\\\"')
             }
 
-            def request = elasticSearchService.buildSearchRequest(params.query, params, index, geoSearch)
-            String requestJSON = XContentHelper.convertToJson(request.source(), true)
-            requestJSON = JSON.parse(requestJSON).query.toString()
+            SearchRequest request = elasticSearchService.buildSearchRequest(params.query, params, index, geoSearch)
+            QueryBuilder query = request.source().query()
+            String requestJSON = Strings.toString(query, true, true)
             requestJSON = requestJSON.replaceAll(',', '\\\\,')
             requestJSON = URLEncoder.encode(requestJSON, "utf-8")
             Map wmsParams = whiteListWMSParams(params)
