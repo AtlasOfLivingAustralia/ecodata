@@ -480,8 +480,7 @@ class SearchController {
         String ELECTORATES = 'electFacet'
         params.facets = ELECTORATES
         SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
-        List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
-
+        List<String> electorates = result.aggregations?.find{it.name == ELECTORATES}?.buckets?.collect{it.key}
         List tabsToExport = params.getList('tabs')
         boolean formSectionPerTab = params.getBoolean("formSectionPerTab", false)
         return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, [:], formSectionPerTab)

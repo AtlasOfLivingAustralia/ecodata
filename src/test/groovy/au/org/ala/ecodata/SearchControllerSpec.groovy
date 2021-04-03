@@ -63,7 +63,7 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
 
         then:
         1 * elasticSearchService.search(_, params, _) >> searchResponse
-        1 * searchResponse.getFacets() >> Mock(Facets)
+
         projectExporter instanceof ProjectXlsExporter
         ((ProjectXlsExporter)projectExporter).formSectionPerTab == formSectionPerTab
         projectExporter.tabsToExport == params.tabs

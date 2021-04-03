@@ -16,7 +16,10 @@
 package au.org.ala.ecodata
 
 import com.vividsolutions.jts.geom.Coordinate
+import grails.boot.GrailsApp
+import grails.compiler.GrailsCompileStatic
 import grails.converters.JSON
+import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
@@ -40,6 +43,7 @@ import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.aggregations.AggregationBuilder
@@ -77,7 +81,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*
  */
 class ElasticSearchService {
     static transactional = false
-    def grailsApplication
+    GrailsApplication grailsApplication
 
     ProjectService projectService
     ActivityService activityService
@@ -102,7 +106,7 @@ class ElasticSearchService {
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
+
     /**
      * Init method to be called on service creation
      */
@@ -110,8 +114,8 @@ class ElasticSearchService {
     def initialize() {
         log.info "Setting-up elasticsearch node and client"
 
-        String host = grailsApplication.config.elasticsearch.host ?: 'localhost'
-        int port = (grailsApplication.config.elasticsearch.port ?: 9200) as Integer
+        String host = grailsApplication.config.getProperty('elasticsearch.host', String,'localhost')
+        int port = grailsApplication.config.getProperty('elasticsearch.port', Integer, 9200)
         client = new RestHighLevelClient(RestClient.builder(new HttpHost(host, port, "http")))
 
         // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
@@ -140,12 +144,12 @@ class ElasticSearchService {
      * @param doc
      * @return IndexResponse
      */
-    def indexDoc(doc, index) {
+    def indexDoc(doc, String index) {
         if (!canIndex(doc)) {
             return
         }
-        def docId = getEntityId(doc)
-        def docMap = GormMongoUtil.extractDboProperties(doc)
+        String docId = getEntityId(doc)
+        Map docMap = GormMongoUtil.extractDboProperties(doc)
         index = index ?: DEFAULT_INDEX
 
         // Delete index if it exists and doc.status == 'deleted'
@@ -186,7 +190,7 @@ class ElasticSearchService {
     }
 
     def getDocType(doc) {
-        def className = doc.className ?: "au.org.ala.ecodata.doc"
+        String className = doc.className ?: "au.org.ala.ecodata.doc"
         className.tokenize(".")[-1].toLowerCase()
     }
 
@@ -1422,12 +1426,12 @@ class ElasticSearchService {
             filters << buildGeoFilter(geoSearchCriteria, params.geoSearchField)
         }
         if (params.terms) {
-            filters << FilterBuilders.termsFilter(params.terms.field, params.terms.values)
+            filters << QueryBuilders.termsQuery(params.terms.field, params.terms.values)
         }
 
         if (params.exists) {
             params.exists.split (',').each {
-                filters << FilterBuilders.existsFilter(it)
+                filters << QueryBuilders.existsQuery(it)
             }
         }
 
@@ -1442,7 +1446,7 @@ class ElasticSearchService {
                 builder.filter(it)
             }
 
-            builder.should(qsQuery)
+            builder.filter(qsQuery)
             queryBuilder = builder
         }
         else {
@@ -1477,13 +1481,14 @@ class ElasticSearchService {
      * @param query
      * @return
      */
-    private applyWeightingToEntities(QueryBuilder query) {
-        functionScoreQuery(query)
-                .add(termsFilter('className', 'au.org.ala.ecodata.Organisation'), ScoreFunctionBuilders.weightFactorFunction(1.75))
-                .add(termsFilter('className', 'au.org.ala.ecodata.Project'), ScoreFunctionBuilders.weightFactorFunction(1.5))
-                .add(termsFilter('className', 'au.org.ala.ecodata.Site'), ScoreFunctionBuilders.weightFactorFunction(1))
-                .add(termsFilter('className', 'au.org.ala.ecodata.Activity'), ScoreFunctionBuilders.weightFactorFunction(0.5))
-
+    private FunctionScoreQueryBuilder applyWeightingToEntities(QueryBuilder query) {
+        FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctions = [
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Organisation'), ScoreFunctionBuilders.weightFactorFunction(1.75)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Project'), ScoreFunctionBuilders.weightFactorFunction(1.5)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Site'), ScoreFunctionBuilders.weightFactorFunction(1)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Activity'), ScoreFunctionBuilders.weightFactorFunction(0.5))
+        ]
+        new FunctionScoreQueryBuilder(query, filterFunctions)
     }
 
     private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "geoIndex") {
@@ -1714,7 +1719,7 @@ class ElasticSearchService {
         facets.each { String facetName, List<String> facetValues ->
 
             if (facetValues.size() == 0) {
-                boolFilter.must(QueryBuilders.missingFilter(facetName).nullValue(true))
+                boolFilter.mustNot(QueryBuilders.existsQuery(facetName))
             }
             else {
                 // support SOLR style filters (-) for exclude

@@ -83,8 +83,10 @@ dependencies {
     compile 'org.grails.plugins:external-config:2.0.0'
     compile "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
 
-    compile "org.elasticsearch:elasticsearch:7.11.1"
-    compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:7.11.1"
+    compile "org.elasticsearch:elasticsearch:$elasticsearchVersion"
+    compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
+    compile "org.elasticsearch.client:elasticsearch-rest-client:$elasticsearchVersion"
+
     compile "com.spatial4j:spatial4j:0.5"
 
     compile group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.7'

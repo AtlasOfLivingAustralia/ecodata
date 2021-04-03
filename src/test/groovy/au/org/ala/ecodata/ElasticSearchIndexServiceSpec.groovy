@@ -5,7 +5,6 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
-import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
@@ -271,9 +270,8 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
 
         then:
         2 * client.get({GetRequest get -> get.index() == ElasticIndex.HOMEPAGE_INDEX && get.id() == projectProps.projectId}, RequestOptions.DEFAULT) >> Mock(GetResponse)
-        1 * client.index({ IndexRequest index ->
-            result = new JsonSlurper().parseText(index.source().utf8ToString())
-            index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == projectProps.projectId}, RequestOptions.DEFAULT) >> Mock(IndexResponse)
+        1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == projectProps.projectId}, RequestOptions.DEFAULT) >>
+                { index, options -> result = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
         1 * projectService.toMap(project, ProjectService.FLAT) >> projectProps
 
         and:
@@ -301,9 +299,8 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
 
         then:
         2 * client.get({GetRequest get -> get.index() == ElasticIndex.HOMEPAGE_INDEX && get.id() == meritProjectProps.projectId}, RequestOptions.DEFAULT) >> Mock(GetResponse)
-        1 * client.index({ IndexRequest index ->
-            meritResult = new JsonSlurper().parseText(index.source().utf8ToString())
-            index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == meritProjectProps.projectId}, RequestOptions.DEFAULT) >> Mock(IndexResponse)
+        1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == meritProjectProps.projectId}, RequestOptions.DEFAULT) >>
+                { index, options  -> meritResult = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
         1 * projectService.toMap(meritProject, ProjectService.FLAT) >> meritProjectProps
         1 * siteService.findAllForProjectId(meritProject.projectId, SiteService.FLAT) >> [site1]
 
@@ -319,9 +316,8 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
 
         then:
         2 * client.get({GetRequest get -> get.index() == ElasticIndex.HOMEPAGE_INDEX && get.id() == biocollectProjectProps.projectId}, RequestOptions.DEFAULT) >> Mock(GetResponse)
-        1 * client.index({ IndexRequest index ->
-            biocollectResult = new JsonSlurper().parseText(index.source().utf8ToString())
-            index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == biocollectProjectProps.projectId}, RequestOptions.DEFAULT) >> Mock(IndexResponse)
+        1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == biocollectProjectProps.projectId}, RequestOptions.DEFAULT) >>
+                { index, options -> biocollectResult = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
         1 * projectService.toMap(biocollectProject, ProjectService.FLAT) >> biocollectProjectProps
         1 * siteService.findAllNonPrivateSitesForProjectId(biocollectProject.projectId, SiteService.FLAT) >> [site2]
 
