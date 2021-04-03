@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 class GormMongoUtil {
 
     // convert object to map
-    static extractDboProperties(obj) {
+    static Map extractDboProperties(obj) {
         obj.collectEntries { field ->
             [field.key, field.value]
         }
