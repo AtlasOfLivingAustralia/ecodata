@@ -48,7 +48,7 @@ configurations {
         extendsFrom developmentOnly
     }
 }
-
+ext['mongodb.version']='3.10.2' //Overide spring BOM for mongo drivers
 dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     compile "org.springframework.boot:spring-boot-starter-logging"
