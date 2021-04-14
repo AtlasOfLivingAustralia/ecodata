@@ -177,10 +177,12 @@ security:
             - '/activityForm/*'
         authenticateOnlyIfLoggedInPattern:
         uriExclusionFilterPattern:
-            - '/images.*'
-            - '/css.*'
-            - '/js.*'
-            - '/less.*'
+            - '/images/.*'
+            - '/css/.*'
+            - '/js/.*'
+            - '/less/.*'
+            - '/assets/.*'
+            - '/activityForm/get.*'
 
 #Fix grails taglib <g:paginate/> to work with bootstrap css.
 grails:

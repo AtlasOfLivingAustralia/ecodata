@@ -1035,16 +1035,6 @@ projectActivity.notifyOnChange=true
 biocollect.baseURL="https://biocollect.ala.org.au"
 biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
 
-security {
-    cas {
-        appServerName = 'http://devt.ala.org.au:8087' // or similar, up to the request path part
-        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
-        uriFilterPattern = '/admin.*,/activityForm/(?!get).*'
-        uriExclusionFilterPattern = '/assets/.*,/images/.*,/css/.*,/js/.*,/less/.*' // this is the default value
-        authenticateOnlyIfLoggedInPattern =  ''
-    }
-}
-
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM
 elasticsearch.local = true
