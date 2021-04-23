@@ -20,8 +20,10 @@ import grails.boot.GrailsApp
 import grails.compiler.GrailsCompileStatic
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
+import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.delete.DeleteResponse
@@ -168,14 +170,19 @@ class ElasticSearchService {
             client.index(indexRequest, RequestOptions.DEFAULT)
         } catch (Exception e) {
             String documentString = (docMap as JSON).toString(true)
-            log.error "Error: ${e.getMessage()}\nDocument:Error indexing document: ${docId}, type:${docMap['className']}"
-            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
-            String body = "Type: "+getDocType(doc)+"\n"
-            body += "Index: "+index+"\n"
-            body += "Error: "+e.getMessage()+"\n"
-            body += "Document: "+documentString
+            String message = e instanceof ElasticsearchException ? e.getDetailedMessage() : e.getMessage()
+            log.error "Error: ${message}\nDocument:Error indexing document: ${docId}, type:${docMap['className']}"
 
-            emailService.emailSupport(subject, body)
+            if (Environment.current == Environment.PRODUCTION) {
+                String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+                String body = "Type: "+getDocType(doc)+"\n"
+                body += "Index: "+index+"\n"
+                body += "Error: "+e.getMessage()+"\n"
+                body += "Document: "+documentString
+
+                emailService.emailSupport(subject, body)
+            }
+
         }
     }
 
@@ -907,6 +914,12 @@ class ElasticSearchService {
                 log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
             }
 
+        }
+
+        // Elasticsearch no longer accepts URLs and the ProjectService.toMap adds org logs as URLs, so remove them
+        // before indexing.
+        projectMap.associatedOrgs?.each {
+            it.remove("logo")
         }
 
         projectMap

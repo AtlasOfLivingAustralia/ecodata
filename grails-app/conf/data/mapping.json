@@ -84,6 +84,10 @@
             "name" : {
               "type" : "text",
               "copy_to": ["organisationName", "organisationFacet", "organisationSort"]
+            },
+            "logo": {
+              "index": false,
+              "type": "text"
             }
           }
         },
@@ -173,7 +177,8 @@
               }
             },
             "geoIndex": {
-              "type": "geo_shape"
+              "type": "geo_shape",
+              "ignore_malformed": true
             },
             "geoPoint": {
               "type": "geo_point"
@@ -192,7 +197,8 @@
         "projectArea":{
           "properties":{
             "geoIndex": {
-              "type": "geo_shape"
+              "type": "geo_shape",
+              "ignore_malformed": true
             },
             "geoPoint": {
               "type": "geo_point"
@@ -405,6 +411,15 @@
                 },
                 "caseStudy": {
                   "type": "keyword"
+                },
+                "events": {
+                  "properties": {
+                    "scheduledDate": {
+                      "type": "date",
+                      "ignore_malformed": true
+                    }
+                  }
+
                 }
               }
             }
