@@ -466,20 +466,25 @@ class ElasticSearchService {
             while (messageCount < maxMessagesToFlush && (message = _messageQueue.poll()) != null) {
                 log.debug "Processing IndexDocMsg: ${message}"
 
-                switch (message.indexType) {
-                    case EventType.PostUpdate:
-                    case EventType.PostInsert:
-                        indexDocType(message.docId, message.docType)
-                        break
-                    case EventType.PreDelete:
-                    case EventType.PostDelete:
-                        deleteDocByIdAndType(message.docId, message.docType)
-                        break
-                    case EventType.PreUpdate:
-                        checkDeleteForProjects(message.docIds)
-                        break
-                    default:
-                        log.warn "Unexpected GORM event type: ${message.indexType}"
+                try {
+                    switch (message.indexType) {
+                        case EventType.PostUpdate:
+                        case EventType.PostInsert:
+                            indexDocType(message.docId, message.docType)
+                            break
+                        case EventType.PreDelete:
+                        case EventType.PostDelete:
+                            deleteDocByIdAndType(message.docId, message.docType)
+                            break
+                        case EventType.PreUpdate:
+                            checkDeleteForProjects(message.docIds)
+                            break
+                        default:
+                            log.warn "Unexpected GORM event type: ${message.indexType}"
+                    }
+                }
+                catch (Exception e) {
+                    log.error "Error indexing message from message queue: ${message}", e
                 }
 
                 messageCount++
