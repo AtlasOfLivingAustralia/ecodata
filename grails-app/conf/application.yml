@@ -214,7 +214,7 @@ environments:
 
 grails:
     mongodb:
-        codecs: au.org.ala.ecodata.customcodec.AccessLevelCodec
-        engine: codec
+        codecs:
+            - au.org.ala.ecodata.customcodec.AccessLevelCodec
 
 
