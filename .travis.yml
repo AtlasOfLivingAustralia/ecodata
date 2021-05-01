@@ -28,7 +28,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ./gradlew cloverGenerateReport
+  - ./gradlew check
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
