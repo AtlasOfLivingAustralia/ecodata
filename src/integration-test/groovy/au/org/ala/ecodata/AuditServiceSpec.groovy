@@ -40,12 +40,14 @@ class AuditServiceSpec extends IntegrationTestHelper {
         AuditMessage.withTransaction {
             auditService.flushMessageQueue()
         }
-
-        then: "the details of the create operation should be audited correctly"
         def auditMessage
+        println "Blah"
         AuditMessage.withTransaction {
             auditMessage = AuditMessage.findByProjectId(project.projectId)
         }
+
+        then: "the details of the create operation should be audited correctly"
+
         auditMessage != null
         auditMessage.eventType == AuditEventType.Insert
         auditMessage.entityType == Project.class.name
@@ -65,12 +67,13 @@ class AuditServiceSpec extends IntegrationTestHelper {
         AuditMessage.withTransaction {
             auditService.flushMessageQueue()
         }
-
-        then: "the event should be audited against an anonymous userId"
         def auditMessage
         AuditMessage.withNewTransaction {
             auditMessage = AuditMessage.findByProjectId(project.projectId)
         }
+
+        then: "the event should be audited against an anonymous userId"
+
         auditMessage != null
         auditMessage.eventType == AuditEventType.Insert
         auditMessage.entityType == Project.class.name
@@ -93,12 +96,12 @@ class AuditServiceSpec extends IntegrationTestHelper {
         AuditMessage.withTransaction {
             auditService.flushMessageQueue()
         }
-
-        then:
         def auditMessage
         AuditMessage.withNewTransaction {
             auditMessage = AuditMessage.findByProjectId(projectId)
         }
+
+        then:
         auditMessage != null
         auditMessage.eventType == AuditEventType.Insert
         auditMessage.entityType == UserPermission.class.name
