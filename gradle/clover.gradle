@@ -22,7 +22,7 @@ clover {
                 '**/*GrailsPlugin.groovy',
                 '**/*Mock.groovy',
                 '**/TimezoneMapper.java',
-                '**/AuditService.java'
+                '**/AuditService.groovy'
     ]
 
 
