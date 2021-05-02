@@ -9,16 +9,16 @@
 	<body>
         <content tag="pageTitle">Audit</content>
         <div style="margin-bottom: 10px">
-            <a href="${createLink(controller: 'admin', action:'audit')}" class="btn">
-                <i class="icon-chevron-left"></i>
+            <a href="${createLink(controller: 'admin', action:'audit')}" class="btn btn-outline-dark">
+                <i class="fa fa-chevron-left"></i>
                 Back to Audit Home
             </a>
         </div>
-        <div class="form-horizontal well well-small">
+        <div class="form-row well well-small">
             <div class="control-group">
                 <label class="control-label" for="entityId">Enter an Entity ID:</label>
-                <div class="controls">
-                    <g:textField class="input-xlarge" name="entityId" id="entityId"/>
+                <div>
+                    <g:textField class="form-control" name="entityId" id="entityId"/>
                     <button class="btn btn-primary" id="btnViewAuditMessages">View</button>
                 </div>
             </div>
