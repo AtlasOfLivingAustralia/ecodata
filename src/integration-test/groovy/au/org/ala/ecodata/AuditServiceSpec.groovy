@@ -1,9 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.testing.mixin.integration.Integration
-//import grails.transaction.Rollback
 import grails.gorm.transactions.*
-import org.grails.datastore.mapping.engine.event.PostInsertEvent
 
 /**
  * Spec for the AuditService.
@@ -40,8 +38,7 @@ class AuditServiceSpec extends IntegrationTestHelper {
         AuditMessage.withTransaction {
             auditService.flushMessageQueue()
         }
-        def auditMessage
-        println "Blah"
+        def auditMessage = null
         AuditMessage.withTransaction {
             auditMessage = AuditMessage.findByProjectId(project.projectId)
         }
@@ -128,7 +125,7 @@ class AuditServiceSpec extends IntegrationTestHelper {
         }
 
         when:
-        List messages
+        List messages = []
         AuditMessage.withTransaction {
             messages = auditService.getAllMessagesForProject('p1')
         }
@@ -156,7 +153,7 @@ class AuditServiceSpec extends IntegrationTestHelper {
         }
 
         when:
-        Map result
+        Map result = null
         AuditMessage.withTransaction {
             result = auditService.getAuditMessagesForProjectPerPage('p1', 0, 100, 'date', 'desc', null)
         }
