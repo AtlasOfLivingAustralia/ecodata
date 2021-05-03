@@ -28,7 +28,9 @@ class MetadataService {
 
     private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
+    private static final String SERVICES_KEY = "services.config"
     def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
+    SettingService settingService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -921,13 +923,18 @@ class MetadataService {
 
     /**
      * Get services of project from configuration file
-     * services.json should be idential with fieldcapture
+     * services.json should be identical with fieldcapture
      * @return
      */
     List<Map> getProjectServices() {
-        List services = JSON.parse(getClass().getResourceAsStream('/data/services.json'), 'UTF-8')
 
-        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
+        String servicesJson = settingService.getSetting(SERVICES_KEY)
+        if (!servicesJson){
+            servicesJson = getClass().getResourceAsStream('/data/services.json')?.getText("UTF-8")
+        }
+        List services = JSON.parse(servicesJson)
+
+        List<Score> scores = Score.findAllByStatusNotEqual(DELETED)
         services.each { service ->
             service.scores = new JSONArray(scores.findAll{it.outputType == service.output})
         }
@@ -961,7 +968,8 @@ class MetadataService {
 
     List<Map> getProjectServicesWithTargets(project){
         def services =  getProjectServices()
-        List projectServices = services?.findAll {it.id in project.custom?.details?.serviceIds }
+        List serviceIds = project.custom?.details?.serviceIds?.collect{it as Integer}
+        List projectServices = services?.findAll {it.id in serviceIds }
         List targets = project.outputTargets
 
         // Make a copy of the services as we are going to augment them with target information.
