@@ -77,12 +77,12 @@ dependencies {
     compile "org.grails:grails-plugin-databinding"
     compile "org.grails:grails-plugin-codecs"
     compile "org.grails.plugins:mongodb:7.0.1"
-    compile "org.grails.plugins:views-json:1.2.10"
-    compile "org.grails.plugins:views-json-templates:1.2.10"
+
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
     profile "org.grails.profiles:web"
     compile "org.grails.plugins:views-json:2.0.4"
+    compile "org.grails.plugins:views-json-templates:2.0.4"
 
     compile 'org.grails.plugins:external-config:2.0.0'
     compile "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
