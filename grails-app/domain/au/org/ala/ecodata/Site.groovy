@@ -38,7 +38,7 @@ class Site {
     String type
     String description
     String habitat
-  //  Double area
+  //  Double area - the area field is a mess, it's about 1/2 doubles, 1/2 strings, most of which are numbers....
     String recordingMethod
     String landTenure
     String protectionMechanism

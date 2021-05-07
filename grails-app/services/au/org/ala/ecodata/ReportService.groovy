@@ -45,12 +45,12 @@ class ReportService {
 
         Map params = [offset:0, max:20, fq:filters]
 
-        def results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
-        def total = results.hits.totalHits
+        SearchResponse results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
+        def total = results.hits.totalHits.value
         while (params.offset < total) {
 
             results.hits.hits.each { hit ->
-                Map project = hit.source
+                Map project = hit.sourceAsMap
 
                 List activities = project.activities
                 if (approvedActivitiesOnly) {
@@ -223,15 +223,15 @@ class ReportService {
         params += [offset:0, max:100]
         def targetsBySubProgram = [:]
         def queryString = params.query ?: "*:*"
-        def results = elasticSearchService.search(queryString, params, "homepage")
+        SearchResponse results = elasticSearchService.search(queryString, params, "homepage")
 
         def propertyAccessor = new PropertyAccessor("target")
-        def total = results.hits.totalHits
+        long total = results.hits.totalHits.value
         while (params.offset < total) {
 
-            def hits = results.hits.hits
-            for (def hit : hits) {
-                def project = hit.source
+            SearchHit[] hits = results.hits.hits
+            for (SearchHit hit : hits) {
+                Map project = hit.sourceAsMap
                 project.outputTargets?.each { target ->
                     def program = project.associatedProgram + ' - ' + project.associatedSubProgram
                     if (!targetsBySubProgram[program]) {

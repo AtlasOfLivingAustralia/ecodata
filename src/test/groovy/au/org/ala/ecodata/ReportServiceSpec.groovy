@@ -43,7 +43,7 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
             [source:[projectId:it, activities: activities.findAll{activity -> (it == 'defaultProjectId' && !activity.projectId) || activity.projectId == it}]]
         }
 
-        elasticSearchService.search(_, _, _) >> [hits:[totalHits:projectDocs.size(), hits:projectDocs]]
+        elasticSearchService.search(_, _, _) >> [hits:[totalHits:[value:projectDocs.size()], hits:projectDocs]]
 
         Output.metaClass.static.findAllByActivityIdInListAndStatusNotEqual = {activityIds, status -> activityIds.collect{outputData[it]}.flatten().findAll()}
     }

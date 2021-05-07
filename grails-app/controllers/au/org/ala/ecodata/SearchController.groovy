@@ -7,6 +7,8 @@ import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms
+import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
 import java.text.SimpleDateFormat
 
@@ -188,9 +190,9 @@ class SearchController {
 
     private def populateGeoInfo(markBy, hit, selectedFacetTerms){
 
-        def geo = hit.source.geo
+        def geo = hit.sourceAsMap.geo
         if(!markBy) {
-            geo[0].geometry = hit.source.sites[0].extent.geometry
+            geo[0].geometry = hit.sourceAsMap.sites[0].extent.geometry
             return geo
         }
 
@@ -198,7 +200,7 @@ class SearchController {
         // When fields are indexed, "Facet" or "Name" is appended to the field name.
         String propertyName = markBy.replaceAll("Facet", "")
 
-        def facetValue = hit.source[propertyName] ?:""
+        def facetValue = hit.sourceAsMap[propertyName] ?:""
 
         if (facetValue) {
             // Geographic facets will be List typed (as a site can be in more than one state for example)
@@ -221,7 +223,7 @@ class SearchController {
             }
         }
         else {
-            hit.source.sites.each { site ->
+            hit.sourceAsMap.sites.each { site ->
                 if(site.extent?.geometry) {
                     facetValue =  site.extent?.geometry[propertyName] ?: ""
 
@@ -260,20 +262,19 @@ class SearchController {
             geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
         }
 
-        def res = elasticSearchService.search(params.query, params, "homepage", geoSearch)
+        SearchResponse res = elasticSearchService.search(params.query, params, "homepage", geoSearch)
         def selectedFacetTerms = []
         def markBy = params.markBy
 
-        if(markBy){
-            res.facets.facets.each{ facet ->
-                if(facet.key.equals(markBy)){
-                    facet.value.eachWithIndex{ val, index ->
-                        def data = [:]
-                        data.legendName = val.term.toString()
-                        data.index = index
-                        data.count = 0
-                        selectedFacetTerms << data
-                    }
+        if (markBy) {
+            Aggregation toMarkBy = res.aggregations.find { it.name == markBy }
+            if (toMarkBy) {
+                ((ParsedTerms)toMarkBy).buckets.eachWithIndex{ Terms.Bucket entry, int i ->
+                    Map data = [:]
+                    data.legendName = entry.key
+                    data.index = i
+                    data.count = 0
+                    selectedFacetTerms << data
                 }
             }
         }
@@ -281,18 +282,18 @@ class SearchController {
         def geoRes = []
 
         res.hits.hits.each { hit ->
-            if(hit.source?.geo) {
+            if(hit.sourceAsMap?.geo) {
                 def proj = [:]
-                proj.projectId = hit.source.projectId
-                proj.name = hit.source.name
-                proj.org = hit.source.organisationName
+                proj.projectId = hit.sourceAsMap.projectId
+                proj.name = hit.sourceAsMap.name
+                proj.org = hit.sourceAsMap.organisationName
                 proj.geo = populateGeoInfo(markBy, hit, selectedFacetTerms)
 
                 geoRes << proj
             }
         }
         response.setContentType("application/json; charset=\"UTF-8\"")
-        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes,'selectedFacetTerms':selectedFacetTerms]
+        def projectsAndTotal = ['total':res.hits.totalHits.value,'projects':geoRes,'selectedFacetTerms':selectedFacetTerms]
 
         render projectsAndTotal as JSON
     }
@@ -668,8 +669,8 @@ class SearchController {
         Set ids = new HashSet()
 
         for (SearchHit hit : res.hits.hits) {
-            if (hit.source.projectId) {
-                ids << hit.source.projectId
+            if (hit.sourceAsMap.projectId) {
+                ids << hit.sourceAsMap.projectId
             }
         }
 

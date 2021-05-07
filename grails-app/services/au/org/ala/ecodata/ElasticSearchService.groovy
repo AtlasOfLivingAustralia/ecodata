@@ -1171,7 +1171,7 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX

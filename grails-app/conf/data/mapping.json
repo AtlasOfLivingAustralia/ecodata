@@ -111,9 +111,10 @@
 
         "managementUnitName": {
           "type" : "text",
-          "fields" : {
-            "muFacet" : {"type" : "keyword"}
-          }
+          "copy_to" : "muFacet"
+        },
+        "muFacet": {
+          "type": "keyword"
         },
         "primaryOutcome": {
           "type": "text",
@@ -501,6 +502,7 @@
   },
   "settings":{
     "index.mapping.total_fields.limit": 2000,
+    "index.max_result_window": 30000,
     "analysis":{
       "analyzer":{
         "facetKeyword":{

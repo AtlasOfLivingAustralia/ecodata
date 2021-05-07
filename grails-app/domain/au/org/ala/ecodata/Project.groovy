@@ -91,12 +91,12 @@ class Project {
     //For embedded table, needs to conversion in controller
     List<Funding> fundings
 
-    List<AssociatedOrg> associatedOrganisations
+    List<AssociatedOrg> associatedOrgs
 
     /** The program of work this project is a part of, if any */
     String programId
 
-    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig', 'risks']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 

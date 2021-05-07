@@ -346,7 +346,7 @@ class DocumentController {
             }
         }
 
-        documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits()]
+        documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits.value]
         documentResult
     }
 
