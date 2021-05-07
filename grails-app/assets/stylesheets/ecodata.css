@@ -645,6 +645,7 @@ a.btn-primary {
 }
 .btn-info {
     background-color: #49afcd;
+    border-color: #2f96b4;
     color: white;
 }
 

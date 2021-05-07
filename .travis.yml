@@ -36,7 +36,7 @@ before_script:
   - sleep 10
 
 script:
-  - ./gradlew cloverGenerateReport
+  - ./gradlew -PenableClover=true cloverGenerateReport
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'

@@ -106,8 +106,8 @@ grails:
     controllers:
         defaultScope: singleton
         upload:
-            maxFileSize: 26214400 #25Mb
-            maxRequestSize: 26214400 #25Mb
+            maxFileSize: 65536000 #64Mb, matches nginx config
+            maxRequestSize: 65536000 #64Mb, matches nginx config
  #       upload:
  #         maxFileSize: 5368709120
  #         maxRequestSize: 5368709120
@@ -122,12 +122,12 @@ grails:
                 - '/plugins/*'
     views:
         default:
-            codec: none  #none, html, base64
+            codec: html  #none, html, base64
         gsp:
             encoding: UTF-8
             htmlcodec: xml
             codecs:
-                expression: none # escapes values inside ${} //html
+                expression: html # escapes values inside ${} //html
                 scriptlets: html
                 taglib: none
                 staticparts: none
@@ -214,7 +214,7 @@ environments:
 
 grails:
     mongodb:
-        codecs: au.org.ala.ecodata.customcodec.AccessLevelCodec
-        engine: codec
+        codecs:
+            - au.org.ala.ecodata.customcodec.AccessLevelCodec
 
 

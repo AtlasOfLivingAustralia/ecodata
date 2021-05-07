@@ -21,7 +21,8 @@ clover {
                 '**/UrlMappings.groovy',
                 '**/*GrailsPlugin.groovy',
                 '**/*Mock.groovy',
-                '**/TimezoneMapper.java'
+                '**/TimezoneMapper.java',
+                '**/AuditService.groovy'
     ]
 
 

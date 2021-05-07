@@ -1,4 +1,4 @@
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="grails.converters.JSON; org.apache.commons.lang.StringEscapeUtils" %>
 <!doctype html>
 <html>
     <head>
@@ -28,7 +28,7 @@
 
         <asset:script>
             $(function(){
-                $('#activitiesMetadata').html(JSON.stringify(${activitiesMetadata},null, 2));
+                $('#activitiesMetadata').html(JSON.stringify(${raw((activitiesMetadata as JSON).toString())},null, 2));
 
                 // assume only one edit field for now
                 var $pre = $('#activitiesMetadata'),

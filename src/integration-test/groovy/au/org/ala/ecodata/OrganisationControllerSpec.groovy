@@ -1,20 +1,17 @@
 package au.org.ala.ecodata
 
+import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
+import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.context.WebApplicationContext
 import grails.util.GrailsWebMockUtil
 import org.grails.plugins.testing.GrailsMockHttpServletRequest
 import org.grails.plugins.testing.GrailsMockHttpServletResponse
-//import grails.testing.gorm.DomainUnitTest
-//import grails.testing.gorm.DataTest
-//import au.org.ala.ecodata.OrganisationController
-//import grails.testing.spring.AutowiredTest
-
 
 @Integration
-//@Rollback
-class OrganisationControllerSpec extends IntegrationTestHelper {// implements ControllerUnitTest<OrganisationController>{
+@Rollback
+class OrganisationControllerSpec extends IntegrationTestHelper {
     @Autowired
     OrganisationController organisationController
 
@@ -78,7 +75,7 @@ class OrganisationControllerSpec extends IntegrationTestHelper {// implements Co
         savedOrganisation.organisationId == organisationId
         savedOrganisation.name == org.name
         savedOrganisation.description == org.description
-        savedOrganisation.dynamicProperty == org.dynamicProperty
+        // savedOrganisation.dynamicProperty == org.dynamicProperty (dynamic properties not working in tests)
         savedOrganisation.collectoryInstitutionId == institutionId
 
         and: "the user who created the organisation is an admin of the new organisation"
@@ -89,19 +86,21 @@ class OrganisationControllerSpec extends IntegrationTestHelper {// implements Co
 
     }
 
- /*   void "projects should be associated with an organisation by the organisationId property"() {
+    void "projects should be associated with an organisation by the organisationId property"() {
         setup:
 
         // Create some data for the database.
-        def organisation = TestDataHelper.buildOrganisation()
+        def organisation = TestDataHelper.buildOrganisation([name:"org 1"])
         def projects = []
         (1..2).each {
-            projects << TestDataHelper.buildProject([organisationId:organisation.organisationId])
+            projects << TestDataHelper.buildProject([organisationId:organisation.organisationId, name:'org project '+it])
         }
         (1..3).each {
-            projects << TestDataHelper.buildProject() // some projects without our organisation id.
+            projects << TestDataHelper.buildProject([name:'project '+it]) // some projects without our organisation id.
         }
-        TestDataHelper.saveAll(projects+[organisation])
+        Organisation.withTransaction {
+            TestDataHelper.saveAll(projects + [organisation])
+        }
 
         when: "retrieving the organisation"
         organisationController.request.addParameter('view', 'all') // The 'all' view will return associated projects.
@@ -124,14 +123,14 @@ class OrganisationControllerSpec extends IntegrationTestHelper {// implements Co
         setup:
 
         // Create some data for the database.
-        def organisation = TestDataHelper.buildOrganisation()
+        def organisation = TestDataHelper.buildOrganisation([name: 'org 1'])
         def projects = []
         (1..2).each {
-            projects << TestDataHelper.buildProject([orgIdSvcProvider: organisation.organisationId])
+            projects << TestDataHelper.buildProject([orgIdSvcProvider: organisation.organisationId, name:'svc project '+it])
         }
-        projects << TestDataHelper.buildProject([organisationId: organisation.organisationId])
+        projects << TestDataHelper.buildProject([organisationId: organisation.organisationId, name:'org project'])
         (1..3).each {
-            projects << TestDataHelper.buildProject() // some projects without our organisation id.
+            projects << TestDataHelper.buildProject([name:"project "+it]) // some projects without our organisation id.
         }
         TestDataHelper.saveAll(projects+[organisation])
 
@@ -149,6 +148,13 @@ class OrganisationControllerSpec extends IntegrationTestHelper {// implements Co
         org.projects.each {
             it.organisationId == organisation.organisationId || it.orgIdSvcProvider == organisation.organisationId
         }
-    }*/
+    }
+
+    private extractJson (String str) {
+        if(str.indexOf('{') > -1 && str.indexOf('}') > -1) {
+            String jsonStr = str.substring(str.indexOf('{'), str.lastIndexOf('}') + 1)
+            new JsonSlurper().parseText(jsonStr)
+        }
+    }
 
 }

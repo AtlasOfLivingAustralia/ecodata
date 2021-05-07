@@ -28,7 +28,11 @@ apply plugin: "groovy"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
-apply from: "${project.projectDir}/gradle/clover.gradle"
+
+if (Boolean.valueOf(enableClover)) {
+    apply from: "${project.projectDir}/gradle/clover.gradle"
+}
+
 //apply from: "${project.projectDir}/gradle/jacoco.gradle"
 
 //apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
@@ -138,7 +142,6 @@ dependencies {
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
     testCompile "org.grails:grails-web-testing-support"
-    //testCompile "org.grails:views-json-testing-support:1.2.0"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
