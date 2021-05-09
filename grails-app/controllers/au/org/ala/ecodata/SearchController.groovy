@@ -46,8 +46,7 @@ class SearchController {
         }
 
         def res = elasticSearchService.search(params.query, params, DEFAULT_INDEX)
-        response.setContentType("application/json; charset=\"UTF-8\"")
-        render res
+        respond searchResponse:res
     }
 
     def elasticHome() {
