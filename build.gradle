@@ -158,7 +158,9 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
     clover 'org.openclover:clover:4.2.0'
-
+    testCompile "com.github.tomakehurst:wiremock-jre8-standalone:2.27.2"
+    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:2.53.1"
+    testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.53.1"
 }
 clover {
     // Although Clover is now open source the plugin

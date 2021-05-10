@@ -656,6 +656,11 @@ environments {
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+
+        wiremock.port = 8018
+        security.cas.bypass = true
+        security.cas.casServerUrlPrefix="http://devt.ala.org.au:${wiremock.port}/cas"
+        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
         grails.cache.config = {

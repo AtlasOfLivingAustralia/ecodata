@@ -3,7 +3,9 @@ package au.org.ala.ecodata
 import grails.testing.mixin.integration.Integration
 import groovy.json.JsonSlurper
 import org.grails.gorm.graphql.plugin.GraphqlController
+import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
+import pages.AdminTools
 
 @Integration
 class GraphqlIntegrationSpec extends GraphqlSpecHelper{
@@ -12,6 +14,16 @@ class GraphqlIntegrationSpec extends GraphqlSpecHelper{
     HubService hubService
     GraphqlController graphqlController
     String controllerName = "graphql"
+
+    @BeforeClass
+    public void setupBeforeAll() {
+        //executing elastic search indexing
+        setup:
+        login([userId: '2', role: "ROLE_ADMIN", email: 'admin@nowhere.com', firstName: "MERIT", lastName: 'ALA_ADMIN'], browser)
+        to AdminTools
+        waitFor 5,{at AdminTools}
+        reindex()
+    }
 
     def setup() {
 //        Hub alaHub = Hub.findByUrlPath('ala')
@@ -217,7 +229,7 @@ class GraphqlIntegrationSpec extends GraphqlSpecHelper{
 
         then:
         result.data.searchMeritProject == null
-        result.errors[0].message == "Exception while fetching data (/searchMeritProject) : Invalid organisationFacet : suggested values are : [, Test Org]"
+        result.errors[0].message == "Exception while fetching data (/searchMeritProject) : Invalid organisationFacet : suggested values are : []"
     }
 
     def "Get merit projects with activity filters"() {
