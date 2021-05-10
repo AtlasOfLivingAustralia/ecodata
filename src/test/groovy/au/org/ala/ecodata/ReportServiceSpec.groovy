@@ -2,6 +2,11 @@ package au.org.ala.ecodata
 
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import org.apache.lucene.search.TotalHitCountCollector
+import org.apache.lucene.search.TotalHits
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.SearchHits
 import spock.lang.Specification
 
 
@@ -40,10 +45,20 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
 
         Set projectIds = new HashSet(activities.collect { it.projectId ?: 'defaultProjectId' })
         List projectDocs = projectIds.collect {
-            [source:[projectId:it, activities: activities.findAll{activity -> (it == 'defaultProjectId' && !activity.projectId) || activity.projectId == it}]]
+            [projectId:it, activities: activities.findAll{activity -> (it == 'defaultProjectId' && !activity.projectId) || activity.projectId == it}]
         }
 
-        elasticSearchService.search(_, _, _) >> [hits:[totalHits:[value:projectDocs.size()], hits:projectDocs]]
+        SearchHit[] hits = projectDocs.collect{
+            SearchHit searchHit = GroovyMock(SearchHit)
+            searchHit.getSourceAsMap() >> it
+            searchHit
+        }
+
+        SearchResponse searchResponse = GroovyMock(SearchResponse)
+        TotalHits totalHits = new TotalHits(projectDocs.size(), TotalHits.Relation.EQUAL_TO)
+        searchResponse.getHits() >> new SearchHits(hits, totalHits, 1.0)
+        elasticSearchService.search(_, _, _) >> searchResponse
+
 
         Output.metaClass.static.findAllByActivityIdInListAndStatusNotEqual = {activityIds, status -> activityIds.collect{outputData[it]}.flatten().findAll()}
     }
