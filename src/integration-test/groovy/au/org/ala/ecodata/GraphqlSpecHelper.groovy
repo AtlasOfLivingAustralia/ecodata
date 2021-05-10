@@ -15,7 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder
 import spock.lang.Specification
 
 @CompileStatic
-abstract class GraphqlSpecHelper extends Specification {
+abstract class GraphqlSpecHelper extends StubbedCasSpec {
 
     @Autowired
     WebApplicationContext ctx
