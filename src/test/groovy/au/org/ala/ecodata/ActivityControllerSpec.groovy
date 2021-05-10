@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.Client
 import spock.lang.Specification
 
@@ -571,7 +572,7 @@ class ActivityControllerSpec extends Specification implements ControllerUnitTest
 
         then:
         1 * elasticSearchService.buildProjectActivityQuery(params)
-        1 * elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX) >> []
+        1 * elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX) >> GroovyMock(SearchResponse)
         response.status == HttpStatus.SC_OK
     }
 
