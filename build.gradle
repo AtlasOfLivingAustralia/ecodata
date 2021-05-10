@@ -20,7 +20,6 @@ plugins {
 }
 
 version "2.0-graphql-SNAPSHOT"
-version "3.4-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 
