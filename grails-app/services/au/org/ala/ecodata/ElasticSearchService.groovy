@@ -1373,10 +1373,6 @@ class ElasticSearchService {
             }
         }
 
-        if (params.highlight) {
-            source.highlight().preTags("<b>").postTags("</b>").field("_all", 60, 2)
-        }
-
         if (params.omitSource) {
             source.fetchSource(false)
         }
@@ -1392,10 +1388,6 @@ class ElasticSearchService {
             }
             source.fetchSource(include, exclude)
         }
-        else {
-            source.fetchField("_all")
-        }
-
 
         request.source(source)
 
@@ -1464,7 +1456,7 @@ class ElasticSearchService {
                 builder.filter(it)
             }
 
-            builder.filter(qsQuery)
+            builder.must(qsQuery)
             queryBuilder = builder
         }
         else {
@@ -1489,7 +1481,6 @@ class ElasticSearchService {
         fieldsAndBoosts.each { field, boost ->
             queryStringQueryBuilder.field(field, boost)
         }
-        queryStringQueryBuilder.field("_all")
 
         return queryStringQueryBuilder
     }
