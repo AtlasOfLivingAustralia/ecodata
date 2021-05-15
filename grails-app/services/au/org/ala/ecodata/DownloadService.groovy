@@ -465,6 +465,7 @@ class DownloadService {
     Set<String> getProjectIdsForDownload(Map params, String searchIndexName, String property = 'projectId') {
         long start = System.currentTimeMillis()
 
+        params.include = property
         SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Set ids = new HashSet()
 
