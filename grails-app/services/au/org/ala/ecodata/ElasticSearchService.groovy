@@ -814,7 +814,7 @@ class ElasticSearchService {
         organisation["className"] = Organisation.class.name
         Map results = documentService.search([organisationId:organisation.organisationId, role:DocumentService.LOGO])
         if (results && results.documents) {
-            organisation.logoUrl = results.documents[0].thumbnailUrl
+            organisation.logoUrl = results.documents[0].thumbnailUrl?.toString() // Elasticsearch can't index URLs
         }
 
         // get list of users of this organisation
