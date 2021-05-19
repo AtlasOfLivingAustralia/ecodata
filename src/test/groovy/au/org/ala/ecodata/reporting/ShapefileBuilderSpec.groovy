@@ -127,6 +127,8 @@ class ShapefileBuilderSpec extends Specification {
             f.getProperty('externalId') == 'External ID'
             f.getProperty('projectName') == 'Project name'
             f.getProperty('workOrderId') == '1234'
+            f.getProperty('featureId') == 'feature 1'
+            f.getProperty('featureName') == 'feature-0-1'
 
             GeometryAttribute geom = f.getDefaultGeometryProperty()
             geom.value.geometryType  == "MultiPolygon"
@@ -168,7 +170,7 @@ class ShapefileBuilderSpec extends Specification {
                 extent:[source:'calculated', geometry: [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]],
                 features:[[
                             type:'Feature',
-                            properties:[name:'feature 1'],
+                            properties:[name:'feature 1', id:'feature-0-1'],
                             geometry: [
                                   type:'Point',
                                   coordinates:[137,-34]

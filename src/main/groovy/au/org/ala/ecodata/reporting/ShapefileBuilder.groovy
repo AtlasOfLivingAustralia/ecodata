@@ -34,7 +34,7 @@ class ShapefileBuilder {
     static CoordinateReferenceSystem DEFAULT_CRS = DefaultGeographicCRS.WGS84
     /** Attributes of each site to write to the shape file */
     static
-    def DEFAULT_SITE_PROPERTIES = [[property: 'name', attribute: 'name'], [property: 'description', attribute: 'description'], [property: 'siteId', attribute:'siteId'], [property:'type', attribute:'type'], [property:'dateCreated', attribute:'dateCreated'], [property:'lastUpdated', attribute:'lastUpdated']]
+    def DEFAULT_SITE_PROPERTIES = [[property: 'name', attribute: 'name'], [property: 'description', attribute: 'description'], [property: 'siteId', attribute:'siteId'], [property:'featureId', attribute:'featureId'], [property:'featureName', attribute:'featureName'], [property:'type', attribute:'type'], [property:'dateCreated', attribute:'dateCreated'], [property:'lastUpdated', attribute:'lastUpdated']]
 
     /** Attributes of each project to write to the shape file */
     static
@@ -100,8 +100,10 @@ class ShapefileBuilder {
                 site.features.each { Map feature ->
                     if (feature.geometry) {
                         Map siteProps = new HashMap(site)
-                        siteProps.name = site.name + '-' + (feature.properties?.name ?: '')
-                        writeGeometry(siteProps, project, feature.geometry)
+                        siteProps.name = site.name
+                        siteProps.featureName = feature.properties?.name
+                        siteProps.featureId = feature.properties?.id
+                        writeGeometry(siteProps, project, new HashMap(feature.geometry))
                     }
                     else {
                         log.warn("Missing geometry for feature: ${site.siteId}")
