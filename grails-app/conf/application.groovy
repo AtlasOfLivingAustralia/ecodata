@@ -676,9 +676,8 @@ environments {
 
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = true
-        app.elasticsearch.location = "./target/elasticsearch/"
-        app.file.upload.path = "./target/uploads"
-        app.file.archive.path = "./target/archive"
+        app.file.upload.path = "./build/uploads"
+        app.file.archive.path = "./build/archive"
         String casBaseUrl = "http://localhost:8018"
         userDetails {
             url = "${casBaseUrl}/userdetails/"

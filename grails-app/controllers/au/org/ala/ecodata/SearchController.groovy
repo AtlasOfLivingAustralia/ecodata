@@ -7,6 +7,7 @@ import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
@@ -187,6 +188,15 @@ class SearchController {
         [hits: [hits: projectActivities.collect { [_source: it]}, total: projectActivities.size() ]]
     }
 
+    private String propertyNameForFacet(String facet) {
+        String facetSuffix = "Facet"
+        String result = facet
+        if (facet?.endsWith(facetSuffix)) {
+            result = facet.substring(0, facet.indexOf(facetSuffix))
+        }
+        result
+    }
+
     private def populateGeoInfo(markBy, hit, selectedFacetTerms){
 
         def geo = hit.sourceAsMap.geo
@@ -197,7 +207,7 @@ class SearchController {
 
         def legendName, index
         // When fields are indexed, "Facet" or "Name" is appended to the field name.
-        String propertyName = markBy.replaceAll("Facet", "")
+        String propertyName = propertyNameForFacet(markBy)
 
         def facetValue = hit.sourceAsMap[propertyName] ?:""
 
@@ -260,19 +270,24 @@ class SearchController {
         if (params.geoSearchJSON) {
             geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
         }
-
-        SearchResponse res = elasticSearchService.search(params.query, params, "homepage", geoSearch)
-        def selectedFacetTerms = []
-        def markBy = params.markBy
+        String markBy = params.markBy
+        params.include = ['projectId', 'geo', 'name', 'organisationName', 'sites.extent', 'sites.siteId']
+        if (markBy) {
+            // Field name by convention is the markBy minus the word "Facet"
+            params.include << propertyNameForFacet(markBy)
+        }
+        SearchResponse res = elasticSearchService.search(params.query, params, ElasticIndex.HOMEPAGE_INDEX, geoSearch)
+        List selectedFacetTerms = []
 
         if (markBy) {
-            Aggregation toMarkBy = res.aggregations.find { it.name == markBy }
+            ParsedTerms toMarkBy = res.aggregations.find { it.name == markBy }
             if (toMarkBy) {
-                ((ParsedTerms)toMarkBy).buckets.eachWithIndex{ Terms.Bucket entry, int i ->
+                List buckets = toMarkBy.buckets
+                buckets.eachWithIndex{ Terms.Bucket entry, int i ->
                     Map data = [:]
                     data.legendName = entry.key
                     data.index = i
-                    data.count = 0
+                    data.count = entry.docCount
                     selectedFacetTerms << data
                 }
             }
@@ -280,8 +295,10 @@ class SearchController {
 
         def geoRes = []
 
-        res.hits.hits.each { hit ->
-            if(hit.sourceAsMap?.geo) {
+        SearchHits hits = res.hits
+        SearchHit[] moreHits = hits.hits
+        for (SearchHit hit in moreHits) {
+            if (hit.sourceAsMap?.geo) {
                 def proj = [:]
                 proj.projectId = hit.sourceAsMap.projectId
                 proj.name = hit.sourceAsMap.name
@@ -296,6 +313,7 @@ class SearchController {
 
         render projectsAndTotal as JSON
     }
+
     def elasticPost() {
         def paramsObj = request.JSON
         def paramMap = new GrailsParameterMap(paramsObj, request)
@@ -662,7 +680,7 @@ class SearchController {
         if (!query) {
             query = '*'
         }
-
+        params.include = 'projectId'
         SearchResponse res = elasticSearchService.search(query, params, "homepage")
 
         Set ids = new HashSet()
