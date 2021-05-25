@@ -16,15 +16,12 @@
 package au.org.ala.ecodata
 
 import com.vividsolutions.jts.geom.Coordinate
-import grails.boot.GrailsApp
-import grails.compiler.GrailsCompileStatic
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
 import org.elasticsearch.ElasticsearchException
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.get.GetRequest
@@ -36,12 +33,8 @@ import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.action.support.master.AcknowledgedResponse
-import org.elasticsearch.client.indices.CreateIndexRequest
-import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.CoordinatesBuilder
 import org.elasticsearch.common.geo.builders.PolygonBuilder
-import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
@@ -64,7 +57,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 import static org.elasticsearch.index.query.QueryBuilders.*
 
@@ -104,6 +97,7 @@ class ElasticSearchService {
 
     Node node
     RestHighLevelClient client
+    ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
     def DEFAULT_FACETS = 10
@@ -119,6 +113,13 @@ class ElasticSearchService {
         String host = grailsApplication.config.getProperty('elasticsearch.host', String,'localhost')
         int port = grailsApplication.config.getProperty('elasticsearch.port', Integer, 9200)
         client = new RestHighLevelClient(RestClient.builder(new HttpHost(host, port, "http")))
+
+        String indexPrefix = grailsApplication.config.getProperty('app.elasticsearch.indexPrefix', String, Environment.current.name.toLowerCase())
+        Map mappings = getMapping()
+        indexManager = new ElasticSearchIndexManager(client, indexPrefix, mappings.settings, mapping.mappings)
+
+        // TODO - this needs to be in a retry loop in case ES is down when ecodata is started
+        indexManager.initialiseIndexAliases()
 
         // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
         // Therefore, calling the below function in a thread.
@@ -301,21 +302,6 @@ class ElasticSearchService {
             }
         }
 
-    }
-
-    /**
-     * Add custom mapping for ES index.
-     */
-    def addMappings(index) {
-        Map parsedJson = getMapping()
-
-        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
-        indexes.each {
-            CreateIndexRequest request = new CreateIndexRequest(it)
-            request.mapping(parsedJson.mappings)
-            request.settings(parsedJson.settings)
-            client.indices().create(request, RequestOptions.DEFAULT)
-        }
     }
 
     /**
@@ -725,8 +711,9 @@ class ElasticSearchService {
      * Index all documents. Index is cleared first.
      */
     def indexAll() {
-        log.debug "Clearing index first"
-        deleteIndex()
+        log.debug "Clearing the unused index first"
+
+        Map newIndexes = indexManager.recreateUnusedIndexes()
 
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
@@ -739,7 +726,7 @@ class ElasticSearchService {
                 projects.each { project ->
                     try {
                         Map projectMap = prepareProjectForHomePageIndex(project)
-                        indexDoc(projectMap, HOMEPAGE_INDEX)
+                        indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX])
                     }
                     catch (Exception e) {
                         log.error("Unable to index project:  " + project?.projectId, e)
@@ -758,7 +745,7 @@ class ElasticSearchService {
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
                     if (siteMap) {
-                        indexDoc(siteMap, DEFAULT_INDEX)
+                        indexDoc(siteMap, newIndexes[DEFAULT_INDEX])
                     }
                 }
                 catch (Exception e) {
@@ -778,7 +765,7 @@ class ElasticSearchService {
             activityService.doWithAllActivities { Map activity ->
                 try {
                     activity = prepareActivityForIndexing(activity)
-                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? newIndexes[PROJECT_ACTIVITY_INDEX] : newIndexes[DEFAULT_INDEX])
                 }
                 catch (Exception e) {
                     log.error("Unable to index activity: " + activity?.activityId, e)
@@ -796,13 +783,17 @@ class ElasticSearchService {
         organisationService.doWithAllOrganisations { Map org ->
             try {
                 prepareOrganisationForIndexing(org)
-                indexDoc(org, DEFAULT_INDEX)
+                indexDoc(org, newIndexes[DEFAULT_INDEX])
             }
             catch (Exception e) {
                 log.error("Unable to index organisation: "+org?.organisationId, e)
             }
         }
 
+        // Swap each alias to the new index
+        newIndexes.each { String alias, String index ->
+            indexManager.updateAlias(alias, index)
+        }
         log.info "Indexing complete"
     }
 
@@ -1870,45 +1861,6 @@ class ElasticSearchService {
     DeleteResponse deleteDocById(String id, String index = DEFAULT_INDEX) {
         DeleteRequest request = new DeleteRequest(index, id)
         client.delete(request, RequestOptions.DEFAULT)
-    }
-
-    /**
-     * Delete the (default) ES index
-     *
-     * @return
-     */
-    public deleteIndex(index) {
-        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
-
-        indexes.each {
-            log.info "trying to delete $it"
-            try {
-                DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(it)
-                AcknowledgedResponse response = client.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT)
-                if (response.acknowledged) {
-                    log.info "The index is removed"
-                } else {
-                    log.error "The index could not be removed"
-                }
-            } catch (Exception e) {
-                log.error "The index you want to delete is missing : ${e.message}"
-            }
-        }
-
-        createIndexAndMapping(index)
-        return "index cleared"
-    }
-
-    /**
-     * Create a new index add configure custom mappings
-     */
-    def createIndexAndMapping(index) {
-        log.info "Creating new index and configuring elastic search custom mapping"
-        try {
-            addMappings(index)
-        } catch (Exception e) {
-            log.error "Error creating index: ${e}", e
-        }
     }
 
     /**
