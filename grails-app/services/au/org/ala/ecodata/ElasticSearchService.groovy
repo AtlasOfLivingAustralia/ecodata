@@ -40,7 +40,6 @@ import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
-import org.elasticsearch.node.Node
 import org.elasticsearch.search.aggregations.AggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.aggregations.BucketOrder
@@ -50,7 +49,6 @@ import org.elasticsearch.search.sort.SortOrder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
-import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -95,7 +93,6 @@ class ElasticSearchService {
     ProgramService programService
     ManagementUnitService managementUnitService
 
-    Node node
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
@@ -106,9 +103,8 @@ class ElasticSearchService {
     /**
      * Init method to be called on service creation
      */
-    @PostConstruct
     def initialize() {
-        log.info "Setting-up elasticsearch node and client"
+        log.info "Setting-up elasticsearch client and indexes"
 
         String host = grailsApplication.config.getProperty('elasticsearch.host', String,'localhost')
         int port = grailsApplication.config.getProperty('elasticsearch.port', Integer, 9200)
@@ -1864,10 +1860,9 @@ class ElasticSearchService {
     }
 
     /**
-     * Shutdown ES server
+     * Shutdown ES client
      */
-    @PreDestroy
     def destroy() {
-        node.close();
+        client.close()
     }
 }

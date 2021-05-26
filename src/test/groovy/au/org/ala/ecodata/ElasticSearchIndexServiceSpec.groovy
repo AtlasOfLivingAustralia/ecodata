@@ -27,8 +27,10 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
     SiteService siteService = Mock(SiteService)
     ActivityService activityService = Mock(ActivityService)
     DocumentService documentService = Mock(DocumentService)
+    CacheService cacheService = new CacheService()
 
     def setup() {
+        service.cacheService = cacheService
         service.permissionService = permissionService
         service.programService = programService
         service.client = client

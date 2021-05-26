@@ -42,6 +42,7 @@ class BootStrap {
             ctx.addApplicationListener new GormEventListener(d, elasticSearchService, auditService)
         }
 
+        elasticSearchService.initialize()
         // Index all docs
         if (grailsApplication.config.app.elasticsearch.indexAllOnStartup) {
             elasticSearchService.indexAll()
@@ -114,6 +115,6 @@ class BootStrap {
 
     def destroy = {
         // shutdown ES server
-        //elasticSearchService.destroy()
+        elasticSearchService.destroy()
     }
 }

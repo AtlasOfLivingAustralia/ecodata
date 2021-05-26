@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.testing.gorm.DataTest
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.elasticsearch.action.admin.indices.flush.FlushRequest
@@ -17,7 +18,7 @@ import spock.lang.Specification
 /**
  * Tests the ElasticSearchService
  */
-class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<ElasticSearchService>, DomainUnitTest<ActivityForm> {
+class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<ElasticSearchService>, DataTest {
 
     private static final String PROGRAM_1 = "Program1"
     private static final String SUB_PROGRAM_1 = "SubProgram1"
@@ -29,7 +30,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
     private static final String THEME1 = "Theme1"
     private static final String THEME2 = "Theme2"
 
-    private static final String INDEX_NAME = "test"
+    private static final String INDEX_NAME = ElasticIndex.DEFAULT_INDEX
 
 
     private int activityId = 0
@@ -44,6 +45,14 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         mapService MapService
     }}
 
+    void setupSpec() {
+        mockDomain(ActivityForm)
+        mockDomain(Project)
+        mockDomain(Activity)
+        mockDomain(Organisation)
+        mockDomain(Site)
+    }
+
     void setup() {
 
         JSON.registerObjectMarshaller(new MapMarshaller())
@@ -54,11 +63,12 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         metadataService.cacheService = cacheService
         service.cacheService = cacheService
         service.metadataService = metadataService
+        service.siteService = Mock(SiteService)
+        service.activityService = Mock(ActivityService)
+        service.organisationService = Mock(OrganisationService)
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
         service.initialize()
-        service.deleteIndex("search") // The elastic search service relies on the search index, this actually forces it to be created.
-        service.deleteIndex(INDEX_NAME) // this actually deletes and recreates the index.
-
+        service.indexAll() // This will delete then recreate the index as there is no data in the database
         def project1 = createProject(PROGRAM_1, SUB_PROGRAM_1)
         def project2 = createProject(PROGRAM_2, SUB_PROGRAM_2)
         def project3 = createProject(PROGRAM_2, SUB_PROGRAM_3)
@@ -105,7 +115,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         while (indexCount != expectedCount) {
 
             SearchSourceBuilder builder = new SearchSourceBuilder()
-            builder.query(QueryBuilders.matchAllQuery()).fetchSource(false)
+            builder.query(QueryBuilders.matchAllQuery())//.fetchSource(false)
 
             SearchRequest searchRequest = new SearchRequest()
             searchRequest.indices(INDEX_NAME).source(builder)
