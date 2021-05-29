@@ -1636,10 +1636,10 @@ class ElasticSearchService {
                 break
             case "reverse_term":
             case "reverseTerm" :
-                sortOrder = BucketOrder.key(true)
+                sortOrder = BucketOrder.key(false)
                 break
             default:
-                sortOrder = BucketOrder.key(false)
+                sortOrder = BucketOrder.key(true)
                 break
         }
 
