@@ -1,13 +1,13 @@
 import groovy.transform.Field
-import org.elasticsearch.search.aggregations.Aggregation
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms
+import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
 @Field ParsedTerms aggregation
 
 json.term {
-       aggregation.buckets.each {
-           term it.term
-           count it.count
+       aggregation.buckets.each { Terms.Bucket bucket ->
+           term bucket.keyAsString
+           count bucket.docCount
        }
 
 
