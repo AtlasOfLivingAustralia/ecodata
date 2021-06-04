@@ -158,10 +158,16 @@ reloadable:
         - file:/data/ecodata/config/ecodata-config.groovy
         - file:/data/ecodata/config/layers-config.groovy
 
-cors:
-    url:
-        pattern:
-            - '/document/download'
+#cors:
+#    url:
+#        pattern:
+#            - '/document/download'
+
+grails:
+    cors:
+        enabled: true
+    mappings:
+        /document/download/**: inherit
 
 ---
 
