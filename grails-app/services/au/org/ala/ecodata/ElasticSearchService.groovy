@@ -1001,7 +1001,7 @@ class ElasticSearchService {
                 Document image = Document.findByActivityIdAndRoleAndTypeAndFilenameIsNotNull(activity.activityId,'surveyImage', 'image')
                 if (image) {
                     projectActivity.surveyImage = true;
-                    activity.thumbnailUrl = image?.thumbnailUrl
+                    activity.thumbnailUrl = image?.thumbnailUrl?.toString()
                 }
             }
             catch (Exception e) {
