@@ -162,6 +162,9 @@ cors:
     url:
         pattern:
             - '/document/download'
+    allow:
+        origin:
+            regex: '^https?:\\/\\/.+\\.ala\\.org\\.au\\/?'
 
 ---
 
