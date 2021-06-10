@@ -66,3 +66,5 @@ recursiveSearch('hub');
 print ("######## updateUndefinedValues.js ##### Update Score collection ########" );
 recursiveSearch('score');
 
+print ("######## updateUndefinedValues.js ##### Update Record collection ########" );
+recursiveSearch('record');
