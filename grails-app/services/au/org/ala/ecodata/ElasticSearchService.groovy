@@ -22,6 +22,9 @@ import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
 import org.elasticsearch.ElasticsearchException
+import org.elasticsearch.action.bulk.BulkProcessor
+import org.elasticsearch.action.bulk.BulkRequest
+import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.get.GetRequest
@@ -52,6 +55,7 @@ import org.grails.datastore.mapping.engine.event.EventType
 import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.function.BiConsumer
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
@@ -143,7 +147,7 @@ class ElasticSearchService {
      * @param doc
      * @return IndexResponse
      */
-    def indexDoc(doc, String index) {
+    def indexDoc(doc, String index, BulkProcessor bulkProcessor = null) {
         if (!canIndex(doc)) {
             return
         }
@@ -164,7 +168,14 @@ class ElasticSearchService {
 
             IndexRequest indexRequest = new IndexRequest(index).id(docId)
             indexRequest.source(docMap)
-            client.index(indexRequest, RequestOptions.DEFAULT)
+            // If we are indexing in bulk, use the supplied request, otherwise index the doc directly.
+            if (bulkProcessor) {
+                bulkProcessor.add(indexRequest)
+            }
+            else {
+                client.index(indexRequest, RequestOptions.DEFAULT)
+            }
+
         } catch (Exception e) {
             String documentString = (docMap as JSON).toString(true)
             String message = e instanceof ElasticsearchException ? e.getDetailedMessage() : e.getMessage()
@@ -714,15 +725,45 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
 
+        int bulkIndexCount = 0
+        int lastReportedIndexCount = 0
+        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
+            @Override
+            void beforeBulk(long executionId, BulkRequest request) {}
+
+            @Override
+            void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+                bulkIndexCount += request.numberOfActions()
+                if (bulkIndexCount - lastReportedIndexCount > 1000) {
+                    log.info("Bulk indexed "+bulkIndexCount+" documents")
+                    lastReportedIndexCount = bulkIndexCount
+                }
+
+                if (response.hasFailures()) {
+                    log.warn(response.buildFailureMessage())
+                }
+            }
+
+            @Override
+            void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+                log.error("Error executing bulk indexing", failure)
+            }
+        }
+
+        BulkProcessor bulkProcessor = BulkProcessor.builder(
+                { request, bulkListener ->
+                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener
+        ).build()
+
         Project.withNewSession {
-            def batchParams = [offset: 0, max: 50, limit: 200]
+            def batchParams = [offset: 0, max: 50]
             def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
             while (projects) {
                 projects.each { project ->
                     try {
                         Map projectMap = prepareProjectForHomePageIndex(project)
-                        indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX])
+                        indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX], bulkProcessor)
                     }
                     catch (Exception e) {
                         log.error("Unable to index project:  " + project?.projectId, e)
@@ -730,6 +771,7 @@ class ElasticSearchService {
                 }
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
+                log.info("Processed "+batchParams.offset+" projects")
             }
         }
 
@@ -741,7 +783,7 @@ class ElasticSearchService {
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
                     if (siteMap) {
-                        indexDoc(siteMap, newIndexes[DEFAULT_INDEX])
+                        indexDoc(siteMap, newIndexes[DEFAULT_INDEX], bulkProcessor)
                     }
                 }
                 catch (Exception e) {
@@ -750,8 +792,19 @@ class ElasticSearchService {
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.info("Indexed "+count+" sites")
+                    log.info("Processed "+count+" sites")
                 }
+            }
+        }
+
+        log.info "Indexing all organisations"
+        organisationService.doWithAllOrganisations { Map org ->
+            try {
+                prepareOrganisationForIndexing(org)
+                indexDoc(org, newIndexes[DEFAULT_INDEX], bulkProcessor)
+            }
+            catch (Exception e) {
+                log.error("Unable to index organisation: "+org?.organisationId, e)
             }
         }
 
@@ -761,7 +814,7 @@ class ElasticSearchService {
             activityService.doWithAllActivities { Map activity ->
                 try {
                     activity = prepareActivityForIndexing(activity)
-                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? newIndexes[PROJECT_ACTIVITY_INDEX] : newIndexes[DEFAULT_INDEX])
+                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? newIndexes[PROJECT_ACTIVITY_INDEX] : newIndexes[DEFAULT_INDEX], bulkProcessor)
                 }
                 catch (Exception e) {
                     log.error("Unable to index activity: " + activity?.activityId, e)
@@ -770,19 +823,8 @@ class ElasticSearchService {
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.info("Indexed " + count + " activities")
+                    log.info("Processed " + count + " activities")
                 }
-            }
-        }
-
-        log.info "Indexing all organisations"
-        organisationService.doWithAllOrganisations { Map org ->
-            try {
-                prepareOrganisationForIndexing(org)
-                indexDoc(org, newIndexes[DEFAULT_INDEX])
-            }
-            catch (Exception e) {
-                log.error("Unable to index organisation: "+org?.organisationId, e)
             }
         }
 
@@ -920,7 +962,7 @@ class ElasticSearchService {
     private Map prepareActivityForIndexing(Map activity, version = null) {
         activity["className"] = Activity.class.getName()
 
-        def project = projectService.get(activity.projectId, ProjectService.FLAT, version)
+        Map project = projectService.get(activity.projectId, ProjectService.FLAT, version)
 
         boolean isWorksActivity = project?.isWorks
 
@@ -1034,6 +1076,12 @@ class ElasticSearchService {
             project.putAll(activity)
             activity = project
             activity.programSubProgram = project.associatedProgram + ' - ' + project.associatedSubProgram
+        }
+        // Elasticsearch no longer accepts URLs and the ProjectService.toMap attaches
+        // the associated orgs logo as a URLs
+        // before indexing.
+        activity?.associatedOrgs?.each {
+            it.logo = it.logo?.toString()
         }
 
         if (activity.siteId) {
