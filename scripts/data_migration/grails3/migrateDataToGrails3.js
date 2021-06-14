@@ -6,3 +6,4 @@ load("./updateUndefinedValues.js");
 load("./updateDocumentDateTaken.js");
 load("./updateProgramConfig.js");
 load("./updateActivityFormVersionDoubleToInt.js");
+load("./updateEventDates.js");
