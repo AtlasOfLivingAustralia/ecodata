@@ -66,14 +66,14 @@
         },
         "organisationSort": {
           "type": "keyword",
-          "analyzer" : "case_insensitive_sort"
+          "normalizer" : "case_insensitive_sort"
         },
         "dateCreated": {
           "type" : "date",
           "copy_to" : "dateCreatedSort"
         },
         "dateCreatedSort" : {
-          "type" : "keyword", "analyzer" : "case_insensitive_sort"
+          "type" : "keyword", "normalizer" : "case_insensitive_sort"
         },
         "serviceProviderName": {
           "type" : "text",
@@ -515,6 +515,11 @@
         "case_insensitive_sort": {
           "tokenizer": "keyword",
           "filter":  [ "lowercase" ]
+        }
+      },
+      "normalizer": {
+        "case_insensitive_sort": {
+          "filter": "lowercase"
         }
       }
     }
