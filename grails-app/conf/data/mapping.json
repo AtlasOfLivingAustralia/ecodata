@@ -65,7 +65,7 @@
           "type": "keyword"
         },
         "organisationSort": {
-          "type": "text",
+          "type": "keyword",
           "analyzer" : "case_insensitive_sort"
         },
         "dateCreated": {
@@ -73,7 +73,7 @@
           "copy_to" : "dateCreatedSort"
         },
         "dateCreatedSort" : {
-          "type" : "text", "analyzer" : "case_insensitive_sort"
+          "type" : "keyword", "analyzer" : "case_insensitive_sort"
         },
         "serviceProviderName": {
           "type" : "text",
