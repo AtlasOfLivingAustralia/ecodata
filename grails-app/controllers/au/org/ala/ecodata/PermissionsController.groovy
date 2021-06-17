@@ -604,7 +604,6 @@ class PermissionsController {
             List out = []
             up.each {
                 Map t = [:]
-                log.debug "it.projectId = ${it.entityId}"
                 t.project = projectService.get(it.entityId, ProjectService.FLAT)
                 t.accessLevel = it.accessLevel
                 if (t.project) out.add t
