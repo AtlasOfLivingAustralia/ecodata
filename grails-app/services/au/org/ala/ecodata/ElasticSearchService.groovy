@@ -1088,6 +1088,9 @@ class ElasticSearchService {
         activity?.associatedOrgs?.each {
             it.logo = it.logo?.toString()
         }
+        activity?.documents?.each {
+            it.thumbnailUrl = it.thumbnailUrl?.toString()
+        }
 
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, [SiteService.FLAT, SiteService.INDEXING], version)

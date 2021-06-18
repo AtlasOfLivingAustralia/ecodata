@@ -4,6 +4,7 @@ import grails.converters.JSON
 import org.apache.commons.io.FilenameUtils
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import groovy.json.JsonSlurper
@@ -327,14 +328,14 @@ class DocumentController {
         elasticSearchService.buildProjectActivityQuery(params)
         SearchResponse results = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX);
         activityIds = results?.hits?.hits?.collect { document ->
-            document.source.activityId
+            document.sourceAsMap.activityId
         }
-        results?.hits?.hits?.each { document ->
-            activityMetadata[document.source.activityId] = [
-                    activityId: document.source.activityId,
-                    activityName: document.source.name,
-                    projectId: document.source.projectActivity.projectId,
-                    projectName: document.source.projectActivity.projectName
+        results?.hits?.hits?.each { SearchHit document ->
+            activityMetadata[document.sourceAsMap.activityId] = [
+                    activityId: document.sourceAsMap.activityId,
+                    activityName: document.sourceAsMap.name,
+                    projectId: document.sourceAsMap.projectActivity.projectId,
+                    projectName: document.sourceAsMap.projectActivity.projectName
             ]
         }
 
