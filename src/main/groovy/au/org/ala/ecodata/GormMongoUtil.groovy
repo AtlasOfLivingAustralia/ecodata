@@ -9,6 +9,16 @@ class GormMongoUtil {
         }
     }
 
+    static Map extractDboPropertiesWithDateConversion(obj) {
+        obj.collectEntries { field ->
+            def value = field.value
+            if (field.value instanceof Date) {
+                value = DateUtil.format(field.value)
+            }
+            [field.key, value]
+        }
+    }
+
     // Deep Prune a hash of all empty [:], [] preserving false and other invalid values
     static Map deepPrune(Map map) {
         map.collectEntries { k, v ->

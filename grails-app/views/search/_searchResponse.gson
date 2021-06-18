@@ -1,6 +1,7 @@
 import groovy.transform.Field
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.aggregations.Aggregation
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 
@@ -14,9 +15,19 @@ json {
     }
 
     facets searchResponse.aggregations?.collectEntries { Aggregation agg ->
-        [(agg.name): [terms:((ParsedTerms)agg).buckets.collect { Terms.Bucket bucket ->
+        String type = agg.type
+        switch (agg.type) {
+            case 'sterms':
+            case 'lterms':
+                type = 'terms'
+                break
+            default:
+                break
+        }
+        MultiBucketsAggregation multiBucketsAggregation = (MultiBucketsAggregation)agg
+        [(agg.name): [terms:multiBucketsAggregation.buckets.collect { bucket ->
             [term: bucket.key, count: bucket.docCount]
-        }]]
+        }, _type:type]]
     }
 
 }

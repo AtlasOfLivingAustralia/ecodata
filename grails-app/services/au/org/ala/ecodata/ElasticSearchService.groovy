@@ -152,7 +152,12 @@ class ElasticSearchService {
             return
         }
         String docId = getEntityId(doc)
-        Map docMap = GormMongoUtil.extractDboProperties(doc)
+        // The purpose of the as JSON call below is to convert Date objects into the format we use
+        // throughout the app - otherwise the elasticsearch XContentBuilder will transform them into
+        // ISO dates with milliseconds which causes BioCollect problems as it uses the _source field of the
+        // search result directly.
+        Map docMap = GormMongoUtil.extractDboPropertiesWithDateConversion(doc)
+
         index = index ?: DEFAULT_INDEX
 
         // Delete index if it exists and doc.status == 'deleted'
@@ -376,7 +381,7 @@ class ElasticSearchService {
             case 'document':
             case 'stringList':
                 mapping?.mappings["properties"].put(field.indexName, [
-                        "type" : "text"
+                        "type" : "keyword"
                 ])
                 break
             case 'number':
@@ -1378,6 +1383,7 @@ class ElasticSearchService {
         QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index)
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params).query(query)
+        source.trackTotalHits(true) // Always provide a full count of the number of results for compatibility with current clients
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
@@ -1675,8 +1681,8 @@ class ElasticSearchService {
         // This is to keep backwards compatibility with elasticsearch 1.7.
         BucketOrder sortOrder
         switch (fsort) {
-            case "count":
-                sortOrder = BucketOrder.count(false)
+            case "term":
+                sortOrder = BucketOrder.key(true)
                 break
             case "reverse_count":
             case "reverseCount":
@@ -1687,7 +1693,7 @@ class ElasticSearchService {
                 sortOrder = BucketOrder.key(false)
                 break
             default:
-                sortOrder = BucketOrder.key(true)
+                sortOrder = BucketOrder.count(false)
                 break
         }
 

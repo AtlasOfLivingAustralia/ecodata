@@ -2,18 +2,13 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.grails.core.artefact.DomainClassArtefactHandler
-import org.grails.web.json.JSONObject
 import org.springframework.context.MessageSourceResolvable
-
-import java.text.SimpleDateFormat
 
 class CommonService {
 
    // static transactional = false
     def grailsApplication, cacheService
     def messageSource
-
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
     /**
      * Updates all properties other than 'id' and converts date strings to BSON dates.
@@ -77,7 +72,7 @@ class CommonService {
     }
 
     Date parse(String dateStr) {
-        return dateFormat.parse(dateStr.replace("Z", "+0000"))
+        return DateUtil.parse(dateStr)
     }
 
     /**

@@ -3,12 +3,31 @@ package au.org.ala.ecodata
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Created by mol109 on 25/5/17.
  */
 
 class DateUtil {
+
+    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
+
+    static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    static Date parse(String dateStr) {
+        return dateFormat.parse(dateStr.replace("Z", "+0000"))
+    }
+
+    static String format(Date date) {
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC)
+        dateTime.format(ISO_DATE_FORMATTER)
+    }
+
     /**
      * Returns a {@link TimeZone} instance for the given clientTimezoneOffset
      *

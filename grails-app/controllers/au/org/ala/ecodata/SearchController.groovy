@@ -69,12 +69,14 @@ class SearchController {
         if (params?.version) {
             //search auditMessage
             res = (auditMessageSearch(params) as JSON).toString()
+            response.setContentType("application/json; charset=\"UTF-8\"")
+            render res
         } else {
             elasticSearchService.buildProjectActivityQuery(params)
             res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
+            respond searchResponse:res
         }
-        response.setContentType("application/json; charset=\"UTF-8\"")
-        render res
+
     }
 
     def getHeatmap () {

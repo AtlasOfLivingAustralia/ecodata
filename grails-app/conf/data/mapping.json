@@ -1,6 +1,5 @@
 {
   "mappings":{
-
       "properties": {
         "siteId" : {
           "type" : "keyword"
@@ -41,15 +40,14 @@
         "tags" : {
           "type" : "keyword"
         },
+        "fundingSourceFacet": {
+          "type": "keyword"
+        },
         "fundings": {
           "properties": {
             "fundingSource": {
               "type": "keyword",
-              "fields": {
-                "fundingSourceFacet": {
-                  "type": "keyword"
-                }
-              }
+              "copy_to":"fundingSourceFacet"
             }
           }
         },
@@ -91,11 +89,10 @@
             }
           }
         },
+        "typeFacet" : {"type" : "keyword"},
         "type": {
           "type" : "text",
-          "fields" : {
-            "typeFacet" : {"type" : "keyword"}
-          }
+          "copy_to" : "typeFacet"
         },
         "className": {
           "type":"text",
@@ -116,17 +113,15 @@
         "muFacet": {
           "type": "keyword"
         },
+        "primaryOutcomeFacet": {"type": "keyword"},
         "primaryOutcome": {
           "type": "text",
-          "fields": {
-            "primaryOutcomeFacet": {"type": "keyword"}
-          }
+          "copy_to": "primaryOutcomeFacet"
         },
+        "secondaryOutcomesFacet": {"type": "keyword"},
         "secondaryOutcomes": {
           "type": "text",
-          "fields": {
-            "secondaryOutcomesFacet": {"type": "keyword"}
-          }
+          "copy_to": "secondaryOutcomesFacet"
         },
         "associatedSubProgram": {
           "type" : "text",
@@ -189,12 +184,11 @@
             },
             "name": {
               "type" : "text",
-              "fields" : {
-                "siteNameFacet" : {"type" : "keyword"}
-              }
+              "copy_to" : "siteNameFacet"
             }
           }
         },
+        "siteNameFacet" : {"type" : "keyword"},
         "projectArea":{
           "properties":{
             "geoIndex": {
@@ -233,7 +227,20 @@
         "promoteOnHomepage": {
           "type": "keyword"
         },
-
+        "projectActivityNameFacet": {
+          "type": "keyword"
+        },
+        "organisationNameFacet": {
+          "type":"keyword"
+        },
+        "projectNameFacet":{"type":"keyword"},
+        "activityOwnerNameFacet":{"type":"keyword"},
+        "activityLastUpdatedYearFacet":{"type":"keyword"},
+        "activityLastUpdatedMonthFacet":{"type":"keyword"},
+        "recordNameFacet":{"type":"keyword"},
+        "surveyImage": {
+          "type": "boolean"
+        },
         "projectActivity":{
           "properties":{
             "embargoUntil":{
@@ -241,21 +248,15 @@
             },
             "name":{
               "type":"text",
-              "fields": {
-                "projectActivityNameFacet":{"type":"keyword"}
-              }
+              "copy_to": "projectActivityNameFacet"
             },
             "organisationName":{
               "type":"text",
-              "fields": {
-                "organisationNameFacet":{"type":"keyword"}
-              }
+              "copy_to": "organisationNameFacet"
             },
             "projectName":{
               "type":"text",
-              "fields": {
-                "projectNameFacet":{"type":"keyword"}
-              }
+              "copy_to": "projectNameFacet"
             },
             "projectId":{
               "type":"keyword"
@@ -265,35 +266,28 @@
             },
             "activityOwnerName":{
               "type":"text",
-              "fields": {
-                "activityOwnerNameFacet":{"type":"keyword"}
-              }
+              "copy_to": "activityOwnerNameFacet"
             },
             "lastUpdated":{
               "type":"keyword"
             },
             "lastUpdatedYear":{
               "type":"text",
-              "fields": {
-                "activityLastUpdatedYearFacet":{"type":"keyword"}
-              }
+              "copy_to": "activityLastUpdatedYearFacet"
             },
             "lastUpdatedMonth":{
               "type":"text",
-              "fields": {
-                "activityLastUpdatedMonthFacet":{"type":"keyword"}
-              }
+              "copy_to": "activityLastUpdatedMonthFacet"
             },
             "surveyImage": {
+              "copy_to": "surveyImage",
               "type": "boolean"
             },
             "records":{
               "properties":{
                 "name":{
                   "type":"text",
-                  "fields": {
-                    "recordNameFacet":{"type":"keyword"}
-                  }
+                  "copy_to": "recordNameFacet"
                 },
                 "eventTime":{
                   "type": "text"
@@ -323,13 +317,13 @@
             }
           }
         },
+        "siteProjectNameFacet":{"type":"keyword"},
+        "siteSurveyNameFacet":{"type":"keyword"},
         "projectList":{
           "properties": {
             "projectName": {
               "type": "text",
-              "fields": {
-                "siteProjectNameFacet":{"type":"keyword"}
-              }
+              "copy_to": "siteProjectNameFacet"
             }
           }
         },
@@ -337,9 +331,7 @@
           "properties": {
             "surveyName": {
               "type": "text",
-              "fields": {
-                "siteSurveyNameFacet":{"type":"keyword"}
-              }
+              "copy_to": "siteSurveyNameFacet"
             }
           }
         },
@@ -367,6 +359,9 @@
         "meriPlanAssetFacet": {
           "type": "keyword"
         },
+        "partnerOrganisationTypeFacet": {
+          "type":"keyword"
+        },
         "custom": {
           "properties": {
             "details": {
@@ -389,11 +384,7 @@
                       "properties": {
                         "data3": {
                           "type":"text",
-                          "fields": {
-                            "partnerOrganisationTypeFacet": {
-                              "type":"text"
-                            }
-                          }
+                          "copy_to": "partnerOrganisationTypeFacet"
                         }
                       }
                     }
@@ -426,16 +417,64 @@
             }
           }
         },
+        "surveyMonthFacet":{"type":"keyword"},
         "surveyMonth":{
           "type":"text",
-          "fields": {
-            "surveyMonthFacet":{"type":"keyword"}
-          }
+          "copy_to": "surveyMonthFacet"
         },
+        "surveyYearFacet":{"type":"keyword"},
         "surveyYear":{
           "type":"text",
-          "fields": {
-            "surveyYearFacet":{"type":"keyword"}
+          "copy_to": "surveyYearFacet"
+        },
+        "userId": {
+          "type": "keyword"
+        },
+        "blog": {
+          "properties": {
+            "content": {
+              "type": "text"
+            },
+            "title": {
+              "type": "text"
+            },
+            "blogEntryId": {
+              "index": false,
+              "type": "keyword"
+            },
+            "date": {
+              "type": "date",
+              "index": false,
+              "ignore_malformed": true
+            },
+            "imageId": {
+              "type": "keyword",
+              "index": false
+            },
+            "imageThumbnailUrl": {
+              "type": "keyword",
+              "index": false
+            },
+            "keepOnTop": {
+              "type": "boolean",
+              "index": false
+            },
+            "projectId": {
+              "type": "keyword",
+              "index": false
+            },
+            "type": {
+              "type": "keyword",
+              "index": false
+            },
+            "stockIcon": {
+              "type": "keyword",
+              "index": false
+            },
+            "viewMoreUrl": {
+              "type": "keyword",
+              "index": false
+            }
           }
         }
       },
