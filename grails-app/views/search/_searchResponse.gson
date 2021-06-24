@@ -2,8 +2,8 @@ import groovy.transform.Field
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.aggregations.Aggregation
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms
-import org.elasticsearch.search.aggregations.bucket.terms.Terms
+import org.elasticsearch.search.aggregations.bucket.histogram.ParsedHistogram
+import org.elasticsearch.search.aggregations.bucket.range.ParsedRange
 
 @Field SearchResponse searchResponse
 
@@ -16,18 +16,44 @@ json {
 
     facets searchResponse.aggregations?.collectEntries { Aggregation agg ->
         String type = agg.type
+        def result = null
         switch (agg.type) {
             case 'sterms':
             case 'lterms':
+            case 'terms':
                 type = 'terms'
+                MultiBucketsAggregation multiBucketsAggregation = (MultiBucketsAggregation)agg
+                result = [(agg.name): [terms:multiBucketsAggregation.buckets.collect { bucket ->
+                    [term: bucket.key, count: bucket.docCount]
+                }, _type:type]]
                 break
+            case 'range':
+                ParsedRange range = (ParsedRange)agg
+                result = [(agg.name): [ranges:range.buckets.collect { bucket ->
+                    Map bucketAsMap = [term: bucket.key, count: bucket.docCount]
+                    def from = bucket.from
+                    if (from && from != Double.NEGATIVE_INFINITY && from != Double.POSITIVE_INFINITY) {
+                        bucketAsMap += [from:from, from_str:bucket.fromAsString]
+                    }
+                    def to = bucket.to
+                    if (to && to != Double.NEGATIVE_INFINITY && to != Double.POSITIVE_INFINITY) {
+                        bucketAsMap += [to:to, to_str:bucket.toAsString]
+                    }
+                    bucketAsMap
+                }, _type:type]]
+                break
+            case 'histogram':
+                ParsedHistogram histogram = (ParsedHistogram)agg
+                result = [(agg.name): [entries:histogram.buckets.collect { bucket ->
+                    [key: bucket.key, count: bucket.docCount]
+                }, _type:type]]
+                break
+            case 'stats':
+
             default:
                 break
         }
-        MultiBucketsAggregation multiBucketsAggregation = (MultiBucketsAggregation)agg
-        [(agg.name): [terms:multiBucketsAggregation.buckets.collect { bucket ->
-            [term: bucket.key, count: bucket.docCount]
-        }, _type:type]]
+        result
     }
 
 }

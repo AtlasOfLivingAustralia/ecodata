@@ -241,16 +241,42 @@
         "surveyImage": {
           "type": "boolean"
         },
+        "embargoed": {
+          "type": "boolean"
+        },
+        "methodType":{
+          "type":"keyword"
+        },
+        "spatialAccuracy":{
+          "type":"keyword"
+        },
+        "speciesIdentification":{
+          "type":"keyword"
+        },
+        "temporalAccuracy":{
+          "type":"keyword"
+        },
+        "nonTaxonomicAccuracy":{
+          "type":"keyword"
+        },
+        "dataQualityAssuranceMethods":{
+          "type":"keyword"
+        },
+        "isDataManagementPolicyDocumented":{
+          "type":"boolean"
+        },
         "projectActivity":{
           "properties":{
             "embargoUntil":{
               "type":"text"
             },
             "name":{
+              "index": false,
               "type":"text",
               "copy_to": "projectActivityNameFacet"
             },
             "organisationName":{
+              "index": false,
               "type":"text",
               "copy_to": "organisationNameFacet"
             },
@@ -259,10 +285,13 @@
               "copy_to": "projectNameFacet"
             },
             "projectId":{
+              "index": false,
               "type":"keyword"
             },
             "embargoed":{
-              "type":"boolean"
+              "index": false,
+              "type":"boolean",
+              "copy_to": "embargoed"
             },
             "activityOwnerName":{
               "type":"text",
@@ -273,14 +302,17 @@
             },
             "lastUpdatedYear":{
               "type":"text",
+              "index": false,
               "copy_to": "activityLastUpdatedYearFacet"
             },
             "lastUpdatedMonth":{
               "type":"text",
+              "index": false,
               "copy_to": "activityLastUpdatedMonthFacet"
             },
             "surveyImage": {
               "copy_to": "surveyImage",
+              "index": false,
               "type": "boolean"
             },
             "records":{
@@ -295,24 +327,38 @@
               }
             },
             "methodType":{
+              "index": false,
+              "copy_to": "methodType",
               "type":"keyword"
             },
             "spatialAccuracy":{
+              "index": false,
+              "copy_to": "spatialAccuracy",
               "type":"keyword"
             },
             "speciesIdentification":{
+              "index": false,
+              "copy_to": "speciesIdentification",
               "type":"keyword"
             },
             "temporalAccuracy":{
+              "index": false,
+              "copy_to": "temporalAccuracy",
               "type":"keyword"
             },
             "nonTaxonomicAccuracy":{
+              "index": false,
+              "copy_to": "nonTaxonomicAccuracy",
               "type":"keyword"
             },
             "dataQualityAssuranceMethods":{
+              "index": false,
+              "copy_to": "dataQualityAssuranceMethods",
               "type":"keyword"
             },
             "isDataManagementPolicyDocumented":{
+              "index": false,
+              "copy_to": "isDataManagementPolicyDocumented",
               "type":"boolean"
             }
           }

@@ -38,6 +38,7 @@ import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.geo.builders.CoordinatesBuilder
 import org.elasticsearch.common.geo.builders.PolygonBuilder
+import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
@@ -52,7 +53,6 @@ import org.elasticsearch.search.sort.SortOrder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
-import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.BiConsumer
@@ -156,7 +156,8 @@ class ElasticSearchService {
         // throughout the app - otherwise the elasticsearch XContentBuilder will transform them into
         // ISO dates with milliseconds which causes BioCollect problems as it uses the _source field of the
         // search result directly.
-        Map docMap = GormMongoUtil.extractDboPropertiesWithDateConversion(doc)
+        Map docMap = doc
+
 
         index = index ?: DEFAULT_INDEX
 
@@ -170,9 +171,9 @@ class ElasticSearchService {
 
         try {
             addCustomFields(docMap)
-
+            String docContent = new JSON(docMap).toString(false)
             IndexRequest indexRequest = new IndexRequest(index).id(docId)
-            indexRequest.source(docMap)
+            indexRequest.source(docContent, XContentType.JSON)
             // If we are indexing in bulk, use the supplied request, otherwise index the doc directly.
             if (bulkProcessor) {
                 bulkProcessor.add(indexRequest)
@@ -1600,11 +1601,11 @@ class ElasticSearchService {
                 RangeAggregationBuilder rangeFacet = AggregationBuilders.range(facetName).field(facetName);
                 ranges?.each { Map range ->
                     if(range.gte && range.lt){
-                        rangeFacet.addRange(range.gte, range.lt)
+                        rangeFacet.addRange(range.gte as double, range.lt as double)
                     } else if (range.gte) {
-                        rangeFacet.addUnboundedFrom(range.gte)
+                        rangeFacet.addUnboundedFrom(range.gte as double)
                     } else if(range.lt){
-                        rangeFacet.addUnboundedTo(range.lt)
+                        rangeFacet.addUnboundedTo(range.lt as double)
                     }
                 }
 
