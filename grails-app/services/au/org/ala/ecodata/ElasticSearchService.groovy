@@ -1013,7 +1013,14 @@ class ElasticSearchService {
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
                 values.commonName = it.commonName
-                values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+
+                // This check is required as elasticsearch JSON validation will fail for
+                // NaN & Infinity and the whole batch will not index.
+                // https://github.com/elastic/elasticsearch/issues/2863
+                if (Double.isFinite(it.decimalLatitude) && Double.isFinite(it.decimalLongitude)) {
+                    values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+                }
+
                 values.multimedia = it.multimedia
                 if(it.eventDate){
                     eventDate = recordService.parseDate(it.eventDate)
