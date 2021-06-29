@@ -1017,7 +1017,7 @@ class ElasticSearchService {
                 // This check is required as elasticsearch JSON validation will fail for
                 // NaN & Infinity and the whole batch will not index.
                 // https://github.com/elastic/elasticsearch/issues/2863
-                if (Double.isFinite(it.decimalLatitude) && Double.isFinite(it.decimalLongitude)) {
+                if (it.decimalLatitude && it.decimalLongitude && Double.isFinite(it.decimalLatitude) && Double.isFinite(it.decimalLongitude)) {
                     values.coordinates = [it.decimalLatitude, it.decimalLongitude]
                 }
 
