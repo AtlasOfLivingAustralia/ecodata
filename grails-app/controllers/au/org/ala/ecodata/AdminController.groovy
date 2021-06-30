@@ -5,6 +5,8 @@ import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -686,6 +688,35 @@ class AdminController {
         message = result ? "Successfully created GeoServer dependencies" : "Failed to create GeoServer dependencies. Is GeoServer running?"
         code = result ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR
         render text: [message: message] as JSON, status: code
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def displayUnIndexedFields() {
+        String index = params.get('index', ElasticIndex.HOMEPAGE_INDEX)
+        String q = "_ignored:*"
+        if (params.q) {
+            q += " AND ("+params.q+")"
+        }
+        List fq = params.getList('fq') ?: []
+
+        List include = params.getList('include') ?: []
+        include += ['isMERIT', 'projectId', 'activityId']
+
+        Map params = [fq:fq, include:include, offset:params.getInt('offset', 0), max:params.getInt('max', 100)]
+        SearchResponse searchResponse = elasticSearchService.search(q, params, index)
+
+        Map resp = [total:searchResponse.hits.totalHits.value, results:[]]
+        searchResponse.hits.hits?.each { SearchHit hit ->
+            Map docFields = hit.fields.collectEntries {
+                [it.key, it.value.values]
+            }
+            include.each {
+                docFields.put(it, hit.sourceAsMap[it])
+            }
+            resp.results << [id:hit.docId(), fields: docFields]
+        }
+
+        render resp as JSON
     }
 
 }
