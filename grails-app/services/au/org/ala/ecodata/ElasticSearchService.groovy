@@ -1552,15 +1552,16 @@ class ElasticSearchService {
         new FunctionScoreQueryBuilder(query, filterFunctions)
     }
 
-    private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "geoIndex") {
+    private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "projectArea.geoIndex") {
         GeoShapeQueryBuilder filter = null
-
+        field = field ?: 'projectArea.geoIndex'
         Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder().points(geographicSearchCriteria.coordinates[0].collect { coordinate ->
-                    new Coordinate(coordinate[0] as double, coordinate[1] as double)
-                } as Coordinate[])
+                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder()
+                geographicSearchCriteria.coordinates[0].each { coordinate ->
+                    coordinatesBuilder.coordinate(coordinate[0] as double, coordinate[1] as double)
+                }
                 shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
                 break;
             case "Circle":
