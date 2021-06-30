@@ -834,6 +834,8 @@ class ElasticSearchService {
             }
         }
 
+        bulkProcessor.close()
+
         // Swap each alias to the new index
         newIndexes.each { String alias, String index ->
             indexManager.updateAlias(alias, index)
