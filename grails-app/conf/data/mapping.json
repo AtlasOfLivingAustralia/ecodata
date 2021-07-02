@@ -177,7 +177,8 @@
               "ignore_malformed": true
             },
             "geoPoint": {
-              "type": "geo_point"
+              "type": "geo_point",
+              "ignore_malformed": true
             },
             "geometryType": {
               "type": "keyword"
@@ -196,7 +197,8 @@
               "ignore_malformed": true
             },
             "geoPoint": {
-              "type": "geo_point"
+              "type": "geo_point",
+              "ignore_malformed": true
             },
             "geometryType": {
               "type": "keyword"
