@@ -17,6 +17,7 @@ json {
     facets searchResponse.aggregations?.collectEntries { Aggregation agg ->
         String type = agg.type
         def result = null
+        long total = 0
         switch (agg.type) {
             case 'sterms':
             case 'lterms':
@@ -24,12 +25,14 @@ json {
                 type = 'terms'
                 MultiBucketsAggregation multiBucketsAggregation = (MultiBucketsAggregation)agg
                 result = [(agg.name): [terms:multiBucketsAggregation.buckets.collect { bucket ->
+                    total += bucket.docCount
                     [term: bucket.key, count: bucket.docCount]
-                }, _type:type]]
+                }, _type:type, total:total]]
                 break
             case 'range':
                 ParsedRange range = (ParsedRange)agg
                 result = [(agg.name): [ranges:range.buckets.collect { bucket ->
+                    total += bucket.docCount
                     Map bucketAsMap = [term: bucket.key, count: bucket.docCount]
                     def from = bucket.from
                     if (from && from != Double.NEGATIVE_INFINITY && from != Double.POSITIVE_INFINITY) {
@@ -40,13 +43,14 @@ json {
                         bucketAsMap += [to:to, to_str:bucket.toAsString]
                     }
                     bucketAsMap
-                }, _type:type]]
+                }, _type:type, total:total]]
                 break
             case 'histogram':
                 ParsedHistogram histogram = (ParsedHistogram)agg
                 result = [(agg.name): [entries:histogram.buckets.collect { bucket ->
+                    total += bucket.docCount
                     [key: bucket.key, count: bucket.docCount]
-                }, _type:type]]
+                }, _type:type, total:total]]
                 break
             case 'stats':
 
