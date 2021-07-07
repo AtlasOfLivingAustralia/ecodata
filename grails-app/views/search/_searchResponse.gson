@@ -26,7 +26,7 @@ json {
                 MultiBucketsAggregation multiBucketsAggregation = (MultiBucketsAggregation)agg
                 result = [(agg.name): [terms:multiBucketsAggregation.buckets.collect { bucket ->
                     total += bucket.docCount
-                    [term: bucket.key, count: bucket.docCount]
+                    [term: bucket.keyAsString, count: bucket.docCount] // keyAsString converts boolean 0/1 to false/true
                 }, _type:type, total:total]]
                 break
             case 'range':
