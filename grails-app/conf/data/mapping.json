@@ -287,7 +287,6 @@
               "copy_to": "projectNameFacet"
             },
             "projectId":{
-              "index": false,
               "type":"keyword"
             },
             "embargoed":{
