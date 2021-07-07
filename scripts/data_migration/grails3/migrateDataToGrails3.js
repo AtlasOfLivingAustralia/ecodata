@@ -7,3 +7,5 @@ load("./updateDocumentDateTaken.js");
 load("./updateProgramConfig.js");
 load("./updateActivityFormVersionDoubleToInt.js");
 load("./updateEventDates.js");
+load("./fixProjectIndexing.js");
+print("Migration complete");
