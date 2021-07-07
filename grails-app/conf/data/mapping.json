@@ -290,7 +290,6 @@
               "type":"keyword"
             },
             "embargoed":{
-              "index": false,
               "type":"boolean",
               "copy_to": "embargoed"
             },
