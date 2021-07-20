@@ -8,4 +8,5 @@ load("./updateProgramConfig.js");
 load("./updateActivityFormVersionDoubleToInt.js");
 load("./updateEventDates.js");
 load("./fixProjectIndexing.js");
+load("./updateAuditEntityIds.js");
 print("Migration complete");
