@@ -656,10 +656,14 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
 
         Date endDate = calendar.getTime()
 
+        calendar.set(Calendar.YEAR, 2019)
+        calendar.set(Calendar.MONTH, 9)
+        Date startDate = calendar.getTime()
+
         project.activities = [
-                [activityId:'a1', type: "Activity 1", description: "Activity 1 description", formVersion: 1, plannedEndDate: endDate,outputs: [getJsonResource("singleSampleNestedDataModel"),  getJsonResource("sampleNestedDataModel")]]]
+                [activityId:'a1', type: "Activity 1", description: "Activity 1 description", formVersion: 1, plannedStartDate:startDate, plannedEndDate: endDate,outputs: [getJsonResource("singleSampleNestedDataModel"),  getJsonResource("sampleNestedDataModel")]]]
         project.reports = [
-                new Report([reportId:'r1', activityType:'Activity 1', activityId:'a1', type:"Activity", generatedBy:"Test config", name:"Report 1", toDate:endDate, description:"Report 1 description"])
+                new Report([reportId:'r1', activityType:'Activity 1', activityId:'a1', type:"Activity", generatedBy:"Test config", name:"Report 1", fromDate: startDate, toDate:endDate, description:"Report 1 description"])
         ]
         when:
         projectXlsExporter.tabsToExport = ["Activity Summary"]
@@ -674,7 +678,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         summarySheet.physicalNumberOfRows == 2
         List summaryRow = readRow(1, summarySheet)
         List activityInfo = summaryRow.subList(projectXlsExporter.commonProjectHeaders.size(), summaryRow.size())
-        activityInfo == ['a1', '', '', endDate, 'Report 1', 'Test config', 'Activity 1 description', 'Activity 1', '', '', 'Unpublished (no action – never been submitted)', '']
+        activityInfo == ['a1', '', startDate, endDate, startDate, endDate, '2019/2020', 'Report 1', 'Test config', 'Activity 1 description', 'Activity 1', '', '', 'Unpublished (no action – never been submitted)', '']
 
     }
 
