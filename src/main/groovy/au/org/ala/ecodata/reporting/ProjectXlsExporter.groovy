@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.ProjectService
@@ -63,8 +64,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
-    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Finanical Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'fromDate', 'toDate', 'financialYear', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
 
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
@@ -816,7 +817,7 @@ class ProjectXlsExporter extends ProjectExporter {
             report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
         }
 
-        [stage:report?.name, reportType:report?.generatedBy]
+        [stage:report?.name, reportType:report?.generatedBy, fromDate:report?.fromDate, toDate:report?.toDate, financialYear: report ? DateUtil.getFinancialYearBasedOnEndDate(report.toDate) : ""]
     }
 
     AdditionalSheet projectSheet() {

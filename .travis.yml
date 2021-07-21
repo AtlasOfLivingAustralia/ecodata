@@ -19,12 +19,17 @@ services:
   - elasticsearch
 
 before_install:
+  - export TZ=Australia/Canberra
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - curl https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.12.0-amd64.deb -o elasticsearch.deb
   - sudo dpkg -i --force-confnew elasticsearch.deb
   - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
   - sudo service elasticsearch restart
+
+# This disables the default gradlew assemble
+install:
+  - true
 
 cache:
   directories:
