@@ -18,8 +18,13 @@ services:
   - mongodb
 
 before_install:
+  - export TZ=Australia/Canberra
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+# This disables the default gradlew assemble
+install:
+  - true
 
 cache:
   directories:
