@@ -47,7 +47,8 @@ var recursiveSearch = function(collection) {
         print("Scanning document with Id: " + doc['_id']);
         var docContainUndefined = deepIterate(collection, doc['_id'], doc, "");
         if (docContainUndefined) {
-            printjson (doc);
+            //printjson (doc);
+            print("updated id: "+ doc['_id']);
         } else {
             print ('Nothing to update for id: ' + doc['_id']);
         }
