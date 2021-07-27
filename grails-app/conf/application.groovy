@@ -3,10 +3,6 @@ def appName = 'ecodata'
 
 environments {
     development {
-        elasticsearch {
-            username = 'elastic'
-            password = 'password'
-        }
         grails {
             mongodb {
                 host = "localhost"
@@ -1215,3 +1211,10 @@ geohash.maxNumberOfGrids = 250
 // Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
 // hide exact location.
 geohash.maxLength =  5
+
+// Dummy / default username and password for elasticsearch, will be ignored if the server is not setup for
+// basic authentication.
+elasticsearch {
+    username = 'elastic'
+    password = 'password'
+}
