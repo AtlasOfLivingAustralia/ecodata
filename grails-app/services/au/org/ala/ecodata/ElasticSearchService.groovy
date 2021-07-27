@@ -21,6 +21,11 @@ import grails.core.GrailsApplication
 import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpHost
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.client.CredentialsProvider
+import org.apache.http.impl.client.BasicCredentialsProvider
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.bulk.BulkProcessor
 import org.elasticsearch.action.bulk.BulkRequest
@@ -35,6 +40,7 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
+import org.elasticsearch.client.RestClientBuilder
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.geo.builders.CoordinatesBuilder
 import org.elasticsearch.common.geo.builders.PolygonBuilder
@@ -110,9 +116,7 @@ class ElasticSearchService {
     def initialize() {
         log.info "Setting-up elasticsearch client and indexes"
 
-        String host = grailsApplication.config.getProperty('elasticsearch.host', String,'localhost')
-        int port = grailsApplication.config.getProperty('elasticsearch.port', Integer, 9200)
-        client = new RestHighLevelClient(RestClient.builder(new HttpHost(host, port, "http")))
+        client = buildElasticSearchClient()
 
         String indexPrefix = grailsApplication.config.getProperty('app.elasticsearch.indexPrefix', String, Environment.current.name.toLowerCase())
         Map mappings = getMapping()
@@ -132,6 +136,25 @@ class ElasticSearchService {
                 log.info("Completed building GeoServer dependencies")
             }
         }
+    }
+
+    private RestHighLevelClient buildElasticSearchClient() {
+        String host = grailsApplication.config.getProperty('elasticsearch.host', String, 'localhost')
+        int port = grailsApplication.config.getProperty('elasticsearch.port', Integer, 9200)
+        String username = grailsApplication.config.getProperty('elasticsearch.username')
+        String password = grailsApplication.config.getProperty('elasticsearch.password')
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider()
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password))
+
+        RestClientBuilder builder = RestClient.builder(
+                new HttpHost(host, port, "http")).setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+            @Override
+            HttpAsyncClientBuilder customizeHttpClient(
+                    HttpAsyncClientBuilder httpClientBuilder) {
+                return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
+        })
+        new RestHighLevelClient(builder)
     }
 
     // Used to avoid a circular dependency during initialisation
