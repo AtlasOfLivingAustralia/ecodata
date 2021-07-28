@@ -205,7 +205,9 @@ class AuditService {
     List getAuditMessagesForSettings(String keyPrefix) {
 
         // We can get away with this because the number of settings objects is small.
-        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{it._id.toHexString()}
+        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{
+            it.id.toHexString()
+        }
 
         List results = AuditMessage.findAllByEntityIdInList(settingIds)
 
