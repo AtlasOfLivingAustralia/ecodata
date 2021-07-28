@@ -49,8 +49,6 @@ class PermissionService {
                     isEditor = true
                 }
             }
-
-            log.debug "userCanEdit = ${isEditor}"
         }
 
         return isEditor // bolean
