@@ -139,7 +139,7 @@ var Output_rarc_EventAndLocationDetails_vegetationCoverTableRow = function (data
     self.vegetationCover_transectOne = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['vegetationCover_transectOne'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -150,7 +150,7 @@ var Output_rarc_EventAndLocationDetails_vegetationCoverTableRow = function (data
     self.vegetationCover_transectTwo = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['vegetationCover_transectTwo'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -161,7 +161,7 @@ var Output_rarc_EventAndLocationDetails_vegetationCoverTableRow = function (data
     self.vegetationCover_transectThree = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['vegetationCover_transectThree'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -172,7 +172,7 @@ var Output_rarc_EventAndLocationDetails_vegetationCoverTableRow = function (data
     self.vegetationCover_transectFour = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['vegetationCover_transectFour'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -424,7 +424,7 @@ var Output_rarc_EventAndLocationDetails_debrisTableRow = function (data, dataMod
     self.debris_transectOne = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['debris_transectOne'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -432,7 +432,7 @@ var Output_rarc_EventAndLocationDetails_debrisTableRow = function (data, dataMod
     self.debris_transectTwo = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['debris_transectTwo'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -440,7 +440,7 @@ var Output_rarc_EventAndLocationDetails_debrisTableRow = function (data, dataMod
     self.debris_transectThree = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['debris_transectThree'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -448,7 +448,7 @@ var Output_rarc_EventAndLocationDetails_debrisTableRow = function (data, dataMod
     self.debris_transectFour = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['debris_transectFour'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -625,7 +625,7 @@ var Output_rarc_EventAndLocationDetails_featuresTableRow = function (data, dataM
     self.feature_transectOne = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['feature_transectOne'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -633,7 +633,7 @@ var Output_rarc_EventAndLocationDetails_featuresTableRow = function (data, dataM
     self.feature_transectTwo = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['feature_transectTwo'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -641,7 +641,7 @@ var Output_rarc_EventAndLocationDetails_featuresTableRow = function (data, dataM
     self.feature_transectThree = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['feature_transectThree'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
@@ -649,7 +649,7 @@ var Output_rarc_EventAndLocationDetails_featuresTableRow = function (data, dataM
     self.feature_transectFour = ko.observable().extend({
         metadata: {
             metadata: self.dataModel['feature_transectFour'],
-            context: context,
+            context: self.$context,
             config: config
         }
     });
