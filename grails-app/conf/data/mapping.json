@@ -767,6 +767,12 @@
               "index": false
             }
           }
+        },
+        "verificationStatus": {
+          "type":"string",
+          "fields": {
+            "verificationStatusFacet":{"type":"string", "index":"not_analyzed"}
+          }
         }
       },
       "dynamic_templates": [
