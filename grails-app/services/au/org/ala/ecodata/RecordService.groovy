@@ -41,8 +41,7 @@ class RecordService {
     CommonService commonService
 
     final def ignores = ["action", "controller", "associatedMedia"]
-    private static
-    final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
+    private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
 
     def getProjectActivityService() {
         grailsApplication.mainContext.projectActivityService
@@ -645,9 +644,9 @@ class RecordService {
     }
 
     def toMap(record) {
-        def dbo = record.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
-        mapOfProperties.recordNumber = record.recordNumber
+        def mapOfProperties = GormMongoUtil.extractDboProperties(record.getProperty("dbo"))
+        //def mapOfProperties = dbo.toMap()
+        mapOfProperties.recordNumber = record.getRecordNumber(grailsApplication.config.getProperty('biocollect.activity.sightingsUrl')) //record.recordNumber
         mapOfProperties.remove("_id")
         mapOfProperties
     }

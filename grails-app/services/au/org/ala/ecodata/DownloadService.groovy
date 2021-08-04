@@ -4,7 +4,8 @@ import au.org.ala.ecodata.reporting.CSProjectXlsExporter
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ShapefileBuilder
 import au.org.ala.ecodata.reporting.XlsExporter
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import grails.async.Promise
+import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
@@ -27,6 +28,7 @@ class DownloadService {
 
     def grailsApplication
     def groovyPageRenderer
+    def grailsLinkGenerator
 
     /**
      * Produces the same file as {@link #downloadProjectData(java.io.OutputStream, org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap)}
@@ -43,13 +45,14 @@ class DownloadService {
         String fileExtension = params.fileExtension?:'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
 
-        task {
+        Promise p = task {
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
-            Project.withNewSession {
-                downloadAction(outputStream, params)
-            }
-        }.onComplete {
+               Project.withNewSession {
+                   downloadAction(outputStream, params)
+               }
+        }
+        p.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
             String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
@@ -59,8 +62,9 @@ class DownloadService {
                 outputStream.flush()
                 outputStream.close()
             }
-        }.onError { Throwable error ->
-            log.error("Failed to generate zip file for download.", error)
+        }
+        p.onError { Throwable error ->
+            log.error("Failed to generate file for download.", error)
             String body = groovyPageRenderer.render(template: "/email/downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
@@ -73,6 +77,39 @@ class DownloadService {
     void downloadProjectDataAsync(GrailsParameterMap map) {
         Closure doDownload = {OutputStream outputStream, GrailsParameterMap params -> downloadProjectData(outputStream, params)}
         downloadProjectDataAsync(map, doDownload)
+    }
+
+    def generateReports(Map params, Closure downloadAction) {
+        String downloadId = UUID.randomUUID().toString()
+        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        directoryPath.mkdirs()
+        String fileExtension = params.fileExtension?:'zip'
+        File file = new File(directoryPath, "${downloadId}.${fileExtension}")
+
+        task {
+                downloadAction(file)
+        }.onComplete {
+            int days = grailsApplication.config.temp.file.cleanup.days as int
+            String url = ''
+            // if report url is not supply by FieldCapture, then create a url based on ecodata
+            if (!params.reportDownloadBaseUrl)
+                url = grailsLinkGenerator.link(controller:'download', action:'get', params:[id: downloadId, fileExtension: fileExtension])
+            else
+                url = params.reportDownloadBaseUrl+'/' + downloadId+'.'+fileExtension
+
+            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            if(params.email && params.systemEmail && params.senderEmail)
+                emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
+            else
+                log.error('Email system is missing sender/receiver')
+
+        }.onError { Throwable error ->
+            log.error("Failed to generate zip file for download.", error)
+            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
+        }
+
+        return downloadId+'.'+fileExtension
     }
 
     /**
@@ -117,7 +154,7 @@ class DownloadService {
                 log.debug("Images added")
 
                 XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
-                zip.putNextEntry(new ZipEntry("data.xls"))
+                zip.putNextEntry(new ZipEntry("data.xlsx"))
                 ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
                 xlsExporter.save(xslFile)
                 xslFile.flush()
@@ -428,12 +465,13 @@ class DownloadService {
     Set<String> getProjectIdsForDownload(Map params, String searchIndexName, String property = 'projectId') {
         long start = System.currentTimeMillis()
 
+        params.include = property
         SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Set ids = new HashSet()
 
         for (SearchHit hit : res.hits.hits) {
-            if (hit.source[property]) {
-                ids << hit.source[property]
+            if (hit.sourceAsMap[property]) {
+                ids << hit.sourceAsMap[property]
             }
         }
 
@@ -449,8 +487,8 @@ class DownloadService {
         Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
 
         for (SearchHit hit : res.hits.hits) {
-            if (hit.source.projectId) {
-                ids[hit.source.projectId] << hit.source.activityId
+            if (hit.sourceAsMap.projectId) {
+                ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
             }
         }
 

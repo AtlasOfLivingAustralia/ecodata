@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
  */
 class RecordController {
 
-    def grailsApplication
+  //  def grailsApplication
 
     RecordService recordService
     UserService userService
@@ -140,13 +140,13 @@ class RecordController {
                 }
             } else {
                 response.status = HttpStatus.SC_BAD_REQUEST
-                log.error(error)
+                log.error(error.toString())
                 result = [status: 'error', error: error]
             }
 
         } catch (Exception ex) {
             response.status = HttpStatus.SC_INTERNAL_SERVER_ERROR
-            log.error(ex)
+            log.error(ex.toString())
             result << [status: 'error', error: "Unexpected error."]
         }
 
@@ -493,7 +493,7 @@ class RecordController {
                 }
 
             } catch (Exception e) {
-                log.error(e, e)
+                log.error(e.getMessage(), e)
                 response.setStatus(SC_INTERNAL_SERVER_ERROR)
                 response.setContentType("application/json")
                 [success: false]

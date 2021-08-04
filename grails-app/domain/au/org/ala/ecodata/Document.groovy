@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.util.Holders
+
 import static au.org.ala.ecodata.Status.ACTIVE
 
 import org.bson.types.ObjectId
@@ -9,7 +11,10 @@ import org.bson.types.ObjectId
  */
 class Document {
 
-    def grailsApplication
+   // Commented out grailsApplication as Domain autowiring is not available by default
+   // due to performance reason
+   // https://grails.github.io/grails-upgrade/latest/guide/index.html#upgradingTo33x
+   // def grailsApplication
 
     static final String DOCUMENT_TYPE_IMAGE = 'image'
     static final String THUMBNAIL_PREFIX = 'thumb_'
@@ -48,10 +53,13 @@ class Document {
     String outputId
     String organisationId
     String programId
+    String reportId
     String externalUrl
     Boolean isSciStarter = false
     String hosted
     String identifier
+    /* To be replaced by reportId */
+    String stage
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText
@@ -59,6 +67,8 @@ class Document {
     Date dateCreated
     Date lastUpdated
 
+    // https://github.com/AtlasOfLivingAustralia/ecodata/issues/565
+    // Only relevant for image document
     Date dateTaken
 	boolean isPrimaryProjectImage = false
 
@@ -105,7 +115,7 @@ class Document {
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
-        URI uri = new URI(grailsApplication.config.app.uploads.url + path + encodedFileName)
+        URI uri = new URI(Holders.config.app.uploads.url + path + encodedFileName)
         return uri.toURL();
     }
 
@@ -115,7 +125,7 @@ class Document {
         if (path) {
             path = path+File.separator
         }
-        return grailsApplication.config.app.file.upload.path + '/' + path  + name
+        return Holders.config.app.file.upload.path + '/' + path  + name
 
     }
 
@@ -132,6 +142,8 @@ class Document {
         activityId nullable: true
         outputId nullable: true
         programId nullable: true
+        reportId nullable: true
+        stage nullable: true
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true

@@ -1,10 +1,11 @@
 package au.org.ala.ecodata
 
 import com.vividsolutions.jts.geom.Geometry
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
+
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
-import org.codehaus.groovy.grails.commons.GrailsApplication
+import grails.core.GrailsApplication
 /**
  * The SpatialService is responsible for:
  * 1. The interface to the spatial portal.

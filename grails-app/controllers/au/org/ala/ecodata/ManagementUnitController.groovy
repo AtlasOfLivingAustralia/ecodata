@@ -1,5 +1,13 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
+import au.org.ala.ecodata.reporting.XlsExporter
+import org.apache.http.HttpStatus
+
+import java.text.ParseException
+import java.time.Instant
+
+
 @RequireApiKey
 class ManagementUnitController {
 
@@ -8,6 +16,17 @@ class ManagementUnitController {
 
     ManagementUnitService managementUnitService
     ElasticSearchService elasticSearchService
+    ActivityService activityService
+    DownloadService downloadService
+    UserService userService
+
+    // JSON response is returned as the unconverted model with the appropriate
+    // content-type. The JSON conversion is handled in the filter. This allows
+    // for universal JSONP support.
+    def asJson = { model ->
+        response.setContentType("application/json;charset=UTF-8")
+        model
+    }
 
     def get(String id) {
         ManagementUnit mu = managementUnitService.get(id, false)
@@ -28,7 +47,6 @@ class ManagementUnitController {
         else{
             respond []
         }
-
     }
 
     def findByName(String name) {
@@ -77,7 +95,34 @@ class ManagementUnitController {
         if (request.method == 'POST') {
             ids = request.JSON?.managementUnitIds
         }
-
         respond managementUnitService.managementUnitSiteMap(ids)
+    }
+
+
+    /**
+     * startDate and endDate need to be ISO 8601
+     *
+     * Get reports of all management units in a given period
+     */
+    def generateReportsInPeriod(){
+        try{
+            Map message = managementUnitService.generateReportsInPeriods(params.startDate, params.endDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email)
+            respond(message, status:200)
+       }catch ( ParseException e){
+            def message = [message: 'Error: You need to provide startDate and endDate in the format of ISO 8601']
+            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
+       }catch(Exception e){
+            def message = [message: 'Fatal: ' + e.message]
+            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
+        }
+    }
+    /**
+     * Get financial years of managment unit reports cover
+     * @return
+     */
+    def getReportPeriods(){
+        List financialYears = managementUnitService.getFinancialYearPeriods()
+        response.setContentType("application/json")
+        respond financialYears
     }
 }

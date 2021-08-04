@@ -1,0 +1,15 @@
+{
+  "name": "Single Nested lists",
+  "data": {
+    "number1": "33",
+    "notes": "single notes",
+    "list": [
+      {
+        "value1": "single.0.value1"
+      },
+      {
+        "value1": "single.1.value1"
+      }
+    ]
+  }
+}

@@ -2,8 +2,7 @@ package au.org.ala.ecodata
 
 
 import static au.org.ala.ecodata.Status.DELETED
-import grails.transaction.Transactional
-import org.bson.BSONObject
+import grails.gorm.transactions.Transactional
 
 class CommentService {
     UserService userService
@@ -18,8 +17,8 @@ class CommentService {
      * @return
      */
     Map getPropertiesOfDomainObject(Comment it) {
-        BSONObject dbo = it.getProperty("dbo")
-        Map mapOfProperties = dbo.toMap()
+        def mapOfProperties = it.getProperty("dbo")
+        //Map mapOfProperties = dbo.toMap()
         mapOfProperties.id = mapOfProperties._id
         mapOfProperties.remove("_id")
         mapOfProperties

@@ -47,17 +47,9 @@ class UserService {
      * @param userId The ID of the user whose roles you want to retrieve. Optional - if not provided, will return the roles for the currently authenticated user (if there is one)
      * @return List of {@link au.org.ala.web.CASRoles} names
      */
-    List<String> getRolesForUser(String userId = null) {
+    def getRolesForUser(String userId = null) {
         userId = userId ?: getCurrentUserDetails().userId
-
-        List<String> roles = []
-        if (userId) {
-            Map userDetails = webService.doPost("${grailsApplication.config.userDetails.url}${grailsApplication.config.userDetailsById.path}?userName=${URLEncoder.encode(userId, 'UTF-8')}&includeProps=false", [:])?.resp
-
-            roles.addAll(userDetails?.roles ?: [])
-        }
-
-        roles
+        authService.getUserForUserId(userId, true)?.roles ?: []
     }
 
     synchronized def getUserForUserId(String userId) {
@@ -127,4 +119,9 @@ class UserService {
     def getUserKey(String username, String password) {
         webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password], true)
     }
+
+    def getAllUsers() {
+        return authService.getAllUserNameList()
+    }
+
 }

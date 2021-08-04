@@ -8,8 +8,9 @@ import grails.validation.ValidationException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.grails.plugins.csv.CSVMapReader
+import org.grails.web.json.JSONArray
+//import org.grails.plugins.csv.CSVMapReader
+import grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -27,7 +28,9 @@ class MetadataService {
 
     private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
-    def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService, commonService
+    private static final String SERVICES_KEY = "services.config"
+    def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
+    SettingService settingService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -205,7 +208,9 @@ class MetadataService {
     Map getOutputNameAndDataModelForAnActivityName(name) {
         def outputList = activitiesModel().activities.find { it.name == name }?.outputs
         if (outputList && outputList.size() > 0) {
-            return activitiesModel().outputs.grep { it.name in outputList }?.collectEntries { [(it.name): getOutputDataModel(it.template)] }
+            return activitiesModel().outputs.grep { it.name in outputList }?.collectEntries {
+                [(it.name): getOutputDataModel(it.template)]
+            }
         }
         return null
     }
@@ -663,10 +668,10 @@ class MetadataService {
                 columnMap:columnMap
         ]
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
-
-        excelImportService.convertColumnMapConfigManyRows(workbook, config)
-
+        excelImportService.mapSheet(workbook, config)
     }
+
+
 
     /**
      * Converts a Score domain object to a Map.
@@ -918,13 +923,18 @@ class MetadataService {
 
     /**
      * Get services of project from configuration file
-     * services.json should be idential with fieldcapture
+     * services.json should be identical with fieldcapture
      * @return
      */
     List<Map> getProjectServices() {
-        List services = JSON.parse(getClass().getResourceAsStream('/data/services.json'), 'UTF-8')
 
-        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
+        String servicesJson = settingService.getSetting(SERVICES_KEY)
+        if (!servicesJson){
+            servicesJson = getClass().getResourceAsStream('/data/services.json')?.getText("UTF-8")
+        }
+        List services = JSON.parse(servicesJson)
+
+        List<Score> scores = Score.findAllByStatusNotEqual(DELETED)
         services.each { service ->
             service.scores = new JSONArray(scores.findAll{it.outputType == service.output})
         }
@@ -958,7 +968,8 @@ class MetadataService {
 
     List<Map> getProjectServicesWithTargets(project){
         def services =  getProjectServices()
-        List projectServices = services?.findAll {it.id in project.custom?.details?.serviceIds }
+        List serviceIds = project.custom?.details?.serviceIds?.collect{it as Integer}
+        List projectServices = services?.findAll {it.id in serviceIds }
         List targets = project.outputTargets
 
         // Make a copy of the services as we are going to augment them with target information.
@@ -977,6 +988,7 @@ class MetadataService {
                 if (target){
                     score.target = target?.target
                     score.periodTargets = target?.periodTargets
+                    score.targetDate = target?.targetDate
                 }else
                     score.delete = true //prepare for delete
             }
@@ -989,6 +1001,33 @@ class MetadataService {
         return results
     }
 
+    /** Returns a value from the gradle git plugin generated git.properties */
+    String getGitProperty(String propertyName) {
+        getFromPropertyFile("git.properties", propertyName)
+    }
+
+    /** Returns a value from the gradle/spring boot generated build-info.properties */
+    String getBuildProperty(String propertyName) {
+        getFromPropertyFile("META-INF/build-info.properties", propertyName)
+    }
+    /**
+     * Loads the properties file with the supplied name from the classpath,
+     * then returns the value associated with the supplied name.
+     */
+    private String getFromPropertyFile(String fileName, String propertyName) {
+        cacheService.get(fileName+'.'+propertyName, {
+            String value = ''
+            def classLoader = Thread.currentThread().getContextClassLoader()
+            URL gitProperties = classLoader.getResource(fileName)
+            gitProperties?.withInputStream {
+                Properties props = new Properties()
+                props.load(it)
+                value = props.get(propertyName)
+            }
+            value
+        })
+
+    }
 
 
 

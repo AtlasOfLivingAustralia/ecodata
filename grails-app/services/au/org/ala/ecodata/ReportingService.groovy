@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.AggregationResult
 import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.*
@@ -13,6 +13,7 @@ import static au.org.ala.ecodata.Status.*
  */
 @Transactional
 class ReportingService {
+    static transactional = true
 
     def permissionService, userService, activityService, commonService
 
@@ -35,9 +36,10 @@ class ReportingService {
     }
 
     Map toMap(Report report, levelOfDetail = []) {
-        def dbo = report.dbo
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = GormMongoUtil.extractDboProperties(report.getProperty("dbo"))
+      //  def mapOfProperties = dbo.toMap()
         mapOfProperties.findAll {k,v -> v != null}
+        //GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     List findAllForProject(String projectId) {
@@ -140,7 +142,7 @@ class ReportingService {
      */
     private void syncReportActivity(Report report) {
 
-        Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, programId:report.programId]
+        Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, managementUnitId:report.managementUnitId]
         Map syncResult
         if (report.activityId) {
             activity.activityId = report.activityId

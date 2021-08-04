@@ -1,4 +1,4 @@
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="grails.converters.JSON; org.apache.commons.lang.StringEscapeUtils" %>
 <!doctype html>
 <html>
     <head>
@@ -28,7 +28,7 @@
 
         <asset:script>
             $(function(){
-                $('#activitiesMetadata').html(vkbeautify.json(${activitiesMetadata},2));
+                $('#activitiesMetadata').html(JSON.stringify(${raw((activitiesMetadata as JSON).toString())},null, 2));
 
                 // assume only one edit field for now
                 var $pre = $('#activitiesMetadata'),
@@ -49,7 +49,7 @@
                         contentType: 'application/json',
                         success: function (data) {
                             if (data !== 'error') {
-                                $pre.html(vkbeautify.json(data,2));
+                                $pre.html(JSON.stringify(data,null,2));
                                 viewMode();
                             } else {
                                 alert(data);

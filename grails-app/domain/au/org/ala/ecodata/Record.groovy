@@ -5,7 +5,7 @@ import static au.org.ala.ecodata.Status.ACTIVE
 import org.bson.types.ObjectId
 
 class Record {
-    def grailsApplication
+ //   def grailsApplication
 
     static mapping = {
         occurrenceID index: true
@@ -67,7 +67,7 @@ class Record {
         outputSpeciesId nullable: true
     }
 
-    String getRecordNumber(){
-        "${grailsApplication.config.biocollect.activity.sightingsUrl}/bioActivity/index/${activityId}"
+    String getRecordNumber(sightingsUrl){
+        "${sightingsUrl}/bioActivity/index/${activityId}"
     }
 }

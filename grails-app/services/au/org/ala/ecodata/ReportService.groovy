@@ -4,7 +4,7 @@ import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.reporting.*
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-import org.grails.plugins.csv.CSVReaderUtils
+import grails.plugins.csv.CSVReaderUtils
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
@@ -45,12 +45,12 @@ class ReportService {
 
         Map params = [offset:0, max:20, fq:filters]
 
-        def results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
-        def total = results.hits.totalHits
+        SearchResponse results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
+        def total = results.hits.totalHits.value
         while (params.offset < total) {
 
             results.hits.hits.each { hit ->
-                Map project = hit.source
+                Map project = hit.sourceAsMap
 
                 List activities = project.activities
                 if (approvedActivitiesOnly) {
@@ -223,15 +223,15 @@ class ReportService {
         params += [offset:0, max:100]
         def targetsBySubProgram = [:]
         def queryString = params.query ?: "*:*"
-        def results = elasticSearchService.search(queryString, params, "homepage")
+        SearchResponse results = elasticSearchService.search(queryString, params, "homepage")
 
         def propertyAccessor = new PropertyAccessor("target")
-        def total = results.hits.totalHits
+        long total = results.hits.totalHits.value
         while (params.offset < total) {
 
-            def hits = results.hits.hits
-            for (def hit : hits) {
-                def project = hit.source
+            SearchHit[] hits = results.hits.hits
+            for (SearchHit hit : hits) {
+                Map project = hit.sourceAsMap
                 project.outputTargets?.each { target ->
                     def program = project.associatedProgram + ' - ' + project.associatedSubProgram
                     if (!targetsBySubProgram[program]) {
@@ -334,5 +334,38 @@ class ReportService {
             builder.addProject(projectId)
         }
         builder.writeShapefile(outputStream)
+    }
+
+    /**
+     *
+     * @param id management unit Id
+     * @return
+     */
+    List getReportsOfManagementUnit(String id){
+        List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(id,Status.DELETED)
+        List<Map> activities = activityService.getAll(reports.activityId,['all'])
+
+        List hasReports = activities.findAll{
+            it.outputs?.size()>0
+        }
+        hasReports.each{
+            def report = reports.find {it.activityId == it.activityId}
+            if (report){
+                it['reportId'] = report['reportId']
+                it['reportName'] = report['name']
+                it['reportDesc'] = report['description']
+            }
+        }
+        return hasReports
+    }
+
+    /**
+     *
+     * @param muIds a list of management unit Ids
+     * @return
+     */
+    Date[] getPeriodOfManagmentUnitReport(String[] muIds ){
+        List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
+        Date[] period = activityService.getPeriod(activityIds)
     }
 }

@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.web.json.JSONObject
 
 
 class ReportController {
@@ -56,41 +56,24 @@ class ReportController {
     @RequireApiKey
     def submit(String id) {
         Map params = request.JSON
-        if (params.comment == JSONObject.NULL) {
-            params.comment = null
-        }
-
         respond reportingService.submit(id, params.comment)
     }
 
     @RequireApiKey
     def approve(String id) {
         Map params = request.JSON
-        if (params.comment == JSONObject.NULL) {
-            params.comment = null
-        }
         respond reportingService.approve(id, params.comment)
     }
 
     @RequireApiKey
     def returnForRework(String id) {
         Map params = request.JSON
-        if (params.comment == JSONObject.NULL) {
-            params.comment = null
-        }
-        if (params.category == JSONObject.NULL) {
-            params.category = null
-        }
-
         respond reportingService.returnForRework(id, params.comment, params.category)
     }
 
     @RequireApiKey
     def adjust(String id) {
         Map params = request.JSON
-        if (params.comment == JSONObject.NULL) {
-            params.comment = null
-        }
         respond reportingService.adjust(id, params.comment, params.adjustmentActivityType)
     }
 

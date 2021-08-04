@@ -12,15 +12,13 @@ See [MERIT schema](https://github.com/AtlasOfLivingAustralia/ecodata/wiki/MeritS
 It implements a JSON/HTTP API to provide access to the data.
 
 ### Technologies
-* Grails framework 2.4.5
-* MongoDB
-* Elasticsearch
-* Java 7
-
-Note: 
-Java 8: use Grails_2_5_6 branch until this is released in the near future.
+* Grails framework 4.0.11
+* MongoDB 4.0
+* Elasticsearch 7.x
+* Java 8
 
 ### Setup
+* Install Elasticsearch into local machine. https://www.elastic.co/guide/en/elasticsearch/reference/7.x/brew.html
 * Clone the repository to your development machine.
 * Create local directories: 
 ```

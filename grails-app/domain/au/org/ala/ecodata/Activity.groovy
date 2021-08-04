@@ -41,6 +41,7 @@ class Activity {
     String siteId
     String projectId
     String projectActivityId
+    String managementUnitId
     String description
     Date startDate
     Date endDate
@@ -91,6 +92,7 @@ class Activity {
         siteId nullable: true
         projectId nullable: true
         projectActivityId nullable: true
+        managementUnitId nullable: true
         description nullable: true
         startDate nullable: true
         endDate nullable: true

@@ -1,19 +1,14 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.core.artefact.DomainClassArtefactHandler
 import org.springframework.context.MessageSourceResolvable
-
-import java.text.SimpleDateFormat
 
 class CommonService {
 
-    //static transactional = false
+   // static transactional = false
     def grailsApplication, cacheService
     def messageSource
-
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
     /**
      * Updates all properties other than 'id' and converts date strings to BSON dates.
@@ -44,13 +39,15 @@ class CommonService {
              * UTC time. They are converted to java dates by forcing a zero time offset so that local timezone is
              * not used. All conversions to and from local time are the responsibility of the service consumer.
              */
-            if (v instanceof String && domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
+            if (v instanceof String && domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyType(k) == Date) {
                 v = v ? parse(v) : null
             }
             if (v == "false") {
                 v = false
             }
-            if (v == "null" || v == JSONObject.NULL) {
+          //  if (v == "null" || v == JSONObject.NULL) {
+            // http://docs.grails.org/3.0.6/api/org/grails/web/json/JSONObject.Null.html
+            if (v == "null") {
                 v = null
             }
 
@@ -62,7 +59,7 @@ class CommonService {
             log.error("has errors:")
             List messages = []
             o.errors?.getAllErrors().each { fieldError ->
-                log.error fieldError;
+                log.error fieldError.toString();
                 if(fieldError instanceof MessageSourceResolvable) {
                     messages.add( messageSource.getMessage(fieldError, Locale.getDefault()))
                 } else {
@@ -75,7 +72,7 @@ class CommonService {
     }
 
     Date parse(String dateStr) {
-        return dateFormat.parse(dateStr.replace("Z", "+0000"))
+        return DateUtil.parse(dateStr)
     }
 
     /**
@@ -84,12 +81,13 @@ class CommonService {
      * @return map of properties
      */
     def toBareMap(o) {
-        def dbo = o.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = GormMongoUtil.extractDboProperties(o.getProperty("dbo"))
+     //   def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.findAll {k,v -> v != null && v != ""}
+       // GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     def checkApiKey(key) {

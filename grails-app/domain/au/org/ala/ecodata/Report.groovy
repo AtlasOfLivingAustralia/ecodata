@@ -44,6 +44,9 @@ class Report {
     String description
     String type // "Activity" for stage/activity progress reporting, "Performance", "Administrative" for organisation performance self assessments
     String category // Client classification for reports
+    /** Name of the report configuration that generated this report */
+    String generatedBy
+
     /**
      * For reports with an activityType specified, this field holds the id of the activity that contains the data for this report.
      * It is unused for other report types.
@@ -152,7 +155,9 @@ class Report {
             approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
         }
         StatusChange change = changeStatus(userId, 'approved', changeDate, comment)
-
+        markDirty("approvedBy")
+        markDirty("dateApproved")
+        markDirty("publicationStatus")
         publicationStatus = REPORT_APPROVED
         approvedBy = change.changedBy
         dateApproved = change.dateChanged
@@ -167,6 +172,9 @@ class Report {
         if (dueDate && !submissionDeltaInWeekdays) {
             submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
         }
+        markDirty("submittedBy")
+        markDirty("dateSubmitted")
+        markDirty("publicationStatus")
         publicationStatus = REPORT_SUBMITTED
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
@@ -174,7 +182,9 @@ class Report {
 
     public void returnForRework(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, 'returned', changeDate, comment, category)
-
+        markDirty("returnedBy")
+        markDirty("dateReturned")
+        markDirty("publicationStatus")
         publicationStatus = REPORT_NOT_APPROVED
         returnedBy = change.changedBy
         dateReturned = change.dateChanged
@@ -186,6 +196,10 @@ class Report {
             throw new IllegalArgumentException("Only approved reports can be adjusted")
         }
         StatusChange change = changeStatus(userId, 'adjusted', changeDate, comment)
+
+        markDirty("adjustedBy")
+        markDirty("dateAdjusted")
+        markDirty("publicationStatus")
 
         publicationStatus = REPORT_APPROVED
         adjustedBy = change.changedBy
@@ -232,6 +246,7 @@ class Report {
         activityType nullable:true
         type nullable:false
         category nullable:true
+        generatedBy nullable:true
         adjustedReportId nullable:true, validator: { value, report ->
             // Adjustment reports must reference another report
             if (report.type == TYPE_ADJUSTMENT) {

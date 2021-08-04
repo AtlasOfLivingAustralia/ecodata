@@ -39,3 +39,8 @@
 /.slcache
 
 out
+/.gradle/
+/build/
+/. /logs/
+/grails-app/assets/vendor/
+/node_modules/

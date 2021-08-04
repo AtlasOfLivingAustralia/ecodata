@@ -5,7 +5,7 @@ import grails.converters.JSON
 @PreAuthorise(basicAuth = false)
 class DocumentationController {
 
-    def grailsApplication
+   // def grailsApplication
     def metadataService
 
     def index() {
@@ -203,10 +203,10 @@ class DocumentationController {
             return JSON.parse(conn.content.text)
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error error
+            log.error error.toString()
             return error
         } catch (Exception e) {
-            log.error e
+            log.error e.toString()
             def error = [error:e.message]
             return error
         }
