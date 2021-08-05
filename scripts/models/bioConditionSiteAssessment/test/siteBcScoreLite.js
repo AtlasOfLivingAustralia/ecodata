@@ -131,10 +131,10 @@ self.getTable7Score = function(assessmentPercentage){
     return score;
 }
 
-self.getTable8Score = function(){
+self.getTable8Score = function(assessmentPercentage){
     var score = 0;
     var table = self.getTable('table_8');
-    if(table == 'table_8' && table && table.value && table.value.length == 4) {
+    if(table.key == 'table_8' && table && table.value && table.value.length == 4) {
         if (table.value[0].name == '<10' && assessmentPercentage < 10) {
             score = table.value[0].value;
         } else if (table.value[1].name == '>=10% and <50%' && assessmentPercentage >= 10 && assessmentPercentage < 50) {
@@ -145,12 +145,13 @@ self.getTable8Score = function(){
             score = table.value[3].value;
         }
     }
+    return score;
 };
 
-self.getTable9Score = function(){
+self.getTable9Score = function(assessmentPercentage){
     var score = 0;
     var table = self.getTable('table_9');
-    if(table == 'table_9' && table && table.value && table.value.length == 3) {
+    if(table.key == 'table_9' && table && table.value && table.value.length == 3) {
         if (table.value[0].name == '<10% of benchmark shrub cover' && assessmentPercentage < 10) {
             score = table.value[0].value;
         } else if (table.value[1].name == '>/= 10 to <50% or >200% of benchmark shrub cover' && ((assessmentPercentage >= 10 && assessmentPercentage < 50) || assessmentPercentage >= 200)) {
@@ -159,6 +160,7 @@ self.getTable9Score = function(){
             score = table.value[2].value;
         }
     }
+    return score;
 };
 
 self.getTable10Score = function(totalCwdLength, bmv10, bmv50, bmv200) {
@@ -353,15 +355,16 @@ self.calculateForbsAndOtherNonGrassGroundSpeciesRichness = function() {
     self.data.numForbSpeciesTotal(self.getTable11Score(assessmentPercentage));
 }    
 
-// Part 4 - H ? 
+// Part 4 - H
 self.calculateNonNativeSpeciesRichness = function() {
     self.data.numNonNativeSpecies(self.data.nonNativeSpeciesRichness().length);
     var numNonNativeSpecies = parseInt(self.data.numNonNativeSpecies()) + parseInt(self.data.numUnknownNonNativeSpecies());
     var benchmarkSpeciesCoverExotic = self.data.benchmarkSpeciesCoverExotic();
     var assessmentPercentage = self.getAssesmentPercentage(benchmarkSpeciesCoverExotic, numNonNativeSpecies);;
     self.data.numNonNativeSpeciesTotal(self.getTable12Score(assessmentPercentage));
-    // TODO: Total cover of non-native species (%): and Non-native plant cover score:
-    // TODO: nonNativePlantCoverPercent and nonNativePlantCoverScore
+
+    var score = self.getTable12Score(self.data.nonNativePlantCoverPercent());
+    self.data.nonNativePlantCoverScore(score);
 }
 
 // Section 3 - 50 x 20m area - Coarse Woody Debris
@@ -396,39 +399,81 @@ self.calculateTreeCanopyCoverScoreAve = function() {
     var sCount = 0;
     var eCount = 0;
     $.each(self.data.treeCanopyRecords(), function( index, value ) {
+        var cover = self.calculateTreeCanopyCover(self.data.treeCanopyRecords(), value);
+        self.data.treeCanopyRecords()[index].totalTCCover(value.distanceInMetersAlongTransectTreeEnd() - value.distanceInMetersAlongTransectTreeStart());
         if(value.treeOrTreeGroup() == 'C') {
-            percentCoverC = parseFloat(percentCoverC) + parseFloat(value.distance()) - parseFloat(value.totalTCCover());
+            percentCoverC = parseFloat(percentCoverC) + parseFloat(cover);
             cCount++;
         } else if(value.treeOrTreeGroup() == 'S') {
-            percentCoverS = parseFloat(percentCoverS) + parseFloat(value.distance()) - parseFloat(value.totalTCCover());
+            percentCoverS = parseFloat(percentCoverS) + parseFloat(cover);
             sCount++;
         } else if (value.treeOrTreeGroup() == 'E') {
-            percentCoverE = parseFloat(percentCoverE) + parseFloat(value.distance()) - parseFloat(value.totalTCCover());
+            percentCoverE = parseFloat(percentCoverE) + parseFloat(cover);
             eCount++;
         }
     });
 
-    self.data.percentCoverC(percentCoverC);
-    self.data.percentCoverS(percentCoverS);
-    self.data.percentCoverE(percentCoverE);
+    var lengthOfTransectInMeters = self.data.lengthOfTransectInMeters();
 
-    var benchmarkTreeCanapyCover = self.data.benchmarkTreeCanopyCover(); 
-    var benchmarkTreeSubCanapyCover = self.data.benchmarkTreeSubcanopyCover(); 
-    var benchmarkTreeEmergentCover = self.data.benchmarkEmergentCanopyCover(); 
-    
-    var assessmentPercentage = self.getAssesmentPercentage(benchmarkTreeCanapyCover, percentCoverC);;
-    self.data.coverScoreC(self.getTable8Score(assessmentPercentage));
+    if(lengthOfTransectInMeters && lengthOfTransectInMeters >=50){
 
-    assessmentPercentage = 0;
-    assessmentPercentage = self.getAssesmentPercentage(benchmarkTreeSubCanapyCover, percentCoverS);;
-    self.data.coverScoreS(self.getTable8Score(assessmentPercentage));
-    
-    assessmentPercentage = 0;
-    assessmentPercentage = self.getAssesmentPercentage(benchmarkTreeEmergentCover, percentCoverE);;
-    self.data.coverScoreE(self.getTable8Score(assessmentPercentage));
+        percentCoverC = percentCoverC*100/lengthOfTransectInMeters;
+        percentCoverS = percentCoverS*100/lengthOfTransectInMeters;
+        percentCoverE = percentCoverE*100/lengthOfTransectInMeters;
 
-    var treeCanopyCoverScoreAve = (cCount+sCount)/2; 
-    self.data.treeCanopyCoverScoreAve(treeCanopyCoverScoreAve);
+        self.data.percentCoverC(percentCoverC);
+        self.data.percentCoverS(percentCoverS);
+        self.data.percentCoverE(percentCoverE);
+
+        var benchmarkTreeCanapyCover = self.data.benchmarkTreeCanopyCover();
+        var benchmarkTreeSubCanapyCover = self.data.benchmarkTreeSubcanopyCover();
+        var benchmarkTreeEmergentCover = self.data.benchmarkEmergentCanopyCover();
+
+        var assessmentPercentage = 0;
+        assessmentPercentage = self.getAssesmentPercentage(benchmarkTreeCanapyCover, percentCoverC);
+        var cCoverScore = self.getTable8Score(assessmentPercentage);
+        self.data.coverScoreC(cCoverScore);
+
+        var assessmentPercentage = 0;
+        assessmentPercentage = self.getAssesmentPercentage(benchmarkTreeSubCanapyCover, percentCoverS);
+        var sCoverScore = self.getTable8Score(assessmentPercentage);
+        self.data.coverScoreS(sCoverScore);
+
+        var assessmentPercentage = 0;
+        assessmentPercentage = self.getAssesmentPercentage(benchmarkTreeEmergentCover, percentCoverE);
+        var eCoverScore = self.getTable8Score(assessmentPercentage);
+        self.data.coverScoreE(eCoverScore);
+
+        var total = 3;
+        if(benchmarkTreeCanapyCover == "na") {total = total -1;}
+        if(benchmarkTreeSubCanapyCover == "na") {total = total -1;}
+        if(benchmarkTreeEmergentCover == "na") {total = total -1;}
+
+        var treeCanopyCoverScoreAve = total == 0 ? 0 : (parseFloat(cCoverScore) + parseFloat(sCoverScore) + parseFloat(eCoverScore))/total;
+        self.data.treeCanopyCoverScoreAve(treeCanopyCoverScoreAve);
+    }
+};
+
+self.calculateTreeCanopyCover = function(treeCanopyRecords, record) {
+
+    var sortedList = Object.values(treeCanopyRecords).sort(function(a,b) { return a.distanceInMetersAlongTransectTreeEnd() - b.distanceInMetersAlongTransectTreeEnd(); });
+    var list = sortedList.filter(y => y.treeOrTreeGroup() == record.treeOrTreeGroup())
+
+    var position = Object.values(list).findIndex(z => z == record)
+
+    if(position == 0){
+        return record.distanceInMetersAlongTransectTreeEnd() - record.distanceInMetersAlongTransectTreeStart()
+    }
+    else{
+        if(record.distanceInMetersAlongTransectTreeStart() < list[position -1].distanceInMetersAlongTransectTreeEnd()){
+            var overlap = list[position -1].distanceInMetersAlongTransectTreeEnd() - record.distanceInMetersAlongTransectTreeStart()
+            return record.distanceInMetersAlongTransectTreeEnd() - record.distanceInMetersAlongTransectTreeStart() - overlap
+        }
+        else{
+            return record.distanceInMetersAlongTransectTreeEnd() - record.distanceInMetersAlongTransectTreeStart()
+        }
+    }
+
 };
 
 // Part 2 - E
@@ -437,18 +482,52 @@ self.calculateShrubCanopyCoverScoreN = function() {
     var percentCoverExotic = 0;
 
     $.each(self.data.shrubCanopyRecords(), function( index, value ) {
+        var cover = self.calculateShrubCanopyCover(self.data.shrubCanopyRecords(), value);
+        self.data.shrubCanopyRecords()[index].totalSCCover(value.distanceInMetersAlongTransectShrubEnd() - value.distanceInMetersAlongTransectShrubStart());
         if(value.shrubType() == 'native') {
-            percentCoverNative = parseFloat(percentCoverNative) + parseFloat(value.distance()) - parseFloat(value.totalSCCover());
+            percentCoverNative = parseFloat(percentCoverNative) + parseFloat(cover);
         } else if(value.shrubType() == 'exotic') {
-            percentCoverExotic = parseFloat(percentCoverExotic) + parseFloat(value.distance()) - parseFloat(value.totalSCCover());
+            percentCoverExotic = parseFloat(percentCoverExotic) + parseFloat(cover);
         }
     });
 
-    self.data.percentCoverNative(percentCoverNative);
-    self.data.percentCoverExotic(percentCoverExotic);
-    var benchmarkShrubCoverNative = self.data.benchmarkShrubCanopyCover();
-    var assessmentPercentage = self.getAssesmentPercentage(benchmarkShrubCoverNative, percentCoverNative);;
-    self.data.shrubCanopyCoverScoreN(self.getTable9Score(assessmentPercentage));
+    var lengthOfTransectInMeters = self.data.lengthOfTransectInMeters();
+
+    if(lengthOfTransectInMeters && lengthOfTransectInMeters >=50){
+
+        percentCoverNative = percentCoverNative*100/lengthOfTransectInMeters;
+        percentCoverExotic = percentCoverExotic*100/lengthOfTransectInMeters;
+
+        self.data.percentCoverNative(percentCoverNative);
+        self.data.percentCoverExotic(percentCoverExotic);
+
+
+        var benchmarkShrubCoverNative = self.data.benchmarkShrubCanopyCover();
+        var assessmentPercentage = self.getAssesmentPercentage(benchmarkShrubCoverNative, percentCoverNative);;
+        self.data.shrubCanopyCoverScoreN(self.getTable9Score(assessmentPercentage));
+    }
+};
+
+self.calculateShrubCanopyCover = function(shrubCanopyRecords, record) {
+
+    var sortedList = Object.values(shrubCanopyRecords).sort(function(a,b) { return a.distanceInMetersAlongTransectShrubEnd() - b.distanceInMetersAlongTransectShrubEnd(); });
+    var list = sortedList.filter(y => y.shrubType() == record.shrubType())
+
+    var position = Object.values(list).findIndex(z => z == record)
+
+    if(position == 0){
+        return record.distanceInMetersAlongTransectShrubEnd() - record.distanceInMetersAlongTransectShrubStart()
+    }
+    else{
+        if(record.distanceInMetersAlongTransectShrubStart() < list[position -1].distanceInMetersAlongTransectShrubEnd()){
+            var overlap = list[position -1].distanceInMetersAlongTransectShrubEnd() - record.distanceInMetersAlongTransectShrubStart()
+            return record.distanceInMetersAlongTransectShrubEnd() - record.distanceInMetersAlongTransectShrubStart() - overlap
+        }
+        else{
+            return record.distanceInMetersAlongTransectShrubEnd() - record.distanceInMetersAlongTransectShrubStart()
+        }
+    }
+
 };
 
 // Section 6 - Update full form calcaulation
@@ -465,6 +544,8 @@ self.calculate = function() {
     self.calculateForbsAndOtherNonGrassGroundSpeciesRichness();
     self.calculateNonNativeSpeciesRichness();
 
+    self.data.nativePlantSpeciesRichnessScore(parseFloat(self.data.numTreeSpeciesTotal()) + parseFloat(self.data.numShrubSpeciesTotal()) + parseFloat(self.data.numGrassSpeciesTotal()) + parseFloat(self.data.numForbSpeciesTotal()));
+
     //Section 3
     self.calculateCwdScore();
 
@@ -475,17 +556,17 @@ self.calculate = function() {
     self.calculateTreeCanopyCoverScoreAve()
     self.calculateShrubCanopyCoverScoreN()
 
-    // Calculate Site Based Final Score 
-    // a+b+c+d+e+f+f+h+i+j/Y 
+    // Calculate Site Based Final Score
+    // a+b+c+d+e+f+g+h+i+j/Y
     // Y = Maximum Benchmark Value.
-    var a = parseInt(self.data.largeTreesScore()); 
-    var b = parseInt(self.data.aveCanopyHeightScore());
-    var c = parseInt(self.data.edlRecruitmentScore());
-    var d = parseInt(self.data.treeCanopyCoverScoreAve());
-    var e = parseInt(self.data.shrubCanopyCoverScoreN());
-    var f = parseInt(self.data.cwdScore());
-    var g = parseInt(self.data.numTreeSpeciesTotal()) + parseInt(self.data.numShrubSpeciesTotal()) + parseInt(self.data.numGrassSpeciesTotal()) + parseInt(self.data.numForbSpeciesTotal());
-    var h = parseInt(self.data.numNonNativeSpeciesTotal());
+    var a = parseFloat(self.data.largeTreesScore());
+    var b = parseFloat(self.data.aveCanopyHeightScore());
+    var c = parseFloat(self.data.edlRecruitmentScore());
+    var d = parseFloat(self.data.treeCanopyCoverScoreAve());
+    var e = parseFloat(self.data.shrubCanopyCoverScoreN());
+    var f = parseFloat(self.data.cwdScore());
+    var g = parseFloat(self.data.nativePlantSpeciesRichnessScore());
+    var h = parseFloat(self.data.nonNativePlantCoverScore());
 
     // % Native Perennial ('decreaser') grass cover*
     var groundCoverNativeGrassCover;
@@ -497,7 +578,7 @@ self.calculate = function() {
     if(groundCoverNativeGrassCover) {
         self.data.nativePerennialGrassCoverScore(groundCoverNativeGrassCover.groundCoverScore());
     }
-    
+
 
     // % Litter*
     var groundCoverOrganicLitterCover;
@@ -511,10 +592,10 @@ self.calculate = function() {
         self.data.litterCoverScore(groundCoverOrganicLitterCover.groundCoverScore());
     }
 
-    var i = parseInt(self.data.nativePerennialGrassCoverScore());
-    var j = parseInt(self.data.litterCoverScore());
-    var y = parseInt(self.data.benchmarkMaxScoreExcludeLandscape());
-    var sum = parseInt(a+b+c+d+e+f+f+h+i+j);
+    var i = parseFloat(self.data.nativePerennialGrassCoverScore());
+    var j = parseFloat(self.data.litterCoverScore());
+    var y = parseFloat(self.data.benchmarkMaxScoreExcludeLandscape());
+    var sum = parseFloat(a+b+c+d+e+f+g+h+i+j);
     if(y > 0 && sum > 0) {
         var siteScore = sum/y;
         self.data.siteBcScore(siteScore);
@@ -542,7 +623,7 @@ self.data.bioregion.subscribe(function (obj) {
         "<h2><b>Benchmark values for RE code: "+self.data.bioregion()+"</b></h2><table border='0'>"+
         "<tr><td><b>Benchmark name</b></td><td><b>Benchmark value</b></td></tr>"+
 
-        "<tr><td>EucalyptLargeTreeDBH</td><td>"+self.data.benchmarkEucalyptLargeTreeDBH()+"</td></tr>"+
+            "<tr><td>EucalyptLargeTreeNo</td><td>"+self.data.benchmarkEucalyptLargeTreeNo()+"</td></tr>"+
         "<tr><td>EucalyptLargeTreeDBH</td><td>"+self.data.benchmarkEucalyptLargeTreeDBH()+"</td></tr>"+
         "<tr><td>NonEucalyptLargeTreeNo</td><td>"+self.data.benchmarkNonEucalyptLargeTreeNo()+"</td></tr>"+
         "<tr><td>NonEucalyptLargeTreeDBH</td><td>"+self.data.benchmarkNonEucalyptLargeTreeDBH()+"</td></tr>"+
@@ -590,7 +671,7 @@ self.transients.siteBcScore =  ko.computed(function () {
 self.loadLookups = function (key) {
     var result = {};
     var bioConditionAssessmentTableReferenceUrl = 'https://dl.dropboxusercontent.com/s/xukt2m2lmfsyexq/mini_vegetationTable.json?dl=0';
-    var consolidatedBenchmarksURL = "https://dl.dropboxusercontent.com/s/trkvck8r00nu5kw/mini_benchmark_data_for_release_v2.1.json?dl=0"
+    var consolidatedBenchmarksURL = "https://dl.dropboxusercontent.com/s/l8xqtip8d1105os/benchmark_data_for_release_v3.1.json?dl=0"
     var url = '';
     switch (key) {
         case 'BioConditionAssessmentTableReference':
