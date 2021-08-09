@@ -111,7 +111,7 @@ class XlsExporter extends XlsxExporter {
 
         CellStyle headerStyle = workbook.createCellStyle();
 
-        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         headerStyle.setFillForegroundColor(backgroundColorIndex);
         Font font = workbook.createFont();
         font.setBold(true)
