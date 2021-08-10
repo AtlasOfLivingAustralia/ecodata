@@ -49,6 +49,8 @@ spring:
                 - '**/*.css'
                 - '**/*.js'
 server:
+    address:
+        127.0.0.1
     tomcat:
         port-header: 'X-Forwarded-Port'
         protocol-header: 'X-Forwarded-Proto'
@@ -57,12 +59,9 @@ server:
         session:
             timeout: 7200
 # Spring Actuator Endpoints are Disabled by Default
-endpoints:
-    enabled: true
-    jmx:
-        enabled: true
-        unique-names: true
-
+management:
+    endpoints:
+        enabled-by-default: false
 ---
 grails:
     mime:
