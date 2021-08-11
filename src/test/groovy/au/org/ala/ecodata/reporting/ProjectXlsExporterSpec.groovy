@@ -64,7 +64,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
         results.size() == 1
         results[0]['Project ID'] == '1234'
-        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Work order id'] == 'work order 1'
         results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
@@ -88,7 +88,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         List<Map> results = readSheet("Projects", projectXlsExporter.projectHeaders)
         results.size() == 1
         results[0]['Project ID'] == '1234'
-        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Work order id'] == 'work order 1'
         results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
@@ -105,14 +105,15 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
-        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', status: "active", contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
+        projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', internalOrderId:'1234567890', contractStartDate: '2019-06-30T14:00:00Z', status: "active", contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
         xlsExporter.save()
 
         then:
         List<Map> results = readSheet(sheet, projectXlsExporter.projectHeaders)
         results.size() == 1
         results[0]['Project ID'] == '1234'
-        results[0]['Internal order number'] == 'work order 1'
+        results[0]['Internal order number'] == '1234567890'
+        results[0]['Work order id'] == 'work order 1'
         results[0]['Contracted Start Date'] == '2019-06-30T14:00:00Z'
         results[0]['Contracted End Date'] == '2022-06-30T14:00:00Z'
         results[0]['Funding'] == 1000
@@ -1545,6 +1546,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsWebUnitTest 
             "    \"tags\" : [],\n" +
             "    \"uNRegions\" : [],\n" +
             "    \"workOrderId\" : \"1234565\",\n" +
+            "    \"internalOrderId\": \"0987654321\",\n" +
             "    \"blog\" : []\n" +
             "}"
 

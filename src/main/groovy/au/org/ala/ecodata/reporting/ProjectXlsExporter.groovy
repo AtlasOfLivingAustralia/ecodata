@@ -32,11 +32,11 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', "Last Modified"]
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"]
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated']
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Termination Reason', 'Last Modified']
-    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status']
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', 'Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status']
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
@@ -64,7 +64,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
-    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Finanical Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'fromDate', 'toDate', 'financialYear', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
 
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
