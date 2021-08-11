@@ -179,7 +179,7 @@ class TabbedExporter {
         outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
             if (isExportableType(dataNode)) {
                 String propertyPath = prefix + path
-                if (dataNode.dataType == 'stringList' && dataNode.constraints) {
+                if (dataNode.dataType == 'stringList' && dataNode.constraints && dataNode.constraints instanceof List) {
                     dataNode.constraints.each { constraint ->
                         String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
                         String constraintPath = propertyPath + '[' + constraint + ']'
