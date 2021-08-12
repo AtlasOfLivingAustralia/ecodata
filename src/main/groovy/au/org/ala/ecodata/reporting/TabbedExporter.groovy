@@ -302,12 +302,34 @@ class TabbedExporter {
         List data = []
         entity.reports?.each { report ->
 
-            Map reportDetails = entity + [reportName:report.name, fromDate:report.fromDate, toDate:report.toDate, progress:report.progress]
+            Map reportDetails = entity + getReportSummaryInfo(report)
             reportDetails.activityCount = reportingService.getActivityCountForReport(report)
             reportDetails.putAll(extractCurrentReportStatus(report))
             data << reportDetails
         }
         sheet.add(data, reportSummaryProperties, row + 1)
+    }
+
+    /** This method finds the Report that contains the supplied activity, either by activityId or date */
+    protected Report findReportForActivity(Map activity, List<Report> reports) {
+        Date activityEndDate = activity.plannedEndDate
+
+        if (!activityEndDate) {
+            log.error("No end date for activity: ${activity.activityId}, project: ${activity.projectId}")
+            return null
+        }
+
+        // First try and match the report by activity id
+        Report report = reports?.find { it.activityId == activity.activityId }
+        if (!report) {
+            report = reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
+        }
+        report
+
+    }
+
+    protected Map getReportSummaryInfo(Report report) {
+        [stage:report?.name, reportName:report?.name, reportDescription:report?.description, reportId:report?.reportId, reportType:report?.generatedBy, fromDate:report?.fromDate, toDate:report?.toDate, financialYear: report ? DateUtil.getFinancialYearBasedOnEndDate(report.toDate) : ""]
     }
 
     protected Map extractCurrentReportStatus(Report report) {
