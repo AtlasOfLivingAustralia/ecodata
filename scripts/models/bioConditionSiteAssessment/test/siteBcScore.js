@@ -530,7 +530,7 @@ self.calculateShrubCanopyCover = function(shrubCanopyRecords, record) {
 
 };
 
-// Section 6 - Update full form calcaulation
+// Section 6 - Update full form calculation
 self.calculate = function() {
     //Section 1
     self.calculateLargeTreeScore(); 
@@ -557,7 +557,7 @@ self.calculate = function() {
     self.calculateShrubCanopyCoverScoreN()
 
     // Calculate Site Based Final Score
-    // a+b+c+d+e+f+g+h+i+j/Y
+    // a+b+c+d+e+f+g+h+i+j+landscapeAttScore/Y+z
     // Y = Maximum Benchmark Value.
     var a = parseFloat(self.data.largeTreesScore());
     var b = parseFloat(self.data.aveCanopyHeightScore());
@@ -567,6 +567,11 @@ self.calculate = function() {
     var f = parseFloat(self.data.cwdScore());
     var g = parseFloat(self.data.nativePlantSpeciesRichnessScore());
     var h = parseFloat(self.data.nonNativePlantCoverScore());
+    var k = parseFloat(self.data.patchSizeScore());
+    var l = parseFloat(self.data.connectivityScore());
+    var m = parseFloat(self.data.landscapeContextScore());
+    var n = parseFloat(self.data.distanceFromWaterScore());
+    var z = 20; // is the maximum site score that can be obtained for landscape attributes (k–m in fragmented landscapes or n in intact landscapes) (Z = 20)
 
     // % Native Perennial ('decreaser') grass cover*
     var groundCoverNativeGrassCover;
@@ -595,9 +600,11 @@ self.calculate = function() {
     var i = parseFloat(self.data.nativePerennialGrassCoverScore());
     var j = parseFloat(self.data.litterCoverScore());
     var y = parseFloat(self.data.benchmarkMaxScoreExcludeLandscape());
-    var sum = parseFloat(a+b+c+d+e+f+g+h+i+j);
+    var isFragmentedLandscape = self.data. isFragmentedLandscape();
+    var landscapeAttScore = isFragmentedLandscape == "Yes" ? parseFloat(k+l+m) : parseFloat(n)
+    var sum = parseFloat(a+b+c+d+e+f+g+h+i+j+landscapeAttScore);
     if(y > 0 && sum > 0) {
-        var siteScore = sum/y;
+        var siteScore = sum/(y+z);
         self.data.siteBcScore(siteScore);
     }
 };
@@ -693,6 +700,77 @@ self.loadLookups = function (key) {
     });
     return result;
 };
+
+
+// Calculate - Assessment - Landscape Attributes
+// Start of 6.1 Landscaping
+self.data.patchSize.subscribe(function (obj) {
+    var table;
+    $.grep(!$.isEmptyObject(self.bioConditionAssessmentTableReference) ? self.bioConditionAssessmentTableReference.value : [], function (row) {
+        if (row.key == 'table_15') {
+            table = row;
+        }
+    });
+
+    $.grep(table ? table.value : [], function (row) {
+        if (row.name == self.data.patchSize()) {
+            self.data.patchSizeScore(row.value);
+        }
+    });
+    self.calculate();
+});
+
+self.data.connectivity.subscribe(function (obj) {
+    var table;
+    $.grep(!$.isEmptyObject(self.bioConditionAssessmentTableReference) ? self.bioConditionAssessmentTableReference.value : [], function (row) {
+        if (row.key == 'table_16') {
+            table = row;
+        }
+    });
+
+    $.grep(table ? table.value : [], function (row) {
+        if (row.name == self.data.connectivity()) {
+            self.data.connectivityScore(row.value);
+        }
+    });
+
+    self.calculate();
+});
+
+self.data.landscapeContext.subscribe(function (obj) {
+    var table;
+
+    $.grep(!$.isEmptyObject(self.bioConditionAssessmentTableReference) ? self.bioConditionAssessmentTableReference.value : [], function (row) {
+        if (row.key == 'table_17') {
+            table = row;
+        }
+    });
+
+    $.grep(table ? table.value : [], function (row) {
+        if (row.name == self.data.landscapeContext()) {
+            self.data.landscapeContextScore(row.value);
+        }
+    });
+
+    self.calculate();
+});
+
+self.data.distanceFromWater.subscribe(function (obj) {
+    var table;
+    $.grep(!$.isEmptyObject(self.bioConditionAssessmentTableReference) ? self.bioConditionAssessmentTableReference.value : [], function (row) {
+        if (row.key == 'table_18') {
+            table = row;
+        }
+    });
+
+    $.grep(table ? table.value : [], function (row) {
+        if (row.name == self.data.distanceFromWater()) {
+            self.data.distanceFromWaterScore(row.value);
+        }
+    });
+    self.calculate();
+});
+// End of 6.1 Landscaping
 
 self.initialiseReferenceTable();
 self.initialiseBenchmark();
