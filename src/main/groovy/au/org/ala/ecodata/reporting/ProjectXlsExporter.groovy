@@ -62,8 +62,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
-    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'fromDate', 'toDate', 'financialYear', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
     List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'fromDate', 'toDate', 'financialYear', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
 
@@ -804,20 +804,8 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private Map getReportInfo(Map activity, project) {
-        Date activityEndDate = activity.plannedEndDate
-
-        if (!activityEndDate) {
-            log.error("No end date for activity: ${activity.activityId}, project: ${project.projectId}")
-            return [:]
-        }
-
-        // First try and match the report by activity id
-        Report report = project.reports?.find { it.activityId == activity.activityId }
-        if (!report) {
-            report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
-        }
-
-        [stage:report?.name, reportType:report?.generatedBy, fromDate:report?.fromDate, toDate:report?.toDate, financialYear: report ? DateUtil.getFinancialYearBasedOnEndDate(report.toDate) : ""]
+        Report report = findReportForActivity(activity, project.reports)
+        getReportSummaryInfo(report)
     }
 
     AdditionalSheet projectSheet() {

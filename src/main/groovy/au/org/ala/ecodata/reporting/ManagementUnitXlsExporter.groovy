@@ -16,11 +16,11 @@ class ManagementUnitXlsExporter extends TabbedExporter {
     private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String  REPORT_PREFIX = 'report_'
 
-    List<String> reportProperties = ['reportId', 'name', 'description', 'fromDate', 'toDate']
+    List<String> reportProperties = ['reportId', 'reportName', 'reportDescription', 'fromDate', 'toDate', 'financialYear']
     List<String> activityHeaders = ['Activity Type','Activity Description','Activity Progress', 'Activity Last Updated' ]
     List<String> activityProperties =  ['type','description','progress', 'lastUpdated']
-    List<String> commonActivityHeaders =  ["Management Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Current Report Status', 'Date of status change', 'Changed by'] + activityHeaders
-    List<String> commonActivityProperties = ["managementUnitId",'managementUnitName', REPORT_PREFIX+'reportId', REPORT_PREFIX+'name', REPORT_PREFIX+'description', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy'] +
+    List<String> commonActivityHeaders =  ["Management Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Financial Year', 'Current Report Status', 'Date of status change', 'Changed by'] + activityHeaders
+    List<String> commonActivityProperties = ["managementUnitId",'managementUnitName', REPORT_PREFIX+'reportId', REPORT_PREFIX+'name', REPORT_PREFIX+'description', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy'] +
             activityProperties.collect {
                     ACTIVITY_DATA_PREFIX+it
                 }
@@ -38,9 +38,9 @@ class ManagementUnitXlsExporter extends TabbedExporter {
                         activity['managementUnitId'] = mu.managementUnitId
                         activity['managementUnitName'] = mu.name
 
-                        Map reportData = [:]
+                        Map reportData = getReportSummaryInfo(report)
                         reportProperties.each { String prop ->
-                            reportData[REPORT_PREFIX + prop] = report[prop]
+                            reportData[REPORT_PREFIX + prop] = reportData[prop]
                         }
                         reportData.putAll(extractCurrentReportStatus(report).collectEntries { k, v -> [REPORT_PREFIX + k, v] })
                         activity.putAll(reportData)
