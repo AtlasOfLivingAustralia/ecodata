@@ -20,7 +20,6 @@ class ProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
     // Avoids name clashes for fields that appear in activities and projects (such as name / description)
-    private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String PROJECT_DATA_PREFIX = 'project_'
 
     List<String> stateHeaders = (1..3).collect{'State '+it}
@@ -224,63 +223,16 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private Map commonActivityData(Map project, Map activity) {
-        String activityDataPrefix = ACTIVITY_DATA_PREFIX
-        Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
-        Map activityData = project + activityBaseData
-        activityData += getReportInfo(activity, project).collectEntries{k, v -> [(activityDataPrefix+k):v]}
-        activityData[(activityDataPrefix+'publicationStatus')] = translatePublicationStatus(activity.publicationStatus)
-        activityData
-    }
-
      void exportActivities(Map project) {
          tabsToExport.each { tab ->
              List activities = project?.activities?.findAll { it.type == tab }
              if (activities) {
                  activities.each {
-                     exportActivity(project, it, formSectionPerTab)
+                     exportActivity(commonActivityHeaders, activityProperties, project, it, formSectionPerTab)
                  }
              }
          }
      }
-
-    private void exportActivity(Map project, Map activity, boolean sectionPerTab) {
-        Map commonData = commonActivityData(project, activity)
-        String activityType = activity.type
-        List exportConfig = getActivityExportConfig(activityType, !sectionPerTab)
-        String sheetName = activityType
-        if (sectionPerTab) {
-            // Split into all the bits.
-            Map<String, List> configPerSection = exportConfig.groupBy{it.section}
-            // We are relying on the grouping preserving order here....
-            configPerSection.each { String section, List sectionConfig ->
-
-                if (configPerSection.size() > 1){
-                    sheetName = section +' '+activityType
-                }
-                List sheetData = prepareActivityDataForExport(activity, false, section)
-                exportActivityOrOutput(sheetName, sectionConfig, commonData, sheetData)
-            }
-        }
-        else {
-            List sheetData = prepareActivityDataForExport(activity, true)
-            exportActivityOrOutput(sheetName, exportConfig, commonData, sheetData)
-        }
-    }
-
-    private void exportActivityOrOutput(String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {
-        List blank = commonActivityHeaders.collect{""}
-        List versionHeaders = blank + exportConfig.collect{ it.formVersion }
-        List propertyHeaders = blank + exportConfig.collect{ it.property }
-
-        List outputGetters = activityProperties + exportConfig.collect{ it.getter }
-        List headers = commonActivityHeaders + exportConfig.collect{ it.header }
-
-        AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
-        int outputRow = outputSheet.sheet.lastRowNum
-        List outputData = activityOrOutputData.collect { commonData + it }
-        outputSheet.add(outputData, outputGetters, outputRow + 1)
-    }
 
     private void exportActivitySummary(Map project) {
         String tab = "Activity Summary"
@@ -801,11 +753,6 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportBlog(Map project) {
         exportList("Blog", project, project.blog, blogHeaders, blogProperties)
-    }
-
-    private Map getReportInfo(Map activity, project) {
-        Report report = findReportForActivity(activity, project.reports)
-        getReportSummaryInfo(report)
     }
 
     AdditionalSheet projectSheet() {
