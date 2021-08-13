@@ -20,7 +20,6 @@ class ProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
     // Avoids name clashes for fields that appear in activities and projects (such as name / description)
-    private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String PROJECT_DATA_PREFIX = 'project_'
 
     List<String> stateHeaders = (1..3).collect{'State '+it}
@@ -32,11 +31,11 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', "Last Modified"]
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"]
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated']
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Termination Reason', 'Last Modified']
-    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status']
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', 'Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status']
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
@@ -62,9 +61,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
-    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
-    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Finanical Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'fromDate', 'toDate', 'financialYear', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'fromDate', 'toDate', 'financialYear', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
 
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
@@ -224,63 +223,16 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private Map commonActivityData(Map project, Map activity) {
-        String activityDataPrefix = ACTIVITY_DATA_PREFIX
-        Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
-        Map activityData = project + activityBaseData
-        activityData += getReportInfo(activity, project).collectEntries{k, v -> [(activityDataPrefix+k):v]}
-        activityData[(activityDataPrefix+'publicationStatus')] = translatePublicationStatus(activity.publicationStatus)
-        activityData
-    }
-
      void exportActivities(Map project) {
          tabsToExport.each { tab ->
              List activities = project?.activities?.findAll { it.type == tab }
              if (activities) {
                  activities.each {
-                     exportActivity(project, it, formSectionPerTab)
+                     exportActivity(commonActivityHeaders, activityProperties, project, it, formSectionPerTab)
                  }
              }
          }
      }
-
-    private void exportActivity(Map project, Map activity, boolean sectionPerTab) {
-        Map commonData = commonActivityData(project, activity)
-        String activityType = activity.type
-        List exportConfig = getActivityExportConfig(activityType, !sectionPerTab)
-        String sheetName = activityType
-        if (sectionPerTab) {
-            // Split into all the bits.
-            Map<String, List> configPerSection = exportConfig.groupBy{it.section}
-            // We are relying on the grouping preserving order here....
-            configPerSection.each { String section, List sectionConfig ->
-
-                if (configPerSection.size() > 1){
-                    sheetName = section +' '+activityType
-                }
-                List sheetData = prepareActivityDataForExport(activity, false, section)
-                exportActivityOrOutput(sheetName, sectionConfig, commonData, sheetData)
-            }
-        }
-        else {
-            List sheetData = prepareActivityDataForExport(activity, true)
-            exportActivityOrOutput(sheetName, exportConfig, commonData, sheetData)
-        }
-    }
-
-    private void exportActivityOrOutput(String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {
-        List blank = commonActivityHeaders.collect{""}
-        List versionHeaders = blank + exportConfig.collect{ it.formVersion }
-        List propertyHeaders = blank + exportConfig.collect{ it.property }
-
-        List outputGetters = activityProperties + exportConfig.collect{ it.getter }
-        List headers = commonActivityHeaders + exportConfig.collect{ it.header }
-
-        AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
-        int outputRow = outputSheet.sheet.lastRowNum
-        List outputData = activityOrOutputData.collect { commonData + it }
-        outputSheet.add(outputData, outputGetters, outputRow + 1)
-    }
 
     private void exportActivitySummary(Map project) {
         String tab = "Activity Summary"
@@ -801,23 +753,6 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportBlog(Map project) {
         exportList("Blog", project, project.blog, blogHeaders, blogProperties)
-    }
-
-    private Map getReportInfo(Map activity, project) {
-        Date activityEndDate = activity.plannedEndDate
-
-        if (!activityEndDate) {
-            log.error("No end date for activity: ${activity.activityId}, project: ${project.projectId}")
-            return [:]
-        }
-
-        // First try and match the report by activity id
-        Report report = project.reports?.find { it.activityId == activity.activityId }
-        if (!report) {
-            report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
-        }
-
-        [stage:report?.name, reportType:report?.generatedBy, fromDate:report?.fromDate, toDate:report?.toDate, financialYear: report ? DateUtil.getFinancialYearBasedOnEndDate(report.toDate) : ""]
     }
 
     AdditionalSheet projectSheet() {

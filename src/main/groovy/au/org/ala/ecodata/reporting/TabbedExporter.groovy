@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 class TabbedExporter {
 
     static Log log = LogFactory.getLog(TabbedExporter.class)
-
+    protected static final String ACTIVITY_DATA_PREFIX = 'activity_'
     MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
     ReportingService reportingService =  Holders.grailsApplication.mainContext.getBean("reportingService")
@@ -94,7 +94,7 @@ class TabbedExporter {
         translated
     }
 
-    private boolean isExportableType(Map dataNode) {
+    protected boolean isExportableType(Map dataNode) {
         !(dataNode.dataType in ['photoPoints', 'matrix', 'masterDetail', 'list'])
     }
 
@@ -111,7 +111,7 @@ class TabbedExporter {
      * @param output
      * @return
      */
-    private List getOutputData(OutputMetadata  outputModel, Map output, String namespace) {
+    protected List getOutputData(OutputMetadata  outputModel, Map output, String namespace) {
         List flatData = []
         if (output) {
             flatData = processor.flatten2(output, outputModel, OutputModelProcessor.FlattenOptions.REPEAT_SELECTIONS, namespace)
@@ -143,7 +143,7 @@ class TabbedExporter {
     }
 
     /** Merges headers and getters from multiple form versions into the cache */
-    private void mergeActivityHeadersAndGetters(String key, List<Map> versionedConfig) {
+    protected void mergeActivityHeadersAndGetters(String key, List<Map> versionedConfig) {
         List currentConfig = activityExportConfig[key]
 
         for (int i=0; i<versionedConfig.size(); i++) {
@@ -153,7 +153,7 @@ class TabbedExporter {
         }
     }
 
-    private List<Map> buildActivityExportConfiguration(ActivityForm activityForm, boolean namespaceOutputs) {
+    protected List<Map> buildActivityExportConfiguration(ActivityForm activityForm, boolean namespaceOutputs) {
         List config = []
         activityForm.sections.each { FormSection section ->
             OutputMetadata outputModel = new OutputMetadata(section.template)
@@ -166,7 +166,7 @@ class TabbedExporter {
         config
     }
 
-    private List<Map> buildOutputExportConfiguration(OutputMetadata outputMetadata, String namespace) {
+    protected List<Map> buildOutputExportConfiguration(OutputMetadata outputMetadata, String namespace) {
 
         String prefix = namespace ? namespace+'.' : ''
         List<Map> fieldConfiguration = []
@@ -179,7 +179,7 @@ class TabbedExporter {
         outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
             if (isExportableType(dataNode)) {
                 String propertyPath = prefix + path
-                if (dataNode.dataType == 'stringList' && dataNode.constraints) {
+                if (dataNode.dataType == 'stringList' && dataNode.constraints && dataNode.constraints instanceof List) {
                     dataNode.constraints.each { constraint ->
                         String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
                         String constraintPath = propertyPath + '[' + constraint + ']'
@@ -198,6 +198,53 @@ class TabbedExporter {
             }
         }
         fieldConfiguration
+    }
+
+    protected void exportActivity(List headers, List properties, Map reportOwningEntity, Map activity, boolean sectionPerTab) {
+        Map commonData = commonActivityData(reportOwningEntity, activity)
+        String activityType = activity.type
+        List exportConfig = getActivityExportConfig(activityType, !sectionPerTab)
+        String sheetName = activityType
+        if (sectionPerTab) {
+            // Split into all the bits.
+            Map<String, List> configPerSection = exportConfig.groupBy{it.section}
+            // We are relying on the grouping preserving order here....
+            configPerSection.each { String section, List sectionConfig ->
+
+                if (configPerSection.size() > 1){
+                    sheetName = section +' '+activityType
+                }
+                List sheetData = prepareActivityDataForExport(activity, false, section)
+                exportActivityOrOutput(headers, properties, sheetName, sectionConfig, commonData, sheetData)
+            }
+        }
+        else {
+            List sheetData = prepareActivityDataForExport(activity, true)
+            exportActivityOrOutput(headers, properties, sheetName, exportConfig, commonData, sheetData)
+        }
+    }
+
+    protected Map commonActivityData(Map reportOwningEntity, Map activity) {
+        String activityDataPrefix = ACTIVITY_DATA_PREFIX
+        Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
+        Map activityData = reportOwningEntity + activityBaseData
+        activityData += getReportInfo(activity, reportOwningEntity.reports).collectEntries{k, v -> [(activityDataPrefix+k):v]}
+        activityData[(activityDataPrefix+'publicationStatus')] = translatePublicationStatus(activity.publicationStatus)
+        activityData
+    }
+
+    protected void exportActivityOrOutput(List activityHeaders, List activityProperties, String sheetName, List exportConfig, Map commonData, List activityOrOutputData) {
+        List blank = activityHeaders.collect{""}
+        List versionHeaders = blank + exportConfig.collect{ it.formVersion }
+        List propertyHeaders = blank + exportConfig.collect{ it.property }
+
+        List outputGetters = activityProperties + exportConfig.collect{ it.getter }
+        List headers = activityHeaders + exportConfig.collect{ it.header }
+
+        AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
+        int outputRow = outputSheet.sheet.lastRowNum
+        List outputData = activityOrOutputData.collect { commonData + it }
+        outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
     /**
@@ -302,12 +349,39 @@ class TabbedExporter {
         List data = []
         entity.reports?.each { report ->
 
-            Map reportDetails = entity + [reportName:report.name, fromDate:report.fromDate, toDate:report.toDate, progress:report.progress]
+            Map reportDetails = entity + getReportSummaryInfo(report)
             reportDetails.activityCount = reportingService.getActivityCountForReport(report)
             reportDetails.putAll(extractCurrentReportStatus(report))
             data << reportDetails
         }
         sheet.add(data, reportSummaryProperties, row + 1)
+    }
+
+    protected Map getReportInfo(Map activity, List reports) {
+        Report report = findReportForActivity(activity, reports)
+        getReportSummaryInfo(report)
+    }
+
+    /** This method finds the Report that contains the supplied activity, either by activityId or date */
+    protected Report findReportForActivity(Map activity, List<Report> reports) {
+        Date activityEndDate = activity.plannedEndDate
+
+        if (!activityEndDate) {
+            log.error("No end date for activity: ${activity.activityId}, project: ${activity.projectId}")
+            return null
+        }
+
+        // First try and match the report by activity id
+        Report report = reports?.find { it.activityId == activity.activityId }
+        if (!report) {
+            report = reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
+        }
+        report
+
+    }
+
+    protected Map getReportSummaryInfo(Report report) {
+        [stage:report?.name, reportName:report?.name, reportDescription:report?.description, reportId:report?.reportId, reportType:report?.generatedBy, fromDate:report?.fromDate, toDate:report?.toDate, financialYear: report ? DateUtil.getFinancialYearBasedOnEndDate(report.toDate) : ""]
     }
 
     protected Map extractCurrentReportStatus(Report report) {
