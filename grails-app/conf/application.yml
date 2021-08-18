@@ -56,13 +56,11 @@ server:
     servlet:
         session:
             timeout: 7200
-# Spring Actuator Endpoints are Disabled by Default
-endpoints:
-    enabled: true
-    jmx:
-        enabled: true
-        unique-names: true
-
+            cookie:
+                secure: true
+management:
+    endpoints:
+        enabled-by-default: false
 ---
 grails:
     mime:
