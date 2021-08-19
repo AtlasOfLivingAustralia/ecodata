@@ -56,8 +56,6 @@ server:
     servlet:
         session:
             timeout: 7200
-            cookie:
-                secure: true
 management:
     endpoints:
         enabled-by-default: false
