@@ -41,6 +41,7 @@ environments {
                 }
             }
         }
+        server.servlet.session.cookie.secure = true
     }
 }
 
