@@ -66,7 +66,10 @@ final info  = [
         'grails.plugins.quartz',
         'grails.mongodb',
         'org.quartz',
-        'org.springframework'
+        'org.springframework',
+        'grails.mongodb',
+        'grails.gorm',
+        'au.org.ala.ecodata'
 ]
 
 final esInfo  = [
@@ -74,10 +77,9 @@ final esInfo  = [
 ]
 
 final debug = [
-        'grails.mongodb',
-        'grails.gorm',
+
       //  'org.grails.datastore.gorm',
-        'au.org.ala.ecodata'
+
 //        'grails.app.services.au.org.ala.volunteer.ExportService',
 //        'grails.app.controllers.au.org.ala.volunteer.ProjectController',
 //        'grails.plugin.cache'
