@@ -49,6 +49,7 @@ spring:
                 - '**/*.css'
                 - '**/*.js'
 server:
+    address: localhost
     tomcat:
         port-header: 'X-Forwarded-Port'
         protocol-header: 'X-Forwarded-Proto'
