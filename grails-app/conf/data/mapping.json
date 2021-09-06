@@ -95,8 +95,7 @@
           "copy_to" : "typeFacet"
         },
         "className": {
-          "type":"keyword",
-          "analyzer":"facetKeyword"
+          "type":"keyword"
         },
         "associatedProgram": {
           "type" : "text",
