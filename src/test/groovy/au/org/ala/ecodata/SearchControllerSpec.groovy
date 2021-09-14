@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
+import grails.plugin.json.view.test.JsonViewTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.SearchResponse
@@ -114,7 +115,7 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
                 selectedFacetTerms:[]]
     }
 
-    def "The elasticGeo method does stuff when markBy is supplied"() {
+    def "The elasticGeo method triggers post processing of search results when markBy is supplied"() {
         setup:
         SearchResponse searchResponse = GroovyMock(SearchResponse)
         List projectDocs = ['p1', 'p2', 'p3'].collect {
@@ -164,6 +165,22 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
             total:totalHits.value,
             projects:expectedResults,
             selectedFacetTerms:expectedFacetTerms]
+    }
+
+    def "The geoPost method presents search results in a backwards compatible way"() {
+
+        setup:
+        SearchResponse searchResponse = GroovyMock(SearchResponse)
+
+        when:
+        request.json = [query:'*:*']
+        controller.elasticPost()
+
+        then:
+        1 * elasticSearchService.search('*:*', _, ElasticIndex.DEFAULT_INDEX) >> searchResponse
+        model == [searchResponse:searchResponse]
+        view == 'elasticPost'
+
     }
 
 }

@@ -322,18 +322,12 @@ class SearchController {
         log.debug "paramMap = ${paramMap}"
 
         if (paramMap) {
-            def res = elasticSearchService.search(paramMap.query, paramMap, "")
-            response.setContentType("application/json; charset=\"UTF-8\"")
-            render res
+            SearchResponse res = elasticSearchService.search(paramMap.query, paramMap, ElasticIndex.DEFAULT_INDEX)
+            respond searchResponse:res
         } else {
             def msg = [error: "Required JSON body not found"]
             render msg as JSON
         }
-    }
-
-    def clearIndex() {
-        log.debug "Clearing index"
-        render elasticSearchService.deleteIndex()
     }
 
     def indexAll() {
