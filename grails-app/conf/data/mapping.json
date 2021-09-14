@@ -381,7 +381,7 @@
           }
         },
         "photoType":{
-          "type": "text"
+          "type": "keyword"
         },
         "activities":{
           "properties":{
