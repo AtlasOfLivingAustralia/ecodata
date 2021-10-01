@@ -18,6 +18,7 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
         service.settingService = settingService
         service.webService = webService
         mockDomain Score
+        mockDomain ActivityForm
     }
 
     void "getGeographicFacetConfig should correctly identify the facet name for a field id and whether it is grouped"(String fid, boolean grouped, String groupName) {
@@ -92,5 +93,27 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
         results[0].scores[0].target == "10"
         results[0].scores[0].preiodTargets == null
 
+    }
+
+    def "The withAllActivityForms method allows us to perform an action against all saved forms"() {
+
+        setup:
+        ActivityForm form1 = new ActivityForm(name:'test', formVersion:1, status: Status.ACTIVE, type:'Activity')
+        form1.save(flush:true, failOnError: true)
+        ActivityForm form2 = new ActivityForm(name:'test', formVersion:2, status: Status.DELETED, type:'Activity')
+        form2.save(flush:true, failOnError: true)
+        ActivityForm form3 = new ActivityForm(name:'abc', formVersion:1, status: Status.ACTIVE, type:'Activity')
+        form3.save(flush:true, failOnError: true)
+        ActivityForm form4 = new ActivityForm(name:'abc', formVersion:2, status: Status.ACTIVE, type:'Activity')
+        form4.save(flush:true, failOnError: true)
+
+        when:
+        List forms = []
+        service.withAllActivityForms { ActivityForm form ->
+            forms << form
+        }
+
+        then:
+        forms.collect{it.name } == ['test', 'abc', 'abc']
     }
 }

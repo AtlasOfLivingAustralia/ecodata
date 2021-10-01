@@ -27,6 +27,8 @@ import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.ElasticsearchException
+import org.elasticsearch.action.DocWriteResponse
+import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkProcessor
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
@@ -781,11 +783,11 @@ class ElasticSearchService {
 
         BulkProcessor bulkProcessor = BulkProcessor.builder(
                 { request, bulkListener ->
-                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener
+                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-indexing"
         ).build()
 
         Project.withNewSession {
-            def batchParams = [offset: 0, max: 50]
+            def batchParams = [offset: 0, max: 50, sort:'projectId']
             def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
             while (projects) {

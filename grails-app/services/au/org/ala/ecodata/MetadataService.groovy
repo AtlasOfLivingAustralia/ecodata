@@ -898,7 +898,7 @@ class MetadataService {
         int count = ActivityForm.countByStatusNotEqual(Status.DELETED)
 
         while (count > offset) {
-            List activities = ActivityForm.findAllByStatusNotEqual(Status.DELETED, [offset:offset, max:batchSize])
+            List activities = ActivityForm.findAllByStatusNotEqual(Status.DELETED, [offset:offset, max:batchSize, sort:'id'])
             activities.each { ActivityForm activityForm ->
                 action(activityForm)
             }
