@@ -1,9 +1,87 @@
 // https://dl.dropbox.com/s/gj71mpffihldk7f/coralObservations.js?dl=0
-var imageCarousel = '<img style="height:300px" src="https://dl.dropboxusercontent.com/s/8nct1vmhq86gpf3/plate.png?dl=0" alt="Plate">'+
-    '<img style="height:300px" src="https://dl.dropboxusercontent.com/s/ksws7ssui4ymrx7/boulder_layout.png" alt="Boulder">' +
-    '<img style="height:300px" src="https://dl.dropboxusercontent.com/s/oyjjsgclz2dw6lw/branching.png?dl=0" alt="Branching">'+
-    '<img style="height:300px" src="https://dl.dropboxusercontent.com/s/hpnxz781h71g164/soft.png?dl=0" alt="Boulder">';
+var imageCarousel = '<img style="height:300px" src="https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&filename=plate.png&model=coralWatch" alt="Plate">'+
+    '<img style="height:300px" src="https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&model=coralWatch&filename=boulder_layout.png" alt="Boulder">' +
+    '<img style="height:300px" src="https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&model=coralWatch&filename=branching.png" alt="Branching">'+
+    '<img style="height:300px" src="https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&model=coralWatch&filename=soft.png" alt="Boulder">';
 $(".form-actions").before( imageCarousel ) ;
+
+const coralWatchContainerValueIncrement = function coralWatchContainerValueIncrement(container, key) {
+    if (!container || !key) {
+        return;
+    }
+    if (!container.has(key)) {
+        container.set(key, 0);
+    }
+    const newValue = container.get(key) + 1;
+    container.set(key, newValue);
+};
+
+/**
+ * Update the knockout array using the new map.
+ * @param currentKoArray The current knockout array.
+ * @param newMap {Map} The new map.
+ */
+const coralWatchContainerToChartDataItems = function coralWatchContainerToChartDataItems(currentKoArray, newMap) {
+    console.warn('[CoralWatch] coralWatchContainerToChartDataItems start', currentKoArray(), newMap);
+    if (!currentKoArray) {
+        return;
+    }
+    if (!newMap) {
+        newMap = new Map();
+    }
+
+    const prefix = 'CustomChartDataItem';
+    const sep = '|||';
+
+    const newItems = [];
+
+    // add or update entries from new map
+    newMap.forEach(function (value, key) {
+        const newItem = prefix + sep + key.toString() + sep + value.toString();
+        newItems.push(newItem);
+
+        if (currentKoArray.indexOf(newItem) === -1) {
+            const newPartialItem = prefix + sep + key.toString() + sep;
+            const existingKeyIndex = currentKoArray().findIndex(function (currentArrayValue) {
+                return currentArrayValue.startsWith(newPartialItem);
+            });
+            if (existingKeyIndex > -1) {
+                // update existing entry with same key but different value
+                currentKoArray.splice(existingKeyIndex, 1, newItem);
+            } else {
+                // add new entry
+                currentKoArray.push(newItem);
+            }
+        }
+    });
+
+    // remove entries that are not present in new map
+    // .remove(func) is a knockout extension to array
+    currentKoArray.remove(function (element) {
+        return newItems.indexOf(element) === -1;
+    });
+
+    console.warn('[CoralWatch] coralWatchContainerToChartDataItems finish', currentKoArray());
+};
+
+const coralWatchRecordLevelCountUpdate = function (items) {
+    // count the number of each unique value
+    const colourCodeAverages = new Map();
+    const typeOfCorals = new Map();
+    items.forEach(function (item) {
+        const colourCodeAverage = item.colourCodeAverage();
+        coralWatchContainerValueIncrement(colourCodeAverages, colourCodeAverage);
+
+        const typeOfCoral = item.typeOfCoral();
+        coralWatchContainerValueIncrement(typeOfCorals, typeOfCoral);
+    });
+
+    // set the new unique counts to the top-level ko properties
+    coralWatchContainerToChartDataItems(self.data.colourCodeAverageRecordLevelCount, colourCodeAverages);
+    coralWatchContainerToChartDataItems(self.data.typeOfCoralRecordLevelCount, typeOfCorals);
+};
+
+const coralWatchActivitySelfData = self.data;
 
 var observationCounter = 0;
 var Output_CoralWatch_coralObservationsRow = function (data, dataModel, context, config) {
@@ -88,19 +166,19 @@ var Output_CoralWatch_coralObservationsRow = function (data, dataModel, context,
         var url = ''
         switch(obj) {
             case 'Plate corals':
-                url = "https://dl.dropboxusercontent.com/s/8nct1vmhq86gpf3/plate.png?dl=0";
+                url = "https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&filename=plate.png&model=coralWatch";
                 break;
 
             case 'Boulder corals':
-                url = "https://dl.dropboxusercontent.com/s/ksws7ssui4ymrx7/boulder_layout.png";
+                url = "https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&model=coralWatch&filename=boulder_layout.png";
                 break;
 
             case 'Branching corals':
-                url = "https://dl.dropboxusercontent.com/s/oyjjsgclz2dw6lw/branching.png?dl=0";
+                url = "https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&model=coralWatch&filename=branching.png";
                 break;
 
             case 'Soft corals':
-                url = "https://dl.dropboxusercontent.com/s/hpnxz781h71g164/soft.png?dl=0";
+                url = "https://biocollect.ala.org.au/download/getScriptFile?hub=coralWatch&model=coralWatch&filename=soft.png";
                 break;
 
             default:
@@ -112,10 +190,24 @@ var Output_CoralWatch_coralObservationsRow = function (data, dataModel, context,
             msg = "<img src='"+url+"'></img>";
         }
     });
+
+    self.colourCodeAverage.subscribe(function (obj) {
+        const currentCoralObservations = coralWatchActivitySelfData.coralObservations();
+        coralWatchRecordLevelCountUpdate(currentCoralObservations);
+    });
+
+    self.typeOfCoral.subscribe(function (obj) {
+        const currentCoralObservations = coralWatchActivitySelfData.coralObservations();
+        coralWatchRecordLevelCountUpdate(currentCoralObservations);
+    });
 };
 
 var context = _.extend({}, context, {parent:self, listName:'coralObservations'});
 self.data.coralObservations = ko.observableArray().extend({list:{metadata:self.dataModel, constructorFunction:Output_CoralWatch_coralObservationsRow, context:context, userAddedRows:true, config:config}});
+
+self.data.coralObservations.subscribe(function (obj) {
+    coralWatchRecordLevelCountUpdate(self.data.coralObservations());
+});
 
 self.data.coralObservations.loadDefaults = function() {
     self.data.coralObservations.addRow();
