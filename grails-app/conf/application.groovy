@@ -616,6 +616,8 @@ grails.cache.config = {
     }
 }
 
+grails.gorm.graphql.browser = true
+
 environments {
     development {
         grails.logging.jul.usebridge = true

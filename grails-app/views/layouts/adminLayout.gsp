@@ -108,6 +108,8 @@
                                        title="Scores list"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'getIndexNames')}"
                                        title="List custom indices"/>
+                    <ec:breadcrumbItem href="${createLink(controller: 'graphql', action: 'browser')}"
+                                       title="Graphql API"/>
 
                 </ul>
 

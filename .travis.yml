@@ -37,9 +37,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ./gradlew bootrun -Dgrails.env=test
   - ./gradlew cloverGenerateReport
-  - ./gradlew -stop
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish'

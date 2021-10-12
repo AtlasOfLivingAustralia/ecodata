@@ -187,7 +187,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         fqList.each {
             List fq = it.toString().split(":")
             if(!enumList.contains(fq.first())) {
-                List<String> lookUps = searchDetails.facets.getFacets().get(fq.first()).entries.term as String[]
+                List<String> lookUps = searchDetails.facets?.getFacets()?.get(fq.first())?.entries?.term as String[]
                 if (!lookUps.contains(fq.last())) {
                     throw new GraphQLException('Invalid ' + fq.first() + ' : suggested values are : ' + lookUps)
                 }
@@ -431,7 +431,8 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         }
 
         paramList.hubFq = hub.defaultFacetQuery
-        paramList.facets = hub.availableFacets.join(",")
+        paramList.facets = hub.availableFacets?.join(",")
+        paramList.hub = environment.arguments.get("hub").toString()
 
         //validate the query
         validateSearchQuery(environment, fqList, paramList, "docType: project", ["status"])
