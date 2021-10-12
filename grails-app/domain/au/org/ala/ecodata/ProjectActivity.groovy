@@ -1,8 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.ProjectActivityGraphQLMapper
 import org.bson.types.ObjectId
 
 class ProjectActivity {
+
+    static graphql = ProjectActivityGraphQLMapper.graphqlMapping()
 
     ObjectId id
     String projectActivityId

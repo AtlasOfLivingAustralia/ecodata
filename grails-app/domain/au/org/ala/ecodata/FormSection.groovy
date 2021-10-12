@@ -34,7 +34,7 @@ class FormSection {
     SectionTemplate getSectionTemplate() {
         SectionTemplate outputData = new SectionTemplate()
         if(template) {
-            outputData.sectionTemplate = template
+            outputData.sectionTemplate = template.findAll{ it.key != "viewModel"}
         }
         return outputData
     }
