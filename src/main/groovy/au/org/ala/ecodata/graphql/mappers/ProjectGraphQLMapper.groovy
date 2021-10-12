@@ -3,6 +3,7 @@ package au.org.ala.ecodata.graphql.mappers
 import au.org.ala.ecodata.Activity
 import au.org.ala.ecodata.Document
 import au.org.ala.ecodata.Project
+import au.org.ala.ecodata.ProjectActivity
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.Status
@@ -18,10 +19,10 @@ import grails.gorm.DetachedCriteria
 import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import org.apache.commons.lang.WordUtils
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
 import org.grails.gorm.graphql.fetcher.impl.SingleEntityDataFetcher
+import org.apache.commons.lang.WordUtils
 
 class ProjectGraphQLMapper {
 
@@ -60,6 +61,13 @@ class ProjectGraphQLMapper {
                 }
             }
 
+            add('surveys', [ProjectActivity]) {
+                dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
+                    ProjectActivity.findAllByProjectId(project.projectId)
+                }
+            }
+
+
             add('documents', [Document]) {
                 dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
                     Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED)
@@ -88,7 +96,7 @@ class ProjectGraphQLMapper {
             activityModel["activities"].each {
                 if(it.name && it.outputs && it.outputs.size() > 0 && it.outputs.fields?.findAll{ x -> x?.size() != 0 }?.size() > 0){
                     def outputTypes = it.outputs
-                    String activityName = WordUtils.capitalize(it.name).replaceAll("\\W", "")
+                    String activityName = (it.name).replaceAll("\\W", "")
                     String name = "Activity_" + activityName
                     List outputList = []
                     List modifiedColumns = []
@@ -97,7 +105,7 @@ class ProjectGraphQLMapper {
                     add(name, name) {
                         type {
                             outputTypes.each { outputType ->
-                                String outputName = WordUtils.capitalize(outputType.name).replaceAll("\\W", "")
+                                String outputName = (outputType.name).replaceAll("\\W", "")
                                 String title = outputType.title
                                 String outputTypeName = "OutputType_" + outputName
                                 if(outputType.fields?.size() > 0 && !(outputTypeName in outputList)) {
@@ -370,6 +378,7 @@ class ProjectGraphQLMapper {
                 argument('isBushfire', [Boolean]){ nullable true }
                 argument('associatedProgram', [String]){ nullable true }
                 argument('typeOfProject', [String]){ nullable true }
+                argument('lga', [String]){ nullable true }
 
                 argument('page', int){ nullable true }
                 argument('max', int){ nullable true }
