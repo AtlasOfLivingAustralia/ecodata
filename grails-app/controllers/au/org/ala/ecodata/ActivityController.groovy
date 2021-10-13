@@ -20,7 +20,7 @@ class ActivityController {
     // for universal JSONP support.
     def asJson = { model ->
         response.setContentType("application/json;charset=UTF-8")
-        model
+        render model as JSON
     }
 
     def index() {
@@ -114,7 +114,7 @@ class ActivityController {
                 errors << [error: result.error]
             }
             errors.each {
-                log.error it
+                log.error it.toString()
             }
             message = [message: 'error', errors: errors]
         }
@@ -151,7 +151,7 @@ class ActivityController {
                 errors << [error: result.error]
             }
             errors.each {
-                log.error it
+                log.error it.toString()
             }
             message = [message: 'error', errors: errors]
         }

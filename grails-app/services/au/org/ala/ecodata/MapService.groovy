@@ -6,11 +6,15 @@ import com.spatial4j.core.io.GeohashUtils
 import com.spatial4j.core.shape.Rectangle
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import org.codehaus.groovy.grails.web.servlet.HttpHeaders
+import grails.web.http.HttpHeaders
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
+import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.common.Strings
+import org.elasticsearch.common.io.stream.OutputStreamStreamOutput
 import org.elasticsearch.common.xcontent.XContentHelper
-import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.search.aggregations.bucket.geogrid.GeoGrid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternResolver
@@ -43,7 +47,7 @@ class MapService {
 
     @PostConstruct
     def init() {
-        enabled = grailsApplication.config.geoServer.enabled?.toBoolean()
+        enabled = grailsApplication?.config?.geoServer?.enabled?.toBoolean()
 
         if (enabled) {
             log.info("GeoServer integration enabled.")
@@ -141,9 +145,9 @@ class MapService {
                 params.query = params.query.replaceAll('"', '\\\\"')
             }
 
-            def request = elasticSearchService.buildSearchRequest(params.query, params, index, geoSearch)
-            String requestJSON = XContentHelper.convertToJson(request.source(), true)
-            requestJSON = JSON.parse(requestJSON).query.toString()
+            SearchRequest request = elasticSearchService.buildSearchRequest(params.query, params, index, geoSearch)
+            QueryBuilder query = request.source().query()
+            String requestJSON = Strings.toString(query, true, true)
             requestJSON = requestJSON.replaceAll(',', '\\\\,')
             requestJSON = URLEncoder.encode(requestJSON, "utf-8")
             Map wmsParams = whiteListWMSParams(params)
@@ -221,7 +225,7 @@ class MapService {
         files?.each { file ->
             def name = getStyleNameFromFileName(file)
             if (name) {
-                styles[name] = file.getFile().getText()
+                styles[name] = file.getURL().getText()
             }
         }
 
@@ -585,7 +589,7 @@ class MapService {
         engine.setIndentation('')
         String content
         files?.each { Resource file ->
-            content = engine.createTemplate(file.getFile()).make(layerConfig).toString()
+            content = engine.createTemplate(file.getURL()).make(layerConfig).toString()
         }
 
         content?.replaceAll('\n', '');
@@ -624,7 +628,7 @@ class MapService {
         engine.setIndentation('')
         String content
         files?.each { Resource file ->
-            content = engine.createTemplate(file.getFile()).make(data).toString()
+            content = engine.createTemplate(file.getURL()).make(data).toString()
         }
 
         content?.replaceAll('\n', '');
@@ -710,9 +714,9 @@ class MapService {
     def getFeatureCollectionFromSearchResult(res, String aggName = "heatmap") {
         Map features = [type: "FeatureCollection", features: []]
         SpatialContext sc = new SpatialContext(true)
-        GeoHashGrid geoHashGridAgg = res.getAggregations().get(aggName)
+        GeoGrid geoHashGridAgg = res.getAggregations().get(aggName)
 
-        for (GeoHashGrid.Bucket entry : geoHashGridAgg.getBuckets()) {
+        for (GeoGrid.Bucket entry : geoHashGridAgg.getBuckets()) {
             Map properties = [:]
             properties.key = entry.getKey()
             properties.count = entry.getDocCount()

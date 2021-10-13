@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+
 import org.bson.types.ObjectId
 
 /**
@@ -107,4 +108,10 @@ class ActivityForm {
     def beforeUpdate() {
         lastUpdatedUserId = currentUserId()
     }
+
+    FormSection getFormSection(String name) {
+        sections.find{it.name == name}
+    }
+
+
 }

@@ -1,0 +1,300 @@
+{
+    "modelName": "saSiteHealthSummary",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "vegetationFormation"
+        },
+        {
+            "dataType": "text",
+            "name": "vegetationCommunity"
+        },
+        {
+            "dataType": "species",
+            "name": "dominantStructuralSpecies"
+        },
+        {
+            "dataType": "species",
+            "name": "subDominantStructuralSpecies"
+        },
+        {
+            "dataType": "number",
+            "name": "noOfNativeSpecies"
+        },
+        {
+            "dataType": "number",
+            "name": "noOfExoticSpecies"
+        },
+        {
+            "dataType": "number",
+            "name": "weedAbundanceThreatScore"
+        },
+        {
+            "dataType": "text",
+            "name": "redAlertWeedScore"
+        },
+        {
+            "dataType": "number",
+            "name": "structuralDiversityAScore"
+        },
+        {
+            "dataType": "number",
+            "name": "structuralDiversityBScore"
+        },
+        {
+            "dataType": "number",
+            "name": "regenerationScore"
+        },
+        {
+            "dataType": "number",
+            "name": "treeHealthScore"
+        },
+        {
+            "dataType": "number",
+            "name": "diebackScore"
+        },
+        {
+            "dataType": "number",
+            "name": "lerpDamageScore"
+        },
+        {
+            "dataType": "number",
+            "name": "mistletoeScore"
+        },
+        {
+            "dataType": "number",
+            "name": "fallenLogsScore"
+        },
+        {
+            "dataType": "number",
+            "name": "treeHabitatScore"
+        },
+        {
+            "dataType": "number",
+            "name": "treeHollowScore"
+        },
+        {
+            "dataType": "number",
+            "name": "noOfLargeTrees"
+        },
+        {
+            "dataType": "number",
+            "name": "treeDensity"
+        },
+        {
+            "dataType": "number",
+            "name": "feralAnimalAbundanceScore"
+        },
+        {
+            "dataType": "number",
+            "name": "feralAnimalFrequencyScore"
+        },
+        {
+            "dataType": "number",
+            "name": "grazingPressureScore"
+        },
+        {
+            "dataType": "number",
+            "name": "animalSpeciesScore"
+        },
+        {
+            "dataType": "number",
+            "name": "degradationRiskScore"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "items": [
+                                {
+                                    "source": "vegetationCommunity",
+                                    "preLabel": "Vegetation community",
+                                    "type": "text"
+                                },
+                                {
+                                    "source": "vegetationFormation",
+                                    "preLabel": "Vegetation structural formation",
+                                    "type": "text"
+                                },
+                                {
+                                    "source": "dominantStructuralSpecies",
+                                    "preLabel": "Dominant structural species",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "source": "subDominantStructuralSpecies",
+                                    "preLabel": "Sub-dominant structural species",
+                                    "type": "autocomplete"
+                                }
+                            ],
+                            "type": "col"
+                        }
+                    ],
+                    "type": "row"
+                }
+            ],
+            "type": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "items": [
+                                {
+                                    "title": "Indicator 1 - Species Diversity",
+                                    "preLabel": "No. of Native species",
+                                    "source": "noOfNativeSpecies",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "No. of Exotic species",
+                                    "source": "noOfExoticSpecies",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 2 - Weed Abundance and Threat",
+                                    "preLabel": "Weed abundance & threat score",
+                                    "source": "weedAbundanceThreatScore",
+                                    "width": "15%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Red alert weed score",
+                                    "source": "redAlertWeedScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 3 - Structural Diversity",
+                                    "preLabel": "Structural diversity A - Ground cover score",
+                                    "source": "structuralDiversityAScore",
+                                    "width": "15%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Structural diversity B - Plant life forms score",
+                                    "source": "structuralDiversityBScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "No. of Exotic species",
+                                    "source": "noOfExoticSpecies",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 4 - Regeneration",
+                                    "preLabel": "Regeneration score",
+                                    "source": "regenerationScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 5 - Tree and Shrub Health",
+                                    "preLabel": "Tree health score",
+                                    "source": "treeHealthScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Dieback score",
+                                    "source": "diebackScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Lerp damage score",
+                                    "source": "lerpDamageScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Mistletoe score",
+                                    "source": "mistletoeScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 6 - Tree Habitat Score",
+                                    "preLabel": "Tree habitat score",
+                                    "source": "treeHabitatScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Tree hollow score",
+                                    "source": "treeHollowScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Fallen logs & trees score",
+                                    "source": "fallenLogsScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "No. of large trees",
+                                    "source": "noOfLargeTrees",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Tree density",
+                                    "postLabel": "trees / ha",
+                                    "source": "treeDensity",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 7 - Feral Animals",
+                                    "preLabel": "Feral animal abundance score",
+                                    "source": "feralAnimalAbundanceScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "preLabel": "Feral animal frequency score",
+                                    "source": "feralAnimalFrequencyScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 8 - Grazing Pressure",
+                                    "preLabel": "Grazing pressure score",
+                                    "source": "grazingPressureScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 9 - Animal Species",
+                                    "preLabel": "Animal species score",
+                                    "source": "animalSpeciesScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Indicator 10 - Bushland Degradation Risk",
+                                    "preLabel": "Bushland degradation risk score",
+                                    "source": "degradationRiskScore",
+                                    "width": "10%",
+                                    "type": "number"
+                                }
+                            ],
+                            "type": "col"
+                        }
+                    ],
+                    "type": "row"
+                }
+            ],
+            "type": "output-section"
+        }
+    ]
+}

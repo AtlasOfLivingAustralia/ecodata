@@ -16,8 +16,8 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
-import org.codehaus.groovy.grails.web.servlet.HttpHeaders
+import org.grails.web.converters.exceptions.ConverterException
+import grails.web.http.HttpHeaders
 import org.springframework.http.MediaType
 
 import javax.servlet.http.HttpServletResponse
@@ -40,13 +40,13 @@ class WebService {
             return responseText(conn)
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error error
+            log.error error.toString(), e
             return error
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}.",
                     statusCode: conn?.responseCode?:"",
                     detail: conn?.errorStream?.text]
-            log.error error, e
+            log.error error.toString(), e
             return error
         }
     }
@@ -113,23 +113,23 @@ class WebService {
             return JSON.parse(json)
         } catch (ConverterException e) {
             def error = ['error': "Failed to parse json. ${e.getClass()} ${e.getMessage()} URL= ${url}."]
-            log.error error
+            log.error error.toString(), e
             return error
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out getting json. URL= ${url}."]
-            println error
+            log.error error.toString(), e
             return error
         } catch (ConnectException ce) {
             log.info "Exception class = ${ce.getClass().name} - ${ce.getMessage()}"
             def error = [error: "ecodata service not available. URL= ${url}."]
-            println error
+            log.error error.toString(), e
             return error
         } catch (Exception e) {
             log.info "Exception class = ${e.getClass().name} - ${e.getMessage()}"
             def error = [error: "Failed to get json from web service. ${e.getClass()} ${e.getMessage()} URL= ${url}.",
                          statusCode: conn?.responseCode?:"",
                          detail: conn?.errorStream?.text]
-            log.error error
+            log.error error.toString(), e
             return error
         }
     }
@@ -151,11 +151,11 @@ class WebService {
      */
     def responseText(urlConnection) {
 
-        def charset = 'UTF-8' // default
+        String charset = 'UTF-8' // default
         def contentType = urlConnection.getContentType()
         if (contentType) {
-            def mediaType = MediaType.parseMediaType(contentType)
-            charset = (mediaType.charSet)?mediaType.charSet.toString():'UTF-8'
+            MediaType mediaType = MediaType.parseMediaType(contentType)
+            charset = (mediaType.charset)?mediaType.charset.toString():'UTF-8'
         }
         return urlConnection.content.getText(charset)
     }
@@ -191,7 +191,7 @@ class WebService {
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
             if (!suppressLog) {
-                log.error(error, e)
+                log.error(error.toString(), e)
             }
 
             return error
@@ -200,7 +200,7 @@ class WebService {
                          statusCode: conn?.responseCode?:"",
                          detail: conn?.errorStream?.text]
             if (!suppressLog) {
-                log.error(error, e)
+                log.error(error.toString(), e)
             }
             return error
         }
@@ -229,13 +229,13 @@ class WebService {
             return [resp: JSON.parse(resp?:"{}"), headers: conn.getHeaderFields()] // fail over to empty json object if empty response string otherwise JSON.parse fails
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error(error, e)
+            log.error(error.toString(), e)
             return error
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
                     statusCode: conn?.responseCode?:"",
                     detail: conn?.errorStream?.text]
-            log.error(error, e)
+            log.error(error.toString(), e)
             return error
         }
     }
@@ -275,13 +275,13 @@ class WebService {
             return [resp: JSON.parse(resp?:"{}"), headers: conn.getHeaderFields()] // fail over to empty json object if empty response string otherwise JSON.parse fails
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error(error, e)
+            log.error(error.toString(), e)
             return error
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
                          statusCode: conn?.responseCode?:"",
                          detail: conn?.errorStream?.text]
-            log.error(error, e)
+            log.error(error.toString(), e)
             return error
         }
     }

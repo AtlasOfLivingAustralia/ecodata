@@ -2,10 +2,12 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.apache.commons.io.FilenameUtils
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import groovy.json.JsonSlurper
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
@@ -21,8 +23,8 @@ class DocumentController {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        response.setContentType("application/json; charset=UTF-8")
-        model
+    //    response.setContentType("application/json; charset=UTF-8")
+        render model as JSON
     }
 
     def index() {
@@ -199,7 +201,7 @@ class DocumentController {
             render message as JSON
         } else {
             //Document.withSession { session -> session.clear() }
-            log.error result.error
+            log.error result.error.toString()
             render status:400, text: result.error
         }
     }
@@ -231,6 +233,8 @@ class DocumentController {
 
         return null
     }
+
+
 
     /**
      * Creates and returns a thumbnail of the supplied image.  The image orientation will be automatically corrected if needed.
@@ -324,14 +328,14 @@ class DocumentController {
         elasticSearchService.buildProjectActivityQuery(params)
         SearchResponse results = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX);
         activityIds = results?.hits?.hits?.collect { document ->
-            document.source.activityId
+            document.sourceAsMap.activityId
         }
-        results?.hits?.hits?.each { document ->
-            activityMetadata[document.source.activityId] = [
-                    activityId: document.source.activityId,
-                    activityName: document.source.name,
-                    projectId: document.source.projectActivity.projectId,
-                    projectName: document.source.projectActivity.projectName
+        results?.hits?.hits?.each { SearchHit document ->
+            activityMetadata[document.sourceAsMap.activityId] = [
+                    activityId: document.sourceAsMap.activityId,
+                    activityName: document.sourceAsMap.name,
+                    projectId: document.sourceAsMap.projectActivity.projectId,
+                    projectName: document.sourceAsMap.projectActivity.projectName
             ]
         }
 
@@ -343,7 +347,7 @@ class DocumentController {
             }
         }
 
-        documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits()]
+        documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits.value]
         documentResult
     }
 

@@ -604,7 +604,6 @@ class PermissionsController {
             List out = []
             up.each {
                 Map t = [:]
-                log.debug "it.projectId = ${it.entityId}"
                 t.project = projectService.get(it.entityId, ProjectService.FLAT)
                 t.accessLevel = it.accessLevel
                 if (t.project) out.add t
@@ -833,8 +832,7 @@ class PermissionsController {
                 Map out =  permissionService.isUserAdminForProjects(userId, projectIds)
                 render out as JSON
             } catch (Exception e){
-                log.error(e.message);
-                log.error(e.stackTrace);
+                log.error(e.message, e);
                 render status: 500, text: 'Internal server error'
             }
         } else {

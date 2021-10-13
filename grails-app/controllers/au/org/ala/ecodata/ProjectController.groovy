@@ -9,6 +9,7 @@ class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
     ElasticSearchService elasticSearchService
+    ManagementUnitService managementUnitService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -18,7 +19,7 @@ class ProjectController {
     // for universal JSONP support.
     def asJson = { model ->
         response.setContentType("application/json;charset=UTF-8")
-        model
+        render model as JSON
     }
 
 	static ignore = ['action','controller','id']
@@ -93,7 +94,7 @@ class ProjectController {
 
         XlsExporter exporter = new XlsExporter(URLEncoder.encode(project.name, 'UTF-8'))
         exporter.setResponseHeaders(response)
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService)
         projectExporter.export(project)
         exporter.sizeColumns()
 
@@ -169,7 +170,7 @@ class ProjectController {
     def updateSites(String id){
         log.debug("Updating the sites for projectID : " + id)
         def props = request.JSON
-        log.debug props
+        log.debug "${props}"
         def allCurrentSites = []
         Site.findAllByProjects(id).each{
           allCurrentSites << it.siteId
@@ -199,7 +200,7 @@ class ProjectController {
     @RequireApiKey
     def update(String id) {
         def props = request.JSON
-        log.debug props
+        log.debug "${props}"
         def result
         def message
 
@@ -215,7 +216,7 @@ class ProjectController {
             setResponseHeadersForProjectId(response, result.projectId)
             asJson(message)
         } else {
-            log.error result.error
+            log.error result.error.toString()
             render status:400, text: result.error
         }
     }
@@ -239,7 +240,7 @@ class ProjectController {
                 xlsx {
                     XlsExporter exporter = new XlsExporter("results")
                     exporter.setResponseHeaders(response)
-                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter)
+                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
                     projectExporter.exportAllProjects(projects)

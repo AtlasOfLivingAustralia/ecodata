@@ -1,4 +1,4 @@
-
+%{--<%@page expressionCodec="none" %>--}%
 <g:if test="${!omitDescription}">
 <strong>Description</strong>
 <p>
@@ -6,9 +6,9 @@
 </p>
 </g:if>
 <ul id="propertiesTabs" class="nav nav-tabs big-tabs">
-    <li class="active"><a href="#overview" id="overview-tab" data-toggle="tab">Overview</a></li>
-    <li><a href="#schema" id="schema-tab" data-toggle="tab">Schema</a></li>
-    <li><a href="#example" id="example-tab" data-toggle="tab">Example</a></li>
+    <li class="nav-item"><a data-bs-target="#overview" class="active nav-link" id="overview-tab" data-bs-toggle="tab">Overview</a></li>
+    <li class="nav-item"><a data-bs-target="#schema" class="nav-link" id="schema-tab" data-bs-toggle="tab">Schema</a></li>
+    <li class="nav-item"><a data-bs-target="#example" class="nav-link" id="example-tab" data-bs-toggle="tab">Example</a></li>
 
 </ul>
 <div class="tab-content">
@@ -22,8 +22,7 @@
                 <g:if test="${overview}">
 
                     <asset:script>
-                        $(function(){$('#overview pre').text(vkbeautify.json('${overview as grails.converters.JSON}'));});
-
+                        $(function(){$('#overview pre').text(JSON.stringify(${raw(overview as grails.converters.JSON)}, null, 2));});
                     </asset:script>
                 </g:if>
             </div>
@@ -54,7 +53,7 @@
 
             $(function(){
                 var schema = ${object as grails.converters.JSON};
-                $('#schema pre').text(vkbeautify.json(schema));});
+                $('#schema pre').text(JSON.stringify(schema, null, 2));});
 
         </asset:script>
     </div>
@@ -67,7 +66,7 @@
             <asset:script>
                 $(function(){
                     var example = ${example as grails.converters.JSON};
-                    $('#example pre').text(vkbeautify.json(example));
+                    $('#example pre').text(JSON.stringify(example, null, 2));
                 });
             </asset:script>
         </g:if>

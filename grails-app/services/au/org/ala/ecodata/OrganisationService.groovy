@@ -1,9 +1,10 @@
 package au.org.ala.ecodata
 
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
-import com.mongodb.QueryBuilder
+
+import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
+import org.bson.conversions.Bson
+
 import static au.org.ala.ecodata.Status.*
 
 /**
@@ -93,6 +94,7 @@ class OrganisationService {
 
             try {
                 String oldName = organisation.name
+                commonService.updateProperties(organisation, props)
                 // if no collectory institution exists for this organisation, create one
                 if (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '') {
                     props.collectoryInstitutionId = createCollectoryInstitution(props)
@@ -148,8 +150,8 @@ class OrganisationService {
     }
 
     def toMap(Organisation org, levelOfDetail = []) {
-        def dbo = org.dbo
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = GormMongoUtil.extractDboProperties(org.getProperty('dbo'))
+       // def mapOfProperties = dbo.toMap()
 
         if ('projects' in levelOfDetail) {
             mapOfProperties.projects = []
@@ -175,12 +177,13 @@ class OrganisationService {
      */
     void doWithAllOrganisations(Closure action) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
-        com.mongodb.DBCollection collection = Organisation.getCollection()
-        DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        DBCursor results = collection.find(siteQuery).batchSize(100)
+        def collection = Organisation.getCollection()
+        //DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
+        Bson query = Filters.ne("status", DELETED);
+        def results = collection.find(query).batchSize(100)
 
         results.each { dbObject ->
-            action.call(dbObject.toMap())
+            action.call(dbObject)
         }
     }
 

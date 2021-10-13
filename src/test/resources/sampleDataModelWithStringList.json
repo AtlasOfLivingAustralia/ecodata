@@ -1,0 +1,16 @@
+{
+  "name": "Single Nested lists",
+  "data": {
+    "number1": "33",
+    "stringList1": ["c1", "c3"],
+    "notes": "single notes",
+    "list": [
+      {
+        "stringList2": ["c4", "c5"], "afterNestedList": ""
+      },
+      {
+        "stringList2":[],"afterNestedList": "single.1.value1"
+      }
+    ]
+  }
+}

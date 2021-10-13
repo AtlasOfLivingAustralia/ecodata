@@ -1,0 +1,71 @@
+{
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "number1"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "value1"
+        },
+        {
+          "dataType": "text",
+          "name": "afterNestedList"
+        }
+      ],
+      "dataType": "list",
+      "name": "list"
+    },
+    {
+      "dataType": "text",
+      "name": "notes"
+    }
+  ],
+  "modelName": "Single Nested lists",
+  "title": "Single Nested lists",
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "number",
+          "source": "number1",
+          "preLabel": "Number 1"
+        }
+      ]
+    },
+    {
+      "type": "repeat",
+      "source": "list",
+      "items": [
+        {
+          "type": "text",
+          "source": "value1",
+          "preLabel": "Value 1"
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "text",
+              "source": "afterNestedList",
+              "preLabel": "After list"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "Notes"
+        }
+      ]
+    }
+  ]
+}

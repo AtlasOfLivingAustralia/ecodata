@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.GrailsApplication
+import grails.core.GrailsApplication
 
 import java.lang.reflect.UndeclaredThrowableException
 

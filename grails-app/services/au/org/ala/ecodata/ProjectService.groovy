@@ -31,6 +31,7 @@ class ProjectService {
     SiteService siteService
     DocumentService documentService
     MetadataService metadataService
+    CommonService commonService
     ReportService reportService
     ActivityService activityService
     ProjectActivityService projectActivityService
@@ -40,10 +41,11 @@ class ProjectService {
     EmailService emailService
     ReportingService reportingService
     OrganisationService organisationService
+    UserService userService
 
-    def getCommonService() {
+  /*  def getCommonService() {
         grailsApplication.mainContext.commonService
-    }
+    }*/
 
     def getBrief(listOfIds, version = null) {
         if (listOfIds) {
@@ -145,7 +147,8 @@ class ProjectService {
     Map toMap(project, levelOfDetail = [], includeDeletedActivities = false, version = null) {
         Map result
 
-        Map mapOfProperties = project instanceof Project ? project.getProperty("dbo").toMap() : project
+        Map mapOfProperties = project instanceof Project ? GormMongoUtil.extractDboProperties(project.getProperty("dbo")) : project
+
         if (levelOfDetail instanceof List) {
             levelOfDetail = levelOfDetail[0]
         }
@@ -219,6 +222,7 @@ class ProjectService {
             }
 
             result = mapOfProperties.findAll { k, v -> v != null }
+            //result = GormMongoUtil.deepPrune(mapOfProperties)
 
             //Fetch name of MU
             if (result?.managementUnitId) {
@@ -261,8 +265,8 @@ class ProjectService {
      * @return map of properties
      */
     def toRichMap(prj) {
-        def dbo = prj.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = prj.getProperty("dbo")
+        //def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
@@ -280,7 +284,7 @@ class ProjectService {
     }
 
     def create(props, boolean collectoryLink = true, boolean overrideUpdateDate = false) {
-        assert getCommonService()
+
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
@@ -303,7 +307,7 @@ class ProjectService {
                 updateCollectoryLinkForProject(project, props)
             }
 
-            getCommonService().updateProperties(project, props, overrideUpdateDate)
+            commonService.updateProperties(project, props, overrideUpdateDate)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
@@ -424,9 +428,10 @@ class ProjectService {
             props = includeProjectFundings(props)
             props = includeProjectActivities(props, projectActivities)
             try {
-                getCommonService().updateProperties(project, props)
-                if (shouldUpdateCollectory)
+                commonService.updateProperties(project, props)
+                if (shouldUpdateCollectory) {
                     updateCollectoryLinkForProject(project, props)
+                }
                 return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
@@ -772,7 +777,7 @@ class ProjectService {
         String imageUrl = transformedProp.remove('image')
         String attribution = transformedProp.remove('attribution')
         String projectId = project.projectId
-        getCommonService().updateProperties(project, transformedProp, true)
+        commonService.updateProperties(project, transformedProp, true)
         updateSciStarterLogo(imageUrl, attribution, projectId)
     }
 
@@ -847,7 +852,7 @@ class ProjectService {
     Map updateSciStarterLogo(String imageUrl, String attribution, String projectId) {
         Document doc = Document.findByProjectIdAndIsPrimaryProjectImageAndRole(projectId, true, "logo")
         if (doc) {
-            getCommonService().updateProperties(doc, [
+            commonService.updateProperties(doc, [
                     "externalUrl": imageUrl,
                     "attribution": attribution
             ])
@@ -909,5 +914,40 @@ class ProjectService {
         } else if (projectMap.isEcoScience) {
             return "ecoScience"
         }
+    }
+
+    /**
+     * Returns a list of times the project MERI plan has been approved.
+     * @param projectId the project to get the approval history for.
+     * @return a List of Maps with keys approvalDate, approvedBy.
+     */
+    List getMeriPlanApprovalHistory(String projectId){
+        Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
+        List<Map> histories = []
+        results?.documents.collect{
+            def data = documentService.readJsonDocument(it)
+
+            if (!data.error){
+                String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
+                def doc = [
+                        approvalDate:data.dateApproved,
+                        approvedBy:displayName,
+                        comment:data.reason,
+                        changeOrderNumber:data.referenceDocument
+                ]
+                histories.push(doc)
+            }
+        }
+        histories
+    }
+
+    /**
+     * Returns the date and user of the most recent approval of the project MERI plan
+     * @param projectId the project.
+     * @return Map with keys approvalDate and approvedBy.  Null if the plan has not been approved.
+     */
+    Map getMostRecentMeriPlanApproval(String projectId) {
+        List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
+        meriApprovalHistory.max{it.approvalDate}
     }
 }

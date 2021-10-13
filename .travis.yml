@@ -1,41 +1,50 @@
 os: linux
-dist: xenial
+dist: bionic
 language: groovy
 jdk:
-- openjdk8
+  - openjdk8
 branches:
   only:
   - master
   - dev
   - hot-fix
   - /^feature\/.*$/
+  - grails3
+  - grails3-dev
   - /^hotfix\/.*$/
+  - grails4
 
 services:
   - mongodb
+  - elasticsearch
+
 before_install:
-- export TZ=Australia/Canberra
-- wget -q https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/ala_common.sh
-- chmod +x ala_common.sh
-- source ./ala_common.sh
-- ala_travis_grails_setup_env
+  - export TZ=Australia/Canberra
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - curl https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.12.0-amd64.deb -o elasticsearch.deb
+  - sudo dpkg -i --force-confnew elasticsearch.deb
+  - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
+  - sudo service elasticsearch restart
+
+# This disables the default gradlew assemble
+install:
+  - true
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 
 before_script:
-  - sudo systemctl stop mongod
-  - sudo apt-get purge mongodb-org
-  - sudo apt autoremove
-  - sudo rm -r /var/lib/mongodb/*
-  - sudo rm -r /var/log/mongodb/*
-  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
-  - echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
-  - sudo apt-get update
-  - sudo apt-get install mongodb-org -y
-  - sudo systemctl start mongod
-  - sleep 15
-  - sudo systemctl status mongod
+  - sleep 10
 
 script:
-  - grails clean; grails refresh-dependencies --non-interactive && grails test-app -clover.on && ala_travis_grails_build
+  - ./gradlew -PenableClover=true cloverGenerateReport
+
+after_success:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
 
 env:
   global:

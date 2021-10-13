@@ -2,35 +2,24 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="app.version" content="${g.meta(name:'app.version')}"/>
-    <meta name="app.build" content="${g.meta(name:'app.build')}"/>
+    <meta name="app.version" content="${g.meta(name:'info.app.version')}"/>
     <meta name="description" content="Atlas of Living Australia"/>
     <meta name="author" content="Atlas of Living Australia">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><g:layoutTitle /></title>
-    <asset:stylesheet src="ecodata"/>
+    <asset:stylesheet src="ecodata.css"/>
     <g:layoutHead />
 </head>
 <body class="${pageProperty(name:'body.class')}" id="${pageProperty(name:'body.id')}" onload="${pageProperty(name:'body.onload')}">
 
-%{--<hf:banner logoutUrl="${grailsApplication.config.grails.serverURL}/logout/logout"/>--}%
-  <div id="fixed-footer-wrapper">
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-
-            <div class="container-fluid">
-                <a class="brand">Draft MERIT API documentation</a>
-
-
-            </div>
+    <div class="container-fluid">
+        <div class="navbar navbar-light">
+            <a class="navbar-brand">Draft MERIT API documentation</a>
         </div>
     </div>
 
     <g:layoutBody />
-    <div class="push"></div>
-  </div>
-  %{--<hf:footer/>--}%
 
 <asset:javascript src="application"/>
 <asset:deferredScripts/>

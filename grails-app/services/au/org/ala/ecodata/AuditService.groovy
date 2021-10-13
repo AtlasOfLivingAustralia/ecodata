@@ -1,9 +1,7 @@
 package au.org.ala.ecodata
 
-import grails.gorm.CriteriaBuilder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
-import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -94,7 +92,7 @@ class AuditService {
      */
     public int flushMessageQueue(int maxMessagesToFlush = 1000) {
         int messageCount = 0
-        AuditMessage.withNewSession { MongoSession session ->
+        AuditMessage.withNewSession { session ->
             try {
                 AuditMessage message = null;
                 while (messageCount < maxMessagesToFlush && (message = _messageQueue.poll()) != null) {
@@ -105,7 +103,7 @@ class AuditService {
                 }
                 session.flush()
             } catch (Exception ex) {
-                log.error(ex)
+                log.error(ex.getMessage(), ex)
             }
             return messageCount
         }
@@ -207,7 +205,9 @@ class AuditService {
     List getAuditMessagesForSettings(String keyPrefix) {
 
         // We can get away with this because the number of settings objects is small.
-        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{it._id.toHexString()}
+        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{
+            it.id.toHexString()
+        }
 
         List results = AuditMessage.findAllByEntityIdInList(settingIds)
 

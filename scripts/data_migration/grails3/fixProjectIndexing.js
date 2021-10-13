@@ -1,0 +1,2 @@
+db.site.update({projects:'c3f5f087-509e-4ea0-b948-41e128ebec5a', 'extent.geometry.area':''}, {$set:{'extent.geometry.area':0}}, {multi:true});
+db.site.update({projects:'9904074e-26f7-4d23-abeb-0b6ed9dfd98d', 'extent.geometry.area':NumberLong(0)}, {$set:{'extent.geometry.area':0}}, {multi:true});

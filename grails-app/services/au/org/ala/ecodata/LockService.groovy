@@ -72,7 +72,10 @@ class LockService {
      */
     Lock lock(String id) {
         def user = userService.getCurrentUserDetails()
-        Lock lock = new Lock(id: id, userId: user.userId)
+       // Lock lock = new Lock(id: id, userId: user.userId)
+        Lock lock = new Lock()
+        lock.id = id
+        lock.userId = user.userId
         Lock.withNewSession {
             lock.insert(flush: true, failOnError:true)
         }

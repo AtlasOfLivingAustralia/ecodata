@@ -8,8 +8,8 @@ class ProjectActivityController {
     def projectActivityService
 
     def asJson = { model ->
-        response.setContentType("application/json;charset=UTF-8")
-        model
+        //response.setContentType("application/json;charset=UTF-8")
+        render model as JSON
     }
 
     /**
@@ -95,7 +95,7 @@ class ProjectActivityController {
     @RequireApiKey
     def update(String id) {
         def props = request.JSON
-        log.debug props
+        log.debug "${props}"
         def result
         def message
         if (id) {
@@ -108,7 +108,7 @@ class ProjectActivityController {
         if (result.status == 'ok') {
             asJson(message)
         } else {
-            log.error result.error
+            log.error result.error.toString()
             render status: 400, text: result.error
         }
     }

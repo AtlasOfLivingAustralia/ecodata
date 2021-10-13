@@ -29,6 +29,7 @@ class Project {
     String dataProviderId // collectory dataProvider id
     String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
+    String terminationReason
     String externalId
     String name  // required
     String description
@@ -85,18 +86,17 @@ class Project {
     MapLayersConfiguration mapLayersConfig
     /** configure how activity is displayed on map for example point, heatmap or cluster. */
     List mapDisplays
-    String terminationReason
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
     List<Funding> fundings
 
-    List<AssociatedOrg> associatedOrganisations
+    List<AssociatedOrg> associatedOrgs
 
     /** The program of work this project is a part of, if any */
     String programId
 
-    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig', 'risks']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 

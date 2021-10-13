@@ -14,7 +14,11 @@ import grails.converters.JSON
  */
 class ExternalController {
 
-    def grailsApplication, projectService, activityService, metadataService, cacheService
+    //def grailsApplication
+    def projectService
+    def activityService
+    def metadataService
+    def cacheService
 
     /** Temporary IP based security */
     def beforeInterceptor = [action:this.&applyWhiteList]

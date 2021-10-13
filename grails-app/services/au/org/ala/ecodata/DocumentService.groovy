@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
+import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
@@ -38,7 +39,7 @@ class DocumentService {
      * @return map of properties
      */
     def toMap(document, levelOfDetail = []) {
-        def mapOfProperties = document instanceof Document ? document.getProperty("dbo").toMap() : document
+        def mapOfProperties = document instanceof Document ? GormMongoUtil.extractDboProperties(document.getProperty("dbo")) : document
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
@@ -48,6 +49,7 @@ class DocumentService {
             mapOfProperties.thumbnailUrl = document.thumbnailUrl
         }
         mapOfProperties.findAll {k,v -> v != null}
+        //GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     def get(id, levelOfDetail = []) {
@@ -524,6 +526,21 @@ class DocumentService {
             doc.remove(item)
         }
         doc
+    }
+
+    /**
+     * Reads the contents of a file associated with a Document and return content as JSON
+     */
+    def readJsonDocument(Map document) {
+        String fullPath = this.fullPath(document.filepath, document.filename)
+        File file = new File(fullPath)
+
+        if (!file.exists()) {
+            return  [error: fullPath + ' does not exist!']
+        }
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(file)
+        return data
     }
 
 }

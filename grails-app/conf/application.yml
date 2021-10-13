@@ -1,0 +1,220 @@
+---
+grails:
+    profile: web
+    codegen:
+        defaultPackage: au.org.ala.ecodata
+    config:
+        locations:
+            - file:///data/ecodata/config/ecodata-config.properties
+            - file:///data/ecodata/config/ecodata-config.yml
+            - file:///data/ecodata/config/ecodata-config.groovy
+            - file:///data/ecodata/config/layers-config.groovy
+    scaffolding:
+        templates:
+            domainSuffix: Instance # This causes all respond methods to add the default object as <type>Instance<container>, eg bookInstance or bookInstanceList but does not affect scaffolding in Grails 3... TODO remove Instance from all GSPs and remove this property
+    servlet:
+        version: 3.0
+    spring:
+        transactionManagement:
+            proxies: false
+info:
+    app:
+        name: '@info.app.name@'
+        version: '@info.app.version@'
+        grailsVersion: '@info.app.grailsVersion@'
+    build:
+        ci : '@info.build.ci@'
+        date: '@info.build.date@'
+        jdk: '@info.build.jdk@'
+        number: '@info.build.number@'
+    git:
+        host: '@git.build.host@'
+        commit: '@git.commit.id@'
+        tag: '@git.closest.tag.name@'
+        timestamp: '@git.commit.time@'
+spring:
+    main:
+        banner-mode: "console"
+    groovy:
+        template:
+          check-template-location: false
+    servlet:
+        multipart:
+            max-file-size: 1024MB
+            max-request-size: 1024MB
+    devtools:
+        restart:
+            additional-exclude:
+                - '**/*.gsp'
+                - '**/*.css'
+                - '**/*.js'
+server:
+    address: localhost
+    tomcat:
+        port-header: 'X-Forwarded-Port'
+        protocol-header: 'X-Forwarded-Proto'
+        remote-ip-header: 'X-Forwarded-For'
+    servlet:
+        session:
+            timeout: 7200
+management:
+    endpoints:
+        enabled-by-default: false
+---
+grails:
+    mime:
+        file:
+            extensions: true # enables the parsing of file extensions from URLs into the request format ???
+        use:
+            accept:
+                header: true
+        disable:
+            accept:
+                header:
+                    userAgents: false
+        types:
+            all: '*/*'
+            atom: application/atom+xml
+            css: text/css
+            csv: text/csv
+            form: application/x-www-form-urlencoded
+            html:
+              - text/html
+              - application/xhtml+xml
+            js: text/javascript
+            json:
+              - application/json
+              - text/json
+            multipartForm: multipart/form-data
+            rss: application/rss+xml
+            text: text/plain
+            xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            xls: 'application/vnd.ms-excel'
+            xml:
+              - text/xml
+              - application/xml
+            shp: application/zip
+            geojson:
+              - application/json
+              - application/vnd.geo+json
+ #   urlmapping:
+ #       cache:
+  #          maxsize: 1000
+    controllers:
+        defaultScope: singleton
+        upload:
+            maxFileSize: 65536000 #64Mb, matches nginx config
+            maxRequestSize: 65536000 #64Mb, matches nginx config
+ #       upload:
+ #         maxFileSize: 5368709120
+ #         maxRequestSize: 5368709120
+    converters:
+        encoding: UTF-8
+    resources:
+        adhoc:
+            patterns:
+                - '/images/*'
+                - '/css/*'
+                - '/js/*'
+                - '/plugins/*'
+    views:
+        default:
+            codec: html  #none, html, base64
+        gsp:
+            encoding: UTF-8
+            htmlcodec: xml
+            codecs:
+                expression: html # escapes values inside ${} //html
+                scriptlets: html
+                taglib: none
+                staticparts: none
+            sitemesh:
+                preprocess: true
+    databinding:
+        convertEmptyStringsToNull: false
+    enable:
+        native2ascii: true
+    web:
+        disable:
+            multipart: false
+    exceptionresolver:
+        params:
+            exclude: #request parameters to mask when logging exceptions
+                - password
+
+---
+#grails:
+#    gorm:
+#        autowire: true
+---
+
+reloadable:
+    cfgs:
+        - file:/data/ecodata/config/ecodata-config.properties
+        - file:/data/ecodata/config/ecodata-config.yml
+        - file:/data/ecodata/config/ecodata-config.groovy
+        - file:/data/ecodata/config/layers-config.groovy
+
+cors:
+    url:
+        pattern:
+            - '/document/download'
+    allow:
+        origin:
+            regex: '^https?:\\/\\/.+\\.ala\\.org\\.au\\/?'
+
+---
+
+security:
+    cas:
+        appServerName: 'http://devt.ala.org.au:8080'
+        casServerName: 'https://auth.ala.org.au'
+        casServerUrlPrefix: 'https://auth.ala.org.au/cas'
+        loginUrl: 'https://auth.ala.org.au/cas/login'
+        logoutUrl: 'https://auth.ala.org.au/cas/logout'
+        uriFilterPattern:
+            - '/admin/*'
+            - '/activityForm/*'
+        authenticateOnlyIfLoggedInPattern:
+        uriExclusionFilterPattern:
+            - '/images/.*'
+            - '/css/.*'
+            - '/js/.*'
+            - '/less/.*'
+            - '/assets/.*'
+            - '/activityForm/get.*'
+
+#Fix grails taglib <g:paginate/> to work with bootstrap css.
+grails:
+    plugins:
+        twitterbootstrap:
+            fixtaglib: true
+    mail:
+        default:
+            from: noreply@volunteer.ala.org.au
+digest:
+    enabled: false
+    threshold: 5
+#    address:
+---
+quartz:
+    autoStartup: true
+    jdbcStore: false
+    waitForJobsToCompleteOnShutdown: true
+    exposeSchedulerInRepository: false
+    props:
+        scheduler:
+            skipUpdateCheck: true
+
+environments:
+    test:
+        quartz:
+            autoStartup: false
+---
+
+grails:
+    mongodb:
+        codecs:
+            - au.org.ala.ecodata.customcodec.AccessLevelCodec
+
+

@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
-import org.grails.databinding.BindingFormat
+
+import grails.databinding.BindingFormat
 
 /**
  * Represents risks identified for a project.

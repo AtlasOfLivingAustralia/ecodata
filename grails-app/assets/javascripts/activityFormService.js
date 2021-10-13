@@ -84,7 +84,7 @@ var ActivityFormService = function(config) {
 
     self.export = function(activityForm) {
 
-        var jsonData = vkbeautify.json(activityForm, 2);
+        var jsonData = JSON.stringify(activityForm, null, 2);
         var fileName = activityForm.name + " v"+activityForm.formVersion+".json"
         function download(content, fileName, contentType) {
             var a = document.createElement("a");

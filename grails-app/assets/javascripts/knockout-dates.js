@@ -1079,7 +1079,7 @@ ko.extenders.jsonText = function(target, option) {
 
     target.fromJSON = function(json) {
         if (json) {
-            target(vkbeautify.json(JSON.stringify(json),2));
+            target(JSON.stringify(json, null, 4));
         }
 
     };
