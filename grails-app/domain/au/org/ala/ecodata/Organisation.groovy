@@ -10,6 +10,8 @@ class Organisation {
 
 
     ObjectId id
+    /** The hubId of the Hub in which this organisation was created */
+    String hubId
     String organisationId
     String acronym
     String name
@@ -37,5 +39,6 @@ class Organisation {
         description nullable: true
         collectoryInstitutionId nullable: true
         abn nullable: true
+        hubId nullable: true
     }
 }

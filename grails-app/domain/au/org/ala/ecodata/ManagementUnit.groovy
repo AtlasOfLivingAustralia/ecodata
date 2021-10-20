@@ -11,6 +11,8 @@ class ManagementUnit {
                                 'startDate', 'endDate', 'associatedOrganisations', 'config']
 
     ObjectId id
+    /** The hubId of the Hub in which this ManagementUnit was created */
+    String hubId
     String status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
@@ -86,6 +88,7 @@ class ManagementUnit {
         managementUnitSiteId nullable: true
         priorities nullable: true
         outcomes nullable:true
+        hubId nullable: true
     }
 
     String toString() {

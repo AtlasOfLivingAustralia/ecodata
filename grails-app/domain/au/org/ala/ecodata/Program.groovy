@@ -9,6 +9,8 @@ class Program {
 
     ObjectId id
     String programId
+    /** The hubId of the hub in which this Program was created */
+    String hubId
     String name
     String acronym
     String description
@@ -137,6 +139,7 @@ class Program {
         associatedOrganisations nullable:true
         programSiteId nullable: true
         acronym nullable: true
+        hubId nullable: true
     }
 
     public String toString() {

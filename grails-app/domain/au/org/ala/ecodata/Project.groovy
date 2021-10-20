@@ -26,6 +26,8 @@ class Project {
 
     ObjectId id
     String projectId
+    /** The id of the hub in which this project was created */
+    String hubId
     String dataProviderId // collectory dataProvider id
     String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
@@ -207,6 +209,7 @@ class Project {
         managementUnitId nullable: true
         mapDisplays nullable: true
         terminationReason nullable: true
+        hubId nullable: true
     }
 }
 
