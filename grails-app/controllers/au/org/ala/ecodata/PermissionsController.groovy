@@ -16,6 +16,7 @@ class PermissionsController {
     PermissionService permissionService
     ProjectService projectService
     OrganisationService organisationService
+    HubService hubService
 
     static allowedMethods = [deleteUserPermission:"POST"]
     def index() {
@@ -1111,12 +1112,25 @@ class PermissionsController {
     }
 
     /**
-     * Admin function to delete all UserPermissions entries for the specific userId for merit user
-     * @return
+     * Admin function to delete all UserPermissions entries for the specific userId for entities
+     * owned by a specific hub.  Currently only used by MERIT.
      */
-    def deleteUserPermission(){
-        String userId = params.id
-        Map results = permissionService.deleteUserPermissionByUserId(userId)
-        render results as JSON
+    def deleteUserPermission(String id, String hubId) {
+
+        // This assigns a temporary default for the hubId parameter to retain
+        // backwards compatibility with the previous API version.
+        String defaultHubForPermissionManagement = "merit"
+        if (!hubId) {
+            hubId = hubService.findByUrlPath(defaultHubForPermissionManagement)?.hubId
+        }
+        if (!id || !hubId) {
+            Map error = [error:'The id and hubId are mandatory parameters']
+            response.setStatus(org.apache.http.HttpStatus.SC_BAD_REQUEST)
+            render error as JSON
+        }
+        else {
+            Map results = permissionService.deleteUserPermissionByUserId(id, hubId)
+            render results as JSON
+        }
     }
 }

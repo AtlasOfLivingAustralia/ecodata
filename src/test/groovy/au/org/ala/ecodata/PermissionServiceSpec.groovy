@@ -1,24 +1,28 @@
 package au.org.ala.ecodata
 
 import grails.test.mongodb.MongoSpec
-import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
-import spock.lang.Specification
 
-class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> { //, DomainUnitTest<UserPermission> {
+class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 
     UserService userService = Stub(UserService)
 
     void setup() {
-        UserPermission.findAll().each{it.delete(flush:true)}
-        Project.findAll().each {it.delete(flush: true)}
+        cleanupData()
         service.userService = userService
         userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
     }
 
     void tearDown() {
+        cleanupData()
+    }
+
+    private void cleanupData() {
         UserPermission.findAll().each{it.delete(flush:true)}
         Project.findAll().each {it.delete(flush: true)}
+        ManagementUnit.findAll().each { it.delete(flush:true)}
+        Program.findAll().each { it.delete(flush:true)}
+        Organisation.findAll().each {it.delete(flush:true)}
     }
 
 
@@ -169,14 +173,37 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
         setup:
         String userId = "1"
-        new UserPermission(entityId:'p1', entityType:Organisation.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
-        new Project(projectId: "project1", name:"test", organisationId: "p1", isMERIT: true).save(flush: true, failOnError: true)
+        String hubId = "h1"
+        new UserPermission(entityId:'org1', entityType:Organisation.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new Organisation(organisationId: "org1", hubId:hubId, name:"test organisation").save(flush: true, failOnError: true)
 
         when:
-        def results = service.deleteUserPermissionByUserId(userId)
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
 
         then:
         UserPermission.findAllByUserId(userId).size() == 0
+        results.status == 200
+        !results.error
+    }
+
+    def "Organisation permissions need to be removed if the organisation is running any MERIT projects"() {
+        setup: "A biocollect organisation with 2 merit projects and 1 biocollect project"
+        String userId = "1"
+        String hubId = "h1"
+        new UserPermission(entityId:'p1', entityType:Project.name, userId: userId, accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: userId, accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p3', entityType:Project.name, userId: userId, accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+
+        new Organisation(organisationId: "org1", hubId:"hub2", name:"test organisation").save(flush: true, failOnError: true)
+        new Project(projectId:"p1", name:"p1", hubId:hubId, organisationId:"org1").save(flush:true, failOnError: true)
+        new Project(projectId:"p2", name:"p2", hubId:hubId, orgIdSvcProvider: "org1").save(flush:true, failOnError: true)
+        new Project(projectId:"p3", name:"p3", hubId:"hub2", organisationId: "org1").save(flush:true, failOnError: true)
+
+        when: "We delete the MERIT user permissions"
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
+
+        then: "Then the organisation permission and both MERIT project permissions are removed, but the biocollect project reamins"
+        UserPermission.findAllByUserId(userId).size() == 1
         results.status == 200
         !results.error
     }
@@ -185,11 +212,12 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
         setup:
         String userId = "1"
+        String hubId = 'h1'
         new UserPermission(entityId:'p1', entityType:Project.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
-        new Project(projectId: "p1", name:"test", isMERIT: true).save(flush: true, failOnError: true)
+        new Project(projectId: "p1", name:"test", hubId: hubId).save(flush: true, failOnError: true)
 
         when:
-        def results = service.deleteUserPermissionByUserId(userId)
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
 
         then:
         UserPermission.findAllByUserId(userId).size() == 0
@@ -201,11 +229,12 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
         setup:
         String userId = "1"
+        String hubId = 'h1'
         new UserPermission(entityId:'p1', entityType:Program.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
-        new Project(projectId: "p1", name:"test", organisationId: "p1", programId: "p1", isMERIT: true).save(flush: true, failOnError: true)
+        new Program(programId: "p1", name:"test program", hubId: hubId).save(flush: true, failOnError: true)
 
         when:
-        def results = service.deleteUserPermissionByUserId(userId)
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
 
         then:
         UserPermission.findAllByUserId(userId).size() == 0
@@ -217,11 +246,12 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
         setup:
         String userId = "1"
-        new UserPermission(entityId:'p1', entityType:ManagementUnit.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
-        new Project(projectId: "p1", name:"test", organisationId: "p1", programId: "p1", managementUnitId: "p1", isMERIT: true).save(flush: true, failOnError: true)
+        String hubId = 'h1'
+        new UserPermission(entityId:'m1', entityType:ManagementUnit.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new ManagementUnit(managementUnitId: "m1", name:"test mu", hubId:hubId).save(flush: true, failOnError: true)
 
         when:
-        def results = service.deleteUserPermissionByUserId(userId)
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
 
         then:
         UserPermission.findAllByUserId(userId).size() == 0
@@ -233,13 +263,14 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
         setup:
         String userId = "1"
+        String hubId = 'h1'
         new UserPermission(entityId:'p1', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
         new UserPermission(entityId:'p2', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
         new UserPermission(entityId:'p3', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
 
 
         when:
-        def results = service.deleteUserPermissionByUserId(userId)
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
 
         then:
         UserPermission.findAllByUserId("2").size() == 3

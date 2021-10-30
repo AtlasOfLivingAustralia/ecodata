@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
+import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -502,12 +503,12 @@ class PermissionService {
         result
     }
 
-    Map deleteUserPermissionByUserId(String userId){
+    Map deleteUserPermissionByUserId(String userId, String hubId){
         List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
         if (permissions.size() > 0) {
             permissions.each {
-                def isMerit = isProjectMerit(it.entityId, it.entityType)
-                if (isMerit){
+                def isInHub = isEntityOwnedByHub(it.entityId, it.entityType, hubId)
+                if (isInHub){
                     try {
                         it.delete(flush: true, failOnError: true)
                         log.info("The Permission is removed for this user: " + userId)
@@ -529,17 +530,32 @@ class PermissionService {
 
     }
 
-    def isProjectMerit(String entityId, String entityType){
-        def results = null
-        if (entityType == Organisation.class.name){
-            results = Project.findAllByOrganisationIdAndIsMERIT(entityId, true)
-        }else if(entityType == Program.class.name){
-             results = Project.findAllByProgramIdAndIsMERIT(entityId, true)
-        }else if (entityType == Project.class.name){
-            results = Project.findAllByProjectIdAndIsMERIT(entityId, true)
-        }else if (entityType == ManagementUnit.class.name){
-            results = Project.findAllByManagementUnitIdAndIsMERIT(entityId, true)
+    /**
+     *  Checks to see if an entity has a matching hubId to the supplied hubId.
+     *  Organisations are a special case - they also check if the organisation is running
+     *  any MERIT projects in which case true will be returned.
+     * @param entityId The id (programId/projectId etc) of the entity to check
+     * @param entityType The type of entity to check (class.getName())
+     * @param hubId the hubId to check against
+     * @return true if the entity is owned by the supplied hub
+     */
+    private boolean isEntityOwnedByHub(String entityId, String entityType, String hubId) {
+        int count = 0
+        if (entityType == Organisation.class.name) {
+            count = Organisation.countByOrganisationIdAndHubId(entityId, hubId)
+            if (count == 0) {
+                DetachedCriteria query = Project.where {
+                    (organisationId == entityId || orgIdSvcProvider == entityId) && hubId == hubId
+                }
+                count = query.count()
+            }
+        } else if (entityType == Program.class.name) {
+            count = Program.countByProgramIdAndHubId(entityId, hubId)
+        } else if (entityType == Project.class.name) {
+            count = Project.countByProjectIdAndHubId(entityId, hubId)
+        } else if (entityType == ManagementUnit.class.name) {
+            count = ManagementUnit.countByManagementUnitIdAndHubId(entityId, hubId)
         }
-        return results.size() > 0
+        return count > 0
     }
 }

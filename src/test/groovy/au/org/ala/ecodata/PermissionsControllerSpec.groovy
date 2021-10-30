@@ -381,41 +381,42 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "delete user Permission when userID is Provided"(){
         setup:
         String userId = "1"
+        String hubId = "h1"
         Map details = [status: 200, error: false]
 
         when:
         params.id = userId
+        params.hubId = hubId
         request.method = "POST"
         controller.deleteUserPermission()
         def result = response.getJson()
 
 
         then:
-        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+        1 * permissionService.deleteUserPermissionByUserId(userId, hubId) >>  details
 
         then:
 
-        result.status == 200
+        result.status == HttpStatus.SC_OK
         result.error == false
     }
 
-    void "UserId does not exist in merit database"(){
+    void "The userId must be supplied when calling deleteUserPermission"(){
         setup:
-        String userId = "1"
-        Map details = [status: 400, error: "No User Permissions found"]
+        String hubId = "h1"
 
         when:
-        params.id = userId
+        params.hubId = hubId
         request.method = "POST"
         controller.deleteUserPermission()
         def result = response.getJson()
 
         then:
-        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+        0 * permissionService.deleteUserPermissionByUserId(_,_)
 
         then:
-        result.status == 400
-        result.error == "No User Permissions found"
+        response.status == HttpStatus.SC_BAD_REQUEST
+        result.error != null
     }
 
     void "Index"() {
@@ -1381,13 +1382,14 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         accessLevel.size() == noOfAccessLevels
 
         where:
-        baseLevel                                  | result       | noOfAccessLevels
+        baseLevel                             | result            | noOfAccessLevels
         AccessLevel.admin.name()              | HttpStatus.SC_OK  |  1
         AccessLevel.caseManager.name()        | HttpStatus.SC_OK  |  2
         AccessLevel.moderator.name()          | HttpStatus.SC_OK  |  3
         AccessLevel.editor.name()             | HttpStatus.SC_OK  |  4
         AccessLevel.projectParticipant.name() | HttpStatus.SC_OK  |  5
-        AccessLevel.starred.name()            | HttpStatus.SC_OK  |  6
+        AccessLevel.readOnly.name()           | HttpStatus.SC_OK  |  6
+        AccessLevel.starred.name()            | HttpStatus.SC_OK  |  7
         //if baseLevel is not set or invalid then returns accesslevel above editor
         "test"                                | HttpStatus.SC_OK  |  4
 
