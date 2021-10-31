@@ -531,6 +531,14 @@ class PermissionService {
     }
 
     /**
+     * Returns a list of permissions that have an expiry date less than or equal to the
+     * supplied date
+     */
+    List<UserPermission> findPermissionsByExpiryDate(Date date = new Date()) {
+        UserPermission.findAllByExpiryDateLessThanEqualsAndStatusNotEqual(date, DELETED)
+    }
+
+    /**
      *  Checks to see if an entity has a matching hubId to the supplied hubId.
      *  Organisations are a special case - they also check if the organisation is running
      *  any MERIT projects in which case true will be returned.

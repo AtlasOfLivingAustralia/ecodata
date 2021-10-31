@@ -277,4 +277,21 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         results.status == 400
         results.error == "No User Permissions found"
     }
+
+    void "The PermissionService can return all expired ACL entries"() {
+        setup:
+        Date date1 = DateUtil.parse("2021-11-01T00:00:00Z")
+        Date date2 = DateUtil.parse("2022-11-01T00:00:00Z")
+        new UserPermission(entityId:'p1', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name(), expiryDate: date1).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p3', entityType:Project.name, userId: "2", accessLevel:AccessLevel.moderator.name(), expiryDate: date2).save(flush:true, failOnError: true)
+
+        expect:
+        service.findPermissionsByExpiryDate(date1).size() == 1
+        service.findPermissionsByExpiryDate(date2).size() == 2
+        service.findPermissionsByExpiryDate(DateUtil.parse("2021-12-01T00:00:00Z"))
+
+
+
+    }
 }
