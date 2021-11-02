@@ -46,5 +46,5 @@ clover {
         xml = true
     }
 
-    targetPercentage = '41.0%'
+    targetPercentage = '41.2%'
 }
