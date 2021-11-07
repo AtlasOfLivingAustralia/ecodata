@@ -8,6 +8,15 @@ module.exports = {
         tools: {
             import:'./src/main/webapp/js/tools.js',
             dependOn: 'vendor'
+
+        },
+        score: {
+            import:'./src/main/webapp/js/score.js',
+            dependOn: 'vendor',
+            library: {
+                type:'assign',
+                name:'LibraryScore'
+            }
         },
         vendor:['jquery', 'knockout'],
         ecodata:'./src/main/webapp/css/ecodata.css'
@@ -18,7 +27,7 @@ module.exports = {
         publicPath: '/assets/',
         filename: 'bundle-[name].js',
         assetModuleFilename: '[name][ext]',
-        clean: true
+        clean: true,
     },
     optimization: {
         runtimeChunk: 'single'
@@ -35,7 +44,21 @@ module.exports = {
             {
                 test: /\.(jpe?g|png|gif|svg|eot|woff|woff2|ttf)$/i,
                 type:'asset/resource'
-            }
+            },
+            {
+                test: require.resolve("jquery"),
+                loader: "expose-loader",
+                options: {
+                    exposes: ["$", "jQuery"]
+                },
+            },
+            {
+                test: require.resolve("knockout"),
+                loader: "expose-loader",
+                options: {
+                    exposes: ["ko"]
+                },
+            },
         ]
     },
     plugins: [

@@ -7,7 +7,7 @@
   "devDependencies": {
     "chromedriver": "95.0.0",
     "css-loader": "^6.5.1",
-    "html-webpack-plugin": "^5.5.0",
+    "expose-loader": "^3.1.0",
     "jasmine-ajax": "^3.4.0",
     "jasmine-core": "^3.3.0",
     "jasmine-jquery": "^2.1.1",
@@ -16,8 +16,6 @@
     "karma-coverage": "^2.0.3",
     "karma-jasmine": "^4.0.1",
     "mini-css-extract-plugin": "^2.4.4",
-    "style-loader": "^3.3.1",
-    "webfonts-loader": "^7.3.0",
     "webpack": "^5.62.1",
     "webpack-cli": "^4.9.1"
   },

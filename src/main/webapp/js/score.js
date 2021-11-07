@@ -1,7 +1,10 @@
+import $ from 'jquery';
+import ko from 'knockout';
+
 /**
  * View model for editing Score objects.
  */
-var ScoreModel = function (score, config) {
+export function ScoreModel(score, config) {
     var self = this;
     self.label = ko.observable(score.label);
     self.description = ko.observable(score.description);
