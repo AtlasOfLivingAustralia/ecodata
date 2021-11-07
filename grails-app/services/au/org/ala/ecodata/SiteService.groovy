@@ -1,11 +1,11 @@
 package au.org.ala.ecodata
 
-import com.mongodb.*
 import com.mongodb.client.FindIterable
-import com.mongodb.client.model.Filters
+import static com.mongodb.client.model.Filters.*
+import com.mongodb.BasicDBObject
+import com.mongodb.DBObject
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import org.bson.conversions.Bson
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
@@ -710,11 +710,9 @@ class SiteService {
      */
     void doWithAllSites(Closure action, Integer max = null) {
 
-        def collection = Site.getCollection()
-        def siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        def results = collection.find(siteQuery).batchSize(100)
-
-        results.each { dbObject ->
+        FindIterable findIterable = Site.find(ne('status', DELETED))
+        int limit = Math.max(max, 100)
+        findIterable.limit(limit).each { dbObject ->
             action.call(dbObject)
         }
 
@@ -750,7 +748,7 @@ class SiteService {
     }
 
     void reloadSiteMetadata(List<String> fids = null, Date modifiedBefore = null, Integer max = 1000) {
-        def collection = Site.getCollection()
+        def collection = Site.collection
 
        /* Bson query = Filters.and(
                                 Filters.ne("status", "DELETED"),
@@ -771,7 +769,7 @@ class SiteService {
 
         println collection.count(query)
        // DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
-        DBCursor results = collection.find(query).batchSize(10).limit(max).iterator()
+        FindIterable results = collection.find(query).limit(max).iterator()
         int count = 0
         while (results.hasNext()) {
             DBObject site = results.next()

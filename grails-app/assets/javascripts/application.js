@@ -1,3 +1,6 @@
+import jQuery from 'jquery'
+import ko from 'knockout'
+
 //= require jquery/jquery
 //= require bootstrap/js/bootstrap
 //= require knockout/knockout-latest

@@ -1,3 +1,8 @@
+@import '~bootstrap/dist/css/bootstrap.css';
+@import '~font-awesome/css/font-awesome.css';
+@import '~bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
+@import '~select2/dist/css/select2.css';
+@import '~jsoneditor/dist/jsoneditor.css';
 /**
  * Manifest for the asset pipeline
  *
@@ -801,8 +806,6 @@ select:focus:invalid:focus {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
-input[type="checkbox"] { -webkit-appearance: checkbox; !important }
-
 .fancybox-nav {
     width: 60px;
 }
@@ -1085,4 +1088,26 @@ textarea.species-settings {
 
 body {
     background-color: #fffef7;
+}
+/* Pagination fix */
+.pagination .disabled, .pagination .currentStep, .pagination .step {
+    float: left;
+    padding: 0 14px;
+    border-right: 1px solid;
+    line-height: 34px;
+    border-right-color: rgba(0, 0, 0, 0.15);
+}
+
+.pagination .prevLink {
+    border-right: 1px solid #DDD !important;
+    line-height: 34px;
+    vertical-align: middle;
+    padding: 0 14px;
+    float: left;
+}
+
+.pagination .nextLink {
+    vertical-align: middle;
+    line-height: 34px;
+    padding: 0 14px;
 }

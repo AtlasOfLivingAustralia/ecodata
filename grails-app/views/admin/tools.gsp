@@ -4,91 +4,16 @@
     <head>
         <meta name="layout" content="adminLayout"/>
         <title>Tools - Admin - Data capture - Atlas of Living Australia</title>
+        <script>
+            window.ecodataConfig = {
+                reloadConfigUrl:"${createLink(controller: 'admin', action:'reloadConfig')}",
+                clearMetaDataCacheUrl:"${createLink(controller: 'admin', action:'clearMetadataCache')}"
+            }
+        </script>
     </head>
 
     <body>
-        <asset:script>
 
-            $(document).ready(function() {
-
-                $("#btnReloadConfig").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'admin', action:'reloadConfig')}").done(function(result) {
-                        document.location.reload();
-                    });
-                });
-
-                $("#btnClearMetadataCache").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'admin', action:'clearMetadataCache')}").done(function(result) {
-                        document.location.reload();
-                    }).fail(function (result) {
-                        alert(result);
-                    });
-                });
-
-                $("#btnReloadDB").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'admin', action:'load', params: [drop:true])}").done(function(result) {
-                        document.location.reload();
-                    }).fail(function (result) {
-                        alert(result);
-                    });
-                });
-
-                $("#btnDumpDB").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'admin', action:'dump')}").done(function(result) {
-                        document.location.reload();
-                    }).fail(function (result) {
-                        alert(result);
-                    });
-                });
-
-                $("#btnReIndexAll").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'search', action:'indexAll')}").done(function(result) {
-                        document.location.reload();
-                    }).fail(function (result) {
-                        alert(result);
-                    });
-                });
-
-                $("#btnRegenerateRecords").click(function(e) {
-                    e.preventDefault();
-                    var outputId = $('#outputId').val();
-                    if (outputId) {
-                        $.ajax("${createLink(controller: 'admin', action:'regenerateRecordsForOutput')}?outputId="+outputId).done(function(result) {
-                            document.location.reload();
-                        }).fail(function (result) {
-                            alert(result);
-                        });
-                    }
-                    else {
-                        alert("Please enter an output ID");
-                    }
-                });
-
-                $("#btnUpdateCollectoryForBiocollectProjects").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'admin', action:'updateCollectoryEntryForBiocollectProjects')}").done(function(result) {
-                        document.location.reload();
-                    }).fail(function (result) {
-                        alert(result);
-                    });
-                });
-
-                $("#btnBuildGeoServerComponents").click(function(e) {
-                    e.preventDefault();
-                    $.ajax("${createLink(controller: 'admin', action:'buildGeoServerDependencies')}").done(function(result) {
-                        document.location.reload();
-                    }).fail(function (resp) {
-                        var result = JSON.parse(resp.responseText)
-                        alert(result.message);
-                    });
-                });
-            });
-        </asset:script>
         <content tag="pageTitle">Tools</content>
 
         <table class="table table-bordered table-striped">
@@ -174,5 +99,8 @@
             </tr>
             </tbody>
         </table>
+    <script defer="defer" src="/assets/bundle-runtime.js"></script>
+    <script defer="defer" src="/assets/bundle-vendor.js"></script>
+    <script defer="defer" src="/assets/bundle-tools.js"></script>
     </body>
 </html>

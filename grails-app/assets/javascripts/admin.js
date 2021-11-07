@@ -1,3 +1,10 @@
+import {$, jQuery} from 'jquery'
+import ko from 'knockout'
+import _ from 'underscore'
+
+
+import './score'
+
 //= require application
 //= require underscore/underscore
 //= require bootstrap-datepicker/js/bootstrap-datepicker
