@@ -15,10 +15,10 @@ module.exports = {
             dependOn: 'vendor',
             library: {
                 type:'assign',
-                name:'LibraryScore'
+                name:'Ecodata'
             }
         },
-        vendor:['jquery', 'knockout'],
+        vendor:['jquery', 'knockout', 'jsoneditor'],
         ecodata:'./src/main/webapp/css/ecodata.css'
     },
     devtool: 'inline-source-map',

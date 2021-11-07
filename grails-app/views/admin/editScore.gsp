@@ -64,7 +64,7 @@
     var score = JSON.parse('${raw((score as grails.converters.JSON).toString())}');
     var updateScoreUrl = '${g.createLink(controller: 'admin', action:'updateScore', id:score.scoreId?:'')}';
     var editScoreUrl = '${g.createLink(action:'editScore')}';
-    var model = new LibraryScore.ScoreModel(score, {updateScoreUrl:updateScoreUrl, editScoreUrl:editScoreUrl, scoreEditorId:'score-configuration'});
+    var model = new Ecodata.ScoreModel(score, {updateScoreUrl:updateScoreUrl, editScoreUrl:editScoreUrl, scoreEditorId:'score-configuration'});
     ko.applyBindings(model);
 
 </asset:script>

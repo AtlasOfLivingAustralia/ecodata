@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import ko from 'knockout';
+import JSONEditor from 'jsoneditor';
 
 /**
  * View model for editing Score objects.
@@ -41,10 +42,8 @@ export function ScoreModel(score, config) {
         modes: ['code', 'tree'],
         onNodeName: nodeName
     };
-    editor = new JSONEditor(editorPane, options);
+    var editor = new JSONEditor(editorPane, options);
     editor.set(score.configuration);
-
-    window.editor = editor;
 
     self.save = function () {
         var model = ko.toJS(self);
