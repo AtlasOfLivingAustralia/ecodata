@@ -1,4 +1,3 @@
-%{--<%@page expressionCodec="none" %>--}%
 <g:if test="${!omitDescription}">
 <strong>Description</strong>
 <p>
@@ -17,14 +16,8 @@
         <div class="row-fluid">
             <div class="span4">
                 <pre>
-
+                    ${raw((overview as grails.converters.JSON).toString(true))}
                 </pre>
-                <g:if test="${overview}">
-
-                    <asset:script>
-                        $(function(){$('#overview pre').text(JSON.stringify(${raw(overview as grails.converters.JSON)}, null, 2));});
-                    </asset:script>
-                </g:if>
             </div>
         </div>
         <div class="row-fluid">
@@ -46,30 +39,18 @@
     </div>
     <div class="tab-pane" id="schema">
         <pre>
-            ${(object as grails.converters.JSON).toString(true)}
+            ${raw((object as grails.converters.JSON).toString(true))}
         </pre>
-
-        <asset:script>
-
-            $(function(){
-                var schema = ${object as grails.converters.JSON};
-                $('#schema pre').text(JSON.stringify(schema, null, 2));});
-
-        </asset:script>
     </div>
     <div class="tab-pane" id="example">
         <pre>
-            to be supplied....
-        </pre>
-
         <g:if test="${example}">
-            <asset:script>
-                $(function(){
-                    var example = ${example as grails.converters.JSON};
-                    $('#example pre').text(JSON.stringify(example, null, 2));
-                });
-            </asset:script>
+            ${raw((example as grails.converters.JSON).toString(true))}
         </g:if>
+        <g:else>
+            to be supplied....
+        </g:else>
+        </pre>
 
     </div>
 </div>

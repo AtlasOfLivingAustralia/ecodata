@@ -17,6 +17,11 @@ grails:
     spring:
         transactionManagement:
             proxies: false
+    views:
+        json:
+            compileStatic: false # Grails 5 / groovy 3 is unable to statically compile the _searchResponse.gson template (it probably needs a rewrite)
+
+
 info:
     app:
         name: '@info.app.name@'

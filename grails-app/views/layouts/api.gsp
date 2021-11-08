@@ -21,7 +21,8 @@
 
     <g:layoutBody />
 
-<asset:javascript src="application"/>
+    <asset:javascript src="bundle-vendor"/>
+    <asset:javascript src="bundle-runtime"/>
 <asset:deferredScripts/>
 
 

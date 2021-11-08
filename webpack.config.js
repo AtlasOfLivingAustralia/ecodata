@@ -18,7 +18,7 @@ module.exports = {
                 name:'Ecodata'
             }
         },
-        vendor:['jquery', 'knockout', 'jsoneditor'],
+        vendor:['jquery', 'knockout', 'jsoneditor', 'bootstrap'],
         ecodata:'./src/main/webapp/css/ecodata.css'
     },
     devtool: 'inline-source-map',
