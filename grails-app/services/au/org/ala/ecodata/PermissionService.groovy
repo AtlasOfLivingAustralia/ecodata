@@ -15,6 +15,7 @@ class PermissionService {
     AuthService authService
     UserService userService // found in ala-auth-plugin
     ProjectController projectController
+    def grailsApplication, webService, hubService
 
     boolean isUserAlaAdmin(String userId) {
         userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
@@ -565,5 +566,78 @@ class PermissionService {
             count = ManagementUnit.countByManagementUnitIdAndHubId(entityId, hubId)
         }
         return count > 0
+    }
+
+    /**
+     * This code snippet is based on ReportService.userSummary
+     * Produces a list of users containing roles below:
+     * (ROLE_FC_READ_ONLY,ROLE_FC_OFFICER,ROLE_FC_ADMIN)
+     */
+    private def extractUserDetails() {
+        List roles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
+        def userDetailsSummary = [:]
+
+        int batchSize = 500
+
+        String url = grailsApplication.config.userDetails.admin.url
+        url += "/userRole/list?format=json&max=${batchSize}&role="
+        roles.each { role ->
+            int offset = 0
+            Map result = webService.getJson(url+role+'&offset='+offset)
+
+            while (offset < result?.count && !result?.error) {
+
+                List usersForRole = result?.users ?: []
+                usersForRole.each { user ->
+                    if (userDetailsSummary[user.userId]) {
+                        userDetailsSummary[user.userId].role = role
+                    }
+                    else {
+                        user.projects = []
+                        user.name = (user.firstName ?: "" + " " +user.lastName ?: "").trim()
+                        user.role = role
+                        userDetailsSummary[user.userId] = user
+                    }
+
+
+                }
+
+                offset += batchSize
+                result = webService.getJson(url+role+'&offset='+offset)
+            }
+
+            if (!result || result.error) {
+                log.error("Error getting user details for role: "+role)
+                return
+            }
+        }
+
+        userDetailsSummary
+    }
+
+    def saveUserDetails() {
+        def map = [ROLE_FC_ADMIN: "admin", ROLE_FC_OFFICER: "caseManager", ROLE_FC_READ_ONLY: "readOnly"]
+        String urlPath = "merit"
+        String hubId = hubService.findByUrlPath(urlPath)?.hubId
+
+        //extracts from UserDetails
+        def userDetailsSummary = extractUserDetails()
+
+        //save to userPermission
+        userDetailsSummary.each { key, value ->
+            value.roles.each { role ->
+                if (map[role]) {
+                    try {
+                        UserPermission up = new UserPermission(userId: key, entityId: hubId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(map[role]))
+                        up.save(flush: true, failOnError: true)
+
+                    } catch (Exception e) {
+                        def msg = "Failed to save UserPermission: ${e.message}"
+                        return [status: 'error', error: msg]
+                    }
+                }
+
+            }
+        }
     }
 }

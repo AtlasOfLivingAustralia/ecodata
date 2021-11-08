@@ -87,6 +87,16 @@
                         alert(result.message);
                     });
                 });
+
+                $("#btnMigrateUserDetailsToEcodata").click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'admin', action:'migrateUserDetailsToEcodata')}").done(function(result) {
+                    alert(result);
+                        document.location.reload();
+                    }).fail(function (result) {
+                        alert(result);
+                    });
+                });
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -170,6 +180,14 @@
                 </td>
                 <td>
                     Delete existing layers, store and workspace associates with Ecodata and create new ones.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnMigrateUserDetailsToEcodata" class="btn btn-small btn-info" title="Migrate UserDetails to Ecodata.">Migrate UserDetails</button>
+                </td>
+                <td>
+                    Migrate the existing MERIT users from UserDetails into the Eccodata Database
                 </td>
             </tr>
             </tbody>

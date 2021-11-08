@@ -27,6 +27,7 @@ class AdminController {
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
     MapService mapService
+    PermissionService permissionService
 
     @AlaSecured("ROLE_ADMIN")
     def index() {}
@@ -718,5 +719,12 @@ class AdminController {
 
         render resp as JSON
     }
+
+    @AlaSecured("ROLE_ADMIN")
+    def migrateUserDetailsToEcodata() {
+        def resp = permissionService.saveUserDetails()
+        render text: [ message: 'UserDetails data migration done.' ] as JSON
+    }
+
 
 }
