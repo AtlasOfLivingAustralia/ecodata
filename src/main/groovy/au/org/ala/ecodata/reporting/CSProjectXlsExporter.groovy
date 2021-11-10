@@ -2,14 +2,12 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.*
-import com.mongodb.BasicDBObject
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 import static au.org.ala.ecodata.Status.DELETED
-
 /**
  * Export Citizen Science style projects to a zip file containing:
  *
@@ -40,7 +38,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
 
     List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
     List<String> recordProperties = ["occurrenceID", "guid", "activityId", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
@@ -185,7 +183,6 @@ class CSProjectXlsExporter extends ProjectExporter {
                             new ConstantGetter("projectId", projectActivity.projectId),
                             new ConstantGetter("projectActivityId", projectActivity.projectActivityId),
                             new ConstantGetter("activityId", activity.activityId),
-                            new ConstantGetter("sites", projectActivity.sites.collect { it.siteId }.join(", ")),
                             new DateConstantGetter("startDate", projectActivity.startDate, null, null, DateTimeParser.Style.DATE, timeZone),
                             new DateConstantGetter("endDate", projectActivity.endDate, null, null, DateTimeParser.Style.DATE, timeZone),
                             new ConstantGetter("description", projectActivity.description),
