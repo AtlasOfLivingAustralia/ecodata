@@ -57,7 +57,7 @@ class UserSpec extends MongoSpec {
         user.save()
 
         then:
-        user.hasErrors() == true
+        user.hasErrors()
 
     }
 
@@ -71,12 +71,12 @@ class UserSpec extends MongoSpec {
         user.save()
 
         then:
-        user.hasErrors() == true
+        user.hasErrors()
         user.errors.getFieldError('userHubs').code == 'user.userHubs.hubId.unique'
 
     }
 
-    def "A UserHub can be retreived by hubId from a User"() {
+    def "A UserHub can be retrieved by hubId from a User"() {
         setup:
         Date date = DateUtil.parse("2021-07-01T00:00:00Z")
         User user = new User(userId:"2", userHubs: [new UserHub(hubId:"h1", lastLoginTime:null), new UserHub(hubId:"h2", lastLoginTime: date)])
