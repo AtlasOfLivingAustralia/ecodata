@@ -2,11 +2,11 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.HubLoginTime
 import grails.converters.JSON
-import org.springframework.validation.Errors
 
 class UserController {
 
-    static allowedMethods = [recordLoginTime: 'POST']
+    static responseFormats = ['json', 'xml']
+    static allowedMethods = [recordUserLogin: 'POST']
 
     UserService userService
     WebService webService
@@ -47,19 +47,19 @@ class UserController {
 
     /**
      * Records the time a User has logged into a hub.
-     * {@link au.org.ala.ecodata.UserService#recordLoginTime(java.lang.String, java.lang.String)} for details.
+     * {@link au.org.ala.ecodata.UserService#recordUserLogin(java.lang.String, java.lang.String)} for details.
      *
      * @param hubId The hubId of the Hub that was logged into
      * @param userId The userId of the user that logged in.  If not supplied the current user will be used.
      * @param loginTime The time the user logged in.  If not supplied, the current time will be used by the service.
      */
-    def recordLoginTime(HubLoginTime hubLoginTime) {
+    def recordUserLogin(HubLoginTime hubLoginTime) {
         if (hubLoginTime.hasErrors()) {
             respond hubLoginTime.errors
         }
         else {
             String userId = hubLoginTime.userId ?: userService.getCurrentUserDetails()?.userId
-            respond userService.recordLoginTime(hubLoginTime.hubId, userId, hubLoginTime.loginTime)
+            respond userService.recordUserLogin(hubLoginTime.hubId, userId, hubLoginTime.loginTime)
         }
 
     }

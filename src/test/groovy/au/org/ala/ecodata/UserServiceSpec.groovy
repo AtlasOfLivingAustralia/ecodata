@@ -23,13 +23,13 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
     def "The recordLoginTime method requires a hubId and userId to be supplied"() {
         when:
-        service.recordLoginTime(null, "user1")
+        service.recordUserLogin(null, "user1")
 
         then:
         thrown(IllegalArgumentException)
 
         when:
-        service.recordLoginTime("hub1", null)
+        service.recordUserLogin("hub1", null)
 
         then:
         thrown(IllegalArgumentException)
@@ -37,7 +37,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
     def "The Hub associated with the supplied hubId must exist"() {
         when:
-        service.recordLoginTime("h3", "user1")
+        service.recordUserLogin("h3", "user1")
 
         then:
         thrown(IllegalArgumentException)
@@ -52,7 +52,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         Date loginTime2 = DateUtil.parse("2021-01-01T00:00:00Z")
 
         when: "No User document exists, this method will insert one"
-        User user = service.recordLoginTime(hubId, userId, loginTime1)
+        User user = service.recordUserLogin(hubId, userId, loginTime1)
 
         then:
         user.userId == userId
@@ -60,7 +60,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         user.getUserHub(hubId).lastLoginTime == loginTime1
 
         when: "If the hub doesn't exist, the method will add one"
-        user = service.recordLoginTime("h2", userId, loginTime2)
+        user = service.recordUserLogin("h2", userId, loginTime2)
 
         then:
         user.userId == userId
@@ -68,7 +68,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         user.getUserHub("h2").lastLoginTime == loginTime2
 
         when: "The last login time is changed, it is updated correctly"
-        user = service.recordLoginTime(hubId, userId, loginTime2)
+        user = service.recordUserLogin(hubId, userId, loginTime2)
 
         then:
         user.userId == userId
@@ -104,7 +104,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
     private void insertUserLogin(String userId, String hubId, String loginTime) {
         Date date = DateUtil.parse(loginTime)
-        service.recordLoginTime(hubId, userId, date)
+        service.recordUserLogin(hubId, userId, date)
     }
 
 }

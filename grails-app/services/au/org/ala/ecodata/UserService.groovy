@@ -129,7 +129,7 @@ class UserService {
      * If no User exists, one will be created.  If no login record exists for a hub, one
      * will be added.  If an existing login time exists, the date will be updated.
      */
-    User recordLoginTime(String hubId, String userId, Date loginTime = new Date()) {
+    User recordUserLogin(String hubId, String userId, Date loginTime = new Date()) {
 
         if (!hubId || !userId || !Hub.findByHubId(hubId)) {
             throw new IllegalArgumentException()
