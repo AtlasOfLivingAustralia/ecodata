@@ -588,10 +588,10 @@ class PermissionsController {
                 Map results = permissionService.getMembersForHubPerPage(hubId,start,size)
                 render(contentType: 'application/json', text: [ data: results.data, totalNbrOfAdmins: results.totalNbrOfAdmins, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
             } else {
-                response.sendError(SC_NOT_FOUND, 'Project not found.')
+                response.sendError(SC_NOT_FOUND, 'Hub not found.')
             }
         } else {
-            response.sendError(SC_BAD_REQUEST, 'Required path not provided: projectId.')
+            response.sendError(SC_BAD_REQUEST, 'Required path not provided: hubId.')
         }
     }
 
