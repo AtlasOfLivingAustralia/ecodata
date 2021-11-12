@@ -573,6 +573,29 @@ class PermissionsController {
     }
 
     /**
+     * Get Merit members, support pagination
+     * @return Hub members one page at a time
+     */
+    @RequireApiKey
+    def getMembersForHubPerPage() {
+        String hubId = params.hubId
+        Integer start = params.getInt('offset')?:0
+        Integer size = params.getInt('max')?:10
+
+        if (hubId){
+            Hub hub = Hub.findByHubId(hubId)
+            if (hub) {
+                Map results = permissionService.getMembersForHubPerPage(hubId,start,size)
+                render(contentType: 'application/json', text: [ data: results.data, totalNbrOfAdmins: results.totalNbrOfAdmins, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
+            } else {
+                response.sendError(SC_NOT_FOUND, 'Project not found.')
+            }
+        } else {
+            response.sendError(SC_BAD_REQUEST, 'Required path not provided: projectId.')
+        }
+    }
+
+    /**
      * Get a list of users with {@link AccessLevel#editor editor} level access or higher
      * for a given {@link Organisation organisation} (via {@link Organisation#organisationId organisationId})
      */

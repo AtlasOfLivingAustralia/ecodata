@@ -284,6 +284,51 @@ class PermissionService {
     }
 
     /**
+     * Return Hub members, support pagination
+     * @param hubId
+     * @param offset
+     * @param max
+     * @param roles
+     * @return Hub members one page at a time
+     */
+    def getMembersForHubPerPage(String hubId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.readOnly]) {
+        List admins = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevel(hubId, Project.class.name, AccessLevel.starred, AccessLevel.admin)
+
+        BuildableCriteria criteria = UserPermission.createCriteria()
+        List memebers = criteria.list(max:max, offset:offset) {
+            eq("entityId", hubId)
+            eq("entityType", Hub.class.name)
+            ne("accessLevel", AccessLevel.starred)
+            inList("accessLevel", roles)
+        }
+
+        Map out = [:]
+        List userIds = []
+        memebers.each{
+            userIds.add(it.userId)
+            Map rec=[:]
+            rec.userId = it.userId
+            rec.role = it.accessLevel?.toString()
+            out.put(it.userId,rec)
+
+        }
+
+        def userList = authService.getUserDetailsById(userIds)
+        if (userList) {
+            def users = userList['users']
+
+            users.each { k, v ->
+                Map rec = out.get(k)
+                if (rec) {
+                    rec.displayName = v?.displayName
+                    rec.userName = v?.userName
+                }
+            }
+        }
+        [totalNbrOfAdmins: admins.size(), data:out.values(), count:memebers.totalCount]
+    }
+
+    /**
      * Returns a list of all users who have permissions configured for the specified program.
      * @param programId the programId of the program to get permissions for.
      * @return a List of the users that have roles configured for the program.

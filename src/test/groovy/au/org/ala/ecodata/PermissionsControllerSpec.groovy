@@ -2457,4 +2457,25 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         response.status == HttpStatus.SC_OK
         result.isSiteStarredByUser == true
     }
+
+    void "get Merit Hub members per page" () {
+        setup:
+        String hubId = '123'
+        new Hub(hubId:hubId, urlPath:'merit').save()
+
+        when:
+        params.hubId = hubId
+        controller.getMembersForHubPerPage()
+        println response.getJson()
+        def result = response.getJson()
+
+        then:
+        1 * permissionService.getMembersForHubPerPage(hubId, 0 ,10) >> [totalNbrOfAdmins: 1, data:['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'readOnly']], count:2]
+        response.status == HttpStatus.SC_OK
+        result.totalNbrOfAdmins == 1
+        result.recordsTotal == 2
+        result.recordsFiltered == 2
+        result.data.size() == 2
+
+    }
 }
