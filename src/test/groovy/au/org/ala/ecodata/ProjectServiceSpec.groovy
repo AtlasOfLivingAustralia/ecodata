@@ -25,8 +25,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     String dataProviderId = 'dp1'
     String dataResourceId = 'dr1'
 
-    static doWithConfig(config) {
-        config.grails.databinding.dateFormats = ["yyyy-MM-dd'T'HH:mm:ss'Z'"]
+    boolean loadExternalBeans() {
+        true
     }
 
 
@@ -167,7 +167,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     def "The project supports Risks as an embedded mapping"() {
         setup:
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         String projectId = 'p1-risks'
         Project project = new Project(projectId:projectId, name:"Project")
         Map risks = buildRisksData()
@@ -186,7 +185,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         then:
         project2.risks.overallRisk == risks.overallRisk
-        project2.risks.dateUpdated ==  f.parse(risks.dateUpdated)
+        project2.risks.dateUpdated ==  DateUtil.parse(risks.dateUpdated)
         project2.risks.rows.size() == risks.rows.size()
         int i=0
         for (Risk risk : project2.risks.rows) {
@@ -199,30 +198,30 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             risk.riskRating == risks.rows[i].consequence
             i++
         }
-// The getDbo method is returning null here.
-//        when:
-//        Map projectData
-//        Project.withNewTransaction { tx ->
-//            Project p = Project.findByProjectId(projectId)
-//            projectData = service.toMap(p, ProjectService.FLAT)
-//        }
-//
-//
-//        then:
-//        projectData.risks.overallRisk == risks.overallRisk
-//        projectData.risks.dateUpdated == f.parse(risks.dateUpdated)
-//        projectData.risks.rows.size() == risks.rows.size()
-//        int j=0
-//        for (Map risk : projectData.risks.rows) {
-//            risk.consequence == risks.rows[j].consequence
-//            risk.likelihood == risks.rows[j].consequence
-//            risk.residualRisk == risks.rows[j].consequence
-//            risk.currentControl == risks.rows[j].consequence
-//            risk.description == risks.rows[j].consequence
-//            risk.threat == risks.rows[j].consequence
-//            risk.riskRating == risks.rows[j].consequence
-//            j++
-//        }
+
+        when:
+        Map projectData
+        Project.withNewTransaction { tx ->
+            Project p = Project.findByProjectId(projectId)
+            projectData = service.toMap(p, ProjectService.FLAT)
+        }
+
+
+        then:
+        projectData.risks.overallRisk == risks.overallRisk
+        projectData.risks.dateUpdated == DateUtil.parse(risks.dateUpdated)
+        projectData.risks.rows.size() == risks.rows.size()
+        int j=0
+        for (Map risk : projectData.risks.rows) {
+            risk.consequence == risks.rows[j].consequence
+            risk.likelihood == risks.rows[j].consequence
+            risk.residualRisk == risks.rows[j].consequence
+            risk.currentControl == risks.rows[j].consequence
+            risk.description == risks.rows[j].consequence
+            risk.threat == risks.rows[j].consequence
+            risk.riskRating == risks.rows[j].consequence
+            j++
+        }
     }
 
     private Map buildRisksData() {
