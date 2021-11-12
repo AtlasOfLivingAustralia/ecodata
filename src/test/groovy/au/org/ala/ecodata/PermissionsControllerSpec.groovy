@@ -2478,4 +2478,28 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         result.data.size() == 2
 
     }
+
+    void "get Merit Hub members per page - when no mandatory params" () {
+        setup:
+
+        when:
+        controller.getMembersForHubPerPage()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.errorMessage == 'Required path not provided: hubId.'
+    }
+
+    void "Merit Hub members per page - hub not existing" () {
+        setup:
+        String hubId = '1'
+
+        when:
+        params.hubId = hubId
+        controller.getMembersForHubPerPage()
+
+        then:
+        response.status == HttpStatus.SC_NOT_FOUND
+        response.errorMessage == 'Hub not found.'
+    }
 }
