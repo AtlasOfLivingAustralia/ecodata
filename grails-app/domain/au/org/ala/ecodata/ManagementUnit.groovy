@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
+import org.springframework.validation.Errors
 
 /**
  * A mu acts as a container for projects, more or less.
@@ -38,7 +39,7 @@ class ManagementUnit {
     Map config
 
     /**
-     * Organisations that have a relationship of some kind with this managmement unit.  Currently the only
+     * Organisations that have a relationship of some kind with this management unit.  Currently the only
      * relationship is a service provider.
      */
     List<AssociatedOrg> associatedOrganisations
@@ -88,7 +89,9 @@ class ManagementUnit {
         managementUnitSiteId nullable: true
         priorities nullable: true
         outcomes nullable:true
-        hubId nullable: true
+        hubId nullable: true, validator: { String hubId, ManagementUnit managementUnit, Errors errors ->
+            GormMongoUtil.validateWriteOnceProperty(managementUnit, 'managementUnitId', 'hubId', errors)
+        }
     }
 
     String toString() {

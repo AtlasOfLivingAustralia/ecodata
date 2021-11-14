@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.springframework.validation.Errors
+
 import static au.org.ala.ecodata.Status.COMPLETED
 
 import org.bson.types.ObjectId
@@ -209,7 +211,9 @@ class Project {
         managementUnitId nullable: true
         mapDisplays nullable: true
         terminationReason nullable: true
-        hubId nullable: true
+        hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
+            GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
+        }
     }
 }
 

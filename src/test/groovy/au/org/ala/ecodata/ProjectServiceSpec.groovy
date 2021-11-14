@@ -198,30 +198,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             risk.riskRating == risks.rows[i].consequence
             i++
         }
-
-        when:
-        Map projectData
-        Project.withNewTransaction { tx ->
-            Project p = Project.findByProjectId(projectId)
-            projectData = service.toMap(p, ProjectService.FLAT)
-        }
-
-
-        then:
-        projectData.risks.overallRisk == risks.overallRisk
-        projectData.risks.dateUpdated == DateUtil.parse(risks.dateUpdated)
-        projectData.risks.rows.size() == risks.rows.size()
-        int j=0
-        for (Map risk : projectData.risks.rows) {
-            risk.consequence == risks.rows[j].consequence
-            risk.likelihood == risks.rows[j].consequence
-            risk.residualRisk == risks.rows[j].consequence
-            risk.currentControl == risks.rows[j].consequence
-            risk.description == risks.rows[j].consequence
-            risk.threat == risks.rows[j].consequence
-            risk.riskRating == risks.rows[j].consequence
-            j++
-        }
     }
 
     private Map buildRisksData() {
