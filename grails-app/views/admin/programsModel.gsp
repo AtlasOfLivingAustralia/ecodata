@@ -31,7 +31,7 @@
                     <li class="item" data-bind="css:{referenced:isSelected}">
                         <div data-bind="click:select">
                             <span data-bind="clickToEdit:name" data-edit-on-dblclick="true" data-input-class="auto-width"></span>%{--<span data-bind="visible:!name()">new</span>--}%
-                            <span class="pull-right" data-bind="visible:isSelected"><i data-bind="click:$parent.removeProgram" class="icon-remove"></i></span>
+                            <span class="pull-right" data-bind="visible:isSelected"><i data-bind="click:$parent.removeProgram" class="fa fa-remove"></i></span>
                         </div>
                         <div data-bind="visible:isSelected">
                             <hr/>
@@ -69,7 +69,7 @@
                         </div>
                     </li>
                 </ul>
-                <span data-bind="click:addProgram" class="clickable"><i class="icon-plus"></i> Add another</span>
+                <span data-bind="click:addProgram" class="clickable"><i class="fa fa-plus"></i> Add another</span>
             </div>
             <div class="col-md-4">
                 <h2>Sub-programs</h2>
@@ -77,7 +77,7 @@
                     <li class="item" data-bind="css:{referenced:isSelected}">
                         <div data-bind="click:select">
                             <span data-bind="clickToEdit:name" data-edit-on-dblclick="true" data-input-class="auto-width"></span>
-                            <span class="pull-right" data-bind="visible:isSelected"><i data-bind="click:$parent.removeSubprogram" class="icon-remove"></i></span>
+                            <span class="pull-right" data-bind="visible:isSelected"><i data-bind="click:$parent.removeSubprogram" class="fa fa-remove"></i></span>
                         </div>
                         <div>Start Date <ec:datePicker class="input-small" targetField="startDate.date" name="startDate"/></div>
                         <div>End Date <ec:datePicker class="input-small" targetField="endDate.date" name="endDate"/></div>
@@ -115,7 +115,7 @@
                         </div>
                     </li>
                 </ul>
-                <span data-bind="click:addSubprogram, visible:transients.selectedProgram()" class="clickable"><i class="icon-plus"></i> Add another</span>
+                <span data-bind="click:addSubprogram, visible:transients.selectedProgram()" class="clickable"><i class="fa fa-plus"></i> Add another</span>
             </div>
             <div class="col-md-4">
                 <h2>Themes</h2>
@@ -123,16 +123,15 @@
                     <li class="item" data-bind="css:{referenced:isSelected}">
                         <div data-bind="click:select">
                             <span data-bind="clickToEdit:name" data-edit-on-dblclick="true" data-input-class="auto-width"></span>
-                            <span class="pull-right" data-bind="visible:isSelected"><i data-bind="click:$parent.removeTheme" class="icon-remove"></i></span>
+                            <span class="pull-right" data-bind="visible:isSelected"><i data-bind="click:$parent.removeTheme" class="fa fa-remove"></i></span>
                         </div>
                     </li>
                 </ul>
-                <span data-bind="click:addTheme, visible:transients.selectedSubprogram()" class="clickable"><i class="icon-plus"></i> Add another</span>
+                <span data-bind="click:addTheme, visible:transients.selectedSubprogram()" class="clickable"><i class="fa fa-plus"></i> Add another</span>
             </div>
         </div>
 
 </form>
-
 <asset:script type="text/javascript">
     $(function(){
 

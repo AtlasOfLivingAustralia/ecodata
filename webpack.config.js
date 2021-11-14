@@ -8,7 +8,6 @@ module.exports = {
         tools: {
             import:'./src/main/webapp/js/tools.js',
             dependOn: 'vendor'
-
         },
         score: {
             import:'./src/main/webapp/js/score.js',
@@ -18,7 +17,21 @@ module.exports = {
                 name:'Ecodata'
             }
         },
-        vendor:['jquery', 'knockout', 'jsoneditor', 'bootstrap'],
+
+        vendor:[
+            'jquery',
+            'knockout',
+            'jsoneditor',
+            'bootstrap',
+            'bootstrap-datepicker',
+            './src/main/webapp/vendor/jquery-validation-engine/jquery.validationEngine.js',
+            './src/main/webapp/vendor/jquery-validation-engine/jquery.validationEngine-en.js',
+            'knockout-mapping',
+            'knockout-sortable',
+            'jquery-ui',
+            'underscore',
+            'select2'
+        ],
         ecodata:'./src/main/webapp/css/ecodata.css'
     },
     devtool: 'inline-source-map',
@@ -57,6 +70,20 @@ module.exports = {
                 loader: "expose-loader",
                 options: {
                     exposes: ["ko"]
+                },
+            },
+            {
+                test: require.resolve("underscore"),
+                loader: "expose-loader",
+                options: {
+                    exposes: ["_"]
+                },
+            },
+            {
+                test: require.resolve("jsoneditor"),
+                loader: "expose-loader",
+                options: {
+                    exposes: ["JSONEditor"]
                 },
             },
         ]

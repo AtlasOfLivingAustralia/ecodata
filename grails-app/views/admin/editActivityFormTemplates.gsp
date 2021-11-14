@@ -77,9 +77,6 @@
             </div>
         </div>
 
-
-
-
 <asset:script>
     $(function(){
 

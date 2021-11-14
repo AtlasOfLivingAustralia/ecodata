@@ -54,11 +54,6 @@
     </div>
     </form>
 
-
-<asset:javascript src="bundle-vendor"/>
-<asset:javascript src="bundle-runtime"/>
-<asset:javascript src="bundle-score"/>
-
 <asset:script>
 
     var score = JSON.parse('${raw((score as grails.converters.JSON).toString())}');
