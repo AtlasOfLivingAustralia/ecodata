@@ -16,6 +16,8 @@ class User {
     String userId
 
     String status = 'active'
+    Date dateCreated
+    Date lastUpdated
 
     static embedded = ['userHubs']
     static hasMany = [userHubs:UserHub]
