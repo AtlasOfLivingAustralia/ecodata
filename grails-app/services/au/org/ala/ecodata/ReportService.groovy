@@ -2,9 +2,9 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.reporting.*
+import groovy.util.logging.Slf4j
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-import grails.plugins.csv.CSVReaderUtils
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
@@ -12,9 +12,10 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
  * The ReportService aggregates and returns output scores.
  * It is also responsible for managing Reports submitted by users.
  */
+@Slf4j
 class ReportService {
 
-    def grailsApplication, activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService, webService
+    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService
 
 
     def findScoresByLabel(List labels) {
@@ -267,63 +268,92 @@ class ReportService {
     }
 
     /**
-     * Produces a list of users for the matching projects.  Also adds any users containing the extra roles, even
-     * if they don't have any explicit project access
+     * Produces a list of users with permissions for the supplied hub
      */
-    def userSummary(Set projectIds, List roles) {
+    def userSummary(String hubId, PrintWriter writer) {
 
-        def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
-
-        def userSummary = [:]
-        Map users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
-
-        users.each { userId, projects ->
-            def userDetails = userService.lookupUserDetails(userId)
-
-
-            userSummary[userId] = [userId:userDetails.userId, name:userDetails.displayName, email:userDetails.userName, role:'FC_USER']
-            userSummary[userId].projects = projects.collect {
-                def project = projectService.get(it.entityId, ProjectService.FLAT)
-
-                [projectId: project.projectId, grantId:project.grantId, externalId:project.externalId, name:project.name, access:levels[it.accessLevel.code]]
+        // Find all users with a recorded login to MERIT
+        // Find all ACL entries matching those users.
+        int batchSize = 50
+        writeUserSummaryHeader(writer)
+        Map batchOptions =  [max:batchSize, offset:0, sort:'userId', order:'asc']
+        List users = User.findAllByLoginHub(hubId,batchOptions)
+        while (users) {
+            Map<String, Map> permissionsByUser = UserPermission.findAllByUserIdInList(users.collect{it.userId}).groupBy{it.userId}
+            Map<String, Map> userSummary = [:]
+            permissionsByUser.each { String userId, List<UserPermission> permissions ->
+                User user = users.find{it.userId == userId}
+                userSummary[userId] = processUser(hubId, user, permissions)
             }
+
+            writeUsers(userSummary, writer)
+
+            batchOptions.offset += batchSize
+            log.info("Processed "+batchOptions.offset+" users for the user summary report")
+            users = User.findAllByLoginHub(hubId, batchOptions)
         }
 
+    }
 
-        int batchSize = 500
+    private Map processUser(String hubId, User user, List<UserPermission> permissions) {
+        String userId = user.userId
+        def userDetails = userService.lookupUserDetails(userId)
 
-        String url = grailsApplication.config.userDetails.admin.url
-        url += "/userRole/list?format=json&max=${batchSize}&role="
-        roles.each { role ->
-            int offset = 0
-            Map result = webService.getJson(url+role+'&offset='+offset)
+        Map userSummary = [userId: userDetails.userId, name: userDetails.displayName, email: userDetails.userName, lastLoginTime:user.getUserHub(hubId).lastLoginTime]
+        List hubPermissions = permissions.findAll{it.entityType == Hub.class.name}
+        userSummary.hubPermissions = hubPermissions.collect{it.accessLevel.name()}
 
-            while (offset < result?.count && !result?.error) {
+        List projectIds = permissions.findAll{it.entityType == Project.class.name}.collect{it.entityId}
+        List muIds = permissions.findAll{it.entityType == ManagementUnit.class.name}.collect{it.entityId}
+        List programIds = permissions.findAll{it.entityType == Program.class.name}.collect{it.entityId}
 
-                List usersForRole = result?.users ?: []
-                usersForRole.each { user ->
-                    if (userSummary[user.userId]) {
-                        userSummary[user.userId].role = role
-                    }
-                    else {
-                        user.projects = []
-                        user.name = (user.firstName ?: "" + " " +user.lastName ?: "").trim()
-                        user.role = role
-                        userSummary[user.userId] = user
-                    }
-                }
+        // TODO not sure what to do about organisations at this time.
+        List<Project> projects = Project.findAllByHubIdAndProjectIdInList(hubId, projectIds)
+        List<ManagementUnit> mus = ManagementUnit.findAllByHubIdAndManagementUnitIdInList(hubId, muIds)
+        List<Program> programs = Program.findAllByHubIdAndProgramIdInList(hubId, programIds)
 
-                offset += batchSize
-                result = webService.getJson(url+role+'&offset='+offset)
-            }
-
-            if (!result || result.error) {
-                log.error("Error getting user details for role: "+role)
-                return
-            }
+        userSummary.projects = projects.collect { Project project ->
+            AccessLevel level = permissions.find{it.entityId == project.projectId}.accessLevel
+            [projectId: project.projectId, grantId: project.grantId, externalId: project.externalId, name: project.name, access: level.name()]
         }
-
+        userSummary.managementUnits = mus.collect { ManagementUnit mu ->
+            AccessLevel level = permissions.find{it.entityId == mu.managementUnitId}.accessLevel
+            [managementUnitId: mu.managementUnitId, name: mu.name, access: level.name()]
+        }
+        userSummary.programs = programs.collect { Program program ->
+            AccessLevel level = permissions.find{it.entityId == program.programId}.accessLevel
+            [programId: program.programId, name: program.name, access: level.name()]
+        }
         userSummary
+    }
+
+    private void writeUserSummaryHeader(PrintWriter writer) {
+        writer.println("User Id, Name, Email, Last Login, Role, Type, ID, Grant ID, External ID, Name, Access Role")
+    }
+
+    private void writeUsers(Map<String, Map> userSummary, PrintWriter writer) {
+        userSummary.values().each { user->
+            boolean firstRow = true
+            String role = user.hubPermissions?.join(',')?:'none'
+            String userDetails = user.userId+","+user.name+","+user.email+","+user.lastLoginTime+","+role+','
+            String blanks = ",,,,,"
+
+            user.projects?.each { project ->
+                writer.print(firstRow?userDetails:blanks)
+                writer.println("Project,"+project.projectId+","+project.grantId+","+project.externalId+",\""+project.name+"\","+project.access)
+                firstRow = false
+            }
+            user.managementUnits?.each {
+                writer.print(firstRow?userDetails:blanks)
+                writer.println("Management Unit,"+it.managementUnitId+",,,\""+it.name+"\","+it.access)
+                firstRow = false
+            }
+            user.programs?.each {
+                writer.print(firstRow?userDetails:blanks)
+                writer.println("Program,"+it.programId+",,,\""+it.name+"\","+it.access)
+                firstRow = false
+            }
+        }
     }
 
     def exportShapeFile(projectIds, name, outputStream) {

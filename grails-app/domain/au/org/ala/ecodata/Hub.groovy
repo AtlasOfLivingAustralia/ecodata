@@ -55,6 +55,15 @@ class Hub {
     Date dateCreated
     Date lastUpdated
 
+    /** If an email is generated relating to this hub, use this sender address instead of the default it the config */
+    String emailFromAddress
+
+    /** If an email is generated relating to this hub, use this sender address instead of the default it the config */
+    String emailReplyToAddress
+
+    /** The URL prefix to use when creating a URL a user can use to download a report */
+    String downloadUrlPrefix
+
 
     static mapping = {
         hubId index: true
@@ -75,6 +84,9 @@ class Hub {
         mapLayersConfig nullable: true
         mapDisplays nullable: true
         timeSeriesOnIndex nullable: true
+        emailFromAddress nullable: true
+        emailReplyToAddress nullable: true
+        downloadUrlPrefix nullable: true
     }
 
     static embedded = ['mapLayersConfig']

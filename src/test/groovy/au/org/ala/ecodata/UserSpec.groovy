@@ -42,7 +42,7 @@ class UserSpec extends MongoSpec {
         users.size() == 2
 
         when:
-        users = User.findAllByLoginHub(hubId1)
+        users = User.findAllByLoginHub(hubId1, [max:100, offset:0])
 
         then:
         users.size() == 2

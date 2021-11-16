@@ -62,11 +62,11 @@ class User {
     }
 
     /** Helper method to find all Users with an entry for a particular hub */
-    static List<User> findAllByLoginHub(String aHubId) {
+    static List<User> findAllByLoginHub(String aHubId, Map searchParams) {
         User.where {
             userHubs {
                 hubId == aHubId
             }
-        }.list()
+        }.list(searchParams)
     }
 }
