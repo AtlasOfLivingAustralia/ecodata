@@ -39,13 +39,14 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         }
 
         when:
-        List users = service.getMembersForHub(hubId)
-
+        List users = service.getMembersForHub(hubId, false)
 
         then:
         users.size() == userIds.size()
         new HashSet(users.collect{it.userId}).equals(userIds)
 
+        and:"The userService isn't used to lookup the user name"
+        0 * userService._
 
     }
 

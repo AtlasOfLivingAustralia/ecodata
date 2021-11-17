@@ -276,11 +276,13 @@ class PermissionService {
     /**
      * Returns a list of all users who have permissions configured for the specified hub.
      * @param hubId the hubId of the hub to get permissions for.
+     * @param includeUserDetails if true, lookup the userId in the UserDetails application to get the user name,
+     * roles etc.
      * @return a List of the users that have roles configured for the hub.
      */
-    List<Map> getMembersForHub(String hubId) {
+    List<Map> getMembersForHub(String hubId, boolean includeUserDetails = true) {
         List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(hubId, Hub.class.name, DELETED)
-        permissions.collect{toMap(it)}
+        permissions.collect{toMap(it, includeUserDetails)}
     }
 
     /**
@@ -353,18 +355,20 @@ class PermissionService {
     }
 
     /**
-     * Converts a UserPermission into a Map, looking up the user display name from the user details service.
+     * Converts a UserPermission into a Map, looking up the user display name from the user details service
+     * if requested.
      */
-    private Map toMap(UserPermission userPermission) {
+    private Map toMap(UserPermission userPermission, boolean includeUserDetails = true) {
         Map mapped = [:]
-        def u = userService.getUserForUserId(userPermission.userId?:"0")
         mapped.role = userPermission.accessLevel?.toString()
         mapped.userId = userPermission.userId
-        mapped.displayName = u?.displayName
-        mapped.userName = u?.userName
 
+        if (includeUserDetails) {
+            def u = userService.getUserForUserId(userPermission.userId)
+            mapped.displayName = u?.displayName
+            mapped.userName = u?.userName
+        }
         mapped
-
     }
 
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
