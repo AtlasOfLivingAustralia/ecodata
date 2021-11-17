@@ -490,21 +490,46 @@ listOfActivities.forEach(function (activityId) {
             var updated = false;
             taxaObservations.forEach(function (row, index) {
                 var commonUpdated;
-                if(speciesList[index].commonName.name === row.commonName) {
-                    commonUpdated = updateCommonName(row, speciesList[index]);
-                } else {
-                    var matches = speciesList.find(function (species) {
-                        species.commonName.name === row.commonName;
-                    })
-                    var match = matches && matches[0];
-                    commonUpdated = updateCommonName(row, match);
-                }
-                if (!commonUpdated) {
-                    print("Failed to update for " + output.outputId);
-                }
+                if(typeof row.commonName === "string") {
+                    if (speciesList[index].commonName.name.trim().toLowerCase() === row.commonName.trim().toLowerCase()) {
+                        commonUpdated = updateCommonName(row, speciesList[index]);
+                    } else {
+                        // try matching with scientific name and common name combination of
+                        var match = speciesList.find(function (species) {
+                            return species.commonName.name === row.commonName;
+                        })
 
-                updated = updated || commonUpdated;
-            })
+                        commonUpdated = updateCommonName(row, match);
+
+                        if (!commonUpdated) {
+                            var parsedName = parseName(row.commonName)
+                            // try matching with scientific name
+                            match = speciesList.find(function (species) {
+                                return species.commonName.scientificName.trim().toLowerCase() === parsedName.scientificName.trim().toLowerCase();
+                            });
+
+                            if (match) {
+                                commonUpdated = updateCommonName(row, match);
+                            } else {
+                                // try matching with common name
+                                match = speciesList.find(function (species) {
+                                    return species.commonName.commonName.trim().toLowerCase() === parsedName.commonName.trim().toLowerCase();
+                                });
+
+                                if (match) {
+                                    commonUpdated = updateCommonName(row, match);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!commonUpdated) {
+                        print("Failed to find a match for " + row.commonName + " " + output.outputId);
+                    }
+
+                    updated = updated || commonUpdated;
+                }
+            });
 
             if (updated) {
                 var result = db.output.update({outputId: output.outputId}, {$set: {"data.taxaObservations": taxaObservations}});
@@ -533,4 +558,14 @@ function updateCommonName(row, match) {
     }
 
     return false;
+}
+
+function parseName(name) {
+    print(name);
+    var matches = name.match(/([^\(]+) \(([^\)]+)\)/)
+    if(matches && (matches.length == 3)) {
+        return {scientificName: matches[2], commonName: matches[1]}
+    } else {
+        return {scientificName: name, commonName: name}
+    }
 }
