@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.reporting.*
+import au.org.ala.web.AuthService
 import groovy.util.logging.Slf4j
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -15,8 +15,14 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 @Slf4j
 class ReportService {
 
-    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService
-
+    ActivityService activityService
+    ElasticSearchService elasticSearchService
+    ProjectService projectService
+    SiteService siteService
+    OutputService outputService
+    MetadataService metadataService
+    UserService userService
+    AuthService authService
 
     def findScoresByLabel(List labels) {
         Score.findAllByLabelInList(labels)
@@ -274,16 +280,23 @@ class ReportService {
 
         // Find all users with a recorded login to MERIT
         // Find all ACL entries matching those users.
-        int batchSize = 50
+        int batchSize = 100
         writeUserSummaryHeader(writer)
         Map batchOptions =  [max:batchSize, offset:0, sort:'userId', order:'asc']
         List users = User.findAllByLoginHub(hubId,batchOptions)
         while (users) {
             Map<String, Map> permissionsByUser = UserPermission.findAllByUserIdInList(users.collect{it.userId}).groupBy{it.userId}
+            Map<String, au.org.ala.web.UserDetails> userDetails = lookupUserDetails(users.collect{it.userId})
             Map<String, Map> userSummary = [:]
             permissionsByUser.each { String userId, List<UserPermission> permissions ->
                 User user = users.find{it.userId == userId}
-                userSummary[userId] = processUser(hubId, user, permissions)
+                Map permissionsForHub = processUser(hubId, user, permissions)
+                if (userDetails[userId]) {
+                    userSummary[userId] = [email:userDetails[userId].email, displayName:userDetails[userId].displayName] + permissionsForHub
+                }
+                else {
+                    userSummary[userId] = permissionsForHub
+                }
             }
 
             writeUsers(userSummary, writer)
@@ -295,11 +308,14 @@ class ReportService {
 
     }
 
-    private Map processUser(String hubId, User user, List<UserPermission> permissions) {
-        String userId = user.userId
-        def userDetails = userService.lookupUserDetails(userId)
 
-        Map userSummary = [userId: userDetails.userId, name: userDetails.displayName, email: userDetails.userName, lastLoginTime:user.getUserHub(hubId).lastLoginTime]
+    private Map<String, au.org.ala.web.UserDetails> lookupUserDetails(List<String> userIds) {
+        def userList = authService.getUserDetailsById(userIds)
+        userList?.users
+    }
+
+    private Map processUser(String hubId, User user, List<UserPermission> permissions) {
+        Map userSummary = [userId: user.userId, lastLoginTime:user.getUserHub(hubId).lastLoginTime]
         List hubPermissions = permissions.findAll{it.entityType == Hub.class.name}
         userSummary.hubPermissions = hubPermissions.collect{it.accessLevel.name()}
 
@@ -335,7 +351,7 @@ class ReportService {
         userSummary.values().each { user->
             boolean firstRow = true
             String role = user.hubPermissions?.join(',')?:'none'
-            String userDetails = user.userId+","+user.name+","+user.email+","+user.lastLoginTime+","+role+','
+            String userDetails = user.userId+","+user.displayName+","+user.email+","+user.lastLoginTime+","+role+','
             String blanks = ",,,,,"
 
             user.projects?.each { project ->
