@@ -102,6 +102,31 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         "h1"  | "2021-05-15T00:00:00Z" | 3
     }
 
+    def "The service can return a list of users who need to be warned their access is due to expire"(String hubId, String fromDateStr, String toDateStr, int expectedResultCount) {
+        setup:
+        insertUserLogin("u1", "h1", "2021-01-01T00:00:00Z")
+        insertUserLogin("u1", "h2", "2021-02-01T00:00:00Z")
+        insertUserLogin("u2", "h1", "2021-01-10T00:00:00Z")
+        insertUserLogin("u3", "h1", "2021-05-01T00:00:00Z")
+        insertUserLogin("u4", "h1", "2021-06-01T00:00:00Z")
+        User.withSession {session -> session.flush()}
+
+        when:
+        Date fromDate = DateUtil.parse(fromDateStr)
+        Date toDate = DateUtil.parse(toDateStr)
+        List users = service.findUsersWhoLastLoggedInToHubBetween(hubId, fromDate, toDate)
+
+        then:
+        users.size() == expectedResultCount
+
+        where:
+        hubId | fromDateStr            |  toDateStr             | expectedResultCount
+        "h1"  | "2021-01-01T00:00:00Z" | "2021-02-01T00:00:00Z" | 2
+        "h2"  | "2021-01-01T00:00:00Z" | "2021-02-01T00:00:00Z" | 0
+        "h2"  | "2021-02-01T00:00:00Z" | "2021-03-01T00:00:00Z" | 1
+        "h1"  | "2021-04-15T00:00:00Z" | "2021-05-01T00:00:00Z" | 0
+    }
+
     private void insertUserLogin(String userId, String hubId, String loginTime) {
         Date date = DateUtil.parse(loginTime)
         service.recordUserLogin(hubId, userId, date)

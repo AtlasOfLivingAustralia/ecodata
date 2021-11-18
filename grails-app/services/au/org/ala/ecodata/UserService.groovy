@@ -155,12 +155,33 @@ class UserService {
      * @return List<User>
      */
     List<User> findUsersNotLoggedInToHubSince(String hubId, Date date, int offset = 0, int max = MAX_QUERY_RESULT_SIZE) {
-        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE)]
+        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'userId']
 
         User.where {
             userHubs {
                 hubId == hubId
                 lastLoginTime < date
+            }
+        }.list(options)
+    }
+
+    /**
+     * Returns a list of Users who last logged into the specified between two specified dates.
+     * Users who have never logged into the hub will not be returned.
+     * @param hubId The hubId of the hub of interest
+     * @param fromDate The start date for finding logins
+     * @param toDate The end date for finding logins
+     * @param offset (optional, default 0) offset into query results, used for batching
+     * @param max (optional, maximum 1000) maximum number of results to return from the query
+     * @return List<User> The users who need to be sent a warning.
+     */
+    List<User> findUsersWhoLastLoggedInToHubBetween(String hubId, Date fromDate, Date toDate, int offset = 0, int max = MAX_QUERY_RESULT_SIZE) {
+        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'userId']
+        User.where {
+            userHubs {
+                hubId == hubId
+                lastLoginTime < toDate
+                lastLoginTime >= fromDate
             }
         }.list(options)
     }
