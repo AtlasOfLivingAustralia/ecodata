@@ -70,5 +70,6 @@ class IdentifierHelperSpec extends Specification {
         IdentifierHelper.getEntityIdPropertyName(Report.class.name) == 'reportId'
         IdentifierHelper.getEntityIdPropertyName(Record.class.name) == 'occurrenceID'
         IdentifierHelper.getEntityIdPropertyName(Lock.class.name) == 'id'
+        IdentifierHelper.getEntityIdPropertyName(ManagementUnit.class.name) == 'managementUnitId'
     }
 }
