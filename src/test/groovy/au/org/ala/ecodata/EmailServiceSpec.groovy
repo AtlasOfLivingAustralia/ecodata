@@ -23,11 +23,11 @@ class EmailServiceSpec extends Specification implements ServiceUnitTest<EmailSer
         Map model = [test:"test"]
 
         when:
-        service.sendTemplatedEmail(templateSubjectKey, templateBodyKey, model, ["to@test.com"])
+        service.sendTemplatedEmail('merit', templateSubjectKey, templateBodyKey, model, ["to@test.com"])
 
         then:
-        1 * settingService.getSettingTextForKey(templateSubjectKey) >> subjectTemplate
-        1 * settingService.getSettingTextForKey(templateBodyKey) >> bodyTemplate
+        1 * settingService.getScopedSettingTextForKey('merit', templateSubjectKey) >> subjectTemplate
+        1 * settingService.getScopedSettingTextForKey('merit', templateBodyKey) >> bodyTemplate
 
         1 * mailService.sendMail({it instanceof Closure})
     }

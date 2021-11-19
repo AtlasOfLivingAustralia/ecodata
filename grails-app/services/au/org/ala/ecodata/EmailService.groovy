@@ -34,23 +34,24 @@ class EmailService implements GrailsConfigurationAware {
      * Sends an email by obtaining the subject and body from the Settings collection and
      * substituting values supplied by the model.
      * The templates should use ${} to denote placeholders for substitution.
+     * @param keyPrefix The
      * @param templateSubjectKey The key used to identify the Setting containing the template for the email subject
      * @param templateBodyKey The key used to identify the Setting containing the template for the email body.
      * @param model A map used for substitution into the templates
      * @param recipients List of addresses to send the email to.
      * @param ccList optional List of addresses to copy the email to
-     * @oaram replyToAddress The address to set as the reply-to address.  If ommitted the
+     * @oaram replyToAddress The address to set as the reply-to address.  If omitted the
      */
-    void sendTemplatedEmail(String templateSubjectKey, String templateBodyKey, Map model, Collection recipients, Collection ccList = [], String replyToAddress = null, String fromAddress = null) {
-        String subject = getEmailContent(templateSubjectKey, model)
-        String body = getEmailContent(templateBodyKey, model)
+    void sendTemplatedEmail(String keyPrefix, String templateSubjectKey, String templateBodyKey, Map model, Collection recipients, Collection ccList = [], String replyToAddress = null, String fromAddress = null) {
+        String subject = getEmailContent(keyPrefix, templateSubjectKey, model)
+        String body = getEmailContent(keyPrefix, templateBodyKey, model)
 
         sendEmail(subject, body, recipients, ccList, replyToAddress, fromAddress)
     }
 
-    private String getEmailContent(String key, Map model) {
-        String templateText = settingService.getSettingTextForKey(key)
-        GStringTemplateEngine templateEngine = new GStringTemplateEngine();
+    private String getEmailContent(String keyPrefix, String key, Map model) {
+        String templateText = settingService.getScopedSettingTextForKey(keyPrefix, key)
+        GStringTemplateEngine templateEngine = new GStringTemplateEngine()
         return templateEngine.createTemplate(templateText).make(model).toString()
     }
 
