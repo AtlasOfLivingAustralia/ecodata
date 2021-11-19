@@ -21,12 +21,24 @@ class UserHub {
     /** the most recent login time to the hub */
     Date lastLoginTime
 
+    /**
+     * Records the Date the user was lest sent a warning that their access is due to expire.
+     * This is used to prevent users being sent more than one warning
+     */
+    Date inactiveAccessWarningSentDate
+
     UserHub(String hubId) {
         this.hubId = hubId
+    }
+
+    /** Returns true if the user has been sent a warning about their access being due to expire */
+    boolean sentAccessRemovalDueToInactivityWarning() {
+        inactiveAccessWarningSentDate && (!lastLoginTime || (inactiveAccessWarningSentDate > lastLoginTime))
     }
 
     static constraints = {
         hubId unique: true
         lastLoginTime nullable: true
+        inactiveAccessWarningSentDate nullable: true
     }
 }

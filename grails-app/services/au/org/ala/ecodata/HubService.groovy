@@ -113,5 +113,11 @@ class HubService {
         properties
     }
 
+    List<Hub> findHubsEligibleForAccessExpiry() {
+        Hub.createCriteria().list {
+            accessManagementOptions != null
+        }
+    }
+
 
 }

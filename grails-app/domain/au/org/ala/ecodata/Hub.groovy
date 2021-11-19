@@ -64,6 +64,7 @@ class Hub {
     /** The URL prefix to use when creating a URL a user can use to download a report */
     String downloadUrlPrefix
 
+    AccessManagementOptions accessManagementOptions
 
     static mapping = {
         hubId index: true
@@ -87,7 +88,8 @@ class Hub {
         emailFromAddress nullable: true
         emailReplyToAddress nullable: true
         downloadUrlPrefix nullable: true
+        accessManagementOptions nullable: true
     }
 
-    static embedded = ['mapLayersConfig']
+    static embedded = ['mapLayersConfig', 'accessManagementOptions']
 }

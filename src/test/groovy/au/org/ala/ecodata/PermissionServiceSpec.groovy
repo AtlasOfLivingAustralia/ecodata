@@ -318,4 +318,23 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         1 * authService.getUserDetailsById(userIds) >> []
         resp.count == 1
     }
+
+    void "The owning hub for a permission can be identified"() {
+        setup:
+        new Project(projectId:'p1', name:"Project 1", hubId:'h1').save()
+        new ManagementUnit(managementUnitid:'m1', name:"MU 1", hubId:'h1').save()
+        new Program(programId:'prg1', name:"Program 1", hubId:'h1').save()
+        new Organisation(organisationId:'o1', name:"Organisation 1", hubId:'h1').save()
+        UserPermission projectPermission = new UserPermission(entityType:Project.class.name, entityId:"p1", userId:"u1", accessLevel: AccessLevel.admin)
+        UserPermission muPermission = new UserPermission(entityType:ManagementUnit.class.name, entityId:"m1", userId:"u1", accessLevel: AccessLevel.admin)
+        UserPermission orgPermission = new UserPermission(entityType:Organisation.class.name, entityId:"o1", userId:"u1", accessLevel: AccessLevel.admin)
+        UserPermission programPermission = new UserPermission(entityType:Program.class.name, entityId:"prg1", userId:"u1", accessLevel: AccessLevel.admin)
+
+        expect:
+        service.findOwningHubId(projectPermission) == 'h1'
+        service.findOwningHubId(muPermission) == 'h1'
+        service.findOwningHubId(orgPermission) == 'h1'
+        service.findOwningHubId(programPermission) == 'h1'
+
+    }
 }

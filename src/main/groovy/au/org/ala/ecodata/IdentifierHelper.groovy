@@ -9,6 +9,48 @@ class IdentifierHelper {
     static String getEntityIdentifier(Object obj) {
         getEntityIdentifier(obj, obj.getClass().name)
     }
+    static String getEntityIdPropertyName(String className) {
+        String propertyName
+        switch (className) {
+            case Project.class.name:
+                propertyName = 'projectId'
+                break
+            case Site.class.name:
+                propertyName = 'siteId'
+                break
+            case Activity.class.name:
+                propertyName = 'activityId'
+                break
+            case Output.class.name:
+                propertyName = 'outputId'
+                break
+            case Document.class.name:
+                propertyName = 'documentId'
+                break
+            case Score.class.name:
+                propertyName = 'scoreId'
+                break
+            case UserPermission.class.name:
+                propertyName = 'id'
+                break
+            case Program.class.name:
+                propertyName = 'programId'
+                break
+            case Organisation.class.name:
+                propertyName = 'organisationId'
+                break
+            case Report.class.name:
+                propertyName = 'reportId'
+                break
+            case Record.class.name:
+                propertyName = 'occurrenceID'
+                break
+            case Lock.class.name:
+                propertyName = 'id'
+                break
+        }
+        propertyName
+    }
 
     static String getEntityIdentifier(Object obj, String className) {
         String entityId

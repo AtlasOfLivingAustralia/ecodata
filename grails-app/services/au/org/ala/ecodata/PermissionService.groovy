@@ -664,6 +664,25 @@ class PermissionService {
         userDetailsSummary
     }
 
+    /**
+     * This method finds the hubId of the entify specified in the supplied UserPermission.
+     * Currently only Project, Organisation, ManagementUnit, Program are supported.
+     */
+    String findOwningHubId(UserPermission permission) {
+        if (!permission.entityType in [Project.class.name, Organisation.class.name, ManagementUnit.class.name, Program.class.name] ) {
+            throw new IllegalArgumentException("Permissions with entityType = $permission.entityType are not supported")
+        }
+        Class entity = Class.forName(permission.entityType)
+        String propertyName = IdentifierHelper.getEntityIdPropertyName(permission.entityType)
+        String hubId = new DetachedCriteria(entity).get {
+            eq(propertyName, permission.entityId)
+            projections {
+                property('hubId')
+            }
+        }
+        hubId
+    }
+
     def saveUserDetails() {
         def map = [ROLE_FC_ADMIN: "admin", ROLE_FC_OFFICER: "caseManager", ROLE_FC_READ_ONLY: "readOnly"]
         String urlPath = "merit"
