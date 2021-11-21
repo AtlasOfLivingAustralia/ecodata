@@ -247,6 +247,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String hubId = '1'
         new Hub(hubId:hubId, urlPath:'test').save()
         String userId = '1'
+        request.JSON = [entity:Hub.name, entityId: hubId, role: AccessLevel.admin.name(), userId: userId]
 
         when:
         params.userId = userId
@@ -255,7 +256,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         controller.addUserWithRoleToHub()
 
         then:
-        1 * permissionService.addUserAsRoleToHub(userId, AccessLevel.admin, hubId) >> [status:"ok"]
+        1 * permissionService.addUserAsRoleToHub(request.JSON) >> [status:"ok"]
         response.status == HttpStatus.SC_OK
     }
 
@@ -285,16 +286,14 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String userId = '1'
         new Hub(hubId:hubId, urlPath:'test').save()
 
+        request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
         when:
-        params.userId = userId
-        params.hubId = hubId
-        params.role = role
         controller.addUserWithRoleToHub()
 
         then:
         if (result == HttpStatus.SC_OK) {
-            1 * permissionService.addUserAsRoleToHub(userId, AccessLevel.valueOf(role), hubId) >> [status: "ok"]
+            1 * permissionService.addUserAsRoleToHub(request.JSON) >> [status: "ok"]
         }
         response.status == result
 
@@ -314,6 +313,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String hubId = '1'
         new Hub(hubId:hubId, urlPath:'test', skin:'configurableHubTemplate1').save()
         String userId = '1'
+        request.JSON = [entity:Hub.name, entityId: hubId, role: AccessLevel.admin.name(), userId: userId]
 
 
         when:
@@ -323,7 +323,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         controller.removeUserWithRoleFromHub()
 
         then:
-        1 * permissionService.removeUserRoleFromHub(userId, AccessLevel.admin, hubId) >> [status:"ok"]
+        1 * permissionService.removeUserRoleFromHub(request.JSON) >> [status:"ok"]
         println response.text
         response.status == HttpStatus.SC_OK
     }
@@ -353,7 +353,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String hubId = '1'
         String userId = '1'
         new Hub(hubId:hubId, urlPath:'test').save()
-
+        request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
         when:
         params.userId = userId
@@ -363,7 +363,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
         then:
         if (result == HttpStatus.SC_OK) {
-            1 * permissionService.removeUserRoleFromHub(userId, AccessLevel.valueOf(role), hubId) >> [status: "ok"]
+            1 * permissionService.removeUserRoleFromHub(request.JSON) >> [status: "ok"]
         }
         response.status == result
 

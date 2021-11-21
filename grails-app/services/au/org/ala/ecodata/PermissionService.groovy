@@ -4,6 +4,7 @@ import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
 import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -311,6 +312,10 @@ class PermissionService {
             Map rec=[:]
             rec.userId = it.userId
             rec.role = it.accessLevel?.toString()
+            if (it.expiryDate) {
+                rec.expiryDate = it.expiryDate
+            }
+
             out.put(it.userId,rec)
 
         }
@@ -492,12 +497,12 @@ class PermissionService {
         return removeUserAsRoleToEntity(userId, accessLevel, ManagementUnit, managementUnitId)
     }
 
-    Map addUserAsRoleToHub(String userId, AccessLevel accessLevel, String hubId) {
-        return addUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
+    Map addUserAsRoleToHub(Map params) {
+        return saveUserToHubEntity(params)
     }
 
-    Map removeUserRoleFromHub(String userId, AccessLevel accessLevel, String hubId) {
-        return removeUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
+    Map removeUserRoleFromHub(Map params) {
+        return removeUserAsRoleToEntity(params.userId,AccessLevel.valueOf(params.role),Hub,params.entityId)
     }
 
     /**
@@ -708,4 +713,31 @@ class PermissionService {
             }
         }
     }
+
+    private def saveUserToHubEntity(Map params) {
+
+        UserPermission up = UserPermission.findByUserIdAndEntityIdAndEntityType(params.userId, params.entityId, Hub.name)
+        try {
+            Date expiration = new Date() // placeholder until we know what will be the value when adding new hub user
+            if (up) {
+                if (params.expiryDate) {
+                    expiration = new SimpleDateFormat("yyyy-MM-dd").parse(params.expiryDate)
+                    up.expiryDate = expiration
+                }
+                up.accessLevel = AccessLevel.valueOf(params.role) ?: up.accessLevel
+                up.save(flush: true, failOnError: true)
+            } else {
+                up = new UserPermission(userId: params.userId, entityId: params.entityId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(params.role), expiryDate:expiration)
+                up.save(flush: true, failOnError: true)
+            }
+        } catch (Exception e) {
+            def msg = "Failed to save UserPermission: ${e.message}"
+            log.error msg, e
+            return [status: 'error', error: msg]
+        }
+
+        return [status:'ok', id: up.id]
+    }
+
+
 }

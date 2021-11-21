@@ -244,19 +244,24 @@ class PermissionsController {
     }
 
 
-    def addUserWithRoleToHub(String userId, String hubId, String role) {
-        Hub hub = Hub.findByHubId(hubId)
-        Closure addToHub= { String userId2, String role2, String hubId2 ->
-            permissionService.addUserAsRoleToHub(userId2, AccessLevel.valueOf(role2), hubId2)}
-        Map result = validateAndUpdatePermission(hub, hubId, role, userId, addToHub)
+    def addUserWithRoleToHub() {
+        Map params = request.JSON
+        Hub hub = Hub.findByHubId(params.entityId)
+
+        Closure addToHub= { Map obj ->
+            permissionService.addUserAsRoleToHub(obj)}
+        Map result = validateAndUpdateHubPermission(hub, params, addToHub)
+
         render status:result.status, text:result.text
     }
 
-    def removeUserWithRoleFromHub(String userId, String hubId, String role) {
-        Hub hub = Hub.findByHubId(hubId)
-        Closure removeFromProgram = { String userId2, String role2, String hubId2 ->
-            permissionService.removeUserRoleFromHub(userId2, AccessLevel.valueOf(role2), hubId2)}
-        Map result = validateAndUpdatePermission(hub, hubId, role, userId, removeFromProgram)
+    def removeUserWithRoleFromHub() {
+        Map params = request.JSON
+        Hub hub = Hub.findByHubId(params.entityId)
+
+        Closure removeFromProgram = { Map obj ->
+            permissionService.removeUserRoleFromHub(obj)}
+        Map result = validateAndUpdateHubPermission(hub, params, removeFromProgram)
         render status:result.status, text:result.text
     }
 
@@ -1155,5 +1160,19 @@ class PermissionsController {
             Map results = permissionService.deleteUserPermissionByUserId(id, hubId)
             render results as JSON
         }
+    }
+
+    private Map validateAndUpdateHubPermission(entity, Map params, Closure serviceCall) {
+        Map result = validate(entity, params.entityId, params.role, params.userId)
+
+        if (!result) {
+            result = serviceCall(params)
+            if (result?.status == "ok") {
+                result = [status:200 , text:"success: ${result.id}"]
+            } else {
+                result = [status: 500, text: "Error removing user/role: ${result}"]
+            }
+        }
+        result
     }
 }

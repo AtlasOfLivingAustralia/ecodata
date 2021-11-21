@@ -55,12 +55,13 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         String userId = 'u1'
         String hubId = 'h1'
         AccessLevel role = AccessLevel.admin
+        Map param = [userId:userId, role: 'admin', hubId: hubId, entityId: '1']
 
         when:
-        service.addUserAsRoleToHub(userId, role, hubId)
+        service.addUserAsRoleToHub(param)
 
         then:
-        UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, AccessLevel.admin, hubId) != null
+        UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, 'admin', '1') != null
     }
 
     void "A user can only be assigned one role for a hub"() {
@@ -68,26 +69,29 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         String userId = '1'
         String hubId = '1'
         new UserPermission(userId:userId, entityId:hubId, entityType:Hub.name, accessLevel: AccessLevel.admin).save(flush:true, failOnError:true)
+        Map param = [userId:userId, role: 'admin', hubId: hubId]
 
         when:
-        service.addUserAsRoleToHub(userId, AccessLevel.editor, hubId)
+        service.addUserAsRoleToHub(param)
 
         then:
         UserPermission.findAllByUserIdAndEntityId(userId, hubId).size() == 1
-        UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, AccessLevel.editor, hubId) != null
+        UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, 'admin', hubId) != null
     }
 
     void "A user can have a role unassigned from a hub"() {
         setup:
         String userId = '1'
         String hubId = '1'
+        String role = 'admin'
         new UserPermission(userId:userId, entityId:hubId, entityType:Hub.name, accessLevel: AccessLevel.admin).save(flush:true, failOnError:true)
+        Map params = [userId:userId, role:role, hubId:hubId, entityId:hubId]
 
         when:
-        service.removeUserRoleFromHub(userId, AccessLevel.admin, hubId)
+        service.removeUserRoleFromHub(params)
 
         then:
-        UserPermission.findAllByUserIdAndEntityId(userId, hubId).size() == 0
+        UserPermission.findAllByUserIdAndEntityId(userId, '1').size() == 0
     }
 
     void "A user can be assigned a role for a program"() {
