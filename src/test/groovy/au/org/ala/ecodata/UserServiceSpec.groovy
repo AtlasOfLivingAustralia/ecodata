@@ -129,7 +129,10 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
     private void insertUserLogin(String userId, String hubId, String loginTime) {
         Date date = DateUtil.parse(loginTime)
-        service.recordUserLogin(hubId, userId, date)
+        User user = service.recordUserLogin(hubId, userId, date)
+        if (user.hasErrors()) {
+            throw new Exception(user.errors.toString())
+        }
     }
 
 }
