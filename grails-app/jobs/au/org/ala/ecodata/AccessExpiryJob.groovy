@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 
+import groovy.util.logging.Slf4j
+
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -10,6 +12,7 @@ import java.time.ZonedDateTime
  * 2) Users who will soon be subject to removal of access because of condition (1)
  * 3) Specific roles that have passed the expiry date
  */
+@Slf4j
 class AccessExpiryJob {
 
     /** Used to lookup the email template warning a user that their access will soon expire */
@@ -21,6 +24,8 @@ class AccessExpiryJob {
     /** Used ot lookup the email template informing a user that their elevated permission has expired */
     static final String PERMISSION_EXPIRED_EMAIL_KEY = 'permissionexpiry.expired.email'
 
+    private static final int BATCH_SIZE = 100
+
     PermissionService permissionService
     UserService userService
     HubService hubService
@@ -30,13 +35,23 @@ class AccessExpiryJob {
         cron name: "midnight", cronExpression: "0 0 0 * * ? *"
     }
 
+    /**
+     * Called when the cron job is fired - checks for users and UserPermissions that need to be removed due
+     * to inactivity or reaching their expiry date.
+     */
     def execute() {
         ZonedDateTime processingTime = ZonedDateTime.now(ZoneOffset.UTC)
         processInactiveUsers(processingTime)
         processExpiredPermissions(processingTime)
     }
 
+    /**
+     * Finds users who have not logged in for a Hub configurable amount of time, and either warns them
+     * their access is due to expire, or expires their access to the Hub.
+     * @param processingTime The time this job started running
+     */
     void processInactiveUsers(ZonedDateTime processingTime) {
+        log.info("AccessExpiryJob is searching for inactive users for processing")
         List<Hub> hubs = hubService.findHubsEligibleForAccessExpiry()
         for (Hub hub : hubs) {
 
@@ -47,34 +62,48 @@ class AccessExpiryJob {
             Date loginDateEligibleForWarning = Date.from(processingTime.minusMonths(month2).toInstant())
 
             processExpiredUserAccess(hub, loginDateEligibleForAccessRemoval)
-            processInactiveUserWarnings(hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning)
+            processInactiveUserWarnings(
+                    hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, Date.from(processingTime.toInstant()))
 
         }
     }
 
     private void processExpiredUserAccess(Hub hub, Date loginDateEligibleForAccessRemoval) {
-        // Expire these users
-        userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval).each {
-            permissionService.deleteUserPermissionByUserId(it.userId, hub.hubId)
-
-            sendEmail(hub, it.userId, ACCESS_EXPIRED_EMAIL_KEY)
+        int offset = 0
+        List<User> users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, BATCH_SIZE)
+        while (users) {
+            for (User user : users) {
+                log.info("Deleting all permissions for user ${user.userId} in hub ${hub.urlPath}")
+                permissionService.deleteUserPermissionByUserId(user.userId, hub.hubId)
+                sendEmail(hub, user.userId, ACCESS_EXPIRED_EMAIL_KEY)
+            }
+            offset += BATCH_SIZE
+            users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, BATCH_SIZE)
         }
+
     }
 
     private void processInactiveUserWarnings(
-            Hub hub, Date loginDateEligibleForWarning, Date loginDateEligibleForAccessRemoval) {
+            Hub hub, Date loginDateEligibleForWarning, Date loginDateEligibleForAccessRemoval, Date processingTime) {
 
-        userService.findUsersWhoLastLoggedInToHubBetween(
-                hub.hubId, loginDateEligibleForWarning, loginDateEligibleForAccessRemoval).each { User user ->
+        int offset = 0
+        List<User> users = userService.findUsersWhoLastLoggedInToHubBetween(
+                hub.hubId, loginDateEligibleForWarning, loginDateEligibleForAccessRemoval, offset, BATCH_SIZE)
+        while (users) {
+            for (User user : users) {
 
-            UserHub userHub = user.getUserHub(hub.hubId)
-            // Filter out users who have already been sent a warning
-            if (!userHub.sentAccessRemovalDueToInactivityWarning()) {
-                    Date now = new Date()
-                    emailService.sendEmail(hub, user.userId, WARNING_EMAIL_KEY)
-                    userHub.inactiveAccessWarningSentDate = now
+                UserHub userHub = user.getUserHub(hub.hubId)
+                // Filter out users who have already been sent a warning
+                if (!userHub.sentAccessRemovalDueToInactivityWarning()) {
+
+                    log.info("Sending inactivity warning to user ${user.userId} in hub ${hub.urlPath}")
+                    sendEmail(hub, user.userId, WARNING_EMAIL_KEY)
+                    userHub.inactiveAccessWarningSentDate = processingTime
                     user.save()
+                }
             }
+            offset += BATCH_SIZE
+            users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, BATCH_SIZE)
         }
     }
 
@@ -91,17 +120,23 @@ class AccessExpiryJob {
                 hub.emailFromAddress)
     }
 
+    /**
+     * Finds all UserPermissions with an expiry date that is before the supplied processing time and removes them.
+     * @param processingTime the time this job started running.
+     */
     void processExpiredPermissions(ZonedDateTime processingTime) {
 
         Date processingDate = Date.from(processingTime.toInstant())
         permissionService.findPermissionsByExpiryDate(processingDate).each {
+
+            log.info("Deleting expired permission for user ${it.userId} for entity ${it.entityType} with id ${it.entityId}")
             it.delete()
 
             // Find the hub attached to the expired permission.
             String hubId = permissionService.findOwningHubId(it)
             Hub hub = Hub.findByHubId(hubId)
 
-            emailService.sendEmail(hub, it.userId, PERMISSION_EXPIRED_EMAIL_KEY)
+            sendEmail(hub, it.userId, PERMISSION_EXPIRED_EMAIL_KEY)
         }
     }
 }
