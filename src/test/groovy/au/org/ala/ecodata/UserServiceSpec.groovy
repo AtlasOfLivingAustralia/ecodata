@@ -98,7 +98,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         hubId | queryDate              | expectedResultCount
         "h1"  | "2021-02-01T00:00:00Z" | 2
         "h2"  | "2021-02-01T00:00:00Z" | 0
-        "h2"  | "2021-02-01T00:00:01Z" | 1
+        "h2"  | "2021-02-02T00:00:00Z" | 1
         "h1"  | "2021-05-15T00:00:00Z" | 3
     }
 
