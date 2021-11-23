@@ -90,8 +90,15 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         when:
         Date date = DateUtil.parse(queryDate)
         List users = service.findUsersNotLoggedInToHubSince(hubId, date)
+        List users2 = User.findAll()
 
         then:
+        users2.size() == 4
+        users2[0].userId == "u1"
+        users2[0].userHubs.size() == 2
+        users2[0].getUserHub("h1") != null
+        users2[0].getUserHub("h2") != null
+
         users.size() == expectedResultCount
 
         where:
