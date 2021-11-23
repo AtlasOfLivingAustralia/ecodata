@@ -159,8 +159,7 @@ class UserService {
 
         User.where {
             userHubs {
-                hubId == hubId
-                lastLoginTime < date
+                hubId == hubId && lastLoginTime < date
             }
         }.list(options)
     }
@@ -179,9 +178,7 @@ class UserService {
         Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'userId']
         User.where {
             userHubs {
-                hubId == hubId
-                lastLoginTime < toDate
-                lastLoginTime >= fromDate
+                hubId == hubId && lastLoginTime < toDate && lastLoginTime >= fromDate
             }
         }.list(options)
     }
