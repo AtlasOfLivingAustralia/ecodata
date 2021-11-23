@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import spock.lang.Unroll
 
 /**
  * We are extending the mongo spec as one of the main things we need to test are complex queries on
@@ -78,6 +79,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
     }
 
+    @Unroll
     def "The service can return a list of users who haven't logged into a hub after a specified time"(String hubId, String queryDate, int expectedResultCount) {
         setup:
         insertUserLogin("u1", "h1", "2021-01-01T00:00:00Z")
@@ -109,6 +111,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         "h1"  | "2021-05-15T00:00:00Z" | 3
     }
 
+    @Unroll
     def "The service can return a list of users who need to be warned their access is due to expire"(String hubId, String fromDateStr, String toDateStr, int expectedResultCount) {
         setup:
         insertUserLogin("u1", "h1", "2021-01-01T00:00:00Z")
