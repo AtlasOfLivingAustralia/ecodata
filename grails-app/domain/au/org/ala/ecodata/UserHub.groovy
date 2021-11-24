@@ -27,6 +27,12 @@ class UserHub {
      */
     Date inactiveAccessWarningSentDate
 
+    /**
+     * Records the Date the user had their access removed due to inactivity.
+     * This is used to prevent this user being processed in future jobs.
+     */
+    Date accessExpiredDate
+
     UserHub(String hubId) {
         this.hubId = hubId
     }
@@ -36,9 +42,15 @@ class UserHub {
         inactiveAccessWarningSentDate && (!lastLoginTime || (inactiveAccessWarningSentDate > lastLoginTime))
     }
 
+    /** Returns true if the user has had their access expired */
+    boolean accessExpired() {
+        accessExpiredDate && (!lastLoginTime || (accessExpiredDate > lastLoginTime))
+    }
+
     static constraints = {
         hubId unique: true
         lastLoginTime nullable: true
         inactiveAccessWarningSentDate nullable: true
+        accessExpiredDate nullable: true
     }
 }

@@ -2,9 +2,8 @@ package au.org.ala.ecodata.job
 
 import au.org.ala.ecodata.*
 import grails.test.mongodb.MongoSpec
-import grails.testing.gorm.DataTest
+import org.apache.http.HttpStatus
 import org.grails.testing.GrailsUnitTest
-import spock.lang.Specification
 
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -46,7 +45,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
     def "The access expiry job will remove all access for users who have not logged in for a specified amount of time"() {
         setup:
         ZonedDateTime processTime = ZonedDateTime.parse("2021-01-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
-        User user = new User(userId:'u1')
+        User user = new User(userId:'u1', userHubs: [new UserHub(hubId:merit.hubId)])
 
         when:
         job.processInactiveUsers(processTime)
@@ -56,7 +55,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 100) >> [user]
         1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 100) >> []
 
-        1 * permissionService.deleteUserPermissionByUserId(user.userId, merit.hubId)
+        1 * permissionService.deleteUserPermissionByUserId(user.userId, merit.hubId) >> [status: HttpStatus.SC_OK]
         1 * userService.lookupUserDetails(user.userId) >> [email:'test@test.com']
         1 * emailService.sendTemplatedEmail(
                 'merit',
@@ -67,6 +66,8 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
                 [],
                 merit.emailReplyToAddress,
                 merit.emailFromAddress)
+        user.getUserHub(merit.hubId).accessExpiredDate == Date.from(processTime.toInstant())
+        user.getUserHub(merit.hubId).accessExpired()
     }
 
     def "The access expiry job will send warning emails to users who have not logged in for a specified amount of time"() {
@@ -96,7 +97,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
                 merit.emailReplyToAddress,
                 merit.emailFromAddress)
         user.getUserHub(merit.hubId).inactiveAccessWarningSentDate == Date.from(processTime.toInstant())
-
+        user.getUserHub(merit.hubId).sentAccessRemovalDueToInactivityWarning()
     }
 
     def "The access expiry job will expire UserPermission entries that have passed their expiry date"() {

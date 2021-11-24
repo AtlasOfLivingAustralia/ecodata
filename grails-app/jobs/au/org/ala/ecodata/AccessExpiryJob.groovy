@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 
 import groovy.util.logging.Slf4j
+import org.apache.http.HttpStatus
 
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -61,21 +62,29 @@ class AccessExpiryJob {
             int month2 = hub.accessManagementOptions.warnUsersAfterThisNumberOfMonthsInactive
             Date loginDateEligibleForWarning = Date.from(processingTime.minusMonths(month2).toInstant())
 
-            processExpiredUserAccess(hub, loginDateEligibleForAccessRemoval)
+            Date processingTimeAsDate = Date.from(processingTime.toInstant())
+            processExpiredUserAccess(hub, loginDateEligibleForAccessRemoval, processingTimeAsDate)
             processInactiveUserWarnings(
-                    hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, Date.from(processingTime.toInstant()))
+                    hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, processingTimeAsDate)
 
         }
     }
 
-    private void processExpiredUserAccess(Hub hub, Date loginDateEligibleForAccessRemoval) {
+    private void processExpiredUserAccess(Hub hub, Date loginDateEligibleForAccessRemoval, Date processingTime) {
         int offset = 0
         List<User> users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, BATCH_SIZE)
         while (users) {
             for (User user : users) {
-                log.info("Deleting all permissions for user ${user.userId} in hub ${hub.urlPath}")
-                permissionService.deleteUserPermissionByUserId(user.userId, hub.hubId)
-                sendEmail(hub, user.userId, ACCESS_EXPIRED_EMAIL_KEY)
+                UserHub userHub = user.getUserHub(hub.hubId)
+                if (!userHub.accessExpired()) {
+                    log.info("Deleting all permissions for user ${user.userId} in hub ${hub.urlPath}")
+                    Map result = permissionService.deleteUserPermissionByUserId(user.userId, hub.hubId)
+                    userHub.accessExpiredDate = processingTime
+                    user.save()
+                    if (result.status == HttpStatus.SC_OK) {
+                        sendEmail(hub, user.userId, ACCESS_EXPIRED_EMAIL_KEY)
+                    }
+                }
             }
             offset += BATCH_SIZE
             users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, BATCH_SIZE)
