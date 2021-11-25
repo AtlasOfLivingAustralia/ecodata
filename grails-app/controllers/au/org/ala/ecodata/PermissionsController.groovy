@@ -1175,4 +1175,24 @@ class PermissionsController {
         }
         result
     }
+
+    /**
+     * Get the list of merit projects who the user have a role
+     */
+    def getMeritProjectsForUserId() {
+        String userId = params.id
+        if (userId) {
+            List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
+            List out = []
+            up.each {
+                Map t = [:]
+                t.project = projectService.getMeritProjectsForUserId(it.entityId, ProjectService.FLAT)
+                t.accessLevel = it.accessLevel
+                if (t.project) out.add t
+            }
+            render out as JSON
+        } else {
+            render status: 400, text: "Required params not provided: userId"
+        }
+    }
 }

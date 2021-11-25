@@ -2502,4 +2502,29 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         response.status == HttpStatus.SC_NOT_FOUND
         response.errorMessage == 'Hub not found.'
     }
+
+    void "get merit projects of the given userId" () {
+        setup:
+        String userId = '1'
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'4', entityType:Project.name, status: Status.DELETED).save()
+
+        when:
+        params.id = userId
+        controller.getMeritProjectsForUserId()
+        def result = response.getJson()
+
+        then:
+        0 * projectService.getMeritProjectsForUserId('1', ProjectService.FLAT)
+        1 * projectService.getMeritProjectsForUserId('2', ProjectService.FLAT) >> [projectId:'2', name:'test']
+        0 * projectService.getMeritProjectsForUserId('3', ProjectService.FLAT)
+        0 * projectService.getMeritProjectsForUserId('4', ProjectService.FLAT)
+
+        response.status == HttpStatus.SC_OK
+        result.size() == 1
+        result[0].accessLevel.name == 'admin'
+        result[0].project.projectId == '2'
+    }
 }

@@ -950,4 +950,17 @@ class ProjectService {
         List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
         meriApprovalHistory.max{it.approvalDate}
     }
+
+
+    /**
+     * Get the list of merit projects
+     * @param id
+     * @param levelOfDetail
+     * @param isMerit
+     * @return
+     */
+    def getMeritProjectsForUserId(String id, levelOfDetail = [], boolean isMerit = true) {
+        def p = Project.findByProjectIdAndIsMERIT(id, isMerit)
+        return p ? toMap(p, levelOfDetail) : null
+    }
 }

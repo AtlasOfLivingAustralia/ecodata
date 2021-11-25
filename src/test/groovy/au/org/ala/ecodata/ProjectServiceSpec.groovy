@@ -538,4 +538,18 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         response.error == 'Duplicate project id for create p1'
     }
 
+    void "Get the merit projects for the given userId"() {
+        setup:
+        Project project1 = new Project(projectId: '678', name: "Project 678", isMERIT: true)
+        project1.save(flush: true, failOnError: true)
+
+        when:
+        Map response = service.getMeritProjectsForUserId('678', [service.BASIC])
+
+        then:
+        response != null
+        response.projectId == '678'
+        response.name == 'Project 678'
+    }
+
 }

@@ -721,9 +721,12 @@ class PermissionService {
             Date expiration = new Date() // placeholder until we know what will be the value when adding new hub user
             if (up) {
                 if (params.expiryDate) {
-                    expiration = new SimpleDateFormat("yyyy-MM-dd").parse(params.expiryDate)
+                    expiration = new SimpleDateFormat("dd-MM-yyyy").parse(params.expiryDate)
                     up.expiryDate = expiration
+                } else {
+                    up.expiryDate = null
                 }
+
                 up.accessLevel = AccessLevel.valueOf(params.role) ?: up.accessLevel
                 up.save(flush: true, failOnError: true)
             } else {
