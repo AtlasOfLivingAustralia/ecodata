@@ -304,7 +304,7 @@ self.calculateEDLSpeciesRecruitment  = function(){
 var Output_BioConditionConsolidated_treeSpeciesRichnessRow = function (data, dataModel, context, config) {
     var self = this;
     ecodata.forms.NestedModel.apply(self, [data, dataModel, context, config]);
-    context = _.extend(context, {parent:self});            var speciesNameTreeConfig = _.extend(config, {printable:'', dataFieldName:'speciesNameTree', output: 'BioCondition Site Method', surveyName: '' });
+    context = _.extend(context, {parent:self});            var speciesNameTreeConfig = _.extend(config, {printable:'', dataFieldName:'speciesNameTree', output: 'BioCondition Lite Methodology', surveyName: '' });
     self.speciesNameTree = new SpeciesViewModel({}, speciesNameTreeConfig);
     self.loadData = function(data) {
         self['speciesNameTree'].loadData(ecodata.forms.orDefault(data['speciesNameTree'], {}));

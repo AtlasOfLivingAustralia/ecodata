@@ -176,16 +176,6 @@ tasks.withType(GroovyCompile) {
     }
 }
 
-
-tasks.withType(Test) {
-
-    testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat "full"
-    }
-}
-
-
 assets {
     minifyJs = true
     minifyCss = true
