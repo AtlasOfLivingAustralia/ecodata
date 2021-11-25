@@ -43,7 +43,7 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         Map result = service.findByUrlPath(path)
 
         then:
-        1 * permissionService.getMembersForHub(hub.hubId) >> userPermissions
+        1 * permissionService.getMembersForHub(hub.hubId, false) >> userPermissions
         result.urlPath == path
         result.hubId == hub.hubId
         result.userPermissions == userPermissions

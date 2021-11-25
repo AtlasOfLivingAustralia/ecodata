@@ -16,6 +16,7 @@ class PermissionsController {
     PermissionService permissionService
     ProjectService projectService
     OrganisationService organisationService
+    HubService hubService
 
     static allowedMethods = [deleteUserPermission:"POST"]
     def index() {
@@ -243,19 +244,24 @@ class PermissionsController {
     }
 
 
-    def addUserWithRoleToHub(String userId, String hubId, String role) {
-        Hub hub = Hub.findByHubId(hubId)
-        Closure addToHub= { String userId2, String role2, String hubId2 ->
-            permissionService.addUserAsRoleToHub(userId2, AccessLevel.valueOf(role2), hubId2)}
-        Map result = validateAndUpdatePermission(hub, hubId, role, userId, addToHub)
+    def addUserWithRoleToHub() {
+        Map params = request.JSON
+        Hub hub = Hub.findByHubId(params.entityId)
+
+        Closure addToHub= { Map obj ->
+            permissionService.addUserAsRoleToHub(obj)}
+        Map result = validateAndUpdateHubPermission(hub, params, addToHub)
+
         render status:result.status, text:result.text
     }
 
-    def removeUserWithRoleFromHub(String userId, String hubId, String role) {
-        Hub hub = Hub.findByHubId(hubId)
-        Closure removeFromProgram = { String userId2, String role2, String hubId2 ->
-            permissionService.removeUserRoleFromHub(userId2, AccessLevel.valueOf(role2), hubId2)}
-        Map result = validateAndUpdatePermission(hub, hubId, role, userId, removeFromProgram)
+    def removeUserWithRoleFromHub() {
+        Map params = request.JSON
+        Hub hub = Hub.findByHubId(params.entityId)
+
+        Closure removeFromProgram = { Map obj ->
+            permissionService.removeUserRoleFromHub(obj)}
+        Map result = validateAndUpdateHubPermission(hub, params, removeFromProgram)
         render status:result.status, text:result.text
     }
 
@@ -568,6 +574,29 @@ class PermissionsController {
             }
         } else {
             response.sendError(SC_BAD_REQUEST, 'Required path not provided: projectId.')
+        }
+    }
+
+    /**
+     * Get Merit members, support pagination
+     * @return Hub members one page at a time
+     */
+    @RequireApiKey
+    def getMembersForHubPerPage() {
+        String hubId = params.hubId
+        Integer start = params.getInt('offset')?:0
+        Integer size = params.getInt('max')?:10
+
+        if (hubId){
+            Hub hub = Hub.findByHubId(hubId)
+            if (hub) {
+                Map results = permissionService.getMembersForHubPerPage(hubId,start,size)
+                render(contentType: 'application/json', text: [ data: results.data, totalNbrOfAdmins: results.totalNbrOfAdmins, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
+            } else {
+                response.sendError(SC_NOT_FOUND, 'Hub not found.')
+            }
+        } else {
+            response.sendError(SC_BAD_REQUEST, 'Required path not provided: hubId.')
         }
     }
 
@@ -1111,12 +1140,59 @@ class PermissionsController {
     }
 
     /**
-     * Admin function to delete all UserPermissions entries for the specific userId for merit user
-     * @return
+     * Admin function to delete all UserPermissions entries for the specific userId for entities
+     * owned by a specific hub.  Currently only used by MERIT.
      */
-    def deleteUserPermission(){
+    def deleteUserPermission(String id, String hubId) {
+
+        // This assigns a temporary default for the hubId parameter to retain
+        // backwards compatibility with the previous API version.
+        String defaultHubForPermissionManagement = "merit"
+        if (!hubId) {
+            hubId = hubService.findByUrlPath(defaultHubForPermissionManagement)?.hubId
+        }
+        if (!id || !hubId) {
+            Map error = [error:'The id and hubId are mandatory parameters']
+            response.setStatus(org.apache.http.HttpStatus.SC_BAD_REQUEST)
+            render error as JSON
+        }
+        else {
+            Map results = permissionService.deleteUserPermissionByUserId(id, hubId)
+            render results as JSON
+        }
+    }
+
+    private Map validateAndUpdateHubPermission(entity, Map params, Closure serviceCall) {
+        Map result = validate(entity, params.entityId, params.role, params.userId)
+
+        if (!result) {
+            result = serviceCall(params)
+            if (result?.status == "ok") {
+                result = [status:200 , text:"success: ${result.id}"]
+            } else {
+                result = [status: 500, text: "Error removing user/role: ${result}"]
+            }
+        }
+        result
+    }
+
+    /**
+     * Get the list of merit projects who the user have a role
+     */
+    def getMeritProjectsForUserId() {
         String userId = params.id
-        Map results = permissionService.deleteUserPermissionByUserId(userId)
-        render results as JSON
+        if (userId) {
+            List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
+            List out = []
+            up.each {
+                Map t = [:]
+                t.project = projectService.getMeritProjectsForUserId(it.entityId, ProjectService.FLAT)
+                t.accessLevel = it.accessLevel
+                if (t.project) out.add t
+            }
+            render out as JSON
+        } else {
+            render status: 400, text: "Required params not provided: userId"
+        }
     }
 }

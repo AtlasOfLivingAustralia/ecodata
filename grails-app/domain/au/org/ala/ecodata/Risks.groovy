@@ -12,7 +12,7 @@ class Risks {
         dateUpdated nullable: true
     }
 
-    @BindingFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @BindingFormat("iso8601")
     Date dateUpdated // lastUpdated is not used as it is ignored by the data binding and not auto-populated for embedded objects
     String overallRisk
     List<Risk> rows

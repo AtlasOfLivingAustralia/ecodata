@@ -576,6 +576,21 @@ grails.cache.config = {
     }
 }
 
+
+security {
+    cas {
+        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
+        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
+        loginUrl = 'https://auth.ala.org.au/cas/login'
+        logoutUrl = 'https://auth.ala.org.au/cas/logout'
+        casServerName = 'https://auth.ala.org.au'
+        uriFilterPattern = ['/admin/*', '/activityForm/*']
+        authenticateOnlyIfLoggedInPattern =
+        uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
+    }
+}
+
 environments {
     development {
         grails.logging.jul.usebridge = true
@@ -638,14 +653,23 @@ environments {
         app.elasticsearch.indexAllOnStartup = true
         app.file.upload.path = "./build/uploads"
         app.file.archive.path = "./build/archive"
-        String casBaseUrl = "http://localhost:8018"
-        userDetails {
-            url = "${casBaseUrl}/userdetails/"
-        }
+
+        wiremock.port = 8018
+        def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
+        security.cas.casServerName="${casBaseUrl}"
+        security.cas.contextPath=""
+        security.cas.casServerUrlPrefix="${casBaseUrl}/cas"
+        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
+        security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
+
+        userDetails.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
         security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
+
+        grails.mail.host = 'localhost'
+        grails.mail.port = 3025 // com.icegreen.greenmail.util.ServerSetupTest.SMTP.port
     }
     production {
         grails.logging.jul.usebridge = false
