@@ -92,7 +92,7 @@ if (!webservice.readTimeout) {
 }
 // spatial services
 if (!spatial.baseUrl) {
-    spatial.baseUrl = "https://nectar-spatial-staging.ala.org.au"
+    spatial.baseUrl = "https://spatial-test.ala.org.au"
 }
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
