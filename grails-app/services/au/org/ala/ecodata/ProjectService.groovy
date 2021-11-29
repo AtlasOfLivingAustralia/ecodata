@@ -307,6 +307,14 @@ class ProjectService {
                 updateCollectoryLinkForProject(project, props)
             }
 
+            if (props.associatedOrgs) {
+                // Use Grails data binding here as simply assigning the property can't
+                // correctly convert the list of maps to a list of AssociatedOrg.
+                // Ideally, the whole Project entity would be mapped using standard data binding
+                // instead of the common service, but that is a bit risky for a quick fix.
+                // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
+                project.properties = [associatedOrgs:props.remove("associatedOrgs")]
+            }
             commonService.updateProperties(project, props, overrideUpdateDate)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
