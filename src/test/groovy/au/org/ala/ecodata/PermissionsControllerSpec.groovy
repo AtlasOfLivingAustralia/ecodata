@@ -253,6 +253,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.hubId = hubId
         params.role = AccessLevel.admin.name()
+        request.method = "POST"
         controller.addUserWithRoleToHub()
 
         then:
@@ -268,6 +269,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.programId = hubId
         params.role = role
+        request.method = "POST"
         controller.addUserWithRoleToHub()
 
         then:
@@ -289,6 +291,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
         when:
+        request.method = "POST"
         controller.addUserWithRoleToHub()
 
         then:
@@ -320,6 +323,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.hubId = hubId
         params.role = AccessLevel.admin.name()
+        request.method = "POST"
         controller.removeUserWithRoleFromHub()
 
         then:
@@ -336,6 +340,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.hubId = hubId
         params.role = role
+        request.method = "POST"
         controller.removeUserWithRoleFromHub()
 
         then:
@@ -359,6 +364,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.hubId = hubId
         params.role = role
+        request.method = "POST"
         controller.removeUserWithRoleFromHub()
 
         then:
@@ -2465,14 +2471,13 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
         when:
         params.hubId = hubId
+        request.method = "GET"
         controller.getMembersForHubPerPage()
-        println response.getJson()
         def result = response.getJson()
 
         then:
         1 * permissionService.getMembersForHubPerPage(hubId, 0 ,10) >> [totalNbrOfAdmins: 1, data:['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'readOnly']], count:2]
         response.status == HttpStatus.SC_OK
-        result.totalNbrOfAdmins == 1
         result.recordsTotal == 2
         result.recordsFiltered == 2
         result.data.size() == 2
