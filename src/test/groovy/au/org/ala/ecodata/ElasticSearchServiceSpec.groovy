@@ -169,6 +169,57 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 
     }
 
+    def "The service will accept T/F values when filtering on boolean fields"() {
+        when:
+        def results = service.search("*:*", [fq:"isExternal:T"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+        when:
+        results = service.search("*:*", [fq:"isExternal:true"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+        when:
+        results = service.search("*:*", [fq:"isExternal:F"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isExternal:false"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:T"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:true"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:F"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:false"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+    }
+
     /**
      * Tests that the home page facets work correctly with activity based facets (in particular, the reporting theme).
      */
@@ -194,7 +245,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
     }
 
     private Map createProject(program, subProgram) {
-        [projectId:'project'+(++projectId), associatedProgram:program, associatedSubProgram:subProgram, className:Project.class.name]
+        [projectId:'project'+(++projectId), associatedProgram:program, associatedSubProgram:subProgram, className:Project.class.name, isExternal:true, isMERIT:false]
     }
 
 
