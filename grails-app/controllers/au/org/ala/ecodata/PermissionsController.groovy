@@ -12,13 +12,15 @@ import static org.apache.http.HttpStatus.*
  *
  * @see au.org.ala.ecodata.UserPermission
  */
+@RequireApiKey
 class PermissionsController {
     PermissionService permissionService
     ProjectService projectService
     OrganisationService organisationService
     HubService hubService
 
-    static allowedMethods = [deleteUserPermission:"POST"]
+    static allowedMethods = [deleteUserPermission:"POST", addUserWithRoleToHub:"POST", removeUserWithRoleFromHub:"POST", getMembersForHubPerPage:"GET",
+                             getMeritProjectsForUserId:"GET"]
     def index() {
         render([message: "Hello"] as JSON)
     }
@@ -558,7 +560,6 @@ class PermissionsController {
      * Get project members, support pagination.
      * @return project members one page at a time
      */
-    @RequireApiKey
     def getMembersForProjectPerPage() {
         String projectId = params.projectId
         Integer start = params.getInt('offset')?:0
@@ -581,7 +582,6 @@ class PermissionsController {
      * Get Merit members, support pagination
      * @return Hub members one page at a time
      */
-    @RequireApiKey
     def getMembersForHubPerPage() {
         String hubId = params.hubId
         Integer start = params.getInt('offset')?:0
@@ -591,7 +591,7 @@ class PermissionsController {
             Hub hub = Hub.findByHubId(hubId)
             if (hub) {
                 Map results = permissionService.getMembersForHubPerPage(hubId,start,size)
-                render(contentType: 'application/json', text: [ data: results.data, totalNbrOfAdmins: results.totalNbrOfAdmins, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
+                render(contentType: 'application/json', text: [ data: results.data, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
             } else {
                 response.sendError(SC_NOT_FOUND, 'Hub not found.')
             }

@@ -295,29 +295,20 @@ class PermissionService {
      * @return Hub members one page at a time
      */
     def getMembersForHubPerPage(String hubId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.readOnly]) {
-        List admins = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevel(hubId, Project.class.name, AccessLevel.starred, AccessLevel.admin)
-
         BuildableCriteria criteria = UserPermission.createCriteria()
-        List memebers = criteria.list(max:max, offset:offset) {
+        List members = criteria.list(max:max, offset:offset) {
             eq("entityId", hubId)
             eq("entityType", Hub.class.name)
             ne("accessLevel", AccessLevel.starred)
             inList("accessLevel", roles)
+            order("accessLevel", "asc")
         }
 
         Map out = [:]
         List userIds = []
-        memebers.each{
+        members.each {
             userIds.add(it.userId)
-            Map rec=[:]
-            rec.userId = it.userId
-            rec.role = it.accessLevel?.toString()
-            if (it.expiryDate) {
-                rec.expiryDate = it.expiryDate
-            }
-
-            out.put(it.userId,rec)
-
+            out.put(it.userId,toMap(it,false))
         }
 
         def userList = authService.getUserDetailsById(userIds)
@@ -332,7 +323,9 @@ class PermissionService {
                 }
             }
         }
-        [totalNbrOfAdmins: admins.size(), data:out.values(), count:memebers.totalCount]
+
+        [data:out.values(), count:members.totalCount]
+
     }
 
     /**
@@ -367,6 +360,9 @@ class PermissionService {
         Map mapped = [:]
         mapped.role = userPermission.accessLevel?.toString()
         mapped.userId = userPermission.userId
+        if (userPermission.expiryDate) {
+            mapped.expiryDate = userPermission.expiryDate
+        }
 
         if (includeUserDetails) {
             def u = userService.getUserForUserId(userPermission.userId)
@@ -714,15 +710,12 @@ class PermissionService {
         }
     }
 
-    private def saveUserToHubEntity(Map params) {
-
+    private Map saveUserToHubEntity(Map params) {
         UserPermission up = UserPermission.findByUserIdAndEntityIdAndEntityType(params.userId, params.entityId, Hub.name)
         try {
-            Date expiration = new Date() // placeholder until we know what will be the value when adding new hub user
             if (up) {
                 if (params.expiryDate) {
-                    expiration = new SimpleDateFormat("dd-MM-yyyy").parse(params.expiryDate)
-                    up.expiryDate = expiration
+                    up.expiryDate = DateUtil.parse(params.expiryDate)
                 } else {
                     up.expiryDate = null
                 }
@@ -730,6 +723,10 @@ class PermissionService {
                 up.accessLevel = AccessLevel.valueOf(params.role) ?: up.accessLevel
                 up.save(flush: true, failOnError: true)
             } else {
+                Calendar cal = Calendar.getInstance()
+                cal.add(Calendar.MONTH, 6)
+                Date expiration = cal.getTime()
+
                 up = new UserPermission(userId: params.userId, entityId: params.entityId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(params.role), expiryDate:expiration)
                 up.save(flush: true, failOnError: true)
             }
