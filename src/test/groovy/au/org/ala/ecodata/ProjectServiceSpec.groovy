@@ -225,6 +225,55 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 //        }
     }
 
+    def "The project supports an associatedOrgs embedded mapping when updating the project"() {
+        setup:
+        String projectId = 'p1'
+        Project project = new Project(projectId:projectId, name:"Project", externalId:'e1')
+
+        when:
+        Map result
+        project.save(flush:true, failOnError: true)
+        result = service.update([associatedOrgs:[[organisationId:'o1', name:"Test name", logo:"test logo", url:"test url"]]], projectId, false)
+
+        then:
+        result == [status:"ok"]
+
+        when:
+        Project project2 = Project.findByProjectId(projectId)
+
+        then:
+        project2.name == "Project"
+        project2.externalId == "e1"
+        project2.associatedOrgs[0].organisationId == "o1"
+        project2.associatedOrgs[0].name == "Test name"
+        project2.associatedOrgs[0].logo == "test logo"
+        project2.associatedOrgs[0].url == "test url"
+
+    }
+
+    def "The project supports an associatedOrgs embedded mapping when creating a project"() {
+        setup:
+        Map props = [name:"Project", externalId:'e1', associatedOrgs:[[organisationId:'o1', name:"Test name", logo:"test logo", url:"test url"]]]
+
+        when:
+        Map result = service.create(props)
+
+        then:
+        result.status == "ok"
+
+        when:
+        Project project2 = Project.findByProjectId(result.projectId)
+
+        then:
+        project2.name == "Project"
+        project2.externalId == "e1"
+        project2.associatedOrgs[0].organisationId == "o1"
+        project2.associatedOrgs[0].name == "Test name"
+        project2.associatedOrgs[0].logo == "test logo"
+        project2.associatedOrgs[0].url == "test url"
+
+    }
+
     private Map buildRisksData() {
         List risks = [["consequence" : "Moderate",
                        "likelihood" : "Likely",

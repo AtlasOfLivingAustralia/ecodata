@@ -113,6 +113,12 @@ class ElasticSearchService {
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
     /**
+     * List of indexed fields we apply a compatibility layer to so we accept "T" and "F" as terms when filtering on these fields.
+     * This is required due to a change in the way elasticsearch handled boolean fields.
+     */
+    private static List BOOLEAN_PROEJCT_FIELDS = ['isExternal', 'isMERIT', 'isCitizenScience', 'isSciStarter', 'alaHarvest']
+
+    /**
      * Init method to be called on service creation
      */
     def initialize() {
@@ -1936,10 +1942,33 @@ class ElasticSearchService {
         allFilters.each { String facet ->
             List tokens = parseFilter(facet)
             String value = (tokens.size() > 1) ? tokens[1] : null
+            value = applyBooleanFieldCompatibilityToTerm(tokens[0], value)
             filterMap[(tokens[0])] << value
         }
         filterMap
     }
+
+    /**
+     * Elasticsearch used to accept T/F when querying boolean fields but now only accepts true/false.
+     * This method checks if a boolean field is being filtered on and if so, converts T/F to true/false,
+     * otherwise the value is unchanged.
+     * @param fieldName the name of the field to filter on.
+     * @param value the term being filtered on.
+     * @return the term to filter on, possibly modfied.
+     */
+    private String applyBooleanFieldCompatibilityToTerm(String fieldName, String value) {
+        String compatibleValue = value
+        if (fieldName in BOOLEAN_PROEJCT_FIELDS) {
+            if (value == "T") {
+                compatibleValue = "true"
+            }
+            else if (value == "F") {
+                compatibleValue = "false"
+            }
+        }
+        compatibleValue
+    }
+
 
     /**
      * Delete a doc given its ID
