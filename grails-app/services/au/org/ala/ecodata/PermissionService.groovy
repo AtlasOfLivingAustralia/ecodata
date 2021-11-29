@@ -288,10 +288,10 @@ class PermissionService {
 
     /**
      * Return Hub members, support pagination
-     * @param hubId
-     * @param offset
-     * @param max
-     * @param roles
+     * @param hubId The hubId of the Hub that was logged into
+     * @param offset Page starting position
+     * @param max Page size
+     * @param roles List of Hub roles that will be included in the criteria
      * @return Hub members one page at a time
      */
     def getMembersForHubPerPage(String hubId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.readOnly]) {
