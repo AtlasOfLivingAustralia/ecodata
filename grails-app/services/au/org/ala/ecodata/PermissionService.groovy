@@ -723,9 +723,10 @@ class PermissionService {
                 up.accessLevel = AccessLevel.valueOf(params.role) ?: up.accessLevel
                 up.save(flush: true, failOnError: true)
             } else {
-                Calendar cal = Calendar.getInstance()
-                cal.add(Calendar.MONTH, 6)
-                Date expiration = cal.getTime()
+                Date expiration = null
+                if (params.expiryDate) {
+                    expiration = DateUtil.parse(params.expiryDate)
+                }
 
                 up = new UserPermission(userId: params.userId, entityId: params.entityId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(params.role), expiryDate:expiration)
                 up.save(flush: true, failOnError: true)
