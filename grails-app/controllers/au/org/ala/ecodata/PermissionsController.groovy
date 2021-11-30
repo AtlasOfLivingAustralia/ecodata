@@ -12,7 +12,6 @@ import static org.apache.http.HttpStatus.*
  *
  * @see au.org.ala.ecodata.UserPermission
  */
-@RequireApiKey
 class PermissionsController {
     PermissionService permissionService
     ProjectService projectService
@@ -560,6 +559,7 @@ class PermissionsController {
      * Get project members, support pagination.
      * @return project members one page at a time
      */
+    @RequireApiKey
     def getMembersForProjectPerPage() {
         String projectId = params.projectId
         Integer start = params.getInt('offset')?:0
@@ -582,6 +582,7 @@ class PermissionsController {
      * Get Merit members, support pagination
      * @return Hub members one page at a time
      */
+    @RequireApiKey
     def getMembersForHubPerPage() {
         String hubId = params.hubId
         Integer start = params.getInt('offset')?:0
