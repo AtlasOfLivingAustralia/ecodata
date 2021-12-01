@@ -106,6 +106,9 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         FlushRequest request = new FlushRequest(INDEX_NAME)
         service.client.indices().flush(request, RequestOptions.DEFAULT)
 
+        request = new FlushRequest(ElasticIndex.HOMEPAGE_INDEX)
+        service.client.indices().flush(request, RequestOptions.DEFAULT)
+
         waitForIndexingToComplete()
     }
 
