@@ -74,6 +74,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         def project3 = createProject(PROGRAM_2, SUB_PROGRAM_3)
         [project1, project2, project3].each {
             service.indexDoc(it, INDEX_NAME)
+            service.indexDoc(it, ElasticIndex.HOMEPAGE_INDEX)
         }
 
         def site1 = createSite("NSW", "NRM1")
@@ -220,11 +221,18 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 
     }
 
-    /**
-     * Tests that the home page facets work correctly with activity based facets (in particular, the reporting theme).
-     */
-    public void testReportingThemeHomepageSearch() {
+    def "The query will search fields other than name, description and organisation name (which are boosted fields)"() {
+        when: "We search on a theme in the default index"
+        def results = service.search(THEME1, [:], INDEX_NAME)
 
+        then:
+        results.hits.totalHits.value > 0
+
+        when: "We search on a theme in the homepage index"
+        results = service.search(PROGRAM_1, [:], ElasticIndex.HOMEPAGE_INDEX)
+
+        then:
+        results.hits.totalHits.value > 0
     }
 
     /**
