@@ -379,7 +379,8 @@ self.calculateCwdScore = function() {
         var bmv10 = (benchmarkValue * 10) / 100;
         var bmv50 = (benchmarkValue * 50) / 100;
         var bmv200 = (benchmarkValue * 200) / 100;
-        self.data.cwdScore(self.getTable10Score(totalCwdLength, bmv10, bmv50, bmv200));
+        //The total measured value should be multiplied by 10 for comparison with the benchmark
+        self.data.cwdScore(self.getTable10Score(totalCwdLength * 10, bmv10, bmv50, bmv200));
     }
 
 };
