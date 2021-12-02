@@ -150,6 +150,47 @@
         "nameSort": {
           "type" : "keyword", "normalizer" : "lowercase"
         },
+        "description": {
+          "type": "text"
+        },
+        "aim": {
+          "type": "text"
+        },
+        "getInvolved": {
+          "type": "text"
+        },
+        "newsAndEvents": {
+          "type": "text"
+        },
+        "projectStories": {
+          "type": "text"
+        },
+        "task": {
+          "type": "text"
+        },
+        "citation": {
+          "type": "text"
+        },
+        "qualityControlDescription": {
+          "type": "text"
+        },
+        "keywords":{
+          "type":"text"
+        },
+        "gear":{
+          "type":"text"
+        },
+        "methodStepDescription": {
+          "type":"text"
+        },
+        "links": {
+          "enabled": false,
+          "type": "object"
+        },
+        "managerEmail": {
+          "type": "text",
+          "index": "false"
+        },
         "extent":{
           "properties": {
             "geometry": {
@@ -185,6 +226,16 @@
             "name": {
               "type" : "text",
               "copy_to" : "siteNameFacet"
+            },
+            "description": {
+              "type": "text"
+            },
+            "notes": {
+              "type": "text"
+            },
+            "features": {
+              "type": "object",
+              "enabled": false
             }
           }
         },
@@ -388,6 +439,9 @@
             "mainTheme": {
               "type":"text",
               "copy_to": "mainThemeFacet"
+            },
+            "description": {
+              "type": "text"
             }
           }
         },
@@ -418,6 +472,19 @@
                         "assets": {
                           "type":"keyword",
                           "copy_to":"meriPlanAssetFacet"
+                        },
+                        "description": {
+                          "type": "text"
+                        }
+                      }
+                    },
+                    "rows" : {
+                      "properties": {
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data1": {
+                          "type": "text"
                         }
                       }
                     }
@@ -430,6 +497,12 @@
                         "data3": {
                           "type":"text",
                           "copy_to": "partnerOrganisationTypeFacet"
+                        },
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data1": {
+                          "type": "text"
                         }
                       }
                     }
@@ -441,6 +514,9 @@
                       "properties": {
                         "shortLabel": {
                           "type":"keyword"
+                        },
+                        "description": {
+                          "type": "text"
                         }
                       }
                     }
@@ -454,9 +530,143 @@
                     "scheduledDate": {
                       "type": "date",
                       "ignore_malformed": true
+                    },
+                    "description": {
+                      "type": "text"
+                    },
+                    "name": {
+                      "type": "text"
                     }
                   }
 
+                },
+                "keq": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data1": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "priorities": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "data1": {
+                          "type": "text"
+                        },
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data3": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "implementation": {
+                  "properties": {
+                    "description": {
+                      "type": "text"
+                    }
+                  }
+                },
+                "relatedProjects": {
+                  "type": "text"
+                },
+                "consultation": {
+                  "type": "text"
+                },
+                "adaptiveManagement": {
+                  "type": "text"
+                },
+                "description": {
+                  "index": false,
+                  "type": "text"
+                },
+                "projectEvaluationApproach": {
+                  "type": "text"
+                },
+                "threats": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "threat": {
+                          "type": "text"
+                        },
+                        "intervention": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "outcomes": {
+                  "properties": {
+                    "shortTermOutcomes": {
+                      "properties": {
+                        "description": {
+                          "type": "text"
+                        }
+                      }
+                    },
+                    "midTermOutcomes": {
+                      "properties": {
+                        "description": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "baseline": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "method": {
+                          "type": "text"
+                        },
+                        "baseline": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "rationale": {
+                  "type": "text"
+                },
+                "communityEngagement": {
+                  "type": "text"
+                },
+                "outcomeProgress": {
+                  "properties": {
+                    "progress": {
+                      "type": "text"
+                    }
+                  }
+                }
+
+              }
+            }
+          }
+        },
+        "risks": {
+          "properties": {
+            "rows": {
+              "properties": {
+                "currentControl":{
+                  "type": "text"
+                },
+                "description": {
+                  "type": "text"
                 }
               }
             }
