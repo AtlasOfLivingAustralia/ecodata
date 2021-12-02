@@ -16,12 +16,12 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         service.commonService = commonService
         commonService.toBareMap(_) >> {args -> [urlPath:args[0].urlPath, hubId:args[0].hubId, status:args[0].status]}
 
-        Hub.findByUrlPath(hub.urlPath)?.delete(flush:true)
+        Hub.findAll().each{it.delete(flush:true)}
         hub.save(failOnError:true, flush:true)
     }
 
     void tearDown() {
-        hub.delete(failOnError:true)
+        Hub.findAll().each{it.delete(flush:true)}
     }
 
     void "hubs can be retrieved by their URL path"() {
@@ -47,6 +47,14 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         result.urlPath == path
         result.hubId == hub.hubId
         result.userPermissions == userPermissions
+    }
+
+    void "Hubs with configuration related to automatic access expiry can be found"() {
+        setup:
+        new Hub(urlPath:"test1", hubId:"hub1", accessManagementOptions: [expireUsersAfterThisNumberOfMonthsInactive:24, warnUsersAfterThisNumberOfMonthsInactive:23]).save(flush:true, deleteOnerror:true)
+
+        expect:
+        service.findHubsEligibleForAccessExpiry().size() == 1
     }
 
 }

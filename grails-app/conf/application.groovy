@@ -670,6 +670,9 @@ environments {
 
         grails.mail.host = 'localhost'
         grails.mail.port = 3025 // com.icegreen.greenmail.util.ServerSetupTest.SMTP.port
+        // Schedule the audit thread frequently during functional tests to get less indexing errors because
+        // the data was cleaned up before the audit ran
+        audit.thread.schedule.interval = 500l;
     }
     production {
         grails.logging.jul.usebridge = false

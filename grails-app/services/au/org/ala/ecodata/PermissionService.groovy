@@ -666,11 +666,11 @@ class PermissionService {
     }
 
     /**
-     * This method finds the hubId of the entify specified in the supplied UserPermission.
+     * This method finds the hubId of the entity specified in the supplied UserPermission.
      * Currently only Project, Organisation, ManagementUnit, Program are supported.
      */
     String findOwningHubId(UserPermission permission) {
-        if (!permission.entityType in [Project.class.name, Organisation.class.name, ManagementUnit.class.name, Program.class.name] ) {
+        if (!(permission.entityType in [Project.class.name, Organisation.class.name, ManagementUnit.class.name, Program.class.name, Hub.class.name])) {
             throw new IllegalArgumentException("Permissions with entityType = $permission.entityType are not supported")
         }
         Class entity = Class.forName(permission.entityType)

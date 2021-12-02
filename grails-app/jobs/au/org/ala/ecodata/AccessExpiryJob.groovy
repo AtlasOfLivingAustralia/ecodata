@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-
+import grails.util.Holders
 import groovy.util.logging.Slf4j
 import org.apache.http.HttpStatus
 
@@ -33,7 +33,8 @@ class AccessExpiryJob {
     EmailService emailService
 
     static triggers = {
-        cron name: "midnight", cronExpression: "0 0 0 * * ? *"
+        String accessExpiryCron = Holders.config.getProperty("access.expiry.cron.expression", String, "0 10 3 * * ? *")
+        cron name: "accessExpiry", cronExpression: accessExpiryCron
     }
 
     /**
@@ -42,8 +43,13 @@ class AccessExpiryJob {
      */
     def execute() {
         ZonedDateTime processingTime = ZonedDateTime.now(ZoneOffset.UTC)
-        processInactiveUsers(processingTime)
-        processExpiredPermissions(processingTime)
+        User.withNewSession {
+            processInactiveUsers(processingTime)
+
+        }
+        UserPermission.withNewSession {
+            processExpiredPermissions(processingTime)
+        }
     }
 
     /**
@@ -54,19 +60,21 @@ class AccessExpiryJob {
     void processInactiveUsers(ZonedDateTime processingTime) {
         log.info("AccessExpiryJob is searching for inactive users for processing")
         List<Hub> hubs = hubService.findHubsEligibleForAccessExpiry()
+        Date processingTimeAsDate = Date.from(processingTime.toInstant())
         for (Hub hub : hubs) {
-
             // Get the configuration for the job from the hub
             int month = hub.accessManagementOptions.expireUsersAfterThisNumberOfMonthsInactive
             Date loginDateEligibleForAccessRemoval = Date.from(processingTime.minusMonths(month).toInstant())
+            if (month > 0) {
+                processExpiredUserAccess(hub, loginDateEligibleForAccessRemoval, processingTimeAsDate)
+            }
+
             int month2 = hub.accessManagementOptions.warnUsersAfterThisNumberOfMonthsInactive
             Date loginDateEligibleForWarning = Date.from(processingTime.minusMonths(month2).toInstant())
-
-            Date processingTimeAsDate = Date.from(processingTime.toInstant())
-            processExpiredUserAccess(hub, loginDateEligibleForAccessRemoval, processingTimeAsDate)
-            processInactiveUserWarnings(
-                    hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, processingTimeAsDate)
-
+            if (month2 > 0) {
+                processInactiveUserWarnings(
+                        hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, processingTimeAsDate)
+            }
         }
     }
 
@@ -136,7 +144,8 @@ class AccessExpiryJob {
     void processExpiredPermissions(ZonedDateTime processingTime) {
 
         Date processingDate = Date.from(processingTime.toInstant())
-        permissionService.findPermissionsByExpiryDate(processingDate).each {
+        List permissions = permissionService.findPermissionsByExpiryDate(processingDate)
+        permissions.each {
 
             log.info("Deleting expired permission for user ${it.userId} for entity ${it.entityType} with id ${it.entityId}")
             it.delete()

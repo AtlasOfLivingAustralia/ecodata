@@ -1,11 +1,14 @@
 package au.org.ala.ecodata
 
+import grails.util.Holders
+
 class FlushAuditMessageQueueJob {
 
     def auditService, elasticSearchService
 
     static triggers = {
-        simple repeatInterval: 5000l // execute job once in 5 seconds
+        long repeatInterval = Holders.config.getProperty("audit.thread.schedule.interval", Long, 5000l)
+        simple repeatInterval: repeatInterval // execute job once in 5 seconds
     }
 
     def execute() {

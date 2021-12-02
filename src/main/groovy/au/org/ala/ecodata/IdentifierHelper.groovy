@@ -51,6 +51,9 @@ class IdentifierHelper {
             case ManagementUnit.class.name:
                 propertyName = 'managementUnitId'
                 break
+            case Hub.class.name:
+                propertyName = 'hubId'
+                break
         }
         propertyName
     }
@@ -96,6 +99,9 @@ class IdentifierHelper {
                 break
             case ManagementUnit.class.name:
                 entityId = obj.managementUnitId
+                break
+            case Hub.class.name:
+                entityId = obj.hubId
                 break
             default:
                 // Last chance to find a 'real' entity id, rather than the internal mongo id.
