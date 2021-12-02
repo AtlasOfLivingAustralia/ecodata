@@ -301,7 +301,7 @@ class PermissionService {
             eq("entityType", Hub.class.name)
             ne("accessLevel", AccessLevel.starred)
             inList("accessLevel", roles)
-            order("accessLevel", "asc")
+//            order("accessLevel", "asc")
         }
 
         Map out = [:]
@@ -696,10 +696,12 @@ class PermissionService {
         userDetailsSummary.each { key, value ->
             value.roles.each { role ->
                 if (map[role]) {
+                    UserPermission userP = UserPermission.findByUserIdAndEntityIdAndEntityType(key, hubId, Hub.name)
                     try {
-                        UserPermission up = new UserPermission(userId: key, entityId: hubId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(map[role]))
-                        up.save(flush: true, failOnError: true)
-
+                        if (!userP) {
+                            UserPermission up = new UserPermission(userId: key, entityId: hubId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(map[role]))
+                            up.save(flush: true, failOnError: true)
+                        }
                     } catch (Exception e) {
                         def msg = "Failed to save UserPermission: ${e.message}"
                         return [status: 'error', error: msg]
