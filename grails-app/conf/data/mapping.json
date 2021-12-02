@@ -317,6 +317,14 @@
         "isDataManagementPolicyDocumented":{
           "type":"boolean"
         },
+        "mapConfiguration": {
+          "type": "object",
+          "enabled": false
+        },
+        "speciesFieldsSettings": {
+          "type": "object",
+          "enabled": false
+        },
         "projectActivity":{
           "properties":{
             "embargoUntil":{
