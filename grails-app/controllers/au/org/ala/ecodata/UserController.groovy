@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.HubLoginTime
+import au.org.ala.web.AuthService
 import grails.converters.JSON
 
 class UserController {
@@ -29,12 +30,12 @@ class UserController {
 
             } else if (ret.resp) {
                 result = ret.resp
-                String userDetailsUrl = grailsApplication.config.userDetails.url + "getUserDetails"
-                def userDetailsResult = webService.doPostWithParams(userDetailsUrl, [userName:username])
-                if (!userDetailsResult?.resp?.statusCode && userDetailsResult.resp) {
-                    result.userId = userDetailsResult.resp.userId
-                    result.firstName = userDetailsResult.resp.firstName
-                    result.lastName = userDetailsResult.resp.lastName
+
+                def userDetailsResult = userService.lookupUserDetails(username)
+                if (userDetailsResult) {
+                    result.userId = userDetailsResult.userId
+                    result.firstName = userDetailsResult.firstName
+                    result.lastName = userDetailsResult.lastName
                 }
             }
         } else {

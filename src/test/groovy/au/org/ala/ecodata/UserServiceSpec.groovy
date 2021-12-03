@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Unroll
@@ -10,11 +11,16 @@ import spock.lang.Unroll
  */
 class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> {
 
+    WebService webService = Mock(WebService)
+    AuthService authService = Mock(AuthService)
+
     def setup() {
         User.findAll().each{it.delete(flush:true)}
         Hub.findAll().each{it.delete(flush:true)}
         new Hub(hubId:'h1', urlPath:"hub1").save(flush:true, failOnError:true)
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
+        service.webService = webService
+        service.authService = authService
     }
 
     def cleanup() {
@@ -136,6 +142,60 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         //"h2"  | "2021-02-01T00:00:00Z" | "2021-03-01T00:00:00Z" | 1 currently failing in travis only
         "h1"  | "2021-04-15T00:00:00Z" | "2021-05-01T00:00:00Z" | 0
     }
+
+    def "The service uses a webservice and the auth service to authorize a mobile user"() {
+        setup:
+        String username = "user"
+        String authKey = "1234"
+
+        when:
+        String userId = service.authorize(username, authKey)
+
+        then:
+        1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
+        1 * authService.getUserForUserId(username) >> [userId:'u1']
+
+        and:
+        userId == 'u1'
+    }
+
+    def "An empty result is returned if a mobile user doesn't specify a username or authKey"() {
+        setup:
+        String username = "user"
+        String authKey = "1234"
+
+        expect:
+        !service.authorize("", authKey)
+        !service.authorize(username, "")
+        !service.authorize(null, null)
+
+    }
+    def "An empty result is returned if a mobile user cannot be authorized"() {
+        setup:
+        String username = "user"
+        String authKey = "1234"
+
+        when:
+        String userId = service.authorize(username, authKey)
+
+        then:
+        1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[statusCode:403]]
+        0 * authService._
+
+        and:
+        !userId
+
+        when:
+        userId = service.authorize(username, authKey)
+
+        then:
+        1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
+        1 * authService.getUserForUserId(username) >> null
+
+        and:
+        !userId
+    }
+
 
     private void insertUserLogin(String userId, String hubId, String loginTime) {
         Date date = DateUtil.parse(loginTime)

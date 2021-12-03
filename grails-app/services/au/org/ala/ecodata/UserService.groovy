@@ -1,14 +1,14 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import org.springframework.validation.Errors
+import grails.core.GrailsApplication
 
 class UserService {
 
     static transactional = false
     AuthService authService
     WebService webService
-    def grailsApplication
+    GrailsApplication grailsApplication
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
@@ -98,16 +98,14 @@ class UserService {
             String key = new String(authKey)
             String username = new String(userName)
 
-            def url = grailsApplication.config.authCheckKeyUrl
+            def url = grailsApplication.config.getProperty('authCheckKeyUrl')
             def params = [userName: username, authKey: key]
             def result = webService.doPostWithParams(url, params, true)
             if (!result?.resp?.statusCode && result.resp?.status == 'success') {
-                params = [userName: username]
-                url = grailsApplication.config.userDetails.url + "getUserDetails"
-                result = webService.doPostWithParams(url, params)
-                if (!result?.resp?.statusCode && result.resp) {
-                    userId = result.resp.userId
-                }
+                // We are deliberately using getUserForUserId over lookupUserDetails as we don't
+                // want the fallback if the lookup fails.
+                def userDetails = getUserForUserId(username)
+                userId = userDetails?.userId
             }
         }
 

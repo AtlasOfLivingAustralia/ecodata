@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
@@ -61,7 +62,7 @@ class UserControllerSpec extends Specification implements ControllerUnitTest<Use
 
         then:
         1 * userService.getUserKey('test', 'test') >>  [resp: [success:'ok']]
-        1 * webService.doPostWithParams(grailsApplication.config.userDetails.url + "getUserDetails", [userName:'test']) >> [resp: [statusCode: null, userId: '1', firstName: 'test', lastName: 'test']]
+        1 * userService.lookupUserDetails("test") >> [userId: '1', firstName: 'test', lastName: 'test']
         response.status == HttpStatus.SC_OK
         response.getJson().userId == '1'
         response.getJson().firstName == 'test'
