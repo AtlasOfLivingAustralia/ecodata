@@ -1,19 +1,45 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
+import au.org.ala.userdetails.UserDetailsClient
+import au.org.ala.userdetails.UserDetailsFromIdListRequest
+import au.org.ala.ws.security.AuthService
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Rfc3339DateJsonAdapter
+import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
+import okhttp3.OkHttpClient
+
+import javax.annotation.PostConstruct
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 class UserService {
 
     static transactional = false
+    UserDetailsClient userDetailsClient
     AuthService authService
     WebService webService
-    def grailsApplication
+    GrailsApplication grailsApplication
 
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
+    @PostConstruct
+    void initialiseUserDetailsClient() {
+        Integer readTimeout = 3000
+        OkHttpClient userDetailsHttpClient = new OkHttpClient.Builder().readTimeout(readTimeout, MILLISECONDS).build()
+        Moshi moshi = new Moshi.Builder().add(Date, new Rfc3339DateJsonAdapter().nullSafe()).build()
+        String baseUrl = grailsApplication.config.getProperty("userDetails.url")
+        userDetailsClient = new UserDetailsClient.Builder(userDetailsHttpClient, baseUrl).moshi(moshi).build()
+    }
+
     def getCurrentUserDisplayName() {
-        def currentUser = _currentUser.get()
-        return currentUser ? currentUser.displayName : ""
+        String displayName = authService.displayName
+        if (!displayName) {
+            def currentUser = _currentUser.get()
+            displayName = currentUser ? currentUser.displayName : ""
+        }
+
+        displayName
     }
 
     /**
@@ -48,15 +74,64 @@ class UserService {
      * @return List of {@link au.org.ala.web.CASRoles} names
      */
     def getRolesForUser(String userId = null) {
+        // TODO if !userId we need to lookup things from the context, not call userdetails
         userId = userId ?: getCurrentUserDetails().userId
-        authService.getUserForUserId(userId, true)?.roles ?: []
+
+        getUserForUserId(userId, true)?.roles ?: []
     }
 
-    synchronized def getUserForUserId(String userId) {
-        if (!userId) {
-            return null
+    @Cacheable("userDetailsCache")
+    au.org.ala.web.UserDetails getUserForUserId(String userId, boolean includeProps = true) {
+        if (!userId) return null // this would have failed anyway
+        def call = userDetailsClient.getUserDetails(userId, includeProps)
+        try {
+            def response = call.execute()
+
+            if (response.successful) {
+                return response.body()
+            } else {
+                log.warn("Failed to retrieve user details for userId: $userId, includeProps: $includeProps. Error was: ${response.message()}")
+            }
+        } catch (Exception ex) {
+            log.error("Exception caught trying get find user details for $userId.", ex)
         }
-        return authService.getUserForUserId(userId)
+        return null
+    }
+
+    /**
+     *
+     * Do a bulk lookup of user ids from the userdetails service.  Accepts a list of numeric user ids and returns a
+     * map that looks like this:
+     *
+     * <pre>
+     [
+     users:[
+     "546": UserDetails(userId: "546", userName: "user1@gmail.com", displayName: "First User"),
+     "4568": UserDetails(userId: "4568", userName: "user2@hotmail.com", displayName: "Second User"),
+     "8744": UserDetails(userId: "8744", userName: "user3@fake.edu.au", displayName: "Third User")
+     ],
+     invalidIds:[ 575 ],
+     success: true
+     ]
+     </pre>
+     *
+     * @param userIds
+     * @return
+     */
+    @Cacheable("userDetailsByIdCache")
+    def getUserDetailsById(List<String> userIds, boolean includeProps = true) {
+        def call = userDetailsClient.getUserDetailsFromIdList(new UserDetailsFromIdListRequest(userIds, includeProps))
+        try {
+            def response = call.execute()
+            if (response.successful) {
+                return response.body()
+            } else {
+                log.warn("Failed to retrieve user details. Error was: ${response.message()}")
+            }
+        } catch (Exception e) {
+            log.error("Exception caught retrieving userdetails for ${userIds}", e)
+        }
+        return null
     }
 
     /**
@@ -118,10 +193,6 @@ class UserService {
      */
     def getUserKey(String username, String password) {
         webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password], true)
-    }
-
-    def getAllUsers() {
-        return authService.getAllUserNameList()
     }
 
 }

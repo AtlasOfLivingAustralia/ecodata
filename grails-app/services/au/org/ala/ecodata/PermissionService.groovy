@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
-import au.org.ala.web.CASRoles
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -11,7 +9,6 @@ import static au.org.ala.ecodata.Status.DELETED
 class PermissionService {
 
     static transactional = false
-    AuthService authService
     UserService userService // found in ala-auth-plugin
     ProjectController projectController
 
@@ -145,7 +142,7 @@ class PermissionService {
     }
 
     def addUserAsEditorToProject(currentUserId, targetUserId, projectId) {
-        if ((isUserAdminForProject(currentUserId, projectId) || authService.userInRole("ROLE_ADMIN")) && targetUserId) {
+        if ((isUserAdminForProject(currentUserId, projectId) || userService.userInRole("ROLE_ADMIN")) && targetUserId) {
             addUserAsRoleToProject(targetUserId, AccessLevel.editor, projectId)
         }
     }
@@ -194,7 +191,7 @@ class PermissionService {
             out.put(it.userId,rec);
 
         }
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userService.getUserDetailsById(userIds)
 
         if (userList) {
             def users = userList['users']
@@ -241,7 +238,7 @@ class PermissionService {
 
         }
 
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userService.getUserDetailsById(userIds)
         if (userList) {
             def users = userList['users']
 

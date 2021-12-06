@@ -170,30 +170,51 @@ cors:
 
 ---
 
-security:
-    cas:
-        appServerName: 'http://devt.ala.org.au:8080'
-        casServerName: 'https://auth.ala.org.au'
-        casServerUrlPrefix: 'https://auth.ala.org.au/cas'
-        loginUrl: 'https://auth.ala.org.au/cas/login'
-        logoutUrl: 'https://auth.ala.org.au/cas/logout'
-        uriFilterPattern:
-            - '/admin/*'
-            - '/activityForm/*'
-        authenticateOnlyIfLoggedInPattern:
-        uriExclusionFilterPattern:
-            - '/images/.*'
-            - '/css/.*'
-            - '/js/.*'
-            - '/less/.*'
-            - '/assets/.*'
-            - '/activityForm/get.*'
+#security:
+#    cas:
+#        appServerName: 'http://devt.ala.org.au:8080'
+#        casServerName: 'https://auth.ala.org.au'
+#        casServerUrlPrefix: 'https://auth.ala.org.au/cas'
+#        loginUrl: 'https://auth.ala.org.au/cas/login'
+#        logoutUrl: 'https://auth.ala.org.au/cas/logout'
+#        uriFilterPattern:
+#            - '/admin/*'
+#            - '/activityForm/*'
+#        authenticateOnlyIfLoggedInPattern:
+#        uriExclusionFilterPattern:
+#            - '/images/.*'
+#            - '/css/.*'
+#            - '/js/.*'
+#            - '/less/.*'
+#            - '/assets/.*'
+#            - '/activityForm/get.*'
+
+spring:
+    autoconfigure.exclude:
+         - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+         - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+         - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+    security:
+        logoutUrl: http://dev.ala.org.au:8080/logout
+        filter.order: -999999
+        oauth2:
+            client:
+                provider:
+                    ala:
+                        issuer-uri: "https://auth-test.ala.org.au/cas/oidc"
+                registration:
+                    ala:
+                        client-id: auth-test-oidc-client-id
+                        client-secret: 9a3c940918ca7820d9edc868f57a6dee09503199
+
+jwk:
+    url: https://auth-test.ala.org.au/cas/oidc/jwks
+
+userDetails:
+    url: https://auth-test.ala.org.au/userdetails
 
 #Fix grails taglib <g:paginate/> to work with bootstrap css.
 grails:
-    plugins:
-        twitterbootstrap:
-            fixtaglib: true
     mail:
         default:
             from: noreply@volunteer.ala.org.au
