@@ -2520,7 +2520,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         when:
         params.userId = userId
         params.entityId = entityId
-        controller.getMeritProjectsForUserId()
+        controller.getHubProjectsForUserId()
         def result = response.getJson()
 
         then:

@@ -1180,10 +1180,10 @@ class PermissionsController {
     /**
      * Get the list of merit projects who the user have a role
      */
-    def getMeritProjectsForUserId() {
+    def getHubProjectsForUserId() {
         String userId = params.userId
         String hubId = params.entityId
-        if (userId) {
+        if (userId && hubId) {
             List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
             List out = []
             up.each {
