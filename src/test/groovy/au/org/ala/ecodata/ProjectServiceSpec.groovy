@@ -589,15 +589,16 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     void "Get the merit projects for the given userId"() {
         setup:
-        Project project1 = new Project(projectId: '678', name: "Project 678", isMERIT: true)
+        Project project1 = new Project(projectId: '678', name: "Project 678", isMERIT: true, hubId:"12345")
         project1.save(flush: true, failOnError: true)
 
         when:
-        Map response = service.getMeritProjectsForUserId('678', [service.BASIC])
+        Map response = service.getHubProjectsForUserId('678', '12345')
 
         then:
         response != null
         response.projectId == '678'
+        response.hubId == '12345'
         response.name == 'Project 678'
     }
 

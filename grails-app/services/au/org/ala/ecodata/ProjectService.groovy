@@ -972,12 +972,12 @@ class ProjectService {
     /**
      * Get the list of merit projects
      * @param id
-     * @param levelOfDetail
-     * @param isMerit
+     * @param hubId
      * @return
      */
-    def getMeritProjectsForUserId(String id, levelOfDetail = [], boolean isMerit = true) {
-        def p = Project.findByProjectIdAndIsMERIT(id, isMerit)
-        return p ? toMap(p, levelOfDetail) : null
+    def getHubProjectsForUserId(String id, String hubId) {
+        def p = Project.findByProjectIdAndHubId(id, hubId)
+        return p ? toMap(p) : null
     }
+
 }

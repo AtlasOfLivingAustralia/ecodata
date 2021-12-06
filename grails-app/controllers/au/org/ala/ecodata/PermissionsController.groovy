@@ -1181,13 +1181,14 @@ class PermissionsController {
      * Get the list of merit projects who the user have a role
      */
     def getMeritProjectsForUserId() {
-        String userId = params.id
+        String userId = params.userId
+        String hubId = params.entityId
         if (userId) {
             List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
             List out = []
             up.each {
                 Map t = [:]
-                t.project = projectService.getMeritProjectsForUserId(it.entityId, ProjectService.FLAT)
+                t.project = projectService.getHubProjectsForUserId(it.entityId, hubId)
                 t.accessLevel = it.accessLevel
                 if (t.project) out.add t
             }
