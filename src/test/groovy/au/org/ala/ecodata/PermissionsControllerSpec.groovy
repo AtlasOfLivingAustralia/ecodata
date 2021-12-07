@@ -2508,7 +2508,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         response.errorMessage == 'Hub not found.'
     }
 
-    void "get merit projects of the given userId" () {
+    void "checks if the user have existing role on a hub project" () {
         setup:
         String userId = '1'
         String entityId = '12'
@@ -2520,19 +2520,17 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         when:
         params.userId = userId
         params.entityId = entityId
-        controller.getHubProjectsForUserId()
+        controller.doesUserHaveHubProjects()
         def result = response.getJson()
 
         then:
-        0 * projectService.getHubProjectsForUserId('1', '11')
-        1 * projectService.getHubProjectsForUserId('2', '12') >> [projectId:'2', name:'test', hubId: '12']
-        0 * projectService.getHubProjectsForUserId('3', '13')
-        0 * projectService.getHubProjectsForUserId('4', '14')
+
+        0 * projectService.doesUserHaveHubProjects('1', '11') >> false
+        0 * projectService.doesUserHaveHubProjects('3', '13') >> false
+        0 * projectService.doesUserHaveHubProjects('4', '14') >> false
+        1 * projectService.doesUserHaveHubProjects('1', '12') >> true
 
         response.status == HttpStatus.SC_OK
-        result.size() == 1
-        result[0].accessLevel.name == 'admin'
-        result[0].project.projectId == '2'
-        result[0].project.hubId == '12'
+        result.doesUserHaveHubProjects == true
     }
 }

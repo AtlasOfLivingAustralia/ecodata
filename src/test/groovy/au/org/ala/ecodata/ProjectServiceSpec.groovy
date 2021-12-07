@@ -71,6 +71,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     def cleanup() {
         Project.findAll().each { it.delete(flush:true) }
         AuditMessage.findAll().each { it.delete(flush:true) }
+        UserPermission.findAll().each { it.delete(flush:true) }
+
     }
 
     def "test create and update project"() {
@@ -587,19 +589,36 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         response.error == 'Duplicate project id for create p1'
     }
 
-    void "Get the merit projects for the given userId"() {
+    void "User have a role on an existing MERIT project"() {
         setup:
         Project project1 = new Project(projectId: '678', name: "Project 678", isMERIT: true, hubId:"12345")
         project1.save(flush: true, failOnError: true)
+        UserPermission up = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project1.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+
 
         when:
-        Map response = service.getHubProjectsForUserId('678', '12345')
+        Boolean response = service.doesUserHaveHubProjects('1', '12345')
 
         then:
         response != null
-        response.projectId == '678'
-        response.hubId == '12345'
-        response.name == 'Project 678'
+        response == true
+
+    }
+
+    void "User have no role on an existing MERIT project"() {
+        setup:
+        Project project1 = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345")
+        project1.save(flush: true, failOnError: true)
+        UserPermission up = new UserPermission(userId:'2', accessLevel:AccessLevel.admin, entityId:'123', entityType:Project.name, status: Status.ACTIVE).save()
+
+
+        when:
+        Boolean response = service.doesUserHaveHubProjects('2', '12345')
+
+        then:
+        response != null
+        response == false
+
     }
 
 }

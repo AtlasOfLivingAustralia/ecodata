@@ -968,16 +968,15 @@ class ProjectService {
         meriApprovalHistory.max{it.approvalDate}
     }
 
-
     /**
-     * Get the list of merit projects
-     * @param id
+     * Checks if a user have a role on an existing MERIT project.
+     * @param userId
      * @param hubId
-     * @return
+     * @return true if user have a role on an existing merit project
      */
-    def getHubProjectsForUserId(String id, String hubId) {
-        def p = Project.findByProjectIdAndHubId(id, hubId)
-        return p ? toMap(p) : null
+    Boolean doesUserHaveHubProjects(String userId, String hubId) {
+        List<UserPermission> ups = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
+        List result = Project.findAllByProjectIdAndHubId(ups?.collect{it?.entityId}, hubId)
+        result.size() > 0
     }
-
 }

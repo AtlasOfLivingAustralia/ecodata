@@ -1178,23 +1178,17 @@ class PermissionsController {
     }
 
     /**
-     * Get the list of merit projects who the user have a role
+     * Checks if a user have a role on an existing MERIT project.
      */
-    def getHubProjectsForUserId() {
+    def doesUserHaveHubProjects() {
         String userId = params.userId
         String hubId = params.entityId
+
         if (userId && hubId) {
-            List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
-            List out = []
-            up.each {
-                Map t = [:]
-                t.project = projectService.getHubProjectsForUserId(it.entityId, hubId)
-                t.accessLevel = it.accessLevel
-                if (t.project) out.add t
-            }
-            render out as JSON
+            render ([doesUserHaveHubProjects: projectService.doesUserHaveHubProjects(userId, hubId)] as JSON)
         } else {
-            render status: 400, text: "Required params not provided: userId"
+            render status: 400, text: "Required params not provided: userId, hubId"
         }
     }
+
 }
