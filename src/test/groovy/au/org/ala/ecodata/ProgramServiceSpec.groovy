@@ -200,15 +200,24 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
         p1.save(flush: true, failOnError: true)
         Program p2 = new Program(programId: "2", name: 'Program Name2', description: 'description', status: Status.ACTIVE)
         p2.save(flush: true, failOnError: true)
+        Program p3 = new Program(programId: "3", name: 'Program Name3', description: 'description', status: Status.ACTIVE, parent: p2)
+        p3.save(flush: true, failOnError: true)
 
         when:
         def programList = service.findAllProgramList()
 
         then:
         programList != null
-        programList.size() == 1
+        programList.size() == 2
         programList[0].programId == '2'
         programList[0].name =='Program Name2'
+        !programList[0].parentId
+        !programList[0].parentName
+        programList[1].programId == '3'
+        programList[1].name =='Program Name3'
+        programList[1].parentId == '2'
+        programList[1].parentName == 'Program Name2'
+
     }
 
     void "delete"() {
