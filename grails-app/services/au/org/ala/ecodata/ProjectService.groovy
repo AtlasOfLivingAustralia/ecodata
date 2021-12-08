@@ -976,7 +976,6 @@ class ProjectService {
      */
     Boolean doesUserHaveHubProjects(String userId, String hubId) {
         List<UserPermission> ups = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
-        List result = Project.findAllByProjectIdAndHubId(ups?.collect{it?.entityId}, hubId)
-        result.size() > 0
+        Project.countByProjectIdAndHubId(ups?.collect{it?.entityId}, hubId) > 0
     }
 }
