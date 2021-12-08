@@ -591,9 +591,14 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     void "User have a role on an existing MERIT project"() {
         setup:
-        Project project1 = new Project(projectId: '678', name: "Project 678", isMERIT: true, hubId:"12345")
-        project1.save(flush: true, failOnError: true)
-        UserPermission up = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project1.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345").save()
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345").save()
+        Project project3 = new Project(projectId: '333', name: "Project 333").save()
+
+        UserPermission up1 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project1.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        UserPermission up2 = new UserPermission(userId:'1', accessLevel:AccessLevel.caseManager, entityId:project2.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        UserPermission up3 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project3.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        UserPermission up4 = new UserPermission(userId:'1', accessLevel:AccessLevel.readOnly, entityId:'12345', entityType:Hub.name, status: Status.ACTIVE).save()
 
 
         when:
