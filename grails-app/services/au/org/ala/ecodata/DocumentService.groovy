@@ -1,16 +1,14 @@
 package au.org.ala.ecodata
+
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
+import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import org.imgscalr.Scalr
 
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -29,7 +27,9 @@ class DocumentService {
                                      "iTunes",
                                      "windowsPhone"]
 
-    def commonService, grailsApplication, activityService
+    CommonService commonService
+    GrailsApplication grailsApplication
+    ActivityService activityService
     
     /**
      * Converts the domain object into a map of properties, including
@@ -412,7 +412,8 @@ class DocumentService {
         if (path) {
             path = path+File.separator
         }
-        return grailsApplication.config.app.file.upload.path + '/' + path  + filename
+        String uploadPath = new File(grailsApplication.config.getProperty('app.file.upload.path')).getCanonicalPath()
+        return uploadPath + '/' + path  + filename
     }
 
     void deleteAllForProject(String projectId, boolean destroy = false) {

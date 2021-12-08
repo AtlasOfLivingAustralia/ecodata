@@ -116,7 +116,7 @@ class Document {
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
         URI uri = new URI(Holders.config.app.uploads.url + path + encodedFileName)
-        return uri.toURL();
+        return uri.toString()
     }
 
     private def filePath(name) {

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.apache.commons.io.FilenameUtils
 import grails.web.servlet.mvc.GrailsParameterMap
+import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
@@ -210,14 +211,20 @@ class DocumentController {
      * Serves up a file named by the supplied filename HTTP parameter.  It is mostly as a convenience for development
      * as the files will be served by Apache in prod.
      */
-    def download() {
+    def download(String path, String filename) {
 
         if (!params.filename) {
             response.status = 400
             return null
         }
 
-        File file = new File(documentService.fullPath('', params.filename))
+        String fullPath = documentService.fullPath(path, filename)
+        File file = new File(fullPath)
+        // Prevent file traversal in the path
+        if (file.getCanonicalPath() != fullPath) {
+            response.status = 400
+            return null
+        }
 
         if (!file.exists()) {
             response.status = 404

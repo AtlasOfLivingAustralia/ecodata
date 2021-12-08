@@ -600,7 +600,7 @@ environments {
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
         grails.serverURL = "http://devt.ala.org.au:8080"
-        app.uploads.url = "${grails.serverURL}/document/download?filename="
+        app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
         temp.dir="/data/ecodata/tmp"
