@@ -407,13 +407,30 @@ class DocumentService {
         return newFilename;
     }
 
-    String fullPath(String filepath, String filename) {
+    /**
+     * Returns the path the document by combining the path and filename with the directory where documents
+     * are uploaded.
+     * Optionally uses the canonical form of the uploads directory to assist validation.
+     */
+    String fullPath(String filepath, String filename, boolean useCanonicalFormOfUploadPath = false) {
         String path = filepath ?: ''
         if (path) {
             path = path+File.separator
         }
-        String uploadPath = new File(grailsApplication.config.getProperty('app.file.upload.path')).getCanonicalPath()
-        return uploadPath + '/' + path  + filename
+        String uploadPath = grailsApplication.config.getProperty('app.file.upload.path')
+        if (useCanonicalFormOfUploadPath) {
+            uploadPath = new File(uploadPath).getCanonicalPath()
+        }
+        return uploadPath + File.separator + path  + filename
+    }
+
+    /**
+     * This method compares the canonical path to a document with the path potentially supplied by the
+     * user and returns false if they don't match.  This is to prevent attempts at file system traversal.
+     */
+    boolean validateDocumentFilePath(String path, String filename) {
+        String file = fullPath(path, filename, true)
+        new File(file).getCanonicalPath() == file
     }
 
     void deleteAllForProject(String projectId, boolean destroy = false) {
