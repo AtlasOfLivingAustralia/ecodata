@@ -73,7 +73,7 @@ class Hub {
 
     static constraints = {
         urlPath unique: true
-        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1']
+        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1', 'bs4']
         title nullable:true
         homePagePath nullable:true
         defaultProgram nullable: true
