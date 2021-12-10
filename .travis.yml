@@ -1,5 +1,5 @@
 os: linux
-dist: xenial
+dist: bionic
 language: groovy
 jdk:
   - openjdk8
@@ -12,23 +12,24 @@ branches:
   - grails3
   - grails3-dev
   - /^hotfix\/.*$/
+  - grails4
 
 services:
   - mongodb
+  - elasticsearch
 
 before_install:
+  - export TZ=Australia/Canberra
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`)
+  - curl https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.15.2-amd64.deb -o elasticsearch.deb
+  - sudo dpkg -i --force-confnew elasticsearch.deb
+  - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
+  - sudo service elasticsearch restart
 
+# This disables the default gradlew assemble
 install:
-  - cd ~/.nvm
-  - source ~/.nvm/nvm.sh
-  - nvm install $TRAVIS_NODE_VERSION
-
-before_script:
-  - cd $TRAVIS_BUILD_DIR
-  - npm install
+  - true
 
 cache:
   directories:
@@ -36,14 +37,16 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+before_script:
+  - sleep 10
+
 script:
-  - ./gradlew cloverGenerateReport
+  - ./gradlew -PenableClover=true cloverGenerateReport
 
 after_success:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
 
 env:
   global:
-  - TRAVIS_NODE_VERSION="12.13.0"
   - secure: bIwDtP92h7r2iGMpwneKwZYjh2kK9gIDkaEHHIuNnatZsyLvqm/FukeJIbeYlXACiOHJVslQu4bpTwYvdI5UzD5KPSUMY4bu+hwtuIgQofF4zArpNzCDA3QW4Jqs87TsvjGs8zfNT5JSM6xt4RoALqpCleiwL9eH3bFIpZx/dIk=
   - secure: IR4hXjbAtG2ipfd8/rRZYg+Vdu50qUYxXUxa9VqHkla6PmmYNkTVknf+oZWYzBSJ+mW9fGjM6fh4KCzopvYzMjlotcHutDbVsEgWCjKR1h+9uE1urbExiaiTRNQMd1X3TyTPp+DL5Z6hGE6JmKikYEjff6pR88iLniXz5gJ8ENk=

@@ -2,7 +2,9 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
+import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -14,6 +16,7 @@ class PermissionService {
     AuthService authService
     UserService userService // found in ala-auth-plugin
     ProjectController projectController
+    def grailsApplication, webService, hubService
 
     boolean isUserAlaAdmin(String userId) {
         userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
@@ -49,8 +52,6 @@ class PermissionService {
                     isEditor = true
                 }
             }
-
-            log.debug "userCanEdit = ${isEditor}"
         }
 
         return isEditor // bolean
@@ -276,11 +277,55 @@ class PermissionService {
     /**
      * Returns a list of all users who have permissions configured for the specified hub.
      * @param hubId the hubId of the hub to get permissions for.
+     * @param includeUserDetails if true, lookup the userId in the UserDetails application to get the user name,
+     * roles etc.
      * @return a List of the users that have roles configured for the hub.
      */
-    List<Map> getMembersForHub(String hubId) {
+    List<Map> getMembersForHub(String hubId, boolean includeUserDetails = true) {
         List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(hubId, Hub.class.name, DELETED)
-        permissions.collect{toMap(it)}
+        permissions.collect{toMap(it, includeUserDetails)}
+    }
+
+    /**
+     * Return Hub members, support pagination
+     * @param hubId The hubId of the Hub that was logged into
+     * @param offset Page starting position
+     * @param max Page size
+     * @param roles List of Hub roles that will be included in the criteria
+     * @return Hub members one page at a time
+     */
+    def getMembersForHubPerPage(String hubId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.readOnly]) {
+        BuildableCriteria criteria = UserPermission.createCriteria()
+        List members = criteria.list(max:max, offset:offset) {
+            eq("entityId", hubId)
+            eq("entityType", Hub.class.name)
+            ne("accessLevel", AccessLevel.starred)
+            inList("accessLevel", roles)
+//            order("accessLevel", "asc")
+        }
+
+        Map out = [:]
+        List userIds = []
+        members.each {
+            userIds.add(it.userId)
+            out.put(it.userId,toMap(it,false))
+        }
+
+        def userList = authService.getUserDetailsById(userIds)
+        if (userList) {
+            def users = userList['users']
+
+            users.each { k, v ->
+                Map rec = out.get(k)
+                if (rec) {
+                    rec.displayName = v?.displayName
+                    rec.userName = v?.userName
+                }
+            }
+        }
+
+        [data:out.values(), count:members.totalCount]
+
     }
 
     /**
@@ -308,18 +353,23 @@ class PermissionService {
     }
 
     /**
-     * Converts a UserPermission into a Map, looking up the user display name from the user details service.
+     * Converts a UserPermission into a Map, looking up the user display name from the user details service
+     * if requested.
      */
-    private Map toMap(UserPermission userPermission) {
+    private Map toMap(UserPermission userPermission, boolean includeUserDetails = true) {
         Map mapped = [:]
-        def u = userService.getUserForUserId(userPermission.userId?:"0")
         mapped.role = userPermission.accessLevel?.toString()
         mapped.userId = userPermission.userId
-        mapped.displayName = u?.displayName
-        mapped.userName = u?.userName
+        if (userPermission.expiryDate) {
+            mapped.expiryDate = userPermission.expiryDate
+        }
 
+        if (includeUserDetails) {
+            def u = userService.getUserForUserId(userPermission.userId)
+            mapped.displayName = u?.displayName
+            mapped.userName = u?.userName
+        }
         mapped
-
     }
 
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
@@ -443,12 +493,12 @@ class PermissionService {
         return removeUserAsRoleToEntity(userId, accessLevel, ManagementUnit, managementUnitId)
     }
 
-    Map addUserAsRoleToHub(String userId, AccessLevel accessLevel, String hubId) {
-        return addUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
+    Map addUserAsRoleToHub(Map params) {
+        return saveUserToHubEntity(params)
     }
 
-    Map removeUserRoleFromHub(String userId, AccessLevel accessLevel, String hubId) {
-        return removeUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
+    Map removeUserRoleFromHub(Map params) {
+        return removeUserAsRoleToEntity(params.userId,AccessLevel.valueOf(params.role),Hub,params.entityId)
     }
 
     /**
@@ -503,12 +553,13 @@ class PermissionService {
 
         result
     }
-    Map deleteUserPermissionByUserId(String userId){
+
+    Map deleteUserPermissionByUserId(String userId, String hubId){
         List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
         if (permissions.size() > 0) {
             permissions.each {
-                def isMerit = isProjectMerit(it.entityId, it.entityType)
-                if (isMerit){
+                def isInHub = isEntityOwnedByHub(it.entityId, it.entityType, hubId)
+                if (isInHub){
                     try {
                         it.delete(flush: true, failOnError: true)
                         log.info("The Permission is removed for this user: " + userId)
@@ -530,18 +581,135 @@ class PermissionService {
 
     }
 
-    def isProjectMerit(String entityId, String entityType){
-        def results = null
-        if (entityType == Organisation.class.name){
-            results = Project.findAllByOrganisationIdAndIsMERIT(entityId, true)
-        }else if(entityType == Program.class.name){
-            results = Project.findAllByProgramIdAndIsMERIT(entityId, true)
-        }else if (entityType == Project.class.name){
-            results = Project.findAllByProjectIdAndIsMERIT(entityId, true)
-        }else if (entityType == ManagementUnit.class.name){
-            results = Project.findAllByManagementUnitIdAndIsMERIT(entityId, true)
+    /**
+     * Returns a list of permissions that have an expiry date less than or equal to the
+     * supplied date
+     */
+    List<UserPermission> findPermissionsByExpiryDate(Date date = new Date()) {
+        UserPermission.findAllByExpiryDateLessThanEqualsAndStatusNotEqual(date, DELETED)
+    }
+
+    /**
+     *  Checks to see if an entity has a matching hubId to the supplied hubId.
+     *  Organisations are a special case - they also check if the organisation is running
+     *  any MERIT projects in which case true will be returned.
+     * @param entityId The id (programId/projectId etc) of the entity to check
+     * @param entityType The type of entity to check (class.getName())
+     * @param hubId the hubId to check against
+     * @return true if the entity is owned by the supplied hub
+     */
+    private boolean isEntityOwnedByHub(String entityId, String entityType, String hubId) {
+        int count = 0
+        if (entityType == Organisation.class.name) {
+            count = Organisation.countByOrganisationIdAndHubId(entityId, hubId)
+            if (count == 0) {
+                DetachedCriteria query = Project.where {
+                    (organisationId == entityId || orgIdSvcProvider == entityId) && hubId == hubId
+                }
+                count = query.count()
+            }
+        } else if (entityType == Program.class.name) {
+            count = Program.countByProgramIdAndHubId(entityId, hubId)
+        } else if (entityType == Project.class.name) {
+            count = Project.countByProjectIdAndHubId(entityId, hubId)
+        } else if (entityType == ManagementUnit.class.name) {
+            count = ManagementUnit.countByManagementUnitIdAndHubId(entityId, hubId)
         }
-        return results.size() > 0
+        return count > 0
+    }
+
+    /**
+     * This code snippet is based on ReportService.userSummary
+     * Produces a list of users containing roles below:
+     * (ROLE_FC_READ_ONLY,ROLE_FC_OFFICER,ROLE_FC_ADMIN)
+     */
+    private def extractUserDetails() {
+        List roles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
+        def userDetailsSummary = [:]
+
+        int batchSize = 500
+
+        String url = grailsApplication.config.userDetails.admin.url
+        url += "/userRole/list?format=json&max=${batchSize}&role="
+        roles.each { role ->
+            int offset = 0
+            Map result = webService.getJson(url+role+'&offset='+offset)
+
+            while (offset < result?.count && !result?.error) {
+
+                List usersForRole = result?.users ?: []
+                usersForRole.each { user ->
+                    if (userDetailsSummary[user.userId]) {
+                        userDetailsSummary[user.userId].role = role
+                    }
+                    else {
+                        user.projects = []
+                        user.name = (user.firstName ?: "" + " " +user.lastName ?: "").trim()
+                        user.role = role
+                        userDetailsSummary[user.userId] = user
+                    }
+
+
+                }
+
+                offset += batchSize
+                result = webService.getJson(url+role+'&offset='+offset)
+            }
+
+            if (!result || result.error) {
+                log.error("Error getting user details for role: "+role)
+                return
+            }
+        }
+
+        userDetailsSummary
+    }
+
+    /**
+     * This method finds the hubId of the entity specified in the supplied UserPermission.
+     * Currently only Project, Organisation, ManagementUnit, Program are supported.
+     */
+    String findOwningHubId(UserPermission permission) {
+        if (!(permission.entityType in [Project.class.name, Organisation.class.name, ManagementUnit.class.name, Program.class.name, Hub.class.name])) {
+            throw new IllegalArgumentException("Permissions with entityType = $permission.entityType are not supported")
+        }
+        Class entity = Class.forName(permission.entityType)
+        String propertyName = IdentifierHelper.getEntityIdPropertyName(permission.entityType)
+        String hubId = new DetachedCriteria(entity).get {
+            eq(propertyName, permission.entityId)
+            projections {
+                property('hubId')
+            }
+        }
+        hubId
+    }
+
+    def saveUserDetails() {
+        def map = [ROLE_FC_ADMIN: "admin", ROLE_FC_OFFICER: "caseManager", ROLE_FC_READ_ONLY: "readOnly"]
+        String urlPath = "merit"
+        String hubId = hubService.findByUrlPath(urlPath)?.hubId
+
+        //extracts from UserDetails
+        def userDetailsSummary = extractUserDetails()
+
+        //save to userPermission
+        userDetailsSummary.each { key, value ->
+            value.roles.each { role ->
+                if (map[role]) {
+                    UserPermission userP = UserPermission.findByUserIdAndEntityIdAndEntityType(key, hubId, Hub.name)
+                    try {
+                        if (!userP) {
+                            UserPermission up = new UserPermission(userId: key, entityId: hubId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(map[role]))
+                            up.save(flush: true, failOnError: true)
+                        }
+                    } catch (Exception e) {
+                        def msg = "Failed to save UserPermission: ${e.message}"
+                        return [status: 'error', error: msg]
+                    }
+                }
+
+            }
+        }
     }
 
     // Permission:
@@ -718,4 +886,37 @@ class PermissionService {
     boolean checkUserPermission(String userId, String permission) {
         checkUserPermission(userId, "api", "api", permission)
     }
+
+
+    private Map saveUserToHubEntity(Map params) {
+        UserPermission up = UserPermission.findByUserIdAndEntityIdAndEntityType(params.userId, params.entityId, Hub.name)
+        try {
+            if (up) {
+                if (params.expiryDate) {
+                    up.expiryDate = DateUtil.parse(params.expiryDate)
+                } else {
+                    up.expiryDate = null
+                }
+
+                up.accessLevel = AccessLevel.valueOf(params.role) ?: up.accessLevel
+                up.save(flush: true, failOnError: true)
+            } else {
+                Date expiration = null
+                if (params.expiryDate) {
+                    expiration = DateUtil.parse(params.expiryDate)
+                }
+
+                up = new UserPermission(userId: params.userId, entityId: params.entityId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(params.role), expiryDate:expiration)
+                up.save(flush: true, failOnError: true)
+            }
+        } catch (Exception e) {
+            def msg = "Failed to save UserPermission: ${e.message}"
+            log.error msg, e
+            return [status: 'error', error: msg]
+        }
+
+        return [status:'ok', id: up.id]
+    }
+
+
 }

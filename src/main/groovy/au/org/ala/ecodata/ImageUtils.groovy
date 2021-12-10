@@ -5,16 +5,17 @@ import com.drew.imaging.ImageProcessingException
 import com.drew.metadata.Directory
 import com.drew.metadata.Metadata
 import com.drew.metadata.exif.ExifIFD0Directory
+import groovy.util.logging.Slf4j
 import org.apache.commons.io.FilenameUtils
-import org.apache.log4j.Logger
 import org.imgscalr.Scalr
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
+@Slf4j
 class ImageUtils {
-
-    static Logger log = Logger.getLogger(ImageUtils.class)
 
     /**
      * Creates a thumbnail of an image file.

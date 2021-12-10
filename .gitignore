@@ -42,4 +42,5 @@ out
 /.gradle/
 /build/
 /. /logs/
-/node_modules
+/grails-app/assets/vendor/
+/node_modules/

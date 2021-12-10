@@ -55,4 +55,21 @@ class IdentifierHelperSpec extends Specification {
         then: "Null should be returned"
         IdentifierHelper.getProjectId(domainObject) == null
     }
+
+    def "The IdentifierHelper can return the property name of the identifer for domain objects"() {
+        expect:
+        IdentifierHelper.getEntityIdPropertyName(Project.class.name) == 'projectId'
+        IdentifierHelper.getEntityIdPropertyName(Site.class.name) == 'siteId'
+        IdentifierHelper.getEntityIdPropertyName(Activity.class.name) == 'activityId'
+        IdentifierHelper.getEntityIdPropertyName(Output.class.name) == 'outputId'
+        IdentifierHelper.getEntityIdPropertyName(Document.class.name) == 'documentId'
+        IdentifierHelper.getEntityIdPropertyName(Score.class.name) == 'scoreId'
+        IdentifierHelper.getEntityIdPropertyName(UserPermission.class.name) == 'id'
+        IdentifierHelper.getEntityIdPropertyName(Program.class.name) == 'programId'
+        IdentifierHelper.getEntityIdPropertyName(Organisation.class.name) == 'organisationId'
+        IdentifierHelper.getEntityIdPropertyName(Report.class.name) == 'reportId'
+        IdentifierHelper.getEntityIdPropertyName(Record.class.name) == 'occurrenceID'
+        IdentifierHelper.getEntityIdPropertyName(Lock.class.name) == 'id'
+        IdentifierHelper.getEntityIdPropertyName(ManagementUnit.class.name) == 'managementUnitId'
+    }
 }

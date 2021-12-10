@@ -17,10 +17,12 @@ class UserPermission {
     String entityType
     String status = ACTIVE
     List<String> permissions = []
+    Date expiryDate
 
     static constraints = {
         userId(unique: ['accessLevel', 'entityId']) // prevent duplicate entries
         status nullable: true
+        expiryDate nullable: true
     }
 
     static mapping = {
@@ -29,6 +31,7 @@ class UserPermission {
         entityType index: true
         status index: true
         accessLevel index: true
+        expiryDate index: true
         version false
     }
 

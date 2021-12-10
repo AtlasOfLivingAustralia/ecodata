@@ -9,20 +9,20 @@
 	<body>
         <content tag="pageTitle">Audit</content>
         <div style="margin-bottom: 10px">
-            <a href="${createLink(controller: 'admin', action:'audit')}" class="btn">
-                <i class="icon-chevron-left"></i>
+            <a href="${createLink(controller: 'admin', action:'audit')}" class="btn btn-outline-dark">
+                <i class="fa fa-chevron-left"></i>
                 Back to Audit Home
             </a>
         </div>
-        <div class="form-horizontal well well-small">
-            <div class="control-group">
+        <form class="well well-small">
+            <div>
                 <label class="control-label" for="projectName">Find a project:</label>
-                <div class="controls">
-                    <g:textField class="input-xlarge" name="projectName" id="projectName"/>
+                <div class="form-row">
+                    <g:textField class="form-control" name="projectName" id="projectName"/>
                     <button class="btn btn-primary" id="btnFindProject">Find</button>
                 </div>
             </div>
-        </div>
+        </form>
         <div id="projectList">
         </div>
     </body>

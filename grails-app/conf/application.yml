@@ -28,35 +28,38 @@ info:
         jdk: '@info.build.jdk@'
         number: '@info.build.number@'
     git:
-        branch: '@info.git.branch@'
-        commit: '@info.git.commit@'
-        slug: '@info.git.slug@'
-        tag: '@info.git.tag@'
-        timestamp: '@info.git.timestamp@'
+        host: '@git.build.host@'
+        commit: '@git.commit.id@'
+        tag: '@git.closest.tag.name@'
+        timestamp: '@git.commit.time@'
 spring:
     main:
         banner-mode: "console"
     groovy:
         template:
           check-template-location: false
-    http:
+    servlet:
         multipart:
-          max-file-size: 5000MB
-          max-request-size: 5000MB
+            max-file-size: 1024MB
+            max-request-size: 1024MB
+    devtools:
+        restart:
+            additional-exclude:
+                - '**/*.gsp'
+                - '**/*.css'
+                - '**/*.js'
 server:
-    session:
-        timeout: 7200 # seconds, 2 hours
+    address: localhost
     tomcat:
         port-header: 'X-Forwarded-Port'
         protocol-header: 'X-Forwarded-Proto'
         remote-ip-header: 'X-Forwarded-For'
-# Spring Actuator Endpoints are Disabled by Default
-endpoints:
-    enabled: true
-    jmx:
-        enabled: true
-        unique-names: true
-
+    servlet:
+        session:
+            timeout: 7200
+management:
+    endpoints:
+        enabled-by-default: false
 ---
 grails:
     mime:
@@ -100,8 +103,8 @@ grails:
     controllers:
         defaultScope: singleton
         upload:
-            maxFileSize: 26214400 #25Mb
-            maxRequestSize: 26214400 #25Mb
+            maxFileSize: 65536000 #64Mb, matches nginx config
+            maxRequestSize: 65536000 #64Mb, matches nginx config
  #       upload:
  #         maxFileSize: 5368709120
  #         maxRequestSize: 5368709120
@@ -116,12 +119,12 @@ grails:
                 - '/plugins/*'
     views:
         default:
-            codec: none  #none, html, base64
+            codec: html  #none, html, base64
         gsp:
             encoding: UTF-8
             htmlcodec: xml
             codecs:
-                expression: none # escapes values inside ${} //html
+                expression: html # escapes values inside ${} //html
                 scriptlets: html
                 taglib: none
                 staticparts: none
@@ -156,25 +159,14 @@ cors:
     url:
         pattern:
             - '/document/download'
+    allow:
+        origin:
+            regex: '^https?:\\/\\/.+\\.ala\\.org\\.au\\/?'
 
 ---
 
-security:
-    cas:
-        appServerName: 'http://devt.ala.org.au:8080/ecodata'
-        casServerName: 'https://auth.ala.org.au'
-        casServerUrlPrefix: 'https://auth.ala.org.au/cas'
-        loginUrl: 'https://auth.ala.org.au/cas/login'
-        logoutUrl: 'https://auth.ala.org.au/cas/logout'
-        uriFilterPattern: '/admin/.*,/activityForm/((?!get).)*,/graphql.*'
-        authenticateOnlyIfLoggedInPattern:
-        uriExclusionFilterPattern: '/images.*,/css.*,/js.*,/less.*'
-
 #Fix grails taglib <g:paginate/> to work with bootstrap css.
 grails:
-    plugins:
-        twitterbootstrap:
-            fixtaglib: true
     mail:
         default:
             from: noreply@volunteer.ala.org.au
@@ -200,8 +192,8 @@ environments:
 
 grails:
     mongodb:
-        codecs: au.org.ala.ecodata.customcodec.AccessLevelCodec
-        engine: codec
+        codecs:
+            - au.org.ala.ecodata.customcodec.AccessLevelCodec
 
 graphql:
     servlet:

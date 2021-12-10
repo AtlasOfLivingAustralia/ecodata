@@ -307,6 +307,14 @@ class ProjectService {
                 updateCollectoryLinkForProject(project, props)
             }
 
+            if (props.associatedOrgs) {
+                // Use Grails data binding here as simply assigning the property can't
+                // correctly convert the list of maps to a list of AssociatedOrg.
+                // Ideally, the whole Project entity would be mapped using standard data binding
+                // instead of the common service, but that is a bit risky for a quick fix.
+                // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
+                project.properties = [associatedOrgs:props.remove("associatedOrgs")]
+            }
             commonService.updateProperties(project, props, overrideUpdateDate)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
@@ -427,7 +435,16 @@ class ProjectService {
             List projectActivities = projectActivityService.getAllByProject(id)
             props = includeProjectFundings(props)
             props = includeProjectActivities(props, projectActivities)
+
             try {
+                if (props.associatedOrgs) {
+                    // Use Grails data binding here as simply assigning the property can't
+                    // correctly convert the list of maps to a list of AssociatedOrg.
+                    // Ideally, the whole Project entity would be mapped using standard data binding
+                    // instead of the common service, but that is a bit risky for a quick fix.
+                    // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
+                    project.properties = [associatedOrgs:props.remove("associatedOrgs")]
+                }
                 commonService.updateProperties(project, props)
                 if (shouldUpdateCollectory) {
                     updateCollectoryLinkForProject(project, props)
@@ -950,4 +967,20 @@ class ProjectService {
         List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
         meriApprovalHistory.max{it.approvalDate}
     }
+
+    /**
+     * Checks if a user have a role on an existing MERIT project.
+     * @param userId
+     * @param hubId
+     * @return true if user have a role on an existing merit project
+     */
+    Boolean doesUserHaveHubProjects(String userId, String hubId) {
+        List<UserPermission> ups = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
+        int count = 0
+        ups.each {
+            count += Project.countByProjectIdAndHubId(it?.entityId, hubId)
+        }
+        count > 0
+    }
+
 }

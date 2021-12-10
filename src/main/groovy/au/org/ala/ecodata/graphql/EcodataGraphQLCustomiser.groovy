@@ -19,7 +19,7 @@ import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
-import org.apache.log4j.Logger
+import groovy.util.logging.Slf4j
 import org.bson.types.ObjectId
 import org.grails.datastore.mapping.model.PersistentEntity
 import org.grails.gorm.graphql.fetcher.GraphQLDataFetcherType
@@ -29,9 +29,8 @@ import org.grails.gorm.graphql.interceptor.manager.GraphQLInterceptorManager
 import org.grails.gorm.graphql.plugin.GraphQLPostProcessor
 import org.grails.gorm.graphql.types.GraphQLTypeManager
 
+@Slf4j
 class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
-
-    static Logger log = Logger.getLogger(EcodataGraphQLCustomiser.class)
 
     @Override
     void doWith(GraphQLTypeManager graphQLTypeManager) {
@@ -88,7 +87,7 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
                 Map query = [:]
                 query.name = environment.selectionSet.fields.name
                 query.arguments = environment.selectionSet.fields.arguments
-                query.selections = environment.selectionSet.fields.selectionSet.selections
+                query.selections = environment.selectionSet.fields.selectionSet
                 log.info ('GrapqhQl API request, UserId: ' + UserService.currentUser()?.userName + ", Query: " + query)
                 return true
             }

@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.springframework.validation.Errors
+
 import static au.org.ala.ecodata.Status.COMPLETED
 import au.org.ala.ecodata.graphql.models.MeriPlan
 import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
@@ -31,9 +33,12 @@ class Project {
 
     ObjectId id
     String projectId
+    /** The id of the hub in which this project was created */
+    String hubId
     String dataProviderId // collectory dataProvider id
     String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
+    String terminationReason
     String externalId
     String name  // required
     String description
@@ -96,13 +101,13 @@ class Project {
     //For embedded table, needs to conversion in controller
     List<Funding> fundings
 
-    List<AssociatedOrg> associatedOrganisations
+    List<AssociatedOrg> associatedOrgs
 
     /** The program of work this project is a part of, if any */
     String programId
     Hub hub
 
-    static embedded = ['associatedOrganisations', 'fundings', 'mapLayersConfig', 'risks']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
 
@@ -212,7 +217,10 @@ class Project {
         mapLayersConfig nullable: true
         managementUnitId nullable: true
         mapDisplays nullable: true
-        hub nullable: true
+        terminationReason nullable: true
+        hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
+            GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
+        }
     }
 
     MeriPlan getMeriPlan() {

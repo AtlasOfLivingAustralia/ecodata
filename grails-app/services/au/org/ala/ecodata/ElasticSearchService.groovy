@@ -17,46 +17,60 @@ package au.org.ala.ecodata
 
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
+import grails.core.GrailsApplication
+import grails.util.Environment
 import groovy.json.JsonSlurper
-import org.elasticsearch.action.index.IndexRequestBuilder
+import org.apache.http.HttpHost
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.client.CredentialsProvider
+import org.apache.http.impl.client.BasicCredentialsProvider
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
+import org.elasticsearch.ElasticsearchException
+import org.elasticsearch.action.DocWriteResponse
+import org.elasticsearch.action.bulk.BulkItemResponse
+import org.elasticsearch.action.bulk.BulkProcessor
+import org.elasticsearch.action.bulk.BulkRequest
+import org.elasticsearch.action.bulk.BulkResponse
+import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.delete.DeleteResponse
+import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.get.GetResponse
+import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
-import org.elasticsearch.client.Client
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.geo.ShapeRelation
-import org.elasticsearch.common.geo.builders.ShapeBuilder
-import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.RestClient
+import org.elasticsearch.client.RestClientBuilder
+import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.common.geo.builders.CoordinatesBuilder
+import org.elasticsearch.common.geo.builders.PolygonBuilder
+import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.geometry.Circle
+import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
-import org.elasticsearch.node.Node
 import org.elasticsearch.search.aggregations.AggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
+import org.elasticsearch.search.aggregations.BucketOrder
+import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import org.elasticsearch.search.facet.FacetBuilders
-import org.elasticsearch.search.facet.range.RangeFacetBuilder
-import org.elasticsearch.search.facet.terms.TermsFacet
-import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
-import javax.naming.directory.SearchResult
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.function.BiConsumer
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
-import static au.org.ala.ecodata.Status.ACTIVE
-import static au.org.ala.ecodata.Status.COMPLETED
-import static org.elasticsearch.index.query.FilterBuilders.*
-import static org.elasticsearch.index.query.QueryBuilders.*
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 import static grails.async.Promises.task
+import static org.elasticsearch.index.query.QueryBuilders.*
+
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -72,7 +86,7 @@ import static grails.async.Promises.task
  */
 class ElasticSearchService {
     static transactional = false
-    def grailsApplication
+    GrailsApplication grailsApplication
 
     ProjectService projectService
     ActivityService activityService
@@ -91,35 +105,34 @@ class ElasticSearchService {
     ProgramService programService
     ManagementUnitService managementUnitService
 
-
-    Node node;
-    Client client;
+    RestHighLevelClient client
+    ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
-    def DEFAULT_TYPE = "doc"
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
+
+    /**
+     * List of indexed fields we apply a compatibility layer to so we accept "T" and "F" as terms when filtering on these fields.
+     * This is required due to a change in the way elasticsearch handled boolean fields.
+     */
+    private static List BOOLEAN_PROEJCT_FIELDS = ['isExternal', 'isMERIT', 'isCitizenScience', 'isSciStarter', 'alaHarvest']
+
     /**
      * Init method to be called on service creation
      */
-    @PostConstruct
     def initialize() {
-        log.info "Setting-up elasticsearch node and client"
-        boolean isLocal = grailsApplication.config.elasticsearch.local.toBoolean()
-        ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
-        settings.put("path.home", grailsApplication.config.app.elasticsearch.location)
-        boolean isPrimaryServer = grailsApplication.config.elasticsearch.primary.toBoolean()
-        if (isPrimaryServer){
-            node = nodeBuilder().local(isLocal).settings(settings).node()
-            client = node.client()
-            client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet()
-        }else{
-            //initialise elasticsearch using a remote connection instead of a local connection
-            settings.put("cluster.name", "elasticsearch").build()
-            client = new TransportClient(settings)
-            client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(grailsApplication.config.elasticsearch.host, grailsApplication.config.elasticsearch.port as Integer))
-        }
+        log.info "Setting-up elasticsearch client and indexes"
+
+        client = buildElasticSearchClient()
+
+        String indexPrefix = grailsApplication.config.getProperty('app.elasticsearch.indexPrefix', String, Environment.current.name.toLowerCase())
+        Map mappings = getMapping()
+        indexManager = new ElasticSearchIndexManager(client, indexPrefix, mappings.settings, mapping.mappings)
+
+        // TODO - this needs to be in a retry loop in case ES is down when ecodata is started
+        indexManager.initialiseIndexAliases()
+
         // MapService.buildGeoServerDependencies can throw Runtime exception. This causes bean initialization failure.
         // Therefore, calling the below function in a thread.
         task {
@@ -131,6 +144,25 @@ class ElasticSearchService {
                 log.info("Completed building GeoServer dependencies")
             }
         }
+    }
+
+    private RestHighLevelClient buildElasticSearchClient() {
+        String host = grailsApplication.config.getProperty('elasticsearch.host', String, 'localhost')
+        int port = grailsApplication.config.getProperty('elasticsearch.port', Integer, 9200)
+        String username = grailsApplication.config.getProperty('elasticsearch.username')
+        String password = grailsApplication.config.getProperty('elasticsearch.password')
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider()
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password))
+
+        RestClientBuilder builder = RestClient.builder(
+                new HttpHost(host, port, "http")).setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+            @Override
+            HttpAsyncClientBuilder customizeHttpClient(
+                    HttpAsyncClientBuilder httpClientBuilder) {
+                return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
+        })
+        new RestHighLevelClient(builder)
     }
 
     // Used to avoid a circular dependency during initialisation
@@ -146,12 +178,18 @@ class ElasticSearchService {
      * @param doc
      * @return IndexResponse
      */
-    def indexDoc(doc, index) {
+    def indexDoc(doc, String index, BulkProcessor bulkProcessor = null) {
         if (!canIndex(doc)) {
             return
         }
-        def docId = getEntityId(doc)
-        def docMap = GormMongoUtil.extractDboProperties(doc)
+        String docId = getEntityId(doc)
+        // The purpose of the as JSON call below is to convert Date objects into the format we use
+        // throughout the app - otherwise the elasticsearch XContentBuilder will transform them into
+        // ISO dates with milliseconds which causes BioCollect problems as it uses the _source field of the
+        // search result directly.
+        Map docMap = doc
+
+
         index = index ?: DEFAULT_INDEX
 
         // Delete index if it exists and doc.status == 'deleted'
@@ -164,21 +202,32 @@ class ElasticSearchService {
 
         try {
             addCustomFields(docMap)
-            def docJson = docMap as JSON
-            IndexRequestBuilder builder = client.prepareIndex(index, DEFAULT_TYPE, docId)
-            builder.setSource(docJson.toString(false)).execute().actionGet()
+            String docContent = new JSON(docMap).toString(false)
+            IndexRequest indexRequest = new IndexRequest(index).id(docId)
+            indexRequest.source(docContent, XContentType.JSON)
+            // If we are indexing in bulk, use the supplied request, otherwise index the doc directly.
+            if (bulkProcessor) {
+                bulkProcessor.add(indexRequest)
+            }
+            else {
+                client.index(indexRequest, RequestOptions.DEFAULT)
+            }
 
         } catch (Exception e) {
             String documentString = (docMap as JSON).toString(true)
-            log.error "Error indexing document: ${documentString}\nError: ${e}", e
+            String message = e instanceof ElasticsearchException ? e.getDetailedMessage() : e.getMessage()
+            log.error "Error: ${message}\nDocument:Error indexing document: ${docId}, type:${docMap['className']}"
 
-            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
-            String body = "Type: "+getDocType(doc)+"\n"
-            body += "Index: "+index+"\n"
-            body += "Error: "+e.getMessage()+"\n"
-            body += "Document: "+documentString
+            if (Environment.current == Environment.PRODUCTION) {
+                String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+                String body = "Type: "+getDocType(doc)+"\n"
+                body += "Index: "+index+"\n"
+                body += "Error: "+e.getMessage()+"\n"
+                body += "Document: "+documentString
 
-            emailService.emailSupport(subject, body)
+                emailService.emailSupport(subject, body)
+            }
+
         }
     }
 
@@ -193,7 +242,7 @@ class ElasticSearchService {
     }
 
     def getDocType(doc) {
-        def className = doc.className ?: "au.org.ala.ecodata.doc"
+        String className = doc.className ?: "au.org.ala.ecodata.doc"
         className.tokenize(".")[-1].toLowerCase()
     }
 
@@ -208,21 +257,22 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId, String index = DEFAULT_INDEX) {
         def isDeleted = false
-        def resp
+        GetResponse resp
 
         try {
-            resp = client.prepareGet(index, DEFAULT_TYPE, docId).execute().actionGet();
+            GetRequest request = new GetRequest(index, docId)
+            resp = client.get(request, RequestOptions.DEFAULT)
+
+            if (resp.exists && doc.status?.toLowerCase() == DELETED) {
+                try {
+                    deleteDocById(docId, index)
+                    isDeleted = true
+                } catch (Exception e) {
+                    log.error "Error deleting doc with ID ${docId}: ${e.message}"
+                }
+            }
         } catch (Exception e) {
             log.error "ES prepareGet error: ${e}", e
-        }
-
-        if (resp && doc.status?.toLowerCase() == DELETED) {
-            try {
-                deleteDocById(docId, index)
-                isDeleted = true
-            } catch (Exception e) {
-                log.error "Error deleting doc with ID ${docId}: ${e.message}"
-            }
         }
 
         return isDeleted
@@ -299,22 +349,6 @@ class ElasticSearchService {
     }
 
     /**
-     * Add custom mapping for ES index.
-     */
-    def addMappings(index) {
-        Map parsedJson = getMapping()
-
-        def mappingsDoc = (parsedJson as JSON).toString() //groovy.json.JsonOutput.toJson(parsedJson).toString() //(parsedJson as JSON).toString()
-
-        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
-        indexes.each {
-            client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
-        }
-
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet()
-    }
-
-    /**
      * Get the complete mapping that will be used by Elastic Search i.e. default mapping + custom mapping
      * @return
      */
@@ -333,8 +367,9 @@ class ElasticSearchService {
             Map parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
             def facetMappings = buildFacetMapping()
             // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
-            parsedJson.mappings.doc["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
-            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings)
+            parsedJson.mappings["properties"].extent["properties"].geometry["properties"].putAll(facetMappings.properties)
+            parsedJson.mappings["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings.properties)
+            parsedJson.mappings["properties"].putAll(facetMappings.facets)
             parsedJson
         })
     }
@@ -377,18 +412,17 @@ class ElasticSearchService {
             case 'Image':
             case 'document':
             case 'stringList':
-                mapping?.mappings.doc["properties"].put(field.indexName, [
-                        "type" : "string",
-                        "index" : "not_analyzed"
+                mapping?.mappings["properties"].put(field.indexName, [
+                        "type" : "keyword"
                 ])
                 break
             case 'number':
-                mapping?.mappings.doc["properties"].put(field.indexName, [
+                mapping?.mappings["properties"].put(field.indexName, [
                         "type" : "double"
                 ])
                 break
             case 'date':
-                mapping?.mappings.doc["properties"].put(field.indexName, [
+                mapping?.mappings["properties"].put(field.indexName, [
                         "type" : "date"
                 ])
                 break
@@ -398,7 +432,7 @@ class ElasticSearchService {
     }
 
     boolean doesIndexExist(String index, Map mapping){
-        if(mapping?.mappings.doc["properties"].hasProperty(index)){
+        if(mapping?.mappings["properties"].hasProperty(index)){
             return true
         }
 
@@ -414,11 +448,13 @@ class ElasticSearchService {
             facetList.addAll(facetConfig[it].collect { k, v -> k })
         }
 
-        def properties = [:]
+        Map properties = [:]
+        Map facets = [:]
         facetList.each { facetName ->
-            properties << [(facetName): [type: 'multi_field', path: 'just_name', fields: [(facetName): [type: "string", index: "analyzed"], (facetName + "Facet"): [type: "string", index: "not_analyzed"]]]]
+            properties << [(facetName): [type: 'text', copy_to:facetName+"Facet"]]
+            facets << [(facetName + "Facet"): [type: "keyword"]]
         }
-        properties
+        [properties:properties, facets:facets]
     }
 
     /**
@@ -460,20 +496,25 @@ class ElasticSearchService {
             while (messageCount < maxMessagesToFlush && (message = _messageQueue.poll()) != null) {
                 log.debug "Processing IndexDocMsg: ${message}"
 
-                switch (message.indexType) {
-                    case EventType.PostUpdate:
-                    case EventType.PostInsert:
-                        indexDocType(message.docId, message.docType)
-                        break
-                    case EventType.PreDelete:
-                    case EventType.PostDelete:
-                        deleteDocByIdAndType(message.docId, message.docType)
-                        break
-                    case EventType.PreUpdate:
-                        checkDeleteForProjects(message.docIds)
-                        break
-                    default:
-                        log.warn "Unexpected GORM event type: ${message.indexType}"
+                try {
+                    switch (message.indexType) {
+                        case EventType.PostUpdate:
+                        case EventType.PostInsert:
+                            indexDocType(message.docId, message.docType)
+                            break
+                        case EventType.PreDelete:
+                        case EventType.PostDelete:
+                            deleteDocByIdAndType(message.docId, message.docType)
+                            break
+                        case EventType.PreUpdate:
+                            checkDeleteForProjects(message.docIds)
+                            break
+                        default:
+                            log.warn "Unexpected GORM event type: ${message.indexType}"
+                    }
+                }
+                catch (Exception e) {
+                    log.error "Error indexing message from message queue: ${message}", e
                 }
 
                 messageCount++
@@ -714,29 +755,60 @@ class ElasticSearchService {
      * Index all documents. Index is cleared first.
      */
     def indexAll() {
-        log.debug "Clearing index first"
-        deleteIndex()
+        log.debug "Clearing the unused index first"
+
+        Map newIndexes = indexManager.recreateUnusedIndexes()
 
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
 
+        int bulkIndexCount = 0
+        int lastReportedIndexCount = 0
+        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
+            @Override
+            void beforeBulk(long executionId, BulkRequest request) {}
+
+            @Override
+            void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+                bulkIndexCount += request.numberOfActions()
+                if (bulkIndexCount - lastReportedIndexCount > 1000) {
+                    log.info("Bulk indexed "+bulkIndexCount+" documents")
+                    lastReportedIndexCount = bulkIndexCount
+                }
+
+                if (response.hasFailures()) {
+                    log.warn(response.buildFailureMessage())
+                }
+            }
+
+            @Override
+            void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+                log.error("Error executing bulk indexing", failure)
+            }
+        }
+
+        BulkProcessor bulkProcessor = BulkProcessor.builder(
+                { request, bulkListener ->
+                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-indexing"
+        ).build()
+
         Project.withNewSession {
-            def batchParams = [offset: 0, max: 50, limit: 200]
-            def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
+            def batchParams = [offset: 0, max: 50, sort:'projectId']
+            def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
             while (projects) {
                 projects.each { project ->
                     try {
                         Map projectMap = prepareProjectForHomePageIndex(project)
-                        indexDoc(projectMap, HOMEPAGE_INDEX)
+                        indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX], bulkProcessor)
                     }
                     catch (Exception e) {
                         log.error("Unable to index project:  " + project?.projectId, e)
                     }
                 }
                 batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
-
+                projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
+                log.info("Processed "+batchParams.offset+" projects")
             }
         }
 
@@ -748,7 +820,7 @@ class ElasticSearchService {
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
                     if (siteMap) {
-                        indexDoc(siteMap, DEFAULT_INDEX)
+                        indexDoc(siteMap, newIndexes[DEFAULT_INDEX], bulkProcessor)
                     }
                 }
                 catch (Exception e) {
@@ -757,8 +829,19 @@ class ElasticSearchService {
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.info("Indexed "+count+" sites")
+                    log.info("Processed "+count+" sites")
                 }
+            }
+        }
+
+        log.info "Indexing all organisations"
+        organisationService.doWithAllOrganisations { Map org ->
+            try {
+                prepareOrganisationForIndexing(org)
+                indexDoc(org, newIndexes[DEFAULT_INDEX], bulkProcessor)
+            }
+            catch (Exception e) {
+                log.error("Unable to index organisation: "+org?.organisationId, e)
             }
         }
 
@@ -768,7 +851,7 @@ class ElasticSearchService {
             activityService.doWithAllActivities { Map activity ->
                 try {
                     activity = prepareActivityForIndexing(activity)
-                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? newIndexes[PROJECT_ACTIVITY_INDEX] : newIndexes[DEFAULT_INDEX], bulkProcessor)
                 }
                 catch (Exception e) {
                     log.error("Unable to index activity: " + activity?.activityId, e)
@@ -777,22 +860,17 @@ class ElasticSearchService {
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.info("Indexed " + count + " activities")
+                    log.info("Processed " + count + " activities")
                 }
             }
         }
 
-        log.info "Indexing all organisations"
-        organisationService.doWithAllOrganisations { Map org ->
-            try {
-                prepareOrganisationForIndexing(org)
-                indexDoc(org, DEFAULT_INDEX)
-            }
-            catch (Exception e) {
-                log.error("Unable to index organisation: "+org?.organisationId, e)
-            }
-        }
+        bulkProcessor.close()
 
+        // Swap each alias to the new index
+        newIndexes.each { String alias, String index ->
+            indexManager.updateAlias(alias, index)
+        }
         log.info "Indexing complete"
     }
 
@@ -804,7 +882,7 @@ class ElasticSearchService {
         organisation["className"] = Organisation.class.name
         Map results = documentService.search([organisationId:organisation.organisationId, role:DocumentService.LOGO])
         if (results && results.documents) {
-            organisation.logoUrl = results.documents[0].thumbnailUrl
+            organisation.logoUrl = results.documents[0].thumbnailUrl?.toString() // Elasticsearch can't index URLs
         }
 
         // get list of users of this organisation
@@ -911,13 +989,19 @@ class ElasticSearchService {
 
         }
 
+        // Elasticsearch no longer accepts URLs and the ProjectService.toMap adds org logs as URLs, so remove them
+        // before indexing.
+        projectMap.associatedOrgs?.each {
+            it.remove("logo")
+        }
+
         projectMap
     }
 
     private Map prepareActivityForIndexing(Map activity, version = null) {
         activity["className"] = Activity.class.getName()
 
-        def project = projectService.get(activity.projectId, ProjectService.FLAT, version)
+        Map project = projectService.get(activity.projectId, ProjectService.FLAT, version)
 
         boolean isWorksActivity = project?.isWorks
 
@@ -962,7 +1046,14 @@ class ElasticSearchService {
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
                 values.commonName = it.commonName
-                values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+
+                // This check is required as elasticsearch JSON validation will fail for
+                // NaN & Infinity and the whole batch will not index.
+                // https://github.com/elastic/elasticsearch/issues/2863
+                if (it.decimalLatitude && it.decimalLongitude && Double.isFinite(it.decimalLatitude) && Double.isFinite(it.decimalLongitude)) {
+                    values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+                }
+
                 values.multimedia = it.multimedia
                 if(it.eventDate){
                     eventDate = recordService.parseDate(it.eventDate)
@@ -998,7 +1089,7 @@ class ElasticSearchService {
                 Document image = Document.findByActivityIdAndRoleAndTypeAndFilenameIsNotNull(activity.activityId,'surveyImage', 'image')
                 if (image) {
                     projectActivity.surveyImage = true;
-                    activity.thumbnailUrl = image?.thumbnailUrl
+                    activity.thumbnailUrl = image?.thumbnailUrl?.toString()
                 }
             }
             catch (Exception e) {
@@ -1031,6 +1122,15 @@ class ElasticSearchService {
             project.putAll(activity)
             activity = project
             activity.programSubProgram = project.associatedProgram + ' - ' + project.associatedSubProgram
+        }
+        // Elasticsearch no longer accepts URLs and the ProjectService.toMap attaches
+        // the associated orgs logo as a URLs
+        // before indexing.
+        activity?.associatedOrgs?.each {
+            it.logo = it.logo?.toString()
+        }
+        activity?.documents?.each {
+            it.thumbnailUrl = it.thumbnailUrl?.toString()
         }
 
         if (activity.siteId) {
@@ -1155,12 +1255,12 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControlFilter = false) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControlFilter = false) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
-        def request = buildSearchRequest(query, params, index, geoSearchCriteria, applyAccessControlFilter)
-        client.search(request).actionGet()
+        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria, applyAccessControlFilter)
+        client.search(request, RequestOptions.DEFAULT)
     }
 
     SearchResponse searchWithSecurity(String userId, String query, Map params, String index = HOMEPAGE_INDEX, Map geoSearchCriteria = [:]) {
@@ -1175,9 +1275,8 @@ class ElasticSearchService {
      * @param request
      * @return IndexResponse
      */
-    def doSearch(SearchRequest request) {
-        def response = client.search(request).actionGet()
-        return response
+    SearchResponse doSearch(SearchRequest request) {
+        client.search(request)
     }
 
     def searchAndAggregateOnGeohash(String query, Map params = [:], geohashField = "sites.geoPoint", boundingBoxField = "geoIndex", String index = PROJECT_ACTIVITY_INDEX) {
@@ -1191,7 +1290,7 @@ class ElasticSearchService {
         search(query, params, index, boundingBox)
     }
 
-    def searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {
+    SearchResponse searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {
         SearchRequest request = new SearchRequest()
         request.indices(index)
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
@@ -1200,13 +1299,13 @@ class ElasticSearchService {
 
         if (activityFilters) {
             def filters = buildFilters(activityFilters)
-            queryBuilder = new FilteredQueryBuilder(queryBuilder, filters)
+            queryBuilder = QueryBuilders.boolQuery().filter(filters).should(queryBuilder)
         }
 
         SearchSourceBuilder source = pagenateQuery(paginationParams).query(queryBuilder)
         request.source(source)
 
-        client.search(request).actionGet()
+        client.search(request, RequestOptions.DEFAULT)
     }
 
     /*
@@ -1328,39 +1427,33 @@ class ElasticSearchService {
     def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControl = false) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
-
-        // set indices and types
         request.indices(index)
-        def types = []
-        if (params.types && params.types instanceof Collection<String>) {
-            types = params.types
-        }
-        request.types(types as String[])
 
         QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index, applyAccessControl)
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params).query(query)
+        source.trackTotalHits(true) // Always provide a full count of the number of results for compatibility with current clients
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
-            source.facet(it)
+            source.aggregation(it)
         }
 
         if(params.rangeFacets){
             addRangeFacets(params.rangeFacets as List).each {
-                source.facet(it)
+                source.aggregation(it)
             }
         }
 
         if(params.histogramFacets){
             addHistogramFacets(params.histogramFacets).each {
-                source.facet(it)
+                source.aggregation(it)
             }
         }
 
         if(params.statFacets){
             addStatFacets(params.statFacets).each {
-                source.facet(it)
+                source.aggregation(it)
             }
         }
 
@@ -1370,12 +1463,8 @@ class ElasticSearchService {
             }
         }
 
-        if (params.highlight) {
-            source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
-        }
-
         if (params.omitSource) {
-            source.noFields()
+            source.fetchSource(false)
         }
         else if (params.include || params.exclude) {
             // We support include/exclude as either a List or a String, the elasticsearch API accepts both.
@@ -1421,16 +1510,16 @@ class ElasticSearchService {
         hubFilters
     }
 
-    private FilterBuilder buildAccessControlFilter() {
+    private BoolQueryBuilder buildAccessControlFilter() {
         String userId = UserService.currentUser()?.userId
-
-        FilterBuilder filter = FilterBuilders.termFilter("allParticipants", userId)
-        List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
+        BoolQueryBuilder builder = QueryBuilders.boolQuery()
+        builder.filter(QueryBuilders.termsQuery("allParticipants", userId))
+        //List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
+        List permissions = []
         if (permissions) {
-            FilterBuilder hubs = FilterBuilders.termsFilter("hubId", permissions.collect { it.entityId})
-            filter = FilterBuilders.boolFilter().should(filter).should(hubs)
+            BoolQueryBuilder hubs = QueryBuilders.termsQuery("hubId", permissions.collect { it.entityId})
         }
-        filter
+        builder
     }
 
     private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index, boolean applyAccessControlFilters = false) {
@@ -1453,12 +1542,12 @@ class ElasticSearchService {
             filters << buildGeoFilter(geoSearchCriteria, params.geoSearchField)
         }
         if (params.terms) {
-            filters << FilterBuilders.termsFilter(params.terms.field, params.terms.values)
+            filters << QueryBuilders.termsQuery(params.terms.field, params.terms.values)
         }
 
         if (params.exists) {
             params.exists.split (',').each {
-                filters << FilterBuilders.existsFilter(it)
+                filters << QueryBuilders.existsQuery(it)
             }
         }
 
@@ -1468,10 +1557,13 @@ class ElasticSearchService {
         }
 
         if (filters) {
-            BoolFilterBuilder builder = FilterBuilders.boolFilter()
-            builder.must(*filters)
+            BoolQueryBuilder builder = QueryBuilders.boolQuery()
+            filters.each {
+                builder.filter(it)
+            }
 
-            queryBuilder = filteredQuery(qsQuery, builder)
+            builder.must(qsQuery)
+            queryBuilder = builder
         }
         else {
             queryBuilder = qsQuery
@@ -1495,7 +1587,7 @@ class ElasticSearchService {
         fieldsAndBoosts.each { field, boost ->
             queryStringQueryBuilder.field(field, boost)
         }
-        queryStringQueryBuilder.field("_all")
+        queryStringQueryBuilder.field("*")
 
         return queryStringQueryBuilder
     }
@@ -1505,35 +1597,40 @@ class ElasticSearchService {
      * @param query
      * @return
      */
-    private applyWeightingToEntities(QueryBuilder query) {
-        functionScoreQuery(query)
-                .add(termsFilter('className', 'au.org.ala.ecodata.Organisation'), ScoreFunctionBuilders.weightFactorFunction(1.75))
-                .add(termsFilter('className', 'au.org.ala.ecodata.Project'), ScoreFunctionBuilders.weightFactorFunction(1.5))
-                .add(termsFilter('className', 'au.org.ala.ecodata.Site'), ScoreFunctionBuilders.weightFactorFunction(1))
-                .add(termsFilter('className', 'au.org.ala.ecodata.Activity'), ScoreFunctionBuilders.weightFactorFunction(0.5))
-
+    private FunctionScoreQueryBuilder applyWeightingToEntities(QueryBuilder query) {
+        FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctions = [
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Organisation'), ScoreFunctionBuilders.weightFactorFunction(1.75)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Project'), ScoreFunctionBuilders.weightFactorFunction(1.5)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Site'), ScoreFunctionBuilders.weightFactorFunction(1)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(termsQuery('className', 'au.org.ala.ecodata.Activity'), ScoreFunctionBuilders.weightFactorFunction(0.5))
+        ]
+        new FunctionScoreQueryBuilder(query, filterFunctions)
     }
 
-    private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "geoIndex") {
-        GeoShapeFilterBuilder filter = null
-
-        ShapeBuilder shape = null
+    private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "projectArea.geoIndex") {
+        GeoShapeQueryBuilder filter = null
+        field = field ?: 'projectArea.geoIndex'
+        Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                shape = ShapeBuilder.newPolygon()
-                shape.points(geographicSearchCriteria.coordinates[0].collect { coordinate ->
-                    new Coordinate(coordinate[0] as double, coordinate[1] as double)
-                } as Coordinate[])
+                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder()
+                geographicSearchCriteria.coordinates[0].each { coordinate ->
+                    coordinatesBuilder.coordinate(coordinate[0] as double, coordinate[1] as double)
+                }
+                shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
                 break;
             case "Circle":
-                shape = ShapeBuilder.newCircleBuilder()
-                        .radius(geographicSearchCriteria.radius?.toString())
-                        .center(geographicSearchCriteria.coordinates[0] as double, geographicSearchCriteria.coordinates[1] as double)
+                shape = new Circle(
+                        geographicSearchCriteria.coordinates[0] as double,
+                        geographicSearchCriteria.coordinates[1] as double,
+                        geographicSearchCriteria.radius as double
+                )
+
                 break
         }
 
         if (shape) {
-            filter = geoShapeFilter(field, shape, ShapeRelation.INTERSECTS)
+            filter = geoIntersectionQuery(field, shape)
         }
 
         filter
@@ -1564,14 +1661,14 @@ class ElasticSearchService {
 
         if (facetGroup) {
             facetGroup.each { String facetName, List ranges ->
-                RangeFacetBuilder rangeFacet = FacetBuilders.rangeFacet(facetName).field(facetName);
+                RangeAggregationBuilder rangeFacet = AggregationBuilders.range(facetName).field(facetName);
                 ranges?.each { Map range ->
                     if(range.gte && range.lt){
-                        rangeFacet.addRange(range.gte, range.lt)
+                        rangeFacet.addRange(range.gte as double, range.lt as double)
                     } else if (range.gte) {
-                        rangeFacet.addUnboundedFrom(range.gte)
+                        rangeFacet.addUnboundedFrom(range.gte as double)
                     } else if(range.lt){
-                        rangeFacet.addUnboundedTo(range.lt)
+                        rangeFacet.addUnboundedTo(range.lt as double)
                     }
                 }
 
@@ -1607,7 +1704,7 @@ class ElasticSearchService {
         if (facets) {
             facets.split(",").each { facet ->
                 List parts = facet.split(':')
-                facetList.add(FacetBuilders.histogramFacet(parts[0]).field(parts[0]).interval(Long.parseLong(parts[1])))
+                facetList.add(AggregationBuilders.histogram(parts[0]).field(parts[0]).interval(Long.parseLong(parts[1])))
             }
         }
 
@@ -1625,7 +1722,7 @@ class ElasticSearchService {
 
         if (facets) {
             facets.split(",").each { facet ->
-                facetList.add(FacetBuilders.statisticalFacet(facet).field(facet))
+                facetList.add(AggregationBuilders.stats(facet).field(facet))
             }
         }
 
@@ -1640,8 +1737,6 @@ class ElasticSearchService {
      * @return facetList
      */
     List addFacets(facets, filters, flimit, fsort) {
-        // use FacetBuilders
-        // e.g. FacetBuilders.termsFacet("f1").field("field")
         log.debug "filters = $filters; flimit = ${flimit}"
         try {
             flimit = (flimit) ? flimit as int : DEFAULT_FACETS
@@ -1649,18 +1744,31 @@ class ElasticSearchService {
             log.warn "addFacets error: ${e.message}"
             flimit = DEFAULT_FACETS
         }
-        try {
-            fsort = (fsort) ? TermsFacet.ComparatorType.fromString(fsort) : TermsFacet.ComparatorType.COUNT
-        } catch (Exception e) {
-            log.warn "addFacets error: ${e.message}"
-            fsort = TermsFacet.ComparatorType.COUNT
+
+        // This is to keep backwards compatibility with elasticsearch 1.7.
+        BucketOrder sortOrder
+        switch (fsort) {
+            case "term":
+                sortOrder = BucketOrder.key(true)
+                break
+            case "reverse_count":
+            case "reverseCount":
+                sortOrder = BucketOrder.count(true)
+                break
+            case "reverse_term":
+            case "reverseTerm" :
+                sortOrder = BucketOrder.key(false)
+                break
+            default:
+                sortOrder = BucketOrder.count(false)
+                break
         }
 
         List facetList = []
 
         if (facets) {
             facets.split(",").each {
-                facetList.add(FacetBuilders.termsFacet(it).field(it).size(flimit).order(fsort))
+                facetList.add(AggregationBuilders.terms(it).field(it).size(flimit).order(sortOrder))
             }
         }
 
@@ -1718,19 +1826,17 @@ class ElasticSearchService {
      * @param filters
      * @return
      */
-    BoolFilterBuilder buildFilters(filters) {
-        // see http://www.elasticsearch.org/guide/reference/java-api/query-dsl-filters/
-        //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
+    BoolQueryBuilder buildFilters(filters) {
 
         List filterList = getFilterList(filters) // allow for multiple fq params
 
         Map facets = parseFilterParams(filterList)
 
-        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter()
+        BoolQueryBuilder boolFilter = QueryBuilders.boolQuery()
         facets.each { String facetName, List<String> facetValues ->
 
             if (facetValues.size() == 0) {
-                boolFilter.must(FilterBuilders.missingFilter(facetName).nullValue(true))
+                boolFilter.mustNot(QueryBuilders.existsQuery(facetName))
             }
             else {
                 // support SOLR style filters (-) for exclude
@@ -1746,18 +1852,18 @@ class ElasticSearchService {
 
     }
 
-    FilterBuilder filterValue(String filterName, List facetValues) {
+    QueryBuilder filterValue(String filterName, List facetValues) {
 
-        FilterBuilder filter
+        QueryBuilder filter
         if (facetValues.size() == 1) {
             String value = facetValues[0]
             if (filterName == '_query') {
-                filter = FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(value))
+                filter = QueryBuilders.queryStringQuery(value)
             }
             else {
                 Map range = parseRangeString(value)
                 if (range) {
-                    filter = rangeFilter(filterName)
+                    filter = new RangeQueryBuilder(filterName)
                     if(range.gte != null){
                         filter.gte(range.gte)
                     }
@@ -1775,14 +1881,14 @@ class ElasticSearchService {
                     }
                 }
                 else {
-                    filter = FilterBuilders.termFilter(filterName, value)
+                    filter = QueryBuilders.termQuery(filterName, value)
                 }
             }
         }
         else {
-            filter = FilterBuilders.boolFilter()
+            filter = QueryBuilders.boolQuery()
             facetValues.each { String value ->
-                ((BoolFilterBuilder)filter).should(filterValue(filterName, [value]))
+                ((BoolQueryBuilder)filter).should(filterValue(filterName, [value]))
             }
         }
 
@@ -1858,10 +1964,33 @@ class ElasticSearchService {
         allFilters.each { String facet ->
             List tokens = parseFilter(facet)
             String value = (tokens.size() > 1) ? tokens[1] : null
+            value = applyBooleanFieldCompatibilityToTerm(tokens[0], value)
             filterMap[(tokens[0])] << value
         }
         filterMap
     }
+
+    /**
+     * Elasticsearch used to accept T/F when querying boolean fields but now only accepts true/false.
+     * This method checks if a boolean field is being filtered on and if so, converts T/F to true/false,
+     * otherwise the value is unchanged.
+     * @param fieldName the name of the field to filter on.
+     * @param value the term being filtered on.
+     * @return the term to filter on, possibly modfied.
+     */
+    private String applyBooleanFieldCompatibilityToTerm(String fieldName, String value) {
+        String compatibleValue = value
+        if (fieldName in BOOLEAN_PROEJCT_FIELDS) {
+            if (value == "T") {
+                compatibleValue = "true"
+            }
+            else if (value == "F") {
+                compatibleValue = "false"
+            }
+        }
+        compatibleValue
+    }
+
 
     /**
      * Delete a doc given its ID
@@ -1869,53 +1998,15 @@ class ElasticSearchService {
      * @param id
      * @return
      */
-    def deleteDocById(id, String index = DEFAULT_INDEX) {
-        client.prepareDelete(index, DEFAULT_TYPE, id).execute().actionGet();
+    DeleteResponse deleteDocById(String id, String index = DEFAULT_INDEX) {
+        DeleteRequest request = new DeleteRequest(index, id)
+        client.delete(request, RequestOptions.DEFAULT)
     }
 
     /**
-     * Delete the (default) ES index
-     *
-     * @return
+     * Shutdown ES client
      */
-    public deleteIndex(index) {
-        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
-
-        indexes.each {
-            log.info "trying to delete $it"
-            try {
-                def response = node.client().admin().indices().prepareDelete(it).execute().get()
-                if (response.acknowledged) {
-                    log.info "The index is removed"
-                } else {
-                    log.error "The index could not be removed"
-                }
-            } catch (Exception e) {
-                log.error "The index you want to delete is missing : ${e.message}"
-            }
-        }
-
-        createIndexAndMapping(index)
-        return "index cleared"
-    }
-
-    /**
-     * Create a new index add configure custom mappings
-     */
-    def createIndexAndMapping(index) {
-        log.info "Creating new index and configuring elastic search custom mapping"
-        try {
-            addMappings(index)
-        } catch (Exception e) {
-            log.error "Error creating index: ${e}", e
-        }
-    }
-
-    /**
-     * Shutdown ES server
-     */
-    @PreDestroy
     def destroy() {
-        node.close();
+        client.close()
     }
 }

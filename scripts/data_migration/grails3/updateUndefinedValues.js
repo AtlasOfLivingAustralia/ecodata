@@ -43,11 +43,12 @@ var recursiveSearch = function(collection) {
     };
 
     // db.getCollection(collection).find({siteId:  'a805e770-10cd-4ead-ad4e-d13d9360fb38'}).forEach(function(doc){
-    db.getCollection(collection).find().forEach(function(doc){
+    db.getCollection(collection).find().addOption(DBQuery.Option.noTimeout).forEach(function(doc){
         print("Scanning document with Id: " + doc['_id']);
         var docContainUndefined = deepIterate(collection, doc['_id'], doc, "");
         if (docContainUndefined) {
-            printjson (doc);
+            //printjson (doc);
+            print("updated id: "+ doc['_id']);
         } else {
             print ('Nothing to update for id: ' + doc['_id']);
         }
@@ -66,3 +67,5 @@ recursiveSearch('hub');
 print ("######## updateUndefinedValues.js ##### Update Score collection ########" );
 recursiveSearch('score');
 
+print ("######## updateUndefinedValues.js ##### Update Record collection ########" );
+recursiveSearch('record');

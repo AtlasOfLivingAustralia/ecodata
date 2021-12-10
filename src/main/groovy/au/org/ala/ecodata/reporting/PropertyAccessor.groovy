@@ -1,6 +1,6 @@
 package au.org.ala.ecodata.reporting
 
-import org.apache.log4j.Logger
+import groovy.util.logging.Slf4j
 
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -9,9 +9,8 @@ import java.text.ParseException
 /**
  * Helper class for accessing data from an activity or output.
  */
+@Slf4j
 class PropertyAccessor {
-
-    static def log = Logger.getLogger(getClass())
 
     static ThreadLocal<NumberFormat> numberFormat = new ThreadLocal<NumberFormat>()
 

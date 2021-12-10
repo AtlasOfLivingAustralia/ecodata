@@ -28,7 +28,7 @@ self.initialiseBenchmarkTable = function () {
 
 self.updateScore = function(){
     // Calculate
-   /* var avg = 0;
+    var avg = 0;
     var total = (parseFloat(self.data.largeTreesScore()) +
         parseFloat(self.data.aveCanopyHeightScore()) +
         parseFloat(self.data.emergentHeightScore()) +
@@ -40,7 +40,8 @@ self.updateScore = function(){
         parseFloat(self.data.numGrassSpeciesTotal()) +
         parseFloat(self.data.numForbSpeciesTotal));
 
-    // TODO Fix this
+    /*
+    // TODO Include the formula
     self.data.siteBcScore(total > 0 ? parseFloat(total)/10 : 0);
     */
 };
@@ -200,8 +201,14 @@ self.transients.largeTreesScore  =  ko.computed(function () {
     var benchmarkNumLargeEucalypt = self.data.benchmarkEucalyptLargeTreeNo();
     var benchmarkNumLargeNonEucalypt = self.data.benchmarkNonEucalyptLargeTreeNo();
     var assessmentPercentage = 0;
-    if(benchmarkTotalLargeTrees != 'na' && !isNaN(benchmarkNumLargeEucalypt) && !isNaN(benchmarkNumLargeNonEucalypt) && benchmarkTotalLargeTrees > 0){
-        var benchmarkTotalLargeTrees = parseInt(benchmarkNumLargeEucalypt) + parseInt(benchmarkNumLargeNonEucalypt);
+    var benchmarkTotalLargeTrees = 0;
+    if(!isNaN(benchmarkNumLargeEucalypt)){
+        benchmarkTotalLargeTrees = benchmarkTotalLargeTrees + parseInt(benchmarkNumLargeEucalypt);
+    }
+    if(!isNaN(benchmarkNumLargeNonEucalypt)) {
+        benchmarkTotalLargeTrees = benchmarkTotalLargeTrees + parseInt(benchmarkNumLargeNonEucalypt);
+    }
+    if(benchmarkTotalLargeTrees > 0) {
         assessmentPercentage = (parseInt(self.data.totalLargeTreesPerHa())/parseInt(benchmarkTotalLargeTrees)) * 100;
     }
 
@@ -573,7 +580,7 @@ self.data.nonNativeSpeciesRichness.subscribe(function (obj) {
             score = table.value[1].value;
         } else if (table.value[2].name == '≥5 – 25% of vegetation cover are non-native plants' && assessmentPercentage >= 5 && assessmentPercentage < 25) {
             score = table.value[2].value;
-        } else if (table.value[3].name == '≥5 – 25% of vegetation cover are non-native plants' && assessmentPercentage < 5) {
+        } else if (table.value[3].name == '<5% of vegetation cover are non-native plants' && assessmentPercentage < 5) {
             score = table.value[3].value;
         }
     }

@@ -1,9 +1,9 @@
 package au.org.ala.ecodata.converter
 
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
 
 
-@Log4j
+@Slf4j
 class ListConverter implements RecordFieldConverter {
 
     @Override

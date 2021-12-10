@@ -12,12 +12,13 @@ See [MERIT schema](https://github.com/AtlasOfLivingAustralia/ecodata/wiki/MeritS
 It implements a JSON/HTTP API to provide access to the data.
 
 ### Technologies
-* Grails framework 3.3.10
+* Grails framework 4.0.11
 * MongoDB 4.0
-* Elasticsearch 1.7
+* Elasticsearch 7.x
 * Java 8
 
 ### Setup
+* Install Elasticsearch into local machine. https://www.elastic.co/guide/en/elasticsearch/reference/7.x/brew.html
 * Clone the repository to your development machine.
 * Create local directories: 
 ```
@@ -42,6 +43,10 @@ environments {
 ```
 This configuration file largely specifies URLs to ecodata dependencies.  See https://github.com/AtlasOfLivingAustralia/ecodata/wiki/Ecodata-Dependencies for information about these.
 Note that you will need to obtain an ALA API key to use ALA services and a Google Maps API key and specify them in this file.
+
+#### Elasticsearch configuration
+Elasticsearch requires an additional configuration item in elasticsearch.yml
+```indices.query.bool.max_clause_count: 8192```
 
 ### Testing
 * To run the grails unit tests, use:

@@ -1,18 +1,11 @@
 {
   "mappings":{
-    "doc": {
-      "_all": {
-        "enabled": true,
-        "store": "yes"
-      },
       "properties": {
         "siteId" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "projectId" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "hubId": {
           "type": "string",
@@ -20,177 +13,188 @@
         },
 
         "projects" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "programId" : {
-          "type" : "string",
-          "index": "not_analyzed"
+          "type" : "keyword"
         },
         "managementUnitId" : {
-          "type" : "string",
-          "index": "not_analyzed"
+          "type" : "keyword"
+        },
+        "grantId": {
+          "type": "keyword"
         },
         "origin" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "countries" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "uNRegions" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "scienceType" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "ecoScienceType" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "typeOfProject" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
         },
         "tags" : {
-          "type" : "string",
-          "index" : "not_analyzed"
+          "type" : "keyword"
+        },
+        "fundingSourceFacet": {
+          "type": "keyword"
         },
         "fundings": {
           "properties": {
             "fundingSource": {
-              "type": "string",
-              "index": "not_analyzed",
-              "fields": {
-                "fundingSourceFacet": {
-                  "type": "string",
-                  "index": "not_analyzed"
-                }
-              }
+              "type": "keyword",
+              "copy_to":"fundingSourceFacet"
             }
           }
         },
 
         "status": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "status" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "keyword"
         },
         "organisationName": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
-            "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "type" : "text",
+          "copy_to": ["organisationFacet", "organisationSort"]
+        },
+        "organisationFacet": {
+          "type": "keyword"
+        },
+        "organisationSort": {
+          "type": "keyword",
+          "normalizer" : "case_insensitive_sort"
         },
         "dateCreated": {
           "type" : "date",
-          "path" : "just_name",
-          "fields" : {
-            "dateCreatedSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "copy_to" : "dateCreatedSort"
+        },
+        "dateCreatedSort" : {
+          "type" : "keyword", "normalizer" : "case_insensitive_sort"
         },
         "serviceProviderName": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "organisationName" : {"type" : "string", "index" : "analyzed"},
-            "organisationFacet" :  {"type" : "string", "index" : "not_analyzed"},
-            "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "type" : "text",
+          "copy_to": ["organisationName","organisationFacet", "organisationSort"]
         },
         "associatedOrgs": {
           "properties" : {
             "name" : {
-              "type" : "string",
-              "path" : "just_name",
-              "fields": {
-                "organisationName": {
-                  "type":"string",
-                  "index":"analyzed"
-                },
-                "organisationFacet": {
-                  "type": "string",
-                  "index": "not_analyzed"
-                },
-                "organisationSort": {
-                  "type": "string",
-                  "analyzer": "case_insensitive_sort"
-                }
-              }
+              "type" : "text",
+              "copy_to": ["organisationName", "organisationFacet", "organisationSort"]
+            },
+            "logo": {
+              "index": false,
+              "type": "text"
             }
           }
         },
+        "typeFacet" : {"type" : "keyword"},
         "type": {
-          "type" : "string",
-          "fields" : {
-            "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "text",
+          "copy_to" : "typeFacet"
         },
         "className": {
-          "type":"string",
-          "analyzer":"facetKeyword"
+          "type":"keyword"
         },
         "associatedProgram": {
-          "type" : "string",
-          "fields" : {
-            "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "text",
+          "copy_to": "associatedProgramFacet"
+        },
+        "associatedProgramFacet": {
+          "type": "keyword"
         },
 
         "managementUnitName": {
-          "type" : "string",
-          "fields" : {
-            "muFacet" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "text",
+          "copy_to" : "muFacet"
         },
+        "muFacet": {
+          "type": "keyword"
+        },
+        "primaryOutcomeFacet": {"type": "keyword"},
         "primaryOutcome": {
-          "type": "string",
-          "fields": {
-            "primaryOutcomeFacet": {"type": "string", "index": "not_analyzed"}
-          }
+          "type": "text",
+          "copy_to": "primaryOutcomeFacet"
         },
+        "secondaryOutcomesFacet": {"type": "keyword"},
         "secondaryOutcomes": {
-          "type": "string",
-          "fields": {
-            "secondaryOutcomesFacet": {"type": "string", "index": "not_analyzed"}
-          }
+          "type": "text",
+          "copy_to": "secondaryOutcomesFacet"
         },
         "associatedSubProgram": {
-          "type" : "string",
-          "fields" : {
-            "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-          }
+          "type" : "text",
+          "copy_to" : "associatedSubProgramFacet"
+        },
+        "associatedSubProgramFacet" : {
+          "type" : "keyword"
         },
         "industries":{
-          "type":"string",
-          "path":"just_name",
-          "fields" : {
-            "industryFacet":{"type":"string", "index":"not_analyzed"}
-          }
-
+          "type":"text",
+          "copy_to":"industryFacet"
         },
-
+        "industryFacet":{
+          "type":"keyword"
+        },
         "bushfireCategories":{
-          "type":"string",
-          "path":"just_name",
-          "fields" : {
-            "bushfireCategoriesFacet":{"type":"string", "index":"not_analyzed"}
-          }
-
+          "type":"text",
+          "copy_to":"bushfireCategoriesFacet"
         },
-
+        "bushfireCategoriesFacet":{
+          "type":"keyword"
+        },
         "name": {
-          "type" : "string",
-          "fields" : {
-            "nameSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-          }
+          "type" : "text",
+          "copy_to": "nameSort"
+        },
+        "nameSort": {
+          "type" : "keyword", "normalizer" : "lowercase"
+        },
+        "description": {
+          "type": "text"
+        },
+        "aim": {
+          "type": "text"
+        },
+        "getInvolved": {
+          "type": "text"
+        },
+        "newsAndEvents": {
+          "type": "text"
+        },
+        "projectStories": {
+          "type": "text"
+        },
+        "task": {
+          "type": "text"
+        },
+        "citation": {
+          "type": "text"
+        },
+        "qualityControlDescription": {
+          "type": "text"
+        },
+        "keywords":{
+          "type":"text"
+        },
+        "gear":{
+          "type":"text"
+        },
+        "methodStepDescription": {
+          "type":"text"
+        },
+        "links": {
+          "enabled": false,
+          "type": "object"
+        },
+        "managerEmail": {
+          "type": "text",
+          "index": "false"
         },
         "extent":{
           "properties": {
@@ -213,216 +217,262 @@
                 }
               }
             },
-            "externalId":{"type":"string"},
             "geoIndex": {
-              "type": "geo_shape"
+              "type": "geo_shape",
+              "ignore_malformed": true
             },
             "geoPoint": {
               "type": "geo_point",
-              "geohash": true,
-              "geohash_precision": "1km",
-              "geohash_prefix": true
+              "ignore_malformed": true
             },
             "geometryType": {
-              "type": "string",
-              "index": "not_analyzed"
+              "type": "keyword"
             },
             "name": {
-              "type" : "string",
-              "fields" : {
-                "siteNameFacet" : {"type" : "string", "index" : "not_analyzed"}
-              }
+              "type" : "text",
+              "copy_to" : "siteNameFacet"
+            },
+            "description": {
+              "type": "text"
+            },
+            "notes": {
+              "type": "text"
+            },
+            "features": {
+              "type": "object",
+              "enabled": false
             }
           }
         },
+        "siteNameFacet" : {"type" : "keyword"},
         "projectArea":{
           "properties":{
             "geoIndex": {
-              "type": "geo_shape"
+              "type": "geo_shape",
+              "ignore_malformed": true
             },
             "geoPoint": {
               "type": "geo_point",
-              "geohash": true,
-              "geohash_precision": "1km",
-              "geohash_prefix": true
+              "ignore_malformed": true
             },
             "geometryType": {
-              "type": "string",
-              "index": "not_analyzed"
+              "type": "keyword"
             }
           }
         },
         "isBushfire":{
-          "type":"boolean",
-          "index":"not_analyzed"
+          "type":"boolean"
         },
         "difficulty":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "fundingSourceFacet":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "reportingThemesFacet":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "assessment":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
         },
         "isExternal":{
-          "type":"boolean",
-          "index":"not_analyzed"
+          "type":"boolean"
         },
         "externalId": {
-          "type":"string"
+          "type":"keyword"
+        },
+        "promoteOnHomepage": {
+          "type": "keyword"
+        },
+        "projectActivityNameFacet": {
+          "type": "keyword"
+        },
+        "organisationNameFacet": {
+          "type":"keyword"
+        },
+        "projectNameFacet":{"type":"keyword"},
+        "activityOwnerNameFacet":{"type":"keyword"},
+        "activityLastUpdatedYearFacet":{"type":"keyword"},
+        "activityLastUpdatedMonthFacet":{"type":"keyword"},
+        "recordNameFacet":{"type":"keyword"},
+        "surveyImage": {
+          "type": "boolean"
+        },
+        "embargoed": {
+          "type": "boolean"
+        },
+        "methodType":{
+          "type":"keyword"
+        },
+        "spatialAccuracy":{
+          "type":"keyword"
+        },
+        "speciesIdentification":{
+          "type":"keyword"
+        },
+        "temporalAccuracy":{
+          "type":"keyword"
+        },
+        "nonTaxonomicAccuracy":{
+          "type":"keyword"
+        },
+        "dataQualityAssuranceMethods":{
+          "type":"keyword"
+        },
+        "isDataManagementPolicyDocumented":{
+          "type":"boolean"
+        },
+        "mapConfiguration": {
+          "type": "object",
+          "enabled": false
+        },
+        "speciesFieldsSettings": {
+          "type": "object",
+          "enabled": false
         },
         "projectActivity":{
           "properties":{
             "embargoUntil":{
-              "type":"string"
+              "type":"text"
             },
             "name":{
-              "type":"string",
-              "fields": {
-                "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "index": false,
+              "type":"text",
+              "copy_to": "projectActivityNameFacet"
             },
             "organisationName":{
-              "type":"string",
-              "fields": {
-                "organisationNameFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "index": false,
+              "type":"text",
+              "copy_to": "organisationNameFacet"
             },
             "projectName":{
-              "type":"string",
-              "fields": {
-                "projectNameFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type":"text",
+              "copy_to": "projectNameFacet"
             },
             "projectId":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "embargoed":{
               "type":"boolean",
-              "index":"not_analyzed"
+              "copy_to": "embargoed"
             },
             "activityOwnerName":{
-              "type":"string",
-              "fields": {
-                "activityOwnerNameFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type":"text",
+              "copy_to": "activityOwnerNameFacet"
             },
             "lastUpdated":{
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             },
             "lastUpdatedYear":{
-              "type":"string",
-              "fields": {
-                "activityLastUpdatedYearFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type":"text",
+              "index": false,
+              "copy_to": "activityLastUpdatedYearFacet"
             },
             "lastUpdatedMonth":{
-              "type":"string",
-              "fields": {
-                "activityLastUpdatedMonthFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type":"text",
+              "index": false,
+              "copy_to": "activityLastUpdatedMonthFacet"
             },
             "surveyImage": {
-              "type": "boolean",
-              "index": "not_analyzed"
+              "copy_to": "surveyImage",
+              "index": false,
+              "type": "boolean"
             },
             "records":{
               "properties":{
                 "name":{
-                  "type":"string",
-                  "fields": {
-                    "recordNameFacet":{"type":"string", "index":"not_analyzed"}
-                  }
+                  "type":"text",
+                  "copy_to": "recordNameFacet"
+                },
+                "eventTime":{
+                  "type": "text"
                 }
-              },
-              "eventTime":{
-                "type": "string"
               }
             },
             "methodType":{
-              "type":"string",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "methodType",
+              "type":"keyword"
             },
             "spatialAccuracy":{
-              "type":"string",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "spatialAccuracy",
+              "type":"keyword"
             },
             "speciesIdentification":{
-              "type":"string",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "speciesIdentification",
+              "type":"keyword"
             },
             "temporalAccuracy":{
-              "type":"string",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "temporalAccuracy",
+              "type":"keyword"
             },
             "nonTaxonomicAccuracy":{
-              "type":"string",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "nonTaxonomicAccuracy",
+              "type":"keyword"
             },
             "dataQualityAssuranceMethods":{
-              "type":"string",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "dataQualityAssuranceMethods",
+              "type":"keyword"
             },
             "isDataManagementPolicyDocumented":{
-              "type":"boolean",
-              "index":"not_analyzed"
+              "index": false,
+              "copy_to": "isDataManagementPolicyDocumented",
+              "type":"boolean"
             }
           }
         },
+        "siteProjectNameFacet":{"type":"keyword"},
+        "siteSurveyNameFacet":{"type":"keyword"},
         "projectList":{
           "properties": {
             "projectName": {
-              "type": "string",
-              "fields": {
-                "siteProjectNameFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type": "text",
+              "copy_to": "siteProjectNameFacet"
             }
           }
         },
         "surveyList":{
           "properties": {
             "surveyName": {
-              "type": "string",
-              "fields": {
-                "siteSurveyNameFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type": "text",
+              "copy_to": "siteSurveyNameFacet"
             }
           }
         },
         "photoType":{
-          "type": "string"
+          "type": "keyword"
         },
         "activities":{
           "properties":{
             "mainTheme": {
-              "type":"string",
-              "path":"just_name",
-              "fields": {
-                "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-              }
+              "type":"text",
+              "copy_to": "mainThemeFacet"
+            },
+            "description": {
+              "type": "text"
             }
           }
         },
         "mainTheme": {
-          "type":"string",
-          "path":"just_name",
-          "fields": {
-            "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-          }
+          "type":"text",
+          "copy_to":"mainThemeFacet"
+        },
+        "mainThemeFacet":{
+          "type":"keyword"
         },
         "publicationStatus":{
-          "type":"string",
-          "index":"not_analyzed"
+          "type":"keyword"
+        },
+        "meriPlanAssetFacet": {
+          "type": "keyword"
+        },
+        "partnerOrganisationTypeFacet": {
+          "type":"keyword"
         },
         "custom": {
           "properties": {
@@ -433,14 +483,21 @@
                     "rows1": {
                       "properties": {
                         "assets": {
-                          "type":"string",
-                          "path":"just_name",
-                          "fields": {
-                            "meriPlanAssetFacet": {
-                              "type":"string",
-                              "index":"not_analyzed"
-                            }
-                          }
+                          "type":"keyword",
+                          "copy_to":"meriPlanAssetFacet"
+                        },
+                        "description": {
+                          "type": "text"
+                        }
+                      }
+                    },
+                    "rows" : {
+                      "properties": {
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data1": {
+                          "type": "text"
                         }
                       }
                     }
@@ -451,14 +508,14 @@
                     "rows": {
                       "properties": {
                         "data3": {
-                          "type":"string",
-                          "path":"just_name",
-                          "fields": {
-                            "partnerOrganisationTypeFacet": {
-                              "type":"string",
-                              "index":"not_analyzed"
-                            }
-                          }
+                          "type":"text",
+                          "copy_to": "partnerOrganisationTypeFacet"
+                        },
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data1": {
+                          "type": "text"
                         }
                       }
                     }
@@ -469,27 +526,223 @@
                     "rows": {
                       "properties": {
                         "shortLabel": {
-                          "type":"string",
-                          "index":"not_analyzed"
+                          "type":"keyword"
+                        },
+                        "description": {
+                          "type": "text"
                         }
                       }
                     }
                   }
+                },
+                "caseStudy": {
+                  "type": "keyword"
+                },
+                "events": {
+                  "properties": {
+                    "scheduledDate": {
+                      "type": "date",
+                      "ignore_malformed": true
+                    },
+                    "description": {
+                      "type": "text"
+                    },
+                    "name": {
+                      "type": "text"
+                    }
+                  }
+
+                },
+                "keq": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data1": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "priorities": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "data1": {
+                          "type": "text"
+                        },
+                        "data2": {
+                          "type": "text"
+                        },
+                        "data3": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "implementation": {
+                  "properties": {
+                    "description": {
+                      "type": "text"
+                    }
+                  }
+                },
+                "relatedProjects": {
+                  "type": "text"
+                },
+                "consultation": {
+                  "type": "text"
+                },
+                "adaptiveManagement": {
+                  "type": "text"
+                },
+                "description": {
+                  "index": false,
+                  "type": "text"
+                },
+                "projectEvaluationApproach": {
+                  "type": "text"
+                },
+                "threats": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "threat": {
+                          "type": "text"
+                        },
+                        "intervention": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "outcomes": {
+                  "properties": {
+                    "shortTermOutcomes": {
+                      "properties": {
+                        "description": {
+                          "type": "text"
+                        }
+                      }
+                    },
+                    "midTermOutcomes": {
+                      "properties": {
+                        "description": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "baseline": {
+                  "properties": {
+                    "rows": {
+                      "properties": {
+                        "method": {
+                          "type": "text"
+                        },
+                        "baseline": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "rationale": {
+                  "type": "text"
+                },
+                "communityEngagement": {
+                  "type": "text"
+                },
+                "outcomeProgress": {
+                  "properties": {
+                    "progress": {
+                      "type": "text"
+                    }
+                  }
+                }
+
+              }
+            }
+          }
+        },
+        "risks": {
+          "properties": {
+            "rows": {
+              "properties": {
+                "currentControl":{
+                  "type": "text"
+                },
+                "description": {
+                  "type": "text"
                 }
               }
             }
           }
         },
+        "surveyMonthFacet":{"type":"keyword"},
         "surveyMonth":{
-          "type":"string",
-          "fields": {
-            "surveyMonthFacet":{"type":"string", "index":"not_analyzed"}
-          }
+          "type":"text",
+          "copy_to": "surveyMonthFacet"
         },
+        "surveyYearFacet":{"type":"keyword"},
         "surveyYear":{
-          "type":"string",
-          "fields": {
-            "surveyYearFacet":{"type":"string", "index":"not_analyzed"}
+          "type":"text",
+          "copy_to": "surveyYearFacet"
+        },
+        "userId": {
+          "type": "keyword"
+        },
+        "blog": {
+          "properties": {
+            "content": {
+              "type": "text"
+            },
+            "title": {
+              "type": "text"
+            },
+            "blogEntryId": {
+              "index": false,
+              "type": "keyword"
+            },
+            "date": {
+              "type": "date",
+              "index": false,
+              "ignore_malformed": true
+            },
+            "imageId": {
+              "type": "keyword",
+              "index": false
+            },
+            "imageThumbnailUrl": {
+              "type": "keyword",
+              "index": false
+            },
+            "keepOnTop": {
+              "type": "boolean",
+              "index": false
+            },
+            "projectId": {
+              "type": "keyword",
+              "index": false
+            },
+            "type": {
+              "type": "keyword",
+              "index": false
+            },
+            "stockIcon": {
+              "type": "keyword",
+              "index": false
+            },
+            "viewMoreUrl": {
+              "type": "keyword",
+              "index": false
+            }
           }
         }
       },
@@ -498,8 +751,7 @@
           "output_template": {
             "path_match": "outputTargets.*",
             "mapping": {
-              "type": "string",
-              "index": "analyzed"
+              "type": "text"
             }
           }
         },
@@ -507,8 +759,7 @@
           "custom_dollars_template": {
             "path_match":"custom.details.budget.rows.costs.dollar",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -516,8 +767,7 @@
           "custom_event_date_template": {
             "path_match":"custom.details.events.scheduledDate",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -525,8 +775,7 @@
           "due_date_template": {
             "path_match":"custom.details.budget.rows.dueDate",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -535,8 +784,7 @@
             "path_match":"custom.details.*",
             "match_mapping_type":"date",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -544,8 +792,7 @@
           "pid_template": {
             "path_match":"*.pid",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         },
@@ -553,15 +800,16 @@
           "blog_date_template": {
             "path_match":"blog.date",
             "mapping": {
-              "type":"string",
-              "index":"not_analyzed"
+              "type":"keyword"
             }
           }
         }
       ]
-    }
+
   },
   "settings":{
+    "index.mapping.total_fields.limit": 2000,
+    "index.max_result_window": 30000,
     "analysis":{
       "analyzer":{
         "facetKeyword":{
@@ -574,6 +822,11 @@
         "case_insensitive_sort": {
           "tokenizer": "keyword",
           "filter":  [ "lowercase" ]
+        }
+      },
+      "normalizer": {
+        "case_insensitive_sort": {
+          "filter": "lowercase"
         }
       }
     }

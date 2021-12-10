@@ -21,11 +21,14 @@ class XlsExporter extends XlsxExporter {
         this.fileName = fileName
     }
 
+    /** Produces a 31 character sheet name from the supplied string by replacing a middle section with ellipsis */
     public static String sheetName(String name) {
-        int end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH) - 1
-        def shortName = name[0..end]
-        shortName = shortName.replaceAll('[^a-zA-z0-9 ]', '')
-
+        int prefixLength = 17
+        int suffixLength = 11
+        String shortName = name
+        if (name.size() > MAX_SHEET_NAME_LENGTH) {
+            shortName = name[0..prefixLength-1]+'...'+name[-suffixLength..name.size()-1]
+        }
         shortName
     }
 
@@ -51,9 +54,21 @@ class XlsExporter extends XlsxExporter {
             styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
 
         } else {
-            if(headers) {
-                sheet.fillHeader(headers)
-                styleRow(sheet, 0, headerStyle(getWorkbook()))
+            if (headers) {
+                if (!(headers[0] instanceof List)) {
+                    headers = [headers]
+                }
+                headers.eachWithIndex { List row, int i ->
+                    if (i == 0) {
+                        sheet.fillHeader(row)
+                    }
+                    else {
+                        sheet.fillRow(row, i)
+                    }
+
+                    styleRow(sheet, i, headerStyle(getWorkbook()))
+                }
+
             }
         }
 
@@ -96,7 +111,7 @@ class XlsExporter extends XlsxExporter {
 
         CellStyle headerStyle = workbook.createCellStyle();
 
-        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         headerStyle.setFillForegroundColor(backgroundColorIndex);
         Font font = workbook.createFont();
         font.setBold(true)

@@ -17,15 +17,14 @@
     <button type="button" data-bind="click:save" class="btn btn-success">Save</button>
     <button type="button" data-bind="click:revert" class="btn">Cancel</button>
 </content>
-<div class="row-fluid span10">
-    <p class="span12">These lists control the programs, sub-programs and themes that can be associated
+<div class="row">
+    <p>These lists control the programs, sub-programs and themes that can be associated
     with projects and activities.</p>
     <p><b>Click</b> an item to select it and show its properties. <b>Double-click</b> to edit a name.
         <b>Drag</b> to rearrange the order of items.</p>
 </div>
 <form id="validation-container">
-    <div class="container-fluid">
-        <div class="row-fluid">
+        <div class="row">
             <div class="col-md-4">
                 <h2>Programs</h2>
                 <ul data-bind="sortable:{data:programs}" class="sortableList programs">
@@ -131,7 +130,7 @@
                 <span data-bind="click:addTheme, visible:transients.selectedSubprogram()" class="clickable"><i class="icon-plus"></i> Add another</span>
             </div>
         </div>
-    </div>
+
 </form>
 
 <asset:script type="text/javascript">
@@ -142,8 +141,8 @@
         var options = {
             updateProgramsModelUrl:fcConfig.updateProgramsModelUrl
         };
-        var activityTypes = JSON.parse('${(activityTypes as grails.converters.JSON).toString().encodeAsJavaScript()}');
-        var programsModel = JSON.parse('${(programsModel as grails.converters.JSON).toString().encodeAsJavaScript()}');
+        var activityTypes = JSON.parse('${raw((activityTypes as grails.converters.JSON).toString().encodeAsJavaScript())}');
+        var programsModel = JSON.parse('${raw((programsModel as grails.converters.JSON).toString().encodeAsJavaScript())}');
         var viewModel = new ProgramModelViewModel(programsModel, activityTypes, options);
         ko.applyBindings(viewModel);
     });

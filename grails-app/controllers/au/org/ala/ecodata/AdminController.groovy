@@ -5,6 +5,8 @@ import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -20,31 +22,17 @@ import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
 
-    private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
-
-    def outputService, activityService, siteService, projectService, authService,
-        collectoryService, organisationService, hubService,
+    def outputService, siteService, projectService, authService,
+        collectoryService, organisationService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
     MapService mapService
-    def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
+    PermissionService permissionService
+    UserService userService
+    EmailService emailService
+    HubService hubService
 
-    /**
-     * Triggered by beforeInterceptor, this restricts access to specified (only) actions to ROLE_ADMIN
-     * users.
-     *
-     * @return
-     */
-    private auth() {
-        if (!authService.userInRole(grailsApplication.config.security.cas.adminRole)) {
-            flash.message = "You are not authorised to access the page: Administration."
-            redirect(uri: "/")
-            false
-        } else {
-            true
-        }
-    }
-
+    @AlaSecured("ROLE_ADMIN")
     def index() {}
 
     @AlaSecured("ROLE_ADMIN")
@@ -686,7 +674,7 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
-    def getIndexNames() {F
+    def getIndexNames() {
         Map model = [indexNames: metadataService.getIndicesForDataModels()]
         render view: 'indexNames', model: model
     }
@@ -705,5 +693,55 @@ class AdminController {
         code = result ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR
         render text: [message: message] as JSON, status: code
     }
+
+    @AlaSecured("ROLE_ADMIN")
+    def displayUnIndexedFields() {
+        String index = params.get('index', ElasticIndex.HOMEPAGE_INDEX)
+        String q = "_ignored:*"
+        if (params.q) {
+            q += " AND ("+params.q+")"
+        }
+        List fq = params.getList('fq') ?: []
+
+        List include = params.getList('include') ?: []
+        include += ['isMERIT', 'projectId', 'activityId']
+
+        Map params = [fq:fq, include:include, offset:params.getInt('offset', 0), max:params.getInt('max', 100)]
+        SearchResponse searchResponse = elasticSearchService.search(q, params, index)
+
+        Map resp = [total:searchResponse.hits.totalHits.value, results:[]]
+        searchResponse.hits.hits?.each { SearchHit hit ->
+            Map docFields = hit.fields.collectEntries {
+                [it.key, it.value.values]
+            }
+            include.each {
+                docFields.put(it, hit.sourceAsMap[it])
+            }
+            resp.results << [id:hit.docId(), fields: docFields]
+        }
+
+        render resp as JSON
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def migrateUserDetailsToEcodata() {
+        def resp = permissionService.saveUserDetails()
+        render text: [ message: 'UserDetails data migration done.' ] as JSON
+    }
+
+    /**
+     * Administrative interface to trigger the access expiry job.  Used in MERIT functional
+     * tests.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    def triggerAccessExpiryJob() {
+        new AccessExpiryJob(
+                permissionService: permissionService,
+                userService: userService,
+                hubService: hubService,
+                emailService: emailService).execute()
+        render 'ok'
+    }
+
 
 }

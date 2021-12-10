@@ -465,12 +465,13 @@ class DownloadService {
     Set<String> getProjectIdsForDownload(Map params, String searchIndexName, String property = 'projectId') {
         long start = System.currentTimeMillis()
 
+        params.include = property
         SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Set ids = new HashSet()
 
         for (SearchHit hit : res.hits.hits) {
-            if (hit.source[property]) {
-                ids << hit.source[property]
+            if (hit.sourceAsMap[property]) {
+                ids << hit.sourceAsMap[property]
             }
         }
 
@@ -486,8 +487,8 @@ class DownloadService {
         Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
 
         for (SearchHit hit : res.hits.hits) {
-            if (hit.source.projectId) {
-                ids[hit.source.projectId] << hit.source.activityId
+            if (hit.sourceAsMap.projectId) {
+                ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
             }
         }
 

@@ -7,6 +7,7 @@ import au.org.ala.ecodata.GormEventListener
 import au.org.ala.ecodata.Hub
 import au.org.ala.ecodata.Program
 import au.org.ala.ecodata.ManagementUnit
+import au.org.ala.ecodata.customcodec.AccessLevelCodec
 import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -15,8 +16,10 @@ import org.bson.BSON
 import org.bson.Transformer
 import org.bson.types.ObjectId
 import grails.core.ApplicationAttributes
+import org.grails.datastore.mapping.mongo.MongoDatastore
 import org.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.context.WebApplicationContext
 
 import javax.imageio.ImageIO
@@ -27,38 +30,29 @@ class BootStrap {
     def grailsApplication
     def auditService
     def hubService
+    @Autowired
+    MongoDatastore mongoDatastore
 
     def init = { servletContext ->
 
         // Add custom GORM event listener for ES indexing
-       // def ctx = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
         def ctx = servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)
         ctx.getBeansOfType(Datastore).values().each { Datastore d ->
             log.info "Adding listener for datastore: ${d}"
             ctx.addApplicationListener new GormEventListener(d, elasticSearchService, auditService)
         }
 
+        elasticSearchService.initialize()
         // Index all docs
-        //elasticSearchService.initialize()
         if (grailsApplication.config.app.elasticsearch.indexAllOnStartup) {
             elasticSearchService.indexAll()
         }
 
-  /*
-        // Allow groovy JSONObject$NULL to be saved (as null) to mongodb
-        BSON.addEncodingHook(JSONObject.NULL.class, new Transformer() {
-            public Object transform(Object o) {
-                return null;
-            }
-        });
-
-        // Allow GStrings to be saved to mongodb
-        BSON.addEncodingHook(GString.class, new Transformer() {
-            @Override
-            Object transform(Object o) {
-                return o?o.toString():null
-            }
-        }) */
+        // Registering the codec via grails.mongodb.codecs fails to allow this type to be used in dynamic
+        // properties (specifically when a UserPermission is stored as the entity in an AuditMessage).
+        // This appears to be because, despite being registered, it gets cached as an Optional None.
+        // Registering it here seems to resolve the issue.
+        mongoDatastore.setCodecs([new AccessLevelCodec()])
 
         /**
          * Custom JSON serializer for {@link AccessLevel} enum
@@ -121,6 +115,6 @@ class BootStrap {
 
     def destroy = {
         // shutdown ES server
-        //elasticSearchService.destroy()
+        elasticSearchService.destroy()
     }
 }

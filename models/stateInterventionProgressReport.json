@@ -72,17 +72,17 @@
               {
                 "dataType": "text",
                 "name": "nature",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               },
               {
                 "dataType": "text",
                 "name": "how",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               },
               {
                 "dataType": "text",
                 "name": "implication",
-                "validate": "required,maxSize[1000]"
+                "validate": "required,maxSize[5000]"
               }
             ]
           },
@@ -326,7 +326,7 @@
             "items": [
               {
                 "source": "isExpenditureWithinBudget",
-                "preLabel": "4.1 Is the project's expenditure proceeding in accordance with the Exchange of Letters Agreement, the expected rate of expenditure and within the total project budget? If you have answered no, please inform the Department of any issue(s) related to the project budget.",
+                "preLabel": "4.1 Is the project's expenditure proceeding in accordance with the Funding Agreement, the expected rate of expenditure and within the total project budget? If you have answered no, please inform the Department of any issue(s) related to the project budget.",
                 "type": "selectOne"
               }
             ],

@@ -1,47 +1,6 @@
 
 def appName = 'ecodata'
 
-/*grails {
-    mongodb {
-        host = "localhost"
-        port = "27017"
-        databaseName = "newecodata"
-    }
-}*/
-
-/*
-dataSource {
-    pooled = true
-    dbCreate = "update"
-    url = "jdbc:mysql://localhost:3306/my_database"
-    driverClassName = "com.mysql.jdbc.Driver"
-    dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-    username = "username"
-    password = "password"
-    type = "com.zaxxer.hikari.HikariDataSource"
-    properties {
-        jmxEnabled = true
-        initialSize = 5
-        maxActive = 50
-        minIdle = 5
-        maxIdle = 25
-        maxWait = 10000
-        maxAge = 10 * 60000
-        timeBetweenEvictionRunsMillis = 5000
-        minEvictableIdleTimeMillis = 60000
-        validationQuery = "SELECT 1"
-        validationQueryTimeout = 3
-        validationInterval = 15000
-        testOnBorrow = true
-        testWhileIdle = true
-        testOnReturn = false
-        jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
-        defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
-    }
-}
-*/
-
-
 environments {
     development {
         grails {
@@ -82,6 +41,7 @@ environments {
                 }
             }
         }
+        server.servlet.session.cookie.secure = true
     }
 }
 
@@ -132,7 +92,7 @@ if (!webservice.readTimeout) {
 }
 // spatial services
 if (!spatial.baseUrl) {
-    spatial.baseUrl = "https://spatial-beta.ala.org.au"
+    spatial.baseUrl = "https://spatial-test.ala.org.au"
 }
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
@@ -616,6 +576,21 @@ grails.cache.config = {
     }
 }
 
+
+security {
+    cas {
+        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
+        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
+        loginUrl = 'https://auth.ala.org.au/cas/login'
+        logoutUrl = 'https://auth.ala.org.au/cas/logout'
+        casServerName = 'https://auth.ala.org.au'
+        uriFilterPattern = ['/admin/*', '/activityForm/*']
+        authenticateOnlyIfLoggedInPattern =
+        uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
+    }
+}
+
 grails.gorm.graphql.browser = true
 
 environments {
@@ -658,11 +633,6 @@ environments {
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
-
-        wiremock.port = 8018
-        security.cas.bypass = true
-        security.cas.casServerUrlPrefix="http://devt.ala.org.au:${wiremock.port}/cas"
-        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
         grails.cache.config = {
@@ -683,17 +653,28 @@ environments {
 
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = true
-        app.elasticsearch.location = "./target/elasticsearch/"
-        app.file.upload.path = "./target/uploads"
-        app.file.archive.path = "./target/archive"
-        String casBaseUrl = "http://localhost:8018"
-        userDetails {
-            url = "${casBaseUrl}/userdetails/"
-        }
+        app.file.upload.path = "./build/uploads"
+        app.file.archive.path = "./build/archive"
+
+        wiremock.port = 8018
+        def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
+        security.cas.casServerName="${casBaseUrl}"
+        security.cas.contextPath=""
+        security.cas.casServerUrlPrefix="${casBaseUrl}/cas"
+        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
+        security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
+
+        userDetails.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
         security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
+
+        grails.mail.host = 'localhost'
+        grails.mail.port = 3025 // com.icegreen.greenmail.util.ServerSetupTest.SMTP.port
+        // Schedule the audit thread frequently during functional tests to get less indexing errors because
+        // the data was cleaned up before the audit ran
+        audit.thread.schedule.interval = 500l;
     }
     production {
         grails.logging.jul.usebridge = false
@@ -701,134 +682,6 @@ environments {
         app.external.model.dir = "/data/ecodata/models/"
     }
 }
-
-// log4j configuration - this can be overridden in the external configuration
-if (!logging.dir) {
-    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs' : '/var/log/tomcat7')
-}
-def loggingDir = logging.dir
-//if logging not available (e.g. Travis) log to /tmp and avoid errors
-if (!new File(loggingDir).exists()) {
-    loggingDir = "/tmp"
-}
-
-println "[${appName}] Logging to ${loggingDir}"
-
-log4j = {
-    appenders {
-        environments {
-            development {
-                console name: "stdout",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
-                        threshold: org.apache.log4j.Level.DEBUG
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata-stacktrace.log"
-                rollingFile name: 'aekosLog',
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/aekosLog.log",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-            }
-            test {
-                console name: "stdout",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
-                        threshold: org.apache.log4j.Level.DEBUG
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata-test.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata-test-stacktrace.log"
-                rollingFile name: 'aekosLog',
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/aekosLog.log",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-            }
-            meritfunctionaltest {
-                console name: "stdout",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
-                        threshold: org.apache.log4j.Level.DEBUG
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata-test.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata-test-stacktrace.log"
-                rollingFile name: 'aekosLog',
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/aekosLog.log",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-            }
-            production {
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/ecodata-stacktrace.log"
-                rollingFile name: 'aekosLog',
-                        maxFileSize: 104857600,
-                        file: loggingDir + "/aekosLog.log",
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-            }
-        }
-    }
-
-    environments {
-        development {
-            all additivity: false, stdout: [
-                    'grails.app.controllers.au.org.ala.ecodata',
-                    'grails.app.domain.au.org.ala.ecodata',
-                    'grails.app.services.au.org.ala.ecodata',
-                    'grails.app.taglib.au.org.ala.ecodata',
-                    'grails.app.conf.au.org.ala.ecodata',
-                    'grails.app.filters.au.org.ala.ecodata',
-//                    'au.org.ala.cas.client'*/
-            ]
-        }
-    }
-
-    all additivity: false, ecodataLog: [
-            'grails.app.controllers.au.org.ala.ecodata',
-            'grails.app.domain.au.org.ala.ecodata',
-            'grails.app.services.au.org.ala.ecodata',
-            'grails.app.taglib.au.org.ala.ecodata',
-            'grails.app.conf.au.org.ala.ecodata',
-            'grails.app.filters.au.org.ala.ecodata'
-    ]
-
-    all additivity: false, aekosLog: [
-            'grails.app.jobs.au.org.ala.ecodata.CheckSubmissionResultJob',
-            'grails.app.services.au.org.ala.ecodata.SubmissionService'
-    ]
-
-    debug 'grails.app.controllers.au.org.ala', 'grails.app.services.au.org.ala.ecodata', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
-    info 'grails.app.jobs.au.org.ala.ecodata', 'au.org.ala.ecodata.reporting'
-
-    error 'org.codehaus.groovy.grails.web.servlet',        // controllers
-            'org.codehaus.groovy.grails.web.pages',          // GSP
-            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-            'org.codehaus.groovy.grails.web.mapping',        // URL mapping
-            'org.codehaus.groovy.grails.commons',            // core / classloading
-            'org.codehaus.groovy.grails.plugins',            // plugins
-            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-            'org.springframework',
-            'org.hibernate',
-            'net.sf.ehcache.hibernate'
-}
-
 
 facets.data = [
         [
@@ -1170,16 +1023,6 @@ projectActivity.notifyOnChange=true
 biocollect.baseURL="https://biocollect.ala.org.au"
 biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
 
-security {
-    cas {
-        appServerName = 'http://devt.ala.org.au:8087' // or similar, up to the request path part
-        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
-        uriFilterPattern = '/admin.*,/activityForm/(?!get).*'
-        uriExclusionFilterPattern = '/assets/.*,/images/.*,/css/.*,/js/.*,/less/.*' // this is the default value
-        authenticateOnlyIfLoggedInPattern =  ''
-    }
-}
-
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM
 elasticsearch.local = true
@@ -1398,3 +1241,10 @@ geohash.maxNumberOfGrids = 250
 // Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
 // hide exact location.
 geohash.maxLength =  5
+
+// Dummy / default username and password for elasticsearch, will be ignored if the server is not setup for
+// basic authentication.
+elasticsearch {
+    username = 'elastic'
+    password = 'password'
+}

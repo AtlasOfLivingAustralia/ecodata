@@ -200,7 +200,7 @@ var ProgramModelViewModel = function (model, activityTypes, options) {
         delete model.transients;
         $.ajax(config.updateProgramsModelUrl, {
             type: 'POST',
-            data: vkbeautify.json(model,2),
+            data: JSON.stringify(model, null, 2),
             contentType: 'application/json',
             success: function (data) {
                 if (data !== 'error') {

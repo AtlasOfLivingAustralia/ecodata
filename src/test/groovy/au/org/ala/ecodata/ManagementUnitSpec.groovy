@@ -29,4 +29,17 @@ class ManagementUnitSpec extends MongoSpec {
 
 
     }
+
+    def "Once set, the hubId cannot be overwritten"() {
+        when:
+        ManagementUnit mu = new ManagementUnit(managementUnitId: "m1", name:"MU 1", hubId:"merit")
+        mu.save(flush:true, failOnError:true)
+
+        mu.hubId = "newHub"
+        mu.save()
+
+        then:
+        mu.hasErrors()
+        mu.errors.getFieldError("hubId")
+    }
 }

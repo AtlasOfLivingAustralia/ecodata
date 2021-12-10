@@ -1,12 +1,15 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
+import au.org.ala.ecodata.metadata.OutputDataGetter
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 /**
@@ -17,7 +20,6 @@ class ProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
     // Avoids name clashes for fields that appear in activities and projects (such as name / description)
-    private static final String ACTIVITY_DATA_PREFIX = 'activity_'
     private static final String PROJECT_DATA_PREFIX = 'project_'
 
     List<String> stateHeaders = (1..3).collect{'State '+it}
@@ -29,10 +31,16 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Status', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"]
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated']
+
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', 'Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status']
+
+    List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
     List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
+
 
     List<String> projectApprovalHeaders = ['MERI plan status','Last approval Date', 'Last approved by']
     List<String> projectApprovalProperties = ['planStatus','approvalDate', 'approvedBy']
@@ -40,8 +48,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
-    List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders
-    List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties
+    List<String> projectHeaders = projectHeadersWithTerminationReason + projectStateHeaders
+    List<String> projectProperties = projectPropertiesWithTerminationReason + projectStateProperties
+
 
     List<String> siteStateHeaders = (1..5).collect{'State '+it}
     List<String> siteStateProperties = (0..4).collect{'state'+it+'-site'}
@@ -52,8 +61,11 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Area (m2)', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'aream2', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
-    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Form Version', 'Theme', 'Status', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'reportType', 'description', 'type', 'formVersion', 'mainTheme', 'progress', 'fromDate', 'toDate', 'financialYear', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+    List<String> activitySummaryHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Report From Date', 'Report To Date', 'Report Financial Year', 'Stage', 'Report Type', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activitySummaryProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'fromDate', 'toDate', 'financialYear', 'stage', 'reportType', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
+
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -104,17 +116,13 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
     List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI", "relatedProjects"]
 
-    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)"]
-    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian"]
+    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing"]
+    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "term", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing"]
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet outputTargetsSheet
     AdditionalSheet risksAndThreatsSheet
-
-
-    Map<String, String> outputSheetNames = [:]
-    Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
 
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
@@ -125,6 +133,9 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Map of key: management unit id, value: management unit name */
     Map<String, String> managementUnitNames
 
+    /** If set to true, activities containing more than one form section will be split over one tab per form section */
+    boolean formSectionPerTab = false
+
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
         super(exporter)
         this.projectService = projectService
@@ -132,9 +143,10 @@ class ProjectXlsExporter extends ProjectExporter {
         setupManagementUnits(managementUnitService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:]) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
+        this.formSectionPerTab = formSectionPerTab
         distinctElectorates = new ArrayList(electorates?:[])
         distinctElectorates.sort()
         projectHeaders += distinctElectorates
@@ -159,7 +171,8 @@ class ProjectXlsExporter extends ProjectExporter {
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
-        exportActivities(project )
+        exportActivitySummary(project)
+        exportActivities(project)
         exportParticipantInfo(project)
         exportRisks(project)
         exportMeriPlan(project)
@@ -210,55 +223,27 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private Map commonActivityData(Map project, Map activity) {
-        String activityDataPrefix = ACTIVITY_DATA_PREFIX
-        Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
-        Map activityData = project + activityBaseData  + [(activityDataPrefix+'stage'): getStage(activity, project)]
-        activityData[(activityDataPrefix+'publicationStatus')] = translatePublicationStatus(activity.publicationStatus)
-        activityData
-    }
-
      void exportActivities(Map project) {
-         tabsToExport.each{ tab ->
-             if(tab =="Activity Summary"){
-                 exportActivitySummary(project)
-             } else {
-                 List activities = project?.activities?.findAll{it.type == tab}
-                 if(activities) {
-                     activities.each {
-                         exportActivity(project, it)
-                     }
+         tabsToExport.each { tab ->
+             List activities = project?.activities?.findAll { it.type == tab }
+             if (activities) {
+                 activities.each {
+                     exportActivity(commonActivityHeaders, activityProperties, project, it, formSectionPerTab)
                  }
              }
          }
-
      }
 
-    private void exportActivity(Map project, Map activity) {
-        Map commonData = commonActivityData(project, activity)
-        String activityType = activity.type
-        Integer formVersion = activity.formVersion  //Use Integer to deal with null
-
-        String sheetName = activityType +  (formVersion? "_V" + formVersion: "")
-
-        Map sheetData = buildOutputSheetData(activity)
-
-        //Combine data from output with  header,getter and  common data
-        List outputGetters = activityProperties + sheetData.getters
-        List headers = commonActivityHeaders + sheetData.headers
-        List outputData = sheetData.data.collect { commonData + it }
-
-        AdditionalSheet outputSheet = createSheet(sheetName, headers)
-        int outputRow = outputSheet.sheet.lastRowNum
-        outputSheet.add(outputData, outputGetters, outputRow + 1)
-    }
-
     private void exportActivitySummary(Map project) {
-        AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
-        project.activities.each { activity ->
-            Map activityData = commonActivityData(project, activity)
-            sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+        String tab = "Activity Summary"
+        if (shouldExport(tab)) {
+            AdditionalSheet sheet = getSheet(tab, activitySummaryHeaders)
+            project.activities.each { activity ->
+                Map activityData = commonActivityData(project, activity)
+                sheet.add(activityData, activitySummaryProperties, sheet.getSheet().lastRowNum + 1)
+            }
         }
+
     }
 
     /**
@@ -338,18 +323,18 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportProject(Map project) {
         if (shouldExport('Projects')) {
             projectSheet()
-            int row = projectSheet.getSheet().lastRowNum
-
             List properties = new ArrayList(projectProperties)
+            int row = projectSheet.getSheet().lastRowNum
 
             List<String> projectElectorates = project.sites?.collect { it?.extent?.geometry?.elect }?.flatten()?.findAll()
 
-            distinctElectorates.each{ electorate ->
-                project[electorate] = projectElectorates.contains(electorate)? 'Y' : 'N'
+            distinctElectorates.each { electorate ->
+                project[electorate] = projectElectorates.contains(electorate) ? 'Y' : 'N'
             }
 
             projectSheet.add([project], properties, row + 1)
         }
+
     }
 
     private exportDataSet(Map project) {
@@ -768,79 +753,6 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportBlog(Map project) {
         exportList("Blog", project, project.blog, blogHeaders, blogProperties)
-    }
-
-    String getStage(Map activity, project) {
-        Date activityEndDate = activity.plannedEndDate
-
-        if (!activityEndDate) {
-            log.error("No end date for activity: ${activity.activityId}, project: ${project.projectId}")
-            return ''
-        }
-
-        Report report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
-
-        report ? report.name : ''
-    }
-
-    AdditionalSheet getActivitySheet(Map activityModel) {
-        String activityType = activityModel.name
-
-        if (!typedActivitySheets[activityType]) {
-            String name = XlsExporter.sheetName(activityType)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (activitySheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            activitySheetNames[name] = activityType
-            List<String> headers = buildActivityHeaders(activityModel)
-            typedActivitySheets[activityType] = exporter.addSheet(name, headers)
-        }
-        typedActivitySheets[activityType]
-    }
-
-
-
-    AdditionalSheet getOutputSheet(String outputName) {
-
-        if (!typedOutputSheets[outputName]) {
-            String name = XlsExporter.sheetName(outputName)
-
-            // If the sheets are named similarly, they may end up the same after being changed to excel
-            // tab compatible strings
-            int i = 1
-            while (outputSheetNames[name]) {
-                name = name.substring(0, name.length()-1)
-                name = name + Integer.toString(i)
-            }
-
-            outputSheetNames[name] = outputName
-            List<String> headers = buildOutputHeaders(outputName)
-            typedOutputSheets[outputName] = exporter.addSheet(name, headers)
-        }
-        typedOutputSheets[outputName]
-    }
-
-    List<String> buildActivityHeaders(Map activityModel) {
-        List<String> activityHeaders = [] + commonActivityHeaders
-
-        activityModel.outputs?.each { output ->
-            Map config = outputProperties(output)
-            activityHeaders += config.headers
-        }
-
-        activityHeaders
-    }
-
-    List<String> buildOutputHeaders(String outputName) {
-        List<String> outputHeaders = [] + commonActivityHeaders
-        outputHeaders += outputProperties(outputName).headers
-        outputHeaders
     }
 
     AdditionalSheet projectSheet() {

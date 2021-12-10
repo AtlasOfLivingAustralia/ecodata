@@ -1,9 +1,7 @@
 package au.org.ala.ecodata
 
-import grails.gorm.CriteriaBuilder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
-import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -207,7 +205,9 @@ class AuditService {
     List getAuditMessagesForSettings(String keyPrefix) {
 
         // We can get away with this because the number of settings objects is small.
-        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{it._id.toHexString()}
+        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{
+            it.id.toHexString()
+        }
 
         List results = AuditMessage.findAllByEntityIdInList(settingIds)
 

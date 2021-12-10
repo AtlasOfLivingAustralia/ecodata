@@ -22,21 +22,22 @@ package au.org.ala.ecodata
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
-public enum AccessLevel {
+enum AccessLevel {
     admin(100),
     caseManager(60),
     moderator(50),
     editor(40),
     projectParticipant(30),
+    readOnly(25),
     starred(20)
 
     private int code
     private AccessLevel(int c) {
-        code = c;
+        code = c
     }
 
     int getCode() {
-        return code;
+        return code
     }
 
     boolean includes(String permission) {
@@ -50,6 +51,4 @@ public enum AccessLevel {
         }
         false
     }
-
-
 }

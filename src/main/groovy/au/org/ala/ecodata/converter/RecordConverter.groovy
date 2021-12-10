@@ -6,7 +6,7 @@ import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.ProjectActivity
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.Site
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang.StringUtils
 
 /**
@@ -41,7 +41,7 @@ import org.apache.commons.lang.StringUtils
  *   ...
  *}* </pre>
  */
-@Log4j
+@Slf4j
 class RecordConverter {
 
     static final List MULTI_ITEM_DATA_TYPES = ["list", "masterDetail"]

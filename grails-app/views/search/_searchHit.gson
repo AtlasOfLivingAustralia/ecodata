@@ -1,0 +1,12 @@
+
+import groovy.transform.Field
+import org.elasticsearch.search.SearchHit
+
+@Field SearchHit searchHit
+
+json {
+    _id searchHit.id
+    _source searchHit.sourceAsMap
+    highlightFields searchHit.highlightFields
+    //score searchHit.score // This had issues with NaN unable to be serialized
+}

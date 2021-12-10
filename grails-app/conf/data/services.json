@@ -243,5 +243,30 @@
       "name": "Weed distribution survey",
       "id": 33,
       "categories": ["Monitoring activities"]
+   },
+   {
+      "output": "Cultural value survey and/or assessment",
+      "name": "Cultural value survey and/or assessment",
+      "id": 37
+   },
+   {
+      "output": "Cultural Site Management",
+      "name": "Cultural Site Management",
+      "id": 38
+   },
+   {
+      "output": "On Country Visits",
+      "name": "On Country Visits",
+      "id": 39
+   },
+   {
+      "output": "Cultural Practices",
+      "name": "Cultural Practices",
+      "id": 40
+   },
+   {
+      "output": "Developing/updating Guidelines/Protocols/Plans",
+      "name": "Developing/updating Guidelines/Protocols/Plans",
+      "id": 41
    }
 ]

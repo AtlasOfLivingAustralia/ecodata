@@ -4,6 +4,7 @@ import au.org.ala.ecodata.graphql.EcodataGraphQLCustomiser
 import au.org.ala.ecodata.graphql.fetchers.OutputFetcher
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.fetchers.SitesFetcher
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 
 // Place your Spring DSL code here
 beans = {
@@ -13,4 +14,6 @@ beans = {
     activitiesFetcher(ActivityFetcher)
     outputFetcher(OutputFetcher)
     graphQLContextBuilder(EcodataGraphQLContextBuilder)
+
+    formattedStringConverter ISODateBindingConverter
 }

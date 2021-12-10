@@ -9,8 +9,8 @@
 
 <div class="container-fluid api">
 
-    <div class="row-fluid">
-        <div class="bs-callout bs-callout-warning">
+    <div class="row">
+        <div class="col-lg-12 bs-callout bs-callout-warning">
             <h4>This API documentation is in draft format</h4>
             <p>This API documentation is intended as a starting point for discussion and is subject to change.<p>
             <p>
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="row-fluid">
+    <div class="row">
         <h3>Operations</h3>
 
         <h4>Project activities</h4>
@@ -93,7 +93,7 @@
 
     </div>
 
-    <div class="row-fluid">
+    <div class="row">
         <h3>Activities and Output Descriptions</h3>
         <p>
             In the MERIT system, each project has a collection of Activities.  Each activity in turn has a collection of Outputs.

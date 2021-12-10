@@ -6,7 +6,7 @@ class ECTagLib {
 
     static namespace = "ec"
 
-    def userService, authService
+    def userService, authService, metadataService
 
     /**
      * @attr active
@@ -21,10 +21,10 @@ class ECTagLib {
         def current = pageProperty(name:'page.pageTitle')?.toString()
 
         def mb = new MarkupBuilder(out)
-        mb.li(class: active == current ? 'active' : '') {
-            a(href:attrs.href) {
+        mb.li {
+            a(href:attrs.href, class:active == current ? 'nav-link active' : 'nav-link') {
                 mkp.yield(attrs.title)
-                span(class:'glyphicon glyphicon-chevron-right pull-right') { mkp.yieldUnescaped('&nbsp;')}
+                span(class:'fa fa-chevron-right') { mkp.yieldUnescaped('&nbsp;')}
             }
         }
     }
@@ -32,7 +32,7 @@ class ECTagLib {
     def currentUserDisplayName = { attrs, body ->
         def mb = new MarkupBuilder(out)
 
-        mb.span(class:'username') {
+        mb.span(class:'username nav-text') {
             def displayName = authService.displayName
             if (displayName) {
                 mkp.yield(displayName)
@@ -204,6 +204,14 @@ class ECTagLib {
                 mkp.yieldUnescaped("&nbsp;")
             }
         }
+    }
+
+    def buildProperty = { attrs ->
+        out << metadataService.getBuildProperty(attrs.name)
+    }
+
+    def gitProperty = { attrs ->
+        out << metadataService.getGitProperty(attrs.name)
     }
 
 }
