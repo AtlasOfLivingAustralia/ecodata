@@ -18,13 +18,13 @@ class ManagementUnitXlsExporter extends TabbedExporter {
     List<String> reportProperties = ['reportId', 'reportName', 'reportDescription', 'fromDate', 'toDate', 'financialYear']
     List<String> activityHeaders = ['Activity Type','Activity Description','Activity Progress', 'Activity Last Updated' ]
     List<String> activityProperties =  ['type','description','progress', 'lastUpdated']
-    List<String> commonActivityHeaders =  ["Management Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Financial Year', 'Current Report Status', 'Date of status change', 'Changed by'] + activityHeaders
     List<String> commonActivityHeadersSummary =  ["Management Unit ID",'Management Unit Name', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Financial Year', 'Current Report Status', 'Date of status change', 'Changed by']
-    List<String> commonActivityProperties = ["managementUnitId",'managementUnitName', REPORT_PREFIX+'reportId', REPORT_PREFIX+'reportName', REPORT_PREFIX+'reportDescription', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy'] +
+    List<String> commonActivityHeaders =  commonActivityHeadersSummary + activityHeaders
+    List<String> commonActivityPropertiesSummary = ["managementUnitId",'managementUnitName', REPORT_PREFIX+'reportId', REPORT_PREFIX+'reportName', REPORT_PREFIX+'reportDescription', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy']
+    List<String> commonActivityProperties = commonActivityPropertiesSummary +
             activityProperties.collect {
                     ACTIVITY_DATA_PREFIX+it
                 }
-    List<String> commonActivityPropertiesSummary = ["managementUnitId",'managementUnitName', REPORT_PREFIX+'reportId', REPORT_PREFIX+'reportName', REPORT_PREFIX+'reportDescription', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy']
 
     ManagementUnitXlsExporter( XlsExporter exporter) {
         super(exporter, [], [:], TimeZone.default)
