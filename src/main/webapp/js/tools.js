@@ -78,4 +78,13 @@ $(document).ready(function() {
             alert(result.message);
         });
     });
+    $("#btnMigrateUserDetailsToEcodata").click(function(e) {
+        e.preventDefault();
+        $.ajax("${createLink(controller: 'admin', action:'migrateUserDetailsToEcodata')}").done(function(result) {
+            alert(result);
+            document.location.reload();
+        }).fail(function (result) {
+            alert(result);
+        });
+    });
 });
