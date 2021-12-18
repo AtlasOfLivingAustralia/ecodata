@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Geometry
+import org.locationtech.jts.geom.Geometry
 import grails.gorm.transactions.Transactional
 
 import groovy.json.JsonParserType

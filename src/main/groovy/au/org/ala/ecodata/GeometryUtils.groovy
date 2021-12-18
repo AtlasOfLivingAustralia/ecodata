@@ -1,10 +1,10 @@
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.*
-import com.vividsolutions.jts.io.WKTReader
-import com.vividsolutions.jts.io.WKTWriter
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
-import com.vividsolutions.jts.util.GeometricShapeFactory
+import org.locationtech.jts.geom.*
+import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.io.WKTWriter
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier
+import org.locationtech.jts.util.GeometricShapeFactory
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory

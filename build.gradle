@@ -118,7 +118,7 @@ dependencies {
     }
 
     compile 'org.grails.plugins:excel-export:2.1'
-    compile group: 'com.vividsolutions', name: 'jts', version: '1.13'
+    compile "org.locationtech.jts:jts-core:${jtsVersion}"
     compile "com.itextpdf:itextpdf:5.5.1"
     compile "org.apache.httpcomponents:httpmime:4.2.1"
     compile 'org.grails.plugins:csv:1.0.1'

@@ -461,10 +461,10 @@ class MapService {
                 className = Date.class.name
                 break;
             case "geo_shape":
-                className = com.vividsolutions.jts.geom.Geometry.class.name
+                className = org.locationtech.jts.geom.Geometry.class.name
                 break
             case "geo_point":
-                className = com.vividsolutions.jts.geom.Point.class.name
+                className = org.locationtech.jts.geom.Point.class.name
                 break
         }
 
