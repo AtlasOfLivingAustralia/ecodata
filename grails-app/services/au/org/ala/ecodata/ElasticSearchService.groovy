@@ -15,7 +15,6 @@
 
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -27,8 +26,6 @@ import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.ElasticsearchException
-import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkProcessor
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
@@ -44,11 +41,10 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestClientBuilder
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.common.geo.builders.CoordinatesBuilder
-import org.elasticsearch.common.geo.builders.PolygonBuilder
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
+import org.elasticsearch.geometry.LinearRing
+import org.elasticsearch.geometry.Polygon
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
@@ -58,6 +54,7 @@ import org.elasticsearch.search.aggregations.BucketOrder
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
+import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
@@ -904,7 +901,7 @@ class ElasticSearchService {
      */
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
-        projectMap["className"] = new Project().getClass().name
+        projectMap["className"] = Project.name
         // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
@@ -1592,11 +1589,14 @@ class ElasticSearchService {
         Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder()
-                geographicSearchCriteria.coordinates[0].each { coordinate ->
-                    coordinatesBuilder.coordinate(coordinate[0] as double, coordinate[1] as double)
+                int coordCount = geographicSearchCriteria.coordinates[0].size()
+                double[] x = new double[coordCount]
+                double[] y = new double[coordCount]
+                geographicSearchCriteria.coordinates[0].eachWithIndex { coordinate, i ->
+                    x[i] = coordinate[0] as double
+                    y[i] = coordinate[1] as double
                 }
-                shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
+                shape = new Polygon(new LinearRing(x, y))
                 break;
             case "Circle":
                 shape = new Circle(
@@ -1604,7 +1604,6 @@ class ElasticSearchService {
                         geographicSearchCriteria.coordinates[1] as double,
                         geographicSearchCriteria.radius as double
                 )
-
                 break
         }
 

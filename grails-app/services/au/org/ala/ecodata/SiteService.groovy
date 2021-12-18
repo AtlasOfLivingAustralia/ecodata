@@ -1,14 +1,15 @@
 package au.org.ala.ecodata
 
-import com.mongodb.*
-import com.mongodb.client.FindIterable
-import com.mongodb.client.model.Filters
+
+import com.mongodb.BasicDBObject
+import com.mongodb.DBCursor
+import com.mongodb.DBObject
+import com.mongodb.QueryBuilder
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import org.bson.conversions.Bson
-import org.elasticsearch.common.geo.builders.ShapeBuilder
-import org.elasticsearch.common.xcontent.XContentParser
-import org.elasticsearch.common.xcontent.json.JsonXContent
+import org.elasticsearch.common.geo.GeometryParser
+import org.elasticsearch.xcontent.XContentParser
+import org.elasticsearch.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.query.api.BuildableCriteria
@@ -822,9 +823,9 @@ class SiteService {
      */
     Boolean isGeoJsonValid(String geoJson){
         try {
-            XContentParser parser = JsonXContent.jsonXContent.createParser(geoJson);
-            parser.nextToken();
-            ShapeBuilder.parse(parser).build();
+            XContentParser parser = JsonXContent.jsonXContent.createParser(geoJson)
+            parser.nextToken()
+            new GeometryParser(true, true, true).parse(parser)
         } catch (Exception e){
             log.error('Invalid GeoJson. ' + e.message)
             return false
