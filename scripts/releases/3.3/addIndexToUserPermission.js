@@ -1,0 +1,1 @@
+db.userPermission.createIndex({expiryDate:1});

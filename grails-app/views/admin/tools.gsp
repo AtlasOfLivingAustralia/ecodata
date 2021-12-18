@@ -97,6 +97,14 @@
                     Delete existing layers, store and workspace associates with Ecodata and create new ones.
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <button id="btnMigrateUserDetailsToEcodata" class="btn btn-small btn-info" title="Migrate UserDetails to Ecodata.">Migrate UserDetails</button>
+                </td>
+                <td>
+                    Migrate the existing MERIT users from UserDetails into the Eccodata Database
+                </td>
+            </tr>
             </tbody>
         </table>
     <script defer="defer" src="/assets/bundle-runtime.js"></script>

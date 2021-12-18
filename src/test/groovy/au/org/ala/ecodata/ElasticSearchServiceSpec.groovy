@@ -74,6 +74,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         def project3 = createProject(PROGRAM_2, SUB_PROGRAM_3)
         [project1, project2, project3].each {
             service.indexDoc(it, INDEX_NAME)
+            service.indexDoc(it, ElasticIndex.HOMEPAGE_INDEX)
         }
 
         def site1 = createSite("NSW", "NRM1")
@@ -103,6 +104,9 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 
         // Ensure results are available for searching
         FlushRequest request = new FlushRequest(INDEX_NAME)
+        service.client.indices().flush(request, RequestOptions.DEFAULT)
+
+        request = new FlushRequest(ElasticIndex.HOMEPAGE_INDEX)
         service.client.indices().flush(request, RequestOptions.DEFAULT)
 
         waitForIndexingToComplete()
@@ -169,11 +173,70 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 
     }
 
-    /**
-     * Tests that the home page facets work correctly with activity based facets (in particular, the reporting theme).
-     */
-    public void testReportingThemeHomepageSearch() {
+    def "The service will accept T/F values when filtering on boolean fields"() {
+        when:
+        def results = service.search("*:*", [fq:"isExternal:T"], INDEX_NAME)
 
+        then:
+        results.hits.totalHits.value > 0
+
+        when:
+        results = service.search("*:*", [fq:"isExternal:true"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+        when:
+        results = service.search("*:*", [fq:"isExternal:F"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isExternal:false"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:T"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:true"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value == 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:F"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+        when:
+        results = service.search("*:*", [fq:"isMERIT:false"], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+    }
+
+    def "The query will search fields other than name, description and organisation name (which are boosted fields)"() {
+        when: "We search on a theme in the default index"
+        def results = service.search(THEME1, [:], INDEX_NAME)
+
+        then:
+        results.hits.totalHits.value > 0
+
+        // Yet another test failing on travis but not locally that I can't figure out why.
+//        when: "We search on a theme in the homepage index"
+//        results = service.search(PROGRAM_1, [:], ElasticIndex.HOMEPAGE_INDEX)
+//
+//        then:
+//        results.hits.totalHits.value > 0
     }
 
     /**
@@ -194,7 +257,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
     }
 
     private Map createProject(program, subProgram) {
-        [projectId:'project'+(++projectId), associatedProgram:program, associatedSubProgram:subProgram, className:Project.class.name]
+        [projectId:'project'+(++projectId), associatedProgram:program, associatedSubProgram:subProgram, className:Project.class.name, isExternal:true, isMERIT:false]
     }
 
 

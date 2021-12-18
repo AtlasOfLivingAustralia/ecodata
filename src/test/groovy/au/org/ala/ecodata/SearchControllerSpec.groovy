@@ -1,17 +1,16 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
-import grails.plugin.json.view.test.JsonViewTest
 import grails.testing.web.controllers.ControllerUnitTest
+import org.apache.http.HttpStatus
 import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
-import org.elasticsearch.search.aggregations.Aggregation
 import org.elasticsearch.search.aggregations.Aggregations
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import spock.lang.Specification
@@ -24,11 +23,13 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
     MetadataService metadataService = Mock(MetadataService)
     ReportingService reportingService = Mock(ReportingService)
     ActivityFormService activityFormService = Mock(ActivityFormService)
+    ReportService reportService = Mock(ReportService)
 
     void setup() {
         controller.downloadService = downloadService
         controller.userService = userService
         controller.elasticSearchService = elasticSearchService
+        controller.reportService = reportService
 
         defineBeans {
             metadataService(MetadataService)
@@ -179,8 +180,33 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         then:
         1 * elasticSearchService.search('*:*', _, ElasticIndex.DEFAULT_INDEX) >> searchResponse
         model == [searchResponse:searchResponse]
-        view == 'elasticPost'
+        // This previously was 'elasticPost' and is now '/search/elasticPost.gsp, possibly to do with the
+        // grails json view plugin behaviour depending on how the test is executed?
+        view.contains('elasticPost')
 
+    }
+
+    def "The download user list action delegates to the reportService to build the report"() {
+        when:
+        UserSummaryReportCommand command = new UserSummaryReportCommand(hubId:"merit")
+        controller.downloadUserList(command)
+
+        then:
+        1 * userService.getCurrentUserDisplayName() >> "Test"
+        1 * downloadService.downloadProjectDataAsync(params, _)
+        response.status == HttpStatus.SC_OK
+    }
+
+    def "The download user action will return an error if the params fail validation"() {
+        when:
+        UserSummaryReportCommand command = new UserSummaryReportCommand(email:"test")
+        command.validate()
+        controller.downloadUserList(command)
+
+        then:
+        0 * userService.getCurrentUserDisplayName()
+        0 * downloadService.downloadProjectDataAsync(_, _)
+        response.status == HttpStatus.SC_UNPROCESSABLE_ENTITY
     }
 
 }

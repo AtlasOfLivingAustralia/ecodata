@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
+import org.springframework.validation.Errors
 
 /**
  * A program acts as a container for projects, more or less.
@@ -9,6 +10,8 @@ class Program {
 
     ObjectId id
     String programId
+    /** The hubId of the hub in which this Program was created */
+    String hubId
     String name
     String acronym
     String description
@@ -137,6 +140,9 @@ class Program {
         associatedOrganisations nullable:true
         programSiteId nullable: true
         acronym nullable: true
+        hubId nullable: true, validator: { String hubId, Program program, Errors errors ->
+            GormMongoUtil.validateWriteOnceProperty(program, 'programId', 'hubId', errors)
+        }
     }
 
     public String toString() {

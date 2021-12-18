@@ -26,6 +26,10 @@ class AdminController {
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
     MapService mapService
+    PermissionService permissionService
+    UserService userService
+    EmailService emailService
+    HubService hubService
 
     @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
     def index() {}
@@ -711,5 +715,26 @@ class AdminController {
 
         render resp as JSON
     }
+
+    @AlaSecured("ROLE_ADMIN")
+    def migrateUserDetailsToEcodata() {
+        def resp = permissionService.saveUserDetails()
+        render text: [ message: 'UserDetails data migration done.' ] as JSON
+    }
+
+    /**
+     * Administrative interface to trigger the access expiry job.  Used in MERIT functional
+     * tests.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    def triggerAccessExpiryJob() {
+        new AccessExpiryJob(
+                permissionService: permissionService,
+                userService: userService,
+                hubService: hubService,
+                emailService: emailService).execute()
+        render 'ok'
+    }
+
 
 }

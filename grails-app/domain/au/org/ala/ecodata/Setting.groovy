@@ -8,11 +8,15 @@ class Setting {
     String key
     String value
     String description
+    Date lastUpdated
+    Date dateCreated
 
     static constraints = {
         key nullable: false
         value nullable: false
         description nullable: true
+        lastUpdated nullable: true
+        dateCreated nullable: true
     }
 
 }

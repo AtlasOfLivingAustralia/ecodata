@@ -213,7 +213,6 @@ jwk:
 userDetails:
     url: https://auth-test.ala.org.au/userdetails
 
-#Fix grails taglib <g:paginate/> to work with bootstrap css.
 grails:
     mail:
         default:

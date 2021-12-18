@@ -1,4 +1,5 @@
 import au.ala.org.ws.security.AlaRoleMapper
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.SecurityConfig
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.filter.OrderedFilter
@@ -11,5 +12,5 @@ beans = {
         filter = ref("springSecurityFilterChain")
         order = OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 25 // This needs to be before the GrailsWebRequestFilter which is +30
     }
-
+    formattedStringConverter ISODateBindingConverter
 }
