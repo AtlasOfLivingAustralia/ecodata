@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.ala.org.ws.security.RequireAuth
+import au.org.ala.ws.security.RequireAuth
 import groovy.json.JsonSlurper
 
 /**
@@ -31,7 +31,7 @@ class ActivityFormController {
      * Updates the activity form identified by the name and version in the payload.
      * @return
      */
-    @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
+    @RequireAuth(["ROLE_ADMIN"])
     def update() {
 
         // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
@@ -46,7 +46,7 @@ class ActivityFormController {
         respond form
     }
 
-    @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
+    @RequireAuth(["ROLE_ADMIN"])
     def create() {
         // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
         // "null" to be saved in templates (it will happen in any embedded Maps).
@@ -65,7 +65,7 @@ class ActivityFormController {
      * @param name the name of the activity form.
      * @return the new form.
      */
-    @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
+    @RequireAuth(["ROLE_ADMIN"])
     def newDraftForm(String name) {
         respond activityFormService.newDraft(name)
     }
@@ -75,7 +75,7 @@ class ActivityFormController {
      * @param name the name of the activity form.
      * @return the new form.
      */
-    @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
+    @RequireAuth(["ROLE_ADMIN"])
     def publish(String name, Integer formVersion) {
         respond activityFormService.publish(name, formVersion)
     }
@@ -85,12 +85,12 @@ class ActivityFormController {
      * @param name the name of the activity form.
      * @return the new form.
      */
-    @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
+    @RequireAuth(["ROLE_ADMIN"])
     def unpublish(String name, Integer formVersion) {
         respond activityFormService.unpublish(name, formVersion)
     }
 
-    @RequireAuth(requiredRoles = ["ROLE_ADMIN"])
+    @RequireAuth(["ROLE_ADMIN"])
     def findUsesOfForm(String name, Integer formVersion) {
         int count = Activity.countByTypeAndFormVersionAndStatusNotEqual(name, formVersion, Status.DELETED)
         Map result = [count:count]

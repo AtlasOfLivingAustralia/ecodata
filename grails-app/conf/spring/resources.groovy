@@ -1,6 +1,7 @@
-import au.ala.org.ws.security.AlaRoleMapper
+
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.SecurityConfig
+import au.org.ala.ws.security.AlaRoleMapper
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.filter.OrderedFilter
 

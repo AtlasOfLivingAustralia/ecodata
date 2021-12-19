@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import java.text.SimpleDateFormat
 

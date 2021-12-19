@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.ala.org.ws.security.AlaWebServiceAuthFilter
+import au.org.ala.ws.security.AlaWebServiceAuthFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientRegistrationRepositoryConfiguration
 import org.springframework.context.annotation.Configuration

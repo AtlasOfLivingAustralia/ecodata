@@ -104,7 +104,7 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml:4.1.2'
     implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
     implementation 'org.codehaus.groovy:groovy-dateutil:3.0.8'
-    implementation ("org.grails.plugins:ala-ws-security-plugin:3.0.1-SNAPSHOT") {
+    implementation ("org.grails.plugins:ala-ws-security-plugin:3.0.2-SNAPSHOT") {
         changing = true
     }
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"

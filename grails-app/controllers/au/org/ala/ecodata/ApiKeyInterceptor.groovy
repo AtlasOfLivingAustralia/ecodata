@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.ala.org.ws.security.RequireAuth
+import au.org.ala.ws.security.RequireAuth
 import grails.converters.JSON
 
 class ApiKeyInterceptor {
