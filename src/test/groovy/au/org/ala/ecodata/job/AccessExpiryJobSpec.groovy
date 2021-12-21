@@ -27,8 +27,8 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
     def setup() {
         deleteAll()
         AccessManagementOptions options = new AccessManagementOptions()
-        options.warnUsersAfterThisNumberOfMonthsInactive = 23
-        options.expireUsersAfterThisNumberOfMonthsInactive = 24
+        options.warnUsersAfterPeriodInactive = "P23M"
+        options.expireUsersAfterPeriodInactive = "P24M"
         merit = new Hub(hubId:'h1', urlPath:'merit')
         merit.accessManagementOptions = options
         merit.save(flush:true, failOnError:true)

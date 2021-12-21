@@ -4,6 +4,8 @@ import grails.util.Holders
 import groovy.util.logging.Slf4j
 import org.apache.http.HttpStatus
 
+import java.time.Duration
+import java.time.Period
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -63,17 +65,18 @@ class AccessExpiryJob {
         Date processingTimeAsDate = Date.from(processingTime.toInstant())
         for (Hub hub : hubs) {
             // Get the configuration for the job from the hub
-            int month = hub.accessManagementOptions.expireUsersAfterThisNumberOfMonthsInactive
-            Date loginDateEligibleForAccessRemoval = Date.from(processingTime.minusMonths(month).toInstant())
-            if (month > 0) {
+            Period period = hub.accessManagementOptions.getAccessExpiryPeriod()
+            if (period) {
+                Date loginDateEligibleForAccessRemoval = Date.from(processingTime.minus(period).toInstant())
                 processExpiredUserAccess(hub, loginDateEligibleForAccessRemoval, processingTimeAsDate)
-            }
 
-            int month2 = hub.accessManagementOptions.warnUsersAfterThisNumberOfMonthsInactive
-            Date loginDateEligibleForWarning = Date.from(processingTime.minusMonths(month2).toInstant())
-            if (month2 > 0) {
-                processInactiveUserWarnings(
-                        hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, processingTimeAsDate)
+                period = hub.accessManagementOptions.getAccessExpiryWarningPeriod()
+                if (period) {
+                    Date loginDateEligibleForWarning = Date.from(processingTime.minus(period).toInstant())
+
+                    processInactiveUserWarnings(
+                            hub, loginDateEligibleForAccessRemoval, loginDateEligibleForWarning, processingTimeAsDate)
+                }
             }
         }
     }

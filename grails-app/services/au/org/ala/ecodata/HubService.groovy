@@ -116,8 +116,8 @@ class HubService {
     /** Returns a list of hubs which have a non-zero value for one of the accessManagementOptions */
     List<Hub> findHubsEligibleForAccessExpiry() {
         Hub.where {
-            accessManagementOptions.expireUsersAfterThisNumberOfMonthsInactive > 0 ||
-                    accessManagementOptions.warnUsersAfterThisNumberOfMonthsInactive > 0
+            accessManagementOptions.warnUsersAfterPeriodInactive != null ||
+                    accessManagementOptions.expireUsersAfterPeriodInactive != null
 
         }.list()
     }
