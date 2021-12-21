@@ -36,7 +36,11 @@ class AccessExpiryJob {
 
     static triggers = {
         String accessExpiryCron = Holders.config.getProperty("access.expiry.cron.expression", String, "0 10 3 * * ? *")
-        cron name: "accessExpiry", cronExpression: accessExpiryCron
+        // Allow the reporting server to override the default to prevent this job from running
+        // on both the reporting and primary server
+        if (accessExpiryCron) {
+            cron name: "accessExpiry", cronExpression: accessExpiryCron
+        }
     }
 
     /**
