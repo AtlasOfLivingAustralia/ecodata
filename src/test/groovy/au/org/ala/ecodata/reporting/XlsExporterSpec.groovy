@@ -13,6 +13,7 @@ class XlsExporterSpec extends Specification {
         XlsExporter.sheetName("Revegetation") == "Revegetation"
         XlsExporter.sheetName("1234567890123456789012345678901") == "1234567890123456789012345678901"
         XlsExporter.sheetName("12345678901234567890123456789012") == "12345678901234567...23456789012"
+        XlsExporter.sheetName("Developing/updating Guidelines/Protocols/Plans") == "Developing-updati...ocols-Plans"
 
     }
 }
