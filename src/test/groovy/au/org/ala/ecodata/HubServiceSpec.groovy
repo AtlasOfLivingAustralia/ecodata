@@ -51,7 +51,7 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
 
     void "Hubs with configuration related to automatic access expiry can be found"() {
         setup:
-        new Hub(urlPath:"test1", hubId:"hub1", accessManagementOptions: [expireUsersAfterThisNumberOfMonthsInactive:24, warnUsersAfterThisNumberOfMonthsInactive:23]).save(flush:true, deleteOnerror:true)
+        new Hub(urlPath:"test1", hubId:"hub1", accessManagementOptions: [expireUsersAfterDurationInactive:"P24M", warnUsersAfterDurationInactive:"P23M"]).save(flush:true, deleteOnerror:true)
 
         expect:
         service.findHubsEligibleForAccessExpiry().size() == 1

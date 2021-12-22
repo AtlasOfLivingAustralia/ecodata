@@ -202,7 +202,7 @@ class ManagementUnitService {
      * @param receiverEmail
      * @return
      */
-    Map generateReportsInPeriods(String startDate, String endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail ){
+    Map generateReportsInPeriods(String startDate, String endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail, boolean isSummary ){
         List<Map> reports =  getReportingActivities(startDate,endDate)
         int countOfReports = reports.sum{it.activities?.count{it.progress!=Activity.PLANNED}}
 
@@ -216,7 +216,7 @@ class ManagementUnitService {
         Closure doDownload = { File file ->
             XlsExporter exporter = new XlsExporter(file.absolutePath)
             ManagementUnitXlsExporter  muXlsExporter = new ManagementUnitXlsExporter(exporter)
-            muXlsExporter.export(reports)
+            muXlsExporter.export(reports, isSummary)
             exporter.sizeColumns()
             exporter.save()
         }
