@@ -294,14 +294,19 @@ class PermissionService {
      * @param roles List of Hub roles that will be included in the criteria
      * @return Hub members one page at a time
      */
-    def getMembersForHubPerPage(String hubId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.readOnly]) {
+    def getMembersForHubPerPage(String hubId, Integer offset, Integer max, String userId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.readOnly]) {
         BuildableCriteria criteria = UserPermission.createCriteria()
         List members = criteria.list(max:max, offset:offset) {
+            if (userId && userId != "null") {
+                eq("userId", userId)
+            }
             eq("entityId", hubId)
             eq("entityType", Hub.class.name)
             ne("accessLevel", AccessLevel.starred)
             inList("accessLevel", roles)
-//            order("accessLevel", "asc")
+            order("accessLevel", "asc")
+
+
         }
 
         Map out = [:]

@@ -316,7 +316,7 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
 
         when:
-        def resp = service.getMembersForHubPerPage(hubId, offset, max, roles)
+        def resp = service.getMembersForHubPerPage(hubId, offset, max, userId, roles)
 
         then:
         1 * authService.getUserDetailsById(userIds) >> []

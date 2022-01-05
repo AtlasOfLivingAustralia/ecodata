@@ -585,13 +585,14 @@ class PermissionsController {
     @RequireApiKey
     def getMembersForHubPerPage() {
         String hubId = params.hubId
+        String userId = params.userId
         Integer start = params.getInt('offset')?:0
         Integer size = params.getInt('max')?:10
 
         if (hubId){
             Hub hub = Hub.findByHubId(hubId)
             if (hub) {
-                Map results = permissionService.getMembersForHubPerPage(hubId,start,size)
+                Map results = permissionService.getMembersForHubPerPage(hubId,start,size,userId)
                 render(contentType: 'application/json', text: [ data: results.data, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
             } else {
                 response.sendError(SC_NOT_FOUND, 'Hub not found.')
