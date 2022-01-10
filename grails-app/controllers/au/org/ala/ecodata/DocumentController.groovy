@@ -1,23 +1,25 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.core.GrailsApplication
 import org.apache.commons.io.FilenameUtils
 import grails.web.servlet.mvc.GrailsParameterMap
+import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
-import groovy.json.JsonSlurper
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
 
 class DocumentController {
 
-    def documentService
+    DocumentService documentService
     ElasticSearchService elasticSearchService
+    GrailsApplication grailsApplication
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST", listImages: "POST"]
+    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST", listImages: "POST", download: "GET"]
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -210,17 +212,19 @@ class DocumentController {
      * Serves up a file named by the supplied filename HTTP parameter.  It is mostly as a convenience for development
      * as the files will be served by Apache in prod.
      */
-    def download() {
+    @RequireApiKey
+    def download(String path, String filename) {
 
-        if (!params.filename) {
-            response.status = 400
+        if (!filename || !documentService.validateDocumentFilePath(path, filename)) {
+            response.status = HttpStatus.SC_BAD_REQUEST
             return null
         }
 
-        File file = new File(documentService.fullPath('', params.filename))
+        String fullPath = documentService.fullPath(path, filename)
+        File file = new File(fullPath)
 
         if (!file.exists()) {
-            response.status = 404
+            response.status = HttpStatus.SC_NOT_FOUND
             return null
         }
 

@@ -71,6 +71,7 @@ class Document {
     // Only relevant for image document
     Date dateTaken
 	boolean isPrimaryProjectImage = false
+    String contentType
 
     def isImage() {
         return DOCUMENT_TYPE_IMAGE == type
@@ -116,7 +117,7 @@ class Document {
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
         URI uri = new URI(Holders.config.app.uploads.url + path + encodedFileName)
-        return uri.toURL();
+        return uri.toString()
     }
 
     private def filePath(name) {
@@ -157,5 +158,6 @@ class Document {
         isSciStarter nullable: true
         hosted nullable: true
         identifier nullable: true
+        contentType nullable: true
     }
 }

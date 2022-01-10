@@ -1,16 +1,14 @@
 package au.org.ala.ecodata
+
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
+import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import org.imgscalr.Scalr
 
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -29,7 +27,9 @@ class DocumentService {
                                      "iTunes",
                                      "windowsPhone"]
 
-    def commonService, grailsApplication, activityService
+    CommonService commonService
+    GrailsApplication grailsApplication
+    ActivityService activityService
     
     /**
      * Converts the domain object into a map of properties, including
@@ -407,12 +407,30 @@ class DocumentService {
         return newFilename;
     }
 
-    String fullPath(String filepath, String filename) {
+    /**
+     * Returns the path the document by combining the path and filename with the directory where documents
+     * are uploaded.
+     * Optionally uses the canonical form of the uploads directory to assist validation.
+     */
+    String fullPath(String filepath, String filename, boolean useCanonicalFormOfUploadPath = false) {
         String path = filepath ?: ''
         if (path) {
             path = path+File.separator
         }
-        return grailsApplication.config.app.file.upload.path + '/' + path  + filename
+        String uploadPath = grailsApplication.config.getProperty('app.file.upload.path')
+        if (useCanonicalFormOfUploadPath) {
+            uploadPath = new File(uploadPath).getCanonicalPath()
+        }
+        return uploadPath + File.separator + path  + filename
+    }
+
+    /**
+     * This method compares the canonical path to a document with the path potentially supplied by the
+     * user and returns false if they don't match.  This is to prevent attempts at file system traversal.
+     */
+    boolean validateDocumentFilePath(String path, String filename) {
+        String file = fullPath(path, filename, true)
+        new File(file).getCanonicalPath() == file
     }
 
     void deleteAllForProject(String projectId, boolean destroy = false) {
