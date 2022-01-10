@@ -71,6 +71,7 @@ class Document {
     // Only relevant for image document
     Date dateTaken
 	boolean isPrimaryProjectImage = false
+    String contentType
 
     def isImage() {
         return DOCUMENT_TYPE_IMAGE == type
@@ -157,5 +158,6 @@ class Document {
         isSciStarter nullable: true
         hosted nullable: true
         identifier nullable: true
+        contentType nullable: true
     }
 }
