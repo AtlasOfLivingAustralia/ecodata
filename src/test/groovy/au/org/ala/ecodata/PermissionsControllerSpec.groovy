@@ -2467,16 +2467,18 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get Merit Hub members per page" () {
         setup:
         String hubId = '123'
+        String userId = '1'
         new Hub(hubId:hubId, urlPath:'merit').save()
 
         when:
         params.hubId = hubId
+        params.userId = userId
         request.method = "GET"
         controller.getMembersForHubPerPage()
         def result = response.getJson()
 
         then:
-        1 * permissionService.getMembersForHubPerPage(hubId, 0 ,10) >> [totalNbrOfAdmins: 1, data:['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'readOnly']], count:2]
+        1 * permissionService.getMembersForHubPerPage(hubId, 0 ,10, userId) >> [totalNbrOfAdmins: 1, data:['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'readOnly']], count:2]
         response.status == HttpStatus.SC_OK
         result.recordsTotal == 2
         result.recordsFiltered == 2
