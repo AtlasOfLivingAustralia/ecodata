@@ -11,10 +11,14 @@ import org.bson.types.ObjectId
  */
 class Document {
 
-   // Commented out grailsApplication as Domain autowiring is not available by default
-   // due to performance reason
-   // https://grails.github.io/grails-upgrade/latest/guide/index.html#upgradingTo33x
-   // def grailsApplication
+    static final String ROLE_BANNER = 'banner'
+    static final String ROLE_FOOTER_LOGO = 'footerlogo'
+    static final String ROLE_LOGO = 'logo'
+    static final String ROLE_HELP_RESOURCE = 'helpResource'
+    static final String ROLE_MAIN_IMAGE = 'mainImage'
+
+    /** If a document is one of these roles, it is implicitly public */
+    static final List PUBLIC_ROLES = [ROLE_BANNER, ROLE_LOGO, ROLE_HELP_RESOURCE, ROLE_FOOTER_LOGO, ROLE_MAIN_IMAGE]
 
     static final String DOCUMENT_TYPE_IMAGE = 'image'
     static final String THUMBNAIL_PREFIX = 'thumb_'
@@ -54,6 +58,8 @@ class Document {
     String organisationId
     String programId
     String reportId
+    String managementUnitId
+    String hubId
     String externalUrl
     Boolean isSciStarter = false
     String hosted
@@ -71,10 +77,16 @@ class Document {
     // Only relevant for image document
     Date dateTaken
 	boolean isPrimaryProjectImage = false
+
+    /** The content type of the file related to this document */
     String contentType
 
     def isImage() {
         return DOCUMENT_TYPE_IMAGE == type
+    }
+
+    boolean isPubliclyViewable() {
+        this['public'] || role in PUBLIC_ROLES || (hosted == ALA_IMAGE_SERVER)
     }
 
     def getUrl() {
@@ -104,7 +116,7 @@ class Document {
     /**
      * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
      */
-    private def urlFor(path, name) {
+    private String urlFor(path, name) {
         if (!name) {
             return ''
         }
@@ -120,7 +132,7 @@ class Document {
         return uri.toString()
     }
 
-    private def filePath(name) {
+    private String filePath(name) {
 
         def path = filepath ?: ''
         if (path) {
