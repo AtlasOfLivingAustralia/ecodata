@@ -4,7 +4,12 @@ import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
 import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.joda.time.DateTime
+
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -747,5 +752,16 @@ class PermissionService {
         return [status:'ok', id: up.id]
     }
 
+    /**
+     * Search if user's permission is expiring within a month.
+     * @param userId
+     * @param hubId
+     * @return
+     */
+    Boolean doesUserExpiresInAMonth(String userId, String hubId) {
+        def expiryDate = LocalDate.now().plusMonths(1)
+        UserPermission.findByUserIdAndEntityIdAndExpiryDate(userId, hubId, expiryDate) != null
+
+    }
 
 }

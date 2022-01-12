@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import org.joda.time.DateTime
 
 class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 
@@ -339,6 +340,18 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         service.findOwningHubId(muPermission) == 'h1'
         service.findOwningHubId(orgPermission) == 'h1'
         service.findOwningHubId(programPermission) == 'h1'
+
+    }
+
+
+    void "Check the user's permission if expiring 1 month from now"() {
+        setup:
+        Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
+        new UserPermission(entityId:'h1', entityType:Hub.name, userId: "1", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
+
+        expect:
+        service.doesUserExpiresInAMonth('1','h1') != null
+
 
     }
 }
