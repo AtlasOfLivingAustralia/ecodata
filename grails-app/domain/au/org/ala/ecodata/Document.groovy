@@ -156,6 +156,7 @@ class Document {
         outputId nullable: true
         programId nullable: true
         reportId nullable: true
+        managementUnitId nullable: true
         stage nullable: true
         filename nullable: true
         dateCreated nullable: true
@@ -171,5 +172,6 @@ class Document {
         hosted nullable: true
         identifier nullable: true
         contentType nullable: true
+        hubId nullable: true
     }
 }
