@@ -753,15 +753,13 @@ class PermissionService {
     }
 
     /**
-     * Search if user's permission is expiring within a month.
-     * @param userId
-     * @param hubId
-     * @return
+     * This checks the user's expiry date if expiring 1 month from now
      */
     Boolean doesUserExpiresInAMonth(String userId, String hubId) {
-        def expiryDate = LocalDate.now().plusMonths(1)
-        UserPermission.findByUserIdAndEntityIdAndExpiryDate(userId, hubId, expiryDate) != null
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date monthFromNow = sdf.parse(LocalDate.now().plusMonths(1).toString())
 
+        UserPermission.findByUserIdAndEntityIdAndExpiryDate(userId, hubId, monthFromNow) != null
     }
 
 }
