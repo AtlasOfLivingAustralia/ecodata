@@ -4,7 +4,9 @@ import grails.util.Holders
 import groovy.util.logging.Slf4j
 import org.apache.http.HttpStatus
 
+import java.text.SimpleDateFormat
 import java.time.Duration
+import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -26,6 +28,10 @@ class AccessExpiryJob {
 
     /** Used ot lookup the email template informing a user that their elevated permission has expired */
     static final String PERMISSION_EXPIRED_EMAIL_KEY = 'permissionexpiry.expired.email'
+
+    /** Used ot lookup the email template informing a user that their elevated permission will expire 1 month from now */
+    static final String PERMISSION_WARNING_EMAIL_KEY = 'permissionexpiry.warning.email'
+
 
     private static final int BATCH_SIZE = 100
 
@@ -55,6 +61,10 @@ class AccessExpiryJob {
         }
         UserPermission.withNewSession {
             processExpiredPermissions(processingTime)
+        }
+
+        UserPermission.withNewSession {
+            processWarningPermissions(processingTime)
         }
     }
 
@@ -162,6 +172,21 @@ class AccessExpiryJob {
             Hub hub = Hub.findByHubId(hubId)
 
             sendEmail(hub, it.userId, PERMISSION_EXPIRED_EMAIL_KEY)
+        }
+    }
+
+    void processWarningPermissions(ZonedDateTime processingTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date monthFromNow = sdf.parse(processingTime.plusMonths(1).toString())
+        List permissions = permissionService.findPermissionsExpiringInAMonth(monthFromNow)
+        permissions.each {
+            // Find the hub attached to the expired permission.
+            String hubId = permissionService.findOwningHubId(it)
+            Hub hub = Hub.findByHubId(hubId)
+
+            log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
+
+            sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
         }
     }
 }

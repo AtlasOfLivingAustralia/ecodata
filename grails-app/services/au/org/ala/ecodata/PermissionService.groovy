@@ -757,9 +757,17 @@ class PermissionService {
      */
     Boolean doesUserExpiresInAMonth(String userId, String hubId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date monthFromNow = sdf.parse(LocalDate.now().plusMonths(1).toString())
+        ZonedDateTime processingTime = ZonedDateTime.now(ZoneOffset.UTC)
+        Date monthFromNow = sdf.parse(processingTime.plusMonths(1).toString())
 
         UserPermission.findByUserIdAndEntityIdAndExpiryDate(userId, hubId, monthFromNow) != null
+    }
+
+    /**
+     * Returns the list of users with role expiring 1 month from now
+     */
+    List<UserPermission> findPermissionsExpiringInAMonth(Date date = new Date()) {
+        UserPermission.findAllByExpiryDateAndStatusNotEqual(date, DELETED)
     }
 
 }

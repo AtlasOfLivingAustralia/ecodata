@@ -5,6 +5,7 @@ import grails.test.mongodb.MongoSpec
 import org.apache.http.HttpStatus
 import org.grails.testing.GrailsUnitTest
 
+import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -124,6 +125,32 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
                 merit.emailFromAddress)
         and: "The permission was deleted"
         !UserPermission.findAllByUserId(permission.userId)
+
+    }
+
+    def "The access expiry job will send warning emails to users who have role expiring 1 month from now"() {
+        ZonedDateTime processTime = ZonedDateTime.parse("2022-03-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date monthFromNow = sdf.parse(processTime.plusMonths(1).toString())
+        UserPermission permission = new UserPermission(userId:"u1", entityType: Hub.class.name, entityId:'hub1', accessLevel: AccessLevel.admin)
+        permission.save()
+
+        when:
+        job.processWarningPermissions(processTime)
+
+        then:
+        1 * permissionService.findPermissionsExpiringInAMonth(monthFromNow) >> [permission]
+        1 * permissionService.findOwningHubId(permission) >> merit.hubId
+        1 * userService.lookupUserDetails(permission.userId) >> [email:'test@test.com']
+        1 * emailService.sendTemplatedEmail(
+                merit.urlPath,
+                AccessExpiryJob.PERMISSION_WARNING_EMAIL_KEY+'.subject',
+                AccessExpiryJob.PERMISSION_WARNING_EMAIL_KEY+'.body',
+                [:],
+                ["test@test.com"],
+                [],
+                merit.emailReplyToAddress,
+                merit.emailFromAddress)
 
     }
 

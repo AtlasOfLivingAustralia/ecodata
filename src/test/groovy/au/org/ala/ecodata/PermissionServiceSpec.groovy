@@ -352,6 +352,17 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         expect:
         service.doesUserExpiresInAMonth('1','h1') != null
 
+    }
+
+    void "Return all users with role expiring 1 month from now"() {
+        setup:
+        Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
+        new UserPermission(entityId:'h1', entityType:Hub.name, userId: "1", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'h1', entityType:Hub.name, userId: "2", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
+
+        expect:
+        service.findPermissionsExpiringInAMonth(date1).size() == 2
+
 
     }
 }
