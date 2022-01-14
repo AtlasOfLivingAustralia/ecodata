@@ -2535,4 +2535,27 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         response.status == HttpStatus.SC_OK
         result.doesUserHaveHubProjects == true
     }
+
+    void "check if the user is expiring a month from now" () {
+        setup:
+        String userId = '1'
+        String entityId = '12'
+        Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
+        new UserPermission(userId:'2', accessLevel:AccessLevel.starred, entityId:'20', entityType:Hub.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'12', entityType:Hub.name, status: Status.ACTIVE, expiryDate: date1).save()
+
+
+        when:
+        params.userId = userId
+        params.entityId = entityId
+        controller.doesUserExpiresInAMonth()
+        def result = response.getJson()
+
+        then:
+
+        1 * permissionService.doesUserExpiresInAMonth('1', '12') >> true
+
+        response.status == HttpStatus.SC_OK
+        result.doesUserExpiresInAMonth == true
+    }
 }

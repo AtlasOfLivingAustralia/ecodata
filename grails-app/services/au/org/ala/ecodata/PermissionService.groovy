@@ -4,7 +4,12 @@ import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
 import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.joda.time.DateTime
+
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -747,5 +752,22 @@ class PermissionService {
         return [status:'ok', id: up.id]
     }
 
+    /**
+     * This checks the user's expiry date if expiring 1 month from now
+     */
+    Boolean doesUserExpiresInAMonth(String userId, String hubId) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ZonedDateTime processingTime = ZonedDateTime.now(ZoneOffset.UTC)
+        Date monthFromNow = sdf.parse(processingTime.plusMonths(1).toString())
+
+        UserPermission.findByUserIdAndEntityIdAndExpiryDate(userId, hubId, monthFromNow) != null
+    }
+
+    /**
+     * Returns the list of users with role expiring 1 month from now
+     */
+    List<UserPermission> findPermissionsExpiringInAMonth(Date date = new Date()) {
+        UserPermission.findAllByExpiryDateAndStatusNotEqual(date, DELETED)
+    }
 
 }
