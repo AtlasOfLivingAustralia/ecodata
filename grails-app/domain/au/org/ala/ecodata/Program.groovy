@@ -47,6 +47,9 @@ class Program {
 
     List<AssociatedOrg> associatedOrganisations
 
+    /** Grant/procurement etc */
+    String fundingType
+
 
     /** Custom rendering for the program */
     Map toMap() {
@@ -71,6 +74,7 @@ class Program {
         program.subPrograms = subPrograms
         program.blog = blog
         program.acronym = acronym
+        program.fundingType = fundingType
 
         program.associatedOrganisations = associatedOrganisations
 
@@ -140,6 +144,7 @@ class Program {
         associatedOrganisations nullable:true
         programSiteId nullable: true
         acronym nullable: true
+        fundingType nullable: true
         hubId nullable: true, validator: { String hubId, Program program, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(program, 'programId', 'hubId', errors)
         }

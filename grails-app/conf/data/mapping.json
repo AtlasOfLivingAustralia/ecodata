@@ -51,7 +51,9 @@
             }
           }
         },
-
+        "fundingType": {
+          "type" : "keyword"
+        },
         "status": {
           "type" : "keyword"
         },
