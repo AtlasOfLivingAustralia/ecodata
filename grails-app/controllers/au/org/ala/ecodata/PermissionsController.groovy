@@ -1192,6 +1192,9 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Get the UserPermission details for the give parameters
+     */
     def findUserPermission() {
         String userId = params.userId
         String hubId = params.entityId

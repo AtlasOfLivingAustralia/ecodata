@@ -760,10 +760,7 @@ class PermissionService {
     }
 
     /**
-     *
-     * @param userId
-     * @param hubId
-     * @return UserPermission
+     * This method returns the UserPermission details
      */
     UserPermission findUserPermission(String userId, String hubId) {
         UserPermission.findByUserIdAndEntityIdAndStatusNotEqual(userId, hubId, DELETED)
