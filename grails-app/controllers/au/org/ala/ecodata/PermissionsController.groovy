@@ -1193,7 +1193,7 @@ class PermissionsController {
     }
 
     /**
-     * Get the UserPermission details for the give parameters
+     * Get the UserPermission details for the given parameters
      */
     def findUserPermission() {
         String userId = params.userId
