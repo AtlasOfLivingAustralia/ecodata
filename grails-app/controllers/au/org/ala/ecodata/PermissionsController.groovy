@@ -1192,15 +1192,12 @@ class PermissionsController {
         }
     }
 
-    /**
-     * Checks if a user's permission is expiring within a month.
-     */
-    def doesUserExpiresInAMonth() {
+    def findUserPermission() {
         String userId = params.userId
         String hubId = params.entityId
 
         if (userId && hubId) {
-            render ([doesUserExpiresInAMonth: permissionService.doesUserExpiresInAMonth(userId, hubId)] as JSON)
+            render (permissionService.findUserPermission(userId, hubId) as JSON)
         } else {
             render status: 400, text: "Required params not provided: userId, hubId"
         }
