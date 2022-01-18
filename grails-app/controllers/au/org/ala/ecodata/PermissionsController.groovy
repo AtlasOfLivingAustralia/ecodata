@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.*
 import static org.apache.http.HttpStatus.*
 
@@ -1200,7 +1201,7 @@ class PermissionsController {
         String hubId = params.entityId
 
         if (userId && hubId) {
-            render (permissionService.findUserPermission(userId, hubId) as JSON)
+            respond permissionService.findUserPermission(userId, hubId)
         } else {
             render status: 400, text: "Required params not provided: userId, hubId"
         }
