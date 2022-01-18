@@ -2549,12 +2549,11 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.entityId = entityId
         controller.findUserPermission()
-        def result = response.getJson()
+
 
         then:
 
         1 * permissionService.findUserPermission('1', '12') >> new UserPermission(userId:'1', entityId:'12', entityType:Hub.name)
-
         response.status == HttpStatus.SC_OK
     }
 }
