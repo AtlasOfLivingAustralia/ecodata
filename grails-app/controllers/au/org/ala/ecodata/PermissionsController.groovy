@@ -13,6 +13,9 @@ import static org.apache.http.HttpStatus.*
  * @see au.org.ala.ecodata.UserPermission
  */
 class PermissionsController {
+
+    static responseFormats = ['json', 'xml']
+
     PermissionService permissionService
     ProjectService projectService
     OrganisationService organisationService
