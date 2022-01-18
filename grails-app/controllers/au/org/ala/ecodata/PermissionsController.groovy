@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 
-import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.*
 import static org.apache.http.HttpStatus.*
 
