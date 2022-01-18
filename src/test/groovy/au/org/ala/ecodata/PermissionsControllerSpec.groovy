@@ -2536,7 +2536,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         result.doesUserHaveHubProjects == true
     }
 
-    void "check if the user is expiring a month from now" () {
+    void "This returns the UserPermission" () {
         setup:
         String userId = '1'
         String entityId = '12'
@@ -2548,14 +2548,12 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         when:
         params.userId = userId
         params.entityId = entityId
-        controller.doesUserExpiresInAMonth()
-        def result = response.getJson()
+        controller.findUserPermission()
+
 
         then:
 
-        1 * permissionService.doesUserExpiresInAMonth('1', '12') >> true
-
+        1 * permissionService.findUserPermission('1', '12') >> new UserPermission(userId:'1', entityId:'12', entityType:Hub.name)
         response.status == HttpStatus.SC_OK
-        result.doesUserExpiresInAMonth == true
     }
 }
