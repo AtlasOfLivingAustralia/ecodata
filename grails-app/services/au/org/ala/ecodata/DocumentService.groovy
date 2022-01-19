@@ -236,6 +236,11 @@ class DocumentService {
                 }
                 props.filepath = partition
             }
+
+            if (props.activityId) {
+                props.reportId = Report.findByActivityId(props.activityId).reportId
+            }
+
             commonService.updateProperties(d, props)
             return [status:'ok',documentId:d.documentId, url:d.url]
         } catch (Exception e) {
