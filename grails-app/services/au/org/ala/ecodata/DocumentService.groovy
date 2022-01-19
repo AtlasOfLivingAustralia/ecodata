@@ -238,7 +238,7 @@ class DocumentService {
             }
 
             if (props.activityId) {
-                props.reportId = Report.findByActivityId(props.activityId).reportId
+                props.reportId = Report.findByActivityId(props.activityId)?.reportId
             }
 
             commonService.updateProperties(d, props)
