@@ -5,8 +5,6 @@ import groovy.util.logging.Slf4j
 import org.apache.http.HttpStatus
 
 import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -176,9 +174,11 @@ class AccessExpiryJob {
     }
 
     void processWarningPermissions(ZonedDateTime processingTime) {
+        log.info("AccessExpiryJob process is searching for users expiring 1 month from today")
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date monthFromNow = sdf.parse(processingTime.plusMonths(1).toString())
-        List permissions = permissionService.findPermissionsExpiringInAMonth(monthFromNow)
+
+        List permissions = permissionService.findAllByExpiryDate(monthFromNow)
         permissions.each {
             // Find the hub attached to the expired permission.
             String hubId = permissionService.findOwningHubId(it)

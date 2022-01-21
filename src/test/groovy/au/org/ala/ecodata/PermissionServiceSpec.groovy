@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
-import org.joda.time.DateTime
 
 class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 
@@ -350,7 +349,7 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         new UserPermission(entityId:'h1', entityType:Hub.name, userId: "2", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
 
         expect:
-        service.findPermissionsExpiringInAMonth(date1).size() == 2
+        service.findAllByExpiryDate(date1).size() == 2
 
     }
 

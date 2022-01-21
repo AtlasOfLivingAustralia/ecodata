@@ -139,7 +139,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         job.processWarningPermissions(processTime)
 
         then:
-        1 * permissionService.findPermissionsExpiringInAMonth(monthFromNow) >> [permission]
+        1 * permissionService.findAllByExpiryDate(monthFromNow) >> [permission]
         1 * permissionService.findOwningHubId(permission) >> merit.hubId
         1 * userService.lookupUserDetails(permission.userId) >> [email:'test@test.com']
         1 * emailService.sendTemplatedEmail(

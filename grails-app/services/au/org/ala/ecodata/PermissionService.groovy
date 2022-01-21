@@ -4,12 +4,6 @@ import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
 import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import org.joda.time.DateTime
-
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -22,6 +16,9 @@ class PermissionService {
     UserService userService // found in ala-auth-plugin
     ProjectController projectController
     def grailsApplication, webService, hubService
+
+    /** Limit to the maximum number of UserPermissions returned by queries */
+    static final int MAX_QUERY_RESULT_SIZE = 1000
 
     boolean isUserAlaAdmin(String userId) {
         userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
@@ -753,17 +750,21 @@ class PermissionService {
     }
 
     /**
-     * Returns the list of users with role expiring 1 month from now
-     */
-    List<UserPermission> findPermissionsExpiringInAMonth(Date date = new Date()) {
-        UserPermission.findAllByExpiryDateAndStatusNotEqual(date, DELETED)
-    }
-
-    /**
      * This method returns the UserPermission details
      */
     UserPermission findUserPermission(String userId, String hubId) {
         UserPermission.findByUserIdAndEntityIdAndStatusNotEqual(userId, hubId, DELETED)
+    }
+
+    /**
+     * Returns a list of permissions that have an expiry date equals to the
+     * supplied date
+     */
+    List<UserPermission> findAllByExpiryDate(Date date = new Date(), int offset = 0, int max = MAX_QUERY_RESULT_SIZE) {
+        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'userId']
+        UserPermission.where {
+                expiryDate == date
+        }.list(options)
     }
 
 }
