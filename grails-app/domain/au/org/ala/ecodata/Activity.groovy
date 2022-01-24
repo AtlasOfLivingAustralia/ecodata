@@ -1,6 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.ActivityGraphQLMapper
+import grails.util.Holders
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetchingEnvironment
 import org.bson.types.ObjectId
+import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 /**
  * Currently this holds both activities and assessments.
@@ -25,7 +30,9 @@ class Activity {
         activities may have 0..n Outputs - these are mapped from the Output side
     */
 
-    static mapping = {
+    static graphql = ActivityGraphQLMapper.graphqlMapping()
+
+        static mapping = {
         activityId index: true
         siteId index: true
         projectId index: true
@@ -74,6 +81,7 @@ class Activity {
     Date lastUpdated
     String userId
     Boolean embargoed
+    List tempArgs = []
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -86,7 +94,7 @@ class Activity {
         return progress in [PLANNED, STARTED, FINISHED]
     }
 
-    static transients = ['complete']
+    static transients = ['complete', 'tempArgs']
 
     static constraints = {
         siteId nullable: true

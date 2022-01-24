@@ -3,14 +3,19 @@ package au.org.ala.ecodata
 import org.springframework.validation.Errors
 
 import static au.org.ala.ecodata.Status.COMPLETED
+import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.Interval
 
+import static au.org.ala.ecodata.Status.COMPLETED
 
 class Project {
+
+    static graphql = ProjectGraphQLMapper.graphqlMapping()
 
     /*
     Associations:
@@ -84,6 +89,7 @@ class Project {
     MapLayersConfiguration mapLayersConfig
     /** configure how activity is displayed on map for example point, heatmap or cluster. */
     List mapDisplays
+    List tempArgs = []
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -93,6 +99,7 @@ class Project {
 
     /** The program of work this project is a part of, if any */
     String programId
+    Hub hub
 
     /** Grant/procurement etc */
     String fundingType
@@ -102,7 +109,7 @@ class Project {
 
     static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
 
-    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
 
     Date getActualStartDate() {
         if (actualStartDate) {
@@ -208,6 +215,17 @@ class Project {
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }
+    }
+
+    MeriPlan getMeriPlan() {
+        if(!custom) {
+            return null
+        }
+
+        MeriPlan meriPlan = new MeriPlan()
+        meriPlan.details = custom.get("details")
+        meriPlan.outputTargets = this.outputTargets
+        return meriPlan
     }
 }
 
