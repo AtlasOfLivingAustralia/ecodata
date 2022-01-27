@@ -183,18 +183,25 @@ class AccessExpiryJob {
 
         DateTime processingDate = new DateTime()
         permissions.each {
-            DateTime expiryDate = new DateTime(it.expiryDate).withZone(DateTimeZone.UTC)
-            DateTime expiryDateMinus = expiryDate.minusMonths(1)
-            if (processingDate >= expiryDateMinus) {
-                // Find the hub attached to the expired permission.
-                String hubId = permissionService.findOwningHubId(it)
-                Hub hub = Hub.findByHubId(hubId)
+            User user = userService.findByUserId(it.userId)
+            if (user) {
+                UserHub userHub = user.getUserHub(it.entityId)
+                if (!userHub.permissionWarningSentDate) {
+                    DateTime expiryDate = new DateTime(it.expiryDate).withZone(DateTimeZone.UTC)
+                    DateTime expiryDateMinus = expiryDate.minusMonths(1)
+                    if (processingDate >= expiryDateMinus) {
+                        // Find the hub attached to the expired permission.
+                        String hubId = permissionService.findOwningHubId(it)
+                        Hub hub = Hub.findByHubId(hubId)
 
-                log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
+                        log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
 
-                sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
+                        sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
+                        userHub.permissionWarningSentDate = Date.from(processingTime.toInstant())
+                        user.save()
+                    }
+                }
             }
-
         }
     }
 }

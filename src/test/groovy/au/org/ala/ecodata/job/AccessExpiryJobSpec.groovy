@@ -129,10 +129,13 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
     }
 
     def "The access expiry job will send warning emails to users who have role expiring 1 month from now"() {
+        User user = new User(userId:'u1', userHubs: [new UserHub(hubId:merit.hubId)])
+        user.loginToHub(merit.hubId, DateUtil.parse("2022-01-22T00:00:00Z"))
+        user.save()
         ZonedDateTime processTime = ZonedDateTime.parse("2022-03-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date monthFromNow = sdf.parse(processTime.plusMonths(1).toString())
-        UserPermission permission = new UserPermission(userId:"u1", entityType: Hub.class.name, entityId:'hub1', accessLevel: AccessLevel.admin)
+        UserPermission permission = new UserPermission(userId:"u1", entityType: Hub.class.name, entityId:'h1', accessLevel: AccessLevel.admin)
         permission.save()
 
         when:
@@ -141,6 +144,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         then:
         1 * permissionService.findAllByExpiryDate(monthFromNow) >> [permission]
         1 * permissionService.findOwningHubId(permission) >> merit.hubId
+        1 * userService.findByUserId(user.userId) >> user
         1 * userService.lookupUserDetails(permission.userId) >> [email:'test@test.com']
         1 * emailService.sendTemplatedEmail(
                 merit.urlPath,
