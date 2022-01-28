@@ -1,12 +1,12 @@
-// This script provides functionality to update the new field publicationStatus in all active existing projects to mark
-// publicationStatus as true
+// This script provides functionality to update the new field projLifecycleStatus in all existing active biocollect
+// projects to Published
 
-print("Start to update publication status");
+print("Start to update projLifecycleStatus");
 
 db.project.update(
 
-    { status:'active'},
-    { $set: { publicationStatus: true } },
+    { status: 'active', isMERIT: false },
+    { $set: { projLifecycleStatus: true } },
     { upsert: false, multi: true }
 
 )
