@@ -1,0 +1,549 @@
+query activityFormList (
+
+    $max: Int,
+    $offset: Int,
+    $sort: String,
+    $order: String,
+    $ignoreCase: Boolean
+)
+
+{ activityFormList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){id,version,name,
+    gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+    dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+        modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+        message}}
+},
+
+query activityForm(
+    $activityFormName: String!
+){ activityForm(activityFormName:$activityFormName){id,version,name,
+    gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+    dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+        modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+        message}}},
+
+
+query managementUnitList(
+    $max: Int,
+    $offset: Int,
+    $sort: String,
+    $order: String,
+    $ignoreCase: Boolean)
+{managementUnitList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){id,name,description,
+    startDate,endDate,url, associatedOrganisations{name,organisationId,logo,url,description},managementUnitSiteId,hubId,dateCreated,lastUpdated,managementUnitId,
+    status,data{id,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+        censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+        associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+        status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},muPriorities{category,priority},outcomes{outcome,category,shortDescription,priorities{category}},
+    reportConfig{report,category,reportType,activityType,reportNameFormat,reportDescriptionFormat,firstReportingPeriodEnd,
+        reportingPeriodInMonths,multiple,minimumPeriodInMonths,reportsAlignedToCalendar},errors{field,message}}},
+
+query searchManagementUnits(
+    $managementUnitId: String
+    $name: String
+    $startDate: String
+    $endDate: String){
+    searchManagementUnits(managementUnitId:$managementUnitId,name:$name,startDate:$startDate,endDate:$endDate){id,name,description,
+        startDate,endDate,url, associatedOrganisations{name,organisationId,logo,url,description},managementUnitSiteId,hubId,dateCreated,lastUpdated,managementUnitId,
+        status,data{id,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+            censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+            associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+            status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},muPriorities{category,priority},outcomes{outcome,category,shortDescription,priorities{category}},
+        reportConfig{report,category,reportType,activityType,reportNameFormat,reportDescriptionFormat,firstReportingPeriodEnd,
+            reportingPeriodInMonths,multiple,minimumPeriodInMonths,reportsAlignedToCalendar},errors{field,message}}},
+
+
+query siteList(
+    $max: Int,
+    $offset: Int,
+    $sort: String,
+    $order: String,
+    $ignoreCase: Boolean)
+{siteList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){id,visibility,name,
+    externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+    catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+        type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}}},
+
+query sites(
+    $term: String!
+    $siteIds: [String]
+    $page: Int
+    $max: Int)
+{sites(term:$term, siteIds: $siteIds, page:$page, max:$max){id,visibility,name,
+    externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+    catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+        type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}}},
+
+query activityList(
+    $max: Int,
+    $offset: Int,
+    $sort: String,
+    $order: String,
+    $ignoreCase: Boolean)
+{activityList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){id,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+    censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+    associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+    status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}}},
+
+
+query activity(
+
+    $activityId: String,
+    $activityList: [activityList])
+{activity(activityId:$activityId, activityList: $activityList){id,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+    censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+    associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+    status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}}},
+
+query activityByProjectId(
+
+    $projectId: String!
+)
+{activityByProjectId(projectId:$projectId){id,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+    censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+    associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+    status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}}},
+
+
+query activitySchemaByName(
+    $activityName: String!
+)
+{activitySchemaByName(activityName:$activityName)},
+
+query activities{activities},
+
+query outputList{outputList},
+
+query outputTypeByName(
+    $outputTypeName: String!
+)
+{outputTypeByName(outputTypeName:$outputTypeName)},
+
+
+query outputs(
+    $output: [output]
+)
+{outputs(output:$output){id,name,assessmentDate,dateCreated,lastUpdated,activityId,outputId,status,errors{field,message}
+    ,data}},
+
+
+query projectActivityList(
+    $max: Int,
+    $offset: Int,
+    $sort: String,
+    $order: String,
+    $ignoreCase: Boolean)
+{projectActivityList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){id,version,endDate,
+    methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
+    dataAccessMethods,pActivityFormName,alerts,restrictRecordToSites,allowAdditionalSurveySites,baseLayersName,
+    publicAccess,visibility{embargoForDays,embargoUntil,alaAdminEnforcedEmbargo,embargoOption},submissionRecords{id,submissionPublicationDate,
+        submissionDoi,datasetSubmitter,datasetVersion,submissionRecordId,projectActivityId,submissionId,errors{field,message},submissionPackage{
+            id,acknowledgement,associatedMaterialNane,associatedMaterialIdentifier,collectionStartDate,collectionEndDate,curationStatus,curationActivitiesOther,
+            datasetContact{title,name,role,address,email,phone,organizationName},datasetAuthors{authorInitials,authorSurnameOrOrgName,authorAffiliation},geographicalExtentDescription,methodDriftDescription,otherMaterials,selectedAnimalGroups,
+            selectedAnthropogenic,selectedConservativeMgmt,selectedEconomicResearch,selectedEnvironmentFeatures,selectedFieldsOfResearch,
+            selectedIdentificationMethod,selectedMaterialIdentifier,selectedMaterialType,selectedObservedAttributes,selectedObservationMeasurements,
+            selectedPlantGroups,selectedSamplingDesign,selectedSocioEconomic,submissionRecordId,errors{field,message}}},legalCustodianOrganisation,dataAccessExternalURL,dataQualityAssuranceDescription,
+    dataManagementPolicyDescription,dataManagementPolicyURL,dataManagementPolicyDocument,excludeProjectSite,
+    mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+        boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},surveySiteOption,canEditAdminSelectedSites,dateCreated,lastUpdated,dataSharingLicense,
+    commentsAllowed,methodName,startDate,projectActivityId,name,status,projectId,description,isDataManagementPolicyDocumented,
+    sites,errors{field,message},surveyForms{id,version,name,
+        gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+        dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+            modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+            message}}
+}}
+
+
+query projectList(
+    $max: Int,
+    $offset: Int,
+    $sort: String,
+    $order: String,
+    $ignoreCase: Boolean
+)
+{projectList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){totalCount,results{
+    id,externalId,description,workOrderId,internalOrderId,contractStartDate,contractEndDate,manager,organisationName,
+    serviceProviderName,plannedStartDate,plannedEndDate,serviceProviderAgreementDate,actualStartDate,actualEndDate,
+    grantId,risks{dateUpdated,overallRisk,rows{currentControl,consequence,threat,residualRisk,riskRating,description,likelihood}},promoteOnHomepage,organisationId,projectType,dataProviderId,dataResourceId,aim,keywords,urlAndroid,
+    urlITunes,urlWeb,getInvolved,scienceType,ecoScienceType,orgIdGrantee,orgIdSponsor,orgIdSvcProvider,projectSiteId,
+    difficulty,gear,task,userCreated,userLastModified,origin,uNRegions,countries,tags,alaHarvest,industries,programId,
+    baseLayer,isBushfire,bushfireCategories,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+        boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},managementUnitId,mapDisplays,terminationReason,fundingType,
+    electionCommitmentYear,hubId,dateCreated,associatedOrgs{organisationId,name,logo,url,description},name,funding,isCitizenScience,lastUpdated,fundings{fundingSourceAmount,fundingSource,fundingType},
+    hub{id,skin,title,urlPath,homePagePath,defaultProgram,templateConfiguration,content,customBreadCrumbs,pages,
+        dataColumns,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},mapDisplays,timeSeriesOnIndex,emailFromAddress,emailReplyToAddress,downloadUrlPrefix,
+        accessManagementOptions{expireUsersAfterPeriodInactive,warnUsersAfterPeriodInactive},dateCreated,hubId,lastUpdated,availableMapFacets,defaultFacetQuery,supportedPrograms,
+        availableFacets,status,quickLinks,adminFacets,errors{field,message}},isMERIT,status,isSciStarter,isExternal,projectId,meriPlan,activities{id,,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+        censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+        associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+        status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},documents{id,name,attribution,licence,filepath,type,role,projectId,organisationId,
+        siteId,activityId,outputId,programId,reportId,managementUnitId,stage,filename,dateCreated,lastUpdated,
+        dateTaken,isPrimaryProjectImage,thirdPartyConsentDeclarationMade,thirdPartyConsentDeclarationText,
+        externalUrl,projectActivityId,labels,isSciStarter,hosted,identifier,contentType,hubId,documentId,status,errors{field,message}},reports{id,
+        reportId,description,dateSubmitted,submittedBy,dateApproved,approvedBy,dateReturned,returnedBy,adjustedBy,
+        dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
+        activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
+        dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
+        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+            type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
+        methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
+        dataAccessMethods,pActivityFormName,alerts,restrictRecordToSites,allowAdditionalSurveySites,baseLayersName,
+        publicAccess,visibility{embargoForDays,embargoUntil,alaAdminEnforcedEmbargo,embargoOption},submissionRecords{id,submissionPublicationDate,
+            submissionDoi,datasetSubmitter,datasetVersion,submissionRecordId,projectActivityId,submissionId,errors{field,message},submissionPackage{
+                id,acknowledgement,associatedMaterialNane,associatedMaterialIdentifier,collectionStartDate,collectionEndDate,curationStatus,curationActivitiesOther,
+                datasetContact{title,name,role,address,email,phone,organizationName},datasetAuthors{authorInitials,authorSurnameOrOrgName,authorAffiliation},geographicalExtentDescription,methodDriftDescription,otherMaterials,selectedAnimalGroups,
+                selectedAnthropogenic,selectedConservativeMgmt,selectedEconomicResearch,selectedEnvironmentFeatures,selectedFieldsOfResearch,
+                selectedIdentificationMethod,selectedMaterialIdentifier,selectedMaterialType,selectedObservedAttributes,selectedObservationMeasurements,
+                selectedPlantGroups,selectedSamplingDesign,selectedSocioEconomic,submissionRecordId,errors{field,message}}},legalCustodianOrganisation,dataAccessExternalURL,dataQualityAssuranceDescription,
+        dataManagementPolicyDescription,dataManagementPolicyURL,dataManagementPolicyDocument,excludeProjectSite,
+        mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},surveySiteOption,canEditAdminSelectedSites,dateCreated,lastUpdated,dataSharingLicense,
+        commentsAllowed,methodName,startDate,projectActivityId,name,status,projectId,description,isDataManagementPolicyDocumented,
+        sites,errors{field,message},surveyForms{id,version,name,
+            gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+            dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+                modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+                message}}},errors{field,message}}}}
+
+
+query project(
+    $projectId: String!)
+{project(projectId:$projectId){id,externalId,description,workOrderId,internalOrderId,contractStartDate,contractEndDate,manager,organisationName,
+    serviceProviderName,plannedStartDate,plannedEndDate,serviceProviderAgreementDate,actualStartDate,actualEndDate,
+    grantId,risks{dateUpdated,overallRisk,rows{currentControl,consequence,threat,residualRisk,riskRating,description,likelihood}},promoteOnHomepage,organisationId,projectType,dataProviderId,dataResourceId,aim,keywords,urlAndroid,
+    urlITunes,urlWeb,getInvolved,scienceType,ecoScienceType,orgIdGrantee,orgIdSponsor,orgIdSvcProvider,projectSiteId,
+    difficulty,gear,task,userCreated,userLastModified,origin,uNRegions,countries,tags,alaHarvest,industries,programId,
+    baseLayer,isBushfire,bushfireCategories,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+        boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},managementUnitId,mapDisplays,terminationReason,fundingType,
+    electionCommitmentYear,hubId,dateCreated,associatedOrgs{organisationId,name,logo,url,description},name,funding,isCitizenScience,lastUpdated,fundings{fundingSourceAmount,fundingSource,fundingType},
+    hub{id,skin,title,urlPath,homePagePath,defaultProgram,templateConfiguration,content,customBreadCrumbs,pages,
+        dataColumns,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},mapDisplays,timeSeriesOnIndex,emailFromAddress,emailReplyToAddress,downloadUrlPrefix,
+        accessManagementOptions{expireUsersAfterPeriodInactive,warnUsersAfterPeriodInactive},dateCreated,hubId,lastUpdated,availableMapFacets,defaultFacetQuery,supportedPrograms,
+        availableFacets,status,quickLinks,adminFacets,errors{field,message}},isMERIT,status,isSciStarter,isExternal,projectId,meriPlan,activities{id,,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+        censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+        associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+        status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},documents{id,name,attribution,licence,filepath,type,role,projectId,organisationId,
+        siteId,activityId,outputId,programId,reportId,managementUnitId,stage,filename,dateCreated,lastUpdated,
+        dateTaken,isPrimaryProjectImage,thirdPartyConsentDeclarationMade,thirdPartyConsentDeclarationText,
+        externalUrl,projectActivityId,labels,isSciStarter,hosted,identifier,contentType,hubId,documentId,status,errors{field,message}},reports{id,
+        reportId,description,dateSubmitted,submittedBy,dateApproved,approvedBy,dateReturned,returnedBy,adjustedBy,
+        dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
+        activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
+        dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
+        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+            type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
+        methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
+        dataAccessMethods,pActivityFormName,alerts,restrictRecordToSites,allowAdditionalSurveySites,baseLayersName,
+        publicAccess,visibility{embargoForDays,embargoUntil,alaAdminEnforcedEmbargo,embargoOption},submissionRecords{id,submissionPublicationDate,
+            submissionDoi,datasetSubmitter,datasetVersion,submissionRecordId,projectActivityId,submissionId,errors{field,message},submissionPackage{
+                id,acknowledgement,associatedMaterialNane,associatedMaterialIdentifier,collectionStartDate,collectionEndDate,curationStatus,curationActivitiesOther,
+                datasetContact{title,name,role,address,email,phone,organizationName},datasetAuthors{authorInitials,authorSurnameOrOrgName,authorAffiliation},geographicalExtentDescription,methodDriftDescription,otherMaterials,selectedAnimalGroups,
+                selectedAnthropogenic,selectedConservativeMgmt,selectedEconomicResearch,selectedEnvironmentFeatures,selectedFieldsOfResearch,
+                selectedIdentificationMethod,selectedMaterialIdentifier,selectedMaterialType,selectedObservedAttributes,selectedObservationMeasurements,
+                selectedPlantGroups,selectedSamplingDesign,selectedSocioEconomic,submissionRecordId,errors{field,message}}},legalCustodianOrganisation,dataAccessExternalURL,dataQualityAssuranceDescription,
+        dataManagementPolicyDescription,dataManagementPolicyURL,dataManagementPolicyDocument,excludeProjectSite,
+        mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},surveySiteOption,canEditAdminSelectedSites,dateCreated,lastUpdated,dataSharingLicense,
+        commentsAllowed,methodName,startDate,projectActivityId,name,status,projectId,description,isDataManagementPolicyDocumented,
+        sites,errors{field,message},surveyForms{id,version,name,
+            gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+            dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+                modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+                message}}},errors{field,message}}
+}
+
+
+
+query projects(
+    $term: String!)
+{projects(term:$term){id,externalId,description,workOrderId,internalOrderId,contractStartDate,contractEndDate,manager,organisationName,
+    serviceProviderName,plannedStartDate,plannedEndDate,serviceProviderAgreementDate,actualStartDate,actualEndDate,
+    grantId,risks{dateUpdated,overallRisk,rows{currentControl,consequence,threat,residualRisk,riskRating,description,likelihood}},promoteOnHomepage,organisationId,projectType,dataProviderId,dataResourceId,aim,keywords,urlAndroid,
+    urlITunes,urlWeb,getInvolved,scienceType,ecoScienceType,orgIdGrantee,orgIdSponsor,orgIdSvcProvider,projectSiteId,
+    difficulty,gear,task,userCreated,userLastModified,origin,uNRegions,countries,tags,alaHarvest,industries,programId,
+    baseLayer,isBushfire,bushfireCategories,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+        boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},managementUnitId,mapDisplays,terminationReason,fundingType,
+    electionCommitmentYear,hubId,dateCreated,associatedOrgs{organisationId,name,logo,url,description},name,funding,isCitizenScience,lastUpdated,fundings{fundingSourceAmount,fundingSource,fundingType},
+    hub{id,skin,title,urlPath,homePagePath,defaultProgram,templateConfiguration,content,customBreadCrumbs,pages,
+        dataColumns,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},mapDisplays,timeSeriesOnIndex,emailFromAddress,emailReplyToAddress,downloadUrlPrefix,
+        accessManagementOptions{expireUsersAfterPeriodInactive,warnUsersAfterPeriodInactive},dateCreated,hubId,lastUpdated,availableMapFacets,defaultFacetQuery,supportedPrograms,
+        availableFacets,status,quickLinks,adminFacets,errors{field,message}},isMERIT,status,isSciStarter,isExternal,projectId,meriPlan,activities{id,,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+        censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+        associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+        status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},documents{id,name,attribution,licence,filepath,type,role,projectId,organisationId,
+        siteId,activityId,outputId,programId,reportId,managementUnitId,stage,filename,dateCreated,lastUpdated,
+        dateTaken,isPrimaryProjectImage,thirdPartyConsentDeclarationMade,thirdPartyConsentDeclarationText,
+        externalUrl,projectActivityId,labels,isSciStarter,hosted,identifier,contentType,hubId,documentId,status,errors{field,message}},reports{id,
+        reportId,description,dateSubmitted,submittedBy,dateApproved,approvedBy,dateReturned,returnedBy,adjustedBy,
+        dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
+        activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
+        dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
+        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+            type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
+        methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
+        dataAccessMethods,pActivityFormName,alerts,restrictRecordToSites,allowAdditionalSurveySites,baseLayersName,
+        publicAccess,visibility{embargoForDays,embargoUntil,alaAdminEnforcedEmbargo,embargoOption},submissionRecords{id,submissionPublicationDate,
+            submissionDoi,datasetSubmitter,datasetVersion,submissionRecordId,projectActivityId,submissionId,errors{field,message},submissionPackage{
+                id,acknowledgement,associatedMaterialNane,associatedMaterialIdentifier,collectionStartDate,collectionEndDate,curationStatus,curationActivitiesOther,
+                datasetContact{title,name,role,address,email,phone,organizationName},datasetAuthors{authorInitials,authorSurnameOrOrgName,authorAffiliation},geographicalExtentDescription,methodDriftDescription,otherMaterials,selectedAnimalGroups,
+                selectedAnthropogenic,selectedConservativeMgmt,selectedEconomicResearch,selectedEnvironmentFeatures,selectedFieldsOfResearch,
+                selectedIdentificationMethod,selectedMaterialIdentifier,selectedMaterialType,selectedObservedAttributes,selectedObservationMeasurements,
+                selectedPlantGroups,selectedSamplingDesign,selectedSocioEconomic,submissionRecordId,errors{field,message}}},legalCustodianOrganisation,dataAccessExternalURL,dataQualityAssuranceDescription,
+        dataManagementPolicyDescription,dataManagementPolicyURL,dataManagementPolicyDocument,excludeProjectSite,
+        mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},surveySiteOption,canEditAdminSelectedSites,dateCreated,lastUpdated,dataSharingLicense,
+        commentsAllowed,methodName,startDate,projectActivityId,name,status,projectId,description,isDataManagementPolicyDocumented,
+        sites,errors{field,message},surveyForms{id,version,name,
+            gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+            dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+                modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+                message}}},errors{field,message}
+}}
+
+query searchMeritProject(
+    $projectId: String
+    $fromDate: String
+    $toDate: String
+    $dateRange: DateRange
+    $status: [String]
+    $organisation: [String]
+    $associatedProgram: [String]
+    $associatedSubProgram: [String]
+    $mainTheme: [String]
+    $state: [String]
+    $lga: [String]
+    $cmz: [String]
+    $partnerOrganisationType: [String]
+    $primaryOutcome: [String]
+    $secondaryOutcomes: [String]
+    $tags: [String]
+    $managementArea: [String]
+    $majorVegetationGroup: [String]
+    $biogeographicRegion: [String]
+    $marineRegion: [String]
+    $otherRegion: [String]
+    $grantManagerNominatedProject: [YesNo]
+    $federalElectorate: [String]
+    $assetsAddressed: [String]
+    $userNominatedProject: [String]
+    $managementUnit: [String]
+    $page: Int
+    $max: Int
+    $myProjects: Boolean
+    $activities: [activities]
+)
+{searchMeritProject(projectId:$projectId,fromDate:$fromDate,toDate:$toDate,dateRange:$dateRange,status:$status,
+    organisation:$organisation,associatedProgram:$associatedProgram,associatedSubProgram:$associatedSubProgram,
+    mainTheme:$mainTheme,state:$state,lga:$lga,cmz:$cmz,partnerOrganisationType:$partnerOrganisationType,
+    primaryOutcome:$primaryOutcome,secondaryOutcomes:$secondaryOutcomes,tags:$tags,managementArea:$managementArea,
+    majorVegetationGroup:$majorVegetationGroup,biogeographicRegion:$biogeographicRegion,page:$page,max:$max,
+    myProjects:$myProjects,activities:$activities,managementUnit:$managementUnit,userNominatedProject:$userNominatedProject,
+    assetsAddressed:$assetsAddressed,marineRegion:$marineRegion,otherRegion:$otherRegion,
+    grantManagerNominatedProject:$grantManagerNominatedProject,federalElectorate:$federalElectorate){id,externalId,description,workOrderId,internalOrderId,contractStartDate,contractEndDate,manager,organisationName,
+    serviceProviderName,plannedStartDate,plannedEndDate,serviceProviderAgreementDate,actualStartDate,actualEndDate,
+    grantId,risks{dateUpdated,overallRisk,rows{currentControl,consequence,threat,residualRisk,riskRating,description,likelihood}},promoteOnHomepage,organisationId,projectType,dataProviderId,dataResourceId,aim,keywords,urlAndroid,
+    urlITunes,urlWeb,getInvolved,scienceType,ecoScienceType,orgIdGrantee,orgIdSponsor,orgIdSvcProvider,projectSiteId,
+    difficulty,gear,task,userCreated,userLastModified,origin,uNRegions,countries,tags,alaHarvest,industries,programId,
+    baseLayer,isBushfire,bushfireCategories,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+        boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},managementUnitId,mapDisplays,terminationReason,fundingType,
+    electionCommitmentYear,hubId,dateCreated,associatedOrgs{organisationId,name,logo,url,description},name,funding,isCitizenScience,lastUpdated,fundings{fundingSourceAmount,fundingSource,fundingType},
+    hub{id,skin,title,urlPath,homePagePath,defaultProgram,templateConfiguration,content,customBreadCrumbs,pages,
+        dataColumns,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},mapDisplays,timeSeriesOnIndex,emailFromAddress,emailReplyToAddress,downloadUrlPrefix,
+        accessManagementOptions{expireUsersAfterPeriodInactive,warnUsersAfterPeriodInactive},dateCreated,hubId,lastUpdated,availableMapFacets,defaultFacetQuery,supportedPrograms,
+        availableFacets,status,quickLinks,adminFacets,errors{field,message}},isMERIT,status,isSciStarter,isExternal,projectId,meriPlan,activities{id,,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+        censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+        associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+        status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},documents{id,name,attribution,licence,filepath,type,role,projectId,organisationId,
+        siteId,activityId,outputId,programId,reportId,managementUnitId,stage,filename,dateCreated,lastUpdated,
+        dateTaken,isPrimaryProjectImage,thirdPartyConsentDeclarationMade,thirdPartyConsentDeclarationText,
+        externalUrl,projectActivityId,labels,isSciStarter,hosted,identifier,contentType,hubId,documentId,status,errors{field,message}},reports{id,
+        reportId,description,dateSubmitted,submittedBy,dateApproved,approvedBy,dateReturned,returnedBy,adjustedBy,
+        dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
+        activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
+        dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
+        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+            type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
+        methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
+        dataAccessMethods,pActivityFormName,alerts,restrictRecordToSites,allowAdditionalSurveySites,baseLayersName,
+        publicAccess,visibility{embargoForDays,embargoUntil,alaAdminEnforcedEmbargo,embargoOption},submissionRecords{id,submissionPublicationDate,
+            submissionDoi,datasetSubmitter,datasetVersion,submissionRecordId,projectActivityId,submissionId,errors{field,message},submissionPackage{
+                id,acknowledgement,associatedMaterialNane,associatedMaterialIdentifier,collectionStartDate,collectionEndDate,curationStatus,curationActivitiesOther,
+                datasetContact{title,name,role,address,email,phone,organizationName},datasetAuthors{authorInitials,authorSurnameOrOrgName,authorAffiliation},geographicalExtentDescription,methodDriftDescription,otherMaterials,selectedAnimalGroups,
+                selectedAnthropogenic,selectedConservativeMgmt,selectedEconomicResearch,selectedEnvironmentFeatures,selectedFieldsOfResearch,
+                selectedIdentificationMethod,selectedMaterialIdentifier,selectedMaterialType,selectedObservedAttributes,selectedObservationMeasurements,
+                selectedPlantGroups,selectedSamplingDesign,selectedSocioEconomic,submissionRecordId,errors{field,message}}},legalCustodianOrganisation,dataAccessExternalURL,dataQualityAssuranceDescription,
+        dataManagementPolicyDescription,dataManagementPolicyURL,dataManagementPolicyDocument,excludeProjectSite,
+        mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},surveySiteOption,canEditAdminSelectedSites,dateCreated,lastUpdated,dataSharingLicense,
+        commentsAllowed,methodName,startDate,projectActivityId,name,status,projectId,description,isDataManagementPolicyDocumented,
+        sites,errors{field,message},surveyForms{id,version,name,
+            gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+            dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+                modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+                message}}},errors{field,message}
+}}
+
+
+query searchBioCollectProject(
+    $projectId: String
+    $hub: String!
+    $isWorldWide: Boolean
+    $projectStartFromDate: String
+    $projectStartToDate: String
+    $scienceType: [String]
+    $tags: [String]
+    $countries: [String]
+    $ecoScienceType: [String]
+    $status: [ProjectStatus]
+    $difficulty: [String]
+    $organisation: [String]
+    $origin: [String]
+    $isBushfire: [Boolean]
+    $associatedProgram: [String]
+    $typeOfProject: [String]
+    $lga: [String]
+    $page: Int
+    $max: Int
+    $myProjects: Boolean
+    $activities: [activitiesList]
+)
+{searchBioCollectProject(projectId:$projectId,hub:$hub,isWorldWide:$isWorldWide,projectStartFromDate:$projectStartFromDate,
+    projectStartToDate:$projectStartToDate,scienceType:$scienceType,countries:$countries,tags:$tags,
+    ecoScienceType:$ecoScienceType,status:$status,difficulty:$difficulty,organisation:$organisation,
+    origin:$origin,isBushfire:$isBushfire,associatedProgram:$associatedProgram,typeOfProject:$typeOfProject,
+    lga:$lga,page:$page,max:$max,myProjects:$myProjects,activities:$activities){id,externalId,description,workOrderId,internalOrderId,contractStartDate,contractEndDate,manager,organisationName,
+    serviceProviderName,plannedStartDate,plannedEndDate,serviceProviderAgreementDate,actualStartDate,actualEndDate,
+    grantId,risks{dateUpdated,overallRisk,rows{currentControl,consequence,threat,residualRisk,riskRating,description,likelihood}},promoteOnHomepage,organisationId,projectType,dataProviderId,dataResourceId,aim,keywords,urlAndroid,
+    urlITunes,urlWeb,getInvolved,scienceType,ecoScienceType,orgIdGrantee,orgIdSponsor,orgIdSvcProvider,projectSiteId,
+    difficulty,gear,task,userCreated,userLastModified,origin,uNRegions,countries,tags,alaHarvest,industries,programId,
+    baseLayer,isBushfire,bushfireCategories,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+        boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},managementUnitId,mapDisplays,terminationReason,fundingType,
+    electionCommitmentYear,hubId,dateCreated,associatedOrgs{organisationId,name,logo,url,description},name,funding,isCitizenScience,lastUpdated,fundings{fundingSourceAmount,fundingSource,fundingType},
+    hub{id,skin,title,urlPath,homePagePath,defaultProgram,templateConfiguration,content,customBreadCrumbs,pages,
+        dataColumns,mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},mapDisplays,timeSeriesOnIndex,emailFromAddress,emailReplyToAddress,downloadUrlPrefix,
+        accessManagementOptions{expireUsersAfterPeriodInactive,warnUsersAfterPeriodInactive},dateCreated,hubId,lastUpdated,availableMapFacets,defaultFacetQuery,supportedPrograms,
+        availableFacets,status,quickLinks,adminFacets,errors{field,message}},isMERIT,status,isSciStarter,isExternal,projectId,meriPlan,activities{id,,siteId,projectId,projectActivityId,managementUnitId,description,startDate,endDate,type,collector,
+        censusMethod,methodAccuracy,fieldNotes,notes,plannedStartDate,plannedEndDate,progress,associatedProgram,
+        associatedSubProgram,projectStage,userId,embargoed,formVersion,dateCreated,lastUpdated,activityId,assessment
+        status,outputs{id,assessmentDate,name,dateCreated,lastUpdated,activityId,outputId,status,data,errors{field,message}},errors{field,message}},documents{id,name,attribution,licence,filepath,type,role,projectId,organisationId,
+        siteId,activityId,outputId,programId,reportId,managementUnitId,stage,filename,dateCreated,lastUpdated,
+        dateTaken,isPrimaryProjectImage,thirdPartyConsentDeclarationMade,thirdPartyConsentDeclarationText,
+        externalUrl,projectActivityId,labels,isSciStarter,hosted,identifier,contentType,hubId,documentId,status,errors{field,message}},reports{id,
+        reportId,description,dateSubmitted,submittedBy,dateApproved,approvedBy,dateReturned,returnedBy,adjustedBy,
+        dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
+        activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
+        dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
+        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
+            type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
+        methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
+        dataAccessMethods,pActivityFormName,alerts,restrictRecordToSites,allowAdditionalSurveySites,baseLayersName,
+        publicAccess,visibility{embargoForDays,embargoUntil,alaAdminEnforcedEmbargo,embargoOption},submissionRecords{id,submissionPublicationDate,
+            submissionDoi,datasetSubmitter,datasetVersion,submissionRecordId,projectActivityId,submissionId,errors{field,message},submissionPackage{
+                id,acknowledgement,associatedMaterialNane,associatedMaterialIdentifier,collectionStartDate,collectionEndDate,curationStatus,curationActivitiesOther,
+                datasetContact{title,name,role,address,email,phone,organizationName},datasetAuthors{authorInitials,authorSurnameOrOrgName,authorAffiliation},geographicalExtentDescription,methodDriftDescription,otherMaterials,selectedAnimalGroups,
+                selectedAnthropogenic,selectedConservativeMgmt,selectedEconomicResearch,selectedEnvironmentFeatures,selectedFieldsOfResearch,
+                selectedIdentificationMethod,selectedMaterialIdentifier,selectedMaterialType,selectedObservedAttributes,selectedObservationMeasurements,
+                selectedPlantGroups,selectedSamplingDesign,selectedSocioEconomic,submissionRecordId,errors{field,message}}},legalCustodianOrganisation,dataAccessExternalURL,dataQualityAssuranceDescription,
+        dataManagementPolicyDescription,dataManagementPolicyURL,dataManagementPolicyDocument,excludeProjectSite,
+        mapLayersConfig{baseLayers{code, displayText,isSelected},overlays{userAccessRestriction,layerName,title,defaultSelected,
+            boundaryColour,showPropertyName,fillColour,textColour,inLayerShapeList,opacity,changeLayerColour,alaId,alaName}},surveySiteOption,canEditAdminSelectedSites,dateCreated,lastUpdated,dataSharingLicense,
+        commentsAllowed,methodName,startDate,projectActivityId,name,status,projectId,description,isDataManagementPolicyDocumented,
+        sites,errors{field,message},surveyForms{id,version,name,
+            gmsId,category,activationDate,publicationStatus,createdUserId, lastUpdatedUserId,minOptionalSectionsCompleted,
+            dateCreated,supportsSites,lastUpdated,supportsPhotoPoints,type,status,formVersion,formSections{version,title,
+                modelName,optionalQuestionText,collapsedByDefault,templateName,optional,name,formTemplate,errors{field,message}},errors{field,
+                message}}},errors{field,message}
+}}
+
+query activityOutput(
+    $fromDate: String
+    $toDate: String
+    $dateRange: DateRange
+    $status: [String]
+    $organisation: [String]
+    $associatedProgram: [String]
+    $associatedSubProgram: [String]
+    $mainTheme: [String]
+    $state: [String]
+    $lga: [String]
+    $cmz: [String]
+    $partnerOrganisationType: [String]
+    $primaryOutcome: [String]
+    $secondaryOutcomes: [String]
+    $tags: [String]
+    $managementArea: [String]
+    $majorVegetationGroup: [String]
+    $biogeographicRegion: [String]
+    $marineRegion: [String]
+    $otherRegion: [String]
+    $grantManagerNominatedProject: [YesNo]
+    $federalElectorate: [String]
+    $assetsAddressed: [String]
+    $userNominatedProject: [String]
+    $managementUnit: [String]
+    $activityOutputs: [activityOutputs]
+){
+    activityOutput(fromDate:$fromDate,toDate:$toDate,dateRange:$dateRange,status:$status,organisation:$organisation,
+        associatedProgram:$associatedProgram,associatedSubProgram:$associatedSubProgram,mainTheme:$mainTheme,
+        state:$state,lga:$lga,cmz:$cmz,partnerOrganisationType:$partnerOrganisationType,primaryOutcome:$primaryOutcome,
+        secondaryOutcomes:$secondaryOutcomes,tags:$tags,managementArea:$managementArea,majorVegetationGroup:$majorVegetationGroup,
+        biogeographicRegion:$biogeographicRegion,marineRegion:$marineRegion,otherRegion:$otherRegion,
+        grantManagerNominatedProject:$grantManagerNominatedProject,federalElectorate:$federalElectorate,
+        assetsAddressed:$assetsAddressed,userNominatedProject:$userNominatedProject,managementUnit:$managementUnit,
+        activityOutputs:$activityOutputs){outputData{category,outputType,result{label,result,resultList,groups{group,results{count,result}}}}}}
+
+
+query outputTargetsByProgram(
+    $fromDate: String
+    $toDate: String
+    $dateRange: DateRange
+    $status: [String]
+    $organisation: [String]
+    $associatedProgram: [String]
+    $associatedSubProgram: [String]
+    $mainTheme: [String]
+    $state: [String]
+    $lga: [String]
+    $cmz: [String]
+    $partnerOrganisationType: [String]
+    $primaryOutcome: [String]
+    $secondaryOutcomes: [String]
+    $tags: [String]
+    $managementArea: [String]
+    $majorVegetationGroup: [String]
+    $biogeographicRegion: [String]
+    $marineRegion: [String]
+    $otherRegion: [String]
+    $grantManagerNominatedProject: [YesNo]
+    $federalElectorate: [String]
+    $assetsAddressed: [String]
+    $userNominatedProject: [String]
+    $managementUnit: [String]
+    $programs: [String]
+    $outputTargetMeasures: [String]){
+    outputTargetsByProgram(fromDate:$fromDate,toDate:$toDate,outputTargetMeasures:$outputTargetMeasures,programs:$programs,
+        managementUnit:$managementUnit,userNominatedProject:$userNominatedProject,assetsAddressed:$assetsAddressed,
+        federalElectorate:$federalElectorate,grantManagerNominatedProject:$grantManagerNominatedProject,otherRegion:$otherRegion,
+        marineRegion:$marineRegion,biogeographicRegion:$biogeographicRegion,majorVegetationGroup:$majorVegetationGroup,
+        managementArea:$managementArea,tags:$tags,secondaryOutcomes:$secondaryOutcomes,primaryOutcome:$primaryOutcome,
+        partnerOrganisationType:$partnerOrganisationType,cmz:$cmz,lga:$lga,state:$state,mainTheme:$mainTheme,
+        associatedSubProgram:$associatedSubProgram,associatedProgram:$associatedProgram,organisation:$organisation,
+        status:$status,dateRange:$dateRange){
+        targets{program,outputTargetMeasure{outputTarget,count,total}}
+    }}
+
+
+
+
+

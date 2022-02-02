@@ -4,6 +4,7 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import grails.core.GrailsApplication
 import grails.validation.ValidationException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
@@ -29,8 +30,9 @@ class MetadataService {
     private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
     private static final String SERVICES_KEY = "services.config"
-    def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
+    def webService, cacheService, messageSource, emailService, userService, commonService
     SettingService settingService
+    GrailsApplication grailsApplication
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions

@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
-import au.org.ala.web.CASRoles
 import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
@@ -12,7 +10,6 @@ import static au.org.ala.ecodata.Status.DELETED
 class PermissionService {
 
     static transactional = false
-    AuthService authService
     UserService userService // found in ala-auth-plugin
     ProjectController projectController
     def grailsApplication, webService, hubService
@@ -21,7 +18,7 @@ class PermissionService {
     static final int MAX_QUERY_RESULT_SIZE = 1000
 
     boolean isUserAlaAdmin(String userId) {
-        userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
+        userId && userService.getRolesForUser(userId)?.contains("ROLE_ADMIN")
     }
 
     public boolean isUserAdminForProject(String userId, String projectId) {
@@ -150,7 +147,7 @@ class PermissionService {
     }
 
     def addUserAsEditorToProject(currentUserId, targetUserId, projectId) {
-        if ((isUserAdminForProject(currentUserId, projectId) || authService.userInRole("ROLE_ADMIN")) && targetUserId) {
+        if ((isUserAdminForProject(currentUserId, projectId) || userService.userInRole("ROLE_ADMIN")) && targetUserId) {
             addUserAsRoleToProject(targetUserId, AccessLevel.editor, projectId)
         }
     }
@@ -199,7 +196,7 @@ class PermissionService {
             out.put(it.userId,rec);
 
         }
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userService.getUserDetailsById(userIds)
 
         if (userList) {
             def users = userList['users']
@@ -246,7 +243,7 @@ class PermissionService {
 
         }
 
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userService.getUserDetailsById(userIds)
         if (userList) {
             def users = userList['users']
 
@@ -318,7 +315,7 @@ class PermissionService {
             out.put(it.userId,toMap(it,false))
         }
 
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userService.getUserDetailsById(userIds)
         if (userList) {
             def users = userList['users']
 

@@ -6,7 +6,6 @@ import au.org.ala.ecodata.graphql.models.KeyValue
 import au.org.ala.ecodata.graphql.models.OutputData
 import com.mongodb.client.FindIterable
 import com.mongodb.client.model.Filters
-import com.sun.xml.internal.bind.v2.TODO
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment

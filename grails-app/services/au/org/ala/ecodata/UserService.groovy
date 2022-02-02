@@ -1,7 +1,17 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
+import au.org.ala.userdetails.UserDetailsClient
+import au.org.ala.userdetails.UserDetailsFromIdListRequest
+import au.org.ala.ws.security.AuthService
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Rfc3339DateJsonAdapter
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
+import okhttp3.OkHttpClient
+
+import javax.annotation.PostConstruct
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 class UserService {
 
@@ -9,6 +19,8 @@ class UserService {
     AuthService authService
     WebService webService
     GrailsApplication grailsApplication
+    UserService userService
+    UserDetailsClient userDetailsClient
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
@@ -16,8 +28,13 @@ class UserService {
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
     def getCurrentUserDisplayName() {
-        def currentUser = _currentUser.get()
-        return currentUser ? currentUser.displayName : ""
+        String displayName = authService.displayName
+        if (!displayName) {
+            def currentUser = _currentUser.get()
+            displayName = currentUser ? currentUser.displayName : ""
+        }
+
+        displayName
     }
 
     /**
@@ -53,15 +70,30 @@ class UserService {
      */
     def getRolesForUser(String userId = null) {
         userId = userId ?: getCurrentUserDetails().userId
-        authService.getUserForUserId(userId, true)?.roles ?: []
+        getUserForUserId(userId, true)?.roles ?: []
     }
 
-    synchronized def getUserForUserId(String userId) {
-        if (!userId) {
-            return null
-        }
-        return authService.getUserForUserId(userId)
+    def userInRole(Object role){
+        return authService.userInRole(role)
     }
+
+    @Cacheable("userDetailsCache")
+    synchronized def getUserForUserId(String userId, boolean includeProps = true) {
+        if (!userId) return null // this would have failed anyway
+        def call = userDetailsClient.getUserDetails(userId, includeProps)
+        try {
+            def response = call.execute()
+            if (response.successful) {
+                return response.body()
+            } else {
+                log.warn("Failed to retrieve user details for userId: $userId, includeProps: $includeProps. Error was: ${response.message()}")
+            }
+        } catch (Exception ex) {
+            log.error("Exception caught trying get find user details for $userId.", ex)
+        }
+        return null
+    }
+
 
     /**
      * This method gets called by a filter at the beginning of the request (if a userId parameter is on the URL)
@@ -186,5 +218,21 @@ class UserService {
      */
     User findByUserId(String userId) {
         User.findByUserId(userId)
+    }
+
+    @Cacheable("userDetailsByIdCache")
+    def getUserDetailsById(List<String> userIds, boolean includeProps = true) {
+        def call = userDetailsClient.getUserDetailsFromIdList(new UserDetailsFromIdListRequest(userIds, includeProps))
+        try {
+            def response = call.execute()
+            if (response.successful) {
+                return response.body()
+            } else {
+                log.warn("Failed to retrieve user details. Error was: ${response.message()}")
+            }
+        } catch (Exception e) {
+            log.error("Exception caught retrieving userdetails for ${userIds}", e)
+        }
+        return null
     }
 }

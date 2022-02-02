@@ -2,11 +2,14 @@ package au.org.ala.ecodata
 
 import grails.core.support.GrailsConfigurationAware
 import grails.config.Config
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority
 
 class AuditInterceptor implements GrailsConfigurationAware {
 
     String httpRequestHeaderForUserId
-    def userService
+    UserService userService
 
     public AuditInterceptor() {
         matchAll()
@@ -15,7 +18,7 @@ class AuditInterceptor implements GrailsConfigurationAware {
     boolean before() {
         // userId is set from either the request param userId or failing that it tries to get it from
         // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
-        def userId = request.getHeader(httpRequestHeaderForUserId)?: request.getUserPrincipal()?.attributes?.userid
+        def userId = request.getHeader(httpRequestHeaderForUserId)?: request.getUserPrincipal()?.principal?.attributes?.id
         if (userId) {
             def userDetails = userService.setCurrentUser(userId)
             if (userDetails) {

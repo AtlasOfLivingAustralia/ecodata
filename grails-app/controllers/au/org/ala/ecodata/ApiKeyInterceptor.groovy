@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AlaSecured
+import au.org.ala.ws.security.RequireAuth
 import grails.converters.JSON
 
 class ApiKeyInterceptor {
@@ -69,8 +69,8 @@ class ApiKeyInterceptor {
 
         } else {
 
-            // Allow migration to the AlaSecured annotation.
-            if (!controllerClass?.isAnnotationPresent(AlaSecured) && !method?.isAnnotationPresent(AlaSecured)) {
+            // Allow migration to the RequireAuth annotation.
+            if (!controllerClass?.isAnnotationPresent(RequireAuth) && !method?.isAnnotationPresent(RequireAuth)) {
                 def whiteList = buildWhiteList()
                 def clientIp = getClientIP(request)
                 def ipOk = checkClientIp(clientIp, whiteList)

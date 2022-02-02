@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
 import grails.converters.JSON
 import au.org.ala.web.UserDetails
 
@@ -8,19 +7,17 @@ class GraphqlInterceptor {
 
     UserService userService
     PermissionService permissionService
-    AuthService authService
 
     GraphqlInterceptor() {
         match uri: '/graphql/**'
     }
 
     boolean before() {
-        String userName = request.getHeader(grailsApplication.config.app.http.header.userId) ?:
-                request.cookies.find { it.name == 'ALA-Auth' }?.value
+        String userName = request.getUserPrincipal()?.principal?.attributes?.id
 
         if (userName) {
             //test to see that the user is valid
-            UserDetails user = authService.getUserForEmailAddress(userName)
+            UserDetails user = userService.getUserForUserId(userName)
 
             if(!user){
                 accessDeniedError('Invalid GrapqhQl API usage: Access denied, userId: ' + userName)

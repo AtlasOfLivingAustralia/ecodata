@@ -229,3 +229,35 @@ graphiql:
     headers:
         Authorization: "Bearer <your-token>"
 
+spring:
+    autoconfigure.exclude:
+        - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+        - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+        - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+    security:
+        logoutUrl: http://dev.ala.org.au:8080/logout/logout
+        filter.order: -999999
+        oauth2:
+            client:
+                provider:
+                    ala:
+                        issuer-uri: "https://auth-dev.ala.org.au/cas/oidc"
+                registration:
+                    ala:
+                        client-id: auth-dev-oidc-client-id
+                        client-secret: u85789gnghdfb765
+                        scope: openid,profile,email,ala,roles,user_defined,offline_access
+
+jwk:
+    url: https://auth-dev.ala.org.au/cas/oidc/jwks
+
+userDetails:
+    url: https://auth-dev.ala.org.au/userdetails
+
+api:
+    whitelist:
+        enabled: false
+    legacy:
+        enabled: false
+    jwt:
+        enabled: true

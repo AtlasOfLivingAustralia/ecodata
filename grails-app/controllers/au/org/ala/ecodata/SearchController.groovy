@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.*
-import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper

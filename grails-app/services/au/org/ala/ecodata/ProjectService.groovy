@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
+import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.context.MessageSource
@@ -25,7 +26,7 @@ class ProjectService {
     static final ENHANCED = 'enhanced'
     static final PRIVATE_SITES_REMOVED = 'privatesitesremoved'
 
-    def grailsApplication
+    GrailsApplication grailsApplication
     MessageSource messageSource
     SessionLocaleResolver localeResolver
     SiteService siteService
