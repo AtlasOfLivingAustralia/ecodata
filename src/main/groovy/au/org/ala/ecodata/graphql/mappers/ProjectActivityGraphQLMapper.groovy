@@ -25,18 +25,6 @@ class ProjectActivityGraphQLMapper {
                 }
             }
 
-            add('surveyDetails', ProjectActivity) {
-                dataFetcher { ProjectActivity projectActivity, ClosureDataFetchingEnvironment env ->
-                    projectActivity
-                }
-            }
-
-            add('surveyMetadata', ProjectActivity) {
-                dataFetcher { ProjectActivity projectActivity, ClosureDataFetchingEnvironment env ->
-                    projectActivity
-                }
-            }
-
             add('surveyForms', [ActivityForm]) {
                 dataFetcher { ProjectActivity projectActivity, ClosureDataFetchingEnvironment env ->
                     ActivityForm.findAllByName(projectActivity.pActivityFormName)

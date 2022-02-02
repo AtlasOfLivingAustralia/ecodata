@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
-import au.org.ala.web.AlaSecured
+import au.org.ala.ws.security.RequireAuth
 import grails.converters.JSON
 import org.springframework.web.multipart.MultipartFile
 
@@ -25,7 +25,7 @@ class MetadataController {
     }
 
     @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
+    @RequireAuth(["ROLE_ADMIN"])
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))

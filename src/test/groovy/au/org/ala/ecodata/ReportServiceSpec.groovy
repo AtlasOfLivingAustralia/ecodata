@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.com.bytecode.opencsv.CSVReader
-import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.apache.lucene.search.TotalHits
@@ -19,7 +18,6 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
     OutputService outputService = Stub(OutputService)
     UserService userService = Mock(UserService)
     ActivityService activityService = Mock(ActivityService)
-    AuthService authService = Mock(AuthService)
 
 
     def setupSpec() {}
@@ -31,7 +29,6 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         service.outputService = outputService
         service.activityService = activityService
         service.userService = userService
-        service.authService = authService
         outputService.toMap(_) >> {Map output -> output}
 
         deleteAll()
@@ -435,7 +432,7 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         service.userSummary("h1", writer)
 
         then:
-        1 * authService.getUserDetailsById([userId]) >> [users:[(userId):new au.org.ala.web.UserDetails(1, "User", "1", "email", userId, false, ["ROLE_USER"] as Set)]]
+        1 * userService.getUserDetailsById([userId]) >> [users:[(userId):new au.org.ala.web.UserDetails(1, "User", "1", "email", userId, false, ["ROLE_USER"] as Set)]]
         CSVReader reader = new CSVReader(new StringReader(stringWriter.toString()))
         List<String[]> lines = reader.readAll().collect{Arrays.asList(it).collect{it?.trim()}}
         lines[0] == "User Id, Name, Email, Last Login, Role, Type, ID, Grant ID, External ID, Name, Access Role".split(", ")

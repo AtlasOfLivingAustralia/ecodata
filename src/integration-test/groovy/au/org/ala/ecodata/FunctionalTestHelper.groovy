@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import geb.Browser
 import geb.spock.GebReportingSpec
-import org.apache.log4j.Logger
+import org.apache.logging.log4j.Logger
 //import pages.HomePage
 import spock.lang.Shared
 

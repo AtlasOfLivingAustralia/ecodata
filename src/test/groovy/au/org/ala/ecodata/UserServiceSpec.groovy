@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Unroll
@@ -12,7 +11,6 @@ import spock.lang.Unroll
 class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> {
 
     WebService webService = Mock(WebService)
-    AuthService authService = Mock(AuthService)
 
     def setup() {
         User.findAll().each{it.delete(flush:true)}
@@ -20,7 +18,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         new Hub(hubId:'h1', urlPath:"hub1").save(flush:true, failOnError:true)
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
         service.webService = webService
-        service.authService = authService
+        grailsApplication.config.userDetails = [url:"http://devt.ala.org.au:${wiremock.port}/userdetails/"]
     }
 
     def cleanup() {
@@ -153,7 +151,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
-        1 * authService.getUserForUserId(username) >> [userId:'u1']
+        1 * userService.getUserForUserId(username) >> [userId:'u1']
 
         and:
         userId == 'u1'
@@ -180,7 +178,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[statusCode:403]]
-        0 * authService._
+        //0 * authService._
 
         and:
         !userId
@@ -190,7 +188,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
-        1 * authService.getUserForUserId(username) >> null
+        //1 * userService.getUserForUserId(username) >> null
 
         and:
         !userId

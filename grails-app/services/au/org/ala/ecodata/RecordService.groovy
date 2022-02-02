@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.com.bytecode.opencsv.CSVWriter
-import au.org.ala.web.AuthService
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
@@ -33,7 +32,6 @@ class RecordService {
     OutputService outputService
     ProjectService projectService
     SiteService siteService
-    AuthService authService
     UserService userService
     RecordAlertService recordAlertService
     SensitiveSpeciesService sensitiveSpeciesService
@@ -315,7 +313,7 @@ class RecordService {
 
         def userDetails = userService.getCurrentUserDetails()
         if (!userDetails && json.userId) {
-            userDetails = authService.getUserForUserId(json.userId)
+            userDetails = userService.getUserForUserId(json.userId)
         }
 
         if (!userDetails) {

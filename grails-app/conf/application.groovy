@@ -526,13 +526,13 @@ if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
 if (!userDetailsSingleUrl) {
-    userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
+    userDetailsSingleUrl = "https://auth-dev.ala.org.au/userdetails/userDetails/getUserDetails"
 }
 if (!userDetailsUrl) {
-    userDetailsUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+    userDetailsUrl = "https://auth-dev.ala.org.au/userdetails/userDetails/getUserListFull"
 }
 if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/ws/admin'
+    userDetails.admin.url = 'https://auth-dev.ala.org.au/userdetails/ws/admin'
 }
 
 if (!authGetKeyUrl) {
@@ -575,21 +575,21 @@ grails.cache.config = {
         diskPersistent true
     }
 }
-
-
-security {
-    cas {
-        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
-        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
-        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
-        loginUrl = 'https://auth.ala.org.au/cas/login'
-        logoutUrl = 'https://auth.ala.org.au/cas/logout'
-        casServerName = 'https://auth.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*']
-        authenticateOnlyIfLoggedInPattern =
-        uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
-    }
-}
+//
+//
+//security {
+//    cas {
+//        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
+//        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+//        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
+//        loginUrl = 'https://auth.ala.org.au/cas/login'
+//        logoutUrl = 'https://auth.ala.org.au/cas/logout'
+//        casServerName = 'https://auth.ala.org.au'
+//        uriFilterPattern = ['/admin/*', '/activityForm/*']
+//        authenticateOnlyIfLoggedInPattern =
+//        uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
+//    }
+//}
 
 grails.gorm.graphql.browser = true
 

@@ -61,7 +61,7 @@
                 <div class="collapse navbar-collapse" id="collapsibleHeaderContent">
                     <div class="d-flex flex-grow-1">
                         <span id="buttonBar" class="ms-auto">
-                            <ec:currentUserDisplayName/>&nbsp;<auth:loginLogout cssClass="nav-item btn btn-info"/>
+                            <ec:currentUserDisplayName/>&nbsp;<hf:loginLogout cssClass="nav-item btn btn-info"/>
                             <button class="btn btn-warning nav-item" id="btnAdministration"><i class="fa fa-cog"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
                         </span>
