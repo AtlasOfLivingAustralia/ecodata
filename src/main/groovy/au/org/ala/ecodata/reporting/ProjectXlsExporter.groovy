@@ -89,6 +89,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3']
     List<String> whsAndCaseStudyHeaders = commonProjectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
     List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
+    List<String> projectAssetHeaders = commonProjectHeaders + ["Asset", "Category"]
+    List<String> projectAssetProperties = commonProjectProperties + ["description", "category"]
 
     List<String> approvalsHeaders = commonProjectHeaders + ['Date / Time Approved', 'Change Order Numbers','Comment','Approved by']
     List<String> approvalsProperties = commonProjectProperties + ['approvalDate', 'changeOrderNumber', 'comment','approvedBy']
@@ -377,7 +379,7 @@ class ProjectXlsExporter extends ProjectExporter {
         String[] meriPlanTabs = [
                 "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
                 "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
-                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
@@ -400,6 +402,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportBaseline(project)
         exportEvents(project)
         exportApprovals(project)
+        exportProjectAssets(project)
         exportRLPOutcomes(project)
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
@@ -749,6 +752,10 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("Report Summary", reportSummaryHeaders)
             exportReportSummary(sheet, project, reportSummaryProperties)
         }
+    }
+
+    private void exportProjectAssets(Map project) {
+        exportList("MERI_Project Assets", project, project?.custom?.details?.assets, projectAssetHeaders, projectAssetProperties)
     }
 
     private void exportBlog(Map project) {
