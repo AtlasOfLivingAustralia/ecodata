@@ -3,6 +3,8 @@ package au.org.ala.ecodata
 import grails.util.Holders
 import groovy.util.logging.Slf4j
 import org.apache.http.HttpStatus
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 
 import java.text.SimpleDateFormat
 import java.time.Period
@@ -28,7 +30,7 @@ class AccessExpiryJob {
     static final String PERMISSION_EXPIRED_EMAIL_KEY = 'permissionexpiry.expired.email'
 
     /** Used ot lookup the email template informing a user that their elevated permission will expire 1 month from now */
-    static final String PERMISSION_WARNING_EMAIL_KEY = 'permissionexpiry.warning.email'
+    static final String PERMISSION_WARNING_EMAIL_KEY = 'permissionwarning.expiry.email'
 
 
     private static final int BATCH_SIZE = 100
@@ -177,16 +179,29 @@ class AccessExpiryJob {
         log.info("AccessExpiryJob process is searching for users expiring 1 month from today")
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date monthFromNow = sdf.parse(processingTime.plusMonths(1).toString())
-
         List permissions = permissionService.findAllByExpiryDate(monthFromNow)
+
+        DateTime processingDate = new DateTime()
         permissions.each {
-            // Find the hub attached to the expired permission.
-            String hubId = permissionService.findOwningHubId(it)
-            Hub hub = Hub.findByHubId(hubId)
+            User user = userService.findByUserId(it.userId)
+            if (user) {
+                UserHub userHub = user.getUserHub(it.entityId)
+                if (!userHub.permissionWarningSentDate) {
+                    DateTime expiryDate = new DateTime(it.expiryDate).withZone(DateTimeZone.UTC)
+                    DateTime expiryDateMinus = expiryDate.minusMonths(1)
+                    if (processingDate >= expiryDateMinus) {
+                        // Find the hub attached to the expired permission.
+                        String hubId = permissionService.findOwningHubId(it)
+                        Hub hub = Hub.findByHubId(hubId)
 
-            log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
+                        log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
 
-            sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
+                        sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
+                        userHub.permissionWarningSentDate = Date.from(processingTime.toInstant())
+                        user.save()
+                    }
+                }
+            }
         }
     }
 }

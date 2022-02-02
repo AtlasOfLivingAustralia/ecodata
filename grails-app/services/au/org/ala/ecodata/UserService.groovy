@@ -237,4 +237,11 @@ class UserService {
         }
         return null
     }
+
+    /**
+     * This will return the User entity
+     */
+    User findByUserId(String userId) {
+        User.findByUserId(userId)
+    }
 }

@@ -33,6 +33,12 @@ class UserHub {
      */
     Date accessExpiredDate
 
+    /**
+     * Records the Date the use was last sent a warning that their permission is expiring 1 month from now
+     * This is used to prevent users being sent more than one warning
+     */
+    Date permissionWarningSentDate
+
     UserHub(String hubId) {
         this.hubId = hubId
     }
@@ -52,5 +58,6 @@ class UserHub {
         lastLoginTime nullable: true
         inactiveAccessWarningSentDate nullable: true
         accessExpiredDate nullable: true
+        permissionWarningSentDate nullable: true
     }
 }

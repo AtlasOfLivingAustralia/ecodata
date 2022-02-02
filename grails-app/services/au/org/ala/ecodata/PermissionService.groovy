@@ -930,14 +930,11 @@ class PermissionService {
     }
 
     /**
-     * Returns a list of permissions that have an expiry date equals to the
+     * Returns a list of permissions that have an expiry date greater than or equal to the
      * supplied date
      */
-    List<UserPermission> findAllByExpiryDate(Date date = new Date(), int offset = 0, int max = MAX_QUERY_RESULT_SIZE) {
-        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'userId']
-        UserPermission.where {
-                expiryDate == date
-        }.list(options)
+    List<UserPermission> findAllByExpiryDate(Date date = new Date()) {
+        UserPermission.findAllByExpiryDateGreaterThanEqualsAndStatusNotEqual(date, DELETED)
     }
 
 }
