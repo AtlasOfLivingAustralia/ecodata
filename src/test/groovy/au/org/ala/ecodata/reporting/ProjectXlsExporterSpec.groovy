@@ -191,6 +191,30 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
+    void "MERI plan assets can be exported to XLSX"() {
+        setup:
+        String sheet = 'MERI_Project Assets'
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        outputFile.withInputStream { fileIn ->
+            Workbook workbook = WorkbookFactory.create(fileIn)
+            Sheet testSheet = workbook.getSheet(sheet)
+            testSheet.physicalNumberOfRows == 3
+
+            Cell assetCell = testSheet.getRow(0).find { it.stringCellValue == 'Asset' }
+            Cell categoryCell = testSheet.getRow(0).find { it.stringCellValue == 'Category' }
+            testSheet.getRow(1).getCell(assetCell.getColumnIndex()).stringCellValue == 'Asset 1'
+            testSheet.getRow(1).getCell(categoryCell.getColumnIndex()).stringCellValue == 'Category 1'
+
+        }
+
+    }
+
     void "RLP Merit approvals exported to XSLS"() {
         setup:
         String sheet = 'MERI_Approvals'
@@ -833,7 +857,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "                    }\n" +
             "                ],\n" +
             "                \"primaryOutcome\" : {\n" +
-            "                \"primaryOutcome\" : {\n" +
             "                    \"assets\" : [ \n" +
             "                        \"Climate change adaptation\", \n" +
             "                        \"Market traceability\"\n" +
@@ -920,7 +943,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "                        \"data\" : 0\n" +
             "                    }\n" +
             "                ]\n" +
-            "            }\n" +
+            "            },\n" +
+            "            \"assets\":[ \n" +
+            "               {  \"description\":\"Asset 1\", \"category\":\"Category 1\" } " +
+            "            ]\n" +
             "        }\n" +
             "    },\n" +
             "    \"dateCreated\" : \"2018-06-14T04:22:13.057Z\",\n" +
