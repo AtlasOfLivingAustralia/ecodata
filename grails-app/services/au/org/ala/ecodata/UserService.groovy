@@ -180,4 +180,11 @@ class UserService {
             }
         }.list(options)
     }
+
+    /**
+     * This will return the User entity
+     */
+    User findByUserId(String userId) {
+        User.findByUserId(userId)
+    }
 }
