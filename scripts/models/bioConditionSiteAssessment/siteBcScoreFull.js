@@ -360,7 +360,7 @@ self.calculateNonNativeSpeciesRichness = function() {
     var numNonNativeSpecies = parseInt(self.data.numNonNativeSpecies()) + parseInt(self.data.numUnknownNonNativeSpecies());
     var benchmarkSpeciesCoverExotic = self.data.benchmarkSpeciesCoverExotic();
     var assessmentPercentage = self.getAssesmentPercentage(benchmarkSpeciesCoverExotic, numNonNativeSpecies);;
-    self.data.numNonNativeSpeciesTotal(self.getTable12Score(assessmentPercentage));
+    self.data.numNonNativeSpeciesTotal(numNonNativeSpecies);
 
     var score = self.getTable12Score(self.data.nonNativePlantCoverPercent());
     self.data.nonNativePlantCoverScore(score);
@@ -379,7 +379,8 @@ self.calculateCwdScore = function() {
         var bmv10 = (benchmarkValue * 10) / 100;
         var bmv50 = (benchmarkValue * 50) / 100;
         var bmv200 = (benchmarkValue * 200) / 100;
-        self.data.cwdScore(self.getTable10Score(totalCwdLength, bmv10, bmv50, bmv200));
+        //The total measured value should be multiplied by 10 for comparison with the benchmark
+        self.data.cwdScore(self.getTable10Score(totalCwdLength * 10, bmv10, bmv50, bmv200));
     }
 
 };
@@ -776,11 +777,15 @@ self.data.patchSize.subscribe(function (obj) {
         }
     });
 
-    $.grep(table ? table.value : [], function (row) {
-        if (row.name == self.data.patchSize()) {
-            self.data.patchSizeScore(row.value);
-        }
-    });
+    if(self.data.patchSize()=='Not applicable'){
+        self.data.patchSizeScore(0);}
+    else {
+        $.grep(table ? table.value : [], function (row) {
+            if (row.name == self.data.patchSize()) {
+                self.data.patchSizeScore(row.value);
+            }
+        });
+    }
     self.calculate();
 });
 
@@ -792,12 +797,15 @@ self.data.connectivity.subscribe(function (obj) {
         }
     });
 
-    $.grep(table ? table.value : [], function (row) {
-        if (row.name == self.data.connectivity()) {
-            self.data.connectivityScore(row.value);
-        }
-    });
-
+    if(self.data.connectivity()=='Not applicable'){
+        self.data.connectivityScore(0);}
+    else {
+        $.grep(table ? table.value : [], function (row) {
+            if (row.name == self.data.connectivity()) {
+                self.data.connectivityScore(row.value);
+            }
+        });
+    }
     self.calculate();
 });
 
@@ -810,12 +818,15 @@ self.data.landscapeContext.subscribe(function (obj) {
         }
     });
 
-    $.grep(table ? table.value : [], function (row) {
-        if (row.name == self.data.landscapeContext()) {
-            self.data.landscapeContextScore(row.value);
-        }
-    });
-
+    if(self.data.landscapeContext()=='Not applicable'){
+        self.data.landscapeContextScore(0);}
+    else {
+        $.grep(table ? table.value : [], function (row) {
+            if (row.name == self.data.landscapeContext()) {
+                self.data.landscapeContextScore(row.value);
+            }
+        });
+    }
     self.calculate();
 });
 
@@ -827,14 +838,56 @@ self.data.distanceFromWater.subscribe(function (obj) {
         }
     });
 
-    $.grep(table ? table.value : [], function (row) {
-        if (row.name == self.data.distanceFromWater()) {
-            self.data.distanceFromWaterScore(row.value);
-        }
-    });
+    if(self.data.distanceFromWater()=='Not applicable'){
+        self.data.distanceFromWaterScore(0);}
+    else {
+        $.grep(table ? table.value : [], function (row) {
+            if (row.name == self.data.distanceFromWater()) {
+                self.data.distanceFromWaterScore(row.value);
+            }
+        });
+    }
     self.calculate();
+});
+
+self.data.isFragmentedLandscape.subscribe(function (obj) {
+    if(self.data.isFragmentedLandscape() == 'Yes'){
+        self.data.distanceFromWater('Not applicable');
+        self.data.distanceFromWaterScore(0);
+
+        if(self.data.landscapeContext()=='Not applicable'){
+            self.data.landscapeContext(null);
+            self.data.landscapeContextScore(0);
+        }
+        if(self.data.connectivity()=='Not applicable'){
+            self.data.connectivity(null);
+            self.data.connectivityScore(0);
+        }
+        if(self.data.patchSize()=='Not applicable'){
+            self.data.patchSize(null);
+            self.data.patchSizeScore(0);
+        }
+    }
+    else{
+        if(self.data.distanceFromWater()=='Not applicable'){
+            self.data.distanceFromWater(null);
+            self.data.distanceFromWaterScore(0);
+        }
+        self.data.landscapeContext('Not applicable');
+        self.data.landscapeContextScore(0);
+        self.data.connectivity('Not applicable');
+        self.data.connectivityScore(0);
+        self.data.patchSize('Not applicable');
+        self.data.patchSizeScore(0);
+    }
 });
 // End of 6.1 Landscaping
 
 self.initialiseReferenceTable();
 self.initialiseBenchmark();
+
+hasBenchmark = function(field, rules, i, options){
+    if (self.data.hasBenchmark() == "Yes") {
+        rules.push('required');
+    }
+}
