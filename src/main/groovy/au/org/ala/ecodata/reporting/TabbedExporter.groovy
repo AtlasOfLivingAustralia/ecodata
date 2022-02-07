@@ -200,10 +200,10 @@ class TabbedExporter {
         fieldConfiguration
     }
 
-    protected void exportActivity(List headers, List properties, Map reportOwningEntity, Map activity, boolean sectionPerTab) {
+    protected void exportActivity(List headers, List properties, Map reportOwningEntity, Map activity, boolean sectionPerTab, boolean isSummary = false) {
         Map commonData = commonActivityData(reportOwningEntity, activity)
         String activityType = activity.type
-        List exportConfig = getActivityExportConfig(activityType, !sectionPerTab)
+        List exportConfig = (!isSummary) ? getActivityExportConfig(activityType, !sectionPerTab) : []
         String sheetName = activityType
         if (sectionPerTab) {
             // Split into all the bits.

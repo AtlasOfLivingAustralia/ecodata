@@ -247,15 +247,17 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String hubId = '1'
         new Hub(hubId:hubId, urlPath:'test').save()
         String userId = '1'
+        request.JSON = [entity:Hub.name, entityId: hubId, role: AccessLevel.admin.name(), userId: userId]
 
         when:
         params.userId = userId
         params.hubId = hubId
         params.role = AccessLevel.admin.name()
+        request.method = "POST"
         controller.addUserWithRoleToHub()
 
         then:
-        1 * permissionService.addUserAsRoleToHub(userId, AccessLevel.admin, hubId) >> [status:"ok"]
+        1 * permissionService.addUserAsRoleToHub(request.JSON) >> [status:"ok"]
         response.status == HttpStatus.SC_OK
     }
 
@@ -267,6 +269,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.programId = hubId
         params.role = role
+        request.method = "POST"
         controller.addUserWithRoleToHub()
 
         then:
@@ -285,16 +288,15 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String userId = '1'
         new Hub(hubId:hubId, urlPath:'test').save()
 
+        request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
         when:
-        params.userId = userId
-        params.hubId = hubId
-        params.role = role
+        request.method = "POST"
         controller.addUserWithRoleToHub()
 
         then:
         if (result == HttpStatus.SC_OK) {
-            1 * permissionService.addUserAsRoleToHub(userId, AccessLevel.valueOf(role), hubId) >> [status: "ok"]
+            1 * permissionService.addUserAsRoleToHub(request.JSON) >> [status: "ok"]
         }
         response.status == result
 
@@ -314,16 +316,18 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String hubId = '1'
         new Hub(hubId:hubId, urlPath:'test', skin:'configurableHubTemplate1').save()
         String userId = '1'
+        request.JSON = [entity:Hub.name, entityId: hubId, role: AccessLevel.admin.name(), userId: userId]
 
 
         when:
         params.userId = userId
         params.hubId = hubId
         params.role = AccessLevel.admin.name()
+        request.method = "POST"
         controller.removeUserWithRoleFromHub()
 
         then:
-        1 * permissionService.removeUserRoleFromHub(userId, AccessLevel.admin, hubId) >> [status:"ok"]
+        1 * permissionService.removeUserRoleFromHub(request.JSON) >> [status:"ok"]
         println response.text
         response.status == HttpStatus.SC_OK
     }
@@ -336,6 +340,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         params.userId = userId
         params.hubId = hubId
         params.role = role
+        request.method = "POST"
         controller.removeUserWithRoleFromHub()
 
         then:
@@ -353,17 +358,18 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String hubId = '1'
         String userId = '1'
         new Hub(hubId:hubId, urlPath:'test').save()
-
+        request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
         when:
         params.userId = userId
         params.hubId = hubId
         params.role = role
+        request.method = "POST"
         controller.removeUserWithRoleFromHub()
 
         then:
         if (result == HttpStatus.SC_OK) {
-            1 * permissionService.removeUserRoleFromHub(userId, AccessLevel.valueOf(role), hubId) >> [status: "ok"]
+            1 * permissionService.removeUserRoleFromHub(request.JSON) >> [status: "ok"]
         }
         response.status == result
 
@@ -381,41 +387,42 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "delete user Permission when userID is Provided"(){
         setup:
         String userId = "1"
+        String hubId = "h1"
         Map details = [status: 200, error: false]
 
         when:
         params.id = userId
+        params.hubId = hubId
         request.method = "POST"
         controller.deleteUserPermission()
         def result = response.getJson()
 
 
         then:
-        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+        1 * permissionService.deleteUserPermissionByUserId(userId, hubId) >>  details
 
         then:
 
-        result.status == 200
+        result.status == HttpStatus.SC_OK
         result.error == false
     }
 
-    void "UserId does not exist in merit database"(){
+    void "The userId must be supplied when calling deleteUserPermission"(){
         setup:
-        String userId = "1"
-        Map details = [status: 400, error: "No User Permissions found"]
+        String hubId = "h1"
 
         when:
-        params.id = userId
+        params.hubId = hubId
         request.method = "POST"
         controller.deleteUserPermission()
         def result = response.getJson()
 
         then:
-        1 * permissionService.deleteUserPermissionByUserId(userId) >>  details
+        0 * permissionService.deleteUserPermissionByUserId(_,_)
 
         then:
-        result.status == 400
-        result.error == "No User Permissions found"
+        response.status == HttpStatus.SC_BAD_REQUEST
+        result.error != null
     }
 
     void "Index"() {
@@ -1381,13 +1388,14 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         accessLevel.size() == noOfAccessLevels
 
         where:
-        baseLevel                                  | result       | noOfAccessLevels
+        baseLevel                             | result            | noOfAccessLevels
         AccessLevel.admin.name()              | HttpStatus.SC_OK  |  1
         AccessLevel.caseManager.name()        | HttpStatus.SC_OK  |  2
         AccessLevel.moderator.name()          | HttpStatus.SC_OK  |  3
         AccessLevel.editor.name()             | HttpStatus.SC_OK  |  4
         AccessLevel.projectParticipant.name() | HttpStatus.SC_OK  |  5
-        AccessLevel.starred.name()            | HttpStatus.SC_OK  |  6
+        AccessLevel.readOnly.name()           | HttpStatus.SC_OK  |  6
+        AccessLevel.starred.name()            | HttpStatus.SC_OK  |  7
         //if baseLevel is not set or invalid then returns accesslevel above editor
         "test"                                | HttpStatus.SC_OK  |  4
 
@@ -2454,5 +2462,98 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         then:
         response.status == HttpStatus.SC_OK
         result.isSiteStarredByUser == true
+    }
+
+    void "get Merit Hub members per page" () {
+        setup:
+        String hubId = '123'
+        String userId = '1'
+        new Hub(hubId:hubId, urlPath:'merit').save()
+
+        when:
+        params.hubId = hubId
+        params.userId = userId
+        request.method = "GET"
+        controller.getMembersForHubPerPage()
+        def result = response.getJson()
+
+        then:
+        1 * permissionService.getMembersForHubPerPage(hubId, 0 ,10, userId) >> [totalNbrOfAdmins: 1, data:['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'readOnly']], count:2]
+        response.status == HttpStatus.SC_OK
+        result.recordsTotal == 2
+        result.recordsFiltered == 2
+        result.data.size() == 2
+
+    }
+
+    void "get Merit Hub members per page - when no mandatory params" () {
+        setup:
+
+        when:
+        controller.getMembersForHubPerPage()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.errorMessage == 'Required path not provided: hubId.'
+    }
+
+    void "Merit Hub members per page - hub not existing" () {
+        setup:
+        String hubId = '1'
+
+        when:
+        params.hubId = hubId
+        controller.getMembersForHubPerPage()
+
+        then:
+        response.status == HttpStatus.SC_NOT_FOUND
+        response.errorMessage == 'Hub not found.'
+    }
+
+    void "checks if the user have existing role on a hub project" () {
+        setup:
+        String userId = '1'
+        String entityId = '12'
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'4', entityType:Project.name, status: Status.DELETED).save()
+
+        when:
+        params.userId = userId
+        params.entityId = entityId
+        controller.doesUserHaveHubProjects()
+        def result = response.getJson()
+
+        then:
+
+        0 * projectService.doesUserHaveHubProjects('1', '11') >> false
+        0 * projectService.doesUserHaveHubProjects('3', '13') >> false
+        0 * projectService.doesUserHaveHubProjects('4', '14') >> false
+        1 * projectService.doesUserHaveHubProjects('1', '12') >> true
+
+        response.status == HttpStatus.SC_OK
+        result.doesUserHaveHubProjects == true
+    }
+
+    void "This returns the UserPermission" () {
+        setup:
+        String userId = '1'
+        String entityId = '12'
+        Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
+        new UserPermission(userId:'2', accessLevel:AccessLevel.starred, entityId:'20', entityType:Hub.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'12', entityType:Hub.name, status: Status.ACTIVE, expiryDate: date1).save()
+
+
+        when:
+        params.userId = userId
+        params.entityId = entityId
+        controller.findUserPermission()
+
+
+        then:
+
+        1 * permissionService.findUserPermission('1', '12') >> new UserPermission(userId:'1', entityId:'12', entityType:Hub.name)
+        response.status == HttpStatus.SC_OK
     }
 }

@@ -1,14 +1,13 @@
 package au.org.ala.ecodata
 
+import au.com.bytecode.opencsv.CSVReader
+import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
-import org.apache.lucene.search.TotalHitCountCollector
 import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
-import spock.lang.Specification
-
 
 /**
  * Specification for the ReportService.
@@ -18,8 +17,9 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
     MetadataService metadataService = Stub(MetadataService)
     ElasticSearchService elasticSearchService = Stub(ElasticSearchService)
     OutputService outputService = Stub(OutputService)
-
+    UserService userService = Mock(UserService)
     ActivityService activityService = Mock(ActivityService)
+    AuthService authService = Mock(AuthService)
 
 
     def setupSpec() {}
@@ -30,7 +30,22 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         service.metadataService = metadataService
         service.outputService = outputService
         service.activityService = activityService
+        service.userService = userService
+        service.authService = authService
         outputService.toMap(_) >> {Map output -> output}
+
+        deleteAll()
+    }
+
+    def cleanup() {
+        deleteAll()
+    }
+
+    private void deleteAll() {
+        User.findAll().each{it.delete()}
+        Project.findAll().each{it.delete()}
+        ManagementUnit.findAll().each{it.delete()}
+        Program.findAll().each{it.delete()}
     }
 
     def setupInputs(outputs, activities, outputData) {
@@ -409,6 +424,28 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
 
     }
 
+    def "the user summary report finds all user roles for a specified hub"() {
+        setup:
+        String userId = "u1"
+        createDataForUserReport(userId)
+        StringWriter stringWriter = new StringWriter()
+        PrintWriter writer = new PrintWriter(stringWriter)
+
+        when:
+        service.userSummary("h1", writer)
+
+        then:
+        1 * authService.getUserDetailsById([userId]) >> [users:[(userId):new au.org.ala.web.UserDetails(1, "User", "1", "email", userId, false, ["ROLE_USER"] as Set)]]
+        CSVReader reader = new CSVReader(new StringReader(stringWriter.toString()))
+        List<String[]> lines = reader.readAll().collect{Arrays.asList(it).collect{it?.trim()}}
+        lines[0] == "User Id, Name, Email, Last Login, Role, Type, ID, Grant ID, External ID, Name, Access Role".split(", ")
+        lines[1] == [userId, "User 1", "email", "Fri Jan 01 11:00:00 AEDT 2021", "caseManager", "Project", "p1", "Grant 1", "External 1", "Project 1", "admin"]
+        lines[2] == ["", "", "", "", "", "Project", "p3", "Grant 3", "External 3", "Project 3", "admin"]
+        lines[3] == ["", "", "", "", "", "Management Unit", "m1", "", "", "MU 1", "admin"]
+        lines[4] == ["", "", "", "", "", "Program", "prg2", "", "", "Program 2", "admin"]
+
+    }
+
     def createOutput(activityId, name, property, value) {
         return [activityId:activityId, name:name, data:[(property):value]]
     }
@@ -416,4 +453,50 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
     def createOutput(activityId, name, Map data) {
         return [activityId:activityId, name:name, data:data]
     }
+
+    /**
+     * Inserts data into the User, UserPermission, Project, ManagementUnit and Program collections
+     * for use by the user summary report.
+     */
+    private void createDataForUserReport(String userId) {
+        String hubId = "h1"
+        User user = new User(userId:userId)
+        user.loginToHub(hubId, DateUtil.parse("2021-01-01T00:00:00Z"))
+        user.save()
+
+        new UserPermission(userId:userId, entityType:Hub.name, entityId:hubId, accessLevel: 'caseManager').save()
+
+        Map projects = ["p1":hubId, "p2":"h2", "p3":"h1"]
+        configureProjects(projects, userId)
+        Map managementUnits = ["m1":hubId, "m2":"h2"]
+        configureManagementUnits(managementUnits, userId)
+        Map programs = ["prg1":"h2", "prg2":"h1"]
+        configurePrograms(programs, userId)
+    }
+
+    private void configureProjects(Map spec, String userId) {
+        int count = 0
+        spec.each { k, v ->
+            count++
+            new Project(projectId:k, name:"Project $count", grantId:"Grant $count", externalId:"External $count", hubId:v).save()
+            new UserPermission(userId:userId, entityType:Project.name, entityId:k, accessLevel: AccessLevel.admin).save()
+        }
+    }
+
+    private void configureManagementUnits(Map spec, String userId) {
+        int count = 0
+        spec.each { k, v ->
+            new ManagementUnit(managementUnitId:k, name:"MU "+ (++count), hubId:v).save()
+            new UserPermission(userId:userId, entityType:ManagementUnit.name, entityId:k, accessLevel: AccessLevel.admin).save()
+        }
+    }
+
+    private void configurePrograms(Map spec, String userId) {
+        int count = 0
+        spec.each { k, v ->
+            new Program(programId:k, name:"Program "+ (++count), hubId:v).save()
+            new UserPermission(userId:userId, entityType:Program.name, entityId:k, accessLevel: AccessLevel.admin).save()
+        }
+    }
+
 }

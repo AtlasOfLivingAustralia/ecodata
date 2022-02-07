@@ -1,10 +1,12 @@
 package au.org.ala.ecodata
 
-
+import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.*
+import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
@@ -15,7 +17,10 @@ import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.*
 
+@Slf4j
 class SearchController {
+
+    static responseFormats = ['json', 'xml']
 
     static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
 
@@ -608,57 +613,29 @@ class SearchController {
     }
 
     @RequireApiKey
-    def downloadUserList() {
+    def downloadUserList(UserSummaryReportCommand userSummaryReportCommand) {
 
-        if (!params.email) {
-            params.email = userService.getCurrentUserDetails().userName
+        if (userSummaryReportCommand.hasErrors()) {
+            respond userSummaryReportCommand.errors
+            return
         }
-
-        params.fileExtension = "csv"
-
-        Map searchParams = [fq:params.fq, query:params.query?:"*:*", max:10000, offset:0]
+        log.info("User "+userService.getCurrentUserDisplayName()+" requested the user summary report for hub "+userSummaryReportCommand.hubId)
+        String hubId = userSummaryReportCommand.hubId
 
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
-
             try {
-                Set projectIds = downloadService.getProjectIdsForDownload(searchParams, HOMEPAGE_INDEX)
-
-                List meritRoles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
-                Map users = reportService.userSummary(projectIds, meritRoles)
-
-                outputStream.withWriter { writer ->
-                    writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
-
-                    users.values().each { user->
-
-                        writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
-                        if (user.projects) {
-                            boolean first = true
-                            user.projects.each { project ->
-                                if (!first) {
-                                    writer.print(",,,,")
-                                }
-                                writer.println(project.projectId+","+project.grantId+","+project.externalId+",\""+project.name+"\","+project.access)
-                                first = false
-                            }
-                        }
-                        else {
-                            writer.println()
-                        }
-
-
-                    }
+                outputStream.withPrintWriter { writer ->
+                    reportService.userSummary(hubId, writer)
                 }
             }
             catch (Exception e) {
-                e.printStackTrace()
+                log.error("There was an error running the user report for hubId "+hubId, e)
             }
         }
-        downloadService.downloadProjectDataAsync(params, doDownload)
+        downloadService.downloadProjectDataAsync(userSummaryReportCommand.populateParams(params), doDownload)
 
         response.status = 200
         render "OK"
-
     }
 
     @RequireApiKey

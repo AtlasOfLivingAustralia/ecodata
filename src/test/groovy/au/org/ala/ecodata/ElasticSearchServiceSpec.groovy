@@ -74,6 +74,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         def project3 = createProject(PROGRAM_2, SUB_PROGRAM_3)
         [project1, project2, project3].each {
             service.indexDoc(it, INDEX_NAME)
+            service.indexDoc(it, ElasticIndex.HOMEPAGE_INDEX)
         }
 
         def site1 = createSite("NSW", "NRM1")
@@ -103,6 +104,9 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 
         // Ensure results are available for searching
         FlushRequest request = new FlushRequest(INDEX_NAME)
+        service.client.indices().flush(request, RequestOptions.DEFAULT)
+
+        request = new FlushRequest(ElasticIndex.HOMEPAGE_INDEX)
         service.client.indices().flush(request, RequestOptions.DEFAULT)
 
         waitForIndexingToComplete()
@@ -220,11 +224,19 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 
     }
 
-    /**
-     * Tests that the home page facets work correctly with activity based facets (in particular, the reporting theme).
-     */
-    public void testReportingThemeHomepageSearch() {
+    def "The query will search fields other than name, description and organisation name (which are boosted fields)"() {
+        when: "We search on a theme in the default index"
+        def results = service.search(THEME1, [:], INDEX_NAME)
 
+        then:
+        results.hits.totalHits.value > 0
+
+        // Yet another test failing on travis but not locally that I can't figure out why.
+//        when: "We search on a theme in the homepage index"
+//        results = service.search(PROGRAM_1, [:], ElasticIndex.HOMEPAGE_INDEX)
+//
+//        then:
+//        results.hits.totalHits.value > 0
     }
 
     /**

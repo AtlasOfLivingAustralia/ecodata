@@ -1566,6 +1566,7 @@ class ElasticSearchService {
         fieldsAndBoosts.each { field, boost ->
             queryStringQueryBuilder.field(field, boost)
         }
+        queryStringQueryBuilder.field("*")
 
         return queryStringQueryBuilder
     }

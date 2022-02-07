@@ -55,6 +55,16 @@ class Hub {
     Date dateCreated
     Date lastUpdated
 
+    /** If an email is generated relating to this hub, use this sender address instead of the default it the config */
+    String emailFromAddress
+
+    /** If an email is generated relating to this hub, use this sender address instead of the default it the config */
+    String emailReplyToAddress
+
+    /** The URL prefix to use when creating a URL a user can use to download a report */
+    String downloadUrlPrefix
+
+    AccessManagementOptions accessManagementOptions
 
     static mapping = {
         hubId index: true
@@ -63,7 +73,7 @@ class Hub {
 
     static constraints = {
         urlPath unique: true
-        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1']
+        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1', 'bs4']
         title nullable:true
         homePagePath nullable:true
         defaultProgram nullable: true
@@ -75,7 +85,11 @@ class Hub {
         mapLayersConfig nullable: true
         mapDisplays nullable: true
         timeSeriesOnIndex nullable: true
+        emailFromAddress nullable: true
+        emailReplyToAddress nullable: true
+        downloadUrlPrefix nullable: true
+        accessManagementOptions nullable: true
     }
 
-    static embedded = ['mapLayersConfig']
+    static embedded = ['mapLayersConfig', 'accessManagementOptions']
 }

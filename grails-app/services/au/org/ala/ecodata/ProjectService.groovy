@@ -967,4 +967,20 @@ class ProjectService {
         List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
         meriApprovalHistory.max{it.approvalDate}
     }
+
+    /**
+     * Checks if a user have a role on an existing MERIT project.
+     * @param userId
+     * @param hubId
+     * @return true if user have a role on an existing merit project
+     */
+    Boolean doesUserHaveHubProjects(String userId, String hubId) {
+        List<UserPermission> ups = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
+        int count = 0
+        ups.each {
+            count += Project.countByProjectIdAndHubId(it?.entityId, hubId)
+        }
+        count > 0
+    }
+
 }
