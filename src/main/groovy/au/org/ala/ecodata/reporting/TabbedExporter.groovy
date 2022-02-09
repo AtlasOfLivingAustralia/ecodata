@@ -35,6 +35,14 @@ class TabbedExporter {
     protected Map<String, String> activitySheetNames = [:]
     protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
+    Map<String, DataDescription> dataDescriptionMap
+    AdditionalSheet dataDictionarySheet
+    String dataDictionarySheetName = "Data Description"
+    Set propertiesAddedToDataDictionarySheet = new HashSet()
+    List dataDictionaryProperties = ['xlsxName', 'xlsxHeader', 'type', 'description', 'entity', 'field', 'derived', 'userInterfaceReference', 'label', 'notes']
+    List dataDictionaryHeaders = ['Name used in Excel export', 'Header used in Excel export', 'Type', 'Description', 'Entity', 'Field', 'Derived?', 'User interface location', 'User interface label', 'Notes']
+
+
     /** Cache of key: activity type, value: export configuration for that activity */
     protected Map<String, Map> activityExportConfig = [:]
 
@@ -45,6 +53,10 @@ class TabbedExporter {
         this.documentMap = documentMap
         this.timeZone = timeZone
         exporter.setDateCellFormat(DATE_CELL_FORMAT)
+    }
+
+    protected void addDataDescriptionToDownload(Map<String, DataDescription> dataDescriptionMap) {
+        this.dataDescriptionMap = dataDescriptionMap
     }
 
     public setDateFormat(String dateFormat) {
@@ -179,22 +191,28 @@ class TabbedExporter {
         outputMetadata.modelIterator { String path, Map viewNode, Map dataNode ->
             if (isExportableType(dataNode)) {
                 String propertyPath = prefix + path
+                Map field = [
+                        dataType:dataNode.dataType,
+                        description:dataNode.description,
+                        helpText:viewNode?.helpText
+                ]
                 if (dataNode.dataType == 'stringList' && dataNode.constraints && dataNode.constraints instanceof List) {
                     dataNode.constraints.each { constraint ->
                         String header = outputMetadata.getLabel(viewNode, dataNode) + ' - ' + constraint
                         String constraintPath = propertyPath + '[' + constraint + ']'
-                        fieldConfiguration << [
+                        field += [
                                 header:header,
                                 property:constraintPath,
                                 getter:new OutputDataGetter(constraintPath, dataNode, documentMap, timeZone)]
                     }
                 }
                 else {
-                    fieldConfiguration << [
+                    field += [
                             header:outputMetadata.getLabel(viewNode, dataNode),
                             property:propertyPath,
                             getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
                 }
+                fieldConfiguration << field
             }
         }
         fieldConfiguration
@@ -241,10 +259,15 @@ class TabbedExporter {
         List outputGetters = activityProperties + exportConfig.collect{ it.getter }
         List headers = activityHeaders + exportConfig.collect{ it.header }
 
-        AdditionalSheet outputSheet = createSheet(sheetName, [propertyHeaders, versionHeaders, headers])
+        AdditionalSheet outputSheet = getSheet(sheetName, outputGetters, [propertyHeaders, versionHeaders, headers], exportConfig)
         int outputRow = outputSheet.sheet.lastRowNum
         List outputData = activityOrOutputData.collect { commonData + it }
-        outputSheet.add(outputData, outputGetters, outputRow + 1)
+        try  {
+            outputSheet.add(outputData, outputGetters, outputRow + 1)
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -415,7 +438,7 @@ class TabbedExporter {
 
     protected void exportList(String tab, Map project, List data, List headers, List properties) {
         if (shouldExport(tab) && data) {
-            AdditionalSheet sheet = getSheet(tab, headers)
+            AdditionalSheet sheet = getSheet(tab, properties, headers)
             int row = sheet.getSheet().lastRowNum
             List augmentedList = data?.collect {
                 it.putAll(project)
@@ -423,6 +446,77 @@ class TabbedExporter {
             }
             sheet.add(augmentedList, properties, row+1)
         }
+    }
+
+    AdditionalSheet getSheet(String sheetName, List properties, List headers, List activityConfig = null) {
+        if (!sheets[sheetName]) {
+            sheets[sheetName] = addSheetWithProperties(sheetName, properties, headers, activityConfig)
+        }
+        sheets[sheetName]
+    }
+
+    protected AdditionalSheet addSheetWithProperties(String sheetName, List properties, List headers, List activityConfig = null) {
+
+        List updatedHeaders = activityConfig ? headers[2] : headers
+        if (dataDescriptionMap != null) {
+            addToDataDictionarySheet(properties, updatedHeaders, activityConfig)
+            int i = 0
+            updatedHeaders = properties.collect { getHeader(it, i++, updatedHeaders) }
+        }
+        getSheet(sheetName, updatedHeaders)
+    }
+
+    private void addToDataDictionarySheet(List properties, List headers, List activityConfig) {
+        AdditionalSheet sheet = getDataDictionarySheet()
+        int row = sheet.getSheet().lastRowNum
+
+        properties.eachWithIndex { def prop, int i ->
+            String propertyName = propertyNameFromGetter(prop)
+            Map formFieldMetadata = activityConfig?.find{it.property == propertyName}
+
+            if (!propertiesAddedToDataDictionarySheet.contains(propertyName)) {
+                DataDescription propertyDescription = dataDescriptionMap[propertyName]
+                if (!propertyDescription) {
+                    propertyDescription = [xlsxName:propertyName, xlsxHeader:headers[i]] as DataDescription
+                }
+                if (formFieldMetadata) {
+                    propertyDescription.description = formFieldMetadata.description
+                    propertyDescription.notes = formFieldMetadata.helpText
+                    propertyDescription.type = formFieldMetadata.dataType
+                    propertyDescription.formVersion = formFieldMetadata.formVersion
+                    propertyDescription.userInterfaceReference = formFieldMetadata.section
+                }
+                sheet.add([propertyDescription], dataDictionaryProperties, ++row)
+                propertiesAddedToDataDictionarySheet.add(propertyName)
+            }
+        }
+    }
+
+    private String propertyNameFromGetter(def prop) {
+        String propertyName
+        if (prop instanceof PropertyGetter) {
+            propertyName = ((PropertyGetter)prop).getPropertyName()
+        }
+        else {
+            propertyName = prop
+        }
+        propertyName
+    }
+
+    private String getHeader(def property, int propertyIndex, List headers) {
+        String propertyName = propertyNameFromGetter(property)
+        String header = dataDescriptionMap[propertyName]?.xlsxHeader
+        if (!header && headers && headers.size() > propertyIndex) {
+            header = headers[propertyIndex]
+        }
+        header
+    }
+
+    protected AdditionalSheet getDataDictionarySheet() {
+        if (!dataDictionarySheet) {
+            dataDictionarySheet = exporter.addSheet(dataDictionarySheetName, dataDictionaryHeaders)
+        }
+        dataDictionarySheet
     }
 
     static class LengthLimitedGetter extends PropertyGetter<String, String> {

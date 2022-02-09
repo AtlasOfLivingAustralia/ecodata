@@ -1,15 +1,12 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.DateUtil
+import au.org.ala.ecodata.DataDescription
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Report
-import au.org.ala.ecodata.metadata.OutputDataGetter
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 /**
@@ -121,11 +118,6 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing"]
     List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "term", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing"]
 
-    AdditionalSheet projectSheet
-    AdditionalSheet sitesSheet
-    AdditionalSheet outputTargetsSheet
-    AdditionalSheet risksAndThreatsSheet
-
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
 
@@ -145,10 +137,11 @@ class ProjectXlsExporter extends ProjectExporter {
         setupManagementUnits(managementUnitService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false) {
-        super(exporter, tabsToExport, documentMap, TimeZone.default)
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, DataDescription> downloadMetadata, boolean formSectionPerTab = false) {
+        super(exporter, tabsToExport, [:], TimeZone.default)
         this.projectService = projectService
         this.formSectionPerTab = formSectionPerTab
+        addDataDescriptionToDownload(downloadMetadata)
         distinctElectorates = new ArrayList(electorates?:[])
         distinctElectorates.sort()
         projectHeaders += distinctElectorates
@@ -165,7 +158,6 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     void export(Map project) {
-
         addCommonProjectData(project)
 
         addProjectGeo(project)
@@ -239,7 +231,7 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportActivitySummary(Map project) {
         String tab = "Activity Summary"
         if (shouldExport(tab)) {
-            AdditionalSheet sheet = getSheet(tab, activitySummaryHeaders)
+            AdditionalSheet sheet = getSheet(tab, activitySummaryProperties, activitySummaryHeaders)
             project.activities.each { activity ->
                 Map activityData = commonActivityData(project, activity)
                 sheet.add(activityData, activitySummaryProperties, sheet.getSheet().lastRowNum + 1)
@@ -280,8 +272,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportSites(Map project) {
-        if (shouldExport('Sites')) {
-            sitesSheet()
+        String sheetName = 'Sites'
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sitesSheet = getSheet(sheetName, siteProperties, siteHeaders)
             if (project.sites) {
                 def sites = project.sites.collect {
                     def centre = it.extent?.geometry?.centre
@@ -307,8 +300,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportOutputTargets(Map project) {
-        if (shouldExport('Output Targets')) {
-            outputTargetsSheet()
+        String sheetName = 'Output Targets'
+        if (shouldExport(sheetName)) {
+            AdditionalSheet outputTargetsSheet = getSheet(sheetName, outputTargetProperties, outputTargetHeaders)
             if (project.outputTargets) {
                 List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
@@ -323,8 +317,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProject(Map project) {
-        if (shouldExport('Projects')) {
-            projectSheet()
+        String sheetName = 'Projects'
+        if (shouldExport(sheetName)) {
+            AdditionalSheet projectSheet = getSheet(sheetName, projectProperties, projectHeaders)
             List properties = new ArrayList(projectProperties)
             int row = projectSheet.getSheet().lastRowNum
 
@@ -341,7 +336,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private exportDataSet(Map project) {
         if (shouldExport("Dataset")) {
-            AdditionalSheet sheet = getSheet("Data_set_Summary", datasetHeader)
+            AdditionalSheet sheet = getSheet("Data_set_Summary", datasetProperties, datasetHeader)
             int row = sheet.getSheet().lastRowNum
 
             List data = project?.custom?.dataSets?.collect { Map dataValue ->
@@ -410,8 +405,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportBudget(Map project) {
-        if (shouldExport("MERI_Budget")) {
-            AdditionalSheet sheet = getSheet("MERI_Budget", budgetHeaders)
+        String sheetName = "MERI_Budget"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, budgetProperties, budgetHeaders)
             int row = sheet.getSheet().lastRowNum
 
             List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
@@ -437,8 +433,9 @@ class ProjectXlsExporter extends ProjectExporter {
 
 
     private void exportOutcomes(Map project) {
-        if (shouldExport("MERI_Outcomes")) {
-            AdditionalSheet sheet = getSheet("MERI_Outcomes", outcomesHeaders)
+        String sheetName = "MERI_Outcomes"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, outcomesProperties, outcomesHeaders)
             int row = sheet.getSheet().lastRowNum
 
 
@@ -466,8 +463,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportMonitoring(Map project) {
-        if (shouldExport("MERI_Monitoring")) {
-            AdditionalSheet sheet = getSheet("MERI_Monitoring", monitoringHeaders)
+        String sheetName = "MERI_Monitoring"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, monitoringProperties, monitoringHeaders)
             int row = sheet.getSheet().lastRowNum
 
 
@@ -493,8 +491,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProjectImplementation(Map project) {
-        if (shouldExport("MERI_Project Implementation")) {
-            AdditionalSheet sheet = getSheet("MERI_Project Implementation", projectImplementationHeaders)
+        String sheetName = "MERI_Project Implementation"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, projectImplementationProperties, projectImplementationHeaders)
             int row = sheet.getSheet().lastRowNum
 
             if (project?.custom?.details?.implementation) {
@@ -518,8 +517,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportWHSAndCaseStudy(Map project) {
-        if (shouldExport("MERI_WHS and Case Study")) {
-            AdditionalSheet sheet = getSheet("MERI_WHS and Case Study", whsAndCaseStudyHeaders)
+        String sheetName = "MERI_WHS and Case Study"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, whsAndCaseStudyProperties, whsAndCaseStudyHeaders)
             int row = sheet.getSheet().lastRowNum
 
             if (project?.custom?.details) {
@@ -533,19 +533,20 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportRisks(Map project) {
         if (shouldExport('MERI_Risks and Threats')) {
-            risksAndThreatsSheet()
-            int row = risksAndThreatsSheet.getSheet().lastRowNum
+            AdditionalSheet sheet = getSheet('Risks and Threats', risksAndThreatsProperties, risksAndThreatsHeaders)
+            int row = sheet.getSheet().lastRowNum
             if (project.risks && project.risks.rows) {
                 List data = project.risks.rows.collect { it + project }
-                risksAndThreatsSheet.add(data, risksAndThreatsProperties, row + 1)
+                sheet.add(data, risksAndThreatsProperties, row + 1)
             }
 
         }
     }
 
     private void exportApprovals(Map project) {
-        if (shouldExport('MERI_Approvals')) {
-            AdditionalSheet sheet = getSheet("MERI_Approvals", approvalsHeaders)
+        String sheetName = 'MERI_Approvals'
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, approvalsProperties, approvalsHeaders)
             int row = sheet.getSheet().lastRowNum
 
             List approvals  = projectService.getMeriPlanApprovalHistory(project.projectId)
@@ -562,9 +563,10 @@ class ProjectXlsExporter extends ProjectExporter {
         exportList("MERI_Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
     }
 
-    private void exportBaseline(Map project){
-        if (shouldExport("MERI_Baseline")) {
-            AdditionalSheet sheet = getSheet("MERI_Baseline", baselineHeaders)
+    private void exportBaseline(Map project) {
+        String sheetName = "MERI_Baseline"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, baselineProperties, baselineHeaders)
             int row = sheet.getSheet().lastRowNum
             List data = project?.custom?.details?.baseline?.rows?.collect { Map baseline ->
                 Map baseLineItem = [:]
@@ -577,8 +579,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportEvents(Map project) {
-        if (shouldExport("MERI_Event")) {
-            AdditionalSheet sheet = getSheet("MERI_Event", eventHeaders)
+        String sheetName = "MERI_Event"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, eventProperties, eventHeaders)
             int row = sheet.getSheet().lastRowNum
             List data = project?.custom?.details?.events?.collect { Map event ->
                 Map eventItem = [:]
@@ -595,7 +598,7 @@ class ProjectXlsExporter extends ProjectExporter {
             /**
              * RLP outcome does not use HEADERs from DB
              */
-            AdditionalSheet sheet = getSheet("RLP Project Details", rlpProjectDetailsHeaders)
+            AdditionalSheet sheet = getSheet("RLP Project Details", rlpProjectDetailsProperties, rlpProjectDetailsHeaders)
             int row = sheet.getSheet().lastRowNum
 
             List data = []
@@ -634,7 +637,7 @@ class ProjectXlsExporter extends ProjectExporter {
             /**
              * RLP outcome does not use HEADERs from DB
              */
-            AdditionalSheet sheet = getSheet("RLP Outcomes", rlpOutcomeHeaders)
+            AdditionalSheet sheet = getSheet("RLP Outcomes", rlpOutcomeProperties, rlpOutcomeHeaders)
             int row = sheet.getSheet().lastRowNum
             Map fields = [:]
             fields["secondaryOutcomes"] = "Secondary Outcome/s"
@@ -685,7 +688,7 @@ class ProjectXlsExporter extends ProjectExporter {
             /**
              * RLP outcome does not use HEADERs from DB
              */
-            AdditionalSheet sheet = getSheet("RLP Key Threats", rlpKeyThreatHeaders)
+            AdditionalSheet sheet = getSheet("RLP Key Threats", rlpKeyThreatProperties, rlpKeyThreatHeaders)
             int row = sheet.getSheet().lastRowNum
 
             List data = []
@@ -714,7 +717,7 @@ class ProjectXlsExporter extends ProjectExporter {
         List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
         def results = metadataService.getProjectServicesWithTargets(project)
 
-        AdditionalSheet sheet = getSheet("Project services and targets", rlpSTHeaders)
+        AdditionalSheet sheet = getSheet("Project services and targets", rlpSTProperties, rlpSTHeaders)
         int row = sheet.getSheet().lastRowNum
 
         List data = []
@@ -741,15 +744,17 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportReports(Map project) {
-        if (shouldExport("Reports")) {
-            AdditionalSheet sheet = getSheet("Reports", reportHeaders)
+        String sheetName = "Reports"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, reportProperties, reportHeaders)
             exportReports(sheet, project, reportProperties)
         }
     }
 
     private void exportReportSummary(Map project) {
-        if (shouldExport("Report Summary")) {
-            AdditionalSheet sheet = getSheet("Report Summary", reportSummaryHeaders)
+        String sheetName = "Report Summary"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, reportSummaryProperties, reportSummaryHeaders)
             exportReportSummary(sheet, project, reportSummaryProperties)
         }
     }
@@ -762,31 +767,4 @@ class ProjectXlsExporter extends ProjectExporter {
         exportList("Blog", project, project.blog, blogHeaders, blogProperties)
     }
 
-    AdditionalSheet projectSheet() {
-        if (!projectSheet) {
-            projectSheet = exporter.addSheet('Projects', projectHeaders)
-        }
-        projectSheet
-    }
-
-    AdditionalSheet sitesSheet() {
-        if (!sitesSheet) {
-            sitesSheet = exporter.addSheet('Sites', siteHeaders)
-        }
-        sitesSheet
-    }
-
-    AdditionalSheet outputTargetsSheet() {
-        if (!outputTargetsSheet) {
-            outputTargetsSheet = exporter.addSheet('Output Targets', outputTargetHeaders)
-        }
-        outputTargetsSheet
-    }
-
-    AdditionalSheet risksAndThreatsSheet() {
-        if (!risksAndThreatsSheet) {
-            risksAndThreatsSheet = exporter.addSheet('Risks and Threats', risksAndThreatsHeaders)
-        }
-        risksAndThreatsSheet
-    }
 }
