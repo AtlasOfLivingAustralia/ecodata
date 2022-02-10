@@ -20,7 +20,7 @@ import javax.inject.Inject
 @Order(1)
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value('${spring.security.logoutUrl:"http://dev.ala.org.au:8080/logout"}')
+    @Value('${spring.security.logoutUrl:"http://dev.ala.org.au:8080/admin/logout"}')
     String logoutUrl
 
     @Inject
