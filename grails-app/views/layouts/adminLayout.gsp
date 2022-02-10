@@ -61,7 +61,7 @@
                 <div class="collapse navbar-collapse" id="collapsibleHeaderContent">
                     <div class="d-flex flex-grow-1">
                         <span id="buttonBar" class="ms-auto">
-                            <ec:currentUserDisplayName/>&nbsp;<hf:loginLogout cssClass="nav-item btn btn-info"/>
+                            <ec:currentUserDisplayName/>&nbsp;<button id="btnLogout" class='nav-item btn btn-info'>Logout</button>
                             <button class="btn btn-warning nav-item" id="btnAdministration"><i class="fa fa-cog"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
                         </span>
@@ -130,7 +130,7 @@
         $.ajaxSetup({ cache: false });
 
         $("#btnLogout").click(function (e) {
-            window.location = "${createLink(controller: 'logout', action:'index')}";
+            window.location = "${createLink(controller: 'admin', action:'logout')}";
         });
 
         $("#btnAdministration").click(function (e) {

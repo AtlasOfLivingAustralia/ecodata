@@ -39,8 +39,8 @@ class ProjectGraphQLMapper {
 
             exclude("custom")
 
-            Map activityModel = new Helper().getActivityOutputModels()
-            String[] duplicateOutputs = activityModel["activities"].outputs.name.flatten().groupBy { it }.findAll { it.value.size() > 1}.keySet()
+            Map activityModel = [:] //new Helper().getActivityOutputModels()
+            String[] duplicateOutputs = [] //activityModel["activities"].outputs.name.flatten().groupBy { it }.findAll { it.value.size() > 1}.keySet()
 
             List<String> restrictedProperties = []
             restrictedProperties.each { String prop ->
