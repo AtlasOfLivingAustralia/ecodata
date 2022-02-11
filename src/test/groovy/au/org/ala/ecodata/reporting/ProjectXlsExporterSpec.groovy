@@ -40,7 +40,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, [:], true)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, null, true)
         projectXlsExporter.activityFormService = activityFormService
         projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
@@ -54,7 +54,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "project details can be exported"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -78,7 +78,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "project details can be exported with Termination Reason"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -99,10 +99,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
-    void "Projects don't have to have a managemeent unit id to be exported correctly"() {
+    void "Projects don't have to have a management unit id to be exported correctly"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -125,7 +125,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Dataset data can be exported"() {
         setup:
         String sheet = "Dataset"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = projectDataSet()
 
@@ -149,7 +149,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "RLP outcomes data can be exported"() {
         setup:
         String sheet = "RLP_Outcomes"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = rlpProject()
 

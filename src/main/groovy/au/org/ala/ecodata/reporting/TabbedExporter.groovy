@@ -204,6 +204,7 @@ class TabbedExporter {
                                 header:header,
                                 property:constraintPath,
                                 getter:new OutputDataGetter(constraintPath, dataNode, documentMap, timeZone)]
+                        fieldConfiguration << field
                     }
                 }
                 else {
@@ -211,8 +212,8 @@ class TabbedExporter {
                             header:outputMetadata.getLabel(viewNode, dataNode),
                             property:propertyPath,
                             getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
+                    fieldConfiguration << field
                 }
-                fieldConfiguration << field
             }
         }
         fieldConfiguration
@@ -262,12 +263,7 @@ class TabbedExporter {
         AdditionalSheet outputSheet = getSheet(sheetName, outputGetters, [propertyHeaders, versionHeaders, headers], exportConfig)
         int outputRow = outputSheet.sheet.lastRowNum
         List outputData = activityOrOutputData.collect { commonData + it }
-        try  {
-            outputSheet.add(outputData, outputGetters, outputRow + 1)
-        }
-        catch (Exception e) {
-            e.printStackTrace()
-        }
+        outputSheet.add(outputData, outputGetters, outputRow + 1)
     }
 
     /**
@@ -463,7 +459,7 @@ class TabbedExporter {
             int i = 0
             updatedHeaders = properties.collect { getHeader(it, i++, updatedHeaders) }
         }
-        getSheet(sheetName, updatedHeaders)
+        getSheet(sheetName, headers)
     }
 
     private void addToDataDictionarySheet(List properties, List headers, List activityConfig) {
