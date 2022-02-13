@@ -575,6 +575,21 @@ grails.cache.config = {
         diskPersistent true
     }
 }
+//
+//
+//security {
+//    cas {
+//        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
+//        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+//        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
+//        loginUrl = 'https://auth.ala.org.au/cas/login'
+//        logoutUrl = 'https://auth.ala.org.au/cas/logout'
+//        casServerName = 'https://auth.ala.org.au'
+//        uriFilterPattern = ['/admin/*', '/activityForm/*']
+//        authenticateOnlyIfLoggedInPattern =
+//        uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
+//    }
+//}
 
 grails.gorm.graphql.browser = true
 

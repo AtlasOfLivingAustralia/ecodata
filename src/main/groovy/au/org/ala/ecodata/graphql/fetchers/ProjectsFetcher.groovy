@@ -10,6 +10,7 @@ import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.aggregations.Aggregation
 
 import java.text.SimpleDateFormat
 
@@ -72,6 +73,8 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         Boolean myProjects = environment.arguments.get("myProjects") != null ? environment.arguments.get("myProjects") : false
         SearchResponse searchResponse
 
+        params.put("include", "projectId")
+
         if(myProjects) {
             searchResponse = elasticSearchService.searchWithSecurity(userId, query, params, HOMEPAGE_INDEX)
         }
@@ -79,7 +82,7 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
             searchResponse = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
         }
 
-        List<String> projectIds = searchResponse.hits.hits.collect{it.source.projectId}
+        List<String> projectIds = searchResponse.hits.hits.collect{it.sourceAsMap.projectId}
 
         // Split projects into those the user has full read permission & those they don't
         List publicProjectIds = []
@@ -186,7 +189,8 @@ class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
         fqList.each {
             List fq = it.toString().split(":")
             if(!enumList.contains(fq.first())) {
-                List<String> lookUps = searchDetails.facets?.getFacets()?.get(fq.first())?.entries?.term as String[]
+                Aggregation aggregation = searchDetails.aggregations?.get(fq.first())
+                List<String> lookUps = aggregation?.buckets?.collect{it.keyAsString}
                 if (!lookUps.contains(fq.last())) {
                     throw new GraphQLException('Invalid ' + fq.first() + ' : suggested values are : ' + lookUps)
                 }

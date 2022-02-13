@@ -1522,6 +1522,18 @@ class ElasticSearchService {
 //        filter
 //    }
 
+    private BoolQueryBuilder buildAccessControlFilter() {
+        String userId = UserService.currentUser()?.userId
+        BoolQueryBuilder builder = QueryBuilders.boolQuery()
+        builder.filter(QueryBuilders.termsQuery("allParticipants", userId))
+        //List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
+        List permissions = []
+        if (permissions) {
+            BoolQueryBuilder hubs = QueryBuilders.termsQuery("hubId", permissions.collect { it.entityId})
+        }
+        builder
+    }
+
     private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index, boolean applyAccessControlFilters = false) {
         QueryBuilder queryBuilder
         List filters = []

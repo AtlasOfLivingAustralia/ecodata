@@ -211,13 +211,6 @@ class UserService {
         }.list(options)
     }
 
-    /**
-     * This will return the User entity
-     */
-    User findByUserId(String userId) {
-        User.findByUserId(userId)
-    }
-
     @Cacheable("userDetailsByIdCache")
     def getUserDetailsById(List<String> userIds, boolean includeProps = true) {
         def call = userDetailsClient.getUserDetailsFromIdList(new UserDetailsFromIdListRequest(userIds, includeProps))
@@ -232,5 +225,12 @@ class UserService {
             log.error("Exception caught retrieving userdetails for ${userIds}", e)
         }
         return null
+    }
+
+    /**
+     * This will return the User entity
+     */
+    User findByUserId(String userId) {
+        User.findByUserId(userId)
     }
 }

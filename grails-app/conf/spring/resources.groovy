@@ -4,7 +4,6 @@ import au.org.ala.ecodata.graphql.EcodataGraphQLCustomiser
 import au.org.ala.ecodata.graphql.fetchers.OutputFetcher
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.fetchers.SitesFetcher
-
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 
 import au.org.ala.ws.security.AlaRoleMapper
@@ -25,6 +24,7 @@ beans = {
     activitiesFetcher(ActivityFetcher)
     outputFetcher(OutputFetcher)
     graphQLContextBuilder(EcodataGraphQLContextBuilder)
+
     formattedStringConverter ISODateBindingConverter
 
     restService(RestTemplate)
