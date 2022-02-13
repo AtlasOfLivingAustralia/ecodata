@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import au.org.ala.userdetails.UserDetailsClient
 import au.org.ala.userdetails.UserDetailsFromIdListRequest
-import au.org.ala.ws.security.AuthService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
 import grails.core.GrailsApplication
@@ -16,7 +15,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS
 class UserService {
 
     static transactional = false
-    AuthService authService
     WebService webService
     GrailsApplication grailsApplication
     UserService userService

@@ -1510,24 +1510,24 @@ class ElasticSearchService {
         hubFilters
     }
 
-    private FilterBuilder buildAccessControlFilter() {
-        String userId = UserService.currentUser()?.userId
-
-        FilterBuilder filter = FilterBuilders.termFilter("allParticipants", userId)
-        List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
-        if (permissions) {
-            FilterBuilder hubs = FilterBuilders.termsFilter("hubId", permissions.collect { it.entityId})
-            filter = FilterBuilders.boolFilter().should(filter).should(hubs)
-        }
-        filter
-    }
+//    private FilterBuilder buildAccessControlFilter() {
+//        String userId = UserService.currentUser()?.userId
+//
+//        FilterBuilder filter = FilterBuilders.termFilter("allParticipants", userId)
+//        List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
+//        if (permissions) {
+//            FilterBuilder hubs = FilterBuilders.termsFilter("hubId", permissions.collect { it.entityId})
+//            filter = FilterBuilders.boolFilter().should(filter).should(hubs)
+//        }
+//        filter
+//    }
 
     private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index, boolean applyAccessControlFilters = false) {
         QueryBuilder queryBuilder
         List filters = []
 
         if (applyAccessControlFilters) {
-            filters << buildAccessControlFilter()
+            //filters << buildAccessControlFilter()
         }
 
         List hubFilters = extractHubFilterParameters(params)
