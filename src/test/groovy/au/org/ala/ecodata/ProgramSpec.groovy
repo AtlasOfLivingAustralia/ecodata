@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import com.mongodb.BasicDBObject
 import grails.test.mongodb.MongoSpec
 import spock.lang.Specification
-//import au.org.ala.domain.ecodata.Program
 
 /**
  * Tests the mappings in the Program class.
@@ -106,5 +105,18 @@ class ProgramSpec extends MongoSpec {
         subPrograms.description == "Sub Description"
         subPrograms.parent.id == parentProgram.id
 
+    }
+
+    def "Once set, the hubId cannot be overwritten"() {
+        when:
+        Program program = new Program(programId:"p1", name:"Program 1", hubId:"merit")
+        program.save(flush:true, failOnError:true)
+
+        program.hubId = "newHub"
+        program.save()
+
+        then:
+        program.hasErrors()
+        program.errors.getFieldError("hubId")
     }
 }

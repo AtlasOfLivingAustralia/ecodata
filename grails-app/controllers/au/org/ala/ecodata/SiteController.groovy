@@ -29,17 +29,6 @@ class SiteController {
         render "${Site.count()} sites"
     }
 
-    def list() {
-        def list = []
-        def sites = params.includeDeleted ? Site.list() :
-            Site.findAllByStatus('active')
-        sites.each { site ->
-            list << siteService.toMap(site)
-        }
-        list.sort {it.name}
-        render list as JSON
-    }
-
     def get(String id) {
         def levelOfDetail = []
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }

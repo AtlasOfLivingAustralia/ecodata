@@ -28,8 +28,9 @@ class ActivityFormService {
         form
     }
 
+    /** Returns a list of all versions of an ActivityForm regardless of publication status. */
     ActivityForm[] findVersionedActivityForm(String name) {
-        ActivityForm[] forms = ActivityForm.findAllByNameAndPublicationStatusAndStatusNotEqual(name, PublicationStatus.PUBLISHED, Status.DELETED)
+        ActivityForm[] forms = ActivityForm.findAllByNameAndStatusNotEqual(name, PublicationStatus.PUBLISHED, Status.DELETED)
         forms
     }
 

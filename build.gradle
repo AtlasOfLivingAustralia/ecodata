@@ -19,7 +19,7 @@ plugins {
     id 'com.craigburke.client-dependencies' version '1.4.0'
 }
 
-version "3.2.2"
+version "3.3"
 group "au.org.ala"
 description "Ecodata"
 

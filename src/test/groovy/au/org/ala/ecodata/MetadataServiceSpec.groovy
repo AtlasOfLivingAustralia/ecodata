@@ -65,7 +65,7 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
         services = service.getProjectServices()
 
         then:
-        1 * settingService.getSetting("services.config") >> [[id:1, name:"Service"]]
+        1 * settingService.getSetting("services.config") >> "[{\"id\":1, \"name\":\"Service\"}]"
         services.size() == 1
         services[0].id == 1
         services[0].name == "Service"

@@ -25,8 +25,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     String dataProviderId = 'dp1'
     String dataResourceId = 'dr1'
 
-    static doWithConfig(config) {
-        config.grails.databinding.dateFormats = ["yyyy-MM-dd'T'HH:mm:ss'Z'"]
+    boolean loadExternalBeans() {
+        true
     }
 
 
@@ -71,6 +71,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     def cleanup() {
         Project.findAll().each { it.delete(flush:true) }
         AuditMessage.findAll().each { it.delete(flush:true) }
+        UserPermission.findAll().each { it.delete(flush:true) }
+
     }
 
     def "test create and update project"() {
@@ -167,7 +169,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     def "The project supports Risks as an embedded mapping"() {
         setup:
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         String projectId = 'p1-risks'
         Project project = new Project(projectId:projectId, name:"Project")
         Map risks = buildRisksData()
@@ -186,7 +187,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         then:
         project2.risks.overallRisk == risks.overallRisk
-        project2.risks.dateUpdated ==  f.parse(risks.dateUpdated)
+        project2.risks.dateUpdated ==  DateUtil.parse(risks.dateUpdated)
         project2.risks.rows.size() == risks.rows.size()
         int i=0
         for (Risk risk : project2.risks.rows) {
@@ -199,30 +200,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             risk.riskRating == risks.rows[i].consequence
             i++
         }
-// The getDbo method is returning null here.
-//        when:
-//        Map projectData
-//        Project.withNewTransaction { tx ->
-//            Project p = Project.findByProjectId(projectId)
-//            projectData = service.toMap(p, ProjectService.FLAT)
-//        }
-//
-//
-//        then:
-//        projectData.risks.overallRisk == risks.overallRisk
-//        projectData.risks.dateUpdated == f.parse(risks.dateUpdated)
-//        projectData.risks.rows.size() == risks.rows.size()
-//        int j=0
-//        for (Map risk : projectData.risks.rows) {
-//            risk.consequence == risks.rows[j].consequence
-//            risk.likelihood == risks.rows[j].consequence
-//            risk.residualRisk == risks.rows[j].consequence
-//            risk.currentControl == risks.rows[j].consequence
-//            risk.description == risks.rows[j].consequence
-//            risk.threat == risks.rows[j].consequence
-//            risk.riskRating == risks.rows[j].consequence
-//            j++
-//        }
     }
 
     def "The project supports an associatedOrgs embedded mapping when updating the project"() {
@@ -610,6 +587,43 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         response != null
         response.status == 'error'
         response.error == 'Duplicate project id for create p1'
+    }
+
+    void "User have a role on an existing MERIT project"() {
+        setup:
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345").save()
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345").save()
+        Project project3 = new Project(projectId: '333', name: "Project 333").save()
+
+        UserPermission up1 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project1.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        UserPermission up2 = new UserPermission(userId:'1', accessLevel:AccessLevel.caseManager, entityId:project2.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        UserPermission up3 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project3.projectId, entityType:Project.name, status: Status.ACTIVE).save()
+        UserPermission up4 = new UserPermission(userId:'1', accessLevel:AccessLevel.readOnly, entityId:'12345', entityType:Hub.name, status: Status.ACTIVE).save()
+
+
+        when:
+        Boolean response = service.doesUserHaveHubProjects('1', '12345')
+
+        then:
+        response != null
+        response == true
+
+    }
+
+    void "User have no role on an existing MERIT project"() {
+        setup:
+        Project project1 = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345")
+        project1.save(flush: true, failOnError: true)
+        UserPermission up = new UserPermission(userId:'2', accessLevel:AccessLevel.admin, entityId:'123', entityType:Project.name, status: Status.ACTIVE).save()
+
+
+        when:
+        Boolean response = service.doesUserHaveHubProjects('2', '12345')
+
+        then:
+        response != null
+        response == false
+
     }
 
 }

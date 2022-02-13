@@ -23,10 +23,6 @@ class ActivityFormController {
         respond activityFormService.findActivityForm(name, formVersion)
     }
 
-    ActivityForm[] findByName(String name){
-        respond activityFormService.findVersionedActivityForm(name)
-    }
-
     /**
      * Updates the activity form identified by the name and version in the payload.
      * @return

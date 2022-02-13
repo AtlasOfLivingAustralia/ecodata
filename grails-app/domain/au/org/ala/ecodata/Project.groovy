@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.springframework.validation.Errors
+
 import static au.org.ala.ecodata.Status.COMPLETED
 
 import org.bson.types.ObjectId
@@ -26,6 +28,8 @@ class Project {
 
     ObjectId id
     String projectId
+    /** The id of the hub in which this project was created */
+    String hubId
     String dataProviderId // collectory dataProvider id
     String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
@@ -39,8 +43,6 @@ class Project {
     String internalOrderId
     Date contractStartDate
     Date contractEndDate
-    String groupId
-    String groupName
     String organisationName
     String serviceProviderName
     String organisationId
@@ -49,12 +51,6 @@ class Project {
     Date serviceProviderAgreementDate
     Date actualStartDate
     Date actualEndDate
-    String fundingSource
-    String fundingSourceProjectPercent
-    String plannedCost
-    String reportingMeasuresAddressed
-    String projectPlannedOutputType
-    String projectPlannedOutputValue
     String managementUnitId
 	Map custom
 	Risks risks
@@ -81,6 +77,8 @@ class Project {
     List<String> industries = []
     List<String> bushfireCategories = []
     boolean isBushfire
+
+    /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
     String baseLayer
     MapLayersConfiguration mapLayersConfig
@@ -95,6 +93,12 @@ class Project {
 
     /** The program of work this project is a part of, if any */
     String programId
+
+    /** Grant/procurement etc */
+    String fundingType
+
+    /** If this project represents an election commitment, the year of the commitment (String typed to allow financial years) */
+    String electionCommitmentYear
 
     static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
 
@@ -153,8 +157,6 @@ class Project {
         contractStartDate nullable: true
         contractEndDate nullable: true
         manager nullable:true
-        groupId nullable:true
-        groupName nullable:true
         organisationName nullable:true
         serviceProviderName nullable:true
         plannedStartDate nullable:true
@@ -162,12 +164,6 @@ class Project {
         serviceProviderAgreementDate nullable:true
         actualStartDate nullable:true
         actualEndDate nullable:true
-        fundingSource nullable:true
-        fundingSourceProjectPercent nullable:true
-        plannedCost nullable:true
-        reportingMeasuresAddressed nullable:true
-        projectPlannedOutputType nullable:true
-        projectPlannedOutputValue nullable:true
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
@@ -207,6 +203,11 @@ class Project {
         managementUnitId nullable: true
         mapDisplays nullable: true
         terminationReason nullable: true
+        fundingType nullable: true
+        electionCommitmentYear nullable: true
+        hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
+            GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
+        }
     }
 }
 

@@ -16,12 +16,12 @@ import java.time.format.DateTimeFormatter
 
 class DateUtil {
 
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
-
+    private static String dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
     static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static Date parse(String dateStr) {
-        return dateFormat.parse(dateStr.replace("Z", "+0000"))
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat)
+        return format.parse(dateStr.replace("Z", "+0000"))
     }
 
     static String format(Date date) {

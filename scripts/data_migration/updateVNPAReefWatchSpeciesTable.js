@@ -524,7 +524,7 @@ listOfActivities.forEach(function (activityId) {
                     }
 
                     if (!commonUpdated) {
-                        print("Failed to find a match for " + row.commonName + " " + output.outputId);
+                        print("Failed to find a match for " + row.commonName + " " + output.activityId);
                     }
 
                     updated = updated || commonUpdated;
@@ -536,12 +536,12 @@ listOfActivities.forEach(function (activityId) {
                 if (result.nModified === 1) {
                     countUpdated ++;
                 } else {
-                    print("Issue updating outputId " + output.outputId);
+                    print("Issue updating outputId " + output.activityId);
                     print(JSON.stringify(taxaObservations))
                     errorUpdated ++;
                 }
             } else {
-                print("Not updating outputId " + output.outputId);
+                print("Not updating outputId " + output.activityId);
             }
         }
     }

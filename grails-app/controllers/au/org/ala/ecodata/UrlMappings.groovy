@@ -192,6 +192,15 @@ class UrlMappings {
         "/ws/$controller/list"() { action = [GET:'list'] }
         "/ws/geoServer/wms"(controller: "geoServer", action: "wms")
 
+        "/ws/document/download/$path/$filename" {
+            controller = 'document'
+            action = 'download'
+        }
+
+        "/ws/document/download/$filename" {
+            controller = 'document'
+            action = 'download'
+        }
 
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')

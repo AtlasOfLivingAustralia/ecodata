@@ -14,8 +14,6 @@ class DocumentServiceSpec extends Specification implements ServiceUnitTest<Docum
     DocumentService service = new DocumentService()
     File tempUploadDir
     File tempArchiveDir
-   // def grailsApplication
-    //Map grailsApplication
 
     def setup() {
         File tempDir = File.createTempDir()
@@ -109,5 +107,23 @@ class DocumentServiceSpec extends Specification implements ServiceUnitTest<Docum
 
     }
 
+    def "The full path method prepends the app.file.upload.path config item"() {
+        expect:
+        service.fullPath("2020-01", "myfile.jpg") == tempUploadDir.getAbsolutePath() + File.separator + "2020-01" + File.separator + "myfile.jpg"
+        service.fullPath("2020-01", "myfile.jpg", true) == tempUploadDir.getCanonicalPath() + File.separator + "2020-01" + File.separator + "myfile.jpg"
+    }
+
+    def "The document service can validate a path to protect from file traversal vulnerabilities"(String path, String filename, boolean expectedResult) {
+        expect:
+        service.validateDocumentFilePath(path, filename) == expectedResult
+
+        where:
+        path      | filename        | expectedResult
+        "2020-01" | "file1.jpg"     | true
+        "../../"  | "file"          | false
+        null      | "../../../file" | false
+        ""        | "../../../file" | false
+        "/etc/"   | "file"          | false
+    }
 
 }

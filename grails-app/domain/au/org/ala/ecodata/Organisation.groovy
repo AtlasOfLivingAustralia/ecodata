@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
+import org.springframework.validation.Errors
 
 /**
  * Represents an organisation that manages projects in fieldcapture.
@@ -10,6 +11,8 @@ class Organisation {
 
 
     ObjectId id
+    /** The hubId of the Hub in which this organisation was created */
+    String hubId
     String organisationId
     String acronym
     String name
@@ -37,5 +40,8 @@ class Organisation {
         description nullable: true
         collectoryInstitutionId nullable: true
         abn nullable: true
+        hubId nullable: true, validator: { String hubId, Organisation organisation, Errors errors ->
+            GormMongoUtil.validateWriteOnceProperty(organisation, 'organisationId', 'hubId', errors)
+        }
     }
 }
