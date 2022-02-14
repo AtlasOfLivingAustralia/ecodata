@@ -25,9 +25,9 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     String dataProviderId = 'dp1'
     String dataResourceId = 'dr1'
 
-    boolean loadExternalBeans() {
-        true
-    }
+//    boolean loadExternalBeans() {
+//        true
+//    }
 
 
     def setup() {

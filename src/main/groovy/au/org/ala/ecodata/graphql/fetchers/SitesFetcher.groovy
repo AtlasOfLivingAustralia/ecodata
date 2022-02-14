@@ -4,6 +4,7 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.reporting.ShapefileBuilder
 import grails.core.GrailsApplication
 import graphql.GraphQLException
+import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class SitesFetcher implements graphql.schema.DataFetcher<List<Site>> {
+class SitesFetcher implements DataFetcher<List<Site>> {
 
     public SitesFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
                         SiteService siteService) {

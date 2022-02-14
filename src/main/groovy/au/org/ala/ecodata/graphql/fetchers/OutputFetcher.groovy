@@ -12,10 +12,11 @@ import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.Summary
 import grails.core.GrailsApplication
 import grails.util.Holders
+import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.springframework.context.MessageSource
 
-class OutputFetcher implements graphql.schema.DataFetcher<List<Output>> {
+class OutputFetcher implements DataFetcher<List<Output>> {
 
     public OutputFetcher(MetadataService metadataService, MessageSource messageSource, GrailsApplication grailsApplication) {
 

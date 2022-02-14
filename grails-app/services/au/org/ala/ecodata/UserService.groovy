@@ -19,7 +19,6 @@ class UserService {
     AuthService authService
     WebService webService
     GrailsApplication grailsApplication
-    //UserService userService
     UserDetailsClient userDetailsClient
 
     /** Limit to the maximum number of Users returned by queries */

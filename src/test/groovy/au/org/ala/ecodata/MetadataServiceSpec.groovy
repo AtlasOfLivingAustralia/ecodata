@@ -10,11 +10,12 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
     SettingService settingService = Mock(SettingService)
 
     def setup() {
-        Map grailsApplication = [config:[app:[facets:[geographic:[:]]], google: [geocode: [url: 'url'], api: [key:'abc']], spatial: [intersectUrl: 'url']]]
+        service.grailsApplication = grailsApplication
+        grailsApplication.config.google = [geocode: [url: 'url'], api: [key:'abc']]
+        grailsApplication.config.spatial= [intersectUrl: 'url']
         grailsApplication.config.app.facets.geographic.contextual = ['state':'cl927', 'cmz':'cl2112']
         grailsApplication.config.app.facets.geographic.grouped = [other:['australian_coral_ecoregions':'cl917'], gerSubRegion:['gerBorderRanges':'cl1062']]
         grailsApplication.config.app.facets.geographic.special = [:]
-        service.grailsApplication = grailsApplication
         service.settingService = settingService
         service.webService = webService
         mockDomain Score

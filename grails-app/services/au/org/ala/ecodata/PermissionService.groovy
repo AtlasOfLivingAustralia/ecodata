@@ -10,7 +10,7 @@ import static au.org.ala.ecodata.Status.DELETED
 class PermissionService {
 
     static transactional = false
-    UserService userService // found in ala-auth-plugin
+    UserService userService
     ProjectController projectController
     def grailsApplication, webService, hubService
 

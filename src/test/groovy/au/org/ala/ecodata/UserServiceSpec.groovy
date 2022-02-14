@@ -18,7 +18,6 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         new Hub(hubId:'h1', urlPath:"hub1").save(flush:true, failOnError:true)
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
         service.webService = webService
-        grailsApplication.config.userDetails = [url:"http://devt.ala.org.au:${wiremock.port}/userdetails/"]
     }
 
     def cleanup() {
@@ -151,7 +150,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
-        1 * userService.getUserForUserId(username) >> [userId:'u1']
+        1 * service.getUserForUserId(username) >> [userId:'u1']
 
         and:
         userId == 'u1'
@@ -178,7 +177,6 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[statusCode:403]]
-        //0 * authService._
 
         and:
         !userId
@@ -188,7 +186,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
-        //1 * userService.getUserForUserId(username) >> null
+        1 * service.getUserForUserId(username) >> null
 
         and:
         !userId

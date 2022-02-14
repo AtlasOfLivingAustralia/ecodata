@@ -8,6 +8,7 @@ import com.mongodb.client.FindIterable
 import com.mongodb.client.model.Filters
 import grails.util.Holders
 import graphql.GraphQLException
+import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.aggregations.Aggregation
@@ -17,7 +18,7 @@ import java.text.SimpleDateFormat
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
 
-class ProjectsFetcher implements graphql.schema.DataFetcher<List<Project>> {
+class ProjectsFetcher implements DataFetcher<List<Project>> {
 
     public ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
                            ReportService reportService, CacheService cacheService, HubService hubService) {

@@ -5,12 +5,13 @@ import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.Summary
 import grails.core.GrailsApplication
 import grails.util.Holders
+import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.apache.commons.lang.WordUtils
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.context.MessageSource
 
-class ActivityFetcher implements graphql.schema.DataFetcher<List<Activity>> {
+class ActivityFetcher implements DataFetcher<List<Activity>> {
 
     public ActivityFetcher(ElasticSearchService elasticSearchService, PermissionService permissionService, MetadataService metadataService, MessageSource messageSource, GrailsApplication grailsApplication) {
 

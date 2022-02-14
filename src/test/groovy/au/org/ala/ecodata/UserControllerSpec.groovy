@@ -18,9 +18,9 @@ class UserControllerSpec extends Specification implements ControllerUnitTest<Use
         mockDomain(User)
     }
 
-    boolean loadExternalBeans() {
-        true
-    }
+//    boolean loadExternalBeans() {
+//        true
+//    }
 
     def cleanup() {
     }
