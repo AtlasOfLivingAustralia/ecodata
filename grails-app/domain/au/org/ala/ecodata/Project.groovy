@@ -102,7 +102,6 @@ class Project {
 
     /** The program of work this project is a part of, if any */
     String programId
-    Hub hub
 
     /** Grant/procurement etc */
     String fundingType
