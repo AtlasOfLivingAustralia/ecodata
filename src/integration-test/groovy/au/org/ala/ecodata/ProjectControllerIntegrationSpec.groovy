@@ -31,7 +31,8 @@ class ProjectControllerIntegrationSpec extends Specification {
         projectController.projectService = projectService
         projectController.projectService.collectoryService = Mock(CollectoryService)
         projectController.projectService.webService = Mock(WebService)
-        projectController.projectService.grailsApplication = [mainContext: [commonService: commonService],config: [collectory: [baseURL: "test"]]]
+        //projectController.projectService.grailsApplication = [mainContext: [commonService: commonService],config: [collectory: [baseURL: "test"]]]
+        projectController.projectService.grailsApplication.config.collectory.baseURL = "test"
     }
 
     def cleanup() {

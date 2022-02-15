@@ -81,7 +81,7 @@ dependencies {
     compile "org.grails:grails-plugin-codecs"
     compile "org.grails.plugins:mongodb:7.0.1"
     compile "org.grails.plugins:gorm-graphql-plugin:2.0.0"
-    implementation "org.hibernate:hibernate-validator:6.2.0.Final"
+    compile "org.hibernate:hibernate-validator:6.2.0.Final"
     //compile 'org.grails:grails-datastore-rest-client'
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"

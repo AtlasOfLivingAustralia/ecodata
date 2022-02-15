@@ -2,16 +2,16 @@ package au.org.ala.ecodata
 
 import geb.Browser
 import geb.spock.GebReportingSpec
+import groovy.util.logging.Slf4j
 import org.apache.logging.log4j.Logger
 //import pages.HomePage
 import spock.lang.Shared
 
 /**
- * Helper class for functional tests in fieldcapture.
+ * Helper class for functional tests.
  */
+@Slf4j
 class FunctionalTestHelper extends GebReportingSpec {
-
-    static Logger log = Logger.getLogger(FunctionalTestHelper.class)
 
     @Shared def testConfig
 
