@@ -116,7 +116,7 @@ class CSProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         then:
         workbook.numberOfSheets == 4
         Sheet paSheet = workbook.getSheet(paName)
-        paSheet.physicalNumberOfRows == 1
+        paSheet.physicalNumberOfRows == 2
         List summaryRow =  ExportTestUtils.readRow(0, paSheet)
         List activityHeaders = summaryRow.subList(0, 7)
         activityHeaders == csProjectXlsExporter.surveyHeaders.subList(0, 7)

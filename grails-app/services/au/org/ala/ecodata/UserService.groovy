@@ -3,15 +3,8 @@ package au.org.ala.ecodata
 import au.org.ala.userdetails.UserDetailsClient
 import au.org.ala.userdetails.UserDetailsFromIdListRequest
 import au.org.ala.ws.security.AuthService
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Rfc3339DateJsonAdapter
 import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
-import okhttp3.OkHttpClient
-
-import javax.annotation.PostConstruct
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 class UserService {
 
@@ -25,15 +18,6 @@ class UserService {
     static final int MAX_QUERY_RESULT_SIZE = 1000
 
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
-
-    @PostConstruct
-    void initialiseUserDetailsClient() {
-        Integer readTimeout = 3000
-        OkHttpClient userDetailsHttpClient = new OkHttpClient.Builder().readTimeout(readTimeout, MILLISECONDS).build()
-        Moshi moshi = new Moshi.Builder().add(Date, new Rfc3339DateJsonAdapter().nullSafe()).build()
-        String baseUrl = grailsApplication.config.getProperty("userDetails.url")
-        userDetailsClient = new UserDetailsClient.Builder(userDetailsHttpClient, baseUrl).moshi(moshi).build()
-    }
 
     def getCurrentUserDisplayName() {
         String displayName = authService.displayName

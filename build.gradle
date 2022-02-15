@@ -164,6 +164,8 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
+    testCompile "com.squareup.retrofit2:retrofit-mock:2.4.0"
+
     runtime "org.slf4j:jul-to-slf4j:1.7.7"
     runtime "org.hsqldb:hsqldb:2.3.1"
 }

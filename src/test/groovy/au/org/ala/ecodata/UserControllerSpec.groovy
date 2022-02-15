@@ -5,6 +5,7 @@ import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import spock.lang.Specification
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 
 class UserControllerSpec extends Specification implements ControllerUnitTest<UserController>, DataTest {
 
@@ -16,11 +17,11 @@ class UserControllerSpec extends Specification implements ControllerUnitTest<Use
         controller.webService = webService
         mockDomain(Hub)
         mockDomain(User)
-    }
 
-//    boolean loadExternalBeans() {
-//        true
-//    }
+        defineBeans {
+            formattedStringConverter(ISODateBindingConverter)
+        }
+    }
 
     def cleanup() {
     }

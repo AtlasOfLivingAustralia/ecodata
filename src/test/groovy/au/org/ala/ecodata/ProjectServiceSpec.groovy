@@ -6,6 +6,7 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 
 import java.text.SimpleDateFormat
 
@@ -25,10 +26,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     String dataProviderId = 'dp1'
     String dataResourceId = 'dr1'
 
-//    boolean loadExternalBeans() {
-//        true
-//    }
-
 
     def setup() {
 
@@ -37,6 +34,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         defineBeans {
             commonService(CommonService)
             collectoryService(CollectoryService)
+            formattedStringConverter(ISODateBindingConverter)
         }
 
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider], collectoryIntegrationEnabled: true]

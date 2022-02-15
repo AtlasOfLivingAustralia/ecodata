@@ -3,6 +3,8 @@ package au.org.ala.ecodata
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Unroll
+import au.org.ala.userdetails.UserDetailsClient
+import retrofit2.mock.Calls
 
 /**
  * We are extending the mongo spec as one of the main things we need to test are complex queries on
@@ -11,6 +13,7 @@ import spock.lang.Unroll
 class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> {
 
     WebService webService = Mock(WebService)
+    def userDetailsClient = Stub(UserDetailsClient)
 
     def setup() {
         User.findAll().each{it.delete(flush:true)}
@@ -18,6 +21,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         new Hub(hubId:'h1', urlPath:"hub1").save(flush:true, failOnError:true)
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
         service.webService = webService
+        service.userDetailsClient = userDetailsClient
     }
 
     def cleanup() {
@@ -144,13 +148,13 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         setup:
         String username = "user"
         String authKey = "1234"
+        userDetailsClient.getUserDetails(username, true) >> Calls.response([userId:'u1'])
 
         when:
         String userId = service.authorize(username, authKey)
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
-        1 * service.getUserForUserId(username) >> [userId:'u1']
 
         and:
         userId == 'u1'
@@ -183,10 +187,10 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         when:
         userId = service.authorize(username, authKey)
+        userDetailsClient.getUserDetails(username, true) >> Calls.response(null)
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
-        1 * service.getUserForUserId(username) >> null
 
         and:
         !userId
