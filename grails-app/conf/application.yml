@@ -17,6 +17,19 @@ grails:
     spring:
         transactionManagement:
             proxies: false
+app:
+    http:
+        header:
+            hubUrlPath: "X-ALA-hub-urlPath"
+    path:
+        document:
+            url:
+                - 'thumbnailUrl'
+                - 'documents.thumbnailUrl'
+                - 'url'
+                - 'imageUrl'
+                - 'logoUrl'
+
 info:
     app:
         name: '@info.app.name@'

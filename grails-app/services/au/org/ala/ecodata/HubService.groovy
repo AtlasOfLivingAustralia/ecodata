@@ -10,9 +10,11 @@ import static au.org.ala.ecodata.Status.DELETED
 class HubService {
 
     static transactional = 'mongo'
+    def grailsApplication
     MessageSource messageSource
     CommonService commonService
     PermissionService permissionService
+    CacheService cacheService
 
     Hub get(String id, includeDeleted = false) {
 
@@ -122,5 +124,11 @@ class HubService {
         }.list()
     }
 
+    List<String> findBioCollectHubs() {
+        cacheService.get('biocollect-hubs', { ->
+            def meritHub = grailsApplication.config.getProperty('app.hub.merit')
+            Hub.findAllByUrlPathNotEqual(meritHub).collect { it.urlPath }
+        })
+    }
 
 }
