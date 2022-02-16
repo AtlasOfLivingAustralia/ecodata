@@ -22,9 +22,9 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
 
     void "interceptor must set document host name if request is coming from biocollect hub"() {
         given:
-        interceptor.hubService.findBioCollectHubs() >> ['ala']
+        def hostName = 'https://biocollect.ala.org.au'
         def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.app.http.header.hubUrlPath, 'ala')
+        request.addHeader(grailsApplication.config.app.http.header.hostName, hostName)
 
         when:
             withInterceptors([controller: DocumentationController]) {
@@ -32,13 +32,14 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
             }
 
         then:
-            GrailsWebRequest.lookup().getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) == grailsApplication.config.biocollect.hostname
+            GrailsWebRequest.lookup().getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) == hostName
     }
 
-    void "interceptor must set document host name if request is coming from MERIT"() {
+    void "interceptor must not set document host name if incorrect url is supplied"() {
         given:
-        interceptor.hubService.findBioCollectHubs() >> ['ala']
+        def hostName = ''
         def controller = (DocumentationController) mockController(DocumentationController)
+        request.addHeader(grailsApplication.config.app.http.header.hostName, hostName)
 
         when:
         withInterceptors([controller: DocumentationController]) {

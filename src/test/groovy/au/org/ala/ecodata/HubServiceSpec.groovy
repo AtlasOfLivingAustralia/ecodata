@@ -57,18 +57,4 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         service.findHubsEligibleForAccessExpiry().size() == 1
     }
 
-    void "All hubs expect MERIT hub are listed"() {
-        setup:
-        def result
-        service.cacheService = new CacheService()
-        new Hub(urlPath:"test1", hubId:"hub1").save(flush:true, deleteOnerror:true)
-
-        when:
-        // MERIT hub name is set in application.groovy
-        result = service.findBioCollectHubs()
-
-        then:
-        result.size() == 2
-        result == ["test", "test1"]
-    }
 }

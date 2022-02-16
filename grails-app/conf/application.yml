@@ -20,7 +20,7 @@ grails:
 app:
     http:
         header:
-            hubUrlPath: "X-ALA-hub-urlPath"
+            hostName: "X-ALA-hostname"
     path:
         document:
             url:

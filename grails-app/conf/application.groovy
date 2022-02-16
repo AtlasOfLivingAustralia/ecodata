@@ -84,10 +84,6 @@ if (!app.external.api.version) {
     app.external.api.version = 'draft'
 }
 
-if (!app.hub.merit) {
-    app.hub.merit = 'merit'
-}
-
 if (!webservice.connectTimeout) {
     webservice.connectTimeout = 10000
 }

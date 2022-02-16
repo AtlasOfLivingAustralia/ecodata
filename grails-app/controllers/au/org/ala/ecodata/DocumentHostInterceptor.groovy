@@ -12,9 +12,17 @@ class DocumentHostInterceptor {
     }
 
     boolean before() {
-        String hubName = request.getHeader(grailsApplication.config.app.http.header.hubUrlPath)
-        if (hubService.findBioCollectHubs()?.contains(hubName)) {
-            GrailsWebRequest.lookup().setAttribute(DOCUMENT_HOST_NAME, grailsApplication.config.biocollect.hostname, RequestAttributes.SCOPE_REQUEST)
+        String hostName = request.getHeader(grailsApplication.config.app.http.header.hostName)
+        if (hostName) {
+            try {
+                URI host = new URI(hostName)
+                if (host.scheme && host.host) {
+                    hostName = "${host.scheme}://${host.host}${host.port != -1?':' + host.port : ''}"
+                    GrailsWebRequest.lookup().setAttribute(DOCUMENT_HOST_NAME, hostName, RequestAttributes.SCOPE_REQUEST)
+                }
+            } catch(Exception e) {
+                log.error("Error parsing host name", e)
+            }
         }
 
         true
