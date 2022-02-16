@@ -77,6 +77,7 @@ class Project {
     List<String> industries = []
     List<String> bushfireCategories = []
     boolean isBushfire
+    String projLifecycleStatus
 
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
