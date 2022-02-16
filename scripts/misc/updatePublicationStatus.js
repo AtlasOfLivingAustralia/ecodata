@@ -6,7 +6,7 @@ print("Start to update projLifecycleStatus");
 db.project.update(
 
     { status: 'active', isMERIT: false },
-    { $set: { projLifecycleStatus: 'Published' } },
+    { $set: { projLifecycleStatus: 'published' } },
     { upsert: false, multi: true }
 
 )
