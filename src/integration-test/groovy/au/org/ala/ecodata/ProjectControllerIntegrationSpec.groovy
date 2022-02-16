@@ -52,7 +52,8 @@ class ProjectControllerIntegrationSpec extends Specification {
         def resp = extractJson(projectController.response.text)
 
         then: "ensure we get a response including a projectId"
-        projectController.response.text != ""
+        projectController.response.text.contains("created")
+        projectController.response.status == 200
         resp != null
         def projectId = resp.projectId
         projectController.response.contentType == 'application/json;charset=UTF-8'
