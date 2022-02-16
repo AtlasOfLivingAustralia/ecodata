@@ -244,7 +244,7 @@ spring:
                         issuer-uri: "https://auth-test.ala.org.au/cas/oidc"
                 registration:
                     ala:
-                        client-id: auth-test-oidc-client-id
+                        client-id: auth-test-oidc-client-id-localhost
                         client-secret: 9a3c940918ca7820d9edc868f57a6dee09503199
                         scope: openid,profile,email,ala,roles,user_defined,offline_access
 
