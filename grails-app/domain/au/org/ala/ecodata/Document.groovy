@@ -59,6 +59,7 @@ class Document {
     String outputId
     String organisationId
     String programId
+    String managementUnitId
     String reportId
     String managementUnitId
     String hubId

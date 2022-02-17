@@ -87,7 +87,7 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
                 Map query = [:]
                 query.name = environment.selectionSet.fields.name
                 query.arguments = environment.selectionSet.fields.arguments
-                query.selections = environment.selectionSet.fields.selectionSet.selections
+                query.selections = environment.selectionSet.fields.selectionSet
                 log.info ('GrapqhQl API request, UserId: ' + UserService.currentUser()?.userName + ", Query: " + query)
                 return true
             }

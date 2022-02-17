@@ -1262,7 +1262,7 @@ class ElasticSearchService {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
-        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria)
+        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria, applyAccessControlFilter)
         client.search(request, RequestOptions.DEFAULT)
     }
 
