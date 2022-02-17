@@ -7,11 +7,6 @@
         "projectId" : {
           "type" : "keyword"
         },
-        "hubId": {
-          "type": "string",
-          "index": "not_analyzed"
-        },
-
         "projects" : {
           "type" : "keyword"
         },
