@@ -17,6 +17,20 @@ grails:
     spring:
         transactionManagement:
             proxies: false
+app:
+    http:
+        header:
+            hostName: "X-ALA-hostname"
+    path:
+        document:
+            url:
+                - 'thumbnailUrl'
+                - 'documents.thumbnailUrl'
+                - 'url'
+                - 'imageUrl'
+                - 'logoUrl'
+    allowedHostName: 'ala.org.au'
+
 info:
     app:
         name: '@info.app.name@'
