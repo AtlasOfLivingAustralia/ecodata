@@ -44,6 +44,7 @@ class DocumentUrlBuilderSpec extends Specification implements GrailsUnitTest {
 
     def "updateDocumentURL should add hostname to all listed properties"() {
         def result
+        grailsApplication.config.getProperty("config.app.uploads.url", String)
 
         when:
         result = DocumentUrlBuilder.updateDocumentURL(source, 'https://biocollect.ala.org.au')
