@@ -24,7 +24,6 @@ import spock.lang.Specification
 class DocumentUrlBuilderSpec extends Specification implements GrailsUnitTest {
     def source
     Closure doWithConfig() {{ config->
-        config.biocollect.hostname = 'https://biocollect.ala.org.au'
         config.app.uploads.url = '/document/download/'
         config.app.path.document.url = ['a.b.c', 'xyz', 'abc', 'abc.dfg', 'f.g', 'documents', 'documents.image']
     }}
@@ -47,7 +46,7 @@ class DocumentUrlBuilderSpec extends Specification implements GrailsUnitTest {
         def result
 
         when:
-        result = DocumentUrlBuilder.updateDocumentURL(source, grailsApplication.config.biocollect.hostname)
+        result = DocumentUrlBuilder.updateDocumentURL(source, 'https://biocollect.ala.org.au')
 
         then:
         result == [

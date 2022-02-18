@@ -16,7 +16,7 @@ class DocumentHostInterceptor {
         if (hostName) {
             try {
                 URI host = new URI(hostName)
-                if (host.scheme && host.host) {
+                if (host.scheme && host.host?.endsWith(grailsApplication.config.app.allowedHostName)) {
                     hostName = "${host.scheme}://${host.host}${host.port != -1?':' + host.port : ''}"
                     GrailsWebRequest.lookup().setAttribute(DOCUMENT_HOST_NAME, hostName, RequestAttributes.SCOPE_REQUEST)
                 }
