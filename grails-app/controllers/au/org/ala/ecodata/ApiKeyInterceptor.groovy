@@ -1,7 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ws.security.AlaWebServiceAuthFilter
+import au.org.ala.ws.security.AuthenticatedUser
 import au.org.ala.ws.security.RequireAuth
 import grails.converters.JSON
+
+import javax.inject.Inject
 
 class ApiKeyInterceptor {
 
@@ -11,6 +15,9 @@ class ApiKeyInterceptor {
     PermissionService permissionService
     CommonService commonService
     ActivityService activityService
+
+    @Inject
+    AlaWebServiceAuthFilter alaWebServiceAuthFilter
 
     def LOCALHOST_IP = '127.0.0.1'
 
@@ -86,15 +93,28 @@ class ApiKeyInterceptor {
                 if(controllerClass?.isAnnotationPresent(RequireJWT) || method?.isAnnotationPresent(RequireJWT)){
                     String userid = request.getUserPrincipal()?.principal?.attributes?.userid
 
-                    if(!userid){
+                    String authorizationHeader = request.getHeader("Authorization");
+                    if (authorizationHeader != null) {
+                        if (authorizationHeader.startsWith("Bearer")) {
+                            Optional<AuthenticatedUser> authenticatedUser = alaWebServiceAuthFilter.jwtService.checkJWT(authorizationHeader);
+                            if (authenticatedUser.isPresent()) {
+                                return true
+                            }
+                        }
+                        else {
+                            Map map = [error: 'Access denied', status: 401]
+                            response.status = 401
+                            log.warn ('No Authorization Bearer token')
+                            render map as JSON
+                            return false
+                        }
+                    }
+                    else {
                         Map map = [error: 'Access denied', status: 401]
                         response.status = 401
-                        log.warn ('No userId')
+                        log.warn ('No Authorization header')
                         render map as JSON
                         return false
-                    }
-                    else{
-                        return  true
                     }
                 }
 
