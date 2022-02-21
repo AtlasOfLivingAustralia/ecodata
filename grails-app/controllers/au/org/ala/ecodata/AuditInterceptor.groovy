@@ -18,9 +18,9 @@ class AuditInterceptor implements GrailsConfigurationAware {
     boolean before() {
         // userId is set from either the request param userId or failing that it tries to get it from
         // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
-        def userId = request.getHeader(httpRequestHeaderForUserId)?: request.getUserPrincipal()?.principal?.attributes?.id
-        if (userId) {
-            def userDetails = userService.setCurrentUser(userId)
+        def userId = request.getHeader(httpRequestHeaderForUserId)?: request.getUserPrincipal()?.principal?.attributes?.userid
+        if (userId != null) {
+            def userDetails = userService.setCurrentUser(userId.toString())
             if (userDetails) {
                 // We set the current user details in the request scope because
                 // the 'afterView' hook can be called prior to the actual rendering (despite the name)

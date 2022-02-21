@@ -71,15 +71,31 @@ class ApiKeyInterceptor {
 
             // Allow migration to the RequireAuth annotation.
             if (!controllerClass?.isAnnotationPresent(RequireAuth) && !method?.isAnnotationPresent(RequireAuth)) {
-                def whiteList = buildWhiteList()
-                def clientIp = getClientIP(request)
-                def ipOk = checkClientIp(clientIp, whiteList)
+//                Api whitelisting will be removed.
+//                def whiteList = buildWhiteList()
+//                def clientIp = getClientIP(request)
+//                def ipOk = checkClientIp(clientIp, whiteList)
+//
+//                // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
+//                if (!ipOk) {
+//                    log.warn("Non-authorised IP address - ${clientIp}" )
+//                    result.status = 403
+//                    result.error = "not authorised"
+//                }
+                // Support RequireJWT
+                if(controllerClass?.isAnnotationPresent(RequireJWT) || method?.isAnnotationPresent(RequireJWT)){
+                    String userid = request.getUserPrincipal()?.principal?.attributes?.userid
 
-                // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
-                if (!ipOk) {
-                    log.warn("Non-authorised IP address - ${clientIp}" )
-                    result.status = 403
-                    result.error = "not authorised"
+                    if(!userid){
+                        Map map = [error: 'Access denied', status: 401]
+                        response.status = 401
+                        log.warn ('No userId')
+                        render map as JSON
+                        return false
+                    }
+                    else{
+                        return  true
+                    }
                 }
 
                 // Support RequireApiKey on top of ip restriction.
