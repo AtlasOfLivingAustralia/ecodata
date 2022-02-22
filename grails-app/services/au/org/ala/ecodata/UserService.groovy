@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.userdetails.UserDetailsClient
 import au.org.ala.userdetails.UserDetailsFromIdListRequest
-import au.org.ala.ws.security.AuthService
+import au.org.ala.web.AuthService
 import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 
@@ -62,30 +62,19 @@ class UserService {
      */
     def getRolesForUser(String userId = null) {
         userId = userId ?: getCurrentUserDetails().userId
-        getUserForUserId(userId, true)?.roles ?: []
+        authService.getUserForUserId(userId, true)?.roles ?: []
     }
 
     def userInRole(Object role){
         return authService.userInRole(role)
     }
 
-    @Cacheable("userDetailsCache")
-    synchronized def getUserForUserId(String userId, boolean includeProps = true) {
-        if (!userId) return null // this would have failed anyway
-        def call = userDetailsClient.getUserDetails(userId, includeProps)
-        try {
-            def response = call.execute()
-            if (response.successful) {
-                return response.body()
-            } else {
-                log.warn("Failed to retrieve user details for userId: $userId, includeProps: $includeProps. Error was: ${response.message()}")
-            }
-        } catch (Exception ex) {
-            log.error("Exception caught trying get find user details for $userId.", ex)
+    synchronized def getUserForUserId(String userId) {
+        if (!userId) {
+            return null
         }
-        return null
+        return authService.getUserForUserId(userId)
     }
-
 
     /**
      * This method gets called by a filter at the beginning of the request (if a userId parameter is on the URL)
@@ -203,22 +192,6 @@ class UserService {
                 hubId == hubId && lastLoginTime < toDate && lastLoginTime >= fromDate
             }
         }.list(options)
-    }
-
-    @Cacheable("userDetailsByIdCache")
-    def getUserDetailsById(List<String> userIds, boolean includeProps = true) {
-        def call = userDetailsClient.getUserDetailsFromIdList(new UserDetailsFromIdListRequest(userIds, includeProps))
-        try {
-            def response = call.execute()
-            if (response.successful) {
-                return response.body()
-            } else {
-                log.warn("Failed to retrieve user details. Error was: ${response.message()}")
-            }
-        } catch (Exception e) {
-            log.error("Exception caught retrieving userdetails for ${userIds}", e)
-        }
-        return null
     }
 
     /**

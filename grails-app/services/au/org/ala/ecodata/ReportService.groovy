@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.*
+import au.org.ala.web.AuthService
 import groovy.util.logging.Slf4j
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -21,6 +22,7 @@ class ReportService {
     OutputService outputService
     MetadataService metadataService
     UserService userService
+    AuthService authService
 
     def findScoresByLabel(List labels) {
         Score.findAllByLabelInList(labels)
@@ -308,7 +310,7 @@ class ReportService {
 
 
     private Map<String, au.org.ala.web.UserDetails> lookupUserDetails(List<String> userIds) {
-        def userList = userService.getUserDetailsById(userIds)
+        def userList = authService.getUserDetailsById(userIds)
         userList?.users
     }
 

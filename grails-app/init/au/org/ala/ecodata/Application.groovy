@@ -30,9 +30,6 @@ import org.springframework.context.annotation.ComponentScan
 //@Slf4j
 class Application extends GrailsAutoConfiguration {
 
-    @Autowired
-    GrailsApplication grailsApplication
-
     static void main(String[] args) {
         GrailsApp.run(Application, args)
     }
@@ -50,26 +47,5 @@ class Application extends GrailsAutoConfiguration {
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         return schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
-    }
-
-    @ConditionalOnMissingBean(name = "userDetailsHttpClient")
-    @Bean(name = ["defaultUserDetailsHttpClient", "userDetailsHttpClient"])
-    OkHttpClient userDetailsHttpClient() {
-        Integer readTimeout = 3000
-        return new OkHttpClient.Builder().readTimeout(readTimeout, MILLISECONDS).build()
-    }
-
-    @ConditionalOnMissingBean(name = "userDetailsMoshi")
-    @Bean(name = ["defaultUserDetailsMoshi", "userDetailsMoshi"])
-    Moshi userDetailsMoshi() {
-        return new Moshi.Builder().add(Date, new Rfc3339DateJsonAdapter().nullSafe()).build()
-    }
-
-    @Bean("userDetailsClient")
-    UserDetailsClient userDetailsClient(@Qualifier("userDetailsHttpClient") OkHttpClient userDetailsHttpClient,
-                                        @Qualifier('userDetailsMoshi') Moshi userDetailsMoshi,
-                                        GrailsApplication grailsApplication) {
-        String baseUrl = grailsApplication.config.getProperty("userDetails.url")
-        return new UserDetailsClient.Builder(userDetailsHttpClient, baseUrl).moshi(userDetailsMoshi).build()
     }
 }

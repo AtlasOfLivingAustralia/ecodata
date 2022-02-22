@@ -1,15 +1,18 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 
 class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 
     UserService userService = Mock(UserService)
+    AuthService authService = Mock(AuthService)
 
     void setup() {
         cleanupData()
         service.userService = userService
+        service.authService = authService
         userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
     }
 
@@ -316,7 +319,7 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         def resp = service.getMembersForHubPerPage(hubId, offset, max, userId, roles)
 
         then:
-        1 * userService.getUserDetailsById(userIds) >> []
+        1 * authService.getUserDetailsById(userIds) >> []
         resp.count == 1
     }
 

@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
 import grails.gorm.DetachedCriteria
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
@@ -10,6 +11,7 @@ import static au.org.ala.ecodata.Status.DELETED
 class PermissionService {
 
     static transactional = false
+    AuthService authService
     UserService userService
     ProjectController projectController
     def grailsApplication, webService, hubService
@@ -147,7 +149,7 @@ class PermissionService {
     }
 
     def addUserAsEditorToProject(currentUserId, targetUserId, projectId) {
-        if ((isUserAdminForProject(currentUserId, projectId) || userService.userInRole("ROLE_ADMIN")) && targetUserId) {
+        if ((isUserAdminForProject(currentUserId, projectId) || authService.userInRole("ROLE_ADMIN")) && targetUserId) {
             addUserAsRoleToProject(targetUserId, AccessLevel.editor, projectId)
         }
     }
@@ -196,7 +198,7 @@ class PermissionService {
             out.put(it.userId,rec);
 
         }
-        def userList = userService.getUserDetailsById(userIds)
+        def userList = authService.getUserDetailsById(userIds)
 
         if (userList) {
             def users = userList['users']
@@ -243,7 +245,7 @@ class PermissionService {
 
         }
 
-        def userList = userService.getUserDetailsById(userIds)
+        def userList = authService.getUserDetailsById(userIds)
         if (userList) {
             def users = userList['users']
 
@@ -315,7 +317,7 @@ class PermissionService {
             out.put(it.userId,toMap(it,false))
         }
 
-        def userList = userService.getUserDetailsById(userIds)
+        def userList = authService.getUserDetailsById(userIds)
         if (userList) {
             def users = userList['users']
 

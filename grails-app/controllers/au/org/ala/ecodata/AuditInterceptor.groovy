@@ -2,9 +2,6 @@ package au.org.ala.ecodata
 
 import grails.core.support.GrailsConfigurationAware
 import grails.config.Config
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.oauth2.core.user.OAuth2UserAuthority
 
 class AuditInterceptor implements GrailsConfigurationAware {
 

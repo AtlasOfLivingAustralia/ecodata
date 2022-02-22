@@ -6,7 +6,7 @@ class ECTagLib {
 
     static namespace = "ec"
 
-    def userService, metadataService
+    def userService, metadataService, authService
 
     /**
      * @attr active
@@ -33,7 +33,14 @@ class ECTagLib {
         def mb = new MarkupBuilder(out)
 
         mb.span(class:'username nav-text') {
-            mkp.yield(userService.currentUserDisplayName)
+            def displayName = authService.displayName
+            if (displayName) {
+                mkp.yield(displayName)
+            } else if (request.userPrincipal) {
+                mkp.yield(request.userPrincipal)
+            } else {
+                mkp.yield(userService.currentUserDisplayName)
+            }
         }
     }
 
@@ -43,13 +50,13 @@ class ECTagLib {
      * @attr role REQUIRED
      */
     def userInRole = { attrs ->
-        if (userService.userInRole(attrs.role)) {
+        if (authService.userInRole(attrs.role)) {
             out << true
         }
     }
 
     def currentUserId = { attrs, body ->
-        out << userService._currentUser()?.userId
+        out << authService.userDetails()?.userId
     }
 
     /**

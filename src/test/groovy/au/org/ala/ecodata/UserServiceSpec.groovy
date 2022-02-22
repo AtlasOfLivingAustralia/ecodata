@@ -1,10 +1,9 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Unroll
-import au.org.ala.userdetails.UserDetailsClient
-import retrofit2.mock.Calls
 
 /**
  * We are extending the mongo spec as one of the main things we need to test are complex queries on
@@ -13,7 +12,7 @@ import retrofit2.mock.Calls
 class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> {
 
     WebService webService = Mock(WebService)
-    def userDetailsClient = Stub(UserDetailsClient)
+    AuthService authService = Mock(AuthService)
 
     def setup() {
         User.findAll().each{it.delete(flush:true)}
@@ -21,7 +20,8 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         new Hub(hubId:'h1', urlPath:"hub1").save(flush:true, failOnError:true)
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
         service.webService = webService
-        service.userDetailsClient = userDetailsClient
+        service.authService = authService
+        //grailsApplication.config.userDetails = [url:"http://devt.ala.org.au:${wiremock.port}/userdetails/"]
     }
 
     def cleanup() {
@@ -148,13 +148,13 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         setup:
         String username = "user"
         String authKey = "1234"
-        userDetailsClient.getUserDetails(username, true) >> Calls.response([userId:'u1'])
 
         when:
         String userId = service.authorize(username, authKey)
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
+        1 * authService.getUserForUserId(username) >> [userId:'u1']
 
         and:
         userId == 'u1'
@@ -181,16 +181,17 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[statusCode:403]]
+        0 * authService._
 
         and:
         !userId
 
         when:
         userId = service.authorize(username, authKey)
-        userDetailsClient.getUserDetails(username, true) >> Calls.response(null)
 
         then:
         1 * webService.doPostWithParams({it.endsWith('/mobileauth/mobileKey/checkKey')}, [userName:username, authKey:authKey], true) >> [resp:[status:'success']]
+        1 * authService.getUserForUserId(username) >> null
 
         and:
         !userId

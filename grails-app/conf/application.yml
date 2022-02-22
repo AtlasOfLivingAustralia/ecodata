@@ -229,40 +229,16 @@ graphiql:
     headers:
         Authorization: "Bearer <your-token>"
 
-spring:
-    autoconfigure.exclude:
-        - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-        - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
-        - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
-    security:
-        logoutUrl: http://dev.ala.org.au:8080/admin/logout
-        filter.order: -999999
-        oauth2:
-            client:
-                provider:
-                    ala:
-                        issuer-uri: "https://auth-test.ala.org.au/cas/oidc"
-                registration:
-                    ala:
-                        client-id: auth-test-oidc-client-id-localhost
-                        client-secret: 9a3c940918ca7820d9edc868f57a6dee09503199
-                        scope: openid,profile,email,ala,roles,user_defined,offline_access
-
-        jwt:
-            jwk:
-                url: https://auth-test.ala.org.au/cas/oidc/jwks
-
-userDetails:
-    url: https://auth-test.ala.org.au/userdetails
-
-api:
-    whitelist:
-        enabled: false
-    legacy:
-        enabled: false
-    jwt:
-        enabled: true
-
 
 casUrl: https://auth-test.ala.org.au/cas/logout
 appUrl: http://devt.ala.org.au:8080/admin
+
+security:
+    cas:
+        enabled: false
+    oidc:
+        enabled: true
+        discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
+        clientId: auth-test-oidc-client-id-ecodata-localhost
+        client-secret: 9a3c940918ca7820d9edc868f57a6dee09503199
+        scope: openid,profile,email,ala,roles,user_defined,offline_access

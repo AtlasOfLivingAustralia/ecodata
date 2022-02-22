@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.com.bytecode.opencsv.CSVWriter
+import au.org.ala.web.AuthService
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
@@ -37,6 +38,7 @@ class RecordService {
     SensitiveSpeciesService sensitiveSpeciesService
     DocumentService documentService
     CommonService commonService
+    AuthService authService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -313,7 +315,7 @@ class RecordService {
 
         def userDetails = userService.getCurrentUserDetails()
         if (!userDetails && json.userId) {
-            userDetails = userService.getUserForUserId(json.userId)
+            userDetails = authService.getUserForUserId(json.userId)
         }
 
         if (!userDetails) {

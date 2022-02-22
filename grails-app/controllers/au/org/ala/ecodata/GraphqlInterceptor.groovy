@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ws.security.AlaWebServiceAuthFilter
-import au.org.ala.ws.security.AuthenticatedUser
 import grails.converters.JSON
 import au.org.ala.web.UserDetails
 
@@ -11,8 +9,6 @@ class GraphqlInterceptor {
 
     UserService userService
     PermissionService permissionService
-    @Inject
-    AlaWebServiceAuthFilter alaWebServiceAuthFilter
 
     GraphqlInterceptor() {
         match uri: '/graphql/**'
@@ -24,10 +20,7 @@ class GraphqlInterceptor {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             if (authorizationHeader.startsWith("Bearer")) {
-                Optional<AuthenticatedUser> authenticatedUser = alaWebServiceAuthFilter.jwtService.checkJWT(authorizationHeader);
-                if (authenticatedUser.isPresent()) {
-                    return true
-                }
+                return true
             }
             else {
                 accessDeniedError('No Authorization Bearer token')
