@@ -59,6 +59,10 @@ class TabbedExporter {
         this.dataDescriptionMap = dataDescriptionMap
     }
 
+    protected boolean includeDataDescription() {
+        return dataDescriptionMap != null
+    }
+
     public setDateFormat(String dateFormat) {
         exporter.setDateCellFormat(dateFormat)
     }
@@ -454,12 +458,11 @@ class TabbedExporter {
     protected AdditionalSheet addSheetWithProperties(String sheetName, List properties, List headers, List activityConfig = null) {
 
         List updatedHeaders = activityConfig ? headers[2] : headers
-        if (dataDescriptionMap != null) {
+        if (includeDataDescription()) {
             addToDataDictionarySheet(properties, updatedHeaders, activityConfig)
-            int i = 0
-            updatedHeaders = properties.collect { getHeader(it, i++, updatedHeaders) }
+            updatedHeaders = properties
         }
-        getSheet(sheetName, headers)
+        getSheet(sheetName, updatedHeaders)
     }
 
     private void addToDataDictionarySheet(List properties, List headers, List activityConfig) {
