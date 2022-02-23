@@ -15,8 +15,6 @@ class GraphqlInterceptor {
     }
 
     boolean before() {
-        String userName = request.getUserPrincipal()?.principal?.attributes?.id
-
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             if (authorizationHeader.startsWith("Bearer")) {

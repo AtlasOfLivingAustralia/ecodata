@@ -240,5 +240,8 @@ security:
         enabled: true
         discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
         clientId: auth-test-oidc-client-id-ecodata-localhost
-        client-secret: 9a3c940918ca7820d9edc868f57a6dee09503199
+        secret: 9a3c940918ca7820d9edc868f57a6dee09503199
         scope: openid,profile,email,ala,roles,user_defined,offline_access
+        allowUnsignedIdTokens: true
+    jwt:
+        enabled:true
