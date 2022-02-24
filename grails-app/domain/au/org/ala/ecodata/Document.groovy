@@ -48,6 +48,8 @@ class Document {
     String type // image, document, sound, etc
     String role // eg primary, carousel, photoPoint
     List<String> labels = [] // allow for searching on custom attributes
+    String citation
+    String doiLink
 
     String status = ACTIVE
     String projectId
@@ -168,6 +170,8 @@ class Document {
         externalUrl nullable: true
         projectActivityId nullable: true
         labels nullable: true
+        citation nullable: true
+        doiLink nullable: true
         isSciStarter nullable: true
         hosted nullable: true
         identifier nullable: true
