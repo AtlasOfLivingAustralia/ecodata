@@ -215,6 +215,27 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
+    void "Electorate Coord data can be exported"() {
+        setup:
+        String sheet = "Electorate Coord"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, "Electorate Coord", projectXlsExporter.electorateCoordHeaders, excelImportService)
+        results.size() == 1
+        results[0]['Primary State'] == 'ACT'
+        results[0]['Primary Electorate'] == 'Canberra'
+        results[0]['Other States'] == 'NSW'
+        results[0]['Other Electorates'] == 'Taylor'
+
+    }
+
     void "RLP Merit approvals exported to XSLS"() {
         setup:
         String sheet = 'MERI_Approvals'
@@ -1518,7 +1539,13 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "    \"uNRegions\" : [],\n" +
             "    \"workOrderId\" : \"1234565\",\n" +
             "    \"internalOrderId\": \"0987654321\",\n" +
-            "    \"blog\" : []\n" +
+            "    \"blog\" : [],\n" +
+            "    \"geographicInfo\" : {\n" +
+            "        \"primaryState\" : \"ACT\",\n" +
+            "        \"primaryElectorate\" : \"Canberra\",\n" +
+            "        \"otherStates\" : \"NSW\",\n" +
+            "        \"otherElectorates\" : \"Taylor\",\n" +
+            "    }\n" +
             "}"
 
     private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriorities\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriority\":\"Other Priorities, other priorities\",\"progress\":\"started\",\"term\":\"Short-term outcome statement\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"
