@@ -1,11 +1,11 @@
 package au.org.ala.ecodata
 
 import grails.util.Holders
+import org.bson.types.ObjectId
+import org.grails.web.servlet.mvc.GrailsWebRequest
+import org.springframework.web.context.request.RequestAttributes
 
 import static au.org.ala.ecodata.Status.ACTIVE
-
-import org.bson.types.ObjectId
-
 /**
  * Represents documents stored in a filesystem that are accessible via http.
  */
@@ -127,10 +127,11 @@ class Document {
             return identifier
         }
 
+        String hostName = GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) ?: ""
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
-        URI uri = new URI(Holders.config.app.uploads.url + path + encodedFileName)
+        URI uri = new URI(hostName + Holders.config.app.uploads.url + path + encodedFileName)
         return uri.toString()
     }
 

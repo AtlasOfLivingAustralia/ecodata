@@ -1,12 +1,22 @@
-
+import au.org.ala.ecodata.DocumentHostInterceptor
+import au.org.ala.ecodata.DocumentUrlBuilder
 import groovy.transform.Field
 import org.elasticsearch.search.SearchHit
+import org.grails.web.servlet.mvc.GrailsWebRequest
+import org.springframework.web.context.request.RequestAttributes
+
+Map hitSource = searchHit.sourceAsMap
+String hostName =  GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST)
+
+if (hostName) {
+    hitSource = DocumentUrlBuilder.updateDocumentURL(hitSource, hostName)
+}
 
 @Field SearchHit searchHit
 
 json {
     _id searchHit.id
-    _source searchHit.sourceAsMap
+    _source hitSource
     highlightFields searchHit.highlightFields
     //score searchHit.score // This had issues with NaN unable to be serialized
 }
