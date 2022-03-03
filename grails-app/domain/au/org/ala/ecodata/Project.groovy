@@ -107,6 +107,9 @@ class Project {
     /** Information about the organisation/department overseeing the project */
     String portfolio
 
+    /** Electorate Reporting Comment */
+    String comment
+
     static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
@@ -228,6 +231,7 @@ class Project {
         electionCommitmentYear nullable: true
         geographicInfo nullable:true
         portfolio nullable: true
+        comment nullable: true
 
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)

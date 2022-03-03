@@ -3,6 +3,8 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
+import au.org.ala.ecodata.Organisation
+import au.org.ala.ecodata.OrganisationService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
@@ -122,8 +124,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> electorateInternalOrderNoHeadear = (1..3).collect{'Internal Order Number '+it}
     List<String> electorateInternalOrderNoProperties = (0..2).collect{'internalOrderNumber'+it}
-    List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id'] + fundingPeriodHeaders + ['Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
-    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantOpportunityId', 'workerOrderId'] + fundingPeriodProperties + ['nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'electionCommitmentYear', 'portfolio', 'origin']
+    List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
+    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantOpportunityId', 'workerOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'funding', 'nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'origin']
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -139,6 +141,8 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Map of key: management unit id, value: management unit name */
     Map<String, String> managementUnitNames
 
+    Map<String, String> fundingAbn
+
     /** If set to true, activities containing more than one form section will be split over one tab per form section */
     boolean formSectionPerTab = false
 
@@ -149,7 +153,7 @@ class ProjectXlsExporter extends ProjectExporter {
         setupManagementUnits(managementUnitService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false, OrganisationService organisationService) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
         this.formSectionPerTab = formSectionPerTab
@@ -158,6 +162,7 @@ class ProjectXlsExporter extends ProjectExporter {
         projectHeaders += distinctElectorates
         projectProperties += distinctElectorates
         setupManagementUnits(managementUnitService)
+        setupFundingAbn(organisationService)
     }
 
     /** This sets up a lazy Map that will query and cache management uints names on demand. */
@@ -165,6 +170,13 @@ class ProjectXlsExporter extends ProjectExporter {
         managementUnitNames = [:].withDefault { String managementUnitId ->
             ManagementUnit mu = managementUnitService.get(managementUnitId)
             mu?.name
+        }
+    }
+
+    private Map setupFundingAbn(OrganisationService organisationService) {
+        fundingAbn = [:].withDefault { String organisationId ->
+            Organisation org = organisationService.get(organisationId)
+            org?.abn
         }
     }
 
@@ -202,6 +214,10 @@ class ProjectXlsExporter extends ProjectExporter {
         }
         if (project.managementUnitId) {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
+        }
+
+        if (project.organisationId) {
+            project[PROJECT_DATA_PREFIX+'abn'] = fundingAbn[project.organisationId]
         }
     }
 
