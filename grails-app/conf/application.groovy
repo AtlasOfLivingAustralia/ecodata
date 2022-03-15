@@ -526,13 +526,13 @@ if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
 if (!userDetailsSingleUrl) {
-    userDetailsSingleUrl = "https://auth-test.ala.org.au/userDetails/getUserDetails"
+    userDetailsSingleUrl = "https://auth-dev.ala.org.au/userDetails/getUserDetails"
 }
 if (!userDetailsUrl) {
-    userDetailsUrl = "https://auth-test.ala.org.au/userDetails/getUserListFull"
+    userDetailsUrl = "https://auth-dev.ala.org.au/userDetails/getUserListFull"
 }
 if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth-test.ala.org.au/userdetails/ws/admin'
+    userDetails.admin.url = 'https://auth-dev.ala.org.au/userdetails/ws/admin'
 }
 
 if (!authGetKeyUrl) {

@@ -230,7 +230,7 @@ graphiql:
         Authorization: "Bearer <your-token>"
 
 
-casUrl: https://auth-test.ala.org.au/cas/logout
+casUrl: https://auth-dev.ala.org.au/cas/logout
 appUrl: http://devt.ala.org.au:8080/admin
 
 security:
@@ -238,10 +238,11 @@ security:
         enabled: false
     oidc:
         enabled: true
-        discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
-        clientId: auth-test-oidc-client-id-ecodata-localhost
-        secret: 9a3c940918ca7820d9edc868f57a6dee09503199
-        scope: openid,profile,email,ala,roles,user_defined,offline_access
+        discoveryUri: https://auth-dev.ala.org.au/cas/oidc/.well-known
+        clientId: auth-dev-oidc-client-id
+        secret: u85789gnghdfb765
+        scope: openid,profile,email,ala,roles,user_defined
         allowUnsignedIdTokens: true
     jwt:
-        enabled:true
+        enabled: true
+        discoveryUri: https://auth-dev.ala.org.au/cas/oidc/.well-known

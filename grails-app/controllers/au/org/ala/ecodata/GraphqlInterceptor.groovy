@@ -1,7 +1,13 @@
 package au.org.ala.ecodata
 
+import org.pac4j.core.config.Config
+import org.pac4j.core.context.JEEContextFactory
 import grails.converters.JSON
 import au.org.ala.web.UserDetails
+import org.pac4j.core.context.WebContext
+import org.pac4j.http.client.direct.DirectBearerAuthClient
+import org.springframework.beans.factory.annotation.Autowired
+import org.pac4j.core.util.FindBest
 
 import javax.inject.Inject
 
@@ -9,6 +15,10 @@ class GraphqlInterceptor {
 
     UserService userService
     PermissionService permissionService
+    @Autowired
+    Config config
+    @Autowired
+    DirectBearerAuthClient directBearerAuthClient
 
     GraphqlInterceptor() {
         match uri: '/graphql/**'
@@ -18,7 +28,15 @@ class GraphqlInterceptor {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             if (authorizationHeader.startsWith("Bearer")) {
-                return true
+                final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
+                def credentials = directBearerAuthClient.getCredentials(context, config.sessionStore)
+                if (credentials.isPresent()) {
+                    return true
+                }
+                else {
+                    accessDeniedError('Invalid token')
+                    return false
+                }
             }
             else {
                 accessDeniedError('No Authorization Bearer token')
