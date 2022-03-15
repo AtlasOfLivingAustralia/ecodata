@@ -78,7 +78,7 @@ class GraphqlInterceptor {
     void afterView() { }
 
     def accessDeniedError(String error) {
-        Map map = [error: 'Access denied', status: 401]
+        Map map = [error: error, status: 401]
         response.status = 401
         log.warn (error)
         render map as JSON
