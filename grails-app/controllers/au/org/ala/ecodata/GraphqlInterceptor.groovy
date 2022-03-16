@@ -3,18 +3,14 @@ package au.org.ala.ecodata
 import org.pac4j.core.config.Config
 import org.pac4j.core.context.JEEContextFactory
 import grails.converters.JSON
-import au.org.ala.web.UserDetails
 import org.pac4j.core.context.WebContext
 import org.pac4j.http.client.direct.DirectBearerAuthClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.pac4j.core.util.FindBest
 
-import javax.inject.Inject
-
 class GraphqlInterceptor {
 
     UserService userService
-    PermissionService permissionService
     @Autowired
     Config config
     @Autowired
@@ -31,7 +27,23 @@ class GraphqlInterceptor {
                 final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
                 def credentials = directBearerAuthClient.getCredentials(context, config.sessionStore)
                 if (credentials.isPresent()) {
-                    return true
+                    def profile = directBearerAuthClient.getUserProfile(credentials.get(), context, config.sessionStore)
+                    if (profile.isPresent()) {
+                        def userProfile = profile.get()
+                        def result =  userProfile.roles.contains("ROLE_ADMIN") || userProfile.roles.contains("ROLE_FC_ADMIN")
+
+                        if(result){
+                            return true
+                        }
+                        else{
+                            accessDeniedError('No required user roles')
+                            return false
+                        }
+                    }
+                    else {
+                        accessDeniedError('Invalid token')
+                        return false
+                    }
                 }
                 else {
                     accessDeniedError('Invalid token')

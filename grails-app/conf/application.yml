@@ -246,3 +246,6 @@ security:
     jwt:
         enabled: true
         discoveryUri: https://auth-dev.ala.org.au/cas/oidc/.well-known
+        requiredClaims: ["sub", "iat", "exp", "jti", "client_id"]
+
+

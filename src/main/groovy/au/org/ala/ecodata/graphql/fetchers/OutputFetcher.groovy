@@ -1,11 +1,7 @@
 package au.org.ala.ecodata.graphql.fetchers
 
-import au.org.ala.ecodata.Activity
-import au.org.ala.ecodata.ActivityService
-import au.org.ala.ecodata.ElasticSearchService
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Output
-import au.org.ala.ecodata.PermissionService
 import au.org.ala.ecodata.SchemaBuilder
 import au.org.ala.ecodata.Status
 import au.org.ala.ecodata.graphql.models.Schema

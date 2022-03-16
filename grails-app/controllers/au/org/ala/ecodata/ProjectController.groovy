@@ -324,7 +324,7 @@ class ProjectController {
         render result as JSON
     }
 
-    @RequireApiKey
+    @RequireJWT
     def findByName() {
         if (!params.projectName) {
             render status:400, text: "projectName is a required parameter"
