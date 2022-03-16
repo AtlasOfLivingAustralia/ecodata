@@ -40,6 +40,7 @@ class SearchController {
     OrganisationService organisationService
     MapService mapService
     ManagementUnitService managementUnitService
+    ProgramService programService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -502,7 +503,7 @@ class SearchController {
         List<String> electorates = result.aggregations?.find{it.name == ELECTORATES}?.buckets?.collect{it.key}
         List tabsToExport = params.getList('tabs')
         boolean formSectionPerTab = params.getBoolean("formSectionPerTab", false)
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, [:], formSectionPerTab, organisationService)
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, [:], formSectionPerTab, organisationService, programService)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {

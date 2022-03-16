@@ -5,6 +5,8 @@ import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.OrganisationService
+import au.org.ala.ecodata.Program
+import au.org.ala.ecodata.ProgramService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
@@ -143,6 +145,10 @@ class ProjectXlsExporter extends ProjectExporter {
 
     Map<String, String> fundingAbn
 
+    Map<String, String> programFundingType
+
+    Map<String, String> programGrantOpportunityId
+
     /** If set to true, activities containing more than one form section will be split over one tab per form section */
     boolean formSectionPerTab = false
 
@@ -153,7 +159,7 @@ class ProjectXlsExporter extends ProjectExporter {
         setupManagementUnits(managementUnitService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false, OrganisationService organisationService) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false, OrganisationService organisationService, ProgramService programService) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
         this.formSectionPerTab = formSectionPerTab
@@ -163,6 +169,7 @@ class ProjectXlsExporter extends ProjectExporter {
         projectProperties += distinctElectorates
         setupManagementUnits(managementUnitService)
         setupFundingAbn(organisationService)
+        setupProgramData(programService)
     }
 
     /** This sets up a lazy Map that will query and cache management uints names on demand. */
@@ -177,6 +184,21 @@ class ProjectXlsExporter extends ProjectExporter {
         fundingAbn = [:].withDefault { String organisationId ->
             Organisation org = organisationService.get(organisationId)
             org?.abn
+        }
+    }
+
+    private Map setupProgramData(ProgramService programService) {
+        programFundingType = [:].withDefault { String programId, String name ->
+            Program program = (programId) ? programService.get(programId) : programService.findByName(name)
+            program?.fundingType
+        }
+
+        programGrantOpportunityId = [:].withDefault { String programId, String name ->
+            Program program = (programId) ? programService.get(programId) : programService.findByName(name)
+            if(program){
+                program.externalIds.find{it.idType == ExternalId.IdType.GRANT_OPPORTUNITY}?.externalId
+            }
+
         }
     }
 
@@ -216,9 +238,6 @@ class ProjectXlsExporter extends ProjectExporter {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
 
-        if (project.organisationId) {
-            project[PROJECT_DATA_PREFIX+'abn'] = fundingAbn[project.organisationId]
-        }
     }
 
     private addProjectGeo(Map project) {
@@ -782,17 +801,26 @@ class ProjectXlsExporter extends ProjectExporter {
             project.geographicInfo.each { geo, values ->
                 project[geo] = values
             }
-            filterExternalIds(project)
-            List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
-            List data = project?.custom?.details?.budget?.rows?.collect { Map lineItem ->
-                Map budgetLineItem = [:]
-                budgetLineItem.putAll(project)
-                financialYears.eachWithIndex { String year, int i ->
-                    budgetLineItem.put(year, lineItem.costs[i].dollar)
-                }
-
-                budgetLineItem
+            if (project.organisationId) {
+                project[PROJECT_DATA_PREFIX+'abn'] = fundingAbn[project.organisationId]
             }
+            if (!project[PROJECT_DATA_PREFIX+'fundingType']) {
+                project[PROJECT_DATA_PREFIX+'fundingType'] = programFundingType[project.programId, project[PROJECT_DATA_PREFIX+'associatedProgram']]
+            }
+            filterExternalIds(project)
+
+            List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
+            List data = []
+            Map budgetLineItem = [:]
+            budgetLineItem.putAll(project)
+            financialYears.eachWithIndex { String year, int i ->
+                BigDecimal totalBudgetPerYear = new BigDecimal(0)
+                project?.custom?.details?.budget?.rows?.each { Map lineItem ->
+                    totalBudgetPerYear += BigDecimal.valueOf(Double.valueOf(lineItem.costs[i].dollar));
+                }
+                budgetLineItem.put(year,totalBudgetPerYear)
+            }
+            data << budgetLineItem
 
             sheet.add(data?:[], electorateCoordProperties, row+1)
         }
@@ -841,5 +869,9 @@ class ProjectXlsExporter extends ProjectExporter {
         }
         project['grantOpportunityId'] = project['externalIds'].find{it.idType == ExternalId.IdType.GRANT_OPPORTUNITY.toString()}?.externalId
         project['workerOrderId'] = project['externalIds'].find{it.idType == ExternalId.IdType.WORK_ORDER.toString()}?.externalId
+
+        if (!project['grantOpportunityId']) {
+            project['grantOpportunityId'] = programGrantOpportunityId[project.programId, project[PROJECT_DATA_PREFIX+'associatedProgram']]
+        }
     }
 }
