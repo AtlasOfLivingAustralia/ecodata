@@ -25,7 +25,7 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
 
     void "insert a new program"() {
         setup:
-        Map programDetails = [name: 'test 1', description: 'description 1', externalIds:[[idType:"GRANT_OPPORTUNITY", externalId:'e1']]]
+        Map programDetails = [name: 'test 1', description: 'description 1', externalIds:[[idType:"GRANT_AWARD", externalId:'e1']]]
         when:
         Program program = service.create(programDetails)
         program = Program.findByProgramId(program.programId)
@@ -34,7 +34,7 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
         program.name == 'test 1'
         program.description == 'description 1'
         program.externalIds.size() == 1
-        program.externalIds[0].idType == ExternalId.IdType.GRANT_OPPORTUNITY
+        program.externalIds[0].idType == ExternalId.IdType.GRANT_AWARD
         program.externalIds[0].externalId == "e1"
 
     }
@@ -46,7 +46,7 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
         program.save(flush:true, failOnError: true)
 
         when:
-        Map newDetails = [name:'test 2', description: 'description 2', externalIds:[[idType:"GRANT_OPPORTUNITY", externalId:'e1']]]
+        Map newDetails = [name:'test 2', description: 'description 2', externalIds:[[idType:"GRANT_AWARD", externalId:'e1']]]
         service.update(programId, newDetails)
         Program newProgram = service.get(programId)
 
@@ -54,7 +54,7 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
         newProgram.name == 'test 2'
         newProgram.description == 'description 2'
         program.externalIds.size() == 1
-        program.externalIds[0].idType == ExternalId.IdType.GRANT_OPPORTUNITY
+        program.externalIds[0].idType == ExternalId.IdType.GRANT_AWARD
         program.externalIds[0].externalId == "e1"
     }
 

@@ -127,7 +127,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> electorateInternalOrderNoHeadear = (1..3).collect{'Internal Order Number '+it}
     List<String> electorateInternalOrderNoProperties = (0..2).collect{'internalOrderNumber'+it}
     List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
-    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantOpportunityId', 'workerOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'funding', 'nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'origin']
+    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', 'workerOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'funding', 'nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'origin']
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -147,7 +147,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     Map<String, String> programFundingType
 
-    Map<String, String> programGrantOpportunityId
+    Map<String, String> programGrantAwardId
 
     /** If set to true, activities containing more than one form section will be split over one tab per form section */
     boolean formSectionPerTab = false
@@ -193,10 +193,10 @@ class ProjectXlsExporter extends ProjectExporter {
             program?.fundingType
         }
 
-        programGrantOpportunityId = [:].withDefault { String programId, String name ->
+        programGrantAwardId = [:].withDefault { String programId, String name ->
             Program program = (programId) ? programService.get(programId) : programService.findByName(name)
             if(program){
-                program.externalIds.find{it.idType == ExternalId.IdType.GRANT_OPPORTUNITY}?.externalId
+                program.externalIds.find{it.idType == ExternalId.IdType.GRANT_AWARD}?.externalId
             }
 
         }
@@ -867,11 +867,11 @@ class ProjectXlsExporter extends ProjectExporter {
         filteredIds.eachWithIndex {value, i ->
             project['internalOrderNumber'+i] = value.externalId
         }
-        project['grantOpportunityId'] = project['externalIds'].find{it.idType == ExternalId.IdType.GRANT_OPPORTUNITY.toString()}?.externalId
+        project['grantAwardId'] = project['externalIds'].find{it.idType == ExternalId.IdType.GRANT_AWARD.toString()}?.externalId
         project['workerOrderId'] = project['externalIds'].find{it.idType == ExternalId.IdType.WORK_ORDER.toString()}?.externalId
 
-        if (!project['grantOpportunityId']) {
-            project['grantOpportunityId'] = programGrantOpportunityId[project.programId, project[PROJECT_DATA_PREFIX+'associatedProgram']]
+        if (!project['grantAwardId']) {
+            project['grantAwardId'] = programGrantAwardId[project.programId, project[PROJECT_DATA_PREFIX+'associatedProgram']]
         }
     }
 }
