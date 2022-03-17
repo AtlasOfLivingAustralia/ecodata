@@ -150,6 +150,7 @@ dependencies {
     // Added due to previous reliance on transitive dependencies from plugins
     compile 'au.com.bytecode:opencsv:2.4'
     compile "com.bertramlabs.plugins:asset-pipeline-core:$assetPipelineVersion"
+    compile 'au.org.ala.plugins:openapi:0.1.0-SNAPSHOT'
 
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"

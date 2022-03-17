@@ -248,4 +248,15 @@ security:
         discoveryUri: https://auth-dev.ala.org.au/cas/oidc/.well-known
         requiredClaims: ["sub", "iat", "exp", "jti", "client_id"]
 
-
+openapi:
+    title: Ecodata REST services
+    description: REST services for interacting with the ecodata webapp
+    terms: https://www.ala.org.au/terms
+    contact:
+        name: Support
+        email: support@ala.org.au
+    license:
+        name: Mozilla Public License 1.1
+        url: https://www.mozilla.org/en-US/MPL/1.1/
+    version: '@info.app.version@'
+    cachetimeoutms: 0
