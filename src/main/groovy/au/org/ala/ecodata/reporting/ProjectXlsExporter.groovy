@@ -188,13 +188,13 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private Map setupProgramData(ProgramService programService) {
-        programFundingType = [:].withDefault { String programId, String name ->
-            Program program = (programId) ? programService.get(programId) : programService.findByName(name)
+        programFundingType = [:].withDefault { String programId ->
+            Program program = programService.get(programId)
             program?.fundingType
         }
 
-        programGrantAwardId = [:].withDefault { String programId, String name ->
-            Program program = (programId) ? programService.get(programId) : programService.findByName(name)
+        programGrantAwardId = [:].withDefault { String programId ->
+            Program program = programService.get(programId)
             if(program){
                 program.externalIds.find{it.idType == ExternalId.IdType.GRANT_AWARD}?.externalId
             }
@@ -809,7 +809,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 project[PROJECT_DATA_PREFIX+'abn'] = fundingAbn[project.organisationId]
             }
             if (!project[PROJECT_DATA_PREFIX+'fundingType']) {
-                project[PROJECT_DATA_PREFIX+'fundingType'] = programFundingType[project.programId, project[PROJECT_DATA_PREFIX+'associatedProgram']]
+                project[PROJECT_DATA_PREFIX+'fundingType'] = programFundingType[project.programId]
             }
             filterExternalIds(project)
 
@@ -880,7 +880,7 @@ class ProjectXlsExporter extends ProjectExporter {
         project[PROJECT_DATA_PREFIX+'workOrderId'] = project['externalIds'].find{it.idType == ExternalId.IdType.WORK_ORDER.toString()}?.externalId
 
         if (!project['grantAwardId']) {
-            project['grantAwardId'] = programGrantAwardId[project.programId, project[PROJECT_DATA_PREFIX+'associatedProgram']]
+            project['grantAwardId'] = programGrantAwardId[project.programId]
         }
     }
 }
