@@ -127,7 +127,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> electorateInternalOrderNoHeadear = (2..3).collect{'Internal Order Number '+it}
     List<String> electorateInternalOrderNoProperties = (1..2).collect{'internalOrderNumber'+it}
     List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
-    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'funding', 'nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'manager']
+    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'comment', 'projectType', 'electionCommitmentYear', 'portfolio', 'manager']
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -816,14 +816,18 @@ class ProjectXlsExporter extends ProjectExporter {
             List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
             List data = []
             Map budgetLineItem = [:]
-            budgetLineItem.putAll(project)
+
+            BigDecimal totalBudget = new BigDecimal(0)
             financialYears.eachWithIndex { String year, int i ->
                 BigDecimal totalBudgetPerYear = new BigDecimal(0)
                 project?.custom?.details?.budget?.rows?.each { Map lineItem ->
                     totalBudgetPerYear += BigDecimal.valueOf(Double.valueOf(lineItem.costs[i].dollar));
                 }
+                totalBudget +=  totalBudgetPerYear
                 budgetLineItem.put(year,totalBudgetPerYear)
             }
+            project[PROJECT_DATA_PREFIX+'gstFunding'] = totalBudget ?: project[PROJECT_DATA_PREFIX+'funding']
+            budgetLineItem.putAll(project)
             data << budgetLineItem
 
             sheet.add(data?:[], electorateCoordProperties, row+1)
