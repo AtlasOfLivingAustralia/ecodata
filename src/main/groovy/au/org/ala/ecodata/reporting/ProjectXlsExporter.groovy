@@ -794,9 +794,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportElectorate(Map project) {
-        log.info("start exportElectorate")
         if (shouldExport("Electorate Coord")) {
-            log.info("inside exportElectorate")
             AdditionalSheet sheet = getSheet("Electorate Coord", electorateCoordHeaders)
             int row = sheet.getSheet().lastRowNum
 
@@ -826,8 +824,6 @@ class ProjectXlsExporter extends ProjectExporter {
             data << budgetLineItem
 
             sheet.add(data?:[], electorateCoordProperties, row+1)
-        } else {
-            log.info("outside exportElectorate")
         }
 
     }
