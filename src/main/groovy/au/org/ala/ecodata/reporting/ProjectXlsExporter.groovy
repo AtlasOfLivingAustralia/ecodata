@@ -127,7 +127,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> electorateInternalOrderNoHeadear = (2..3).collect{'Internal Order Number '+it}
     List<String> electorateInternalOrderNoProperties = (1..2).collect{'internalOrderNumber'+it}
     List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
-    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'primaryElectorate', 'primaryState', 'otherElectorates', 'otherStates', 'comment', 'projectType', 'electionCommitmentYear', 'portfolio', 'manager']
+    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'geographicInfo.primaryElectorate', 'geographicInfo.primaryState', new ListGetter('geographicInfo.otherElectorates'), new ListGetter('geographicInfo.otherStates'), 'comment', 'projectType', 'electionCommitmentYear', 'portfolio', 'manager']
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -800,17 +800,10 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("Electorate Coord", electorateCoordHeaders)
             int row = sheet.getSheet().lastRowNum
 
-            project.geographicInfo.each { geo, values ->
-                if (values instanceof String) {
-                    project[geo] = values
-                } else {
-                    project[geo] = values.join(', ')
-                }
-            }
             if (project.organisationId) {
                 project[PROJECT_DATA_PREFIX+'abn'] = fundingAbn[project.organisationId]
             }
-            if (!project[PROJECT_DATA_PREFIX+'fundingType']) {
+            if (!project[PROJECT_DATA_PREFIX+'fundingType'] && project.programId) {
                 project[PROJECT_DATA_PREFIX+'fundingType'] = programFundingType[project.programId]
             }
             filterExternalIds(project)
@@ -884,7 +877,7 @@ class ProjectXlsExporter extends ProjectExporter {
         project['grantAwardId'] = project['externalIds'].find{it.idType == ExternalId.IdType.GRANT_AWARD.toString()}?.externalId
         project[PROJECT_DATA_PREFIX+'workOrderId'] = project['externalIds'].find{it.idType == ExternalId.IdType.WORK_ORDER.toString()}?.externalId
 
-        if (!project['grantAwardId']) {
+        if (!project['grantAwardId'] && project.programId) {
             project['grantAwardId'] = programGrantAwardId[project.programId]
         }
     }
