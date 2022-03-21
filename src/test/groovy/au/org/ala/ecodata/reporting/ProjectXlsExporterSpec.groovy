@@ -1545,8 +1545,8 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "    \"geographicInfo\" : {\n" +
             "        \"primaryState\" : \"ACT\",\n" +
             "        \"primaryElectorate\" : \"Canberra\",\n" +
-            "        \"otherStates\" : \"NSW\",\n" +
-            "        \"otherElectorates\" : \"Taylor\",\n" +
+            "        \"otherStates\" : [\"NSW\"],\n" +
+            "        \"otherElectorates\" : [\"Taylor\"],\n" +
             "    }\n" +
             "}"
 
