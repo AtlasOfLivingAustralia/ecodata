@@ -72,6 +72,12 @@ class ReportController {
     }
 
     @RequireApiKey
+    def cancel(String id) {
+        Map params = request.JSON
+        respond reportingService.cancel(id, params.comment, params.category)
+    }
+
+    @RequireApiKey
     def adjust(String id) {
         Map params = request.JSON
         respond reportingService.adjust(id, params.comment, params.adjustmentActivityType)

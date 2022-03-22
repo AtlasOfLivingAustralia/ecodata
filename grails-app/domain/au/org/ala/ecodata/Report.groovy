@@ -14,6 +14,7 @@ class Report {
     public static final String REPORT_APPROVED = 'published'
     public static final String REPORT_SUBMITTED = 'pendingApproval'
     public static final String REPORT_NOT_APPROVED = 'unpublished'
+    public static final String REPORT_CANCELLED = 'cancelled'
 
     /**
      *  An activity report is the one that is applied to all activities performed during the
@@ -94,6 +95,10 @@ class Report {
     Integer submissionDeltaInWeekdays
     /** Number of days after a report is submitted that it's approved.  Calculated at approval time to make reporting easier. */
     Integer approvalDeltaInWeekdays
+    /** The Date the report was cancelled */
+    Date dateCancelled
+    /** The user ID of the grant manager who cancelled this Report */
+    String cancelledBy
 
     /** REPORT_NOT_APPROVED, REPORT_SUBMITTED, REPORT_APPROVED */
     String publicationStatus = REPORT_NOT_APPROVED
@@ -190,6 +195,16 @@ class Report {
         dateReturned = change.dateChanged
     }
 
+    public void cancel(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'cancelled', changeDate, comment, category)
+        markDirty("cancelledBy")
+        markDirty("dateCancelled")
+        markDirty("publicationStatus")
+        publicationStatus = REPORT_CANCELLED
+        cancelledBy = change.changedBy
+        dateCancelled = change.dateChanged
+    }
+
     public void adjust(String userId, String comment, Date changeDate = new Date()) {
 
         if (!isApproved() || isAdjusted()) {
@@ -229,6 +244,8 @@ class Report {
         approvedBy nullable:true
         dateReturned nullable:true
         returnedBy nullable:true
+        dateCancelled nullable:true
+        cancelledBy nullable:true
         adjustedBy nullable:true
         dateAdjusted nullable:true
         projectId nullable:true
