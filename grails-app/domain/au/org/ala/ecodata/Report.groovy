@@ -224,6 +224,7 @@ class Report {
     private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
         StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment, category:category)
         statusChangeHistory << change
+        markDirty('statusChangeHistory')
 
         return change
     }
@@ -264,6 +265,7 @@ class Report {
         type nullable:false
         category nullable:true
         generatedBy nullable:true
+        statusChangeHistory nullable: true
         adjustedReportId nullable:true, validator: { value, report ->
             // Adjustment reports must reference another report
             if (report.type == TYPE_ADJUSTMENT) {
