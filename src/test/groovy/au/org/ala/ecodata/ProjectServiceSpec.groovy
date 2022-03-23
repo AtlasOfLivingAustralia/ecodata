@@ -251,6 +251,110 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    def "The project supports an externalIds embedded mapping when updating a project"() {
+        setup:
+        Map externalIds = [externalIds:[
+                [idType:'INTERNAL_ORDER_NUMBER', externalId: 'internalOrderNumber1'],
+                [idType:'INTERNAL_ORDER_NUMBER', externalId: 'internalOrderNumber2'],
+                [idType:'WORK_ORDER', externalId: 'workOrderId1']
+        ]]
+        Project project = new Project([projectId:'p1', name:"Project", externalId:'e1'])
+        project.save()
+
+        when:
+        Map result = service.update(externalIds, project.projectId, false)
+
+        then:
+        result.status == "ok"
+
+        when:
+        Project project2 = Project.findByProjectId(project.projectId)
+
+        then:
+        project2.name == "Project"
+        project2.externalId == "e1"
+        project2.externalIds.size() == 3
+
+        project2.getWorkOrderId() == "workOrderId1"
+        project2.getInternalOrderId() == "internalOrderNumber1"
+    }
+
+    def "The project supports an externalIds embedded mapping when creating a project"() {
+        setup:
+        Map props = [name:"Project", externalId:'e1', externalIds:[
+                [idType:'INTERNAL_ORDER_NUMBER', externalId: 'internalOrderNumber1'],
+                [idType:'INTERNAL_ORDER_NUMBER', externalId: 'internalOrderNumber2'],
+                [idType:'WORK_ORDER', externalId: 'workOrderId1']
+        ]]
+
+        when:
+        Map result = service.create(props)
+
+        then:
+        result.status == "ok"
+
+        when:
+        Project project2 = Project.findByProjectId(result.projectId)
+
+        then:
+        project2.name == "Project"
+        project2.externalId == "e1"
+        project2.externalIds.size() == 3
+
+        project2.getWorkOrderId() == "workOrderId1"
+        project2.getInternalOrderId() == "internalOrderNumber1"
+    }
+
+    def "The project supports the geographicInfo embedded mapping when updating a project"() {
+        setup:
+        Map geographicInfo = [primaryElectorate:"Canberra", primaryState:"ACT", otherStates:["NSW"], otherElectorates:["Bean"]]
+
+        Project project = new Project([projectId:'p1', name:"Project", externalId:'e1'])
+        project.save()
+
+        when:
+        Map result = service.update([geographicInfo:geographicInfo], project.projectId, false)
+
+        then:
+        result.status == "ok"
+
+        when:
+        Project project2 = Project.findByProjectId(project.projectId)
+
+        then:
+        project2.name == "Project"
+        project2.externalId == "e1"
+        project2.geographicInfo.primaryElectorate == geographicInfo.primaryElectorate
+        project2.geographicInfo.primaryState == geographicInfo.primaryState
+        project2.geographicInfo.otherElectorates == geographicInfo.otherElectorates
+        project2.geographicInfo.otherStates == geographicInfo.otherStates
+    }
+
+    def "The project supports the geographicInfo embedded mapping when creating a project"() {
+        setup:
+        Map geographicInfo = [primaryElectorate:"Canberra", primaryState:"ACT", otherStates:["NSW"], otherElectorates:["Bean"]]
+
+        Map props = [name:"Project", externalId:'e1', geographicInfo: geographicInfo]
+
+        when:
+        Map result = service.create(props)
+
+        then:
+        result.status == "ok"
+
+        when:
+        Project project2 = Project.findByProjectId(result.projectId)
+
+        then:
+        project2.name == "Project"
+        project2.externalId == "e1"
+        project2.geographicInfo.primaryElectorate == geographicInfo.primaryElectorate
+        project2.geographicInfo.primaryState == geographicInfo.primaryState
+        project2.geographicInfo.otherElectorates == geographicInfo.otherElectorates
+        project2.geographicInfo.otherStates == geographicInfo.otherStates
+    }
+
+
     private Map buildRisksData() {
         List risks = [["consequence" : "Moderate",
                        "likelihood" : "Likely",

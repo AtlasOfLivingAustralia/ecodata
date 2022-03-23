@@ -456,4 +456,15 @@ class TabbedExporter {
             }
         }
     }
+
+    static class ListGetter extends PropertyGetter<List, String> {
+        ListGetter(String propertyName) {
+            super(propertyName)
+        }
+
+        @Override
+        protected Object format(List value) {
+            value?.join(', ')
+        }
+    }
 }
