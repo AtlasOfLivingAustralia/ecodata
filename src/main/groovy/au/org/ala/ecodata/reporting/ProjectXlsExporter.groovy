@@ -152,11 +152,13 @@ class ProjectXlsExporter extends ProjectExporter {
     /** If set to true, activities containing more than one form section will be split over one tab per form section */
     boolean formSectionPerTab = false
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService) {
         super(exporter)
         this.projectService = projectService
         distinctElectorates = new ArrayList()
         setupManagementUnits(managementUnitService)
+        setupFundingAbn(organisationService)
+        setupProgramData(programService)
     }
 
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false, OrganisationService organisationService, ProgramService programService) {
@@ -220,6 +222,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportReportSummary(project)
         exportBlog(project)
         exportDataSet(project)
+        exportElectorate(project)
 
         if(exporter.workbook.numberOfSheets == 0){
             createEmptySheet()
@@ -445,7 +448,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
         exportRLPServicesTargets(project)
-        exportElectorate(project)
+
     }
 
     private void exportBudget(Map project) {
