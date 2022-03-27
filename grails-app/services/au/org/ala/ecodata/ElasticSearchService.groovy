@@ -105,7 +105,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -590,6 +590,14 @@ class ElasticSearchService {
                     indexDocType(activity.siteId, Site.class.name)
                 }
                 break
+
+            case Document.class.name:
+                Map document = documentService.get(docId)
+
+                prepareDocumentForIndexing(document)
+                indexDoc(document, DEFAULT_INDEX)
+                break
+
             case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
 
@@ -806,6 +814,17 @@ class ElasticSearchService {
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
                 log.info("Processed "+batchParams.offset+" projects")
+            }
+        }
+
+        log.info "Indexing all documents"
+        documentService.doWithAllDocuments { Map doc ->
+            try {
+                prepareDocumentForIndexing(doc)
+                indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
+            }
+            catch (Exception e) {
+                log.error("Unable to index document: "+doc?.documentId, e)
             }
         }
 
@@ -1144,6 +1163,20 @@ class ElasticSearchService {
         }
 
         activity
+    }
+
+    private Map prepareDocumentForIndexing(Map document) {
+        document["className"] = Document.class.getName()
+
+        Map project = projectService.get(document.projectId, ProjectService.FLAT)
+
+        if (document) {
+            // overwrite any project properties that has same name as document properties.
+            project.putAll(document)
+            document = project
+
+            document
+        }
     }
 
     /**
