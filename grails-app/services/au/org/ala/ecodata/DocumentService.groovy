@@ -3,10 +3,12 @@ package au.org.ala.ecodata
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
+import com.mongodb.client.model.Filters
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
+import org.bson.conversions.Bson
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.text.DateFormat
@@ -17,6 +19,7 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class DocumentService {
 
+    static final FLAT = 'flat'
     static final LINKTYPE = "link"
     static final LOGO = 'logo'
     static final FILE_LOCK = new Object()
@@ -566,4 +569,13 @@ class DocumentService {
         return data
     }
 
+    void doWithAllDocuments(Closure action) {
+        def collection = Document.getCollection()
+        Bson query = Filters.ne("status", DELETED);
+        def results = collection.find(query).batchSize(100)
+
+        results.each { dbObject ->
+            action.call(dbObject)
+        }
+    }
 }
