@@ -86,6 +86,9 @@ class TabbedExporter {
             case Report.REPORT_SUBMITTED:
                 translated = 'Submitted'
                 break
+            case Report.REPORT_CANCELLED:
+                translated = 'Not required (exempt)'
+                break
             default:
                 translated = 'Unpublished (no action – never been submitted)'
                 break
