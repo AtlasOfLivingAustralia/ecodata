@@ -594,7 +594,7 @@ class ElasticSearchService {
             case Document.class.name:
                 Map document = documentService.get(docId)
 
-                prepareDocumentForIndexing(document)
+                document = prepareDocumentForIndexing(document)
                 indexDoc(document, DEFAULT_INDEX)
                 break
 
@@ -820,7 +820,7 @@ class ElasticSearchService {
         log.info "Indexing all documents"
         documentService.doWithAllDocuments { Map doc ->
             try {
-                prepareDocumentForIndexing(doc)
+                doc = prepareDocumentForIndexing(doc)
                 indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
             }
             catch (Exception e) {
