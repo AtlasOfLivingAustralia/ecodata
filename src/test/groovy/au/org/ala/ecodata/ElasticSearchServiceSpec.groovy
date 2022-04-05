@@ -66,6 +66,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         service.siteService = Mock(SiteService)
         service.activityService = Mock(ActivityService)
         service.organisationService = Mock(OrganisationService)
+        service.documentService = Mock(DocumentService)
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
         service.initialize()
         service.indexAll() // This will delete then recreate the index as there is no data in the database
