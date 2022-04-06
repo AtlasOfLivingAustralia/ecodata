@@ -50,6 +50,8 @@ class Program {
     /** Grant/procurement etc */
     String fundingType
 
+    /** Records the id/s of this program has held in external systems */
+    List<ExternalId> externalIds
 
     /** Custom rendering for the program */
     Map toMap() {
@@ -75,6 +77,7 @@ class Program {
         program.blog = blog
         program.acronym = acronym
         program.fundingType = fundingType
+        program.externalIds = externalIds
 
         program.associatedOrganisations = associatedOrganisations
 
@@ -127,7 +130,7 @@ class Program {
         version false
     }
 
-    static embedded = ['associatedOrganisations']
+    static embedded = ['associatedOrganisations', 'externalIds']
 
     static hasMany = [subPrograms:Program]
 
@@ -145,6 +148,7 @@ class Program {
         programSiteId nullable: true
         acronym nullable: true
         fundingType nullable: true
+        externalIds nullable: true
         hubId nullable: true, validator: { String hubId, Program program, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(program, 'programId', 'hubId', errors)
         }
