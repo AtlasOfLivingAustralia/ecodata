@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.test.mongodb.MongoSpec
+
 //import grails.test.mixin.Mock
 import grails.testing.mixin.integration.Integration
 import groovy.json.JsonSlurper
@@ -12,7 +14,7 @@ import org.grails.plugins.testing.GrailsMockHttpServletRequest
 import org.grails.plugins.testing.GrailsMockHttpServletResponse
 
 @Integration
-class ProjectControllerIntegrationSpec extends Specification {
+class ProjectControllerIntegrationSpec extends MongoSpec {
 
     @Autowired
     ProjectController projectController
