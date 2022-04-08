@@ -353,10 +353,10 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([], null, [score], [property:'activity.plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy'])
+        def results = service.aggregate([], null, [score], [property:'activity.plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMMM yyyy'])
 
         then:
-        results.outputData.groups[0].group == 'Before Jan 2014'
+        results.outputData.groups[0].group == 'Before January 2014'
         def group1Results = results.outputData.groups[0].results[0].groups
 
         [group1:1, group2:2].each { k, v ->
@@ -364,7 +364,7 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
             nestedResult.results[0].result == v
         }
 
-        results.outputData.groups[1].group == 'Jan 2014 - Dec 2014'
+        results.outputData.groups[1].group == 'January 2014 - December 2014'
         def group2Results = results.outputData.groups[1].results[0].groups
 
         [group1:3, group2:4, group3:2].each { k, v ->
@@ -372,7 +372,7 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
             nestedResult.results[0].result == v
         }
 
-        results.outputData.groups[2].group == 'After Dec 2014'
+        results.outputData.groups[2].group == 'After December 2014'
         def group3Results = results.outputData.groups[2].results[0].groups
         [group1:5, group2:4, group4:5].each { k, v ->
             def nestedResult = group3Results.find{it.group == k}
@@ -402,7 +402,7 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         List activities = activityDates.collect{[activityId:it.key, plannedEndDate:it.value, outputs:outputs[it.key]]}
 
 
-        Map dateGroupingConfig = [property:'activity.plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy']
+        Map dateGroupingConfig = [property:'activity.plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMMM yyyy']
 
         when:
         List summary = service.projectSummary(projectId, [score], false, dateGroupingConfig)
@@ -410,15 +410,15 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         then:
         1 * activityService.findAllForProjectId(projectId, 'FLAT') >> activities
         summary.size() == 3
-        summary[0].group == 'Before Jan 2014'
+        summary[0].group == 'Before January 2014'
         summary[0].count == 1
         summary[0].results[0].result.result == 3
 
-        summary[1].group == "Jan 2014 - Dec 2014"
+        summary[1].group == "January 2014 - December 2014"
         summary[1].count == 3
         summary[1].results[0].result.result == 13
 
-        summary[2].group == "After Dec 2014"
+        summary[2].group == "After December 2014"
         summary[2].count == 1
         summary[2].results[0].result.result == 10
 

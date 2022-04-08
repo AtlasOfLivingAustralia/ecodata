@@ -46,22 +46,21 @@ class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<Man
 
     }
 
-    //************* Existing version of geo tools are not support with Java 11
-//    def "The service can produce a FeatureCollection containing the management unit sites"() {
-//
-//        setup:
-//        (1..10).each {setupMu(it)}
-//
-//        when:
-//        Map featureCollection = service.managementUnitSiteMap()
-//
-//        then:
-//        10 * siteService.get({it.startsWith('muSite')}) >> [siteId:'1']
-//        10 * siteService.toGeoJson(_) >> squareFeature("1", 0, 0)
-//
-//        and:
-//        featureCollection.features.size() == 10
-//    }
+    def "The service can produce a FeatureCollection containing the management unit sites"() {
+
+        setup:
+        (1..10).each {setupMu(it)}
+
+        when:
+        Map featureCollection = service.managementUnitSiteMap()
+
+        then:
+        10 * siteService.get({it.startsWith('muSite')}) >> [siteId:'1']
+        10 * siteService.toGeoJson(_) >> squareFeature("1", 0, 0)
+
+        and:
+        featureCollection.features.size() == 10
+    }
 
     def "The service calculates report periods "() {
         setup:

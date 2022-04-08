@@ -15,7 +15,6 @@ import spock.lang.Specification
  * Specification / tests for the SiteService
  */
 
-//@TestMixin(MongoDbTestMixin)
 class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> {
 
     //def service = new SiteService()
@@ -45,38 +44,36 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         Site.collection.remove(new BasicDBObject())
     }
 
-    //************* Existing version of geo tools are not support with Java 11
-
     // We should be storing the extent geometry as geojson already to enable geographic searching using
     // mongo / elastic search.  But we aren't (at least not for all types), so the conversion is currently necessary.
-//    def "The site extent can be converted to geojson"() {
-//
-//        when: "The site is a drawn rectangle"
-//        def coordinates = [ [ 148.260498046875, -37.26530995561874 ], [ 148.260498046875, -35.1288943410105 ], [ 149.710693359375, -35.1288943410105 ], [ 149.710693359375, -37.26530995561874 ], [ 148.260498046875, -37.26530995561874 ] ]
-//        def extent = buildExtent('drawn', 'Polygon', coordinates)
-//        def geojson = service.geometryAsGeoJson([extent:extent])
-//
-//        then: "The site is already valid geojson"
-//        geojson.type == 'Polygon'
-//        geojson.coordinates == [coordinates]
-//
-//        when: "The site is a drawn circle"
-//        extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], coordinates: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
-//        geojson = service.geometryAsGeoJson([extent:extent])
-//
-//        then: "Circles aren't valid geojson so we need to convert them to a polygon"
-//        geojson.type == 'Polygon'
-//        geojson.coordinates[0].size() == 101
-//
-//        when: "The site is a line"
-//        coordinates = [[145.42448043823242,-37.72728027686003],[148.00626754760742,-37.16031654673676],[148.36881637573242,-37.77071473849609],[147.09440231323242,-38.59111377614743]]
-//        extent = ["source":"drawn","geometry":["type":"LineString","coordinates": coordinates]]
-//        geojson = service.geometryAsGeoJson([extent:extent])
-//
-//        then: "Is site a valid GeoJSON"
-//        geojson.type == 'LineString'
-//        geojson.coordinates == coordinates
-//    }
+    def "The site extent can be converted to geojson"() {
+
+        when: "The site is a drawn rectangle"
+        def coordinates = [ [ 148.260498046875, -37.26530995561874 ], [ 148.260498046875, -35.1288943410105 ], [ 149.710693359375, -35.1288943410105 ], [ 149.710693359375, -37.26530995561874 ], [ 148.260498046875, -37.26530995561874 ] ]
+        def extent = buildExtent('drawn', 'Polygon', coordinates)
+        def geojson = service.geometryAsGeoJson([extent:extent])
+
+        then: "The site is already valid geojson"
+        geojson.type == 'Polygon'
+        geojson.coordinates == [coordinates]
+
+        when: "The site is a drawn circle"
+        extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], coordinates: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
+        geojson = service.geometryAsGeoJson([extent:extent])
+
+        then: "Circles aren't valid geojson so we need to convert them to a polygon"
+        geojson.type == 'Polygon'
+        geojson.coordinates[0].size() == 101
+
+        when: "The site is a line"
+        coordinates = [[145.42448043823242,-37.72728027686003],[148.00626754760742,-37.16031654673676],[148.36881637573242,-37.77071473849609],[147.09440231323242,-38.59111377614743]]
+        extent = ["source":"drawn","geometry":["type":"LineString","coordinates": coordinates]]
+        geojson = service.geometryAsGeoJson([extent:extent])
+
+        then: "Is site a valid GeoJSON"
+        geojson.type == 'LineString'
+        geojson.coordinates == coordinates
+    }
 
     def "Duplicate coordinates must be removed"() {
         when: "duplicate points are included"
@@ -170,40 +167,39 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         site.poi.size() == 1
         site.poi[0].poiId != null
     }
-    //************* Existing version of geo tools are not support with Java 11
 
-//    def "New sites without a centroid should have one assigned"() {
-//        when:
-//        def result
-//        Site.withSession { session ->
-//            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', pid: 'cl123']]])
-//            session.flush()
-//        }
-//
-//
-//        then:
-//        1 * webServiceMock.getJson(_) >>  [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
-//        1 * spatialServiceMock.intersectPid('cl123', null, null) >> [state:'state1', test:'test']
-//
-//        def site = Site.findBySiteId (result.siteId)
-//        //def site = Site.collection.find([siteId:result.siteId]).next()
-//
-//        // Reference to the DBO is because POI is currently a dynamic property (it shouldn't be)
-//        site.extent.geometry.centre == ['136.5', '-34.5']
-//        site.extent.geometry.test == 'test'
-//    }
-//
-//    def "must return precision depending on area of bounding box" () {
-//        def result
-//
-//        expect:
-//        service.calculateGeohashPrecision(bbox) == precision
-//
-//        where:
-//        precision   | bbox
-//        4           | ["type":"Polygon","coordinates":[[[132.890625,-31.53076171875],[156.796875,-31.53076171875],[156.796875,-16.435546875],[132.890625,-16.435546875],[132.890625,-31.53076171875]]]]
-//        5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
-//    }
+    def "New sites without a centroid should have one assigned"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', pid: 'cl123']]])
+            session.flush()
+        }
+
+
+        then:
+        1 * webServiceMock.getJson(_) >>  [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
+        1 * spatialServiceMock.intersectPid('cl123', null, null) >> [state:'state1', test:'test']
+
+        def site = Site.findBySiteId (result.siteId)
+        //def site = Site.collection.find([siteId:result.siteId]).next()
+
+        // Reference to the DBO is because POI is currently a dynamic property (it shouldn't be)
+        site.extent.geometry.centre == ['136.5', '-34.5']
+        site.extent.geometry.test == 'test'
+    }
+
+    def "must return precision depending on area of bounding box" () {
+        def result
+
+        expect:
+        service.calculateGeohashPrecision(bbox) == precision
+
+        where:
+        precision   | bbox
+        4           | ["type":"Polygon","coordinates":[[[132.890625,-31.53076171875],[156.796875,-31.53076171875],[156.796875,-16.435546875],[132.890625,-16.435546875],[132.890625,-31.53076171875]]]]
+        5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
+    }
 
 
     private Map buildExtent(source, type, coordinates, pid = '') {
