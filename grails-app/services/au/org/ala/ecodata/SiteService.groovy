@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import com.mongodb.*
 import com.mongodb.client.FindIterable
 import com.mongodb.client.model.Filters
-import com.vividsolutions.jts.geom.Geometry
+import org.locationtech.jts.geom.Geometry
 import grails.converters.JSON
 import org.bson.conversions.Bson
 import org.elasticsearch.common.geo.builders.ShapeBuilder

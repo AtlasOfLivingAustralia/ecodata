@@ -15,7 +15,7 @@
 
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.Coordinate
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
