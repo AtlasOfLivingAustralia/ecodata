@@ -47,9 +47,10 @@ class ProjectControllerIntegrationSpec extends Specification {
         projectController.request.method = 'POST'
 
         when: "creating a project"
+        def resp
         Project.withTransaction {
             projectController.update('') // Empty or null ID triggers a create
-            def resp = extractJson(projectController.response.text)
+            resp = extractJson(projectController.response.text)
         }
 
         then: "ensure we get a response including a projectId"
