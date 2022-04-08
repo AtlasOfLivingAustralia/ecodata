@@ -237,6 +237,14 @@ class ReportingService {
         return r
     }
 
+    def cancel(String id, String comment = '', String category = '') {
+        def user = userService.getCurrentUserDetails()
+        Report r = get(id)
+        r.cancel(user.userId, comment, category)
+        r.save()
+        return r
+    }
+
     /**
      * A report adjustment can be performed to modify the results of an approved report via the creation of
      * another report that contributes to the same scores as the original report.  This is sometimes required in

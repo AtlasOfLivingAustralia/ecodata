@@ -696,6 +696,26 @@
         "userId": {
           "type": "keyword"
         },
+        "geographicInfo": {
+          "properties": {
+            "primaryState": {
+              "type": "keyword",
+              "copy_to": "stateFacet"
+            },
+            "otherStates": {
+              "type": "keyword",
+              "copy_to": "stateFacet"
+            },
+            "primaryElectorate": {
+              "type": "keyword",
+              "copy_to": "electFacet"
+            },
+            "otherElectorates": {
+              "type": "keyword",
+              "copy_to": "electFacet"
+            }
+          }
+        },
         "blog": {
           "properties": {
             "content": {

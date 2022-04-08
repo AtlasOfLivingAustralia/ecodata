@@ -11,6 +11,7 @@ class StatusChange {
     String comment
     String category
     static constraints = {
-        //version false
+        comment nullable: true
+        category nullable: true
     }
 }

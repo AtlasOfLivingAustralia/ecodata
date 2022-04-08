@@ -86,6 +86,9 @@ class TabbedExporter {
             case Report.REPORT_SUBMITTED:
                 translated = 'Submitted'
                 break
+            case Report.REPORT_CANCELLED:
+                translated = 'Not required (exempt)'
+                break
             default:
                 translated = 'Unpublished (no action – never been submitted)'
                 break
@@ -454,6 +457,17 @@ class TabbedExporter {
             catch (NumberFormatException e) {
                 return null
             }
+        }
+    }
+
+    static class ListGetter extends PropertyGetter<List, String> {
+        ListGetter(String propertyName) {
+            super(propertyName)
+        }
+
+        @Override
+        protected Object format(List value) {
+            value?.join(', ')
         }
     }
 }
