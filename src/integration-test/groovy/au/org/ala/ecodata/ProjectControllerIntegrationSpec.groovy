@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
-
 //import grails.test.mixin.Mock
 import grails.testing.mixin.integration.Integration
 import groovy.json.JsonSlurper
@@ -14,7 +12,7 @@ import org.grails.plugins.testing.GrailsMockHttpServletRequest
 import org.grails.plugins.testing.GrailsMockHttpServletResponse
 
 @Integration
-class ProjectControllerIntegrationSpec extends MongoSpec {
+class ProjectControllerIntegrationSpec extends Specification {
 
     @Autowired
     ProjectController projectController
@@ -49,8 +47,10 @@ class ProjectControllerIntegrationSpec extends MongoSpec {
         projectController.request.method = 'POST'
 
         when: "creating a project"
-        projectController.update('') // Empty or null ID triggers a create
-        def resp = extractJson(projectController.response.text)
+        Project.withTransaction {
+            projectController.update('') // Empty or null ID triggers a create
+            def resp = extractJson(projectController.response.text)
+        }
 
         then: "ensure we get a response including a projectId"
         projectController.response.text.contains("created")
