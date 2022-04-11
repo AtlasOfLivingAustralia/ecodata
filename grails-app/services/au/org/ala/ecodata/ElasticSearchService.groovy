@@ -15,7 +15,7 @@
 
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Coordinate
+
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -27,8 +27,6 @@ import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.ElasticsearchException
-import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkProcessor
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
@@ -70,7 +68,6 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 import static org.elasticsearch.index.query.QueryBuilders.*
-
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -972,6 +969,7 @@ class ElasticSearchService {
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
+        projectMap.fullSizeImageUrl = documentService.findImageUrlForProjectId(project.projectId, false)
         projectMap.logoAttribution = documentService.getLogoAttributionForProjectId(project.projectId)
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId

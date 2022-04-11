@@ -169,11 +169,17 @@ class DocumentService {
         Document.findAllByProjectActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    String findImageUrlForProjectId(id, levelOfDetail = []){
+    String findImageUrlForProjectId(id, boolean isThumbnail = true){
         Document primaryImageDoc;
         Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
         String urlImage;
-        urlImage = logoDoc?.url ? logoDoc.getThumbnailUrl() : ''
+        urlImage = logoDoc?.url
+        if (urlImage) {
+            if (isThumbnail) {
+                urlImage = logoDoc.getThumbnailUrl()
+            }
+        }
+
         if(!urlImage){
             primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
             urlImage = primaryImageDoc?.url;
