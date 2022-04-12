@@ -584,6 +584,7 @@ class DocumentService {
             }
 
             count = documents.size()
+            offset += batchSize
         }
     }
 }
