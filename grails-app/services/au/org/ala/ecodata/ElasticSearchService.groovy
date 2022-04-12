@@ -1168,7 +1168,7 @@ class ElasticSearchService {
     private Map prepareDocumentForIndexing(Map document) {
         document["className"] = Document.class.getName()
 
-        Map project = projectService.get(document.projectId, ProjectService.FLAT)
+        Map project = projectService.get(document.projectId, ProjectService.FLAT) ?: [:]
 
         if (document) {
             // overwrite any project properties that has same name as document properties.

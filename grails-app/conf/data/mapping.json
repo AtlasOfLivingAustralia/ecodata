@@ -185,6 +185,9 @@
         "methodStepDescription": {
           "type":"text"
         },
+        "filepath": {
+          "type":"date"
+        },
         "links": {
           "enabled": false,
           "type": "object"
