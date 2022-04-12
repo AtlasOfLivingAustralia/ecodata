@@ -817,17 +817,6 @@ class ElasticSearchService {
             }
         }
 
-        log.info "Indexing all documents"
-        documentService.doWithAllDocuments { Map doc ->
-            try {
-                doc = prepareDocumentForIndexing(doc)
-                indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
-            }
-            catch (Exception e) {
-                log.error("Unable to index document: "+doc?.documentId, e)
-            }
-        }
-
         log.info "Indexing all sites"
         int count = 0
         Site.withNewSession { session ->
@@ -878,6 +867,19 @@ class ElasticSearchService {
                     session.clear()
                     log.info("Processed " + count + " activities")
                 }
+            }
+        }
+
+        log.info "Indexing all documents"
+        documentService.doWithAllDocuments { Map doc ->
+            try {
+                doc = prepareDocumentForIndexing(doc)
+                if(doc) {
+                    indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
+                }
+            }
+            catch (Exception e) {
+                log.error("Unable to index document: "+doc?.documentId, e)
             }
         }
 
@@ -1169,6 +1171,8 @@ class ElasticSearchService {
         document["className"] = Document.class.getName()
 
         Map project = projectService.get(document.projectId, ProjectService.FLAT) ?: [:]
+        if(project.isMERIT)
+            return
 
         if (document) {
             // overwrite any project properties that has same name as document properties.
