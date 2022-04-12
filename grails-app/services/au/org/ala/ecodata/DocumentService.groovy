@@ -3,12 +3,10 @@ package au.org.ala.ecodata
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
-import com.mongodb.client.model.Filters
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
-import org.bson.conversions.Bson
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.text.DateFormat
@@ -33,7 +31,7 @@ class DocumentService {
     CommonService commonService
     GrailsApplication grailsApplication
     ActivityService activityService
-    
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -388,7 +386,7 @@ class DocumentService {
 				filename = nextUniqueFileName(filepath, filename)
 			}
 			OutputStream file = new FileOutputStream(new File(fullPath(filepath, filename)));
-			
+
 			//supply outputstream to itext to write the PDF data,
 			com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 			document.setPageSize(PageSize.LETTER.rotate());
@@ -401,11 +399,11 @@ class DocumentService {
 			document.close();
 			file.close();
 			return filename
-			
+
 		}
-		
+
 	}
-			
+
     /**
      * We are preserving the file name so the URLs look nicer and the file extension isn't lost.
      * As filename are not guaranteed to be unique, we are pre-pending the file with a counter if necessary to
@@ -576,12 +574,16 @@ class DocumentService {
     }
 
     void doWithAllDocuments(Closure action) {
-        def collection = Document.getCollection()
-        Bson query = Filters.ne("status", DELETED);
-        def results = collection.find(query).batchSize(100)
+        def offset = 0
+        def batchSize = 100
 
-        results.each { dbObject ->
-            action.call(dbObject)
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            List documents = Document.findAllByStatus('active', [offset: offset, max: batchSize]).collect {
+                action.call(toMap(it))
+            }
+
+            count = documents.size()
         }
     }
 }
