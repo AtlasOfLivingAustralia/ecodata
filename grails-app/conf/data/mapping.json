@@ -186,7 +186,7 @@
           "type":"text"
         },
         "filepath": {
-          "type":"date"
+          "type":"text"
         },
         "links": {
           "enabled": false,

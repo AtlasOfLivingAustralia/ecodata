@@ -592,7 +592,7 @@ class ElasticSearchService {
                 break
 
             case Document.class.name:
-                Map document = documentService.get(docId)
+                Map document = documentService.getByStatus(docId)
 
                 document = prepareDocumentForIndexing(document)
                 indexDoc(document, DEFAULT_INDEX)
@@ -1168,6 +1168,9 @@ class ElasticSearchService {
     }
 
     private Map prepareDocumentForIndexing(Map document) {
+        if (!document?.projectId)
+            return
+
         document["className"] = Document.class.getName()
 
         Map project = projectService.get(document.projectId, ProjectService.FLAT) ?: [:]
