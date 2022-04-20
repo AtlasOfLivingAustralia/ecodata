@@ -58,6 +58,11 @@ class DocumentService {
         return o ? toMap(o, levelOfDetail) : null
     }
 
+    def getByStatus(id, levelOfDetail = []) {
+        def o = Document.findByDocumentId(id)
+        return o ? toMap(o, levelOfDetail) : null
+    }
+
     def getAll(boolean includeDeleted = false, levelOfDetail = []) {
         includeDeleted ?
             Document.findAllByTypeNotEqual(LINKTYPE).collect { toMap(it, levelOfDetail) } :
