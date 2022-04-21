@@ -871,6 +871,7 @@ class ElasticSearchService {
         }
 
         log.info "Indexing all documents"
+        count = 0;
         documentService.doWithAllDocuments { Map doc ->
             try {
                 doc = prepareDocumentForIndexing(doc)
@@ -880,6 +881,11 @@ class ElasticSearchService {
             }
             catch (Exception e) {
                 log.error("Unable to index document: "+doc?.documentId, e)
+            }
+
+            count++
+            if (count % 1000 == 0) {
+                log.info("Processed " + count + " documents")
             }
         }
 
@@ -1179,6 +1185,7 @@ class ElasticSearchService {
 
         if (document) {
             // overwrite any project properties that has same name as document properties.
+            project.remove('description') // to avoid overwriting of document description by project description
             project.putAll(document)
             document = project
 
