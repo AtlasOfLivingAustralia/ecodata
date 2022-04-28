@@ -63,10 +63,15 @@ class ActivityGraphQLMapper {
             //get a list of activities by project id
             query('activityByProjectId', [Activity]) {
                 argument('projectId', String)
+                argument('page', int){ nullable true }
+                argument('max', int){ nullable true }
                 dataFetcher(new DataFetcher() {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {
-                        Activity.where { projectId == environment.getArgument('projectId') }
+                        int max = environment.getArgument('max') ?: 20
+                        int page = environment.getArgument('page') ?: 1
+                        int offset = max*(page-1)
+                        Activity.where { projectId == environment.getArgument('projectId') }.list([max: max, offset:offset])
                     }
                 })
             }
