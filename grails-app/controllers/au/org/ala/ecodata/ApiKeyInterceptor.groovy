@@ -18,9 +18,9 @@ class ApiKeyInterceptor {
     CommonService commonService
     ActivityService activityService
 
-    @Autowired
+    @Autowired(required = false)
     Config config
-    @Autowired
+    @Autowired(required = false)
     DirectBearerAuthClient directBearerAuthClient
 
     public ApiKeyInterceptor() {

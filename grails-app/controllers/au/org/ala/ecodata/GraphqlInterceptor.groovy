@@ -1,19 +1,21 @@
+
+
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import org.pac4j.core.config.Config
 import org.pac4j.core.context.JEEContextFactory
-import grails.converters.JSON
 import org.pac4j.core.context.WebContext
+import org.pac4j.core.util.FindBest
 import org.pac4j.http.client.direct.DirectBearerAuthClient
 import org.springframework.beans.factory.annotation.Autowired
-import org.pac4j.core.util.FindBest
 
 class GraphqlInterceptor {
 
     UserService userService
-    @Autowired
+    @Autowired(required = false)
     Config config
-    @Autowired
+    @Autowired(required = false)
     DirectBearerAuthClient directBearerAuthClient
 
     GraphqlInterceptor() {
@@ -21,6 +23,11 @@ class GraphqlInterceptor {
     }
 
     boolean before() {
+        // allow ALA admins to access GraphQL browser
+        if (request.isUserInRole("ROLE_ADMIN")) {
+            return true
+        }
+
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
             if (authorizationHeader.startsWith("Bearer")) {
