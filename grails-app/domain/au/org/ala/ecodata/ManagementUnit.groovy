@@ -9,7 +9,7 @@ import org.springframework.validation.Errors
 class ManagementUnit {
 
     static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
-                                'startDate', 'endDate', 'associatedOrganisations', 'config']
+                                'startDate', 'endDate', 'associatedOrganisations', 'config', 'shortName']
 
     ObjectId id
     /** The hubId of the Hub in which this ManagementUnit was created */
@@ -25,6 +25,7 @@ class ManagementUnit {
     /** The date this management unit was established */
     Date startDate
     Date endDate
+    String shortName
 
     /** Outcomes to be achieved in this mu (probably should only be defined by programs) */
     List<Map> outcomes
@@ -65,6 +66,7 @@ class ManagementUnit {
         mu.status = status
         mu.associatedOrganisations = associatedOrganisations
         mu.relevantManagementUnits = relevantManagementUnits
+        mu.shortName = shortName
 
         mu
     }
@@ -89,6 +91,7 @@ class ManagementUnit {
         managementUnitSiteId nullable: true
         priorities nullable: true
         outcomes nullable:true
+        shortName nullable: true
         hubId nullable: true, validator: { String hubId, ManagementUnit managementUnit, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(managementUnit, 'managementUnitId', 'hubId', errors)
         }
