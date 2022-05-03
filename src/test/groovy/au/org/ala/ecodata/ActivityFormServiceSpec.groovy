@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
+import groovy.json.JsonSlurper
 import spock.lang.Specification
 
 class ActivityFormServiceSpec extends Specification implements ServiceUnitTest<ActivityFormService>, DomainUnitTest<ActivityForm> {
@@ -306,5 +307,100 @@ class ActivityFormServiceSpec extends Specification implements ServiceUnitTest<A
         //version 2 should be retrieved since the form is in deleted status
         activities[1].formVersions[0] == 1
     }
+
+    def "The activityFormService can find forms referenced by Score configurations"() {
+        when:
+        Map scoreConfiguration = new JsonSlurper().parseText(exampleConfig)
+
+        then:
+        service.referencedFormSectionProperties(scoreConfiguration) == [
+                "RLP - Output Report Adjustment":[
+                        "adjustments.scoreId":[property:"data.adjustments.scoreId", type:"filter", "filterValue":"a516c78d-740f-463b-a1ce-5b02b8c82dd3"],
+                        "adjustments.adjustment":[property:"data.adjustments.adjustment", type:"SUM"]],
+                "RLP - Weed treatment":[
+                        "weedTreatmentSites.initialOrFollowup":[property:"data.weedTreatmentSites.initialOrFollowup", type:"filter", filterValue:"Initial"],
+                        "weedTreatmentSites.areaTreatedHa":[property:"data.weedTreatmentSites.areaTreatedHa", type:"SUM"]
+                ],
+                "Weed treatment":[
+                        "weedTreatmentSites.initialOrFollowup":[property:"data.weedTreatmentSites.initialOrFollowup", type:"filter", filterValue:"Initial"],
+                        "weedTreatmentSites.areaTreatedHa":[property:"data.weedTreatmentSites.areaTreatedHa", type:"SUM"]
+                ]
+        ]
+    }
+
+    private String exampleConfig = """ 
+    {
+        "label": "Area (ha) treated for weeds - initial",
+        "childAggregations": [
+            {
+                "filter": {
+                    "filterValue": "RLP - Output Report Adjustment",
+                    "type": "filter",
+                    "property": "name"
+                },
+                "childAggregations": [
+                    {
+                        "filter": {
+                            "property": "data.adjustments.scoreId",
+                            "type": "filter",
+                            "filterValue": "a516c78d-740f-463b-a1ce-5b02b8c82dd3"
+                        },
+                        "childAggregations": [
+                            {
+                                "property": "data.adjustments.adjustment",
+                                "type": "SUM"
+                            }
+                        ]   
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "filterValue": "RLP - Weed treatment",
+                    "property": "name",
+                    "type": "filter"
+                },
+                "childAggregations": [
+                    {
+                        "filter": {
+                            "property": "data.weedTreatmentSites.initialOrFollowup",
+                            "type": "filter",
+                            "filterValue": "Initial"
+                        },
+                        "childAggregations": [
+                            {
+                                "property": "data.weedTreatmentSites.areaTreatedHa",
+                                "type": "SUM"
+                            }
+                    ]
+                    }
+                ]
+            },
+            {
+                "filter": {
+                    "filterValue": "Weed treatment",
+                    "property": "name",
+                    "type": "filter"
+                },
+                "childAggregations": [
+                    {
+                        "filter": {
+                            "property": "data.weedTreatmentSites.initialOrFollowup",
+                            "type": "filter",
+                            "filterValue": "Initial"
+                        },
+                        "childAggregations": [
+                            {
+                                "property": "data.weedTreatmentSites.areaTreatedHa",
+                                "type": "SUM"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+        }
+    }
+"""
 
 }

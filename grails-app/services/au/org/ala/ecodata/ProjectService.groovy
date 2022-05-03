@@ -42,6 +42,7 @@ class ProjectService {
     ReportingService reportingService
     OrganisationService organisationService
     UserService userService
+    ActivityFormService activityFormService
 
   /*  def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -569,6 +570,19 @@ class ProjectService {
             log.error error
             return [status: 'error', error: error]
         }
+    }
+
+    Map scoreDataForActivityAndProject(String activityId, Map activityData = null) {
+        Map activity = activityService.get(activityId)
+
+        ActivityForm form = activityFormService.findActivityForm(activity.type, activity.formVersion)
+        List<Score> scores = activityFormService.findScoresThatReferenceForm(form)
+
+        List projectResults = projectMetrics(activity.projectId, true, false, scores.collect{it.scoreId})
+        List activityResults = reportService.aggregateActivities([activityData ?: activity], scores)
+
+        [projectScores:projectResults, activityScores:activityResults]
+
     }
 
     List<String> getActivityIdsForProject(String projectId) {
