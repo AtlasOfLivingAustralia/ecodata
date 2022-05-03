@@ -48,6 +48,8 @@ class ManagementUnit {
     //Management units which have the same service provider
     List relevantManagementUnits = []
 
+    GeographicInfo geographicInfo
+
     /** Custom rendering for the mu */
     Map toMap() {
         Map mu = [:]
@@ -76,7 +78,7 @@ class ManagementUnit {
         version false
     }
 
-    static embedded = ['associatedOrganisations']
+    static embedded = ['associatedOrganisations', 'geographicInfo']
 
     static transients = ['relevantManagementUnits']
 
@@ -92,6 +94,7 @@ class ManagementUnit {
         priorities nullable: true
         outcomes nullable:true
         shortName nullable: true
+        geographicInfo nullable:true
         hubId nullable: true, validator: { String hubId, ManagementUnit managementUnit, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(managementUnit, 'managementUnitId', 'hubId', errors)
         }
