@@ -9,7 +9,7 @@ import org.springframework.validation.Errors
 class ManagementUnit {
 
     static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
-                                'startDate', 'endDate', 'associatedOrganisations', 'config', 'shortName']
+                                'startDate', 'endDate', 'associatedOrganisations', 'config', 'shortName', 'geographicInfo']
 
     ObjectId id
     /** The hubId of the Hub in which this ManagementUnit was created */
