@@ -32,7 +32,6 @@ class ProgramService {
         properties.programId = Identifiers.getNew(true, '')
         Program program = new Program(properties)
         updateParent(program, properties)
-        commonService.updateProperties(program, properties)
         program.save(flush: true)
         return program
     }
@@ -41,8 +40,7 @@ class ProgramService {
     Program update(String id, Map properties) {
         Program program = get(id)
         updateParent(program, properties)
-
-        commonService.updateProperties(program, properties)
+        program.properties = properties
         program.save(flush:true)
         return program
     }

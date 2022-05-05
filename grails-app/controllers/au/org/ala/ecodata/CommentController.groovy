@@ -74,7 +74,7 @@ class CommentController {
                 response.addHeader("location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
                 response.addHeader("entityId", comment.getId().toString())
                 response.setContentType("application/json")
-                render model as JSON
+                render new JSON(model)
             } else {
                 response.sendError(SC_INTERNAL_SERVER_ERROR, 'Failed saving data to database');
             }
@@ -105,7 +105,7 @@ class CommentController {
                         result.success = true;
                     }
 
-                    render(text: result as JSON, contentType: 'application/json');
+                    render(text: new JSON(result), contentType: 'application/json');
                 } else {
                     response.sendError(SC_UNAUTHORIZED, 'Only comment owner can update this comment.');
                 }
@@ -146,7 +146,7 @@ class CommentController {
             Comment c = Comment.get(params.id);
             if (c) {
                 Map mapOfProperties = commentService.getCommentProperties(c)
-                render text: mapOfProperties as JSON, contentType: 'application/json'
+                render text: new JSON(mapOfProperties), contentType: 'application/json'
             } else {
                 response.sendError(SC_NOT_FOUND, "Comment not found");
             }

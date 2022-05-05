@@ -86,6 +86,30 @@ class ReportingControllerSpec extends Specification implements ControllerUnitTes
         results.progress == report.progress
     }
 
+    def "can cancel outcomes report"(){
+        setup:
+        def reportId = "1"
+        def params = [comment: null, category: null]
+        def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: Report.REPORT_NOT_APPROVED, category: "Core Service", activityId: "12",
+                      activityType: "RLP", fromDate: new Date(), toDate: new Date(), dueDate: new Date(), submissionDate: new Date(), dateSubmitted: new Date(), progress: "planned", submittedBy: "1",
+                      publicationStatus: "approved", status: "active", dateCreated: new Date(), lastUpdated:  new Date(), cancelledBy: "1", dateCancelled: new Date()]
+
+        when:
+        request.method = "POST"
+        controller.cancel(reportId)
+        def results = response.getJson()
+
+        then:
+        1* reportingService.cancel(reportId, params.comment, params.category) >> report
+
+        and:
+        results.size() == 21
+        results.reportId == report.reportId
+        results.name == report.name
+        results.type == report.type
+        results.progress == report.progress
+    }
+
 //    def "can adjust report"(){
 //        setup:
 //        def reportId = "1"

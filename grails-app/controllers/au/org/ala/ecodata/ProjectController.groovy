@@ -10,6 +10,8 @@ class ProjectController {
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
     ElasticSearchService elasticSearchService
     ManagementUnitService managementUnitService
+    OrganisationService organisationService
+    ProgramService programService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -94,7 +96,7 @@ class ProjectController {
 
         XlsExporter exporter = new XlsExporter(URLEncoder.encode(project.name, 'UTF-8'))
         exporter.setResponseHeaders(response)
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService, organisationService, programService)
         projectExporter.export(project)
         exporter.sizeColumns()
 
@@ -240,7 +242,7 @@ class ProjectController {
                 xlsx {
                     XlsExporter exporter = new XlsExporter("results")
                     exporter.setResponseHeaders(response)
-                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService)
+                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService, organisationService, programService)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
                     projectExporter.exportAllProjects(projects)

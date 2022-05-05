@@ -2556,4 +2556,107 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         1 * permissionService.findUserPermission('1', '12') >> new UserPermission(userId:'1', entityId:'12', entityType:Hub.name)
         response.status == HttpStatus.SC_OK
     }
+
+    void "Add star to a management unit for user"(){
+        setup:
+        String userId = "123"
+        String managementUnitId = '567'
+        ManagementUnit mu = new ManagementUnit(managementUnitId: 567, name: "MU test")
+        mu.save(flush:true, failOnError: true)
+
+        when:
+        params.userId = userId
+        params.managementUnitId = managementUnitId
+        request.method = "POST"
+        controller.addStarManagementUnitForUser()
+
+        then:
+        1 * permissionService.addUserAsRoleToManagementUnit(userId, AccessLevel.starred, managementUnitId) >> [status: "ok", id: managementUnitId]
+        response.status == HttpStatus.SC_OK
+        response.text == "success: 567"
+    }
+
+    void "Add star to a management unit for user but with missing param"(){
+        setup:
+        String userId = "123"
+        String managementUnitId = '567'
+
+        when:
+
+        request.method = "POST"
+        controller.addStarManagementUnitForUser()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.text == 'Required params not provided: userId, managementUnitId.'
+    }
+
+    void "Remove star from a management unit for user"(){
+        setup:
+        String userId = "123"
+        String managementUnitId = '567'
+        ManagementUnit mu = new ManagementUnit(managementUnitId: 567, name: "MU test")
+        mu.save(flush:true, failOnError: true)
+
+        when:
+        params.userId = userId
+        params.managementUnitId = managementUnitId
+        request.method = "POST"
+        controller.removeStarManagementUnitForUser()
+
+        then:
+        1 * permissionService.removeUserAsRoleFromManagementUnit(userId, AccessLevel.starred, managementUnitId) >> [status: "ok", id: managementUnitId]
+        response.status == HttpStatus.SC_OK
+        response.text == "success: 567"
+    }
+
+    void "Remove star from a management unit for user but with missing param"(){
+        setup:
+        String userId = "123"
+        String managementUnitId = '567'
+
+        when:
+
+        request.method = "POST"
+        controller.removeStarManagementUnitForUser()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.text == 'Required params not provided: userId, managementUnitId.'
+    }
+
+    void "Is management unit starred by user" () {
+        setup:
+        String userId = '123'
+        String managementUnitId = '567'
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new UserPermission(userId:'123', accessLevel:AccessLevel.starred, entityId:'567', entityType:ManagementUnit.name).save()
+
+        when:
+        params.userId = userId
+        params.managementUnitId = managementUnitId
+        controller.isManagementUnitStarredByUser()
+        def result = response.getJson()
+
+        then:
+        response.status == HttpStatus.SC_OK
+        result.isManagementUnitStarredByUser == true
+    }
+
+    void "Is management unit starred by user but with missing param" () {
+        setup:
+        String userId = '123'
+        String managementUnitId = '567'
+
+
+        when:
+        params.userId = userId
+
+        controller.isManagementUnitStarredByUser()
+        def result = response.getJson()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.text == 'Required params not provided: id, managementUnitId.'
+    }
 }

@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
 
+import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
-import spock.lang.Specification
+import grails.util.Holders
 
 /**
  * Tests the DocumentService.
@@ -9,7 +11,7 @@ import spock.lang.Specification
  * The test landscape image is by Pierre Bouillot.
  * The test portrait image is by John Salvino.
  */
-class DocumentServiceSpec extends Specification implements ServiceUnitTest<DocumentService> {
+class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentService>, DomainUnitTest<Document> {
 
     DocumentService service = new DocumentService()
     File tempUploadDir
@@ -24,8 +26,9 @@ class DocumentServiceSpec extends Specification implements ServiceUnitTest<Docum
         tempArchiveDir.mkdirs()
         new File(tempUploadDir, "test").mkdir()
 
-        grailsApplication.config.app = [file: [archive: [path: tempArchiveDir.getAbsolutePath()], upload: [path: tempUploadDir.getAbsolutePath()]]]
+        grailsApplication.config.app = [file: [archive: [path: tempArchiveDir.getAbsolutePath()], upload: [path: tempUploadDir.getAbsolutePath()]], uploads: [url: '/document/download/']]
         service.grailsApplication = grailsApplication
+        Holders.config.app = grailsApplication.config.app
     }
 
     def cleanup() {
@@ -124,6 +127,31 @@ class DocumentServiceSpec extends Specification implements ServiceUnitTest<Docum
         null      | "../../../file" | false
         ""        | "../../../file" | false
         "/etc/"   | "file"          | false
+    }
+
+    def "findImageUrlForProjectId should provide provide thumbnail url as well as full image url"(){
+        setup:
+        def projectId = 'abc'
+        def url
+        Document d = new Document(documentId: 'doc1', filepath: '2022-03', filename: 'Landscape_1.jpg', name:'Test Image', projectId: projectId, type: Document.DOCUMENT_TYPE_IMAGE, role: Document.ROLE_LOGO, status: Status.ACTIVE)
+        d.save(flush: true, failOnError: true)
+        service.saveFile(d.filepath, d.filename, fileAsStream(d.filename), false, Document.DOCUMENT_TYPE_IMAGE)
+
+        when:
+        url = service.findImageUrlForProjectId(projectId)
+
+        then:
+        url.contains('thumb_')
+
+        when:
+        url = service.findImageUrlForProjectId(projectId, false)
+
+        then:
+        !url.contains('thumb_')
+        url.endsWith('2022-03' + File.separator + "Landscape_1.jpg")
+
+        cleanup:
+        d.delete(flush: true)
     }
 
 }

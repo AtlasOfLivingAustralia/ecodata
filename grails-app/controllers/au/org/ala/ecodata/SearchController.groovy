@@ -40,6 +40,7 @@ class SearchController {
     OrganisationService organisationService
     MapService mapService
     ManagementUnitService managementUnitService
+    ProgramService programService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -505,7 +506,7 @@ class SearchController {
         Map metadata = [:].withDefault {
             DataDescription.findByXlsxName(it)
         }
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, metadata, formSectionPerTab)
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService,  organisationService, programService, metadata, formSectionPerTab)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
