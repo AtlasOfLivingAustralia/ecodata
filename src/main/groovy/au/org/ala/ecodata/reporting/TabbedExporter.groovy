@@ -460,8 +460,9 @@ class TabbedExporter {
 
     protected AdditionalSheet addSheetWithProperties(String sheetName, List properties, List headers, List activityConfig = null) {
 
-        List updatedHeaders = activityConfig ? headers[2] : headers
+        List updatedHeaders = headers
         if (includeDataDescription()) {
+            updatedHeaders = activityConfig && headers.size() >= 3 ? headers[2] : headers
             addToDataDictionarySheet(properties, updatedHeaders, activityConfig)
             updatedHeaders = properties
         }

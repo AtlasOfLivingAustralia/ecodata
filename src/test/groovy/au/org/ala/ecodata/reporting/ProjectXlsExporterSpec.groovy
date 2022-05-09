@@ -220,7 +220,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Electorate Coord data can be exported"() {
         setup:
         String sheet = "Electorate Coord"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 

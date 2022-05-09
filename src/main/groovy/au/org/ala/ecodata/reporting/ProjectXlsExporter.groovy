@@ -160,7 +160,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService, Map<String, DataDescription> downloadMetadata, boolean formSectionPerTab = false) {
-        super(exporter, tabsToExport, documentMap, TimeZone.default)
+        super(exporter, tabsToExport, [:], TimeZone.default)
         this.projectService = projectService
         this.formSectionPerTab = formSectionPerTab
         addDataDescriptionToDownload(downloadMetadata)
