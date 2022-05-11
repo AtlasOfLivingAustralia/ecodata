@@ -19,7 +19,7 @@ plugins {
     id 'com.craigburke.client-dependencies' version '1.4.0'
 }
 
-version "3.4-biocollect-6.0-SNAPSHOT"
+version "3.4"
 group "au.org.ala"
 description "Ecodata"
 
@@ -46,7 +46,6 @@ repositories {
     maven { url "https://repo.osgeo.org/repository/release/" }
     maven { url "https://repo.grails.org/grails/core" }
     maven { url "https://nexus.ala.org.au/content/groups/public/" }
-    jcenter()
 }
 
 configurations {
