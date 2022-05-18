@@ -13,6 +13,9 @@
         "programId" : {
           "type" : "keyword"
         },
+        "projLifecycleStatus" : {
+          "type" : "keyword"
+        },
         "managementUnitId" : {
           "type" : "keyword"
         },

@@ -999,6 +999,12 @@ facets.project = [
                 helpText: 'Assets addressed in the MERI plan'
         ],
         [
+                name: "projLifecycleStatus",
+                title: 'Project Lifecycle Status',
+                dataType: 'text',
+                helpText: 'Filters projects by project lifecycle status'
+        ],
+        [
                 name: "partnerOrganisationTypeFacet",
                 title: 'Partner Organisations',
                 dataType: 'text',
