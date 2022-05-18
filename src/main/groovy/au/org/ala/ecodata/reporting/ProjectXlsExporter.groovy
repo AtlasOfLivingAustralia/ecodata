@@ -129,6 +129,12 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
     List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'geographicInfo.primaryElectorate', 'geographicInfo.primaryState', new ListGetter('geographicInfo.otherElectorates'), new ListGetter('geographicInfo.otherStates'), 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'manager']
 
+    List<String> nativeThreatsHeaders =commonProjectHeaders + ['Could this control approach pose a threat to Native Animals/Plants or Biodiversity?', 'Details']
+    List<String> nativeThreatsProperties =commonProjectProperties + ['couldBethreatToSpecies', 'details']
+
+    List<String> pestControlMethodsHeaders =commonProjectHeaders + ['Are there any current control methods for this pest?', 'Has it been successful?', 'Type of method', 'Details']
+    List<String> pestControlMethodsProperties =commonProjectProperties + ['currentControlMethod', 'hasBeenSuccessful', 'methodType', 'details']
+
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet outputTargetsSheet
@@ -420,7 +426,9 @@ class ProjectXlsExporter extends ProjectExporter {
         String[] meriPlanTabs = [
                 "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
                 "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
-                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets",
+                'MERI_Pest Control Methods', 'MERI_Native Species Threat',
+                "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
@@ -448,6 +456,8 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
         exportRLPServicesTargets(project)
+        exportControlMethods(project)
+        exportNativeThreats(project)
 
     }
 
@@ -776,6 +786,50 @@ class ProjectXlsExporter extends ProjectExporter {
         }
 
         sheet.add(data?:[], rlpSTProperties, row+1)
+    }
+
+    private  void exportControlMethods(Map project){
+        if (shouldExport("MERI_Pest Control Methods")) {
+            AdditionalSheet sheet = getSheet("Pest Control Methods", pestControlMethodsHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threatControlMethod?.rows
+                items.each{ Map item ->
+                    Map controlMethod = [:]
+                    controlMethod["currentControlMethod"] = item.currentControlMethod
+                    controlMethod["hasBeenSuccessful"] = item.hasBeenSuccessful
+                    controlMethod["methodType"] = item.methodType
+                    controlMethod["details"] = item.details
+                    controlMethod.putAll(project)
+                    data.add(project + controlMethod)
+                }
+            }
+
+            sheet.add(data?:[], pestControlMethodsProperties, row+1)
+        }
+    }
+
+    private  void exportNativeThreats(Map project){
+        if (shouldExport("MERI_Native Species Threat")) {
+            AdditionalSheet sheet = getSheet("Native Species Threat", nativeThreatsHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threatToNativeSpecies?.rows
+                items.each{ Map item ->
+                    Map nativeThreat = [:]
+                    nativeThreat["couldBethreatToSpecies"] = item.couldBethreatToSpecies
+                    nativeThreat["details"] = item.details
+                    nativeThreat.putAll(project)
+                    data.add(project + nativeThreat)
+                }
+            }
+
+            sheet.add(data?:[], nativeThreatsProperties, row+1)
+        }
     }
 
     private void exportDocuments(Map project) {
