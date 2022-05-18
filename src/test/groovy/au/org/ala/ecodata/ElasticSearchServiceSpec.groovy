@@ -53,6 +53,8 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         mockDomain(Site)
     }
 
+    ProjectService projectService = Mock(ProjectService)
+
     void setup() {
 
         JSON.registerObjectMarshaller(new MapMarshaller())
@@ -67,6 +69,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         service.activityService = Mock(ActivityService)
         service.organisationService = Mock(OrganisationService)
         service.documentService = Mock(DocumentService)
+        service.projectService = projectService
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
         service.initialize()
         service.indexAll() // This will delete then recreate the index as there is no data in the database
@@ -238,6 +241,18 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
 //
 //        then:
 //        results.hits.totalHits.value > 0
+    }
+
+    def "prepare a document for indexing"() {
+        setup:
+        Map document = [documentId:'d1', projectId:'p1']
+        Map project = [projectId: 'p1']
+
+        when:
+        service.prepareDocumentForIndexing(document)
+
+        then:
+        projectService.get(document.projectId, ProjectService.FLAT) >> project
     }
 
     /**
