@@ -68,13 +68,13 @@ class ReportController {
     @RequireApiKey
     def returnForRework(String id) {
         Map params = request.JSON
-        respond reportingService.returnForRework(id, params.comment, params.category)
+        respond reportingService.returnForRework(id, params.comment, params.categories)
     }
 
     @RequireApiKey
     def cancel(String id) {
         Map params = request.JSON
-        respond reportingService.cancel(id, params.comment, params.category)
+        respond reportingService.cancel(id, params.comment, params.categories)
     }
 
     @RequireApiKey
