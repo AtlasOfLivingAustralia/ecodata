@@ -100,8 +100,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
-    List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
-    List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
+    List<String> reportHeaders = commonProjectHeaders + ['Report From Date', 'Report To Date', 'Report Financial Year', 'Report Type', 'Description', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment', 'Categories']
+    List<String> reportProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate',  'financialYear',  'reportType', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment', 'categories']
     List<String> reportSummaryHeaders = commonProjectHeaders + ['Stage', 'Stage from', 'Stage to', 'Activity Count', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
     List<String> reportSummaryProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']

@@ -65,18 +65,19 @@ class ReportingControllerSpec extends Specification implements ControllerUnitTes
     def "can return for rework report"(){
         setup:
         def reportId = "1"
-        def params = [comment: null, category: null]
+        def params = [comment: 'Testing', categories: ['Other']]
         def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: Report.REPORT_APPROVED, category: "Core Service", activityId: "12",
-                      activityType: "RLP", fromDate: new Date(), toDate: new Date(), dueDate: new Date(), submissionDate: new Date(), dateSubmitted: new Date(), progress: "finish", submittedBy: "1",
+                      activityType: "RLP", fromDate: new Date(), toDate: new Date(), dueDate: new Date(), submissionDate: new Date(), dateSubmitted: new Date(), progress: "finished", submittedBy: "1",
                       publicationStatus: "approved", status: "active", dateCreated: new Date(), lastUpdated:  new Date(), dateApproved: new Date(), approvedBy: "1", dateReturned: new Date()]
 
         when:
+        request.json = params
         request.method = "POST"
         controller.returnForRework(reportId)
         def results = response.getJson()
 
         then:
-        1* reportingService.returnForRework(reportId, params.comment, params.category) >> report
+        1* reportingService.returnForRework(reportId, params.comment, params.categories) >> report
 
         and:
         results.size() == 22
@@ -89,7 +90,7 @@ class ReportingControllerSpec extends Specification implements ControllerUnitTes
     def "can cancel outcomes report"(){
         setup:
         def reportId = "1"
-        def params = [comment: null, category: null]
+        def params = [comment: null, categories: null]
         def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: Report.REPORT_NOT_APPROVED, category: "Core Service", activityId: "12",
                       activityType: "RLP", fromDate: new Date(), toDate: new Date(), dueDate: new Date(), submissionDate: new Date(), dateSubmitted: new Date(), progress: "planned", submittedBy: "1",
                       publicationStatus: "approved", status: "active", dateCreated: new Date(), lastUpdated:  new Date(), cancelledBy: "1", dateCancelled: new Date()]
@@ -100,7 +101,7 @@ class ReportingControllerSpec extends Specification implements ControllerUnitTes
         def results = response.getJson()
 
         then:
-        1* reportingService.cancel(reportId, params.comment, params.category) >> report
+        1* reportingService.cancel(reportId, params.comment, params.categories) >> report
 
         and:
         results.size() == 21
