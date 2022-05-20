@@ -797,96 +797,101 @@ class ElasticSearchService {
                     client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-indexing"
         ).build()
 
-        Project.withNewSession {
-            def batchParams = [offset: 0, max: 50, sort:'projectId']
-            def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
+        try {
 
-            while (projects) {
-                projects.each { project ->
+            Project.withNewSession {
+                def batchParams = [offset: 0, max: 50, sort: 'projectId']
+                def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
+
+                while (projects) {
+                    projects.each { project ->
+                        try {
+                            Map projectMap = prepareProjectForHomePageIndex(project)
+                            indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX], bulkProcessor)
+                        }
+                        catch (Exception e) {
+                            log.error("Unable to index project:  " + project?.projectId, e)
+                        }
+                    }
+                    batchParams.offset = batchParams.offset + batchParams.max
+                    projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
+                    log.info("Processed " + batchParams.offset + " projects")
+                }
+            }
+
+            log.info "Indexing all sites"
+            int count = 0
+            Site.withNewSession { session ->
+                siteService.doWithAllSites { def siteMap ->
+                    siteMap["className"] = Site.class.name
                     try {
-                        Map projectMap = prepareProjectForHomePageIndex(project)
-                        indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX], bulkProcessor)
+                        siteMap = prepareSiteForIndexing(siteMap, false)
+                        if (siteMap) {
+                            indexDoc(siteMap, newIndexes[DEFAULT_INDEX], bulkProcessor)
+                        }
                     }
                     catch (Exception e) {
-                        log.error("Unable to index project:  " + project?.projectId, e)
+                        log.error("Unable index site: " + siteMap?.siteId, e)
+                    }
+                    count++
+                    if (count % 1000 == 0) {
+                        session.clear()
+                        log.info("Processed " + count + " sites")
                     }
                 }
-                batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
-                log.info("Processed "+batchParams.offset+" projects")
             }
-        }
 
-        log.info "Indexing all sites"
-        int count = 0
-        Site.withNewSession { session ->
-            siteService.doWithAllSites { def siteMap ->
-                siteMap["className"] = Site.class.name
+            log.info "Indexing all organisations"
+            organisationService.doWithAllOrganisations { Map org ->
                 try {
-                    siteMap = prepareSiteForIndexing(siteMap, false)
-                    if (siteMap) {
-                        indexDoc(siteMap, newIndexes[DEFAULT_INDEX], bulkProcessor)
+                    prepareOrganisationForIndexing(org)
+                    indexDoc(org, newIndexes[DEFAULT_INDEX], bulkProcessor)
+                }
+                catch (Exception e) {
+                    log.error("Unable to index organisation: " + org?.organisationId, e)
+                }
+            }
+
+            log.info "Indexing all activities"
+            count = 0;
+            Activity.withNewSession { session ->
+                activityService.doWithAllActivities { Map activity ->
+                    try {
+                        activity = prepareActivityForIndexing(activity)
+                        indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? newIndexes[PROJECT_ACTIVITY_INDEX] : newIndexes[DEFAULT_INDEX], bulkProcessor)
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index activity: " + activity?.activityId, e)
+                    }
+
+                    count++
+                    if (count % 1000 == 0) {
+                        session.clear()
+                        log.info("Processed " + count + " activities")
+                    }
+                }
+            }
+
+            log.info "Indexing all documents"
+            count = 0;
+            documentService.doWithAllDocuments { Map doc ->
+                try {
+                    doc = prepareDocumentForIndexing(doc)
+                    if (doc) {
+                        indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
                     }
                 }
                 catch (Exception e) {
-                    log.error("Unable index site: "+siteMap?.siteId, e)
-                }
-                count++
-                if (count % 1000 == 0) {
-                    session.clear()
-                    log.info("Processed "+count+" sites")
-                }
-            }
-        }
-
-        log.info "Indexing all organisations"
-        organisationService.doWithAllOrganisations { Map org ->
-            try {
-                prepareOrganisationForIndexing(org)
-                indexDoc(org, newIndexes[DEFAULT_INDEX], bulkProcessor)
-            }
-            catch (Exception e) {
-                log.error("Unable to index organisation: "+org?.organisationId, e)
-            }
-        }
-
-        log.info "Indexing all activities"
-        count = 0;
-        Activity.withNewSession { session ->
-            activityService.doWithAllActivities { Map activity ->
-                try {
-                    activity = prepareActivityForIndexing(activity)
-                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? newIndexes[PROJECT_ACTIVITY_INDEX] : newIndexes[DEFAULT_INDEX], bulkProcessor)
-                }
-                catch (Exception e) {
-                    log.error("Unable to index activity: " + activity?.activityId, e)
+                    log.error("Unable to index document: " + doc?.documentId, e)
                 }
 
                 count++
                 if (count % 1000 == 0) {
-                    session.clear()
-                    log.info("Processed " + count + " activities")
+                    log.info("Processed " + count + " documents")
                 }
             }
-        }
-
-        log.info "Indexing all documents"
-        count = 0;
-        documentService.doWithAllDocuments { Map doc ->
-            try {
-                doc = prepareDocumentForIndexing(doc)
-                if(doc) {
-                    indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
-                }
-            }
-            catch (Exception e) {
-                log.error("Unable to index document: "+doc?.documentId, e)
-            }
-
-            count++
-            if (count % 1000 == 0) {
-                log.info("Processed " + count + " documents")
-            }
+        } catch (Throwable throwable) {
+            log.info("Thowable exceptions", throwable)
         }
 
         bulkProcessor.close()
