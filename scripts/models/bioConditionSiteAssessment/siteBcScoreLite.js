@@ -736,8 +736,8 @@ self.transients.siteBcScore =  ko.computed(function () {
 // Retreive BioCondition reference table and benchmark values
 self.loadLookups = function (key) {
     var result = {};
-    var bioConditionAssessmentTableReferenceUrl = 'https://biocollect.ala.org.au/download/getScriptFile?hub=bcc&filename=mini_vegetationTable.json.js&model=bioConditionSiteAssessment';
-    var consolidatedBenchmarksURL = "https://biocollect.ala.org.au/download/getScriptFile?hub=bcc&filename=benchmark_data_for_release_v3.1.json&model=bioConditionSiteAssessment"
+    var bioConditionAssessmentTableReferenceUrl = '/download/getScriptFile?hub=bcc&filename=mini_vegetationTable.json.js&model=bioConditionSiteAssessment';
+    var consolidatedBenchmarksURL = "/download/getScriptFile?hub=bcc&filename=benchmark_data_for_release_v3.2.json&model=bioConditionSiteAssessment"
     var url = '';
     switch (key) {
         case 'BioConditionAssessmentTableReference':
