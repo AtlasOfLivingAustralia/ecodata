@@ -590,6 +590,7 @@ class DocumentService {
 
             count = documents.size()
             offset += batchSize
+            Document.withSession { session -> session.clear() }
         }
     }
 }
