@@ -404,7 +404,7 @@ class SearchController {
         render results as JSON
     }
 
-//    @RequireApiKey
+    @RequireApiKey
     def genericReport() {
         Map params = request.JSON
         String index = params.index ?: ElasticIndex.DEFAULT_INDEX
