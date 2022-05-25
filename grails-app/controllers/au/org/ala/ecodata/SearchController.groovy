@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.*
-import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
@@ -401,6 +401,20 @@ class SearchController {
         Map params = request.JSON
         def approvedOnly = params.approvedActivitiesOnly
         def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, approvedOnly)
+        render results as JSON
+    }
+
+    @RequireApiKey
+    def genericReport() {
+        Map params = request.JSON
+        String index = params.index ?: ElasticIndex.DEFAULT_INDEX
+        if(![ElasticIndex.DEFAULT_INDEX, ElasticIndex.HOMEPAGE_INDEX, ElasticIndex.PROJECT_ACTIVITY_INDEX].contains(index) ) {
+            response.setStatus(400)
+            render text: [message: "Bad request: index not recognised"] as JSON
+            return
+        }
+
+        def results = reportService.runReport(params.query ?: "*:*", params.fq, params.reportConfig, index)
         render results as JSON
     }
 

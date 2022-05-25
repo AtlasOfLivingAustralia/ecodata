@@ -48,37 +48,61 @@ class ReportService {
         [results:allResults, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
     }
 
-    def queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action) {
+    def runReport(String searchTerm, List filters, Map reportConfig, String index = HOMEPAGE_INDEX) {
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(reportConfig)
 
+        Map metadata = [distinctProjects:new HashSet()]
+
+        Closure aggregateProjects =  { Map project ->
+            metadata.distinctProjects.add(project.projectId)
+            aggregator.aggregate(project)
+        }
+        queryPaginated(filters, searchTerm, aggregateProjects, index)
+
+        AggregationResult allResults = aggregator.result()
+
+        [results:allResults, metadata:metadata]
+
+    }
+
+    private void queryPaginated(List filters, String searchTerm, Closure action, String index = HOMEPAGE_INDEX) {
         Map params = [offset:0, max:20, fq:filters]
 
-        SearchResponse results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
+        SearchResponse results = elasticSearchService.search(searchTerm, params, index)
         def total = results.hits.totalHits.value
         while (params.offset < total) {
 
             results.hits.hits.each { hit ->
-                Map project = hit.sourceAsMap
-
-                List activities = project.activities
-                if (approvedActivitiesOnly) {
-                    activities = activities?.findAll{it.publicationStatus == Report.REPORT_APPROVED}
-                }
-                if (activities) {
-                    List activityIds = activities?.collect{it.activityId}
-                    Output.withNewSession {
-                        List outputs = Output.findAllByActivityIdInListAndStatusNotEqual(activityIds, Status.DELETED)
-                        Map<String, List> outputsByActivityId = outputs.groupBy { it.activityId }
-                        activities?.each { activity ->
-                            activity.outputs = outputsByActivityId[activity.activityId] ?: []
-                            action(aggregator, activity)
-                        }
-                    }
-                }
+                Map result = hit.sourceAsMap
+                action(result)
             }
             params.offset += params.max
 
-            results  = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
+            results  = elasticSearchService.search(searchTerm, params, index)
         }
+    }
+
+    private void queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action) {
+
+        Closure aggregateActivityData = { Map project ->
+            List activities = project.activities
+            if (approvedActivitiesOnly) {
+                activities = activities?.findAll{it.publicationStatus == Report.REPORT_APPROVED}
+            }
+            if (activities) {
+                List activityIds = activities?.collect{it.activityId}
+                Output.withNewSession {
+                    List outputs = Output.findAllByActivityIdInListAndStatusNotEqual(activityIds, Status.DELETED)
+                    Map<String, List> outputsByActivityId = outputs.groupBy { it.activityId }
+                    activities?.each { activity ->
+                        activity.outputs = outputsByActivityId[activity.activityId] ?: []
+                        action(aggregator, activity)
+                    }
+                }
+            }
+        }
+
+        queryPaginated(filters, searchTerm, aggregateActivityData)
     }
 
     def aggregate(List filters, String searchTerm) {
@@ -179,18 +203,25 @@ class ReportService {
      * @param aggregationSpec defines the scores to be aggregated and if any grouping needs to occur.
      * [{score:{name: , units:, aggregationType}, groupBy: {entity: <one of 'activity', 'output', 'project', 'site>, property: String <the entity property to group by>}, ...]
      *
-     * @return the results of the aggregration.  The results will be a List of Maps, the structure of each Map is
+     * @return the results of the aggregation.  The results will be a List of Maps, the structure of each Map is
      * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
      *
      */
     List projectSummary(String projectId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
 
-
-       // We definitely could be smarter about this query - only getting activities with outputs of particular
+        // We definitely could be smarter about this query - only getting activities with outputs of particular
         // types or containing particular scores for example.
         List activities = activityService.findAllForProjectId(projectId, 'FLAT')
+        aggregate(activities, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
+    }
+
+    List aggregate(List activities, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
+        aggregateActivities(activities, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
+    }
+
+    List aggregateActivities(List activities, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
         if (approvedActivitiesOnly) {
-            activities = activities.findAll{it.publicationStatus == 'published'}
+            activities = activities.findAll{it.publicationStatus == Report.REPORT_APPROVED}
         }
 
         AggregationConfig aggregationConfig = aggregationConfigFromScores(aggregationSpec, topLevelAggregationConfig)
