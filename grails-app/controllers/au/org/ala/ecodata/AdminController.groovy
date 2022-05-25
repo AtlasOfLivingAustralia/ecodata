@@ -418,69 +418,6 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
-    def populateStageReportStatus(project) {
-
-
-        List stuff = AuditMessage.findAllByProjectIdAndEventTypeAndEntityType(project.projectId, 'Update', Activity.name)
-
-        stuff.sort { a1, a2 ->
-            return a1.date.compareTo(a2.date)
-        }
-
-        //println "${project.name}"
-        //println "**************"
-
-        def reports = Report.findAllByProjectId(project.projectId)
-
-        stuff.each {
-            def status = it.entity.publicationStatus ?: ''
-            if (!status) {
-                return
-            }
-            if (it.entity.description == 'Upload of stage 1 and 2 reporting data') {
-                return
-            }
-            def activityEndDate = new DateTime(it.entity.plannedEndDate).minusDays(1).toDate()
-
-            def stageReport = reports.find {
-                it.fromDate.before(activityEndDate) &&
-                (it.toDate.after(activityEndDate) || it.toDate.equals(activityEndDate))}
-
-            if (!stageReport) {
-                throw new Exception("No stage report found for project ${project.projectId} and date ${it.entity.plannedEndDate}")
-            }
-
-
-            if (stageReport.publicationStatus != status) {
-
-                //println "found report: ${stageReport.name} for date ${it.entity.plannedEndDate} status: ${status}"
-                switch (status) {
-                    case 'pendingApproval':
-                        if (stageReport.publicationStatus == 'published') {
-                            log.warn("Adding implicit rejection step to the report ${stageReport.name} for project: ${project.projectId}")
-                            stageReport.returnForRework("-1", it.date)
-                        }
-                        stageReport.submit(it.userId, it.date)
-                        break
-                    case 'published':
-                        if (stageReport.publicationStatus != 'pendingApproval') {
-                            log.warn("Adding implicit submit step to the report ${stageReport.name} for project: ${project.projectId}")
-                            stageReport.submit("-1", it.date)
-                        }
-                        stageReport.approve(it.userId, it.date)
-                        break
-                    case 'unpublished':
-                        stageReport.returnForRework(it.userId, it.date)
-                        break
-                }
-
-                stageReport.save()
-            }
-        }
-
-    }
-
-    @AlaSecured("ROLE_ADMIN")
     def createStageReports(String projectId) {
 
         def reports = []

@@ -19,8 +19,8 @@ class OrganisationXlsExporter extends TabbedExporter {
     List<String> organisationHeaders = commonOrganisationHeaders + ['Acronym', 'Description', 'State']
     List<String> organisationProperties = commonOrganisationProperties + ['acronym', 'description', 'state']
 
-    List<String> reportHeaders = commonOrganisationHeaders + ['Report', 'From Date', 'To Date', 'Data Entry Progress', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
-    List<String> reportProperties = commonOrganisationProperties + ['reportName', 'fromDate', 'toDate', 'progress', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
+    List<String> reportHeaders = commonOrganisationHeaders + ['Report', 'From Date', 'To Date', 'Data Entry Progress', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment', 'Categories']
+    List<String> reportProperties = commonOrganisationProperties + ['reportName', 'fromDate', 'toDate', 'progress', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment', 'categories']
 
     List<String> reportSummaryHeaders = commonOrganisationHeaders + ['Report', 'Stage from', 'Stage to', 'Data Entry Progress', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
     List<String> reportSummaryProperties = commonOrganisationProperties + ['reportName', 'fromDate', 'toDate', 'progress', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']

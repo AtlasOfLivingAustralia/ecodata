@@ -13,6 +13,7 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
     def setup() {
         controller.managementUnitService = managementUnitService
         mockDomain ManagementUnit
+        mockDomain GeographicInfo
     }
 
     def "find a management unit"() {
@@ -164,6 +165,38 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
                 assert it.value == mu[it.key]
             }
         }
+    }
+
+    def "to test GeographicInfo saving and conversion of it from map to an object"() {
+
+        setup:
+        Map props = [
+                name:'Test',
+                description:'Test description',
+                url:'https://www.mu.org',
+                startDate:'2019-01-01T00:00:00Z',
+                endDate:'2023-06-30T14:00:00Z',
+                priorities:[[category:"Threatened species", priority:"Hibiscus brennanii"]],
+                outcomes:[[outcome:"outcome 1", priorities: [category:"Threatened species"]]],
+                managementUnitSiteId:'site1',
+                config:[config1:'1', config2:'2'],
+                shortName:'MU02',
+                geographicInfo:[primaryState:"ACT"]
+
+
+        ]
+        ManagementUnit capturedMu = null
+
+        when:
+        request.method = 'POST'
+        request.json = props
+        controller.update('')
+
+        then:
+        1 * managementUnitService.create(_) >> {capturedMu = it[0]}
+        capturedMu.geographicInfo.primaryState == "ACT"
+
+
     }
 
 
