@@ -30,10 +30,17 @@ class BootStrap {
     def grailsApplication
     def auditService
     def hubService
+    def messageSource
     @Autowired
     MongoDatastore mongoDatastore
 
     def init = { servletContext ->
+        messageSource.setBasenames(
+                "file:///var/opt/atlas/i18n/ecodata/messages",
+                "file:///opt/atlas/i18n/ecodata/messages",
+                "WEB-INF/grails-app/i18n/messages",
+                "classpath:messages"
+        )
 
         // Add custom GORM event listener for ES indexing
         def ctx = servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)
@@ -79,6 +86,10 @@ class BootStrap {
 
         JSON.registerObjectMarshaller(AuditEventType) { AuditEventType eventType ->
             return eventType.toString()
+        }
+
+        JSON.registerObjectMarshaller(ExternalId) {
+            return [idType:it.idType, externalId:it.externalId]
         }
 
       //  JSON.registerObjectMarshaller(JSONNull, {return ""})

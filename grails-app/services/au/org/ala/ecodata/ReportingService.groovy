@@ -229,10 +229,18 @@ class ReportingService {
         return r
     }
 
-    def returnForRework(String id, String comment = '', String category = '') {
+    def returnForRework(String id, String comment = '', List categories = null) {
         def user = userService.getCurrentUserDetails()
         Report r = get(id)
-        r.returnForRework(user.userId, comment, category)
+        r.returnForRework(user.userId, comment, categories)
+        r.save()
+        return r
+    }
+
+    def cancel(String id, String comment = '', List categories = null) {
+        def user = userService.getCurrentUserDetails()
+        Report r = get(id)
+        r.cancel(user.userId, comment, categories)
         r.save()
         return r
     }

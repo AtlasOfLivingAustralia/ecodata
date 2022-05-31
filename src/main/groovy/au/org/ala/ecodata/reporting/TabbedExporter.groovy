@@ -86,6 +86,9 @@ class TabbedExporter {
             case Report.REPORT_SUBMITTED:
                 translated = 'Submitted'
                 break
+            case Report.REPORT_CANCELLED:
+                translated = 'Not required (exempt)'
+                break
             default:
                 translated = 'Unpublished (no action – never been submitted)'
                 break
@@ -323,20 +326,18 @@ class TabbedExporter {
         int row = sheet.getSheet().lastRowNum
         SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
         List data = []
-        entity.reports?.each { report ->
+        entity.reports?.each { Report report ->
             Map statusCounts = [:].withDefault { 1 }
             Map previousChange = null
+            Map reportData = getReportSummaryInfo(report)
             report.statusChangeHistory?.eachWithIndex { change, i ->
                 String statusChange = change.status
-                if (change.category) {
-                    statusChange = change.category + ' ' + change.status
-                }
                 int count = statusCounts[statusChange]
                 statusCounts[change.status] = count + 1
                 String noTimeStr = format.format(change.dateChanged)
                 Date noTime = format.parse(noTimeStr)
                 int delta = previousChange ? Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged) : 0
-                previousChange = entity + [reportName: report.name, fromDate: report.fromDate, toDate: report.toDate, progress:report.progress, reportStatus: statusChange + " " + count, changedBy: change.changedBy, dateChanged: noTime, delta: delta, comment: change.comment]
+                previousChange = entity + reportData + [progress:report.progress, reportStatus: statusChange + " " + count, changedBy: change.changedBy, dateChanged: noTime, delta: delta, comment: change.comment, categories: change.categories?.join(', ')]
                 data << previousChange
             }
         }
@@ -454,6 +455,17 @@ class TabbedExporter {
             catch (NumberFormatException e) {
                 return null
             }
+        }
+    }
+
+    static class ListGetter extends PropertyGetter<List, String> {
+        ListGetter(String propertyName) {
+            super(propertyName)
+        }
+
+        @Override
+        protected Object format(List value) {
+            value?.join(', ')
         }
     }
 }

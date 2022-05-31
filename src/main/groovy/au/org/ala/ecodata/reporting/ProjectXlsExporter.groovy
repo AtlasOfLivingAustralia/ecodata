@@ -1,15 +1,16 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.DateUtil
+import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
+import au.org.ala.ecodata.Organisation
+import au.org.ala.ecodata.OrganisationService
+import au.org.ala.ecodata.Program
+import au.org.ala.ecodata.ProgramService
 import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Report
-import au.org.ala.ecodata.metadata.OutputDataGetter
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 /**
@@ -70,8 +71,10 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
     List<String> risksAndThreatsProperties = commonProjectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
-    List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
-    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'budgetDescription', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
+    List<String> fundingPeriodHeaders = ['2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026', '2026/2027', '2027/2028', '2028/2029', '2029/2030']
+    List<String> fundingPeriodProperties = ['2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026', '2026/2027', '2027/2028', '2028/2029', '2029/2030']
+    List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Description'] + fundingPeriodHeaders
+    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'budgetDescription'] + fundingPeriodProperties
     List<String> assetsAddressed = ['Natural/Cultural assets managed','Threatened Species', 'Threatened Ecological Communities',
         'Migratory Species', 'Ramsar Wetland', 'World Heritage area', 'Community awareness/participation in NRM', 'Indigenous Cultural Values',
         'Indigenous Ecological Knowledge', 'Remnant Vegetation', 'Aquatic and Coastal systems including wetlands', 'Not Applicable']
@@ -97,8 +100,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
-    List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
-    List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
+    List<String> reportHeaders = commonProjectHeaders + ['Report From Date', 'Report To Date', 'Report Financial Year', 'Report Type', 'Description', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment', 'Categories']
+    List<String> reportProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate',  'financialYear',  'reportType', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment', 'categories']
     List<String> reportSummaryHeaders = commonProjectHeaders + ['Stage', 'Stage from', 'Stage to', 'Activity Count', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
     List<String> reportSummaryProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
@@ -121,6 +124,17 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing"]
     List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "term", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing"]
 
+    List<String> electorateInternalOrderNoHeadear = (2..3).collect{'Internal Order Number '+it}
+    List<String> electorateInternalOrderNoProperties = (1..2).collect{'internalOrderNumber'+it}
+    List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
+    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'geographicInfo.primaryElectorate', 'geographicInfo.primaryState', new ListGetter('geographicInfo.otherElectorates'), new ListGetter('geographicInfo.otherStates'), 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'manager']
+
+    List<String> nativeThreatsHeaders =commonProjectHeaders + ['Could this control approach pose a threat to Native Animals/Plants or Biodiversity?', 'Details']
+    List<String> nativeThreatsProperties =commonProjectProperties + ['couldBethreatToSpecies', 'details']
+
+    List<String> pestControlMethodsHeaders =commonProjectHeaders + ['Are there any current control methods for this pest?', 'Has it been successful?', 'Type of method', 'Details']
+    List<String> pestControlMethodsProperties =commonProjectProperties + ['currentControlMethod', 'hasBeenSuccessful', 'methodType', 'details']
+
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet outputTargetsSheet
@@ -135,17 +149,25 @@ class ProjectXlsExporter extends ProjectExporter {
     /** Map of key: management unit id, value: management unit name */
     Map<String, String> managementUnitNames
 
+    Map<String, String> fundingAbn
+
+    Map<String, String> programFundingType
+
+    Map<String, String> programGrantAwardId
+
     /** If set to true, activities containing more than one form section will be split over one tab per form section */
     boolean formSectionPerTab = false
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService) {
         super(exporter)
         this.projectService = projectService
         distinctElectorates = new ArrayList()
         setupManagementUnits(managementUnitService)
+        setupFundingAbn(organisationService)
+        setupProgramData(programService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, Map<String, Object> documentMap = [:], boolean formSectionPerTab = false, OrganisationService organisationService, ProgramService programService) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
         this.formSectionPerTab = formSectionPerTab
@@ -154,6 +176,8 @@ class ProjectXlsExporter extends ProjectExporter {
         projectHeaders += distinctElectorates
         projectProperties += distinctElectorates
         setupManagementUnits(managementUnitService)
+        setupFundingAbn(organisationService)
+        setupProgramData(programService)
     }
 
     /** This sets up a lazy Map that will query and cache management uints names on demand. */
@@ -161,6 +185,28 @@ class ProjectXlsExporter extends ProjectExporter {
         managementUnitNames = [:].withDefault { String managementUnitId ->
             ManagementUnit mu = managementUnitService.get(managementUnitId)
             mu?.name
+        }
+    }
+
+    private Map setupFundingAbn(OrganisationService organisationService) {
+        fundingAbn = [:].withDefault { String organisationId ->
+            Organisation org = organisationService.get(organisationId)
+            org?.abn
+        }
+    }
+
+    private Map setupProgramData(ProgramService programService) {
+        programFundingType = [:].withDefault { String programId ->
+            Program program = programService.get(programId)
+            program?.fundingType
+        }
+
+        programGrantAwardId = [:].withDefault { String programId ->
+            Program program = programService.get(programId)
+            if(program){
+                program.externalIds.find{it.idType == ExternalId.IdType.GRANT_AWARD}?.externalId
+            }
+
         }
     }
 
@@ -182,7 +228,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportReportSummary(project)
         exportBlog(project)
         exportDataSet(project)
-
+        exportElectorate(project)
 
         if(exporter.workbook.numberOfSheets == 0){
             createEmptySheet()
@@ -200,6 +246,7 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.managementUnitId) {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
+
     }
 
     private addProjectGeo(Map project) {
@@ -379,7 +426,9 @@ class ProjectXlsExporter extends ProjectExporter {
         String[] meriPlanTabs = [
                 "MERI_Budget","MERI_Outcomes","MERI_Monitoring","MERI_Project Partnerships","MERI_Project Implementation",
                 "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
-                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets", "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+                "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets",
+                'MERI_Pest Control Methods', 'MERI_Native Species Threat',
+                "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
@@ -407,6 +456,9 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
         exportRLPServicesTargets(project)
+        exportControlMethods(project)
+        exportNativeThreats(project)
+
     }
 
     private void exportBudget(Map project) {
@@ -736,6 +788,50 @@ class ProjectXlsExporter extends ProjectExporter {
         sheet.add(data?:[], rlpSTProperties, row+1)
     }
 
+    private  void exportControlMethods(Map project){
+        if (shouldExport("MERI_Pest Control Methods")) {
+            AdditionalSheet sheet = getSheet("Pest Control Methods", pestControlMethodsHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threatControlMethod?.rows
+                items.each{ Map item ->
+                    Map controlMethod = [:]
+                    controlMethod["currentControlMethod"] = item.currentControlMethod
+                    controlMethod["hasBeenSuccessful"] = item.hasBeenSuccessful
+                    controlMethod["methodType"] = item.methodType
+                    controlMethod["details"] = item.details
+                    controlMethod.putAll(project)
+                    data.add(project + controlMethod)
+                }
+            }
+
+            sheet.add(data?:[], pestControlMethodsProperties, row+1)
+        }
+    }
+
+    private  void exportNativeThreats(Map project){
+        if (shouldExport("MERI_Native Species Threat")) {
+            AdditionalSheet sheet = getSheet("Native Species Threat", nativeThreatsHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threatToNativeSpecies?.rows
+                items.each{ Map item ->
+                    Map nativeThreat = [:]
+                    nativeThreat["couldBethreatToSpecies"] = item.couldBethreatToSpecies
+                    nativeThreat["details"] = item.details
+                    nativeThreat.putAll(project)
+                    data.add(project + nativeThreat)
+                }
+            }
+
+            sheet.add(data?:[], nativeThreatsProperties, row+1)
+        }
+    }
+
     private void exportDocuments(Map project) {
         exportList("Documents", project, project.documents, documentHeaders, documentProperties)
     }
@@ -752,6 +848,41 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("Report Summary", reportSummaryHeaders)
             exportReportSummary(sheet, project, reportSummaryProperties)
         }
+    }
+
+    private void exportElectorate(Map project) {
+        if (shouldExport("Electorate Coord")) {
+            AdditionalSheet sheet = getSheet("Electorate Coord", electorateCoordHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            if (project.organisationId) {
+                project[PROJECT_DATA_PREFIX+'abn'] = fundingAbn[project.organisationId]
+            }
+            if (!project[PROJECT_DATA_PREFIX+'fundingType'] && project.programId) {
+                project[PROJECT_DATA_PREFIX+'fundingType'] = programFundingType[project.programId]
+            }
+            filterExternalIds(project)
+
+            List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
+            List data = []
+            Map budgetLineItem = [:]
+
+            BigDecimal totalBudget = new BigDecimal(0)
+            financialYears.eachWithIndex { String year, int i ->
+                BigDecimal totalBudgetPerYear = new BigDecimal(0)
+                project?.custom?.details?.budget?.rows?.each { Map lineItem ->
+                    totalBudgetPerYear += BigDecimal.valueOf(Double.valueOf(lineItem.costs[i].dollar));
+                }
+                totalBudget +=  totalBudgetPerYear
+                budgetLineItem.put(year,totalBudgetPerYear)
+            }
+            project[PROJECT_DATA_PREFIX+'gstFunding'] = totalBudget ?: project[PROJECT_DATA_PREFIX+'funding']
+            budgetLineItem.putAll(project)
+            data << budgetLineItem
+
+            sheet.add(data?:[], electorateCoordProperties, row+1)
+        }
+
     }
 
     private void exportProjectAssets(Map project) {
@@ -788,5 +919,19 @@ class ProjectXlsExporter extends ProjectExporter {
             risksAndThreatsSheet = exporter.addSheet('Risks and Threats', risksAndThreatsHeaders)
         }
         risksAndThreatsSheet
+    }
+
+    private filterExternalIds(Map project) {
+        List<ExternalId> filteredIds = project['externalIds'].findAll {it.idType == ExternalId.IdType.INTERNAL_ORDER_NUMBER.toString()}
+        project[PROJECT_DATA_PREFIX+'internalOrderId'] = filteredIds[0]?.externalId
+        filteredIds.eachWithIndex {value, i ->
+            project['internalOrderNumber'+i] = value.externalId
+        }
+        project['grantAwardId'] = project['externalIds'].find{it.idType == ExternalId.IdType.GRANT_AWARD.toString()}?.externalId
+        project[PROJECT_DATA_PREFIX+'workOrderId'] = project['externalIds'].find{it.idType == ExternalId.IdType.WORK_ORDER.toString()}?.externalId
+
+        if (!project['grantAwardId'] && project.programId) {
+            project['grantAwardId'] = programGrantAwardId[project.programId]
+        }
     }
 }

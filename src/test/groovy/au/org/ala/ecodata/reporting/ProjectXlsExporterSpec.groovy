@@ -25,6 +25,8 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     ProjectXlsExporter projectXlsExporter
     ExcelImportService excelImportService
     ActivityFormService activityFormService = Mock(ActivityFormService)
+    OrganisationService organisationService = Mock(OrganisationService)
+    ProgramService programService = Mock(ProgramService)
 
     File outputFile
 
@@ -40,7 +42,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, [:], true)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, [:], true, organisationService, programService)
         projectXlsExporter.activityFormService = activityFormService
         projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
@@ -54,7 +56,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "project details can be exported"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -78,7 +80,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "project details can be exported with Termination Reason"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -102,7 +104,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Projects don't have to have a managemeent unit id to be exported correctly"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -125,7 +127,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Dataset data can be exported"() {
         setup:
         String sheet = "Dataset"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = projectDataSet()
 
@@ -149,7 +151,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "RLP outcomes data can be exported"() {
         setup:
         String sheet = "RLP_Outcomes"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = rlpProject()
 
@@ -213,6 +215,65 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
         }
 
+    }
+
+    void "Electorate Coord data can be exported"() {
+        setup:
+        String sheet = "Electorate Coord"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, "Electorate Coord", projectXlsExporter.electorateCoordHeaders, excelImportService)
+        results.size() == 1
+        results[0]['Primary State'] == 'ACT'
+        results[0]['Primary Electorate'] == 'Canberra'
+        results[0]['Other States'] == 'NSW'
+        results[0]['Other Electorates'] == 'Taylor'
+
+    }
+
+    void "Native Species Threat can be exported"() {
+        setup:
+        String sheet = "MERI_Native Species Threat"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, "Native Species Threat", projectXlsExporter.nativeThreatsHeaders, excelImportService)
+        results.size() == 1
+        results[0]['Could this control approach pose a threat to Native Animals/Plants or Biodiversity?'] == 'Yes'
+        results[0]['Details'] == 'Test yes details'
+    }
+
+    void "Pest Control Methods can be exported"() {
+        setup:
+        String sheet = "MERI_Pest Control Methods"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, "Pest Control Methods", projectXlsExporter.pestControlMethodsHeaders, excelImportService)
+        results.size() == 1
+        results[0]['Type of method'] == 'Natural'
+        results[0]['Has it been successful?'] == 'Yes'
+        results[0]['Are there any current control methods for this pest?'] == 'Test'
+        results[0]['Details'] == 'Test'
     }
 
     void "RLP Merit approvals exported to XSLS"() {
@@ -944,6 +1005,26 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "                    }\n" +
             "                ]\n" +
             "            },\n" +
+            "            \"threatToNativeSpecies\" : {\n" +
+            "                \"description\" : \"\",\n" +
+            "                \"rows\" : [ \n" +
+            "                    {\n" +
+            "                        \"couldBethreatToSpecies\" : \"Yes\",\n" +
+            "                        \"details\" : \"Test yes details\"\n" +
+            "                    }\n" +
+            "                ]\n" +
+            "            },\n" +
+            "            \"threatControlMethod\" : {\n" +
+            "                \"description\" : \"\",\n" +
+            "                \"rows\" : [ \n" +
+            "                    {\n" +
+            "                        \"currentControlMethod\" : \"Test\",\n" +
+            "                        \"details\" : \"Test\",\n" +
+            "                        \"hasBeenSuccessful\" : \"Yes\",\n" +
+            "                        \"methodType\" : \"Natural\"\n" +
+            "                    }\n" +
+            "                ]\n" +
+            "            },\n" +
             "            \"assets\":[ \n" +
             "               {  \"description\":\"Asset 1\", \"category\":\"Category 1\" } " +
             "            ]\n" +
@@ -1518,7 +1599,13 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "    \"uNRegions\" : [],\n" +
             "    \"workOrderId\" : \"1234565\",\n" +
             "    \"internalOrderId\": \"0987654321\",\n" +
-            "    \"blog\" : []\n" +
+            "    \"blog\" : [],\n" +
+            "    \"geographicInfo\" : {\n" +
+            "        \"primaryState\" : \"ACT\",\n" +
+            "        \"primaryElectorate\" : \"Canberra\",\n" +
+            "        \"otherStates\" : [\"NSW\"],\n" +
+            "        \"otherElectorates\" : [\"Taylor\"],\n" +
+            "    }\n" +
             "}"
 
     private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriorities\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriority\":\"Other Priorities, other priorities\",\"progress\":\"started\",\"term\":\"Short-term outcome statement\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"

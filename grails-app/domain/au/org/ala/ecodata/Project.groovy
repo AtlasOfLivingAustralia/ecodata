@@ -39,8 +39,6 @@ class Project {
     String description
     String manager
     String grantId
-    String workOrderId
-    String internalOrderId
     Date contractStartDate
     Date contractEndDate
     String organisationName
@@ -92,6 +90,9 @@ class Project {
 
     List<AssociatedOrg> associatedOrgs
 
+    /** Associates a list of ids from external systems with this project */
+    List<ExternalId> externalIds
+
     /** The program of work this project is a part of, if any */
     String programId
 
@@ -101,7 +102,16 @@ class Project {
     /** If this project represents an election commitment, the year of the commitment (String typed to allow financial years) */
     String electionCommitmentYear
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks']
+    /** Records geographic information about the project that isn't derived from the project Sites */
+    GeographicInfo geographicInfo
+
+    /** Information about the organisation/department overseeing the project */
+    String portfolio
+
+    /** Electorate Reporting Comment */
+    String comment
+
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
@@ -137,6 +147,22 @@ class Project {
         return intervalInWeeks(contractStartDate, contractEndDate)
     }
 
+    /**
+     * Compatibility method to extract the workOrderId from the embedded list.  Returns the first
+     * ExternalId with type WORK_ORDER from the externalIds field
+     */
+    String getWorkOrderId() {
+        externalIds.find{it.idType == ExternalId.IdType.WORK_ORDER}?.externalId
+    }
+
+    /**
+     * Compatibility method to extract the internalOrderId from the embedded list.  Returns the first
+     * ExternalId with type INTERNAL_ORDER from the externalIds field
+     */
+    String getInternalOrderId() {
+        externalIds.find{it.idType == ExternalId.IdType.INTERNAL_ORDER_NUMBER}?.externalId
+    }
+
     private Integer intervalInWeeks(Date startDate, Date endDate) {
         if (!startDate || !endDate) {
             return null
@@ -153,8 +179,6 @@ class Project {
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
-        workOrderId nullable:true
-        internalOrderId nullable:true
         contractStartDate nullable: true
         contractEndDate nullable: true
         manager nullable:true
@@ -206,9 +230,18 @@ class Project {
         terminationReason nullable: true
         fundingType nullable: true
         electionCommitmentYear nullable: true
+        geographicInfo nullable:true
+        portfolio nullable: true
+        comment nullable: true
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
+        }
+
+        externalIds nullable: true, validator: { List<ExternalId> externalIds, Project project, Errors errors ->
+            if (externalIds?.size() != externalIds?.toUnique()?.size()) {
+                errors.rejectValue('externalIds', 'Each ExternalId in externalIds must be unique')
+            }
         }
     }
 }

@@ -78,6 +78,21 @@ class ReportSpec extends MongoSpec implements DomainUnitTest<Report> {
         savedReport.statusChangeHistory.size() == 1
     }
 
+
+    void "when a report is cancelled, history should be recorded"() {
+        when:
+        Report report = new Report(reportId:'aReportId', name:'My report', type:Report.TYPE_ACTIVITY, fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        report.cancel('1234')
+        report.save(flush:true, failOnError:true)
+
+        then:
+        def savedReport = Report.findByReportId('aReportId')
+        savedReport.cancelledBy == '1234'
+        savedReport.publicationStatus == Report.REPORT_CANCELLED
+        savedReport.dateCancelled != null
+        savedReport.statusChangeHistory.size() == 1
+    }
+
     void "an adjustment report needs to reference another report"() {
         when:
         Report report = new Report(reportId:'aReportId', name:'My report', type:Report.TYPE_ADJUSTMENT, fromDate:new Date(), toDate: new Date(), dueDate: new Date())

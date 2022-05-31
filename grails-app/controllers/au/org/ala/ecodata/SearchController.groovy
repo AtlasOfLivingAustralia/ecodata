@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.*
-import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
@@ -40,6 +40,7 @@ class SearchController {
     OrganisationService organisationService
     MapService mapService
     ManagementUnitService managementUnitService
+    ProgramService programService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -403,6 +404,20 @@ class SearchController {
         render results as JSON
     }
 
+    @RequireApiKey
+    def genericReport() {
+        Map params = request.JSON
+        String index = params.index ?: ElasticIndex.DEFAULT_INDEX
+        if(![ElasticIndex.DEFAULT_INDEX, ElasticIndex.HOMEPAGE_INDEX, ElasticIndex.PROJECT_ACTIVITY_INDEX].contains(index) ) {
+            response.setStatus(400)
+            render text: [message: "Bad request: index not recognised"] as JSON
+            return
+        }
+
+        def results = reportService.runReport(params.query ?: "*:*", params.fq, params.reportConfig, index)
+        render results as JSON
+    }
+
 
     @Deprecated
     /**
@@ -502,7 +517,7 @@ class SearchController {
         List<String> electorates = result.aggregations?.find{it.name == ELECTORATES}?.buckets?.collect{it.key}
         List tabsToExport = params.getList('tabs')
         boolean formSectionPerTab = params.getBoolean("formSectionPerTab", false)
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, [:], formSectionPerTab)
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService, [:], formSectionPerTab, organisationService, programService)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
