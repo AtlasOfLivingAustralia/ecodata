@@ -48,6 +48,23 @@ class ReportService {
         [results:allResults, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
     }
 
+    def runReport(String searchTerm, List filters, Map reportConfig, String index = HOMEPAGE_INDEX) {
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(reportConfig)
+
+        Map metadata = [distinctProjects:new HashSet()]
+
+        Closure aggregateProjects =  { Map project ->
+            metadata.distinctProjects.add(project.projectId)
+            aggregator.aggregate(project)
+        }
+        queryPaginated(filters, searchTerm, aggregateProjects, index)
+
+        AggregationResult allResults = aggregator.result()
+
+        [results:allResults, metadata:metadata]
+
+    }
+
     private void queryPaginated(List filters, String searchTerm, Closure action, String index = HOMEPAGE_INDEX) {
         Map params = [offset:0, max:20, fq:filters]
 
@@ -56,8 +73,8 @@ class ReportService {
         while (params.offset < total) {
 
             results.hits.hits.each { hit ->
-                Map project = hit.sourceAsMap
-                action(project)
+                Map result = hit.sourceAsMap
+                action(result)
             }
             params.offset += params.max
 

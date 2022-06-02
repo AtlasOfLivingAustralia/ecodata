@@ -9,9 +9,9 @@ class StatusChange {
     String changedBy
     String status
     String comment
-    String category
+    List categories
     static constraints = {
         comment nullable: true
-        category nullable: true
+        categories nullable: true
     }
 }

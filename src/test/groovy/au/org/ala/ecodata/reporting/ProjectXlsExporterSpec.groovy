@@ -237,6 +237,44 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
+    void "Native Species Threat can be exported"() {
+        setup:
+        String sheet = "MERI_Native Species Threat"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, "Native Species Threat", projectXlsExporter.nativeThreatsHeaders, excelImportService)
+        results.size() == 1
+        results[0]['Could this control approach pose a threat to Native Animals/Plants or Biodiversity?'] == 'Yes'
+        results[0]['Details'] == 'Test yes details'
+    }
+
+    void "Pest Control Methods can be exported"() {
+        setup:
+        String sheet = "MERI_Pest Control Methods"
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter.metadataService = Mock(MetadataService)
+        Map project = project()
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, "Pest Control Methods", projectXlsExporter.pestControlMethodsHeaders, excelImportService)
+        results.size() == 1
+        results[0]['Type of method'] == 'Natural'
+        results[0]['Has it been successful?'] == 'Yes'
+        results[0]['Are there any current control methods for this pest?'] == 'Test'
+        results[0]['Details'] == 'Test'
+    }
+
     void "RLP Merit approvals exported to XSLS"() {
         setup:
         String sheet = 'MERI_Approvals'
@@ -963,6 +1001,26 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             "                    }, \n" +
             "                    {\n" +
             "                        \"data\" : 0\n" +
+            "                    }\n" +
+            "                ]\n" +
+            "            },\n" +
+            "            \"threatToNativeSpecies\" : {\n" +
+            "                \"description\" : \"\",\n" +
+            "                \"rows\" : [ \n" +
+            "                    {\n" +
+            "                        \"couldBethreatToSpecies\" : \"Yes\",\n" +
+            "                        \"details\" : \"Test yes details\"\n" +
+            "                    }\n" +
+            "                ]\n" +
+            "            },\n" +
+            "            \"threatControlMethod\" : {\n" +
+            "                \"description\" : \"\",\n" +
+            "                \"rows\" : [ \n" +
+            "                    {\n" +
+            "                        \"currentControlMethod\" : \"Test\",\n" +
+            "                        \"details\" : \"Test\",\n" +
+            "                        \"hasBeenSuccessful\" : \"Yes\",\n" +
+            "                        \"methodType\" : \"Natural\"\n" +
             "                    }\n" +
             "                ]\n" +
             "            },\n" +

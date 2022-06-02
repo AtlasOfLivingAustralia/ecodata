@@ -75,6 +75,7 @@ class Project {
     List<String> industries = []
     List<String> bushfireCategories = []
     boolean isBushfire
+    String projLifecycleStatus
 
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
@@ -232,7 +233,7 @@ class Project {
         geographicInfo nullable:true
         portfolio nullable: true
         comment nullable: true
-
+        projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }

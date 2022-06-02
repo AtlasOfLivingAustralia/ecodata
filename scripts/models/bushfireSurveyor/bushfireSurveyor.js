@@ -14,6 +14,10 @@ self.data.recordType.subscribe(function(obj) {
         $('div[data-bind*="propertyInformationRepeatSection"]').parent().parent().hide()
         $('div[data-bind*="bushInformationRepeatSection"]').parent().parent().show()
     }
+    else if(recordType == "Both property and bushland assets impacted"){
+        $('div[data-bind*="propertyInformationRepeatSection"]').parent().parent().show()
+        $('div[data-bind*="bushInformationRepeatSection"]').parent().parent().show()
+    }
     else{
         $('div[data-bind*="propertyInformationRepeatSection"]').parent().parent().hide()
         $('div[data-bind*="bushInformationRepeatSection"]').parent().parent().hide()
