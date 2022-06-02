@@ -796,9 +796,9 @@ class ProjectXlsExporter extends ProjectExporter {
         sheet.add(data?:[], rlpSTProperties, row+1)
     }
 
-    private  void exportControlMethods(Map project){
+    private void exportControlMethods(Map project) {
         if (shouldExport("MERI_Pest Control Methods")) {
-            AdditionalSheet sheet = getSheet("Pest Control Methods", pestControlMethodsHeaders)
+            AdditionalSheet sheet = getSheet("Pest Control Methods", pestControlMethodsProperties, pestControlMethodsHeaders)
             int row = sheet.getSheet().lastRowNum
             List data = []
 
@@ -819,9 +819,9 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private  void exportNativeThreats(Map project){
+    private  void exportNativeThreats(Map project) {
         if (shouldExport("MERI_Native Species Threat")) {
-            AdditionalSheet sheet = getSheet("Native Species Threat", nativeThreatsHeaders)
+            AdditionalSheet sheet = getSheet("Native Species Threat", nativeThreatsProperties, nativeThreatsHeaders)
             int row = sheet.getSheet().lastRowNum
             List data = []
 

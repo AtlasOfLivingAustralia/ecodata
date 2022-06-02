@@ -240,7 +240,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Native Species Threat can be exported"() {
         setup:
         String sheet = "MERI_Native Species Threat"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
@@ -258,7 +257,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Pest Control Methods can be exported"() {
         setup:
         String sheet = "MERI_Pest Control Methods"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
