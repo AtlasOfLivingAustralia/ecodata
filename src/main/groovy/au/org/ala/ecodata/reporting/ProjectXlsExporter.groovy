@@ -119,15 +119,18 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority']
 
     List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
-    List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI", "relatedProjects"]
+    List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projectMethodology", "projectREI", "relatedProjects"]
 
     List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing"]
     List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "term", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing"]
 
-    List<String> electorateInternalOrderNoHeadear = (2..3).collect{'Internal Order Number '+it}
-    List<String> electorateInternalOrderNoProperties = (1..2).collect{'internalOrderNumber'+it}
-    List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeadear + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State','Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
-    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + ['grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'geographicInfo.primaryElectorate', 'geographicInfo.primaryState', new ListGetter('geographicInfo.otherElectorates'), new ListGetter('geographicInfo.otherStates'), 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'manager']
+    List<String> electorateInternalOrderNoHeader = (2..3).collect{'Internal order number '+it}
+    List<String> electorateInternalOrderNoProperties = (1..2).collect{PROJECT_DATA_PREFIX+'internalOrderId'+it}
+    List<String> techOneCodeHeaders = ['Tech One Project Code'] + (2..3).collect{'Tech One Project Code '+it}
+    List<String> techOneCodeProperties = [PROJECT_DATA_PREFIX+'techOneProjectCode'] + (1..2).collect{PROJECT_DATA_PREFIX+'techOneProjectCode'+it}
+
+    List<String> electorateCoordHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateInternalOrderNoHeader + techOneCodeHeaders + ['GO ID', 'Work order id', 'Funding Recipient Entity ABN'] + fundingPeriodHeaders + ['Total  Funding (GST excl)', 'Nationwide/Statewide', 'Primary Electorate', 'Primary State', 'Other Electorates', 'Other States', 'Electorate Reporting Comment', 'Grant/Procurement/Other', 'Election Commitment Calendar Year', 'Portfolio', 'Agency Managing Grant Delivery']
+    List<String> electorateCoordProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateInternalOrderNoProperties + techOneCodeProperties + [PROJECT_DATA_PREFIX+'grantAwardId', PROJECT_DATA_PREFIX+'workOrderId', PROJECT_DATA_PREFIX+'abn'] + fundingPeriodProperties + [PROJECT_DATA_PREFIX+'gstFunding', 'nationwide', 'geographicInfo.primaryElectorate', 'geographicInfo.primaryState', new ListGetter('geographicInfo.otherElectorates'), new ListGetter('geographicInfo.otherStates'), 'comment', PROJECT_DATA_PREFIX+'fundingType', 'electionCommitmentYear', 'portfolio', 'manager']
 
     List<String> nativeThreatsHeaders =commonProjectHeaders + ['Could this control approach pose a threat to Native Animals/Plants or Biodiversity?', 'Details']
     List<String> nativeThreatsProperties =commonProjectProperties + ['couldBethreatToSpecies', 'details']
@@ -246,7 +249,7 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.managementUnitId) {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
-
+        filterExternalIds(project, PROJECT_DATA_PREFIX)
     }
 
     private addProjectGeo(Map project) {
@@ -651,14 +654,14 @@ class ProjectXlsExporter extends ProjectExporter {
             int row = sheet.getSheet().lastRowNum
 
             List data = []
-            //["projectDescription","projectRationale","projecMethodology", "projectREI"]
+            //["projectDescription","projectRationale","projectMethodology", "projectREI"]
             Map item = [:]
             if (project?.custom?.details?.description){
                 item["projectDescription"]=project?.custom?.details?.description
             }
 
             if (project?.custom?.details?.implementation){
-                item["projecMethodology"]=project?.custom?.details?.implementation?.description
+                item["projectMethodology"]=project?.custom?.details?.implementation?.description
             }
 
             if (project?.custom?.details?.rationale){
@@ -861,7 +864,6 @@ class ProjectXlsExporter extends ProjectExporter {
             if (!project[PROJECT_DATA_PREFIX+'fundingType'] && project.programId) {
                 project[PROJECT_DATA_PREFIX+'fundingType'] = programFundingType[project.programId]
             }
-            filterExternalIds(project)
 
             List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
             List data = []
@@ -921,17 +923,31 @@ class ProjectXlsExporter extends ProjectExporter {
         risksAndThreatsSheet
     }
 
-    private filterExternalIds(Map project) {
-        List<ExternalId> filteredIds = project['externalIds'].findAll {it.idType == ExternalId.IdType.INTERNAL_ORDER_NUMBER.toString()}
-        project[PROJECT_DATA_PREFIX+'internalOrderId'] = filteredIds[0]?.externalId
-        filteredIds.eachWithIndex {value, i ->
-            project['internalOrderNumber'+i] = value.externalId
-        }
-        project['grantAwardId'] = project['externalIds'].find{it.idType == ExternalId.IdType.GRANT_AWARD.toString()}?.externalId
-        project[PROJECT_DATA_PREFIX+'workOrderId'] = project['externalIds'].find{it.idType == ExternalId.IdType.WORK_ORDER.toString()}?.externalId
+    /**
+     * Takes the embedded externalIds array in the project, and adds them as individual
+     * key value pairs to the supplied project Map, with the key identifying the externalId type
+     * and the index. The index is omitted from the first id of each type for
+     * backwards compatibility.
+     * (eg. [internalOrderId:'io1', internalOrderId1:'oi2', workOrderId:'w1']
+     * @param project the project containing the externalIds
+     * @param prefix the prefix to use when creating a key to use for the flattened values.
+     */
+    private void filterExternalIds(Map project, String prefix = '') {
+        Map externalIdTypeToExportProperty =
+                [(ExternalId.IdType.INTERNAL_ORDER_NUMBER.toString()):'internalOrderId',
+                 (ExternalId.IdType.GRANT_AWARD.toString()):'grantAwardId',
+                 (ExternalId.IdType.TECH_ONE_CODE.toString()):'techOneProjectCode',
+                 (ExternalId.IdType.WORK_ORDER.toString()):'workOrderId']
 
-        if (!project['grantAwardId'] && project.programId) {
-            project['grantAwardId'] = programGrantAwardId[project.programId]
+        project.externalIds?.groupBy { it.idType }.each { idType, externalIds ->
+            externalIds.eachWithIndex { value, i ->
+                String property = externalIdTypeToExportProperty[value.idType] ?: value.idType
+                if (i > 0) {
+                    property+=i
+                }
+                project[prefix+property] = value.externalId
+            }
         }
+
     }
 }
