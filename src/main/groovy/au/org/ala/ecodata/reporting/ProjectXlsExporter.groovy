@@ -654,7 +654,6 @@ class ProjectXlsExporter extends ProjectExporter {
             int row = sheet.getSheet().lastRowNum
 
             List data = []
-            //["projectDescription","projectRationale","projectMethodology", "projectREI"]
             Map item = [:]
             if (project?.custom?.details?.description){
                 item["projectDescription"]=project?.custom?.details?.description
