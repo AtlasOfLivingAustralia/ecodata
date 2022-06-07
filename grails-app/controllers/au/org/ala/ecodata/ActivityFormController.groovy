@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AlaSecured
+import grails.converters.JSON
 import groovy.json.JsonSlurper
 
 /**
@@ -19,8 +20,12 @@ class ActivityFormController {
      * @param formVersion (optional) the version of the form.
      * @return
      */
-    ActivityForm get(String name, Integer formVersion) {
-        respond activityFormService.findActivityForm(name, formVersion)
+    ActivityForm get(String name, Integer formVersion, boolean includeScoreInformation) {
+        ActivityForm form = activityFormService.findActivityForm(name, formVersion)
+        if (includeScoreInformation) {
+            activityFormService.addScoreInformationToFormConfiguration(form)
+        }
+        render form as JSON
     }
 
     /**

@@ -27,8 +27,16 @@ class ActivityFormService {
             List forms = ActivityForm.findAllByNameAndPublicationStatusAndStatusNotEqual(name, PublicationStatus.PUBLISHED, Status.DELETED)
             form = forms.max{it.formVersion}
         }
-        addScoreInformationToFormTemplates(form)
         form
+    }
+
+    /**
+     * Modifies the dataModel of the supplied form to insert information about where an attribute of the
+     * dataModel is used in Score calculations.
+     * @param activityForm the form to modify.
+     */
+    void addScoreInformationToFormConfiguration(ActivityForm activityForm) {
+        addScoreInformationToFormTemplates(activityForm)
     }
 
     /** Returns a list of all versions of an ActivityForm regardless of publication status. */
