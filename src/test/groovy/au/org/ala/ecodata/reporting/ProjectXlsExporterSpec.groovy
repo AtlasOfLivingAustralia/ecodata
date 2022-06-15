@@ -2,10 +2,11 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.util.ExportTestUtils
-import grails.converters.JSON
 import grails.util.Holders
-import org.apache.poi.ss.usermodel.*
-import org.apache.poi.ss.util.CellReference
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.grails.testing.GrailsUnitTest
 import spock.lang.Specification
 
@@ -172,7 +173,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "RLP Merit Baseline exported to XSLS"() {
         setup:
         String sheet = 'MERI_Baseline'
-        List<String> properties = ['Baseline Method', 'Baseline']
         Map project = project()
 
         when:
@@ -180,17 +180,11 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         xlsExporter.save()
 
         then:
-        outputFile.withInputStream { fileIn ->
-            Workbook workbook = WorkbookFactory.create(fileIn)
-            Sheet testSheet = workbook.getSheet(sheet)
-            testSheet.physicalNumberOfRows == 3
-
-            Cell baselineCell = testSheet.getRow(0).find { it.stringCellValue == 'Baseline' }
-            baselineCell != null
-            testSheet.getRow(1).getCell(baselineCell.getColumnIndex()).stringCellValue == 'Test'
-
-        }
-
+        List<Map> results = ExportTestUtils.readSheet(outputFile, sheet, projectXlsExporter.baselineHeaders, excelImportService)
+        results[0]['Baseline'] == 'Test'
+        results[0]['Baseline Method'] == 'Test'
+        results[1]['Baseline'] == 'Test2'
+        results[1]['Baseline Method'] == 'Test1'
     }
 
     void "MERI plan assets can be exported to XLSX"() {
@@ -234,7 +228,12 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         results[0]['Primary Electorate'] == 'Canberra'
         results[0]['Other States'] == 'NSW'
         results[0]['Other Electorates'] == 'Taylor'
-
+        results[0]['Internal order number'] == '1234-1'
+        results[0]['Internal order number 2'] == '1234-2'
+        results[0]['GO ID'] == 'g-1'
+        results[0]['Work order id'] == 'w-1'
+        results[0]['Tech One Project Code'] == 't-1'
+        results[0]['Tech One Project Code 2'] == 't-2'
     }
 
     void "Native Species Threat can be exported"() {
@@ -767,7 +766,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     }
 
 
-    
+
     private Map project() {
         new groovy.json.JsonSlurper().parseText(projectJson)
     }
@@ -779,831 +778,409 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         new groovy.json.JsonSlurper().parseText(projectDataSet)
     }
 
-    private String projectJson = "{\n" +
-            "    \"alaHarvest\" : false,\n" +
-            "    \"associatedProgram\" : \"\",\n" +
-            "    \"associatedSubProgram\" : \"\",\n" +
-            "    \"status\": \"active\",\n"+
-            "    \"countries\" : [],\n" +
-            "    \"custom\" : {\n" +
-            "        \"details\" : {\n" +
-            "            \"partnership\" : {\n" +
-            "                \"description\" : \"\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"data3\" : \"\",\n" +
-            "                        \"data2\" : \"\",\n" +
-            "                        \"data1\" : \"\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"projectEvaluationApproach\" : \"Test\",\n" +
-            "            \"implementation\" : {\n" +
-            "                \"description\" : \"Test methodology\"\n" +
-            "            },\n" +
-            "            \"obligations\" : \"\",\n" +
-            "            \"policies\" : \"\",\n" +
-            "            \"description\" : \"TBA - this is a temporary description\",\n" +
-            "            \"baseline\" : {\n" +
-            "                \"description\" : \"This is a baseline\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"method\" : \"Test\",\n" +
-            "                        \"baseline\" : \"Test\"\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"method\" : \"Test1\",\n" +
-            "                        \"baseline\" : \"Test2\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"rationale\" : \"Test rational\",\n" +
-            "            \"caseStudy\" : true,\n" +
-            "            \"lastUpdated\" : \"2019-06-06T06:07:27Z\",\n" +
-            "            \"priorities\" : {\n" +
-            "                \"description\" : \"\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"data3\" : \"Test\",\n" +
-            "                        \"data2\" : \"Test\",\n" +
-            "                        \"data1\" : \"Test\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"serviceIds\" : [ \n" +
-            "                1, \n" +
-            "                2, \n" +
-            "                3, \n" +
-            "                4, \n" +
-            "                5, \n" +
-            "                34, \n" +
-            "                6, \n" +
-            "                7, \n" +
-            "                8, \n" +
-            "                10, \n" +
-            "                9, \n" +
-            "                11, \n" +
-            "                12, \n" +
-            "                13, \n" +
-            "                14, \n" +
-            "                15, \n" +
-            "                16, \n" +
-            "                17, \n" +
-            "                18, \n" +
-            "                19, \n" +
-            "                20, \n" +
-            "                21, \n" +
-            "                22, \n" +
-            "                23, \n" +
-            "                24, \n" +
-            "                25, \n" +
-            "                26, \n" +
-            "                27, \n" +
-            "                28, \n" +
-            "                35, \n" +
-            "                29, \n" +
-            "                30, \n" +
-            "                31, \n" +
-            "                32, \n" +
-            "                33\n" +
-            "            ],\n" +
-            "            \"outcomes\" : {\n" +
-            "                \"secondaryOutcomes\" : [ \n" +
-            "                    {\n" +
-            "                        \"assets\" : [ \n" +
-            "                            \"Soil carbon\"\n" +
-            "                        ],\n" +
-            "                        \"description\" : \"By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\"\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"assets\" : [ \n" +
-            "                            \"Natural Temperate Grassland of the South Eastern Highlands\"\n" +
-            "                        ],\n" +
-            "                        \"description\" : \"By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"shortTermOutcomes\" : [ \n" +
-            "                    {\n" +
-            "                        \"assets\" : [ \n" +
-            "                            \"Asset 1\", \n" +
-            "                            \"Assert2\"\n" +
-            "                        ],\n" +
-            "                        \"description\" : \"Test\"\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"assets\" : [ \n" +
-            "                            \"Asset3\"\n" +
-            "                        ],\n" +
-            "                        \"description\" : \"Test 2\"\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"assets\" : [],\n" +
-            "                        \"description\" : \"sfasdf\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"midTermOutcomes\" : [ \n" +
-            "                    {\n" +
-            "                        \"assets\" : [ \n" +
-            "                            \"Asset 1\", \n" +
-            "                            \"Assert2\"\n" +
-            "                        ],\n" +
-            "                        \"description\" : \"Test\"\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"assets\" : [],\n" +
-            "                        \"description\" : \"\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"primaryOutcome\" : {\n" +
-            "                    \"assets\" : [ \n" +
-            "                        \"Climate change adaptation\", \n" +
-            "                        \"Market traceability\"\n" +
-            "                    ],\n" +
-            "                    \"description\" : \"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.\"\n" +
-            "                }\n" +
-            "            },\n" +
-            "            \"keq\" : {\n" +
-            "                \"description\" : \"\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"data3\" : \"\",\n" +
-            "                        \"data2\" : \"Test\",\n" +
-            "                        \"data1\" : \"*** This is a monitoring indictor ** \"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"threats\" : {\n" +
-            "                \"description\" : \"\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"threat\" : \"Test this is another EDIT\",\n" +
-            "                        \"intervention\" : \"Test\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"objectives\" : {\n" +
-            "                \"rows1\" : [ \n" +
-            "                    {\n" +
-            "                        \"assets\" : [],\n" +
-            "                        \"description\" : \"\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"data3\" : \"\",\n" +
-            "                        \"data2\" : \"\",\n" +
-            "                        \"data1\" : \"\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"events\" : [ \n" +
-            "                {\n" +
-            "                    \"funding\" : \"0\",\n" +
-            "                    \"name\" : \"\",\n" +
-            "                    \"description\" : \"\",\n" +
-            "                    \"scheduledDate\" : \"\",\n" +
-            "                    \"media\" : \"\",\n" +
-            "                    \"grantAnnouncementDate\" : \"\",\n" +
-            "                    \"type\" : \"\"\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"status\" : \"active\",\n" +
-            "            \"budget\" : {\n" +
-            "                \"overallTotal\" : 0,\n" +
-            "                \"headers\" : [ \n" +
-            "                    {\n" +
-            "                        \"data\" : \"2017/2018\"\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"data\" : \"2018/2019\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"costs\" : [ \n" +
-            "                            {\n" +
-            "                                \"dollar\" : \"0\"\n" +
-            "                            }, \n" +
-            "                            {\n" +
-            "                                \"dollar\" : \"0\"\n" +
-            "                            }\n" +
-            "                        ],\n" +
-            "                        \"rowTotal\" : 0,\n" +
-            "                        \"description\" : \"\",\n" +
-            "                        \"shortLabel\" : \"\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"columnTotal\" : [ \n" +
-            "                    {\n" +
-            "                        \"data\" : 0\n" +
-            "                    }, \n" +
-            "                    {\n" +
-            "                        \"data\" : 0\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"threatToNativeSpecies\" : {\n" +
-            "                \"description\" : \"\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"couldBethreatToSpecies\" : \"Yes\",\n" +
-            "                        \"details\" : \"Test yes details\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"threatControlMethod\" : {\n" +
-            "                \"description\" : \"\",\n" +
-            "                \"rows\" : [ \n" +
-            "                    {\n" +
-            "                        \"currentControlMethod\" : \"Test\",\n" +
-            "                        \"details\" : \"Test\",\n" +
-            "                        \"hasBeenSuccessful\" : \"Yes\",\n" +
-            "                        \"methodType\" : \"Natural\"\n" +
-            "                    }\n" +
-            "                ]\n" +
-            "            },\n" +
-            "            \"assets\":[ \n" +
-            "               {  \"description\":\"Asset 1\", \"category\":\"Category 1\" } " +
-            "            ]\n" +
-            "        }\n" +
-            "    },\n" +
-            "    \"dateCreated\" : \"2018-06-14T04:22:13.057Z\",\n" +
-            "    \"description\" : \"TBA - this is a temporary description\",\n" +
-            "    \"ecoScienceType\" : [],\n" +
-            "    \"externalId\" : \"\",\n" +
-            "    \"fundingSource\" : \"RLP\",\n" +
-            "    \"funding\" : 10000,\n" +
-            "    \"grantId\" : \"RLP-Test-Program-Project-1\",\n" +
-            "    \"industries\" : [],\n" +
-            "    \"bushfireCategories\" : [],\n" +
-            "    \"isCitizenScience\" : false,\n" +
-            "    \"isExternal\" : false,\n" +
-            "    \"isMERIT\" : true,\n" +
-            "    \"isSciStarter\" : false,\n" +
-            "    \"lastUpdated\" : \"2019-08-13T05:17:48.686Z\",\n" +
-            "    \"manager\" : \"\",\n" +
-            "    \"name\" : \"Test Program - Project 1\",\n" +
-            "    \"orgIdSvcProvider\" : \"\",\n" +
-            "    \"organisationId\" : \"\",\n" +
-            "    \"organisationName\" : \"Test Org\",\n" +
-            "    \"origin\" : \"merit\",\n" +
-            "    \"outputTargets\" : [ \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"0df7c177-2864-4a25-b420-2cf3c45ce749\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : \"2\"\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : \"2\"\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"2\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"69deaaf9-cdc2-439a-b684-4cffdc7f224e\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : \"1\"\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : \"4\"\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"4\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"26a8213e-1770-4dc4-8f99-7e6302197504\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : \"1\"\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : \"1\"\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"2\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"c464b652-be5e-4658-b62f-02bf1a80bcf8\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : \"1\"\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"50\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"3cbf653f-f74c-4066-81d2-e3f78268185c\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"300\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"0f9ef068-b2f9-4e6f-9ab5-521857b036f4\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"300\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"e48faf01-72eb-479c-be9b-d2d71d254fa4\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"400\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"482bdf4e-6f7a-4bdf-80d5-d619ac7cdf50\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"400\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"8025b157-44d7-4283-bc1c-f40fb9b99501\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"600\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"a3afea6e-711c-4ef2-bb20-6d2630b7ee93\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"12\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"757d6c9e-ec24-486f-a128-acc9bfb87830\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"600\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"b7c067e3-6ae7-4e76-809a-312165b75f94\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"60\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"d1c10295-05e5-4265-a5f1-8a5683af2efe\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"2\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"011a161f-7275-4b5e-986e-3fe4640d0265\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"500\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"c2dc6f91-ccb1-412e-99d0-a842a4ac4b03\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"400\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"def4e2af-dcad-4a15-8336-3765e6671f08\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"400\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"c46842b6-d7b6-4917-b56f-f1b0594663fa\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"199\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"2d877a91-6312-4c44-9ae1-2494ea3e43db\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"4\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"d4ba13a1-00c8-4e7f-8463-36b6ea37eee6\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"2\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"4bcab901-879a-402d-83f3-01528c6c86a5\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"1\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"45994b98-21f1-4927-a03e-3d940ac75116\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"100\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"6eaa061c-b77b-4440-8e8f-7ebaa2ff6207\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"1000\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"0e887410-a3c5-49ca-a6f5-0f2f6fae30db\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"200\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"725d9365-0889-4355-8a7f-a21ef260c468\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"450\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"0f11a699-6063-4e91-96ca-53e45cf26b80\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"900\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"3c2c4aaa-fd5f-43d8-a72f-3567e6dea6f4\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"50\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"ed30b80b-7bb9-4c04-9949-093df64d124c\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"5000\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"4cbcb2b5-45cd-42dc-96bf-a9a181a4865b\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"3090\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"f38fbd9e-d208-4750-96ce-3c032ad37684\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"500\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"dea1ff8b-f4eb-4987-8073-500bbbf97fcd\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"500\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"4f747371-fa5f-4200-ae37-6cd59d268fe8\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"4\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"685d61e9-2ebd-4198-a83a-ac7a2fc1477a\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"4\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"91387f2b-258d-4325-aa60-828d1acf6ac6\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"3\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"ba3d0a20-1e4d-404a-9907-b95239499c2f\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"400\"\n" +
-            "        }, \n" +
-            "        {\n" +
-            "            \"scoreId\" : \"28dd9736-b66a-4ab4-9111-504d5cffba88\",\n" +
-            "            \"periodTargets\" : [ \n" +
-            "                {\n" +
-            "                    \"period\" : \"2017/2018\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }, \n" +
-            "                {\n" +
-            "                    \"period\" : \"2018/2019\",\n" +
-            "                    \"target\" : 0\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"target\" : \"400\"\n" +
-            "        }\n" +
-            "    ],\n" +
-            "    \"planStatus\" : \"not approved\",\n" +
-            "    \"plannedEndDate\" : \"2019-06-29T14:00:00.000Z\",\n" +
-            "    \"plannedStartDate\" : \"2017-08-01T14:00:00.000Z\",\n" +
-            "    \"programId\" : \"test_program\",\n" +
-            "    \"projectId\" : \"8693cbc5-6947-4614-9bd1-b22ef44bc8fd\",\n" +
-            "    \"projectType\" : \"works\",\n" +
-            "    \"promoteOnHomepage\" : \"no\",\n" +
-            "    \"risks\" : {\n" +
-            "        \"overallRisk\" : \"Low\",\n" +
-            "        \"rows\" : [ \n" +
-            "            {\n" +
-            "                \"consequence\" : \"Minor\",\n" +
-            "                \"likelihood\" : \"Unlikely\",\n" +
-            "                \"residualRisk\" : \"Low\",\n" +
-            "                \"currentControl\" : \"Test\",\n" +
-            "                \"description\" : \"Low\",\n" +
-            "                \"threat\" : \"Work Health and Safety\",\n" +
-            "                \"riskRating\" : \"Low\"\n" +
-            "            }, \n" +
-            "            {\n" +
-            "                \"consequence\" : \"Moderate\",\n" +
-            "                \"likelihood\" : \"Unlikely\",\n" +
-            "                \"residualRisk\" : \"High\",\n" +
-            "                \"currentControl\" : \"Test\",\n" +
-            "                \"description\" : \"Test 2\",\n" +
-            "                \"threat\" : \"Performance\",\n" +
-            "                \"riskRating\" : \"Low\"\n" +
-            "            }, \n" +
-            "            {\n" +
-            "                \"consequence\" : \"Minor\",\n" +
-            "                \"likelihood\" : \"Possible\",\n" +
-            "                \"residualRisk\" : \"Medium\",\n" +
-            "                \"currentControl\" : \"yep\",\n" +
-            "                \"description\" : \"lalala\",\n" +
-            "                \"threat\" : \"People resources\",\n" +
-            "                \"riskRating\" : \"Low\"\n" +
-            "            }, \n" +
-            "            {\n" +
-            "                \"consequence\" : \"High\",\n" +
-            "                \"likelihood\" : \"Possible\",\n" +
-            "                \"residualRisk\" : \"Medium\",\n" +
-            "                \"currentControl\" : \"yrd\",\n" +
-            "                \"description\" : \"\$\",\n" +
-            "                \"threat\" : \"Financial\",\n" +
-            "                \"riskRating\" : \"Medium\"\n" +
-            "            }\n" +
-            "        ],\n" +
-            "        \"status\" : \"\"\n" +
-            "    },\n" +
-            "    \"scienceType\" : [],\n" +
-            "    \"serviceProviderName\" : \"\",\n" +
-            "    \"managementUnitId\" : \"mu1\",\n" +
-            "    \"status\" : \"active\",\n" +
-            "    \"tags\" : [],\n" +
-            "    \"uNRegions\" : [],\n" +
-            "    \"workOrderId\" : \"1234565\",\n" +
-            "    \"internalOrderId\": \"0987654321\",\n" +
-            "    \"blog\" : [],\n" +
-            "    \"geographicInfo\" : {\n" +
-            "        \"primaryState\" : \"ACT\",\n" +
-            "        \"primaryElectorate\" : \"Canberra\",\n" +
-            "        \"otherStates\" : [\"NSW\"],\n" +
-            "        \"otherElectorates\" : [\"Taylor\"],\n" +
-            "    }\n" +
-            "}"
+    private String projectJson = """
+        {
+              "alaHarvest" : false, 
+              "associatedProgram" : "",
+              "associatedSubProgram" : "", 
+              "status": "active",
+              "countries" : [], 
+              "custom" : { 
+                  "details" : { 
+                      "partnership" : { 
+                          "description" : "", 
+                          "rows" : [
+                              { 
+                                  "data3" : "", 
+                                  "data2" : "", 
+                                  "data1" : "" 
+                              } 
+                          ] 
+                      }, 
+                      "projectEvaluationApproach" : "Test", 
+                      "implementation" : { 
+                          "description" : "Test methodology" 
+                      }, 
+                      "obligations" : "", 
+                      "policies" : "", 
+                      "description" : "TBA - this is a temporary description", 
+                      "baseline" : { 
+                          "description" : "This is a baseline", 
+                          "rows" : [  
+                              { 
+                                  "method" : "Test", 
+                                  "baseline" : "Test" 
+                              },
+                              { 
+                                  "method" : "Test1", 
+                                  "baseline" : "Test2" 
+                              } 
+                          ]
+                      }, 
+                      "rationale" : "Test rational", 
+                      "caseStudy" : true, 
+                      "lastUpdated" : "2019-06-06T06:07:27Z", 
+                      "priorities" : { 
+                          "description" : "", 
+                          "rows" : [
+                              { 
+                                  "data3" : "Test", 
+                                  "data2" : "Test", 
+                                  "data1" : "Test" 
+                              } 
+                          ]
+                      }, 
+                      "serviceIds" : [ 
+                          1,  
+                          2, 
+                          3, 
+                          4, 
+                          5, 
+                          34, 
+                          6, 
+                          7, 
+                          8, 
+                          10,
+                          9,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19,
+                          20,
+                          21,
+                          22,
+                          23, 
+                          24,
+                          25, 
+                          26, 
+                          27, 
+                          28, 
+                          35, 
+                          29, 
+                          30, 
+                          31, 
+                          32, 
+                          33
+                      ], 
+                      "outcomes" : { 
+                          "secondaryOutcomes" : [
+                              { 
+                                  "assets" : [
+                                      "Soil carbon" 
+                                  ], 
+                                  "description" : "By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation." 
+                              },
+                              { 
+                                  "assets" : [
+                                      "Natural Temperate Grassland of the South Eastern Highlands" 
+                                  ], 
+                                  "description" : "By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities." 
+                              } 
+                          ], 
+                          "shortTermOutcomes" : [
+                              { 
+                                  "assets" : [ 
+                                      "Asset 1", 
+                                      "Assert2" 
+                                  ], 
+                                  "description" : "Test" 
+                              },
+                              { 
+                                  "assets" : [
+                                      "Asset3" 
+                                  ], 
+                                  "description" : "Test 2" 
+                              },
+                              { 
+                                  "assets" : [], 
+                                  "description" : "sfasdf" 
+                              } 
+                          ], 
+                          "midTermOutcomes" : [
+                              { 
+                                  "assets" : [ 
+                                      "Asset 1", 
+                                      "Assert2" 
+                                  ], 
+                                  "description" : "Test" 
+                              }, 
+                              { 
+                                  "assets" : [], 
+                                  "description" : "" 
+                              } 
+                          ], 
+                          "primaryOutcome" : { 
+                              "assets" : [
+                                  "Climate change adaptation", 
+                                  "Market traceability" 
+                              ], 
+                              "description" : "By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production." 
+                          } 
+                      }, 
+                      "keq" : { 
+                          "description" : "", 
+                          "rows" : [ 
+                              { 
+                                  "data3" : "", 
+                                  "data2" : "Test", 
+                                  "data1" : "*** This is a monitoring indictor ** " 
+                              } 
+                          ]
+                      }, 
+                      "threats" : { 
+                          "description" : "", 
+                          "rows" : [ 
+                              { 
+                                  "threat" : "Test this is another EDIT", 
+                                  "intervention" : "Test" 
+                              } 
+                          ] 
+                      }, 
+                      "objectives" : { 
+                          "rows1" : [
+                              { 
+                                  "assets" : [], 
+                                  "description" : "" 
+                              } 
+                          ], 
+                          "rows" : [
+                              { 
+                                  "data3" : "", 
+                                  "data2" : "", 
+                                  "data1" : "" 
+                              } 
+                          ]
+                      }, 
+                      "events" : [
+                          { 
+                              "funding" : "0", 
+                              "name" : "", 
+                              "description" : "", 
+                              "scheduledDate" : "", 
+                              "media" : "", 
+                              "grantAnnouncementDate" : "", 
+                              "type" : "" 
+                          } 
+                      ], 
+                      "status" : "active", 
+                      "budget" : { 
+                          "overallTotal" : 0, 
+                          "headers" : [
+                              { 
+                                  "data" : "2017/2018" 
+                              }, 
+                              { 
+                                  "data" : "2018/2019" 
+                              } 
+                          ], 
+                          "rows" : [
+                              { 
+                                  "costs" : [
+                                      { 
+                                          "dollar" : "0" 
+                                      }, 
+                                      { 
+                                          "dollar" : "0" 
+                                      } 
+                                  ], 
+                                  "rowTotal" : 0, 
+                                  "description" : "", 
+                                  "shortLabel" : "" 
+                              } 
+                          ], 
+                          "columnTotal" : [ 
+                              { 
+                                  "data" : 0
+                              }, 
+                              { 
+                                  "data" : 0
+                              } 
+                          ]
+                      }, 
+                      "threatToNativeSpecies" : { 
+                          "description" : "", 
+                          "rows" : [ 
+                              { 
+                                  "couldBethreatToSpecies" : "Yes", 
+                                  "details" : "Test yes details" 
+                              } 
+                          ]
+                      }, 
+                      "threatControlMethod" : { 
+                          "description" : "", 
+                          "rows" : [ 
+                              { 
+                                  "currentControlMethod" : "Test", 
+                                  "details" : "Test", 
+                                  "hasBeenSuccessful" : "Yes", 
+                                  "methodType" : "Natural" 
+                              } 
+                          ]
+                      }, 
+                      "assets": [ 
+                         {  "description":"Asset 1", "category":"Category 1" }
+                      ]
+                  } 
+              }, 
+              "dateCreated" : "2018-06-14T04:22:13.057Z", 
+              "description" : "TBA - this is a temporary description", 
+              "ecoScienceType" : [], 
+              "externalId" : "", 
+              "fundingSource" : "RLP", 
+              "funding" : 10000, 
+              "grantId" : "RLP-Test-Program-Project-1", 
+              "industries" : [], 
+              "bushfireCategories" : [], 
+              "isCitizenScience" : false, 
+              "isExternal" : false, 
+              "isMERIT" : true, 
+              "isSciStarter" : false, 
+              "lastUpdated" : "2019-08-13T05:17:48.686Z", 
+              "manager" : "", 
+              "name" : "Test Program - Project 1", 
+              "orgIdSvcProvider" : "", 
+              "organisationId" : "", 
+              "organisationName" : "Test Org", 
+              "origin" : "merit", 
+              "outputTargets" : [
+                  { 
+                      "scoreId" : "0df7c177-2864-4a25-b420-2cf3c45ce749", 
+                      "periodTargets" : [
+                          { 
+                              "period" : "2017/2018", 
+                              "target" : "2" 
+                          },  
+                          { 
+                              "period" : "2018/2019", 
+                              "target" : "2" 
+                          } 
+                      ], 
+                      "target" : "2" 
+                  },
+                  { 
+                      "scoreId" : "69deaaf9-cdc2-439a-b684-4cffdc7f224e", 
+                      "periodTargets" : [ 
+                          { 
+                              "period" : "2017/2018", 
+                              "target" : "1" 
+                          }, 
+                          { 
+                              "period" : "2018/2019", 
+                              "target" : "4" 
+                          } 
+                      ], 
+                      "target" : "4" 
+                  },
+                  { 
+                      "scoreId" : "26a8213e-1770-4dc4-8f99-7e6302197504", 
+                      "periodTargets" : [ 
+                          { 
+                              "period" : "2017/2018", 
+                              "target" : "1" 
+                          }, 
+                          { 
+                              "period" : "2018/2019", 
+                              "target" : "1" 
+                          } 
+                      ], 
+                      "target" : "2" 
+                  }
+              ], 
+              "planStatus" : "not approved", 
+              "plannedEndDate" : "2019-06-29T14:00:00.000Z", 
+              "plannedStartDate" : "2017-08-01T14:00:00.000Z", 
+              "programId" : "test_program", 
+              "projectId" : "8693cbc5-6947-4614-9bd1-b22ef44bc8fd", 
+              "projectType" : "works", 
+              "promoteOnHomepage" : "no", 
+              "risks" : { 
+                  "overallRisk" : "Low", 
+                  "rows" : [ 
+                      { 
+                          "consequence" : "Minor", 
+                          "likelihood" : "Unlikely", 
+                          "residualRisk" : "Low", 
+                          "currentControl" : "Test", 
+                          "description" : "Low", 
+                          "threat" : "Work Health and Safety", 
+                          "riskRating" : "Low" 
+                      }, 
+                      { 
+                          "consequence" : "Moderate", 
+                          "likelihood" : "Unlikely", 
+                          "residualRisk" : "High", 
+                          "currentControl" : "Test", 
+                          "description" : "Test 2", 
+                          "threat" : "Performance", 
+                          "riskRating" : "Low" 
+                      }, 
+                      { 
+                          "consequence" : "Minor", 
+                          "likelihood" : "Possible", 
+                          "residualRisk" : "Medium", 
+                          "currentControl" : "yep", 
+                          "description" : "lalala", 
+                          "threat" : "People resources", 
+                          "riskRating" : "Low" 
+                      },  
+                      { 
+                          "consequence" : "High", 
+                          "likelihood" : "Possible", 
+                          "residualRisk" : "Medium", 
+                          "currentControl" : "yrd", 
+                          "description" : "\$", 
+                          "threat" : "Financial", 
+                          "riskRating" : "Medium" 
+                      } 
+                  ], 
+                  "status" : "" 
+              }, 
+              "scienceType" : [], 
+              "serviceProviderName" : "", 
+              "managementUnitId" : "mu1", 
+              "status" : "active", 
+              "tags" : [], 
+              "uNRegions" : [], 
+              "externalIds" : [
+                    {
+                      "idType":"INTERNAL_ORDER_NUMBER",
+                      "externalId": "1234-1"
+                    },
+                    {
+                      "idType":"INTERNAL_ORDER_NUMBER",
+                      "externalId": "1234-2"
+                    },
+                    {
+                      "idType":"WORK_ORDER",
+                      "externalId": "w-1"
+                    },
+                    {
+                      "idType":"GRANT_AWARD",
+                      "externalId": "g-1"
+                    },
+                    {
+                      "idType":"TECH_ONE_CODE",
+                      "externalId": "t-1"
+                    },
+                    {
+                      "idType":"TECH_ONE_CODE",
+                      "externalId": "t-2"
+                    }
+              ],
+              
+              "blog" : [], 
+              "geographicInfo" : { 
+                  "primaryState" : "ACT", 
+                  "primaryElectorate" : "Canberra", 
+                  "otherStates" : ["NSW"], 
+                  "otherElectorates" : ["Taylor"], 
+              } 
+            }"""
 
     private String projectDataSet = "{\"origin\":\"merit\",\"promoteOnHomepage\":\"no\",\"name\":\"Building the drought resilience of East Gippsland’s beef and sheep farms\",\"funding\":0,\"isCitizenScience\":false,\"uNRegions\":[],\"industries\":[],\"tags\":[\"\"],\"isBushfire\":false,\"alaHarvest\":false,\"isMERIT\":true,\"status\":\"active\",\"isSciStarter\":false,\"isExternal\":false,\"projectId\":\"1dda8202-cbf1-45d8-965c-9b93306aaeaf\",\"grantId\":\"FDF-MU24-P1\",\"projectType\":\"works\",\"description\":\"Test\",\"externalId\":\"\",\"serviceProviderName\":\"\",\"organisationName\":\"RLP East Gippsland Catchment Management Authority\",\"internalOrderId\":\"TBA\",\"workOrderId\":\"TBA\",\"programId\":\"08335f58-63d0-42e1-a852-2ba5c3a083ed\",\"planStatus\":\"not approved\",\"abn\":\"\",\"associatedSubProgram\":\"Natural Resource Management - Landscape\",\"organisationId\":\"\",\"manager\":\"\",\"orgIdSvcProvider\":\"\",\"associatedProgram\":\"Future Drought Fund\",\"custom\":{\"dataSets\":[{\"owner\":\"na\",\"methodDescription\":\"Testing\",\"custodian\":\"na\",\"investmentPriorities\":[\"Testing\",\"Other\"],\"endDate\":\"2021-02-04T13:00:00Z\",\"methods\":[\"Hair, track, dung sampling\",\"Area sampling\"],\"format\":\"JSON\",\"published\":\"No\",\"sensitivities\":[\"Indigenous/cultural\",\"Commercially sensitive\"],\"type\":\"Baseline dataset associated with a project outcome\",\"collectionApp\":\"Test\",\"collectorType\":\"Specialist consultant\",\"qa\":\"Yes\",\"otherInvestmentPriority\":\"Other Priorities, other priorities\",\"progress\":\"started\",\"term\":\"Short-term outcome statement\",\"dataSetId\":\"967fd2e8-8621-49c2-99ac-861828f752ce\",\"name\":\"Testing Data Set\",\"measurementTypes\":[\"Adoption - climate and market demands\",\"Adoption - land resource management practices\"],\"storageType\":\"Cloud\",\"location\":\"test\",\"programOutcome\":\"5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.\",\"publicationUrl\":\"ttt\",\"startDate\":\"2021-02-03T13:00:00Z\",\"addition\":\"No\"}]}}"
 
