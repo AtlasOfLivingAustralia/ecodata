@@ -480,6 +480,7 @@ class TabbedExporter {
                 if (!propertyDescription) {
                     propertyDescription = [xlsxName:propertyName, xlsxHeader:headers[i]] as DataDescription
                 }
+                propertyDescription.xlsxName = propertyDescription.xlsxName ?: propertyName
                 if (formFieldMetadata) {
                     propertyDescription.description = formFieldMetadata.description
                     propertyDescription.notes = formFieldMetadata.helpText
@@ -493,7 +494,7 @@ class TabbedExporter {
         }
     }
 
-    private String propertyNameFromGetter(def prop) {
+    protected String propertyNameFromGetter(Object prop) {
         String propertyName
         if (prop instanceof PropertyGetter) {
             propertyName = ((PropertyGetter)prop).getPropertyName()
@@ -502,15 +503,6 @@ class TabbedExporter {
             propertyName = prop
         }
         propertyName
-    }
-
-    private String getHeader(def property, int propertyIndex, List headers) {
-        String propertyName = propertyNameFromGetter(property)
-        String header = dataDescriptionMap[propertyName]?.xlsxHeader
-        if (!header && headers && headers.size() > propertyIndex) {
-            header = headers[propertyIndex]
-        }
-        header
     }
 
     protected AdditionalSheet getDataDictionarySheet() {

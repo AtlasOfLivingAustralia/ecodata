@@ -517,10 +517,14 @@ class SearchController {
         List<String> electorates = result.aggregations?.find{it.name == ELECTORATES}?.buckets?.collect{it.key}
         List tabsToExport = params.getList('tabs')
         boolean formSectionPerTab = params.getBoolean("formSectionPerTab", false)
-        Map metadata = [:].withDefault {
-            DataDescription.findByXlsxName(it)
+        Map dataDescriptionLookup = null
+        if (params.includeDataDescriptionSheet) {
+            dataDescriptionLookup = [:].withDefault {
+                DataDescription.findByXlsxName(it)
+            }
         }
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService,  organisationService, programService, metadata, formSectionPerTab)
+
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService,  organisationService, programService, dataDescriptionLookup, formSectionPerTab)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {

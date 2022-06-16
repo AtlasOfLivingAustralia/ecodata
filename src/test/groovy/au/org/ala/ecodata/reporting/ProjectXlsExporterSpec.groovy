@@ -765,6 +765,31 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
+    void "A data description sheet can be optionally included in the download"() {
+        setup:
+        String sheet = 'MERI_Baseline'
+        Map project = project()
+        Map dataDescription = ['baseline':new DataDescription(name: "baseline", label:"Baseline", xlsxHeader: "Baseline", derived: false, entity: 'Project', xlsxName: "baseline")]
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, ['MERI_Baseline'], [], managementUnitService, organisationService, programService, dataDescription, true)
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, sheet, projectXlsExporter.baselineHeaders, excelImportService)
+        results[0]['Baseline'] == 'Test'
+        results[0]['Baseline Method'] == 'Test'
+        results[1]['Baseline'] == 'Test2'
+        results[1]['Baseline Method'] == 'Test1'
+
+        and:
+        List<Map> dataDescriptionSheetData = ExportTestUtils.readSheet(outputFile, projectXlsExporter.dataDictionarySheetName, projectXlsExporter.dataDictionaryHeaders, excelImportService)
+        dataDescriptionSheetData[-2]['Name used in Excel export'] == 'method'
+        dataDescriptionSheetData[-2]['Header used in Excel export'] == 'Baseline Method'
+        dataDescriptionSheetData[-1]['Name used in Excel export'] == 'baseline'
+        dataDescriptionSheetData[-1]['Header used in Excel export'] == 'Baseline'
+    }
 
 
     private Map project() {

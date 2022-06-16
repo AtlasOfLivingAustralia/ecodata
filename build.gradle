@@ -20,7 +20,7 @@ plugins {
     id 'com.craigburke.client-dependencies' version '1.4.0'
 }
 
-version "3.8-SNAPSHOT"
+version "3.8-overdelivery-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 

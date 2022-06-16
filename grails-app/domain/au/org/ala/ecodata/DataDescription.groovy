@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+/**
+ * Allows for extended description of data that is able to be accessed by the MERIT API or via downloads.
+ */
 class DataDescription {
 
     String name
