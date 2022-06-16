@@ -436,6 +436,9 @@ class ProjectController {
         response.addHeader("entityId", projectId)
     }
 
+    /**
+     * @link ProjectService#scoreDataForActivityAndProject(String, String)
+     */
     def scoreDataForActivityAndProject(String id) {
         def result = projectService.scoreDataForActivityAndProject(id)
         render result as JSON

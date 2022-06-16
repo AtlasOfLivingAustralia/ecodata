@@ -571,6 +571,17 @@ class ProjectService {
         }
     }
 
+    /**
+     * This method calculates the current scores for the project identified by the supplied activity id
+     * and separately calculates the contribution to the score from either the supplied activityData or
+     * the saved output data for that activity.
+     * The purpose is to allow the client to detect where a score has over-delivered a target to allow action
+     * to be taken.
+     * @param activityId the activity of interest
+     * @param activityData if supplied, this data will be used instead of any saved Output data for the activity.
+     * @return a Map [projectScores:<score data>, activityScores:<score data>] where <score data> is in the format
+     * returned by ReportService::aggregateActivities
+     */
     Map scoreDataForActivityAndProject(String activityId, Map activityData = null) {
         Map activity = activityService.get(activityId)
 

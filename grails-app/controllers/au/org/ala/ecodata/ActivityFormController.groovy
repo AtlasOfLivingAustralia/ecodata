@@ -18,7 +18,8 @@ class ActivityFormController {
      * activity form with the highest version that is also published will be returned.
      * @param name the name of the form.
      * @param formVersion (optional) the version of the form.
-     * @return
+     * @param includeScoreInformation If true, the form dataModel will be modified to include any scores
+     * referenced by the form.
      */
     ActivityForm get(String name, Integer formVersion, boolean includeScoreInformation) {
         ActivityForm form = activityFormService.findActivityForm(name, formVersion)
