@@ -25,7 +25,7 @@ class ActivityFormController {
         if (includeScoreInformation) {
             activityFormService.addScoreInformationToFormConfiguration(form)
         }
-        render form as JSON
+        respond form
     }
 
     /**
