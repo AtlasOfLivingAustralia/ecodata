@@ -1209,4 +1209,84 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Add user role to management unit
+     *
+     */
+    def addStarManagementUnitForUser() {
+        String managementUnitId = params.managementUnitId
+        String userId = params.userId
+        AccessLevel role = AccessLevel.starred
+
+        if (userId && managementUnitId) {
+            ManagementUnit managementUnit = ManagementUnit.findByManagementUnitId(managementUnitId)
+            if (managementUnit) {
+                log.debug "addUserAsRoleToManagementunit: ${userId}, ${role}, ${managementUnit}"
+                Map ps = permissionService.addUserAsRoleToManagementUnit(userId, role, managementUnitId)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status: 500, text: "Error adding editor: ${ps}"
+                }
+            } else {
+                render status: 404, text: "ManagementUnit not found for managementUnitId: ${managementUnitId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, managementUnitId.'
+        }
+    }
+
+    /**
+     * Delete user role from management unit
+     *
+     */
+    def removeStarManagementUnitForUser() {
+        String managementUnitId = params.managementUnitId
+        String userId = params.userId
+        AccessLevel role = AccessLevel.starred
+
+        if (userId && managementUnitId) {
+            ManagementUnit managementUnit = ManagementUnit.findByManagementUnitId(managementUnitId)
+            if (managementUnit) {
+                Map ps = permissionService.removeUserAsRoleFromManagementUnit(userId, role, managementUnitId)
+                if (ps && ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else if (ps) {
+                    render status: 500, text: "Error removing star: ${ps}"
+                } else {
+                    render status: 404, text: "ManagementUnit: ${managementUnitId} not starred for userId: ${userId}"
+                }
+            } else {
+                render status: 404, text: "ManagementUnit not found for managementUnitId: ${managementUnitId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, managementUnitId.'
+        }
+    }
+
+    /**
+     * Does a given {@link Project project} have {@link AccessLevel#starred starred} level access
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def isManagementUnitStarredByUser() {
+        String userId = params.userId
+        String managementUnitId = params.managementUnitId
+
+        if (userId && managementUnitId) {
+            ManagementUnit managementUnit = ManagementUnit.findByManagementUnitId(managementUnitId)
+            if (managementUnit) {
+                List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, managementUnitId, ManagementUnit.class.name, AccessLevel.starred)
+                Map outMap = [isManagementUnitStarredByUser: !permissions.isEmpty()]
+                render outMap as JSON
+            } else {
+                render status: 404, text: "ManagementUnit not found for managementUnitId: ${managementUnitId}"
+            }
+
+        } else {
+            render status: 400, text: "Required params not provided: id, managementUnitId."
+        }
+    }
+
 }

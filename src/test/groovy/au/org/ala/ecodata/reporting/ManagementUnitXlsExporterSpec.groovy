@@ -94,7 +94,7 @@ class ManagementUnitXlsExporterSpec extends Specification implements GrailsUnitT
 
         and: "The management unit and report data is included"
         List muData = ExportTestUtils.readRow(3, activitySheet).subList(0, managementUnitXlsExporter.commonActivityHeaders.size())
-        muData == ['mu1', 'Test MU', 'r1', 'Report 1', 'Report 1 description', startDate, endDate, '2020/2021', 'Unpublished (no action – never been submitted)', '', '', 'Core Services Annual Report', 'Core Services Annual Report', 'finished', '2021-08-12T14:00:00Z']
+        muData == ['mu1', 'Test MU', 'MU01', 'ACT', 'r1', 'Report 1', 'Report 1 description', startDate, endDate, '2020/2021', 'Unpublished (no action – never been submitted)', '', '', 'Core Services Annual Report', 'Core Services Annual Report', 'finished', '2021-08-12T14:00:00Z']
 
         and: "The data in the subsequent rows matches the data in the activity"
         List dataRow1 =  ExportTestUtils.readRow(3, activitySheet).subList(managementUnitXlsExporter.commonActivityHeaders.size(), headers.size())
@@ -144,7 +144,7 @@ class ManagementUnitXlsExporterSpec extends Specification implements GrailsUnitT
 
         and: "The management unit and report data is included"
         List muData = ExportTestUtils.readRow(3, activitySheet).subList(0, managementUnitXlsExporter.commonActivityHeadersSummary.size())
-        muData == ['mu1', 'Test MU', 'r1', 'Report 1', 'Report 1 description', startDate, endDate, '2020/2021', 'Unpublished (no action – never been submitted)', '', '']
+        muData == ['mu1', 'Test MU', 'MU01', 'ACT', 'r1', 'Report 1', 'Report 1 description', startDate, endDate, '2020/2021', 'Unpublished (no action – never been submitted)', '', '']
 
         and: "The data in the subsequent rows matches the data in the activity"
         List dataRow1 =  ExportTestUtils.readRow(3, activitySheet).subList(managementUnitXlsExporter.commonActivityHeadersSummary.size(), headers.size())
@@ -165,6 +165,7 @@ class ManagementUnitXlsExporterSpec extends Specification implements GrailsUnitT
     }
 
     private Map managementUnit() {
-        [name:'Test MU', managementUnitId:'mu1']
+        Map geoInfo = [primaryState:'ACT']
+        [name:'Test MU', managementUnitId:'mu1', shortName:'MU01',geographicInfo:geoInfo]
     }
 }

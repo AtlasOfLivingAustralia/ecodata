@@ -17,6 +17,7 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class DocumentService {
 
+    static final FLAT = 'flat'
     static final LINKTYPE = "link"
     static final LOGO = 'logo'
     static final FILE_LOCK = new Object()
@@ -30,7 +31,7 @@ class DocumentService {
     CommonService commonService
     GrailsApplication grailsApplication
     ActivityService activityService
-    
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -54,6 +55,11 @@ class DocumentService {
 
     def get(id, levelOfDetail = []) {
         def o = Document.findByDocumentIdAndStatus(id, ACTIVE)
+        return o ? toMap(o, levelOfDetail) : null
+    }
+
+    def getByStatus(id, levelOfDetail = []) {
+        def o = Document.findByDocumentId(id)
         return o ? toMap(o, levelOfDetail) : null
     }
 
@@ -166,11 +172,17 @@ class DocumentService {
         Document.findAllByProjectActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    String findImageUrlForProjectId(id, levelOfDetail = []){
+    String findImageUrlForProjectId(id, boolean isThumbnail = true){
         Document primaryImageDoc;
         Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
         String urlImage;
-        urlImage = logoDoc?.url ? logoDoc.getThumbnailUrl() : ''
+        urlImage = logoDoc?.url
+        if (urlImage) {
+            if (isThumbnail) {
+                urlImage = logoDoc.getThumbnailUrl()
+            }
+        }
+
         if(!urlImage){
             primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
             urlImage = primaryImageDoc?.url;
@@ -379,7 +391,7 @@ class DocumentService {
 				filename = nextUniqueFileName(filepath, filename)
 			}
 			OutputStream file = new FileOutputStream(new File(fullPath(filepath, filename)));
-			
+
 			//supply outputstream to itext to write the PDF data,
 			com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 			document.setPageSize(PageSize.LETTER.rotate());
@@ -392,11 +404,11 @@ class DocumentService {
 			document.close();
 			file.close();
 			return filename
-			
+
 		}
-		
+
 	}
-			
+
     /**
      * We are preserving the file name so the URLs look nicer and the file extension isn't lost.
      * As filename are not guaranteed to be unique, we are pre-pending the file with a counter if necessary to
@@ -566,4 +578,19 @@ class DocumentService {
         return data
     }
 
+    void doWithAllDocuments(Closure action) {
+        def offset = 0
+        def batchSize = 100
+
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            List documents = Document.findAllByStatus('active', [offset: offset, max: batchSize]).collect {
+                action.call(toMap(it))
+            }
+
+            count = documents.size()
+            offset += batchSize
+            Document.withSession { session -> session.clear() }
+        }
+    }
 }

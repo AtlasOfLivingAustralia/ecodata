@@ -27,8 +27,6 @@ import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.ElasticsearchException
-import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkProcessor
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
@@ -108,7 +106,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -593,6 +591,14 @@ class ElasticSearchService {
                     indexDocType(activity.siteId, Site.class.name)
                 }
                 break
+
+            case Document.class.name:
+                Map document = documentService.getByStatus(docId)
+
+                document = prepareDocumentForIndexing(document)
+                indexDoc(document, DEFAULT_INDEX)
+                break
+
             case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
 
@@ -793,7 +799,7 @@ class ElasticSearchService {
         ).build()
 
         Project.withNewSession {
-            def batchParams = [offset: 0, max: 50, sort:'projectId']
+            def batchParams = [offset: 0, max: 50, sort: 'projectId']
             def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
             while (projects) {
@@ -808,7 +814,7 @@ class ElasticSearchService {
                 }
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
-                log.info("Processed "+batchParams.offset+" projects")
+                log.info("Processed " + batchParams.offset + " projects")
             }
         }
 
@@ -824,12 +830,12 @@ class ElasticSearchService {
                     }
                 }
                 catch (Exception e) {
-                    log.error("Unable index site: "+siteMap?.siteId, e)
+                    log.error("Unable index site: " + siteMap?.siteId, e)
                 }
                 count++
                 if (count % 1000 == 0) {
                     session.clear()
-                    log.info("Processed "+count+" sites")
+                    log.info("Processed " + count + " sites")
                 }
             }
         }
@@ -841,7 +847,7 @@ class ElasticSearchService {
                 indexDoc(org, newIndexes[DEFAULT_INDEX], bulkProcessor)
             }
             catch (Exception e) {
-                log.error("Unable to index organisation: "+org?.organisationId, e)
+                log.error("Unable to index organisation: " + org?.organisationId, e)
             }
         }
 
@@ -862,6 +868,25 @@ class ElasticSearchService {
                     session.clear()
                     log.info("Processed " + count + " activities")
                 }
+            }
+        }
+
+        log.info "Indexing all documents"
+        count = 0;
+        documentService.doWithAllDocuments { Map doc ->
+            try {
+                doc = prepareDocumentForIndexing(doc)
+                if (doc) {
+                    indexDoc(doc, newIndexes[DEFAULT_INDEX], bulkProcessor)
+                }
+            }
+            catch (Exception e) {
+                log.error("Unable to index document: " + doc?.documentId, e)
+            }
+
+            count++
+            if (count % 1000 == 0) {
+                log.info("Processed " + count + " documents")
             }
         }
 
@@ -953,6 +978,7 @@ class ElasticSearchService {
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
+        projectMap.fullSizeImageUrl = documentService.findImageUrlForProjectId(project.projectId, false)
         projectMap.logoAttribution = documentService.getLogoAttributionForProjectId(project.projectId)
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
@@ -1146,6 +1172,26 @@ class ElasticSearchService {
         }
 
         activity
+    }
+
+    private Map prepareDocumentForIndexing(Map document) {
+        if (!document?.projectId)
+            return
+
+        document["className"] = Document.class.getName()
+
+        Map project = projectService.get(document.projectId, ProjectService.FLAT) ?: [:]
+        if(project.isMERIT)
+            return
+
+        if (document) {
+            // overwrite any project properties that has same name as document properties.
+            project.remove('description') // to avoid overwriting of document description by project description
+            project.putAll(document)
+            document = project
+
+            document
+        }
     }
 
     /**

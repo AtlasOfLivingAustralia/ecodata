@@ -16,7 +16,9 @@ class ManagementUnitSpec extends MongoSpec {
 
     void "GORM test"() {
         setup:
-        ManagementUnit p1 = new ManagementUnit(managementUnitId: 'p1', name: 'test 1', description: 'description 1',status:Status.ACTIVE)
+        Map geographicInfo = [primaryState:"ACT"]
+        ManagementUnit p1 = new ManagementUnit(managementUnitId: 'p1', name: 'test 1', description: 'description 1',
+                shortName: 'short test', geographicInfo: geographicInfo, status:Status.ACTIVE)
         p1.save(flush:true, failOnError: true)
 
         when:

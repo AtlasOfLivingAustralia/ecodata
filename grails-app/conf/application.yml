@@ -29,6 +29,7 @@ app:
                 - 'url'
                 - 'imageUrl'
                 - 'logoUrl'
+                - 'fullSizeImageUrl'
     allowedHostName: 'ala.org.au'
 
 info:

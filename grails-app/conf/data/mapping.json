@@ -14,6 +14,9 @@
         "programId" : {
           "type" : "keyword"
         },
+        "projLifecycleStatus" : {
+          "type" : "keyword"
+        },
         "managementUnitId" : {
           "type" : "keyword"
         },
@@ -184,6 +187,9 @@
           "type":"text"
         },
         "methodStepDescription": {
+          "type":"text"
+        },
+        "filepath": {
           "type":"text"
         },
         "links": {

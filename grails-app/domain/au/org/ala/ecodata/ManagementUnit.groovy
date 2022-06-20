@@ -12,7 +12,7 @@ class ManagementUnit {
     static graphql = ManagementUnitGraphQLMapper.graphqlMapping()
 
     static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
-                                'startDate', 'endDate', 'associatedOrganisations', 'config']
+                                'startDate', 'endDate', 'associatedOrganisations', 'config', 'shortName', 'geographicInfo']
 
     ObjectId id
     /** The hubId of the Hub in which this ManagementUnit was created */
@@ -28,6 +28,7 @@ class ManagementUnit {
     /** The date this management unit was established */
     Date startDate
     Date endDate
+    String shortName
 
     /** Outcomes to be achieved in this mu (probably should only be defined by programs) */
     List<Map> outcomes
@@ -50,6 +51,8 @@ class ManagementUnit {
     //Management units which have the same service provider
     List relevantManagementUnits = []
 
+    GeographicInfo geographicInfo
+
     /** Custom rendering for the mu */
     Map toMap() {
         Map mu = [:]
@@ -68,6 +71,7 @@ class ManagementUnit {
         mu.status = status
         mu.associatedOrganisations = associatedOrganisations
         mu.relevantManagementUnits = relevantManagementUnits
+        mu.shortName = shortName
 
         mu
     }
@@ -77,7 +81,7 @@ class ManagementUnit {
         version false
     }
 
-    static embedded = ['associatedOrganisations']
+    static embedded = ['associatedOrganisations', 'geographicInfo']
 
     static transients = ['relevantManagementUnits']
 
@@ -92,6 +96,8 @@ class ManagementUnit {
         managementUnitSiteId nullable: true
         priorities nullable: true
         outcomes nullable:true
+        shortName nullable: true
+        geographicInfo nullable:true
         hubId nullable: true, validator: { String hubId, ManagementUnit managementUnit, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(managementUnit, 'managementUnitId', 'hubId', errors)
         }

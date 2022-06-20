@@ -185,8 +185,8 @@ class Report {
         dateSubmitted = change.dateChanged
     }
 
-    public void returnForRework(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
-        StatusChange change = changeStatus(userId, 'returned', changeDate, comment, category)
+    public void returnForRework(String userId, String comment = '', List categories = null, Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'returned', changeDate, comment, categories)
         markDirty("returnedBy")
         markDirty("dateReturned")
         markDirty("publicationStatus")
@@ -195,8 +195,8 @@ class Report {
         dateReturned = change.dateChanged
     }
 
-    public void cancel(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
-        StatusChange change = changeStatus(userId, 'cancelled', changeDate, comment, category)
+    public void cancel(String userId, String comment = '', List categories = null, Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'cancelled', changeDate, comment, categories)
         markDirty("cancelledBy")
         markDirty("dateCancelled")
         markDirty("publicationStatus")
@@ -221,8 +221,8 @@ class Report {
         dateAdjusted = change.dateChanged
     }
 
-    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
-        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment, category:category)
+    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', List categories = null) {
+        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment, categories:categories)
         statusChangeHistory << change
         markDirty('statusChangeHistory')
 
