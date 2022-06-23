@@ -37,6 +37,9 @@ if (Boolean.valueOf(enableClover)) {
     apply from: "${project.projectDir}/gradle/clover.gradle"
 }
 
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
 //apply from: "${project.projectDir}/gradle/jacoco.gradle"
 
 //apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
@@ -110,7 +113,6 @@ dependencies {
     compile "org.grails.plugins:ala-auth:5.0.0"
     compile "org.grails.plugins:ala-ws-security-plugin:4.0.0"
     compile "org.grails.plugins:ala-admin-plugin:2.1"
-    runtime "org.grails.plugins:ala-bootstrap3:4.0.0-SNAPSHOT"
     compile "au.org.ala:userdetails-service-client:1.5.0"
     compile "org.codehaus.gpars:gpars:1.1.0"
     compile "org.apache.httpcomponents:httpclient:4.5.7"

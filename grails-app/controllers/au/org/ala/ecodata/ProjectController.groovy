@@ -360,7 +360,6 @@ class ProjectController {
         render result as JSON
     }
 
-    @RequireJWT
     @Operation(
             method = "GET",
             tags = "project",

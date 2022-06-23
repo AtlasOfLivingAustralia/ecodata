@@ -2,12 +2,6 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
-import org.pac4j.core.config.Config
-import org.pac4j.core.context.JEEContextFactory
-import org.pac4j.core.context.WebContext
-import org.pac4j.core.util.FindBest
-import org.pac4j.http.client.direct.DirectBearerAuthClient
-import org.springframework.beans.factory.annotation.Autowired
 
 class ApiKeyInterceptor {
 
@@ -18,10 +12,7 @@ class ApiKeyInterceptor {
     CommonService commonService
     ActivityService activityService
 
-    @Autowired(required = false)
-    Config config
-    @Autowired(required = false)
-    DirectBearerAuthClient directBearerAuthClient
+    def LOCALHOST_IP = '127.0.0.1'
 
     public ApiKeyInterceptor() {
         matchAll().excludes(controller: 'graphql')
@@ -80,32 +71,17 @@ class ApiKeyInterceptor {
 
             // Allow migration to the AlaSecured annotation.
             if (!controllerClass?.isAnnotationPresent(AlaSecured) && !method?.isAnnotationPresent(AlaSecured)) {
+                def whiteList = buildWhiteList()
+                def clientIp = getClientIP(request)
+                def ipOk = checkClientIp(clientIp, whiteList)
 
-                // Support RequireJWT
-                if(controllerClass?.isAnnotationPresent(RequireJWT) || method?.isAnnotationPresent(RequireJWT)){
-
-                    String authorizationHeader = request.getHeader("Authorization");
-                    if (authorizationHeader != null) {
-                        if (authorizationHeader.startsWith("Bearer")) {
-                            final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
-                            def credentials = directBearerAuthClient.getCredentials(context, config.sessionStore)
-                            if (!credentials.isPresent()) {
-                                result.error = 'Invalid token'
-                                result.status = 401
-                            }
-                        }
-                        else {
-                            result.error = 'Access denied: No Authorization Bearer token'
-                            result.status = 401
-                        }
-                    }
-                    else {
-                        result.error = 'Access denied: No Authorization header'
-                        result.status = 401
-                    }
+                // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
+                if (!ipOk) {
+                    log.warn("Non-authorised IP address - ${clientIp}" )
+                    result.status = 403
+                    result.error = "not authorised"
                 }
 
-                //**** This needs to be removed once all RequireApiKey annotations changed to RequireJWT
                 // Support RequireApiKey on top of ip restriction.
                 if(controllerClass?.isAnnotationPresent(RequireApiKey) || method?.isAnnotationPresent(RequireApiKey)){
                     def keyOk = commonService.checkApiKey(request.getHeader('Authorization')).valid
