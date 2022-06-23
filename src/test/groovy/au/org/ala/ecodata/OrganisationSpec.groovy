@@ -15,7 +15,7 @@ class OrganisationSpec extends MongoSpec implements DomainUnitTest<Project> {
 
     def "Once set, the hubId cannot be overwritten"() {
         when:
-        Organisation o = new Organisation(organisationId:"p1", name:"Org 1", hubId:"merit")
+        Organisation o = new Organisation(organisationId:"o1", name:"Org 1", hubId:"merit")
         o.save(flush:true, failOnError:true)
 
         o.hubId = "newHub"
