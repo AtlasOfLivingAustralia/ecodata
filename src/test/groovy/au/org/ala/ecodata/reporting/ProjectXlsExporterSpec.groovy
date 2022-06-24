@@ -43,7 +43,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, [:], true, organisationService, programService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, organisationService, programService, null, true)
         projectXlsExporter.activityFormService = activityFormService
         projectXlsExporter.metadataService = Mock(MetadataService)
         excelImportService = new ExcelImportService()
@@ -57,7 +57,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "project details can be exported"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -81,7 +81,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "project details can be exported with Termination Reason"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -102,10 +102,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
-    void "Projects don't have to have a managemeent unit id to be exported correctly"() {
+    void "Projects don't have to have a management unit id to be exported correctly"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
@@ -128,7 +128,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Dataset data can be exported"() {
         setup:
         String sheet = "Dataset"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = projectDataSet()
 
@@ -152,7 +152,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "RLP outcomes data can be exported"() {
         setup:
         String sheet = "RLP_Outcomes"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = rlpProject()
 
@@ -214,7 +214,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Electorate Coord data can be exported"() {
         setup:
         String sheet = "Electorate Coord"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
@@ -240,7 +239,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Native Species Threat can be exported"() {
         setup:
         String sheet = "MERI_Native Species Threat"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
@@ -258,7 +256,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Pest Control Methods can be exported"() {
         setup:
         String sheet = "MERI_Pest Control Methods"
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, [:], organisationService, programService)
         projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
@@ -768,6 +765,31 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
     }
 
+    void "A data description sheet can be optionally included in the download"() {
+        setup:
+        String sheet = 'MERI_Baseline'
+        Map project = project()
+        Map dataDescription = ['baseline':new DataDescription(name: "baseline", label:"Baseline", xlsxHeader: "Baseline", derived: false, entity: 'Project', xlsxName: "baseline")]
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, ['MERI_Baseline'], [], managementUnitService, organisationService, programService, dataDescription, true)
+
+        when:
+        projectXlsExporter.export(project)
+        xlsExporter.save()
+
+        then:
+        List<Map> results = ExportTestUtils.readSheet(outputFile, sheet, projectXlsExporter.baselineHeaders, excelImportService)
+        results[0]['Baseline'] == 'Test'
+        results[0]['Baseline Method'] == 'Test'
+        results[1]['Baseline'] == 'Test2'
+        results[1]['Baseline Method'] == 'Test1'
+
+        and:
+        List<Map> dataDescriptionSheetData = ExportTestUtils.readSheet(outputFile, projectXlsExporter.dataDictionarySheetName, projectXlsExporter.dataDictionaryHeaders, excelImportService)
+        dataDescriptionSheetData[-2]['Name used in Excel export'] == 'method'
+        dataDescriptionSheetData[-2]['Header used in Excel export'] == 'Baseline Method'
+        dataDescriptionSheetData[-1]['Name used in Excel export'] == 'baseline'
+        dataDescriptionSheetData[-1]['Header used in Excel export'] == 'Baseline'
+    }
 
 
     private Map project() {

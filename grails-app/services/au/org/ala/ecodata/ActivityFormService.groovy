@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.metadata.OutputMetadata
+
 /**
  * Processes requests related to activity forms.
  */
@@ -26,6 +28,15 @@ class ActivityFormService {
             form = forms.max{it.formVersion}
         }
         form
+    }
+
+    /**
+     * Modifies the dataModel of the supplied form to insert information about where an attribute of the
+     * dataModel is used in Score calculations.
+     * @param activityForm the form to modify.
+     */
+    void addScoreInformationToFormConfiguration(ActivityForm activityForm) {
+        addScoreInformationToFormTemplates(activityForm)
     }
 
     /** Returns a list of all versions of an ActivityForm regardless of publication status. */
@@ -132,4 +143,93 @@ class ActivityFormService {
         activities
     }
 
+    List findScoresThatReferenceForm(ActivityForm form) {
+        List scores = []
+        Score.findAll().each { Score score ->
+            Map referencedFormSections = referencedFormSectionProperties(score.configuration)
+            form.sections.each { FormSection section ->
+                Map propertiesUsedInScore = referencedFormSections[section.name]
+                if (propertiesUsedInScore) {
+                    scores << score
+                }
+            }
+        }
+        scores
+    }
+
+    void addScoreInformationToFormTemplates(ActivityForm form) {
+        Score.findAll().each { Score score ->
+            Map referencedFormSections = referencedFormSectionProperties(score.configuration)
+            form.sections.each { FormSection section ->
+                Map propertiesUsedInScore = referencedFormSections[section.name]
+                if (propertiesUsedInScore) {
+                    mergeScoreIntoTemplate(section.template, propertiesUsedInScore, score)
+                }
+            }
+        }
+    }
+
+    private Map mergeScoreIntoTemplate(Map template, Map config, Score score) {
+
+        OutputMetadata metadata = new OutputMetadata(template)
+        metadata.dataModelIterator { String path, Map node ->
+            if (config[path]) {
+                if (!node.scores) {
+                    node.scores = []
+                }
+                node.scores << [scoreId: score.scoreId, label: score.label, config:config[path]]
+            }
+        }
+    }
+
+
+    Map<String, List> referencedFormSectionProperties(Map scoreConfiguration) {
+        referencedPropertiesByFormSection([scoreConfiguration])
+    }
+
+    private Map<String, List> referencedPropertiesByFormSection(List<Map> configurations) {
+        Map result = [:]
+        configurations.each { Map config ->
+            // Almost all scores will filter on the output name to avoid having to process
+            // every output
+            if (configurationMatchesFormSection(config)) {
+                // Found a section!
+                result[config.filter?.filterValue] = findPropertiesReferencedInSection(config.childAggregations)
+            }
+            else if (config.childAggregations) {
+                result.putAll(referencedPropertiesByFormSection(config.childAggregations))
+            }
+        }
+        result
+    }
+
+    private boolean configurationMatchesFormSection(Map config) {
+        config.filter?.property == 'name' && config.filter?.filterValue
+    }
+
+    private Map findPropertiesReferencedInSection(List<Map> scoreConfigSection) {
+        Map<String, List> propertyNameToScore = [:].withDefault{[]}
+        scoreConfigSection?.each {
+            processProperty(propertyNameToScore, it.filter)
+            processProperty(propertyNameToScore, it)
+
+            propertyNameToScore.putAll(findPropertiesReferencedInSection(it.childAggregations))
+        }
+        propertyNameToScore
+    }
+
+    private void processProperty(Map target, Map config) {
+        if (config?.property) {
+            String prop = filterPropertyName(config.property)
+            target[prop] << config
+        }
+    }
+
+    private static String filterPropertyName(String property) {
+        String prefixToRemove = 'data.'
+        if (property.startsWith(prefixToRemove)) {
+            property = property.substring(prefixToRemove.size())
+        }
+        property
+    }
 }

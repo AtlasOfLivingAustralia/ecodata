@@ -20,7 +20,7 @@ plugins {
     id 'com.craigburke.client-dependencies' version '1.4.0'
 }
 
-version "3.8-graphql-SNAPSHOT"
+version "3.10-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 
@@ -123,11 +123,7 @@ dependencies {
     }
 
     compile 'org.grails.plugins:excel-export:2.1'
-    compile 'org.apache.poi:ooxml-schemas:1.4'
-    compile 'org.apache.poi:poi:4.1.1'
-    compile 'org.apache.poi:poi-ooxml:4.1.1'
-    compile 'org.apache.poi:poi-ooxml-schemas:4.1.1'
-    compile "org.locationtech.jts:jts-core:${jtsVersion}"
+    compile group: 'com.vividsolutions', name: 'jts', version: '1.13'
     compile "com.itextpdf:itextpdf:5.5.1"
     compile "org.apache.httpcomponents:httpmime:4.2.1"
     compile 'org.grails.plugins:csv:1.0.1'
