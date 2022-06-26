@@ -5,7 +5,9 @@ import au.org.ala.ecodata.metadata.*
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 import pl.touk.excel.export.multisheet.AdditionalSheet
+import org.bson.types.MinKey
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -147,7 +149,6 @@ class CSProjectXlsExporter extends ProjectExporter {
     }
 
     private AdditionalSheet createSurveySheet(Map projectActivity, Set<String> activityIds = null) {
-        AdditionalSheet sheet = null
         def userId = userService.currentUserDetails?.userId
 
         boolean userIsAlaAdmin = false
@@ -163,9 +164,61 @@ class CSProjectXlsExporter extends ProjectExporter {
         ActivityForm form = activityFormService.findActivityForm(projectActivity.pActivityFormName)
         if (activityIds == null || activityIds.isEmpty()) {
             activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
+
+            int batchSize = 10
+            int processed = 0
+            def count = activities?.size() ?: 0
+
+            while (processed < count) {
+                def id = new MinKey()
+
+                BuildableCriteria criteria = Activity.createCriteria()
+                List newActivities = criteria.list([offset: processed, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
+                    gt 'id', id
+                }
+
+                id = newActivities.last().id
+
+                activityIds = new HashSet<String>();
+
+                for (int i = 0; i < newActivities.size(); i++) {
+                    activityIds.add(newActivities[i].activityId)
+                }
+
+                generateSheet(newActivities, activityIds, projectActivity, userId, userIsAlaAdmin, form)
+                processed += batchSize
+            }
         } else {
             activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId)
+
+            int batchSize = 10
+            int processed = 0
+            def count = activities?.size() ?: 0
+
+            while (processed < count) {
+                def id = new MinKey()
+
+                BuildableCriteria criteria = Activity.createCriteria()
+                List newActivities = criteria.list([offset: processed, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
+                    gt 'id', id
+                }
+
+                id = newActivities.last().id
+
+                activityIds = new HashSet<String>();
+
+                for (int i = 0; i < newActivities.size(); i++) {
+                    activityIds.add(newActivities[i].activityId)
+                }
+
+                generateSheet(newActivities, activityIds, projectActivity, userId, userIsAlaAdmin, form)
+                processed += batchSize
+            }
         }
+    }
+
+    private generateSheet(List<Map> activities, Set<String> activityIds, Map projectActivity, def userId, boolean userIsAlaAdmin, ActivityForm form) {
+        AdditionalSheet sheet = null
 
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
             List<String> headers = []
