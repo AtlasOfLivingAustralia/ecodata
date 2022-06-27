@@ -326,7 +326,7 @@ class ProjectService {
     // instead of the common service, but that is a bit risky for a quick fix.
     // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
     private void bindEmbeddedProperties(Project project, Map properties) {
-        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo']
+        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo', 'outputTargets']
         for (String prop in embeddedPropertyNames) {
             if (properties[prop]) {
                 project.properties = [(prop):properties.remove(prop)]
