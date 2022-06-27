@@ -91,6 +91,8 @@ class DataDescription {
         projectId nullable: true
         program nullable: true
         subProgram nullable: true
+        name nullable:true
+        description nullable:true
         organisation nullable: true
         reportFinancialYear nullable: true
         targetMeasure nullable: true
