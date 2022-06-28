@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 import com.mongodb.*
 import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.Filters
 import org.locationtech.jts.geom.Geometry
 import grails.converters.JSON
@@ -16,6 +18,7 @@ import org.grails.web.json.JSONObject
 
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
+import static com.mongodb.client.model.Filters.*;
 
 class SiteService {
 
@@ -710,9 +713,8 @@ class SiteService {
      */
     void doWithAllSites(Closure action, Integer max = null) {
 
-        def collection = Site.getCollection()
-        def siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        def results = collection.find(siteQuery).batchSize(100)
+        MongoCollection collection = Site.getCollection()
+        def results = collection.find(ne('status', DELETED)).batchSize(100)
 
         results.each { dbObject ->
             action.call(dbObject)
@@ -770,8 +772,7 @@ class SiteService {
         }
 
         println collection.count(query)
-       // DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
-        DBCursor results = collection.find(query).batchSize(10).limit(max).iterator()
+        MongoCursor results = collection.find(query).batchSize(10).limit(max).iterator()
         int count = 0
         while (results.hasNext()) {
             DBObject site = results.next()
