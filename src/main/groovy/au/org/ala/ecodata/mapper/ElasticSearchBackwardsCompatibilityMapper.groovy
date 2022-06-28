@@ -64,11 +64,11 @@ class ElasticSearchBackwardsCompatibilityMapper {
         result
     }
 
-    static List mapAggregations(Aggregations aggregations) {
-        List results = []
+    static Map mapAggregations(Aggregations aggregations) {
+        Map results = [:]
         if (aggregations != null) {
             for (Aggregation agg : aggregations) {
-                results.add(mapAggregation(agg))
+                results += mapAggregation(agg)
             }
         }
         results
