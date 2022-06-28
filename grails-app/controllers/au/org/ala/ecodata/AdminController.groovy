@@ -688,17 +688,18 @@ class AdminController {
             String fileType = excel.getContentType()
 
             if (!dataDescriptionService.isValidFileType(fileType) || excel.isEmpty()) {
-                flash.message = 'The uploaded file is empty or is not an excel file'
-                redirect(action: 'index')
+                flash.errorMessage = 'The uploaded file is empty or is not an excel file'
+                redirect(action: 'tools')
                 return
             }
 
             if(dataDescriptionService.importData(excel.getInputStream())){
                 flash.message = 'Excel file was uploaded successfully'
-                return redirect(action:'index')
+                return redirect(action:'tools')
+                return
             }
-            flash.message = 'There was error during excel upload'
-            return redirect(action:'index')
+                flash.errorMessage = 'There was error during excel upload'
+            return redirect(action:'tools')
 
         } else {
             response.status = 400

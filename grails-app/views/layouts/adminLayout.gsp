@@ -100,7 +100,8 @@
             <div class="col-md-9">
                 <g:if test="${flash.errorMessage}">
                     <div class="container-fluid">
-                        <div class="alert alert-error">
+                        <div class="alert alert-danger">
+                            <button class="close" onclick="$('.alert').fadeOut();" href="#">×</button>
                             ${flash.errorMessage}
                         </div>
                     </div>
@@ -109,6 +110,7 @@
                 <g:if test="${flash.message}">
                     <div class="container-fluid">
                         <div class="alert alert-info">
+                            <button class="close" onclick="$('.alert').fadeOut();" href="#">×</button>
                             ${flash.message}
                         </div>
                     </div>
