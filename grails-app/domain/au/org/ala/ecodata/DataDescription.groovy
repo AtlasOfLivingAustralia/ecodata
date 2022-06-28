@@ -7,7 +7,10 @@ class DataDescription {
 
     String name
     String graphQlName
+    String xlsxName
+    String xlsxHeader
     String type
+    String description
     Integer formVersion
     String entity
     String field
@@ -24,10 +27,12 @@ class DataDescription {
     Date dateCreated
     Date lastUpdated
 
-
     static constraints = {
         name nullable: true
+        description nullable:true
         graphQlName nullable: true
+        xlsxName nullable: true
+        xlsxHeader nullable: true
         formVersion nullable: true
         entity nullable: true
         field nullable: true
