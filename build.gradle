@@ -17,7 +17,7 @@ buildscript {
 
 plugins {
     //id "com.gorylenko.gradle-git-properties" version "2.2.4"
-    id 'com.craigburke.client-dependencies' version '1.4.0'
+    //id 'com.craigburke.client-dependencies' version '1.4.0'
 }
 
 version "4.0-SNAPSHOT"
@@ -158,7 +158,7 @@ dependencies {
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.grails.plugins:geb"
     testImplementation "org.grails:grails-web-testing-support"
-    testImplementation "com.github.tomakehurst:wiremock-jre8-standalone:2.27.2"
+    testImplementation "com.github.tomakehurst:wiremock-jre8-standalone:2.33.2"
     testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-safari-driver:$seleniumSafariDriverVersion"
@@ -196,6 +196,10 @@ tasks.withType(GroovyCompile) {
     configure(groovyOptions) {
         forkOptions.jvmArgs = ['-Xmx1024m', '-Xss2048k']
     }
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
 }
 
 tasks.withType(Test) {
