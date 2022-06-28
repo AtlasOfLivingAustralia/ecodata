@@ -12,61 +12,12 @@ class DataDescriptionService {
     ExcelImportService excelImportService
 
     static def EXCEL_COLUMN_MAP = [
-            'Name':'name',
-            'Description':'description',
-            'Start Date':'startDate',
-            'End Date':'endDate',
-            'Grant ID':'grantId',
-            'Program':'program',
-            'Sub Program':'subProgram',
-            'Organisation':'organisation',
-            'Management Unit':'managementUnit',
-            'Activity Id':'activityId',
-            'Project Id':'projectId',
-            'Report Financial Year':'reportFinancialYear',
-            'Target Measure':'targetMeasure',
-            'Service':'service',
-            'Site Id':'siteId',
-            'External Id':'externalId',
-            'Report Status':'reportStatus',
-            'Rroject Status':'projectStatus',
-            'Status':'status',
-            'Measured':'measured',
-            'Invoiced':'invoiced',
-            'Actual':'actual',
-            'Stage':'stage',
-            'Activity Type':'activityType',
-            'Report From Date':'reportFromDate',
-            'Report To Date':'reportToDate',
-            'Contracted Start Date':'contractedStartDate',
-            'Contracted End Date':'contractedEndDate',
-            'Last Modified':'lastModified',
-            'Category':'category',
-            'Context':'context',
-            'Species':'species',
-            'Grant Or Procurement':'grantOrProcurement',
-            'Total To Be Delivered':'totalToBeDelivered',
-            'fy Target':'fyTarget',
-            'Meta Source Sheetname':'metaSourceSheetname',
-            'MetaColMeasured':'metaColMeasured',
-            'MetaColActual':'metaColActual',
-            'MetaColInvoiced':'metaColInvoiced',
-            'MetaColCategory':'metaColCategory',
-            'MetaColContext':'metaColContext',
-            'MetaTextSubcategory':'metaTextSubcategory',
-            'MetaColSpecies':'metaColSpecies',
-            'MetaLineItemObjectClass':'metaLineItemObjectClass',
-            'MetaLineItemProperty':'metaLineItemProperty',
-            'MetaLineItemValue':'metaLineItemValue',
-            'MU Id':'muId',
-            'MU State':'muState',
-            'Extract Date':'extractDate',
-            'Subcategory':'subcategory',
-            'Merit Reports Link':'meritReportsLink',
-            'MetaColProjectStatus':'metaColProjectStatus',
-            'MetaColStatus':'metaColStatus',
-            'MetaColReportLastModified':'metaColReportLastModified'
-
+            'Column':'excelExportedColumn',
+            'Status':'excelExportedStatus',
+            'Required':'excelExportedRequired',
+            'Source':'excelExportedSource',
+            'Description':'excelExportedDescription',
+            'Example':'excelExportedExample',
     ]
 
     /**
@@ -92,16 +43,22 @@ class DataDescriptionService {
             return false
         }
 
+
+
         dataDescriptions.each { dataDescription->
-            dataDescription.reportFromDate = (dataDescription.reportFromDate) ? DateUtil.getJavaDate(dataDescription.reportFromDate).toInstant() : dataDescription.reportFromDate
-            dataDescription.reportToDate = (dataDescription.reportToDate) ? DateUtil.getJavaDate(dataDescription.reportToDate).toInstant() : dataDescription.reportToDate
-            dataDescription.startDate = (dataDescription.startDate) ? DateUtil.getJavaDate(dataDescription.startDate).toInstant() : dataDescription.startDate
-            dataDescription.endDate = (dataDescription.endDate) ? DateUtil.getJavaDate(dataDescription.endDate).toInstant() : dataDescription.endDate
-            dataDescription.contractedStartDate = (dataDescription.contractedStartDate) ? DateUtil.getJavaDate(dataDescription.contractedStartDate).toInstant() : dataDescription.contractedStartDate
-            dataDescription.contractedEndDate = (dataDescription.contractedEndDate) ? DateUtil.getJavaDate(dataDescription.contractedEndDate).toInstant() : dataDescription.contractedEndDate
-            dataDescription.lastModified = (dataDescription.lastModified) ? DateUtil.getJavaDate(dataDescription.lastModified).toInstant() : dataDescription.lastModified
-            DataDescription dataDescription1 = new DataDescription(dataDescription)
-            dataDescription1.save(flush:true,failOnError:true)
+            DataDescription dataDesc = DataDescription.findByExcelExportedColumn(dataDescription.excelExportedColumn)
+            if (dataDesc) {
+                dataDesc.excelExportedStatus = dataDescription.excelExportedStatus
+                dataDesc.excelExportedRequired = dataDescription.excelExportedRequired
+                dataDesc.excelExportedSource = dataDescription.excelExportedSource
+                dataDesc.excelExportedDescription = dataDescription.excelExportedDescription
+                dataDesc.excelExportedExample = dataDescription.excelExportedExample
+                dataDesc.save(flush:true,failOnError:true)
+            } else {
+                DataDescription newDataDesc = new DataDescription(dataDescription)
+                newDataDesc.save(flush:true,failOnError:true)
+            }
+
         }
 
         return true

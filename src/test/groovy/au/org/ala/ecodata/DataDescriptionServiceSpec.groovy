@@ -29,7 +29,7 @@ class DataDescriptionServiceSpec extends MongoSpec implements ServiceUnitTest<Da
         def dataDescriptions = service.importData(excel)
 
         then:
-        1 * excelImportService.mapSheet(_, _) >> [[name:"yzy350_v1", description:"admin",startDate:44739.0,endDate:45107.0, grantId:"DD-01-D1"], [name:"yzy350_v2", description:"admin",startDate:44739.0,endDate:45107.0, grantId:"DD-02-D2"]]
+        1 * excelImportService.mapSheet(_, _) >> [[excelExportedColumn:"project_id", excelExportedDescription:"ID of the project",lastUpdated:44739.0, excelExportedStatus:"As is"], [excelExportedColumn:"management_unit", excelExportedDescription:"Id of the management unit",lastUpdated:44739.0, excelExportedStatus:"As is"]]
         dataDescriptions == true
 
     }
