@@ -51,9 +51,9 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
 
             createProjectActivity(props)
         }
-        ProjectActivity.metaClass.getDbo = {
-            delegate.properties
-        }
+//        ProjectActivity.metaClass.getDbo = {
+//            delegate.properties
+//        }
     }
 
     void cleanup() {
@@ -62,7 +62,7 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
                 it.delete()
             }
         //}
-        ProjectActivity.metaClass.getDbo = null
+       // ProjectActivity.metaClass.getDbo = null
     }
 
     private def createProjectActivity(props) {

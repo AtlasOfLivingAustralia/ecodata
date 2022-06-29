@@ -33,16 +33,18 @@ apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.grails.plugins.views-json"
 apply plugin:"asset-pipeline"
 
+// Open Clover doesn't support groovy 3 - https://github.com/openclover/clover/issues/121
 if (Boolean.valueOf(enableClover)) {
     apply from: "${project.projectDir}/gradle/clover.gradle"
+}
+
+if (Boolean.valueOf(enableJacoco)) {
+    apply from: "${project.projectDir}/gradle/jacoco.gradle"
 }
 
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-//apply from: "${project.projectDir}/gradle/jacoco.gradle"
-
-//apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
 apply from: "${project.projectDir}/gradle/publish.gradle"
 
 repositories {
