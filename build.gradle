@@ -18,6 +18,7 @@ buildscript {
 plugins {
     //id "com.gorylenko.gradle-git-properties" version "2.2.4"
     //id 'com.craigburke.client-dependencies' version '1.4.0'
+    id "com.github.node-gradle.node" version "3.4.0"
 }
 
 version "4.0-SNAPSHOT"
@@ -181,6 +182,7 @@ springBoot {
 }
 
 bootRun {
+    dependsOn npm_run_bundle
     jvmArgs('-Dspring.output.ansi.enabled=always', '-Xmx8000m')
     sourceResources sourceSets.main
     System.properties.each { k,v->
@@ -216,7 +218,13 @@ assets {
     minifyCss = true
 }
 
+npm_run_bundle {
+    dependsOn npmInstall
+}
+
+
 bootJar {
+    dependsOn npm_run_bundle
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     enabled = true
     classifier = 'exec'
@@ -235,28 +243,5 @@ publish {
     dependsOn assemble
 }
 
-//clientDependencies {
-//    bower {
-//        'jquery-ui'('1.12.1') {
-//            include 'jquery-ui.js'
-//        }
-//    }
-//    npm {
-//        'bootstrap'('^5.0.0-beta3', transitive:false)
-//        'jquery'('3.6.0')
-//        'font-awesome'('4.7.0')
-//        'knockout'('3.5.1', from:'build/output')
-//        'knockout-mapping'('2.6.0')
-//        'knockout-sortable'('1.2.0', from:'build')
-//        'select2'('4.0.13')
-//        'underscore'('1.12.1') {
-//            include 'underscore.js'
-//        }
-//        'bootstrap-datepicker'('1.9.0')
-//        jsoneditor('9.3.0', transitive:false)
-//    }
-//
-//    copyExcludes '**/*esm.js'
-//}
 
 
