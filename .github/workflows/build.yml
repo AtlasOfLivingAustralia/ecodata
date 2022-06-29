@@ -3,7 +3,7 @@ name: ecodata build
 on:
   push:
     branches:
-      - githubactions
+      - grails5java11
       - dev
       - master
       - feature/**
