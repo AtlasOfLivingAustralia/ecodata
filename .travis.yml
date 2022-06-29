@@ -41,7 +41,7 @@ before_script:
   - sleep 10
 
 script:
-  - ./gradlew -PenableClover=true cloverGenerateReport
+  - ./gradlew -PenableJacoco=true jacocoTestCoverageVerification
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
