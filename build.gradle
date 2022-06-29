@@ -217,6 +217,7 @@ assets {
 }
 
 bootJar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     enabled = true
     classifier = 'exec'
     launchScript()
