@@ -3,15 +3,6 @@
 @import '~bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 @import '~select2/dist/css/select2.css';
 @import '~jsoneditor/dist/jsoneditor.css';
-/**
- * Manifest for the asset pipeline
- *
- *= require bootstrap/css/bootstrap
- *= require font-awesome/css/font-awesome
- *= require bootstrap-datepicker/css/bootstrap-datepicker
- *= require select2/css/select2
- *= require jsoneditor/jsoneditor.css
- */
 
 /* CSS for the API documentation */
 .property-name {width:15%;}
