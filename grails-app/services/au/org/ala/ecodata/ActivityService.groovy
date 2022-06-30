@@ -180,12 +180,12 @@ class ActivityService {
         activities
     }
 
-    List<Map> findAllForProjectActivityId(String projectActivityId, levelOfDetail = []) {
-        Activity.findAllByProjectActivityIdAndStatus(projectActivityId, ACTIVE).collect { toMap(it, levelOfDetail) }
+    List<Map> findAllForProjectActivityId(String projectActivityId, Map params, levelOfDetail = []) {
+        Activity.findAllByProjectActivityIdAndStatus(projectActivityId, ACTIVE, params).collect { toMap(it, levelOfDetail) }
     }
 
-    List<Map> findAllForActivityIdsInProjectActivity(List activityIdList, String projectActivityId, levelOfDetail = []) {
-        Activity.findAllByActivityIdInListAndProjectActivityIdAndStatus(activityIdList, projectActivityId, ACTIVE).collect { toMap(it, levelOfDetail) }
+    List<Map> findAllForActivityIdsInProjectActivity(List activityIdList, String projectActivityId, Map params, levelOfDetail = []) {
+        Activity.findAllByActivityIdInListAndProjectActivityIdAndStatus(activityIdList, projectActivityId, ACTIVE, params).collect { toMap(it, levelOfDetail) }
     }
 
     def findAllForUserId(userId, query, levelOfDetail = []){

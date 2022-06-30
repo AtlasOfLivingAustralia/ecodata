@@ -364,7 +364,7 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
         createActivity([activityId:'activity7', type:'Type 1', description:'Test', progress:Activity.FINISHED, plannedStartDate:new Date(), plannedEndDate: new Date(), status: Status.ACTIVE, projectActivityId: '1234'])
 
         when:
-        List activitiesRetrieved = service.findAllForProjectActivityId('1234', ActivityService.FLAT)
+        List activitiesRetrieved = service.findAllForProjectActivityId('1234', [:], ActivityService.FLAT)
 
         then:
         //activities in deleted status will not be returned by this
@@ -380,7 +380,7 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
         List ids = ['activity1', 'activity2', 'activity6', 'activity7']
 
         when:
-        List activitiesRetrieved = service.findAllForActivityIdsInProjectActivity(ids, '1234', ActivityService.FLAT)
+        List activitiesRetrieved = service.findAllForActivityIdsInProjectActivity(ids, '1234', [:], ActivityService.FLAT)
 
         then:
         //activities in deleted status will not be returned by this

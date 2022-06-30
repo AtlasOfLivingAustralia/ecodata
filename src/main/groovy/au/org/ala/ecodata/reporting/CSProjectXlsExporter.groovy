@@ -149,6 +149,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     }
 
     private AdditionalSheet createSurveySheet(Map projectActivity, Set<String> activityIds = null) {
+        AdditionalSheet sheet = null
         def userId = userService.currentUserDetails?.userId
 
         boolean userIsAlaAdmin = false
@@ -163,63 +164,51 @@ class CSProjectXlsExporter extends ProjectExporter {
         // BioCollect currently doesn't use form versioning so just get the latest version of the form.
         ActivityForm form = activityFormService.findActivityForm(projectActivity.pActivityFormName)
         if (activityIds == null || activityIds.isEmpty()) {
-            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
+            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId, [:])
 
-            int batchSize = 10
+            int batchSize = 100
             int processed = 0
             def count = activities?.size() ?: 0
 
+            List<Map> batchedActivities = []
+
             while (processed < count) {
-                def id = new MinKey()
+                if (activityList.size() > batchSize) {
+                    batchedActivities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId, [offset: processed, max: batchSize])
 
-                BuildableCriteria criteria = Activity.createCriteria()
-                List newActivities = criteria.list([offset: processed, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
-                    gt 'id', id
+                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
+                }
+                else {
+                    sheet = generateSheet(activities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
                 }
 
-                id = newActivities.last().id
-
-                activityIds = new HashSet<String>();
-
-                for (int i = 0; i < newActivities.size(); i++) {
-                    activityIds.add(newActivities[i].activityId)
-                }
-
-                generateSheet(newActivities, activityIds, projectActivity, userId, userIsAlaAdmin, form)
                 processed += batchSize
             }
         } else {
-            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId)
+            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId, [:])
 
-            int batchSize = 10
+            int batchSize = 100
             int processed = 0
             def count = activities?.size() ?: 0
 
+            List<Map> batchedActivities = []
+
             while (processed < count) {
-                def id = new MinKey()
+                if (activityList.size() > batchSize) {
+                    batchedActivities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId, [offset: processed, max: batchSize])
 
-                BuildableCriteria criteria = Activity.createCriteria()
-                List newActivities = criteria.list([offset: processed, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
-                    gt 'id', id
+                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
+                }
+                else {
+                    sheet = generateSheet(activities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
                 }
 
-                id = newActivities.last().id
-
-                activityIds = new HashSet<String>();
-
-                for (int i = 0; i < newActivities.size(); i++) {
-                    activityIds.add(newActivities[i].activityId)
-                }
-
-                generateSheet(newActivities, activityIds, projectActivity, userId, userIsAlaAdmin, form)
                 processed += batchSize
             }
         }
     }
 
-    private generateSheet(List<Map> activities, Set<String> activityIds, Map projectActivity, def userId, boolean userIsAlaAdmin, ActivityForm form) {
-        AdditionalSheet sheet = null
-
+    private generateSheet(List<Map> activities, List activityIds, Map projectActivity, def userId, boolean userIsAlaAdmin, ActivityForm form, AdditionalSheet sheet) {
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
             List<String> headers = []
             headers.addAll(surveyHeaders)
