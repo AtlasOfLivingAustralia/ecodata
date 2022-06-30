@@ -182,7 +182,7 @@ springBoot {
 }
 
 bootRun {
-    dependsOn npm_run_bundle
+    //dependsOn npm_run_bundle
     jvmArgs('-Dspring.output.ansi.enabled=always', '-Xmx8000m')
     sourceResources sourceSets.main
     System.properties.each { k,v->

@@ -1,53 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
   <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
   <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wex</pattern>
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>'%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wex'</pattern>
     </encoder>
   </appender>
-  <appender name="ES-INDEXING" class="ch.qos.logback.core.FileAppender">
-    <file>ecodata-indexing.log</file>
-    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n</pattern>
-    </encoder>
-  </appender>
-  <appender name="GRAPHQL" class="ch.qos.logback.core.FileAppender">
-    <file>ecodata-graphql.log</file>
-    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %level - %msg%n</pattern>
-    </encoder>
-  </appender>
-  <root level="ERROR">
-    <appender-ref ref="STDOUT"/>
+
+  <logger name="au.org.ala.ecodata" level="INFO">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <root level="error">
+    <appender-ref ref="STDOUT" />
   </root>
-  <logger name="EsIndexing" level="INFO" additivity="false">
-    <appender-ref ref="ES-INDEXING"/>
-  </logger>
-  <logger name="graphql" level="INFO" additivity="false">
-    <appender-ref ref="GRAPHQL"/>
-  </logger>
-  <logger name="au.org.ala.cas.client" level="WARN"/>
-  <logger name="au.org.ala.cas.util" level="WARN"/>
-  <logger name="org.apache.coyote.http11.Http11Processor" level="WARN"/>
-  <logger name="asset.pipeline" level="INFO"/>
-  <logger name="grails.app" level="INFO"/>
-  <logger name="grails.plugins.mail" level="INFO"/>
-  <logger name="grails.plugins.quartz" level="INFO"/>
-  <logger name="grails.mongodb" level="INFO"/>
-  <logger name="org.quartz" level="INFO"/>
-  <logger name="org.springframework" level="INFO"/>
-  <logger name="grails.mongodb" level="INFO"/>
-  <logger name="grails.gorm" level="INFO"/>
-  <logger name="au.org.ala.ecodata" level="INFO"/>
-  <logger name="au.org.ala.ecodata.ElasticSearchService" level="INFO">
-    <appender-ref ref="ES-INDEXING"/>
-  </logger>
-  <logger name="au.org.ala.ecodata.GraphqlInterceptor" level="INFO">
-    <appender-ref ref="GRAPHQL"/>
-  </logger>
-  <logger name="au.org.ala.ecodata.graphql.EcodataGraphQLCustomiser" level="INFO">
-    <appender-ref ref="GRAPHQL"/>
-  </logger>
 </configuration>
