@@ -43,6 +43,7 @@ class ProjectService {
     ReportingService reportingService
     OrganisationService organisationService
     UserService userService
+    ActivityFormService activityFormService
 
   /*  def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -325,7 +326,7 @@ class ProjectService {
     // instead of the common service, but that is a bit risky for a quick fix.
     // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
     private void bindEmbeddedProperties(Project project, Map properties) {
-        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo']
+        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo', 'outputTargets']
         for (String prop in embeddedPropertyNames) {
             if (properties[prop]) {
                 project.properties = [(prop):properties.remove(prop)]
@@ -569,6 +570,30 @@ class ProjectService {
             log.error error
             return [status: 'error', error: error]
         }
+    }
+
+    /**
+     * This method calculates the current scores for the project identified by the supplied activity id
+     * and separately calculates the contribution to the score from either the supplied activityData or
+     * the saved output data for that activity.
+     * The purpose is to allow the client to detect where a score has over-delivered a target to allow action
+     * to be taken.
+     * @param activityId the activity of interest
+     * @param activityData if supplied, this data will be used instead of any saved Output data for the activity.
+     * @return a Map [projectScores:<score data>, activityScores:<score data>] where <score data> is in the format
+     * returned by ReportService::aggregateActivities
+     */
+    Map scoreDataForActivityAndProject(String activityId, Map activityData = null) {
+        Map activity = activityService.get(activityId)
+
+        ActivityForm form = activityFormService.findActivityForm(activity.type, activity.formVersion)
+        List<Score> scores = activityFormService.findScoresThatReferenceForm(form)
+
+        List projectResults = projectMetrics(activity.projectId, true, false, scores.collect{it.scoreId})
+        List activityResults = reportService.aggregateActivities([activityData ?: activity], scores)
+
+        [projectScores:projectResults, activityScores:activityResults]
+
     }
 
     List<String> getActivityIdsForProject(String projectId) {

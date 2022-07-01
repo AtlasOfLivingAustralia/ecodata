@@ -120,7 +120,9 @@ class Project {
     /** Electorate Reporting Comment */
     String comment
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds']
+    List<OutputTarget> outputTargets
+
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
 
