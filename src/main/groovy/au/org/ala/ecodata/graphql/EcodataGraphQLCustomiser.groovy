@@ -63,8 +63,6 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
 
             @Override
             void interceptSchema(GraphQLObjectType.Builder queryType, GraphQLObjectType.Builder mutationType, Set<GraphQLType> additionalTypes) {
-                println queryType
-
 
             }
         })
@@ -72,8 +70,6 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
         graphQLInterceptorManager.registerInterceptor(Object, new GraphQLFetcherInterceptor() {
             @Override
             boolean onQuery(DataFetchingEnvironment environment, GraphQLDataFetcherType type) {
-                println "Running query $type"
-
                 return true
             }
 
