@@ -5,7 +5,6 @@ import au.org.ala.ecodata.metadata.*
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.grails.datastore.mapping.query.api.BuildableCriteria
 import pl.touk.excel.export.multisheet.AdditionalSheet
 import org.bson.types.MinKey
 
@@ -40,7 +39,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
 
     List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
     List<String> recordProperties = ["occurrenceID", "guid", "activityId", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
@@ -55,6 +54,9 @@ class CSProjectXlsExporter extends ProjectExporter {
     DoublePropertyGetter locationLongitudeGetter =  new DoublePropertyGetter("locationLongitude")
     CompositeGetter<Double> generalLongitudeGetter = new CompositeGetter<Double>(generalisedLongitudeGetter, decimalLongitudeGetter, locationLongitudeGetter)
     CompositeGetter<Double> accurateLongitudeGetter = new CompositeGetter<Double>(decimalLongitudeGetter, locationLongitudeGetter, generalisedLongitudeGetter)
+
+    DoublePropertyGetter locationCentroidLatitudeGetter = new DoublePropertyGetter("locationCentroidLatitude")
+    DoublePropertyGetter locationCentroidLongitudeGetter = new DoublePropertyGetter("locationCentroidLongitude")
 
     ProjectActivityService projectActivityService = Holders.grailsApplication.mainContext.getBean("projectActivityService")
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
@@ -160,49 +162,48 @@ class CSProjectXlsExporter extends ProjectExporter {
         List activityList = []
         activityList.addAll(activityIds)
 
-        List<Map> activities = []
+        int batchSize = 100
+        int processed = 0
+        def count = batchSize
+
+        List<Map> batchedActivities = []
         // BioCollect currently doesn't use form versioning so just get the latest version of the form.
         ActivityForm form = activityFormService.findActivityForm(projectActivity.pActivityFormName)
         if (activityIds == null || activityIds.isEmpty()) {
-            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId, [:])
+            def id = new MinKey()
 
-            int batchSize = 100
-            int processed = 0
-            def count = activities?.size() ?: 0
+            while (count == batchSize) {
+                batchedActivities = Activity.createCriteria().list([offset: 0, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
+                    and {
+                        eq "projectActivityId", projectActivity.projectActivityId
+                        gt "id", id
+                    }
+                }.collect { activityService.toMap(it, []) }
 
-            List<Map> batchedActivities = []
+                sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
 
-            while (processed < count) {
-                if (activityList.size() > batchSize) {
-                    batchedActivities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId, [offset: processed, max: batchSize])
+                if (batchedActivities.size() > 0)
+                    id = batchedActivities.last().id
 
-                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
-                }
-                else {
-                    sheet = generateSheet(activities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
-                }
-
+                count = batchedActivities.size()
                 processed += batchSize
             }
         } else {
-            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId, [:])
+            def id = new MinKey()
 
-            int batchSize = 100
-            int processed = 0
-            def count = activities?.size() ?: 0
+            while (count == batchSize) {
+                batchedActivities = Activity.createCriteria().list([offset: 0, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
+                    eq "projectActivityId", projectActivity.projectActivityId
+                    'in' "activityId", activityList
+                    gt "id", id
+                }.collect { activityService.toMap(it, []) }
 
-            List<Map> batchedActivities = []
+                sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
 
-            while (processed < count) {
-                if (activityList.size() > batchSize) {
-                    batchedActivities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId, [offset: processed, max: batchSize])
+                if (batchedActivities.size() > 0)
+                    id = batchedActivities.last().id
 
-                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
-                }
-                else {
-                    sheet = generateSheet(activities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
-                }
-
+                count = batchedActivities.size()
                 processed += batchSize
             }
         }
@@ -231,7 +232,9 @@ class CSProjectXlsExporter extends ProjectExporter {
                             new ConstantGetter("status", projectActivity.status),
                             new ConstantGetter("attribution", projectActivity.attribution),
                             generalLatitudeGetter,
-                            generalLongitudeGetter
+                            generalLongitudeGetter,
+                            locationCentroidLatitudeGetter,
+                            locationCentroidLongitudeGetter
                     ]
                     // Include user selected projectActivity site associated with the survey
                     def site = projectActivity?.sites?.find{it.siteId == activity.siteId}

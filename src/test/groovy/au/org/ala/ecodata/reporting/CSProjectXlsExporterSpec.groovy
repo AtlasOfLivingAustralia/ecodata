@@ -104,7 +104,7 @@ class CSProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         projectService.get(projectId) >> project
         projectActivityService.getAllByProject(projectId, ProjectActivityService.ALL) >> [pa]
         projectActivityService.listRestrictedProjectActivityIds(_, _) >> []
-        activityService.findAllForActivityIdsInProjectActivity(['abc123'], _, [:]) >> [[activityId: "abc123", outputs:[[name: "test", data: ['item1': 1], name: "test", outputId: "abc"]]]]
+        activityService.findAllForActivityIdsInProjectActivity(['abc123'], _) >> [[activityId: "abc123", outputs:[[name: "test", data: ['item1': 1], name: "test", outputId: "abc"]]]]
         activityFormService.findActivityForm(pa.pActivityFormName) >> activityForm
 
         when:
