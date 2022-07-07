@@ -2,6 +2,8 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.util.ExportTestUtils
+import com.mongodb.BasicDBObject
+import grails.testing.gorm.DataTest
 import grails.util.Holders
 
 /*
@@ -24,14 +26,14 @@ import grails.util.Holders
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.grails.testing.GrailsUnitTest
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 import java.time.ZoneId
 
 /**
  * Spec for the csProjectXlsExporter
  */
-class CSProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
+class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, DataTest {
 
     def projectService = Mock(ProjectService)
     def projectActivityService = Mock(ProjectActivityService)
@@ -81,6 +83,9 @@ class CSProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         outputFile.delete()
     }
 
+    def cleanup() {
+        Activity.collection.remove(new BasicDBObject())
+    }
 
     def "Project activity sheet must not contain a list of sites associated with project activity"() {
         setup:
@@ -101,10 +106,13 @@ class CSProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         Set activities = new HashSet<String>()
         activities.add('abc123')
         ActivityForm activityForm = form()
+        Activity activity = new Activity(activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
+                plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId).save()
         projectService.get(projectId) >> project
         projectActivityService.getAllByProject(projectId, ProjectActivityService.ALL) >> [pa]
         projectActivityService.listRestrictedProjectActivityIds(_, _) >> []
-        activityService.findAllForActivityIdsInProjectActivity(['abc123'], _) >> [[activityId: "abc123", outputs:[[name: "test", data: ['item1': 1], name: "test", outputId: "abc"]]]]
+        activityService.toMap(_, []) >> [activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
+                                                 plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId, outputs:[[name: "test", data: ['item1': 1], name: "test", outputId: "abc"]]]
         activityFormService.findActivityForm(pa.pActivityFormName) >> activityForm
 
         when:
