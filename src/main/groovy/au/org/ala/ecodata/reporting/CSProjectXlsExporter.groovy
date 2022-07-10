@@ -162,7 +162,7 @@ class CSProjectXlsExporter extends ProjectExporter {
         List activityList = []
         activityList.addAll(activityIds)
 
-        int batchSize = 100
+        int batchSize = 1000
         int processed = 0
         def count = batchSize
 
