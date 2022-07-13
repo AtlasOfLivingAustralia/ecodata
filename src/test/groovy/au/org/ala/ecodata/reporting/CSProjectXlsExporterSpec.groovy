@@ -67,7 +67,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         outputFile = File.createTempFile('test', '.xlsx')
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
-        xlsExporter = new XlsExporter(name)
+        xlsExporter = new StreamingXlsExporter(name)
         csProjectXlsExporter = new CSProjectXlsExporter( xlsExporter,null, TimeZone.default)
         csProjectXlsExporter.projectActivityService = projectActivityService
         csProjectXlsExporter.projectService = projectService
@@ -124,7 +124,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         then:
         workbook.numberOfSheets == 4
         Sheet paSheet = workbook.getSheet(paName)
-        paSheet.physicalNumberOfRows == 1
+        paSheet.physicalNumberOfRows == 2 //returns 2 rows, header and one data row
         List summaryRow =  ExportTestUtils.readRow(0, paSheet)
         List activityHeaders = summaryRow.subList(0, 7)
         activityHeaders == csProjectXlsExporter.surveyHeaders.subList(0, 7)

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.CSProjectXlsExporter
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ShapefileBuilder
+import au.org.ala.ecodata.reporting.StreamingXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.async.Promise
 import grails.web.servlet.mvc.GrailsParameterMap
@@ -446,7 +447,7 @@ class DownloadService {
     XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results", TimeZone timeZone) {
         long start = System.currentTimeMillis()
 
-        XlsExporter xlsExporter = new XlsExporter(fileName)
+        XlsExporter xlsExporter = new StreamingXlsExporter(fileName)
 
         log.info "Exporting activities"
 

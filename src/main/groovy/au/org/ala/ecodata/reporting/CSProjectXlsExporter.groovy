@@ -73,7 +73,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     Map<String, AdditionalSheet> surveySheets = [:]
     Map<String, Object> documentMap
 
-    public CSProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap,TimeZone timeZone) {
+    public CSProjectXlsExporter(StreamingXlsExporter exporter, Map<String, Object> documentMap,TimeZone timeZone) {
         super(exporter, [], documentMap, timeZone)
         this.documentMap = documentMap
     }
@@ -144,7 +144,10 @@ class CSProjectXlsExporter extends ProjectExporter {
                 AdditionalSheet sheet = surveySheets[survey.name]
                 if (!sheet) {
                     sheet = createSurveySheet(survey, activityIds)
-                    surveySheets.put(survey.name, sheet)
+
+                    if (sheet) {
+                        surveySheets.put(survey.name, sheet)
+                    }
                 }
             }
         }
@@ -162,9 +165,16 @@ class CSProjectXlsExporter extends ProjectExporter {
         List activityList = []
         activityList.addAll(activityIds)
 
-        int batchSize = 1000
+        int batchSize = 100
         int processed = 0
         def count = batchSize
+
+        List<String> headers = []
+        headers.addAll(surveyHeaders)
+
+        OutputModelProcessor processor = new OutputModelProcessor()
+
+        Set<String> uniqueOutputs = [] as HashSet<String>
 
         List<Map> batchedActivities = []
         // BioCollect currently doesn't use form versioning so just get the latest version of the form.
@@ -178,17 +188,31 @@ class CSProjectXlsExporter extends ProjectExporter {
                         eq "projectActivityId", projectActivity.projectActivityId
                         gt "id", id
                     }
-                }.collect { activityService.toMap(it, []) }
+                }
 
-                sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
-
-                if (batchedActivities.size() > 0)
+                if (batchedActivities.size() > 0) {
                     id = batchedActivities.last().id
+
+                    batchedActivities = batchedActivities.collect { activityService.toMap(it, []) }
+
+                    if (processed == 0) {
+                        batchedActivities.first().outputs.foreach { output ->
+                            Map model = form.getFormSection(output.name)?.template
+
+                            OutputMetadata outputModel = new OutputMetadata(model)
+                            Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
+                            headers.addAll(outputConfig.headers)
+                        }
+                    }
+
+                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet, headers, processor, uniqueOutputs)
+                }
 
                 count = batchedActivities.size()
                 processed += batchSize
             }
-        } else {
+        }
+        else {
             def id = new MinKey()
 
             while (count == batchSize) {
@@ -196,27 +220,36 @@ class CSProjectXlsExporter extends ProjectExporter {
                     eq "projectActivityId", projectActivity.projectActivityId
                     'in' "activityId", activityList
                     gt "id", id
-                }.collect { activityService.toMap(it, []) }
+                }
 
-                sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet)
-
-                if (batchedActivities.size() > 0)
+                if (batchedActivities.size() > 0) {
                     id = batchedActivities.last().id
+
+                    batchedActivities = batchedActivities.collect { activityService.toMap(it, []) }
+
+                    if (processed == 0) {
+                        batchedActivities.first().outputs.each { output ->
+                            Map model = form.getFormSection(output.name)?.template
+
+                            OutputMetadata outputModel = new OutputMetadata(model)
+                            Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
+                            headers.addAll(outputConfig.headers)
+                        }
+                    }
+
+                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet, headers, processor, uniqueOutputs)
+                }
 
                 count = batchedActivities.size()
                 processed += batchSize
             }
         }
+
+        sheet
     }
 
-    private generateSheet(List<Map> activities, List activityIds, Map projectActivity, def userId, boolean userIsAlaAdmin, ActivityForm form, AdditionalSheet sheet) {
+    private generateSheet(List<Map> activities, List activityIds, Map projectActivity, def userId, boolean userIsAlaAdmin, ActivityForm form, AdditionalSheet sheet, List<String> headers, OutputModelProcessor processor, Set<String> uniqueOutputs) {
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
-            List<String> headers = []
-            headers.addAll(surveyHeaders)
-
-            OutputModelProcessor processor = new OutputModelProcessor()
-
-            Set<String> uniqueOutputs = [] as HashSet<String>
             activities.each { activity ->
                 List rows = [[:]]
                 // need to differentiate between an empty set of activity ids (which means don't export any activities),
@@ -256,7 +289,6 @@ class CSProjectXlsExporter extends ProjectExporter {
                         OutputMetadata outputModel = new OutputMetadata(model)
                         Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
                         if (!uniqueOutputs.contains(output.name)) {
-                            headers.addAll(outputConfig.headers)
                             uniqueOutputs << output.name
                         }
 
@@ -298,15 +330,16 @@ class CSProjectXlsExporter extends ProjectExporter {
                     if (rows && !rows[0].isEmpty()) {
                         if (!sheet) {
                             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
+
+                            if (sheet) {
+                                sheet.fillHeader(headers)
+                                exporter.styleRow(sheet, 0, exporter.headerStyle(exporter.getWorkbook()))
+                            }
                         }
+
                         sheet.add(rows, properties, sheet.sheet.lastRowNum + 1)
                     }
                 }
-            }
-
-            if (sheet) {
-                sheet.fillHeader(headers)
-                exporter.styleRow(sheet, 0, exporter.headerStyle(exporter.getWorkbook()))
             }
         }
 
