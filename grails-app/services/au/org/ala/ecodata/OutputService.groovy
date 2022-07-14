@@ -326,15 +326,15 @@ class OutputService {
                     remove = []
                     output[name]?.each {
                         // save image if document id not found
-                        if (!it.documentId) {
+                        if (!it.documentId && it.url) {
                             it.activityId = activityId
                             it.outputId = outputId
                             it.remove('staged')
                             it.role = role
                             it.type = type
                             // record creation requires images to have an 'identifier' attribute containing the url for the image
-                            it.identifier = it.url
 
+                            it.identifier = it.url
                             biocollect = new URL(it.url)
                             stream = biocollect.openStream()
                             Map document = documentService.create(it, stream)
