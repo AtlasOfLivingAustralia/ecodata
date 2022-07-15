@@ -484,6 +484,11 @@ class DownloadService {
     Map<String, Set<String>> getActivityIdsForDownload(Map params, String searchIndexName) {
         long start = System.currentTimeMillis()
 
+        List include = params.getList('include') ?: []
+        include += ['projectId', 'activityId']
+
+        params.put('include',include)
+
         SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
 
