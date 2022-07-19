@@ -484,18 +484,32 @@ class DownloadService {
     Map<String, Set<String>> getActivityIdsForDownload(Map params, String searchIndexName) {
         long start = System.currentTimeMillis()
 
+        Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
+
         List include = params.getList('include') ?: []
         include += ['projectId', 'activityId']
 
         params.put('include',include)
 
-        SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
-        Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
+        int batchSize = 100
+        int processed = 0
+        def count = batchSize
 
-        for (SearchHit hit : res.hits.hits) {
-            if (hit.sourceAsMap.projectId) {
-                ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
+        params.max = batchSize
+
+        while (count == batchSize) {
+            SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
+
+            for (SearchHit hit : res.hits.hits) {
+                if (hit.sourceAsMap.projectId) {
+                    ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
+                }
             }
+
+            count = res.hits.hits.size()
+            processed += batchSize
+
+            params.offset = processed
         }
 
         log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
