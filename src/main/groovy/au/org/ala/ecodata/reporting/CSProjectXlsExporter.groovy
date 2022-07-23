@@ -169,6 +169,8 @@ class CSProjectXlsExporter extends ProjectExporter {
         int processed = 0
         def count = batchSize
 
+        int batchedActivitiesCount = 0
+
         List<String> headers = []
         headers.addAll(surveyHeaders)
 
@@ -238,6 +240,9 @@ class CSProjectXlsExporter extends ProjectExporter {
                     }
 
                     sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet, headers, processor, uniqueOutputs)
+
+                    batchedActivitiesCount += batchedActivities.size()
+                    log.info "Processed activities: ${batchedActivitiesCount}"
                 }
 
                 count = batchedActivities.size()
