@@ -499,6 +499,8 @@ class DownloadService {
 
         while (count == batchSize) {
             SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
+            Map resp = [total:res.hits.totalHits.value, results:[]]
+            log.info "Processed activities: ${resp.total}"
 
             for (SearchHit hit : res.hits.hits) {
                 if (hit.sourceAsMap.projectId) {

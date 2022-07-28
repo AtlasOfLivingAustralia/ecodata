@@ -211,7 +211,7 @@ class CSProjectXlsExporter extends ProjectExporter {
                 }
 
                 count = batchedActivities.size()
-                processed += batchSize
+                processed += batchedActivities.size()
             }
         }
         else {
@@ -246,9 +246,10 @@ class CSProjectXlsExporter extends ProjectExporter {
                 }
 
                 count = batchedActivities.size()
-                processed += batchSize
+                processed += batchedActivities.size()
             }
         }
+        log.info "Processed: ${processed}"
 
         sheet
     }
