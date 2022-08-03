@@ -675,7 +675,7 @@ class AdminController {
         render 'ok'
     }
 
-    @AlaSecured(["ROLE_ADMIN]")
+    @AlaSecured(["ROLE_ADMIN"])
     def createDataDescription() {
         if (request.respondsTo('getFile')) {
             MultipartFile excel = request.getFile('descriptionData')
