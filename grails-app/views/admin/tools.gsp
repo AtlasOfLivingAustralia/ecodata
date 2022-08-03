@@ -97,6 +97,21 @@
                         alert(result);
                     });
                 });
+
+                $("#createDataDescription").change(function() {
+                    if ($("#createDataDescription").val()) {
+                        $("#btnImportDataDescription").removeAttr("disabled");
+                    }
+                    else {
+                        $("#btnImportDataDescription").attr("disabled", "disabled");
+                    }
+
+                }).trigger('change');
+
+                $('#btnImportDataDescription').click(function(e) {
+                    e.preventDefault();
+                    $('form.createDataDescription').submit();
+                });
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -188,6 +203,18 @@
                 </td>
                 <td>
                     Migrate the existing MERIT users from UserDetails into the Eccodata Database
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button disabled id="btnImportDataDescription" class="btn btn-small btn-info" title="Update Data Description.">Update Data Description</button>
+                </td>
+                <td>
+                    Import data into DataDescription collection.
+                    <g:uploadForm class="createDataDescription" action="createDataDescription">
+                        <div><input id="createDataDescription" type="file" name="descriptionData"/></div>
+                    </g:uploadForm>
+
                 </td>
             </tr>
             </tbody>

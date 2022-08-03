@@ -18,8 +18,18 @@ class DataDescription {
     String userInterfaceReference
     String label
     String notes
+    String excelExportedColumn
+    String excelExportedStatus
+    String excelExportedRequired
+    String excelExportedSource
+    String excelExportedDescription
+    String excelExportedExample
+    Date dateCreated
+    Date lastUpdated
 
     static constraints = {
+        name nullable: true
+        description nullable:true
         graphQlName nullable: true
         xlsxName nullable: true
         xlsxHeader nullable: true
@@ -29,5 +39,13 @@ class DataDescription {
         userInterfaceReference nullable: true
         label nullable: true
         notes nullable: true
+        type nullable: true
+        excelExportedColumn nullable: true
+        excelExportedStatus nullable: true
+        excelExportedRequired nullable: true
+        excelExportedSource nullable: true
+        excelExportedDescription nullable: true
+        excelExportedExample nullable: true
+
     }
 }

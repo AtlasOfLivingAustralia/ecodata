@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.CSProjectXlsExporter
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ShapefileBuilder
+import au.org.ala.ecodata.reporting.StreamingXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.async.Promise
 import grails.web.servlet.mvc.GrailsParameterMap
@@ -446,7 +447,7 @@ class DownloadService {
     XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results", TimeZone timeZone) {
         long start = System.currentTimeMillis()
 
-        XlsExporter xlsExporter = new XlsExporter(fileName)
+        XlsExporter xlsExporter = new StreamingXlsExporter(fileName)
 
         log.info "Exporting activities"
 
@@ -483,13 +484,34 @@ class DownloadService {
     Map<String, Set<String>> getActivityIdsForDownload(Map params, String searchIndexName) {
         long start = System.currentTimeMillis()
 
-        SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
 
-        for (SearchHit hit : res.hits.hits) {
-            if (hit.sourceAsMap.projectId) {
-                ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
+        List include = params.getList('include') ?: []
+        include += ['projectId', 'activityId']
+
+        params.put('include',include)
+
+        int batchSize = 100
+        int processed = 0
+        def count = batchSize
+
+        params.max = batchSize
+
+        while (count == batchSize) {
+            SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
+            Map resp = [total:res.hits.totalHits.value, results:[]]
+            log.info "Processed activities: ${resp.total}"
+
+            for (SearchHit hit : res.hits.hits) {
+                if (hit.sourceAsMap.projectId) {
+                    ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
+                }
             }
+
+            count = res.hits.hits.size()
+            processed += batchSize
+
+            params.offset = processed
         }
 
         log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
