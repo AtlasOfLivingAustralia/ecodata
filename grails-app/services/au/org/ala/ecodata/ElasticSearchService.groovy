@@ -1183,6 +1183,9 @@ class ElasticSearchService {
         if(project.isMERIT)
             return
 
+        if (document.type == "link")
+            return
+
         if (document) {
             // overwrite any project properties that has same name as document properties.
             project.remove('description') // to avoid overwriting of document description by project description
