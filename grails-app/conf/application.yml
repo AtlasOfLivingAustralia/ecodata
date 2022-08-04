@@ -259,9 +259,10 @@ security:
         scope: openid,profile,email,ala,roles,user_defined
         allowUnsignedIdTokens: true
     jwt:
-        enabled: true
+        enabled: false
         discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
         requiredClaims: ["sub", "iat", "exp", "jti", "client_id"]
+        urlPatterns: ["/ws/graphql/*"]
 
 openapi:
     title: Ecodata REST services

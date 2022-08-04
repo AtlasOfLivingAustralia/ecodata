@@ -202,6 +202,10 @@ class UrlMappings {
             action = 'download'
         }
 
+        "/ws/graphql" {
+            controller = 'graphql'
+        }
+
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
 	}
