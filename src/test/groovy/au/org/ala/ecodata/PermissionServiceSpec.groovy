@@ -267,6 +267,24 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         !results.error
     }
 
+    void "delete user Permission when userID is Provided entity Type is HUB"(){
+
+        setup:
+        String userId = "1"
+        String hubId = 'h1'
+        new UserPermission(entityId:hubId, entityType:Hub.name, userId: userId, accessLevel:AccessLevel.caseManager.name()).save(flush:true, failOnError: true)
+        Hub hub = new Hub(hubId:hubId, urlPath: "hub")
+        hub.save()
+
+        when:
+        def results = service.deleteUserPermissionByUserId(userId, hubId)
+
+        then:
+        UserPermission.findAllByUserId(userId).size() == 0
+        results.status == 200
+        !results.error
+    }
+
     void "unable to find user when wrong userID  Provided or no user exist in userPermission database table "(){
 
         setup:

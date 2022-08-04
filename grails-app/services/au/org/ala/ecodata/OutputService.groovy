@@ -333,12 +333,17 @@ class OutputService {
                             it.role = role
                             it.type = type
                             // record creation requires images to have an 'identifier' attribute containing the url for the image
-                            it.identifier = it.url
+                            try {
+                                it.identifier = it.url
+                                biocollect = new URL(it.url)
+                                stream = biocollect.openStream()
+                                Map document = documentService.create(it, stream)
+                                it.documentId = document.documentId
+                            } catch (MalformedURLException urlException){
+                                def error = [error: "URL invalid/${urlException.getMessage()}"]
+                                log.error error.toString()
+                            }
 
-                            biocollect = new URL(it.url)
-                            stream = biocollect.openStream()
-                            Map document = documentService.create(it, stream)
-                            it.documentId = document.documentId
                         } else {
                             documentService.update(it, it.documentId);
                             // if deleted remove the document

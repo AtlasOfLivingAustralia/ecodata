@@ -621,6 +621,8 @@ class PermissionService {
             count = Project.countByProjectIdAndHubId(entityId, hubId)
         } else if (entityType == ManagementUnit.class.name) {
             count = ManagementUnit.countByManagementUnitIdAndHubId(entityId, hubId)
+        } else if (entityType == Hub.class.name) {
+            count = Hub.countByHubId(entityId, hubId)
         }
         return count > 0
     }
