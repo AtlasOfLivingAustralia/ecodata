@@ -115,6 +115,8 @@ class ElasticSearchService {
      */
     private static List BOOLEAN_PROEJCT_FIELDS = ['isExternal', 'isMERIT', 'isCitizenScience', 'isSciStarter', 'alaHarvest']
 
+    private static List DOCUMENT_TYPES_TO_EXCLUDE_REINDEXING = ['link']
+
     /**
      * Init method to be called on service creation
      */
@@ -1183,7 +1185,7 @@ class ElasticSearchService {
         if(project.isMERIT)
             return
 
-        if (document.type == "link")
+        if (DOCUMENT_TYPES_TO_EXCLUDE_REINDEXING.contains(document?.type))
             return
 
         if (document) {
