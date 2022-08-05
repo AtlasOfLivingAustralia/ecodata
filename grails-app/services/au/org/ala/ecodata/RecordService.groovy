@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
+
 import au.com.bytecode.opencsv.CSVWriter
+import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.web.AuthService
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -18,9 +20,11 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
-
 /**
  * Services for handling the creation of records with images.
  */
@@ -39,9 +43,12 @@ class RecordService {
     SensitiveSpeciesService sensitiveSpeciesService
     DocumentService documentService
     CommonService commonService
+    MapService mapService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
+    static final List<String> MULTIMEDIA_DATA_TYPES = ['image', 'audio', 'document', 'photoPoints']
+    static final String DWC_EVENT = 'Event', DWC_MEDIA = 'Media', DWC_MEASUREMENT = 'MeasurementOrFact', DWC_OCCURRENCE = 'Occurrence'
 
     def getProjectActivityService() {
         grailsApplication.mainContext.projectActivityService
@@ -253,7 +260,7 @@ class RecordService {
     }
 
     def getAllRecordsByActivityList(List<String> activityList) {
-        Record.findAllByActivityIdInList(activityList).collect { toMap(it) }
+        Record.findAllByActivityIdInListAndStatusNotEqual(activityList, Status.DELETED).collect { toMap(it) }
     }
 
     /**
@@ -941,5 +948,406 @@ class RecordService {
         }
 
         return grailsApplication.config.license.default;
+    }
+
+    /**
+     * Creates Darwin Core Archive for a project. Output of this function are
+     * | - meta.xml
+     * | - eml.xml
+     * | - Event.csv
+     * | - MeasurementOrFact.csv
+     * | - Media.csv
+     * | - Occurrence.csv
+     * @param outputStream
+     * @param project
+     */
+    void getDarwinCoreArchiveForProject(outputStream, Project project) {
+        Map result
+        Map<String,List> headersByDwcClass = [:].withDefault {[]}
+        new ZipOutputStream(outputStream).withStream { zip ->
+            try {
+                Long start = System.currentTimeMillis(), end
+                result = generateEventCoreFiles (project)
+
+                result.each { dwcClass, rows ->
+                    if (rows.size()) {
+                        zip.putNextEntry(new ZipEntry("${dwcClass}.csv"))
+                        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(zip))
+                        List headers = getHeadersFromRows(rows)
+                        List defaultOrder = getHeaderOrder(grailsApplication.config.darwinCore.termsGroupedByClass[dwcClass])
+                        headers = reorderHeaders(headers, defaultOrder)
+                        headersByDwcClass[dwcClass] = headers
+                        csvWriter.writeNext(headers as String[])
+                        rows.each { row ->
+                            List line = headers.collect {
+                                row[it] instanceof Collection ? row[it].join(" | ") :  row[it] ?: ""
+                            }
+                            csvWriter.writeNext(line as String[])
+                        }
+
+                        csvWriter.flush()
+                        log.info("finished writing ${dwcClass}.csv")
+                    }
+                }
+                end = System.currentTimeMillis()
+                log.debug("Time in milliseconds to write event core CSVs- ${end - start}")
+                start = end
+
+                zip.putNextEntry(new ZipEntry("meta.xml"))
+                zip << getMetaXML(headersByDwcClass)
+                zip.closeEntry()
+
+                zip.putNextEntry(new ZipEntry("eml.xml"))
+                zip << getEmlXML(project)
+                zip.closeEntry()
+                end = System.currentTimeMillis()
+                log.debug("Time in milliseconds to write event core XMLs- ${end - start}")
+
+                log.debug("completed zip")
+            } catch (Exception e){
+                log.error("error creating darwin core archive", e)
+            } finally {
+                zip.finish()
+                zip.flush()
+                zip.close()
+            }
+        }
+    }
+
+    /**
+     * Creates a data structure that enables creation of Darwin Core Archive. Project activity is a survey type in Event table.
+     * [
+     *      'Event' : [[a: 'b']],
+     *      'MeasurementOrFact' : [[a: 'b']],
+     *      'Media' : [[a: 'b']],
+     *      'Occurrence' : [[a: 'b']]
+     * ]
+     * @param project
+     * @return
+     */
+    Map generateEventCoreFiles(Project project) {
+        Map<String,List> result = [:].withDefault {[]}
+        Organisation organisation = project?.organisationName ? Organisation.findByName(project?.organisationName) : null
+        List<ProjectActivity> projectActivitiesForProject = ProjectActivity.findAllByProjectIdAndStatusNotEqualAndPublished(project.projectId, Status.DELETED, true)
+        projectActivitiesForProject.each { ProjectActivity projectActivity ->
+            int batchSize = 100
+            int offset = 0
+            int size = batchSize
+
+            // adds project activity to event table.
+            result[DWC_EVENT].add(convertProjectActivityToEvent(projectActivity, project))
+            while ( batchSize == size ) {
+                List<Activity> activities = Activity.findAllByProjectIdAndStatusNotEqualAndProjectActivityId(project.projectId, Status.DELETED, projectActivity.projectActivityId, [max: batchSize, offset: offset])
+                activities.each { Activity activity ->
+                    if(activityService.isActivityEmbargoed(activity, projectActivity))
+                        return
+
+                    Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
+                    List<Output> outputs = Output.findAllByActivityId(activity.activityId)
+                    outputs.eachWithIndex { output, outputIndex ->
+                        Map props = outputService.toMap(output)
+                        Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
+                        try {
+                            List<Map> records = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, props.data, outputMetadata, false)
+                            records.eachWithIndex { record, recordIndex ->
+                                Map params = [
+                                        activity: activity,
+                                        site: site,
+                                        output: output,
+                                        data: props.data,
+                                        metadata: outputMetadata,
+                                        organisation: organisation,
+                                        project: project,
+                                        recordService: this,
+                                        index: "${activity.activityId}-${outputIndex}-${recordIndex}"
+                                ]
+                                // groups dwc attributes to event core tables
+                                Map normalised = normaliseRecords(record, params)
+                                normalised.each { dwcClass, attributes ->
+                                    switch (dwcClass) {
+                                        case DWC_EVENT:
+                                            if (attributes && !result[dwcClass].find { it.eventID == attributes.eventID }) {
+                                                attributes.parentEventID = projectActivity.projectActivityId
+                                                result[dwcClass].add (attributes)
+                                            }
+                                            break
+                                        case DWC_MEDIA:
+                                        case DWC_MEASUREMENT:
+                                            if(attributes){
+                                                result[dwcClass].addAll(attributes)
+                                            }
+                                            break
+                                        case DWC_OCCURRENCE:
+                                        default:
+                                            if(attributes && attributes.scientificName) {
+                                                result[dwcClass].add (attributes)
+                                            }
+                                            break
+                                    }
+                                }
+                            }
+                        } catch (Exception ex) {
+                            log.error("error converting record - activity id " + activity.activityId, ex)
+                        }
+                    }
+                }
+                offset += batchSize
+                size = activities.size()
+            }
+        }
+
+        if (result[DWC_MEASUREMENT]?.size()) {
+            result[DWC_MEASUREMENT] = RecordConverter.removeDuplicates(result[DWC_MEASUREMENT])
+        }
+
+        if (result[DWC_MEDIA]?.size()) {
+            result[DWC_MEDIA] = RecordConverter.removeDuplicates(result[DWC_MEDIA])
+        }
+
+        result
+    }
+
+    /**
+     * Get the order of header to write the CSV. By default, the order is determined by order of entry in config
+     * darwinCore.termsGroupedByClass[dwcClass]. However, it is possible to override this by an attribute called order.
+     * Check entry for MeasurementOrFact.
+     * @param configs
+     * @return
+     */
+    List getHeaderOrder (List configs) {
+        Boolean isExplicitOrderAvailable = false
+        Integer orderIndex = null
+        List headers = []
+        configs.eachWithIndex { config, index ->
+            headers.add(config.name)
+
+            if (config.order) {
+                isExplicitOrderAvailable = true
+                orderIndex = index
+            }
+        }
+
+        isExplicitOrderAvailable ? configs.get(orderIndex)?.order : headers
+    }
+
+    /**
+     * Reorder content of header based on defaultOrder.
+     * @param headers
+     * @param defaultOrder
+     * @return
+     */
+    List reorderHeaders (List headers, List defaultOrder) {
+        List reordered = []
+
+        defaultOrder.each { name ->
+            if ( headers.contains(name) ) {
+                reordered.add(name)
+                headers.remove(name)
+            }
+        }
+
+        reordered + headers
+    }
+
+    /**
+     * Groups darwin core fields to event core table. Various transformations are done on top of the value.
+     * @param record
+     * @param params
+     * @return
+     */
+    Map normaliseRecords(Map record, Map params) {
+        Map trimmedGroups = darwinCoreTermsGroupedByClass()
+        Map attributeLinkedToClasses = invertAttributeToClass(trimmedGroups )
+        Map<String,Map> result = [:].withDefault {[:]}
+        attributeLinkedToClasses.each { attribute, classes ->
+            classes.each { dwcClass ->
+                Map config = getAttributeConfig(dwcClass, attribute)
+
+                transformToEventCoreTerm(config, record, params, result, dwcClass)
+            }
+        }
+
+        result
+    }
+
+    /**
+     * Transform a darwin core value before entering into event core.
+     * @param config
+     * @param record
+     * @param params
+     * @param result
+     * @param dwcClass
+     */
+    void transformToEventCoreTerm(Map config, Object record, Map params, Map<String, Map> result, String dwcClass) {
+        String attribute = config.name
+
+        if (config.code) {
+            result[dwcClass][attribute] = config.code(record, params)
+        } else if (config.substitute) {
+            result[dwcClass] = config.substitute(record, params)
+        } else if (config.ref) {
+            result[dwcClass][attribute] = record[config.ref]
+        } else if (record[attribute] != null) {
+            if (record[attribute] instanceof List)
+                result[dwcClass][attribute] = record[attribute]?.join(" | ")
+            else
+                result[dwcClass][attribute] = record[attribute]
+        } else if (config.default) {
+            result[dwcClass][attribute] = config.default
+        }
+    }
+
+    Map getAttributeConfig(String dwcClass, String attribute) {
+        Map groups = grailsApplication.config.darwinCore.termsGroupedByClass
+        groups[dwcClass].find { it.name == attribute }
+    }
+
+    Map darwinCoreTermsGroupedByClass() {
+        Map groups = grailsApplication.config.darwinCore.termsGroupedByClass
+        Map<String, List> trimmedGroups = [:]
+        groups.each { String key, List values ->
+            trimmedGroups[key] = values?.collect {
+                it.name
+            }
+
+            if (trimmedGroups[key]?.size() == 0 ) {
+                trimmedGroups.remove(key)
+            }
+        }
+
+        trimmedGroups
+    }
+
+    Map invertAttributeToClass (Map termsGroupedByClass) {
+        Map<String,List> inverted = [:].withDefault {[]}
+        termsGroupedByClass.each {dwcClass, attributes ->
+            attributes.each {
+                inverted [it].add (dwcClass)
+            }
+        }
+
+        inverted
+    }
+
+    /**
+     * Iterates all rows to get union of all keys in the map.
+     * @param rows
+     * @return
+     */
+    List getHeadersFromRows (List rows) {
+        Set headers = new HashSet<String>()
+        rows.each { Map row ->
+            headers.addAll(row.keySet())
+        }
+
+        headers.asList()
+    }
+
+    /**
+     * Generates meta.xml class. It describes the values in various associated CSV files.
+     * @param headersByDwcClass
+     * @return
+     */
+    String getMetaXML(Map<String,List> headersByDwcClass) {
+        Map dataBinding = getMetaXMLData(headersByDwcClass)
+        String xml = mapService.bindDataToXMLTemplate("classpath:data/eventcore/meta.template", dataBinding, true)
+        addXMLDeclaration(xml)
+    }
+
+    /**
+     * Generates data that is used to bind to meta.template.
+     * @param headersByDwcClass
+     * @return
+     */
+    Map getMetaXMLData(Map headersByDwcClass) {
+        Map dataBinding = [
+                archiveNameSpace: grailsApplication.config.darwinCore.namespaces["Archive"],
+                emlFileName: "eml.xml",
+                core: [:],
+                extensions: []
+        ]
+
+        headersByDwcClass.each { String dwcClass, List headers ->
+            Map result = getFields(headers)
+            Map defaultValues = [
+                    encoding: "UTF-8",
+                    fieldsTerminatedBy: CSVWriter.DEFAULT_SEPARATOR,
+                    linesTerminatedBy: "\\n",
+                    fieldsEnclosedBy: CSVWriter.DEFAULT_QUOTE_CHARACTER == '"' ? "&quot;" : "",
+                    ignoreHeaderLines: 1
+            ]
+
+            switch (dwcClass) {
+                case DWC_EVENT:
+                    defaultValues.rowType = grailsApplication.config.darwinCore.namespaces[dwcClass]
+                    defaultValues.location = "${dwcClass}.csv"
+                    defaultValues.fields = result.fields
+                    defaultValues.coreIndex = result.coreIndex
+                    dataBinding.core  = defaultValues
+                    break
+                default:
+                    defaultValues.rowType = grailsApplication.config.darwinCore.namespaces[dwcClass]
+                    defaultValues.location = "${dwcClass}.csv"
+                    defaultValues.fields = result.fields
+                    defaultValues.coreIndex = result.coreIndex
+                    dataBinding.extensions.add(defaultValues)
+                    break
+            }
+        }
+
+        dataBinding
+    }
+
+    /**
+     * Get darwin core namespace for various fields. Used to create meta.xml.
+     * @param headers
+     * @return
+     */
+    Map getFields(List headers) {
+        int coreIndex = 0
+        String coreID = "eventID"
+        List fields = []
+
+        headers?.eachWithIndex { header, hIndex ->
+            if (header == coreID)
+                coreIndex = hIndex
+
+            fields.add([index: hIndex, term: grailsApplication.config.darwinCore.namespaces[header] ?: header])
+        }
+
+        [coreIndex: coreIndex, fields: fields]
+    }
+
+    /**
+     * Creates eml.xml. Data bound to it is derived from Project domain object.
+     * @param project
+     * @return
+     */
+    String getEmlXML(Project project) {
+        Map proj = projectService.toMap(project)
+        String xml = mapService.bindDataToXMLTemplate("classpath:data/eventcore/eml.template", proj, true)
+        addXMLDeclaration(xml)
+    }
+
+    String addXMLDeclaration (String xml) {
+        String declaration = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+        declaration + xml
+    }
+
+    /**
+     * Convert project activity to darwin core records. This is ultimately ends up in Event table.
+     * @param pActivity
+     * @param project
+     * @return
+     */
+    Map convertProjectActivityToEvent (pActivity, project) {
+        String dwcClass = DWC_EVENT
+        List configs = grailsApplication.config.darwinCore.projectActivityToDwC[dwcClass]
+        Map<String,Map> result = [:].withDefault {[:]}
+        configs.each { config ->
+            transformToEventCoreTerm(config, pActivity, [project: project, pActivity: pActivity, recordService: this], result, dwcClass)
+        }
+
+        result[dwcClass]
     }
 }

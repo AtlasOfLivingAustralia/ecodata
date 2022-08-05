@@ -5,14 +5,12 @@ import com.spatial4j.core.context.SpatialContext
 import com.spatial4j.core.io.GeohashUtils
 import com.spatial4j.core.shape.Rectangle
 import grails.converters.JSON
-import groovy.json.JsonSlurper
 import grails.web.http.HttpHeaders
+import groovy.json.JsonSlurper
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.common.Strings
-import org.elasticsearch.common.io.stream.OutputStreamStreamOutput
-import org.elasticsearch.common.xcontent.XContentHelper
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoGrid
 import org.springframework.beans.factory.annotation.Autowired
@@ -622,16 +620,23 @@ class MapService {
         webService.doDelete(url, headers)
     }
 
-    String bindDataToXMLTemplate (String fileClassPath, Map data) {
+    String bindDataToXMLTemplate (String fileClassPath, Map data, boolean prettyPrint = false) {
         def files = resourceResolver.getResources(fileClassPath)
         def engine = new groovy.text.XmlTemplateEngine()
-        engine.setIndentation('')
+        if (!prettyPrint)
+            engine.setIndentation("")
+        else
+            engine.setIndentation("    ")
+
         String content
         files?.each { Resource file ->
             content = engine.createTemplate(file.getURL()).make(data).toString()
         }
 
-        content?.replaceAll('\n', '');
+        if (prettyPrint)
+            return content
+        else
+            return content?.replaceAll('\n', '')
     }
 
     def buildStyleForTermFacet(String field, List terms, String style, String dataStore) {

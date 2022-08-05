@@ -1,11 +1,9 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputModelProcessor
 import com.mongodb.BasicDBObject
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
-import com.mongodb.client.model.Filters
-import org.bson.conversions.Bson
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import au.org.ala.ecodata.metadata.*
 
 import javax.persistence.PessimisticLockException
 
@@ -649,4 +647,23 @@ class ActivityService {
         }
     }
 
+    /**
+     * An activity is embargoed if either of the below conditions are satisfied
+     * 1. embargoed flag is set to true on an activity
+     * 2. project activity is embargoed until a defined date
+     * @param activity
+     * @param projectActivity
+     * @return
+     */
+    boolean isActivityEmbargoed(Activity activity, ProjectActivity projectActivity){
+        if (activity.embargoed) {
+            return activity.embargoed
+        }
+
+        if (projectActivity?.visibility?.embargoUntil) {
+            return projectActivity?.visibility?.embargoUntil.after(new Date())
+        }
+
+        return false
+    }
 }

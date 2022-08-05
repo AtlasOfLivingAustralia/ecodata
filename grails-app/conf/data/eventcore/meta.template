@@ -1,0 +1,22 @@
+<archive xmlns="${archiveNameSpace}" metadata="${emlFileName}" xmlns:gsp="http://groovy.codehaus.org/2005/gsp">
+    <core rowType="${core.rowType}" encoding="${core.encoding}" fieldsTerminatedBy="${core.fieldsTerminatedBy}" linesTerminatedBy="${core.linesTerminatedBy}" fieldsEnclosedBy="${core.fieldsEnclosedBy}" ignoreHeaderLines="${core.ignoreHeaderLines}">
+        <files>
+            <location>${core.location}</location>
+        </files>
+        <id index="${core.coreIndex}"/>
+        <gsp:scriptlet>core.fields?.each {</gsp:scriptlet>
+        <field index="${it.index}" term="${it.term}"/>
+        <gsp:scriptlet>}</gsp:scriptlet>
+    </core>
+    <gsp:scriptlet>extensions?.each {</gsp:scriptlet>
+    <extension rowType="${it.rowType}" encoding="${it.encoding}" fieldsTerminatedBy="${it.fieldsTerminatedBy}" linesTerminatedBy="${it.linesTerminatedBy}" fieldsEnclosedBy="${it.fieldsEnclosedBy}" ignoreHeaderLines="${it.ignoreHeaderLines}">
+        <files>
+            <location>${it.location}</location>
+        </files>
+        <coreid index="${it.coreIndex}"/>
+        <gsp:scriptlet>it.fields?.each {</gsp:scriptlet>
+        <field index="${it.index}" term="${it.term}"/>
+        <gsp:scriptlet>}</gsp:scriptlet>
+    </extension>
+    <gsp:scriptlet>}</gsp:scriptlet>
+</archive>

@@ -1,0 +1,15 @@
+<eml:eml xmlns:d="eml://ecoinformatics.org/dataset-2.1.0" xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/terms/" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml-gbif-profile.xsd" system="ALA-Registry" scope="system" xml:lang="en">
+    <dataset>
+        <title xmlns:lang="en">${name}</title>
+        <creator>
+            <organizationName>${organisationName}</organizationName>
+        </creator>
+        <metadataProvider>
+            <organizationName>Atlas of Living Australia</organizationName>
+        </metadataProvider>
+        <pubDate>${dateCreated}</pubDate>
+        <abstract>
+            <para>${description}</para>
+        </abstract>
+    </dataset>
+</eml:eml>

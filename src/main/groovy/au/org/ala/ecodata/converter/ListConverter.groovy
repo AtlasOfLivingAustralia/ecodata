@@ -36,7 +36,9 @@ class ListConverter implements RecordFieldConverter {
             baseRecordModels?.each { Map dataModel ->
                 RecordFieldConverter converter = RecordConverter.getFieldConverter(dataModel.dataType)
                 List<Map> recordFieldSets = converter.convert(row, dataModel)
-                baseRecord << recordFieldSets[0]
+                Map recordFieldSet = recordFieldSets[0]
+                baseRecord = RecordConverter.overrideAllExceptLists(baseRecord, recordFieldSet)
+                RecordConverter.updateEventIdToMeasurements(baseRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
             }
 
             // For each species dataType, where present we will generate a new record
@@ -48,11 +50,16 @@ class ListConverter implements RecordFieldConverter {
                 // We want to create a record in the DB only if species information is present
                 if(speciesRecord.outputSpeciesId) {
                     speciesRecord.outputItemId = index++
+                    RecordConverter.updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.outputSpeciesId)
                     records << speciesRecord
                 } else {
                     log.warn("Record [${speciesRecord}] does not contain full species information. " +
                             "This is most likely a bug.")
                 }
+            }
+
+            if (!speciesModels) {
+                records << baseRecord
             }
         }
 

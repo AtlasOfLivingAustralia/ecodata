@@ -210,4 +210,6 @@ grails:
         codecs:
             - au.org.ala.ecodata.customcodec.AccessLevelCodec
 
-
+---
+image:
+    baseURL: "https://images.ala.org.au"

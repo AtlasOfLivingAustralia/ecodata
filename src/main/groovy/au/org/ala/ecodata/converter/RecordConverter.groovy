@@ -1,13 +1,10 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Activity
-import au.org.ala.ecodata.Output
-import au.org.ala.ecodata.Project
-import au.org.ala.ecodata.ProjectActivity
-import au.org.ala.ecodata.Organisation
-import au.org.ala.ecodata.Site
+import au.org.ala.ecodata.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang.StringUtils
+
+import static au.org.ala.ecodata.converter.ListConverter.PROP_MEASUREMENTS_OR_FACTS
 
 /**
  * Utility for converting the data submitted for an Output into one or more Records with the correct Darwin Core fields
@@ -51,8 +48,25 @@ class RecordConverter {
     static final String DEFAULT_LICENCE_TYPE = "https://creativecommons.org/licenses/by/4.0/"
     static final String SYSTEMATIC_SURVEY = "systematic"
     static final List MACHINE_SURVEY_TYPES = ["Bat survey - Echolocation recorder","Fauna survey - Call playback","Fauna survey - Camera trapping"]
+    static final List LIST_COMBINE_EXCEPTION = ["multimedia"]
 
-    static List<Map> convertRecords(Project project, Organisation organisation, Site site, ProjectActivity projectActivity, Activity activity, Output output, Map data, Map outputMetadata) {
+    /**
+     * Creates darwin core fields from output data. It behaviour is controlled by recordGeneration attribute.
+     * By default this field is true and backward compatible with record creation logic for BioCollect Activity. It will only
+     * return value if species is present in data model. Setting recordGeneration is false is used by event core archive
+     * creation. It returns darwin core fields even if species is not present.
+     * @param project
+     * @param organisation
+     * @param site
+     * @param projectActivity
+     * @param activity
+     * @param output
+     * @param data
+     * @param outputMetadata
+     * @param recordGeneration
+     * @return
+     */
+    static List<Map> convertRecords(Project project, Organisation organisation, Site site, ProjectActivity projectActivity, Activity activity, Output output, Map data, Map outputMetadata, boolean recordGeneration = true) {
         // Outputs are made up of multiple 'dataModels', where each dataModel could map to one or more Record fields
         // and/or one or more Records. For example, a dataModel with a type of 'list' will map to one Record per item in
         // the list. Further, each item in the list is a 'dataModel' on it's own, which will map to one or more fields.
@@ -63,8 +77,11 @@ class RecordConverter {
                 projectId        : activity.projectId,
                 projectActivityId: activity.projectActivityId,
                 activityId       : activity.activityId,
-                userId           : activity.userId
+                userId           : activity.userId,
+                multimedia :   []
         ]
+        Long start = System.currentTimeMillis(), end
+
 
         // Populate the skeleton with Record attributes which are derived from the Activity. These attributes are shared
         // by all Records that are generated from this Output.
@@ -96,7 +113,8 @@ class RecordConverter {
         baseRecordModels?.each { Map dataModel ->
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
             List<Map> recordFieldSets = converter.convert(data, dataModel)
-            baseRecord << recordFieldSets[0]
+            baseRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
+            updateEventIdToMeasurements(baseRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
         }
 
         List<Map> records = []
@@ -104,16 +122,25 @@ class RecordConverter {
         speciesModels?.each { Map dataModel ->
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
             List<Map> recordFieldSets = converter.convert(data, dataModel)
-            Map speciesRecord = overrideFieldValues(baseRecord, recordFieldSets[0])
-
+            Map speciesRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
             // We want to create a record in the DB only if species guid is present i.e. species is valid
-            if(speciesRecord.guid && speciesRecord.guid != "") {
+            if(recordGeneration){
+                if(speciesRecord.guid && speciesRecord.guid != "") {
+                    records << speciesRecord
+                }
+                else {
+                    log.warn("Record [${speciesRecord}] does not contain full species information. " +
+                            "This is most likely a bug.")
+                }
+            }
+            else {
+                updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.outputSpeciesId)
                 records << speciesRecord
-            } else {
-                log.warn("Record [${speciesRecord}] does not contain full species information. " +
-                        "This is most likely a bug.")
             }
         }
+        end = System.currentTimeMillis()
+        log.debug("Time in milliseconds to convert root level data model - ${end - start}")
+        start = end
 
         if (multiItemModels) {
             // For each multiItemModel, get the appropriate field converter for the data type and generate the list of field
@@ -124,17 +151,28 @@ class RecordConverter {
                 List<Map> recordFieldSets = converter.convert(data, dataModel)
 
                 recordFieldSets.each {
-                    Map rowRecord = overrideFieldValues(baseRecord, it)
-                    if(rowRecord.guid && rowRecord.guid != "") {
+                    Map rowRecord = overrideAllExceptLists(baseRecord, it)
+                    if(recordGeneration) {
+                        if (rowRecord.guid && rowRecord.guid != "") {
+                            records << rowRecord
+
+                        } else {
+                            log.warn("Multi item Record [${rowRecord}] does not contain species information, " +
+                                    "was the form intended to work like that?")
+                        }
+                    }
+                    else {
+                        updateEventIdToMeasurements(rowRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
                         records << rowRecord
-                    } else {
-                        log.warn("Multi item Record [${rowRecord}] does not contain species information, " +
-                                "was the form intended to work like that?")
                     }
                 }
             }
         }
-
+        else if(!speciesModels && !recordGeneration) {
+            records << baseRecord
+        }
+        end = System.currentTimeMillis()
+        log.debug("Time in milliseconds to convert nested data model - ${end - start}")
         // We are now left with a list of one or more Maps, where each Map contains all the fields for an individual Record.
         records
     }
@@ -243,5 +281,70 @@ class RecordConverter {
         }
 
         dwcFields
+    }
+
+    static void updateSpeciesIdToMeasurements(List measurements, String id) {
+        measurements?.each {
+            if(!it.occurrenceID)
+                it.occurrenceID = id
+        }
+    }
+
+    static void updateEventIdToMeasurements(List measurements, String id) {
+        measurements?.each {
+            if(!it.eventID)
+                it.eventID = id
+        }
+    }
+
+    static Map overrideAllExceptLists(Map source, Map additional){
+        Map result = [:]
+        overrideValues(source, result)
+        overrideValues(additional, result)
+    }
+
+    /**
+     * Replaces value in result with value in source except when the value is a list.
+     * If value is list, then it combines the result and source values. However, this is not applicable
+     * for key found in LIST_COMBINE_EXCEPTION. Therefore, `multimedia` values are replaced. But `measurementorfact` values
+     * are combined.
+     * @param source
+     * @param result
+     * @return
+     */
+    static Map overrideValues(Map source, Map result) {
+        source.each { entry ->
+            if ((entry.value instanceof Collection) && (result[entry.key] instanceof Collection)) {
+                if (LIST_COMBINE_EXCEPTION.contains(entry.key)) {
+                    result[entry.key] = entry.value
+                    return
+                }
+
+                if(result[entry.key] == null) {
+                    result[entry.key] = []
+                }
+
+                result[entry.key].addAll(entry.value)
+            }
+            else {
+                result[entry.key] = entry.value
+            }
+        }
+
+        result
+    }
+
+    /**
+     * Removes for duplicate entries. A duplicate entry is when all values in a map are the same.
+     * [a: 'b', c: 'd'] & [a: 'b', c: 'd'] are duplicates.
+     * [a: 'b', c: 'd'] & [a: 'b', c: 'e'] are not duplicates.
+     * @param measurements
+     * @return
+     */
+    static List removeDuplicates (List measurements) {
+        measurements?.groupBy {
+            it.values().toString() }.collect { key, values ->
+            values?.get(0)
+        }
     }
 }

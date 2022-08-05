@@ -135,7 +135,19 @@ class ProjectService {
             order(params.sort, params.order)
         }
 
-        [total: list?.totalCount, list: list?.collect { toMap(it, "basic") }]
+        def total = list?.totalCount
+        list = list?.collect { toMap(it, "basic") }
+        addArchiveLink(list)
+        [total: total, list: list]
+    }
+
+    /**
+     * Adds archive URL to projects
+     * @param projects
+     * @return
+     */
+    def addArchiveLink (List projects) {
+        projects?.each { it.archiveURL = grailsApplication.config.getProperty("grails.serverURL") + "/ws/project/${it.projectId}/archive" }
     }
 
 

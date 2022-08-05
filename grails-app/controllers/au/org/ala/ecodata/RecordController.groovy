@@ -1,6 +1,9 @@
 package au.org.ala.ecodata
 
 import org.apache.http.HttpStatus
+import org.apache.http.entity.ContentType
+import org.grails.web.servlet.mvc.GrailsWebRequest
+import org.springframework.web.context.request.RequestAttributes
 
 import java.text.SimpleDateFormat
 
@@ -552,6 +555,27 @@ class RecordController {
             render record as JSON
         } else{
             render (status: 404, text: 'No such id')
+        }
+    }
+
+    /**
+     * Get Darwin Core Archive for a project that has ala harvest enabled.
+     * @param projectId
+     * @return
+     */
+    @RequireApiKey
+    def getDarwinCoreArchiveForProject (String projectId) {
+        if (projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if(project?.alaHarvest) {
+                // Simulate BioCollect as the hostname calling this method. This is done to get the correct URL for
+                // documents.
+                GrailsWebRequest.lookup().setAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, grailsApplication.config.getProperty("biocollect.baseURL"), RequestAttributes.SCOPE_REQUEST)
+                recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
+            } else
+                response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON
+        } else {
+            response status: HttpStatus.SC_BAD_REQUEST, text: [error: "projectId is required"] as JSON, contentType: ContentType.APPLICATION_JSON
         }
     }
 
