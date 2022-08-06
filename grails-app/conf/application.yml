@@ -185,6 +185,7 @@ grails:
     mail:
         default:
             from: noreply@volunteer.ala.org.au
+        poolSize: 1
 digest:
     enabled: false
     threshold: 5
