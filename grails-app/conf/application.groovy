@@ -579,6 +579,7 @@ grails.cache.config = {
 
 security {
     cas {
+        enabled = false
         appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
         // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
         casServerUrlPrefix = 'https://auth.ala.org.au/cas'
@@ -588,6 +589,19 @@ security {
         uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*']
         authenticateOnlyIfLoggedInPattern = "/graphql/*"
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
+    }
+    oidc {
+        enabled = true
+        discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
+        clientId = 'changeMe'
+        secret = 'changeMe'
+        scope = 'openid,profile,email,ala,roles,user_defined'
+    }
+    jwt {
+        enabled = true
+        discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
+        requiredClaims: ["sub", "iat", "exp", "jti", "client_id"]
+        urlPatterns: ["/ws/graphql/*"]
     }
 }
 
@@ -649,11 +663,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.hostname = "localhost"
-        // Only for travis CI, they must be overriden by ecodata-config.properties
-        serverName = "http://${grails.hostname}:8080"
-        grails.app.context = "ecodata"
-        grails.serverURL = serverName + "/" + grails.app.context
+        grails.serverURL = "http://devt.ala.org.au:8080"
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
@@ -662,6 +672,8 @@ environments {
         app.file.archive.path = "./build/archive"
 
         wiremock.port = 8018
+        security.oidc.discoveryUri = "http://localhost:${wiremock.port}/cas/oidc/.well-known"
+        security.oidc.allowUnsignedIdTokens = true
         def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
         security.cas.casServerName="${casBaseUrl}"
         security.cas.contextPath=""
