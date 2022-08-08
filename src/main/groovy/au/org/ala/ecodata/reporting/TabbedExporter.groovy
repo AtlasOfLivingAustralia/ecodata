@@ -83,7 +83,7 @@ class TabbedExporter {
 
     AdditionalSheet getSheet(String name, List<String> headers) {
         if (!sheets[name]) {
-            sheets[name] = exporter.addSheet(name, headers)
+            sheets[name] = createSheet(name, headers)
         }
         sheets[name]
     }
