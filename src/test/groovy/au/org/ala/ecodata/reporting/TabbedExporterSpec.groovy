@@ -60,6 +60,21 @@ class TabbedExporterSpec extends Specification implements GrailsWebUnitTest, Dom
 
     }
 
+    def "The getSheet method invokes createSheet if the sheet is not found"() {
+        when:
+        tabbedExporter.getSheet("Test a name above 31 characters which will be shortened to the same name", [])
+
+        then:
+        tabbedExporter.activitySheetNames["Test a name above...e same name"] == "Test a name above 31 characters which will be shortened to the same name"
+
+        when:
+        tabbedExporter.getSheet("Test a name above 31 characters which will also be shortened to the same name", [])
+
+        then:
+        tabbedExporter.activitySheetNames == ["Test a name above...e same name":"Test a name above 31 characters which will be shortened to the same name",
+                                              "Test a name above...e same n(1)":"Test a name above 31 characters which will also be shortened to the same name"]
+    }
+
     def "Array valued data models will be spread across multiple columns in the output if the set of possible values are avaialble"() {
         setup:
         String type = 'form'
