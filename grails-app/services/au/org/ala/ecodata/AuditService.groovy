@@ -274,7 +274,6 @@ class AuditService {
         Closure getByLike = {
             or {
                 ilike 'entityType', "%${q}%"
-                ilike 'eventType', "%${q}%"
                 ilike 'entity.name', "%${q}%"
             }
         }

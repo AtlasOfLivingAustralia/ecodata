@@ -1,11 +1,12 @@
 package au.org.ala.ecodata
 
-import com.mongodb.*
-import com.mongodb.client.FindIterable
+
+import com.mongodb.BasicDBObject
+import com.mongodb.DBObject
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.Filters
-import org.locationtech.jts.geom.Geometry
 import grails.converters.JSON
-import org.bson.conversions.Bson
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
@@ -13,6 +14,7 @@ import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.web.json.JSONObject
+import org.locationtech.jts.geom.Geometry
 
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
@@ -710,9 +712,8 @@ class SiteService {
      */
     void doWithAllSites(Closure action, Integer max = null) {
 
-        def collection = Site.getCollection()
-        def siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        def results = collection.find(siteQuery).batchSize(100)
+        MongoCollection collection = Site.getCollection()
+        def results = collection.find(Filters.ne('status', DELETED)).batchSize(100)
 
         results.each { dbObject ->
             action.call(dbObject)
@@ -770,8 +771,7 @@ class SiteService {
         }
 
         println collection.count(query)
-       // DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
-        DBCursor results = collection.find(query).batchSize(10).limit(max).iterator()
+        MongoCursor results = collection.find(query).batchSize(10).limit(max).iterator()
         int count = 0
         while (results.hasNext()) {
             DBObject site = results.next()

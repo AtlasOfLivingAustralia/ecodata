@@ -1,9 +1,9 @@
 buildscript {
     repositories {
-        jcenter()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
+        classpath 'com.bmuschko:gradle-clover-plugin:3.0.3'
     }
 }
 
@@ -30,8 +30,8 @@ clover {
         encoding = 'UTF-8'
 
         // Override the Java Compiler source and target compatibility settings
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility = '11'
+        targetCompatibility = '11'
 
         // used to add debug information for Spring applications
         debug = true

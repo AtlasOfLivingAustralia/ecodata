@@ -1,12 +1,4 @@
-//= require jquery/jquery
-//= require bootstrap/js/bootstrap
-//= require knockout/knockout-latest
-//= require jquery-ui/jquery-ui
-//= require knockout-sortable/knockout-sortable
-//= require knockout-mapping/knockout.mapping
-//= require vendor/jquery-validation-engine/jquery.validationEngine
-//= require knockout-dates
-//= require_self
+
 
 if (typeof jQuery !== 'undefined') {
 	(function($) {

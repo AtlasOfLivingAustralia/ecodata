@@ -1,7 +1,16 @@
 apply plugin:"jacoco"
 jacoco {
-    toolVersion = "0.8.4"
-    excludes = ['**/TimezoneMapper.java']
+    toolVersion = "0.8.8"
+}
+test {
+    jacoco {
+        excludes = ['**/Application.groovy',
+                    '**/BootStrap.groovy',
+                    '**/UrlMappings.groovy',
+                    '**/*GrailsPlugin.groovy',
+                    '**/*Mock.groovy',
+                    'com.skedgo.converter.*']
+    }
 }
 jacocoTestReport {
     dependsOn test
@@ -19,5 +28,15 @@ jacocoTestReport {
         xml.enabled false
         csv.enabled false
         html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.16
+            }
+        }
     }
 }

@@ -4,9 +4,6 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.pac4j.core.config.Config
-import org.pac4j.core.context.JEEContextFactory
-import org.pac4j.core.context.WebContext
-import org.pac4j.core.util.FindBest
 import org.pac4j.http.client.direct.DirectBearerAuthClient
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -27,45 +24,45 @@ class GraphqlInterceptor {
         if (request.isUserInRole("ROLE_ADMIN")) {
             return true
         }
-
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
-            if (authorizationHeader.startsWith("Bearer")) {
-                final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
-                def credentials = directBearerAuthClient.getCredentials(context, config.sessionStore)
-                if (credentials.isPresent()) {
-                    def profile = directBearerAuthClient.getUserProfile(credentials.get(), context, config.sessionStore)
-                    if (profile.isPresent()) {
-                        def userProfile = profile.get()
-                        def result =  userProfile.roles.contains("ROLE_ADMIN") || userProfile.roles.contains("ROLE_FC_ADMIN")
-
-                        if(result){
-                            return true
-                        }
-                        else{
-                            accessDeniedError('No required user roles')
-                            return false
-                        }
-                    }
-                    else {
-                        accessDeniedError('Invalid token')
-                        return false
-                    }
-                }
-                else {
-                    accessDeniedError('Invalid token')
-                    return false
-                }
-            }
-            else {
-                accessDeniedError('No Authorization Bearer token')
-                return false
-            }
-        }
-        else {
-            accessDeniedError('No Authorization header')
-            return false
-        }
+//
+//        String authorizationHeader = request.getHeader("Authorization");
+//        if (authorizationHeader != null) {
+//            if (authorizationHeader.startsWith("Bearer")) {
+//                final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
+//                def credentials = directBearerAuthClient.getCredentials(context, config.sessionStore)
+//                if (credentials.isPresent()) {
+//                    def profile = directBearerAuthClient.getUserProfile(credentials.get(), context, config.sessionStore)
+//                    if (profile.isPresent()) {
+//                        def userProfile = profile.get()
+//                        def result =  userProfile.roles.contains("ROLE_ADMIN") || userProfile.roles.contains("ROLE_FC_ADMIN")
+//
+//                        if(result){
+//                            return true
+//                        }
+//                        else{
+//                            accessDeniedError('No required user roles')
+//                            return false
+//                        }
+//                    }
+//                    else {
+//                        accessDeniedError('Invalid token')
+//                        return false
+//                    }
+//                }
+//                else {
+//                    accessDeniedError('Invalid token')
+//                    return false
+//                }
+//            }
+//            else {
+//                accessDeniedError('No Authorization Bearer token')
+//                return false
+//            }
+//        }
+//        else {
+//            accessDeniedError('No Authorization header')
+//            return false
+//        }
 
 //        if (userName) {
 //            //test to see that the user is valid

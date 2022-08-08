@@ -185,6 +185,7 @@ grails:
     mail:
         default:
             from: noreply@volunteer.ala.org.au
+        poolSize: 1
 digest:
     enabled: false
     threshold: 5
@@ -248,20 +249,6 @@ graphiql:
 casUrl: https://auth-test.ala.org.au/cas/logout
 appUrl: http://devt.ala.org.au:8080/admin
 
-security:
-    cas:
-        enabled: false
-    oidc:
-        enabled: true
-        discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
-        clientId: changeMe
-        secret: changeMe
-        scope: openid,profile,email,ala,roles,user_defined
-        allowUnsignedIdTokens: true
-    jwt:
-        enabled: true
-        discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
-        requiredClaims: ["sub", "iat", "exp", "jti", "client_id"]
 
 openapi:
     title: Ecodata REST services

@@ -33,7 +33,7 @@ class ProjectGraphQLMapper {
             operations.list.enabled true
             operations.list.paginate(true)
             operations.count.enabled false
-            operations.create.enabled true
+            operations.create.enabled false
             operations.update.enabled false
             operations.delete.enabled false
 

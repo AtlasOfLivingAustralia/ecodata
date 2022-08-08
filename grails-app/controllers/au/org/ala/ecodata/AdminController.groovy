@@ -31,6 +31,7 @@ class AdminController {
     UserService userService
     EmailService emailService
     HubService hubService
+    DataDescriptionService dataDescriptionService
 
     @AlaSecured(["ROLE_ADMIN"])
     def index() {}
@@ -672,6 +673,35 @@ class AdminController {
                 hubService: hubService,
                 emailService: emailService).execute()
         render 'ok'
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def createDataDescription() {
+        if (request.respondsTo('getFile')) {
+            MultipartFile excel = request.getFile('descriptionData')
+            String fileType = excel.getContentType()
+
+            if (!dataDescriptionService.isValidFileType(fileType) || excel.isEmpty()) {
+                flash.errorMessage = 'The uploaded file is empty or is not an excel file'
+                redirect(action: 'tools')
+                return
+            }
+
+            if(dataDescriptionService.importData(excel.getInputStream())){
+                flash.message = 'Excel file was uploaded successfully'
+                return redirect(action:'tools')
+                return
+            }
+                flash.errorMessage = 'There was error during excel upload'
+            return redirect(action:'tools')
+
+        } else {
+            response.status = 400
+            Map result = [status: 400, error:'No file attachment found']
+            response.setContentType('text/plain;charset=UTF8')
+            def resultJson = result as JSON
+            render resultJson.toString()
+        }
     }
 
     /**
