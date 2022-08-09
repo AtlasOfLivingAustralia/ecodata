@@ -194,6 +194,11 @@ class OutputModelProcessor {
         }
         boolean first = true
         Map toRepeat
+
+        // if datamodel contains flattenOption then set it
+        if (outputMetadata.metadata.flattenOption != null)
+            option = outputMetadata.metadata.flattenOption
+
         switch (option) {
             case FlattenOptions.REPEAT_NONE:
                 toRepeat = [:]
