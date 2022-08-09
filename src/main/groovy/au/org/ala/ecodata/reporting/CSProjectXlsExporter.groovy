@@ -282,8 +282,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                     boolean userIsProjectMember = false
                     if (userId) {
-                        def members = permissionService.getMembersForProject(activity.projectId)
-                        userIsProjectMember = members.find{it.userId == userId} || userIsAlaAdmin
+                        userIsProjectMember = userIsAlaAdmin || permissionService.isUserMemberOfProject(userId, activity.projectId)
                     }
 
                     activity?.outputs?.each { output ->

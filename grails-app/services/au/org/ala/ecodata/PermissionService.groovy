@@ -151,8 +151,8 @@ class PermissionService {
      * @return
      */
     boolean isUserMemberOfProject(String userId, String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]) {
-        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInListAndUserId(projectId, Project.class.name, AccessLevel.starred, roles, userId)
-        up?.size() > 0
+        def up = UserPermission.findByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInListAndUserId(projectId, Project.class.name, AccessLevel.starred, roles, userId)
+        up != null
     }
 
     private def getUserAccessForEntity(String userId, Class entityType, String entityId ) {
