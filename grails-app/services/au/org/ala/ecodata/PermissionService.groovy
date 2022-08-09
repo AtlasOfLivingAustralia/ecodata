@@ -144,6 +144,17 @@ class PermissionService {
         return isGrantManager
     }
 
+    /**
+     *
+     * @param projectId
+     * @param roles
+     * @return
+     */
+    boolean isUserMemberOfProject(String userId, String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]) {
+        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInListAndUserId(projectId, Project.class.name, AccessLevel.starred, roles, userId)
+        up?.size() > 0
+    }
+
     private def getUserAccessForEntity(String userId, Class entityType, String entityId ) {
         return UserPermission.findAllByUserIdAndEntityTypeAndEntityId(userId, entityType.name, entityId)
 

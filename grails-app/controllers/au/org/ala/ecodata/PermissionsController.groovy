@@ -1048,6 +1048,25 @@ class PermissionsController {
         }
     }
 
+    def isUserMemberOfProject() {
+        String userId = params.userId
+        String projectId = params.projectId
+        String roles = params.roles ?: "admin,caseManager,moderator,editor,projectParticipant"
+        List<AccessLevel> accessLevels = roles.split(",").collect { AccessLevel.valueOf(it) }
+
+        if (userId && projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if (project) {
+                render ([access: permissionService.isUserMemberOfProject(userId, projectId, accessLevels)] as JSON)
+            } else {
+                render status: 404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, projectId'
+        }
+
+    }
+
     /**
      * Admin function to clear all UserPermissions entries for the
      * specified user.
