@@ -361,4 +361,25 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         expect:
         service.findUserPermission('1','h1') != null
     }
+
+    void "check if a user is member of a project"() {
+        setup:
+        new UserPermission(entityId:'p1', entityType:Project.name, userId: '1', accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: '1', accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: '2', accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        when:
+        Boolean permission = service.isUserMemberOfProject(userId, projectId, roles)
+
+        then:
+        permission == expectedReturnValue
+
+        where:
+        userId | projectId | expectedReturnValue | roles
+        null   | null       | false               | []
+        ''     | ''         | false               | []
+        '1'    | 'p1'       | true                | [AccessLevel.moderator]
+        '1'    | 'p1'       | false               | [AccessLevel.admin]
+        '3'    | 'p1'       | false               | [AccessLevel.moderator, AccessLevel.admin]
+        '2'    | 'p2'       | true                | [AccessLevel.moderator, AccessLevel.admin]
+    }
 }
