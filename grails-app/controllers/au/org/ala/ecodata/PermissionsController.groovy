@@ -1051,13 +1051,12 @@ class PermissionsController {
     def isUserMemberOfProject() {
         String userId = params.userId
         String projectId = params.projectId
-        String roles = params.roles ?: "admin,caseManager,moderator,editor,projectParticipant"
-        List<AccessLevel> accessLevels = roles.split(",").collect { AccessLevel.valueOf(it) }
+        List<AccessLevel> roles = params.getList("role")?.collect { AccessLevel.valueOf(it) } ?: [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]
 
         if (userId && projectId) {
             Project project = Project.findByProjectId(projectId)
             if (project) {
-                render ([access: permissionService.isUserMemberOfProject(userId, projectId, accessLevels)] as JSON)
+                render ([access: permissionService.isUserMemberOfProject(userId, projectId, roles)] as JSON)
             } else {
                 render status: 404, text: "Project not found for projectId: ${projectId}"
             }
