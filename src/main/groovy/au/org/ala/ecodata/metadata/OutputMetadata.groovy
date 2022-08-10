@@ -165,7 +165,7 @@ class OutputMetadata {
         dataModelIterator { path, node ->
             if (!visitedDataNodes.contains(node)) {
                 println "Warning: node ${path} is not refernced by the view model"
-                callback(fullPathToNode(path, node), null, node)
+                callback(path, null, node)
             }
         }
     }

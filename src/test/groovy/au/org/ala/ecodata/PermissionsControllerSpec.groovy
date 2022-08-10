@@ -2659,4 +2659,26 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         response.status == HttpStatus.SC_BAD_REQUEST
         response.text == 'Required params not provided: id, managementUnitId.'
     }
+
+    void "Is user a member of project"(String userId, String projectId, List roles, int statusCode) {
+        setup:
+        if (projectId) {
+            new Project(projectId:projectId, name:"Project 1").save()
+        }
+
+        when:
+        params.userId = userId
+        params.projectId = projectId
+        params.role = roles
+        controller.isUserMemberOfProject()
+
+        then:
+        response.status == statusCode
+
+        where:
+        userId | projectId | roles                  | statusCode
+        null   | null      | null                   | 400
+        '1'    | null      | ['admin']              | 400
+        '1'    | '1'       | ['admin']              | 200
+    }
 }
