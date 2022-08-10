@@ -57,8 +57,7 @@ class ActivityService {
 
             boolean userIsProjectMember = false
             if (userId) {
-                def members = permissionService.getMembersForProject(activity.projectId)
-                userIsProjectMember = members.find{it.userId == userId} || userIsAlaAdmin
+                userIsProjectMember = userIsAlaAdmin || permissionService.isUserMemberOfProject(userId, activity.projectId)
             }
 
             OutputModelProcessor processor = new OutputModelProcessor()

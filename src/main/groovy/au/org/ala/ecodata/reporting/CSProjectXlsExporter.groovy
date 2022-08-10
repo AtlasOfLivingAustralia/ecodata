@@ -6,6 +6,7 @@ import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
+import org.bson.types.MinKey
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -38,7 +39,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
 
     List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
     List<String> recordProperties = ["occurrenceID", "guid", "activityId", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
@@ -53,6 +54,9 @@ class CSProjectXlsExporter extends ProjectExporter {
     DoublePropertyGetter locationLongitudeGetter =  new DoublePropertyGetter("locationLongitude")
     CompositeGetter<Double> generalLongitudeGetter = new CompositeGetter<Double>(generalisedLongitudeGetter, decimalLongitudeGetter, locationLongitudeGetter)
     CompositeGetter<Double> accurateLongitudeGetter = new CompositeGetter<Double>(decimalLongitudeGetter, locationLongitudeGetter, generalisedLongitudeGetter)
+
+    DoublePropertyGetter locationCentroidLatitudeGetter = new DoublePropertyGetter("locationCentroidLatitude")
+    DoublePropertyGetter locationCentroidLongitudeGetter = new DoublePropertyGetter("locationCentroidLongitude")
 
     ProjectActivityService projectActivityService = Holders.grailsApplication.mainContext.getBean("projectActivityService")
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
@@ -69,7 +73,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     Map<String, AdditionalSheet> surveySheets = [:]
     Map<String, Object> documentMap
 
-    public CSProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap,TimeZone timeZone) {
+    public CSProjectXlsExporter(StreamingXlsExporter exporter, Map<String, Object> documentMap,TimeZone timeZone) {
         super(exporter, [], documentMap, timeZone)
         this.documentMap = documentMap
     }
@@ -140,7 +144,10 @@ class CSProjectXlsExporter extends ProjectExporter {
                 AdditionalSheet sheet = surveySheets[survey.name]
                 if (!sheet) {
                     sheet = createSurveySheet(survey, activityIds)
-                    surveySheets.put(survey.name, sheet)
+
+                    if (sheet) {
+                        surveySheets.put(survey.name, sheet)
+                    }
                 }
             }
         }
@@ -158,22 +165,97 @@ class CSProjectXlsExporter extends ProjectExporter {
         List activityList = []
         activityList.addAll(activityIds)
 
-        List<Map> activities = []
+        int batchSize = 100
+        int processed = 0
+        def count = batchSize
+
+        int batchedActivitiesCount = 0
+
+        List<String> headers = []
+        headers.addAll(surveyHeaders)
+
+        OutputModelProcessor processor = new OutputModelProcessor()
+
+        Set<String> uniqueOutputs = [] as HashSet<String>
+
+        List<Map> batchedActivities = []
         // BioCollect currently doesn't use form versioning so just get the latest version of the form.
         ActivityForm form = activityFormService.findActivityForm(projectActivity.pActivityFormName)
         if (activityIds == null || activityIds.isEmpty()) {
-            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
-        } else {
-            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId)
+            def id = new MinKey()
+
+            while (count == batchSize) {
+                batchedActivities = Activity.createCriteria().list([offset: 0, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
+                    and {
+                        eq "projectActivityId", projectActivity.projectActivityId
+                        gt "id", id
+                    }
+                }
+
+                if (batchedActivities.size() > 0) {
+                    id = batchedActivities.last().id
+
+                    batchedActivities = batchedActivities.collect { activityService.toMap(it, []) }
+
+                    if (processed == 0) {
+                        batchedActivities.first().outputs.foreach { output ->
+                            Map model = form.getFormSection(output.name)?.template
+
+                            OutputMetadata outputModel = new OutputMetadata(model)
+                            Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
+                            headers.addAll(outputConfig.headers)
+                        }
+                    }
+
+                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet, headers, processor, uniqueOutputs)
+                }
+
+                count = batchedActivities.size()
+                processed += batchedActivities.size()
+            }
         }
+        else {
+            def id = new MinKey()
 
+            while (count == batchSize) {
+                batchedActivities = Activity.createCriteria().list([offset: 0, max: batchSize, readOnly: true, sort: 'id', order: "asc"]) {
+                    eq "projectActivityId", projectActivity.projectActivityId
+                    'in' "activityId", activityList
+                    gt "id", id
+                }
+
+                if (batchedActivities.size() > 0) {
+                    id = batchedActivities.last().id
+
+                    batchedActivities = batchedActivities.collect { activityService.toMap(it, []) }
+
+                    if (processed == 0) {
+                        batchedActivities.first().outputs.each { output ->
+                            Map model = form.getFormSection(output.name)?.template
+
+                            OutputMetadata outputModel = new OutputMetadata(model)
+                            Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
+                            headers.addAll(outputConfig.headers)
+                        }
+                    }
+
+                    sheet = generateSheet(batchedActivities, activityList, projectActivity, userId, userIsAlaAdmin, form, sheet, headers, processor, uniqueOutputs)
+
+                    batchedActivitiesCount += batchedActivities.size()
+                    log.info "Processed activities: ${batchedActivitiesCount}"
+                }
+
+                count = batchedActivities.size()
+                processed += batchedActivities.size()
+            }
+        }
+        log.info "Processed: ${processed}"
+
+        sheet
+    }
+
+    private generateSheet(List<Map> activities, List activityIds, Map projectActivity, def userId, boolean userIsAlaAdmin, ActivityForm form, AdditionalSheet sheet, List<String> headers, OutputModelProcessor processor, Set<String> uniqueOutputs) {
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
-            List<String> headers = []
-            headers.addAll(surveyHeaders)
-
-            OutputModelProcessor processor = new OutputModelProcessor()
-
-            Set<String> uniqueOutputs = [] as HashSet<String>
             activities.each { activity ->
                 List rows = [[:]]
                 // need to differentiate between an empty set of activity ids (which means don't export any activities),
@@ -189,7 +271,9 @@ class CSProjectXlsExporter extends ProjectExporter {
                             new ConstantGetter("status", projectActivity.status),
                             new ConstantGetter("attribution", projectActivity.attribution),
                             generalLatitudeGetter,
-                            generalLongitudeGetter
+                            generalLongitudeGetter,
+                            locationCentroidLatitudeGetter,
+                            locationCentroidLongitudeGetter
                     ]
                     // Include user selected projectActivity site associated with the survey
                     def site = projectActivity?.sites?.find{it.siteId == activity.siteId}
@@ -198,8 +282,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                     boolean userIsProjectMember = false
                     if (userId) {
-                        def members = permissionService.getMembersForProject(activity.projectId)
-                        userIsProjectMember = members.find{it.userId == userId} || userIsAlaAdmin
+                        userIsProjectMember = userIsAlaAdmin || permissionService.isUserMemberOfProject(userId, activity.projectId)
                     }
 
                     activity?.outputs?.each { output ->
@@ -211,7 +294,6 @@ class CSProjectXlsExporter extends ProjectExporter {
                         OutputMetadata outputModel = new OutputMetadata(model)
                         Map outputConfig = getHeadersAndPropertiesForOutput(outputModel)
                         if (!uniqueOutputs.contains(output.name)) {
-                            headers.addAll(outputConfig.headers)
                             uniqueOutputs << output.name
                         }
 
@@ -253,15 +335,16 @@ class CSProjectXlsExporter extends ProjectExporter {
                     if (rows && !rows[0].isEmpty()) {
                         if (!sheet) {
                             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
+
+                            if (sheet) {
+                                sheet.fillHeader(headers)
+                                exporter.styleRow(sheet, 0, exporter.headerStyle(exporter.getWorkbook()))
+                            }
                         }
+
                         sheet.add(rows, properties, sheet.sheet.lastRowNum + 1)
                     }
                 }
-            }
-
-            if (sheet) {
-                sheet.fillHeader(headers)
-                exporter.styleRow(sheet, 0, exporter.headerStyle(exporter.getWorkbook()))
             }
         }
 
