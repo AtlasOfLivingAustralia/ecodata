@@ -31,6 +31,7 @@ class MetadataService {
     private static final String SERVICES_KEY = "services.config"
     def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
     SettingService settingService
+    ActivityFormService activityFormService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -1027,6 +1028,43 @@ class MetadataService {
             value
         })
 
+    }
+
+
+
+    List formsAndFieldsUsedInScore(Score score) {
+        Map<String, Map> formSections = activityFormService.referencedFormSectionProperties(score.configuration)
+        List results = []
+
+        formSections.each { String section, Map properties ->
+            List forms = ActivityForm.createCriteria().list {
+                sections {
+                    eq 'name', section
+                }
+            }
+            forms.each { ActivityForm form ->
+                FormSection formSection = form.sections.find{it.name == section}
+                String title = formSection.title ?: formSection.template?.title ?: section
+                String formDescription = form.name + " (" + title + ")"
+                if (!results.find{it.form == formDescription}) { // We get one result per form version
+                    List fields = []
+                    OutputMetadata metadata = new OutputMetadata(formSection.template)
+
+                    metadata.modelIterator { String path, Map viewNode, Map dataNode ->
+                        def config = properties[path] ?: properties["data."+path]
+                        if (config) {
+                            String label = metadata.getLabel(viewNode, dataNode)
+                            fields << [label:label, path:path, config:config]
+                        }
+                    }
+
+                    results << [form:formDescription, fields:fields]
+                }
+
+            }
+
+        }
+        results
     }
 
 

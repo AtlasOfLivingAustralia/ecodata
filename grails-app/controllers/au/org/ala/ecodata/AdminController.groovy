@@ -710,4 +710,64 @@ class AdminController {
         }
     }
 
+    /**
+     * Only works for scores with a single aggregate operation, which includes most output targets
+     *  Doesn't currently support scores that treat form versions differently.
+     */
+    def simplifiedDescriptionForOutputTargetScores() {
+        List rlpScores = Score.findAllByCategoryAndStatusNotEqual("RLP and Bushfire Recovery", Status.DELETED)
+        List results = []
+        List messages = []
+        rlpScores.each { Score score ->
+            List scoreMapping = metadataService.formsAndFieldsUsedInScore(score)
+
+            results << scoreMapping
+
+            messages += "\n"
+            messages += "The delivery against the target \""+score.label+"\" is calculated by: \n"
+
+            scoreMapping.each { Map form ->
+                Map mainField = form.fields.find{it.config[0].type != 'filter'}
+                if (!mainField) {
+                    println form
+                    return
+                }
+                String aggregateOperation = "(unspecified)"
+                String type = mainField.config[0].type
+                switch (type) {
+                    case "SUM":
+                        aggregateOperation = "summing"
+                        break
+                    case "COUNT":
+                        aggregateOperation = "counting non-null values for"
+                        break
+                }
+                String message = "Using the form / service \""+form.form+"\" and "+aggregateOperation+" the field \""+mainField.label+"\""
+                if (form.fields.size() > 1) {
+                    boolean first = true
+                    for (int i=0; i<form.fields.size(); i++) {
+                        if (form.fields[i].config[0].type == 'filter') {
+                            if (first) {
+                                first = false
+                                message += " where "
+                            }
+                            else {
+                                message += " and "
+                            }
+                            message += "the field \""+form.fields[i].label + "\" has the value \""+form.fields[i].config[0].filterValue+"\""
+                        }
+
+                    }
+                }
+
+                messages += message + "\n"
+            }
+        }
+        response.contentType = 'text/plain'
+        render messages.join("\n")
+    }
+
+
+
+
 }
