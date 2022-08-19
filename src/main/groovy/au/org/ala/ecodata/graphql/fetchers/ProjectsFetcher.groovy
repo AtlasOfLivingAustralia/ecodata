@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
+import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.models.KeyValue
 import au.org.ala.ecodata.graphql.models.OutputData
@@ -11,6 +12,7 @@ import graphql.GraphQLException
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.aggregations.Aggregation
 
 import java.text.SimpleDateFormat
@@ -20,7 +22,7 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class ProjectsFetcher implements DataFetcher<List<Project>> {
 
-    public ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
+    ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
                            ReportService reportService, CacheService cacheService, HubService hubService) {
         this.projectService = projectService
         this.elasticSearchService = elasticSearchService
@@ -48,82 +50,45 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
     @Override
     List<Project> get(DataFetchingEnvironment environment) throws Exception {
 
-
-        // Search ES, applying the user role in the process...
-
-
-        // What should happen if we get a "show me all" type query?
-
-        // Should we return the public view for all public projects (is that all projects?) we have data for?
-
-        // e.g. should the role check only apply during the mapping phase?  In which case we need a bulk query of permissions to determine a list of project ids we can get full resolution data for?
-        // Or do we do two queries, one for full resolution, one for the rest (how do we sort/page if we do two queries?)
-
         String query = environment.arguments.term ?:"*:*"
-
         return queryElasticSearch(environment, query, [include:'projectId'])
     }
 
     private List<Project> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
-
-
-        // add pagination results.
-        String userId = environment.context.user?.userId ?: '1493'
+        EcodataGraphQLContextBuilder.EcodataGraphQLContext context = (EcodataGraphQLContextBuilder.EcodataGraphQLContext)environment.context
         String query = queryString ?:"*:*"
-        Boolean myProjects = environment.arguments.get("myProjects") != null ? environment.arguments.get("myProjects") : false
         SearchResponse searchResponse
 
-        params.put("include", "projectId")
+        params.put("include", ["projectId", "hubId", "name", "description"])
+        searchResponse = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
 
-        if(myProjects) {
-            searchResponse = elasticSearchService.searchWithSecurity(userId, query, params, HOMEPAGE_INDEX)
-        }
-        else {
-            searchResponse = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
-        }
+        List<Map> restrictedAccessProjects = new ArrayList()
+        List<String> fullAccessProjectIds = new ArrayList()
+        List<String> projectIds = new ArrayList(searchResponse.hits?.hits?.size() ?: 0)
+        searchResponse.hits?.hits?.each { SearchHit hit ->
+            Map projectInfo = hit.sourceAsMap
+            projectIds.add(projectInfo.projectId)
 
-        List<String> projectIds = searchResponse.hits.hits.collect{it.sourceAsMap.projectId}
-
-        // Split projects into those the user has full read permission & those they don't
-        List publicProjectIds = []
-        List fullProjectIds = []
-
-        if(myProjects) {
-            fullProjectIds = projectIds
-        }
-        else {
-            publicProjectIds = projectIds
+            if (context.hasPermission(projectInfo)) {
+                fullAccessProjectIds << projectInfo.projectId
+            }
+            else {
+                restrictedAccessProjects << new Project(projectId:projectInfo.projectId, name:projectInfo.name, description:projectInfo.description)
+            }
         }
 
-
-        // Alternative here is to also return the userIds from the ES query and see if the user is in the result.
-        // we could also map directly from the ES, but this would require a different approach (maybe creating
-        // and binding the domain objects from the ES data?)
-//        projectIds.each {
-//            boolean readable = permissionService.checkUserPermission(userId, it, Project.name, "read")
-//            readable ? publicProjectIds << it : publicProjectIds << it
-//        }
-
-        Map publicView = [name:true, description:true, projectId:true]
-
-        Map publicProjects = [:]
-        FindIterable findIterable = Project.find(Filters.in("projectId", publicProjectIds))
-        findIterable.each { Project project ->
-            publicProjects.put(project.projectId, project)
+        List fullAccessProjects = Project.createCriteria().list {
+            inList('projectId', fullAccessProjectIds)
+            order('lastUpdated', 'desc')
         }
 
-        Map fullProjects = [:]
-        findIterable = Project.find(Filters.in("projectId", fullProjectIds))
-        findIterable.each { Project project ->
-            fullProjects.put(project.projectId, project)
+        List<Project> results = new ArrayList(projectIds.size())
+        projectIds.each { String projectId ->
+            results << (fullAccessProjects.find{it.projectId == projectId} ?: restrictedAccessProjects.find{it.projectId == projectId})
         }
 
-        List projects = projectIds.collect {
-            !myProjects ? publicProjects[it] : fullProjects[it]
-        }
-
-        projects
+        results
     }
 
     List<Project> searchMeritProject (DataFetchingEnvironment environment) {

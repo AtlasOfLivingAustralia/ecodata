@@ -15,7 +15,7 @@
 
 package au.org.ala.ecodata
 
-import org.locationtech.jts.geom.Coordinate
+
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -1308,17 +1308,12 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControlFilter = false) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
-        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria, applyAccessControlFilter)
+        SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria)
         client.search(request, RequestOptions.DEFAULT)
-    }
-
-    SearchResponse searchWithSecurity(String userId, String query, Map params, String index = HOMEPAGE_INDEX, Map geoSearchCriteria = [:]) {
-
-        search(query, params, index, geoSearchCriteria, true)
     }
 
     /**
@@ -1477,12 +1472,12 @@ class ElasticSearchService {
      * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:], boolean applyAccessControl = false) {
+    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
         request.indices(index)
 
-        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index, applyAccessControl)
+        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index)
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params).query(query)
         source.trackTotalHits(true) // Always provide a full count of the number of results for compatibility with current clients
@@ -1563,25 +1558,9 @@ class ElasticSearchService {
         hubFilters
     }
 
-    private BoolQueryBuilder buildAccessControlFilter() {
-        String userId = UserService.currentUser()?.userId
-        BoolQueryBuilder builder = QueryBuilders.boolQuery()
-        builder.filter(QueryBuilders.termsQuery("allParticipants", userId))
-        //List permissions = UserPermission.findAllByUserIdAndEntityTypeAndPermissionsAndStatusNotEqual(userId, Hub.name, "api", Status.DELETED)
-        List permissions = []
-        if (permissions) {
-            BoolQueryBuilder hubs = QueryBuilders.termsQuery("hubId", permissions.collect { it.entityId})
-        }
-        builder
-    }
-
-    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index, boolean applyAccessControlFilters = false) {
+    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index) {
         QueryBuilder queryBuilder
         List filters = []
-
-        if (applyAccessControlFilters) {
-            filters << buildAccessControlFilter()
-        }
 
         List hubFilters = extractHubFilterParameters(params)
         if (hubFilters) {

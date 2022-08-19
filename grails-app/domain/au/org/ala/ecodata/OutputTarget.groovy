@@ -1,11 +1,21 @@
 package au.org.ala.ecodata
 
 import grails.databinding.BindingFormat
+import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 /**
  * Stores details of a target a project plans to achieve.
  */
 class OutputTarget {
+
+    static graphql = GraphQLMapping.build {
+        exclude('scoreId')
+        add('targetMeasure', Score) {
+            dataFetcher { OutputTarget outputTarget ->
+                Score.findByScoreId(outputTarget.scoreId)
+            }
+        }
+    }
 
     static constraints = {
         targetDate nullable: true
