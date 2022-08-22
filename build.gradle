@@ -224,7 +224,6 @@ npm_run_bundle {
 
 
 bootJar {
-    dependsOn npm_run_bundle
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     enabled = true
     classifier = 'exec'
@@ -232,6 +231,7 @@ bootJar {
 }
 
 assemble {
+    dependsOn npm_run_bundle
     dependsOn bootJar
 }
 
