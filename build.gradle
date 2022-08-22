@@ -230,8 +230,11 @@ bootJar {
     launchScript()
 }
 
-assemble {
+assetCompile {
     dependsOn npm_run_bundle
+}
+
+assemble {
     dependsOn bootJar
 }
 
