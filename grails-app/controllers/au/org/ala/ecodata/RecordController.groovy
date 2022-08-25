@@ -43,7 +43,7 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
-    @PreAuthorise
+    @RequireApiKey
     def listHarvestDataResource() {
         def result, error
         try {
