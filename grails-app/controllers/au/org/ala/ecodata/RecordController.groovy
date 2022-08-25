@@ -43,7 +43,7 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
-    @RequireApiKey
+    @PreAuthorise
     def listHarvestDataResource() {
         def result, error
         try {
@@ -563,7 +563,7 @@ class RecordController {
      * @param projectId
      * @return
      */
-    @RequireApiKey
+    @PreAuthorise
     def getDarwinCoreArchiveForProject (String projectId) {
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
