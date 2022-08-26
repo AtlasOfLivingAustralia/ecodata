@@ -967,6 +967,11 @@ class RecordService {
         new ZipOutputStream(outputStream).withStream { zip ->
             try {
                 Long start = System.currentTimeMillis(), end
+
+                zip.putNextEntry(new ZipEntry("eml.xml"))
+                zip << getEmlXML(project)
+                zip.closeEntry()
+
                 result = generateEventCoreFiles (project)
 
                 result.each { dwcClass, rows ->
@@ -997,9 +1002,6 @@ class RecordService {
                 zip << getMetaXML(headersByDwcClass)
                 zip.closeEntry()
 
-                zip.putNextEntry(new ZipEntry("eml.xml"))
-                zip << getEmlXML(project)
-                zip.closeEntry()
                 end = System.currentTimeMillis()
                 log.debug("Time in milliseconds to write event core XMLs- ${end - start}")
 
