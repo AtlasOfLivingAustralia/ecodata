@@ -9,10 +9,7 @@ branches:
   - dev
   - hot-fix
   - /^feature\/.*$/
-  - grails3
-  - grails3-dev
   - /^hotfix\/.*$/
-  - grails4
 
 services:
   - mongodb
