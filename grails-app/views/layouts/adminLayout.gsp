@@ -95,7 +95,6 @@
 <asset:javascript src="bundle-vendor"/>
 <asset:javascript src="bundle-runtime"/>
 <asset:javascript src="admin"/>
-<asset:deferredScripts/>
 
 <asset:script type="text/javascript">
 
@@ -118,7 +117,7 @@
     });
 
 </asset:script>
-
+<asset:deferredScripts/>
 <!-- Google Analytics -->
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

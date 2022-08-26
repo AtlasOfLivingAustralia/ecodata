@@ -600,8 +600,9 @@ security {
     jwt {
         enabled = true
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
-        requiredClaims: ["sub", "iat", "exp", "jti", "client_id"]
-        urlPatterns: ["/ws/graphql/*"]
+        requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
+        urlPatterns = ["/ws/graphql/*"]
+        requiredScores = ["openid", 'profile', "email", "ala", "roles", "user_defined"]
     }
 }
 
