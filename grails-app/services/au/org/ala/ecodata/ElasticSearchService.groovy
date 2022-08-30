@@ -944,6 +944,8 @@ class ElasticSearchService {
                     site
                 }
                 projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+            } else {
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name()).collect{[type:it.type]}
             }
 
             // If we don't flatten these values into the root of the project, they are not currently usable by
