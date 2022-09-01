@@ -1,14 +1,15 @@
-var projects = db.project.find();
+let projects = db.project.find();
+const failOnError = true;
 while (projects.hasNext()) {
-    var project = projects.next();
-    var changed = false;
+    const project = projects.next();
+    let changed = false;
     if (project.outputTargets) {
         if (!project.isMERIT) {
             print("Found biocollect project with output targets! "+project.projectId);
         }
-        for (var i=0; i<project.outputTargets.length; i++) {
+        for (let i=0; i<project.outputTargets.length; i++) {
 
-            var target = project.outputTargets[i];
+            let target = project.outputTargets[i];
             if (target.targetDate == "" || target.targetDate === undefined) {
                 target.targetDate = null;
                 changed = true;
@@ -30,8 +31,22 @@ while (projects.hasNext()) {
                     target.target = target.target.replace(' ', "");
                     target.target = target.target.replace('%', "");
                 }
-                target.target = NumberDecimal(target.target);
-                changed = true;
+                try {
+                    target.target = NumberDecimal(target.target);
+
+                }
+                catch (e) {
+                    print(target.target+" cannot be converted, setting to 0");
+                    print(e);
+                    if (failOnError) {
+                        throw e;
+                    }
+                    else {
+                        target.target = NumberDecimal(0);
+                        changed = true;
+                    }
+                }
+
             }
             if (project.outputTargets[i].periodTargets) {
                 for (var j=0; j<project.outputTargets[i].periodTargets.length; j++) {
