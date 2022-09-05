@@ -32,7 +32,7 @@
     "test": "karma start karma.conf.js",
     "debug": "karma start --debug --browsers=Chrome --single-run=false",
     "bundle": "webpack",
-    "start": "webpack --progress --watch"
+    "start": "webpack --progress --watch --mode=development"
   },
   "author": "",
   "license": "",
