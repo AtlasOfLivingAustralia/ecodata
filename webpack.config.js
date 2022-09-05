@@ -62,7 +62,7 @@ module.exports = {
                 test: require.resolve("jquery"),
                 loader: "expose-loader",
                 options: {
-                    exposes: ["$", "jQuery"]
+                    exposes: ["$", "jQuery", "_"]
                 },
             },
             {
@@ -70,13 +70,6 @@ module.exports = {
                 loader: "expose-loader",
                 options: {
                     exposes: ["ko"]
-                },
-            },
-            {
-                test: require.resolve("underscore"),
-                loader: "expose-loader",
-                options: {
-                    exposes: ["_"]
                 },
             },
             {
