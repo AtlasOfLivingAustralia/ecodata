@@ -30,8 +30,7 @@ class ProjectGraphQLMapper {
         GraphQLMapping.lazy {
             // Disable default operations, including get as we only want to expose UUIDs in the API not internal ones
             operations.get.enabled false
-            operations.list.enabled true
-            operations.list.paginate(true)
+            operations.list.enabled false
             operations.count.enabled false
             operations.create.enabled false
             operations.update.enabled false
