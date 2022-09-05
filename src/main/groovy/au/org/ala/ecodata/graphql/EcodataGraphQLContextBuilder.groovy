@@ -60,12 +60,7 @@ class EcodataGraphQLContextBuilder implements GraphQLContextBuilder {
             List otherRoles = [AccessLevel.admin]
             if (!hasPermission) {
                 // Then see if there is a project associated ACL
-                String entityId = IdentifierHelper.getProjectId(entity)
-                hasPermission = permissionByEntityId[entityId] in otherRoles
-            }
-            if (!hasPermission) {
-                String entityId = IdentifierHelper.getEntityIdentifier(entity)
-                hasPermission = permissionByEntityId[entityId] in otherRoles
+                hasPermission = permissionByEntityId[entity.projectId] in otherRoles
             }
             hasPermission
         }
