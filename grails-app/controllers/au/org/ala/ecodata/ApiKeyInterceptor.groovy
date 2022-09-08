@@ -3,6 +3,8 @@ package au.org.ala.ecodata
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 
+import javax.servlet.http.HttpServletRequest
+
 class ApiKeyInterceptor {
 
     ProjectService projectService
@@ -111,8 +113,10 @@ class ApiKeyInterceptor {
      * @param clientIp
      * @return
      */
-    def checkClientIp(clientIp, List whiteList) {
-        whiteList.contains(clientIp) || (whiteList.size() == 1 && whiteList[0] == LOCALHOST_IP)
+    def checkClientIp(String clientIp, List whiteList) {
+        List clientIps = clientIp?.split(',').collect{it?.trim()}
+
+        clientIps.size() > 0 && whiteList.containsAll(clientIps)  || (whiteList.size() == 1 && whiteList[0] == LOCALHOST_IP)
     }
 
     def buildWhiteList() {
@@ -124,9 +128,9 @@ class ApiKeyInterceptor {
         whiteList
     }
 
-    def getClientIP(request) {
+    String getClientIP(request) {
         // External requests to ecodata are proxied by Apache, which uses X-Forwarded-For to identify the original IP.
-        def ip = request.getHeader("X-Forwarded-For")
+        String ip = request.getHeader("X-Forwarded-For")
         if (!ip) {
             ip = request.getRemoteHost()
         }

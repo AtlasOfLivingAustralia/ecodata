@@ -596,6 +596,7 @@ security {
         clientId = 'changeMe'
         secret = 'changeMe'
         scope = 'openid,profile,email,ala,roles,user_defined'
+        connectTimeout = 5000
     }
     jwt {
         enabled = true
