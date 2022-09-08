@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
+import grails.web.http.HttpHeaders
 
 import javax.servlet.http.HttpServletRequest
 
@@ -73,9 +74,9 @@ class ApiKeyInterceptor {
 
             // Allow migration to the AlaSecured annotation.
             if (!controllerClass?.isAnnotationPresent(AlaSecured) && !method?.isAnnotationPresent(AlaSecured)) {
-                def whiteList = buildWhiteList()
-                def clientIp = getClientIP(request)
-                def ipOk = checkClientIp(clientIp, whiteList)
+                List whiteList = buildWhiteList()
+                List clientIp = getClientIP(request)
+                boolean ipOk = checkClientIp(clientIp, whiteList)
 
                 // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
                 if (!ipOk) {
@@ -113,28 +114,32 @@ class ApiKeyInterceptor {
      * @param clientIp
      * @return
      */
-    def checkClientIp(String clientIp, List whiteList) {
-        List clientIps = clientIp?.split(',').collect{it?.trim()}
-
-        clientIps.size() > 0 && whiteList.containsAll(clientIps)  || (whiteList.size() == 1 && whiteList[0] == LOCALHOST_IP)
+    boolean checkClientIp(List clientIps, List whiteList) {
+        clientIps.size() > 0 && whiteList.containsAll(clientIps) || (whiteList.size() == 1 && whiteList[0] == LOCALHOST_IP)
     }
 
-    def buildWhiteList() {
+    private List buildWhiteList() {
         def whiteList = [LOCALHOST_IP] // allow calls from localhost to make testing easier
-        def config = grailsApplication.config.app.api.whiteList as String
+        def config = grailsApplication.config.getProperty('app.api.whiteList')
         if (config) {
             whiteList.addAll(config.split(',').collect({it.trim()}))
         }
         whiteList
     }
 
-    String getClientIP(request) {
+    private List getClientIP(HttpServletRequest request) {
         // External requests to ecodata are proxied by Apache, which uses X-Forwarded-For to identify the original IP.
-        String ip = request.getHeader("X-Forwarded-For")
-        if (!ip) {
-            ip = request.getRemoteHost()
+        // From grails 5, tomcat started returning duplicate headers as a comma separated list.  When a download
+        // request is sent from MERIT to ecodata, ngnix adds a X-Forwarded-For header, then forwards to the
+        // reporting server, which adds another header before proxying to tomcat/grails.
+        List allIps = []
+        Enumeration<String> ips = request.getHeaders(HttpHeaders.X_FORWARDED_FOR)
+        while (ips.hasMoreElements()) {
+            String ip = ips.nextElement()
+            allIps.addAll(ip?.split(',').collect{it?.trim()})
         }
-        return ip
+        allIps.add(request.getRemoteHost())
+        return allIps
     }
 
 }
