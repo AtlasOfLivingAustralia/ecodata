@@ -503,7 +503,7 @@ class DocumentService {
         File fileToArchive = new File(fullPath(document.filepath, document.filename))
 
         if (fileToArchive.exists()) {
-            File archiveDir = new File("${grailsApplication.config.app.file.archive.path}/${document.filepath}")
+            File archiveDir = new File("${grailsApplication.config.getProperty('app.file.archive.path')}/${document.filepath}")
             // This overwrites an archived file with the same name.
             FileUtils.copyFileToDirectory(fileToArchive, archiveDir)
             FileUtils.deleteQuietly(fileToArchive)

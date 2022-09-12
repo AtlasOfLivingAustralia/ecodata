@@ -18,7 +18,7 @@ class SchemaUrlBuilder {
 
     public SchemaUrlBuilder(config, metadataService) {
         this.metadataService = metadataService
-        this.urlPrefix = config.grails.serverURL + SCHEMA_PATH_PREFIX + config.app.external.api.version
+        this.urlPrefix = config.getProperty('grails.serverURL') + SCHEMA_PATH_PREFIX + config.getProperty('app.external.api.version')
     }
 
     public String outputSchemaUrl(outputName) {

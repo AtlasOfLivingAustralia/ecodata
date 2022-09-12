@@ -51,13 +51,13 @@ class AdminController {
     @AlaSecured(["ROLE_ADMIN"])
     def settings() {
         def settings = [
-                [key:'app.external.model.dir', value: grailsApplication.config.app.external.model.dir,
+                [key:'app.external.model.dir', value: grailsApplication.config.getProperty('app.external.model.dir'),
                         comment: 'location of the application meta-models such as the list of activities and ' +
                                 'the output data models'],
-                [key:'app.dump.location', value: grailsApplication.config.app.dump.location,
+                [key:'app.dump.location', value: grailsApplication.config.getProperty('app.dump.location'),
                         comment: 'directory where DB dump files will be created']
         ]
-        def config = grailsApplication.config.flatten()
+        def config = grailsApplication.config
         ['ala.baseURL','grails.serverURL','grails.config.locations','collectory.baseURL',
                 'headerAndFooter.baseURL','ecodata.use.uuids'
         ].each {
@@ -81,7 +81,7 @@ class AdminController {
 
         // reload system config
         def resolver = new PathMatchingResourcePatternResolver()
-        def resource = resolver.getResource(grailsApplication.config.reloadable.cfgs[0])
+        def resource = resolver.getResource(grailsApplication.config.getProperty('reloadable.cfgs', List)[0])
         def stream = null
 
         try {
@@ -114,9 +114,9 @@ class AdminController {
             render res + "</ul>"
         }
         catch (FileNotFoundException fnf) {
-            println "No external config to reload configuration. Looking for ${grailsApplication.config.reloadable.cfgs[0]}"
+            println "No external config to reload configuration. Looking for ${grailsApplication.config.getProperty('reloadable.cfgs', List)[0]}"
             fnf.printStackTrace()
-            render "No external config to reload configuration. Looking for ${grailsApplication.config.reloadable.cfgs[0]}"
+            render "No external config to reload configuration. Looking for ${grailsApplication.config.getProperty('reloadable.cfgs', List)[0]}"
         }
         catch (Exception gre) {
             println "Unable to reload configuration. Please correct problem and try again: " + gre.getMessage()
@@ -712,7 +712,7 @@ class AdminController {
      */
     def logout = {
         session.invalidate()
-        redirect(url:"${grailsApplication.config.casUrl}?url=${grailsApplication.config.appUrl}")
+        redirect(url:"${grailsApplication.config.getProperty('casUrl')}?url=${grailsApplication.config.getProperty('appUrl')}")
     }
 
 
