@@ -11,6 +11,7 @@ class FormSection {
     String name
     String title
     String modelName
+    String description
 
     /**
      * Deprecated but required for compatibility with the old API which retrieves the form template

@@ -114,7 +114,12 @@
         <div class="col-md-9">
             <input type="text" class="form-control" data-bind="value:name"></div>
     </div>
-</div>
+    <div class="row">
+        <label class="col-md-3 col-form-label">Description:</label>
+
+        <div class="col-md-9">
+            <input type="text" class="form-control" data-bind="value:description"></div>
+    </div>
     <div class="row">
         <label class="col-md-3 col-form-label">Type:</label>
 
@@ -179,6 +184,11 @@
 
                         <div class="col-md-9">
                             <input type="text" class="form-control" data-bind="value:name">
+                        </div>
+                        <label class="col-md-3 col-form-label">Description</label>
+
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value:description">
                         </div>
                     </div>
 
