@@ -41,7 +41,7 @@ class CollectoryService {
     String createInstitution(props) {
 
         def collectoryProps = mapOrganisationAttributesToCollectory(props)
-        def result = webService.doPost(grailsApplication.config.collectory.baseURL + INSTITUTION_COLLECTORY_PATH, collectoryProps)
+        def result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + INSTITUTION_COLLECTORY_PATH, collectoryProps)
         String institutionId = webService.extractIdFromLocationHeader(result)
 
         return institutionId
@@ -70,7 +70,7 @@ class CollectoryService {
     // return null if sucessful, or errors
     def syncOrganisations(OrganisationService organisationService) {
         def errors = []
-        def url = "${grailsApplication.config.collectory.baseURL}ws/institution/"
+        def url = "${grailsApplication.config.getProperty('collectory.baseURL')}ws/institution/"
         def institutions = webService.getJson(url)
         if (institutions instanceof List) {
             def orgs = Organisation.findAllByCollectoryInstitutionIdIsNotNull()
@@ -112,7 +112,7 @@ class CollectoryService {
         if (ids.dataProviderId) {
             // create a dataResource in collectory to hold project outputs
             collectoryProps.dataProvider = [uid: ids.dataProviderId]
-            Map result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
+            Map result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
             if (result.error) {
                 throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
             }
@@ -120,7 +120,7 @@ class CollectoryService {
 
             // Now we have an id we can create the connection properties
             Map connectionParameters = [connectionParameters:collectoryConnectionParametersForProject(props, ids.dataResourceId)]
-            result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH+'/'+ids.dataResourceId, connectionParameters)
+            result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + DATA_RESOURCE_COLLECTORY_PATH+'/'+ids.dataResourceId, connectionParameters)
             if (result.error) {
                 throw new Exception("Failed to create Collectory data resource connection parameters: ${result.error} ${result.detail ?: ""}")
             }
@@ -135,7 +135,7 @@ class CollectoryService {
      * MERIT or BioCollect, but this may need to be revisited.
      */
     private String dataProviderForProject(Map project) {
-        return project.isMERIT ?  grailsApplication.config.collectory.dataProviderUid.merit : grailsApplication.config.collectory.dataProviderUid.biocollect
+        return project.isMERIT ?  grailsApplication.config.getProperty('collectory.dataProviderUid.merit') : grailsApplication.config.getProperty('collectory.dataProviderUid.biocollect')
     }
 
     /** The Collectory expects the upload connection parameters as a JSON encoded String */
@@ -177,7 +177,7 @@ class CollectoryService {
 
                 // Only update if a property other than the "hiddenJSON" attribute has changed.
                 if ((collectoryAttributes.size() > 1) || forceUpdate) {
-                    Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
+                    Map result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
                     if (result.error) {
                         log.error "Error updating collectory info for project ${projectId} - ${result.error}"
                     }
@@ -191,7 +191,7 @@ class CollectoryService {
     }
 
     def updateCollectoryEntryForProjects (Boolean isBiocollect) {
-        if (Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
+        if (Boolean.valueOf(grailsApplication.config.getProperty('collectory.collectoryIntegrationEnabled'))) {
             log.info("Collectory update started.")
 
             Boolean isMERIT = !isBiocollect
@@ -221,7 +221,7 @@ class CollectoryService {
             }
             String message = error.message
             log.error(message, error)
-            emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
+            emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.getProperty('ecodata.support.email.address')])
         }
     }
 

@@ -98,7 +98,7 @@ class CommonService {
         String cacheKey = 'apikey-'+key
         Map result = cacheService.get(cacheKey, {
             // try the preferred api key store first
-            def url = grailsApplication.config.security.apikey.serviceUrl + key
+            def url = grailsApplication.config.getProperty('security.apikey.serviceUrl') + key
             try {
                 def conn = new URL(url).openConnection()
                 if (conn.getResponseCode() == 200) {

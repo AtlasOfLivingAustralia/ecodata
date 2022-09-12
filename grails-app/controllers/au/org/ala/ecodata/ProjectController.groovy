@@ -424,7 +424,7 @@ class ProjectController {
      * @return
      */
     def getScienceTypes(){
-        List scienceTypes = grailsApplication.config.biocollect.scienceType
+        List scienceTypes = grailsApplication.config.getProperty('biocollect.scienceType', List)
         render(text:  scienceTypes as JSON, contentType: 'application/json')
     }
 
@@ -433,7 +433,7 @@ class ProjectController {
      * @return
      */
     def getEcoScienceTypes(){
-        List ecoScienceTypes = grailsApplication.config.biocollect.ecoScienceType
+        List ecoScienceTypes = grailsApplication.config.getProperty('biocollect.ecoScienceType', List)
         render(text:  ecoScienceTypes as JSON, contentType: 'application/json')
     }
 
@@ -442,7 +442,7 @@ class ProjectController {
      * @return
      */
     def getUNRegions(){
-        List regions = grailsApplication.config.uNRegions
+        List regions = grailsApplication.config.getProperty('uNRegions', List)
         render( text: regions as JSON, contentType: 'application/json' )
     }
 
@@ -451,7 +451,7 @@ class ProjectController {
      * @return
      */
     def getCountries(){
-        List countries = grailsApplication.config.countries
+        List countries = grailsApplication.config.getProperty('countries', List)
         render( text: countries as JSON, contentType: 'application/json' )
     }
 
@@ -461,12 +461,12 @@ class ProjectController {
      * @return
      */
     def getDataCollectionWhiteList(){
-        List dataCollectionWhiteList = grailsApplication.config.biocollect.dataCollectionWhiteList
+        List dataCollectionWhiteList = grailsApplication.config.getProperty('biocollect.dataCollectionWhiteList', List)
         render( text: dataCollectionWhiteList as JSON, contentType: 'application/json' )
     }
 
     def getDefaultFacets(){
-        List facets = grailsApplication.config.facets.project
+        List facets = grailsApplication.config.getProperty('facets.project', List)
         render text: facets as JSON, contentType: 'application/json'
     }
 
@@ -483,8 +483,8 @@ class ProjectController {
     }
 
     private def setResponseHeadersForProjectId(response, projectId){
-        response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/project/" + projectId)
-        response.addHeader("location", grailsApplication.config.grails.serverURL + "/project/" +  projectId)
+        response.addHeader("content-location", grailsApplication.config.getProperty('grails.serverURL') + "/project/" + projectId)
+        response.addHeader("location", grailsApplication.config.getProperty('grails.serverURL') + "/project/" +  projectId)
         response.addHeader("entityId", projectId)
     }
 

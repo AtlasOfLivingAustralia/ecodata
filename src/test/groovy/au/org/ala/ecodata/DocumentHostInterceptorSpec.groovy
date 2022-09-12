@@ -20,7 +20,7 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
         given:
         def hostName = 'https://biocollect.ala.org.au'
         def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.app.http.header.hostName, hostName)
+        request.addHeader(grailsApplication.config.getProperty('app.http.header.hostName'), hostName)
 
         when:
             withInterceptors([controller: DocumentationController]) {
@@ -35,7 +35,7 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
         given:
         def hostName = 'https://example.com'
         def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.app.http.header.hostName, hostName)
+        request.addHeader(grailsApplication.config.getProperty('app.http.header.hostName'), hostName)
 
         when:
         withInterceptors([controller: DocumentationController]) {
@@ -51,7 +51,7 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
         given:
         def hostName = ''
         def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.app.http.header.hostName, hostName)
+        request.addHeader(grailsApplication.config.getProperty('app.http.header.hostName'), hostName)
 
         when:
         withInterceptors([controller: DocumentationController]) {

@@ -262,7 +262,7 @@ class MetadataController {
     }
 
     def getGeographicFacetConfig() {
-        render grailsApplication.config.app.facets.geographic as JSON
+        render grailsApplication.config.getProperty('app.facets.geographic', Map) as JSON
     }
 
     /**

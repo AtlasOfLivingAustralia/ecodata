@@ -151,7 +151,7 @@ class DocumentationController {
     def exampleActivity(activityType) {
 
         // Get demo data from the test server....
-        def url = grailsApplication.config.ecodata.documentation.exampleProjectUrl
+        def url = grailsApplication.config.getProperty('ecodata.documentation.exampleProjectUrl')
 
         def activities = doGet(url)
         if (activities && !activities.error) {
@@ -171,7 +171,7 @@ class DocumentationController {
 
     def exampleOutput(outputType) {
         // Get demo data from the dev server....
-        def url = grailsApplication.config.ecodata.documentation.exampleProjectUrl
+        def url = grailsApplication.config.getProperty('ecodata.documentation.exampleProjectUrl')
         def output
 
         def activities = doGet(url)

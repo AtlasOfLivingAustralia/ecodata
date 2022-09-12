@@ -21,7 +21,6 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService> 
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
         service.webService = webService
         service.authService = authService
-        //grailsApplication.config.userDetails = [url:"http://devt.ala.org.au:${wiremock.port}/userdetails/"]
     }
 
     def cleanup() {

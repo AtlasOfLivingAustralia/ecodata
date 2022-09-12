@@ -51,7 +51,7 @@ class BootStrap {
 
         elasticSearchService.initialize()
         // Index all docs
-        if (grailsApplication.config.app.elasticsearch.indexAllOnStartup) {
+        if (grailsApplication.config.getProperty('app.elasticsearch.indexAllOnStartup', Boolean, false)) {
             elasticSearchService.indexAll()
         }
 
@@ -102,13 +102,13 @@ class BootStrap {
         }
 
         //Add a default project for individual sightings (unless disabled)
-        def individualSightingsProject = au.org.ala.ecodata.Project.findByProjectId(grailsApplication.config.records.default.projectId)
+        def individualSightingsProject = au.org.ala.ecodata.Project.findByProjectId(grailsApplication.config.getProperty('records.default.projectId'))
         if(!individualSightingsProject){
             log.info "Creating individual sightings project"
             def project = new au.org.ala.ecodata.Project(
                     name: "Individual sightings",
-                    projectId: grailsApplication.config.records.default.projectId,
-                    dataResourceId: grailsApplication.config.records.default.dataResourceId,
+                    projectId: grailsApplication.config.getProperty('records.default.projectId'),
+                    dataResourceId: grailsApplication.config.getProperty('records.default.dataResourceId'),
                     isCitizenScience: true
             )
             project.save(flush: true)
@@ -120,7 +120,7 @@ class BootStrap {
         // Data migration of activities-model.json
         int formCount = ActivityForm.count()
         if (formCount == 0) {
-            new ActivityFormMigrator(grailsApplication.config.app.external.model.dir).migrateActivitiesModel()
+            new ActivityFormMigrator(grailsApplication.config.getProperty('app.external.model.dir')).migrateActivitiesModel()
         }
     }
 

@@ -132,7 +132,7 @@ class UserService {
      * @param password
      */
     def getUserKey(String username, String password) {
-        webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password], true)
+        webService.doPostWithParams(grailsApplication.config.getProperty('authGetKeyUrl'), [userName: username, password: password], true)
     }
 
     /**
