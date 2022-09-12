@@ -29,7 +29,7 @@ module.exports = {
             'knockout-mapping',
             'knockout-sortable',
             'jquery-ui',
-            'underscore',
+            'lodash',
             'select2'
         ],
         ecodata:'./src/main/webapp/css/ecodata.css'
@@ -62,7 +62,7 @@ module.exports = {
                 test: require.resolve("jquery"),
                 loader: "expose-loader",
                 options: {
-                    exposes: ["$", "jQuery", "_"]
+                    exposes: ["$", "jQuery"]
                 },
             },
             {
