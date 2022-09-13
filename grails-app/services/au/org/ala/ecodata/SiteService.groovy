@@ -576,7 +576,7 @@ class SiteService {
     }
 
     def geometryForPid(pid) {
-        def url = "${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/${pid}"
+        def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/shape/geojson/${pid}"
         webService.getJson(url)
     }
 
@@ -864,13 +864,13 @@ class SiteService {
 
         def resp = null
         if (geometry?.type == 'Circle') {
-            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.api_key]
-            def url = grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/pointradius/" +
+            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.getProperty('api_key')]
+            def url = grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/shape/upload/pointradius/" +
                     geometry?.coordinates[1] + '/' + geometry?.coordinates[0] + '/' + (geometry?.radius / 1000)
             resp = webService.doPost(url, body)
         } else if (geometry?.type in ['Polygon', 'LineString']) {
-            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.api_key]
-            resp = webService.doPost(grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/geojson", body)
+            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.getProperty('api_key')]
+            resp = webService.doPost(grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/shape/upload/geojson", body)
         }
 
         resp
@@ -886,9 +886,9 @@ class SiteService {
     int calculateGeohashPrecision(Map boundingBox) {
         Geometry geom = GeometryUtils.geoJsonMapToGeometry(boundingBox)
         double area = GeometryUtils.area(geom)
-        List lookupTable = grailsApplication.config.geohash.lookupTable
-        int maxNumberOfGrids = grailsApplication.config.geohash.maxNumberOfGrids as int
-        int maxLengthIndex = grailsApplication.config.geohash.maxLength as int
+        List lookupTable = grailsApplication.config.getProperty('geohash.lookupTable', List)
+        int maxNumberOfGrids = grailsApplication.config.getProperty('geohash.maxNumberOfGrids', Integer)
+        int maxLengthIndex = grailsApplication.config.getProperty('geohash.maxLength', Integer)
         Map step
 
         for(int i = 0; i < maxLengthIndex;  i++) {

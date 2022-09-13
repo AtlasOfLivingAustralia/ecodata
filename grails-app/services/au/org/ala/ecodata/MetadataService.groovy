@@ -148,7 +148,7 @@ class MetadataService {
 
     def programsModel() {
         return cacheService.get('programs-model',{
-            String filename = (grailsApplication.config.app.external.model.dir as String) + 'programs-model.json'
+            String filename = grailsApplication.config.getProperty('app.external.model.dir') + 'programs-model.json'
             JSON.parse(new File(filename).text)
         })
     }
@@ -228,7 +228,7 @@ class MetadataService {
 
     def institutionList() {
         return cacheService.get('institutions',{
-            webService.getJson(grailsApplication.config.collectory.baseURL + 'ws/institution')
+            webService.getJson(grailsApplication.config.getProperty('collectory.baseURL') + 'ws/institution')
         })
     }
 
@@ -259,11 +259,11 @@ class MetadataService {
     }
 
     def updateProgramsModel(model) {
-        writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'programs-model', 'json')
+        writeWithBackup(model, grailsApplication.config.getProperty('app.external.model.dir'), '', 'programs-model', 'json')
         // make sure it gets reloaded
         cacheService.clear('programs-model')
-        String bodyText = "The programs-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
-        emailService.emailSupport("Program model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
+        String bodyText = "The programs-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.getProperty('grails.serverURL')} server"
+        emailService.emailSupport("Program model updated in ${grailsApplication.config.getProperty('grails.serverURL')}", bodyText)
     }
 
     // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
@@ -271,7 +271,7 @@ class MetadataService {
     def getNvisClassesForPoint(Double lat, Double lon) {
         def retMap = [:]
 
-        def nvisLayers = grailsApplication.config.app.facets.geographic.special
+        Map nvisLayers = grailsApplication.config.getProperty('app.facets.geographic.special', Map)
 
         nvisLayers.each { name, path ->
             def classesJsonFile = new File(path + '.json')
@@ -341,8 +341,8 @@ class MetadataService {
 
         def features = performLayerIntersect(lat, lng)
         def localityValue = ''
-        if(grailsApplication.config.google.api.key) {
-            def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}&key=${grailsApplication.config.google.api.key}"
+        if(grailsApplication.config.getProperty('google.api.key')) {
+            def localityUrl = grailsApplication.config.getProperty('google.geocode.url') + "${lat},${lng}&key=${grailsApplication.config.getProperty('google.api.key')}"
             def result = webService.getJson(localityUrl)
             localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
         }
@@ -367,8 +367,8 @@ class MetadataService {
     def performLayerIntersect(lat,lng) {
 
 
-        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
-        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
+        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
 
         // Extract all of the layer field ids from the facet configuration so we can make a single web service call to the spatial portal.
         def fieldIds = contextualLayers.collect { k, v -> v }
@@ -377,7 +377,7 @@ class MetadataService {
         }
 
         // Do the intersect
-        def featuresUrl = grailsApplication.config.spatial.intersectUrl + "${fieldIds.join(',')}/${lat}/${lng}"
+        def featuresUrl = grailsApplication.config.getProperty('spatial.intersectUrl') + "${fieldIds.join(',')}/${lat}/${lng}"
         def features = webService.getJson(featuresUrl)
 
         def facetTerms = [:]
@@ -437,8 +437,8 @@ class MetadataService {
 
     /** Returns a list of spatial portal layer/field ids that ecodata will intersect every site against to support facetted geographic searches */
     List<String> getSpatialLayerIdsToIntersect() {
-        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
-        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
+        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
         def fieldIds = contextualLayers.collect { k, v -> v }
         groupedFacets.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
@@ -452,7 +452,7 @@ class MetadataService {
      * @param fid the field id.
      */
     Map getGeographicFacetConfig(String fid) {
-        Map config = grailsApplication.config.app.facets.geographic
+        Map config = grailsApplication.config.getProperty('app.facets.geographic', Map)
         Map facetConfig = null
         config.contextual.each { String groupName, String groupFid ->
             if (fid == groupFid) {
@@ -493,7 +493,7 @@ class MetadataService {
         for(int i = 0; i < pointsArray?.size(); i++) {
             log.info("${(i+1)}/${pointsArray.size()} batch process started..")
 
-            def featuresUrl = grailsApplication.config.spatial.intersectBatchUrl + "?fids=${fieldIds.join(',')}&points=${pointsArray[i]}"
+            def featuresUrl = grailsApplication.config.getProperty('spatial.intersectBatchUrl') + "?fids=${fieldIds.join(',')}&points=${pointsArray[i]}"
             def status = webService.getJsonRepeat(featuresUrl)
             if(status?.error){
                 throw new Exception("Webservice error, failed to get JSON after 12 tries.. - ${status}")
@@ -562,8 +562,8 @@ class MetadataService {
             log.error("Missing result for ${lat}, ${lng}")
         }
 
-        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
-        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
+        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
         def facetTerms = [:]
 
         contextualLayers.each { name, fid ->
@@ -616,8 +616,8 @@ class MetadataService {
             def features = [:]
             if (includeLocality) {
                 def localityValue = ''
-                if(grailsApplication.config.google.api.key) {
-                    def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}&key=${grailsApplication.config.google.api.key}"
+                if(grailsApplication.config.getProperty('google.api.key')) {
+                    def localityUrl = grailsApplication.config.getProperty('google.geocode.url') + "${lat},${lng}&key=${grailsApplication.config.getProperty('google.api.key')}"
                     def result = webService.getJson(localityUrl)
                     localityValue = (result?.results && result.results) ? result.results[0].formatted_address : ''
                 }
@@ -865,7 +865,7 @@ class MetadataService {
             modelIndices.each { String indexName,  List details ->
                 List dataType = details?.collect { it.dataType }
                 List existingDataTypes = allIndices?.get(indexName)?.collect { it.dataType }
-                List defaultDataTypes = grailsApplication.config.facets.data?.grep { it.name == indexName }?.collect { it.dataType }
+                List defaultDataTypes = grailsApplication.config.getProperty('facets.data', List)?.grep { it.name == indexName }?.collect { it.dataType }
                 List allDataTypes = []
                 if(dataType){
                     allDataTypes.addAll(dataType)

@@ -129,7 +129,7 @@ class SitesFetcher implements DataFetcher<List<Site>> {
 
     String createSiteShapeFiles(String siteId, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
-        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        File directoryPath = new File("${grailsApplication.config.getProperty('temp.dir')}")
         directoryPath.mkdirs()
         String fileExtension = 'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
@@ -138,7 +138,7 @@ class SitesFetcher implements DataFetcher<List<Site>> {
             downloadAction(outputStream, siteId)
         }
 
-        String urlPrefix = "${grailsApplication.config.grails.serverURL}/download/get/"
+        String urlPrefix = "${grailsApplication.config.getProperty('grails.serverURL')}/download/get/"
         String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
         if (outputStream) {
             outputStream.flush()

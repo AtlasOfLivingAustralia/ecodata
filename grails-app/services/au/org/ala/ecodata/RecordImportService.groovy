@@ -52,7 +52,7 @@ class RecordImportService {
         Record.findAll().each { record ->
 
            try {
-               def url = grailsApplication.config.biocacheService.baseURL + "/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
+               def url = grailsApplication.config.getProperty('biocacheService.baseURL') + "/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
                log.info("[record ${count}] Retrieving from biocache: ${url}")
                def response = new URL(url).text
                def json = js.parseText(response)
@@ -64,7 +64,7 @@ class RecordImportService {
                        record.multimedia = []
                        json.occurrences[0].imageUrls.each {
                            def imageId = it.substring(it.indexOf("=") + 1)
-                           def imageUrl = grailsApplication.config.imagesService.baseURL + "/ws/getImageInfo?id=" + imageId
+                           def imageUrl = grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/getImageInfo?id=" + imageId
                            log.info("[images ${images}] Retrieving from images: " + imageUrl)
                            def imageMetadata = js.parseText(new URL(imageUrl).text)
                            record.multimedia << [
