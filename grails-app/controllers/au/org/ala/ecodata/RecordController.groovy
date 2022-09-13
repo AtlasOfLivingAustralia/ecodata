@@ -556,8 +556,8 @@ class RecordController {
     }
 
     private def setResponseHeadersForRecord(response, record) {
-        response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
-        response.addHeader("location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
+        response.addHeader("content-location", grailsApplication.config.getProperty('grails.serverURL') + "/record/" + record.occurrenceID)
+        response.addHeader("location", grailsApplication.config.getProperty('grails.serverURL') + "/record/" + record.occurrenceID)
         response.addHeader("entityId", record.id.toString())
     }
 

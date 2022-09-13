@@ -648,7 +648,7 @@ class PermissionService {
 
         int batchSize = 500
 
-        String url = grailsApplication.config.userDetails.admin.url
+        String url = grailsApplication.config.getProperty('userDetails.admin.url')
         url += "/userRole/list?format=json&max=${batchSize}&role="
         roles.each { role ->
             int offset = 0

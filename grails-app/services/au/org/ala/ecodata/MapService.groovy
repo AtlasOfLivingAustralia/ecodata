@@ -669,7 +669,7 @@ class MapService {
 
     def buildStyleForRangeFacet(String field, List terms, String style, String dataStore) {
         int cIndex = 0
-        List colour = grailsApplication.config.geoserver.facetRangeColour
+        List colour = grailsApplication.config.getProperty('geoserver.facetRangeColour', List)
 
         terms?.eachWithIndex { Map term, index ->
             // reuse last colour in array if number of terms exceed number of colours

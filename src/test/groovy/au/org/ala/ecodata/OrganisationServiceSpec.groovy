@@ -14,15 +14,16 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
     def emailService = Mock(EmailService)
 
     def setup() {
-
+        grailsApplication.config.collectory.collectoryIntegrationEnabled = true
+        grailsApplication.config.ecodata.support.email.address = 'test@test.com'
         service.commonService = new CommonService()
         service.commonService.grailsApplication = grailsApplication
         service.collectoryService = collectoryService
         service.userService = stubbedUserService
         service.permissionService = mockedPermissionService
         service.emailService = emailService
-        service.grailsApplication = [config: [collectory:[collectoryIntegrationEnabled:true],
-                                              ecodata:[support:[email:[address:'test@test.com']]]]]
+        service.grailsApplication = grailsApplication
+
     }
 
     def cleanup() {
