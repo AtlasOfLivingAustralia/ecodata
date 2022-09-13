@@ -2,6 +2,7 @@
 var ActivityFormViewModel = function (act, model) {
     var self = this;
     self.name = ko.observable(act.name);
+    self.description = ko.observable(act.description);
     self.type = ko.observable(act.type);
     self.sections = ko.observableArray($.map(act.sections || [], function (formSection) {
         return new FormSection(formSection, self);
@@ -85,6 +86,7 @@ var ActivityFormViewModel = function (act, model) {
 var FormSection = function (formSection, parent) {
     var self = this;
     self.name = ko.observable(formSection.name);
+    self.description = ko.observable(formSection.description);
     self.optionalQuestionText = ko.observable(formSection.optionalQuestionText);
     self.optional = ko.observable(formSection.optional);
     self.collapsedByDefault = ko.observable(formSection.collapsedByDefault);

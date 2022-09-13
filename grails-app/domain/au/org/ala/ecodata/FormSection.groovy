@@ -11,11 +11,13 @@ class FormSection {
         title nullable: true
         modelName nullable: true
         optionalQuestionText nullable: true
+        description nullable: true
     }
 
     String name
     String title
     String modelName
+    String description
 
     /**
      * Deprecated but required for compatibility with the old API which retrieves the form template
