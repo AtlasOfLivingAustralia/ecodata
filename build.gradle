@@ -88,7 +88,7 @@ dependencies {
     implementation "org.grails:grails-plugin-codecs"
     implementation "org.grails.plugins:mongodb:$gormMongoVersion"
     // Without this override, 4.6.0 is being included which fails
-    implementation "org.mongodb:bson:4.3.0"
+    //implementation "org.mongodb:bson:4.3.0"
     implementation "org.grails.plugins:gorm-graphql-plugin:2.0.0"
     // Without this override, 18.1 is being included which is not compatible with the graphql-plugin
     implementation "com.graphql-java:graphql-java:14.0"
