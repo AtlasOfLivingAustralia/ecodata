@@ -190,6 +190,10 @@
                         <div class="col-md-9">
                             <input type="text" class="form-control" data-bind="value:description">
                         </div>
+                        <label class="col-md-3 col-form-label">collapsibleHeading</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value:collapsibleHeading">
+                        </div>
                     </div>
 
                     <div class="row">

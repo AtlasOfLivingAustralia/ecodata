@@ -90,6 +90,7 @@ var FormSection = function (formSection, parent) {
     self.optionalQuestionText = ko.observable(formSection.optionalQuestionText);
     self.optional = ko.observable(formSection.optional);
     self.collapsedByDefault = ko.observable(formSection.collapsedByDefault);
+    self.collapsibleHeading = ko.observable(formSection.collapsibleHeading);
     var templateName = formSection.templateName || (parent.name() + '_' + self.name());
     self.templateName = ko.observable(templateName);
 
