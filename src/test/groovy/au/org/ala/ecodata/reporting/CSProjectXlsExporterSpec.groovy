@@ -113,10 +113,6 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
                 plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId).save()
         new Record(occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
                 projectActivityId: paId).save(flush: true)
-        new Record(occurrenceID: 'occurs124', projectId: projectId, activityId:'abc123', scientificName:'name 2', decimalLatitude:10.0, decimalLongitude: 10.0,
-                projectActivityId: paId).save(flush: true)
-        new Record(occurrenceID: 'occurs125', projectId: projectId, activityId:'abc123', scientificName:'name 3', decimalLatitude:10.0, decimalLongitude: 10.0,
-                projectActivityId: paId).save(flush: true)
         projectService.get(projectId) >> project
         projectActivityService.getAllByProject(projectId, ProjectActivityService.ALL) >> [pa]
         projectActivityService.listRestrictedProjectActivityIds(_, _) >> []
@@ -139,13 +135,9 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         activityHeaders == csProjectXlsExporter.surveyHeaders.subList(0, 7)
         activityHeaders.contains('Site IDs') == false
         Sheet recordsSheet = workbook.getSheet('DwC Records')
-        recordsSheet.physicalNumberOfRows == 4
+        recordsSheet.physicalNumberOfRows == 2
         List recordRow1 =  ExportTestUtils.readRow(1, recordsSheet)
-        recordRow1[0] in ['occurs123','occurs124','occurs125']
-        List recordRow2 =  ExportTestUtils.readRow(2, recordsSheet)
-        recordRow2[0] in ['occurs123','occurs124','occurs125']
-        List recordRow3 =  ExportTestUtils.readRow(3, recordsSheet)
-        recordRow3[0] in ['occurs123','occurs124','occurs125']
+        recordRow1[0] == 'occurs123'
     }
 
 
