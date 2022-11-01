@@ -74,7 +74,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         csProjectXlsExporter.projectService = projectService
         csProjectXlsExporter.siteService = siteService
         csProjectXlsExporter.activityService = activityService
-        csProjectXlsExporter.recordService = grailsApplication.mainContext.getBean("recordService")
+        csProjectXlsExporter.recordService = recordService
         csProjectXlsExporter.recordService.grailsApplication = grailsApplication
         csProjectXlsExporter.userService = userService
         csProjectXlsExporter.permissionService = permissionService
@@ -111,7 +111,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         ActivityForm activityForm = form()
         Activity activity = new Activity(activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
                 plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId).save()
-        new Record(occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
+        Record record = new Record(occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
                 projectActivityId: paId).save(flush: true)
         projectService.get(projectId) >> project
         projectActivityService.getAllByProject(projectId, ProjectActivityService.ALL) >> [pa]
@@ -119,6 +119,8 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         activityService.toMap(_, []) >> [activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
                                                  plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId, outputs:[[name: "test", data: ['item1': 1], name: "test", outputId: "abc"]]]
         activityFormService.findActivityForm(pa.pActivityFormName) >> activityForm
+        recordService.list(_) >> [total: 1, list: [[occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
+                                                    projectActivityId: paId]]]
 
         when:
         csProjectXlsExporter.export(projectId, activities)
