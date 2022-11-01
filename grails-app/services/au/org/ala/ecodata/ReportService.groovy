@@ -1,13 +1,16 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.Score
 import au.org.ala.ecodata.reporting.*
 import au.org.ala.web.AuthService
 import groovy.util.logging.Slf4j
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.action.search.SearchScrollRequest
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.search.SearchHit
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
-
 /**
  * The ReportService aggregates and returns output scores.
  * It is also responsible for managing Reports submitted by users.
@@ -57,7 +60,7 @@ class ReportService {
             metadata.distinctProjects.add(project.projectId)
             aggregator.aggregate(project)
         }
-        queryPaginated(filters, searchTerm, aggregateProjects, index)
+        queryPaginatedWithScrollApi(filters, searchTerm, aggregateProjects, index)
 
         AggregationResult allResults = aggregator.result()
 
@@ -80,6 +83,21 @@ class ReportService {
 
             results  = elasticSearchService.search(searchTerm, params, index)
         }
+    }
+
+    private void queryPaginatedWithScrollApi(List filters, String searchTerm, Closure action, String index = HOMEPAGE_INDEX) {
+        Map params = [offset:0, max:20, fq:filters]
+
+        SearchResponse results = elasticSearchService.search(searchTerm, params, index, [:], true)
+        while (results.getHits().getHits().length != 0) {
+            for (SearchHit hit : results.getHits().getHits()) {
+                Map result = hit.sourceAsMap
+                action(result)
+            }
+
+            results = elasticSearchService.client.scroll(new SearchScrollRequest(results.getScrollId()).scroll(new TimeValue(60000)), RequestOptions.DEFAULT)
+        }
+
     }
 
     private void queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action) {

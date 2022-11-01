@@ -138,6 +138,29 @@ class ProjectService {
         [total: list?.totalCount, list: list?.collect { toMap(it, "basic") }]
     }
 
+    def listProjects(Map params) {
+        params = params.clone()
+        Map arrange = params.remove('arrange')
+        def list = Project.createCriteria().list(max: params.max, offset: params.offset) {
+
+            params.searchCriteria?.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+
+            if(arrange?.sort && arrange?.order) {
+                order(arrange.sort, arrange.order)
+            }
+        }
+
+        [total: list?.totalCount, list: list]
+    }
+
 
     /**
      * Converts the domain object into a map of properties, including

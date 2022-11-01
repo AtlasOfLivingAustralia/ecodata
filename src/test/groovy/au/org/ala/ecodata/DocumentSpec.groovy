@@ -26,6 +26,7 @@ import spock.lang.Specification
 class DocumentSpec extends Specification implements DomainUnitTest<Document>, ControllerUnitTest<DocumentController> {
     Closure doWithConfig(){{ config->
         config.app.uploads.url = '/dir1/'
+        config.imagesService.baseURL = 'https://ala.org.au/abc/'
     }}
 
     def "document should create url with host name"() {
@@ -39,5 +40,21 @@ class DocumentSpec extends Specification implements DomainUnitTest<Document>, Co
 
         then:
         url == "https://xyz.com/dir1/2021-04/1.jpeg"
+    }
+
+    def "document should check if it is available on public server" () {
+        when:
+        Document doc = new Document(identifier: "https://ala.org.au/abc/xyz.png", type : Document.DOCUMENT_TYPE_IMAGE, filename: 'abc', filepath: 'xyz')
+
+        then:
+        doc.isImageHostedOnPublicServer() == true
+        doc.getUrl() == doc.identifier
+
+        when:
+        doc = new Document(identifier: "https://example.org",type : Document.DOCUMENT_TYPE_IMAGE, filename: 'abc', filepath: 'xyz')
+
+        then:
+        doc.isImageHostedOnPublicServer() == false
+        doc.getUrl() != doc.identifier
     }
 }

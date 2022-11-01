@@ -537,19 +537,22 @@ class PermissionsController {
     }
 
     /**
-     * Get a list of users with {@link AccessLevel#editor editor} level access or higher
+     * Get a list of users with {@link AccessLevel#projectParticipant projectParticipant} level access or higher
      * for a given {@link Project project} (via {@link Project#projectId projectId})
-     *
+     * @params
+     * id - project id
+     * role - optional - filter list of roles to include
      * @return
      */
     def getMembersForProject() {
         String projectId = params.id
+        List<AccessLevel> roles = params.getList("role")?.collect { AccessLevel.valueOf(it) } ?: [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]
 
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
             if (project) {
-                List members = permissionService.getMembersForProject(projectId)
-                render members as JSON
+                List members = permissionService.getMembersForProject(projectId, roles)
+                render text: members as JSON
             } else {
                 render status: 404, text: "Project not found for projectId: ${projectId}"
             }

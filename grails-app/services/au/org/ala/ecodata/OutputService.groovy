@@ -182,7 +182,7 @@ class OutputService {
      * @param output
      * @param props
      */
-    def createOrUpdateRecordsForOutput(Activity activity, Output output, Map props) {
+    def createOrUpdateRecordsForOutput(Activity activity, Output output, Map props, boolean doNotAlert = false) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
         boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
@@ -205,7 +205,7 @@ class OutputService {
                     if (existingRecord) {
                         existingRecord.status = Status.ACTIVE
                         try {
-                            recordService.updateRecord(existingRecord, record)
+                            recordService.updateRecord(existingRecord, record, [:], doNotAlert)
                             totalRecords++
                         } catch (e) { // Never hide an exception, chain it instead
                             //No need to log here if it is chained, the catcher should do the right thing
@@ -213,7 +213,7 @@ class OutputService {
                         }
                     } else {
                         try {
-                            recordService.createRecord(record)
+                            recordService.createRecord(record, doNotAlert)
                             totalRecords++
                         } catch (e) {
                             throw new IllegalArgumentException("Failed to create record: ${record},\n Original Error: ${e.message}", e)
@@ -339,6 +339,9 @@ class OutputService {
                                 stream = biocollect.openStream()
                                 Map document = documentService.create(it, stream)
                                 it.documentId = document.documentId
+                                // remove reference to biocollect staging area
+                                it.identifier = document.url
+                                documentService.update([identifier: document.url], it.documentId)
                             } catch (MalformedURLException urlException){
                                 def error = [error: "URL invalid/${urlException.getMessage()}"]
                                 log.error error.toString()
@@ -406,5 +409,27 @@ class OutputService {
         } else {
             return []
         }
+    }
+
+    Map list(Map params = [arrange: [sort: 'id', order: 'desc']]) {
+        params = params.clone()
+        Map query = params.remove('query')
+        Map arrange = params.remove('arrange')
+        List outputs = Output.createCriteria().list () {
+            query?.each { prop, value ->
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+
+            if (arrange) {
+                order(arrange.sort, arrange.order)
+            }
+        }
+
+        [total: outputs.totalCount, list: outputs]
     }
 }

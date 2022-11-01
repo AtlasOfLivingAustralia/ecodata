@@ -219,6 +219,28 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
+    Map list(Map params = [max : 20, offset: 0, arrange: [sort: 'id', order: 'desc']]) {
+        params = params.clone()
+        Map query = params.remove('query')
+        Map arrange = params.remove('arrange')
+        List activities = Activity.createCriteria().list (params) {
+            query?.each { prop, value ->
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+
+            if (arrange) {
+                order(arrange.sort, arrange.order)
+            }
+        }
+
+        [total: activities.totalCount, list: activities]
+    }
+
     /**
      * Count activity by project activity
      * @param pActivityId Project Activity identifier
