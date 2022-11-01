@@ -549,7 +549,7 @@ class RecordService {
             order(params.sort, params.order)
         }
 
-        [total: list?.totalCount, list: list]
+        [total: list?.totalCount, list: list?.collect { toMap(it) }]
     }
 
     /**

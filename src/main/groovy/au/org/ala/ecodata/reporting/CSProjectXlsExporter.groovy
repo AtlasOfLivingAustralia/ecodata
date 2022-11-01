@@ -420,7 +420,7 @@ class CSProjectXlsExporter extends ProjectExporter {
                 // need to differentiate between an empty set of activity ids (which means don't export any activities),
                 // and a null value (which means export all activities).
                 if (!restrictedSurveys.contains(it.projectActivityId) && (activityIds == null || activityIds.contains(it.activityId))) {
-                    recordSheet.add([recordService.toMap(it)], properties, recordSheet.sheet.lastRowNum + 1)
+                    recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
                 }
             }
 

@@ -202,12 +202,12 @@ class OutputServiceSpec extends Specification {
         outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
 
         then:
-        1 * outputService.recordService.createRecord(_) >> { argument ->
-            assert argument.activityId[0] == "activity1"
-            assert argument.outputId[0] == "output1"
-            assert argument.projectActivityId[0] == "projAct1"
-            assert argument.projectId[0] == "project1"
-            assert argument.userId[0] == "user1"
+        1 * outputService.recordService.createRecord(_,_) >> { Map argument, boolean doNotAlert ->
+            assert argument.activityId == "activity1"
+            assert argument.outputId == "output1"
+            assert argument.projectActivityId == "projAct1"
+            assert argument.projectId == "project1"
+            assert argument.userId == "user1"
 
             null
         }
@@ -437,58 +437,58 @@ class OutputServiceSpec extends Specification {
         outputService.createOrUpdateRecordsForOutput(activity, output, properties)
 
         then: "4 records will be created 1 general, 3 for each row. row records reuse information from the general record"
-        4 * outputService.recordService.createRecord(_) >> { argument ->
+        4 * outputService.recordService.createRecord(_, _) >> { Map argument, boolean doNotAlert ->
 
             //Let's cover the basics
-            assert argument.activityId[0] == "activity1"
-            assert argument.outputId[0] == "output1"
-            assert argument.projectActivityId[0] == "projAct1"
-            assert argument.projectId[0] == "project1"
-            assert argument.userId[0] == "user1"
+            assert argument.activityId == "activity1"
+            assert argument.outputId == "output1"
+            assert argument.projectActivityId == "projAct1"
+            assert argument.projectId == "project1"
+            assert argument.userId == "user1"
 
             // Still common but we need to ensure they comply
-            assert argument?.json[0] == null
-            assert argument.decimalLatitude[0] == -41.0
-            assert argument.decimalLongitude[0] == 146.0
+            assert argument?.json == null
+            assert argument.decimalLatitude == -41.0
+            assert argument.decimalLongitude == 146.0
 
 
-            switch (argument.individualCount[0]) {
+            switch (argument.individualCount) {
                 case '1':
                     // And then the particular information
-                    assert argument.scientificName[0] == "Tigrana"
-                    assert argument.multimedia.filename[0][0] == "1.png"
-                    assert argument.individualCount[0] == '1'
-                    assert argument.sex[0] == 'Male'
-                    assert argument.notes[0] == 'Single Species Sighting Comment'
+                    assert argument.scientificName == "Tigrana"
+                    assert argument.multimedia.filename[0] == "1.png"
+                    assert argument.individualCount == '1'
+                    assert argument.sex == 'Male'
+                    assert argument.notes == 'Single Species Sighting Comment'
 
                     break;
 
                 case '2':
 
                     // And then the particular information
-                    assert argument.scientificName[0] == "Abcandonopsis Karanovic, 2004"
-                    assert argument.multimedia.filename[0][0] == "2.png"
-                    assert argument.individualCount[0] == '2'
-                    assert argument.sex[0] == 'Female'
-                    assert argument.notes[0] == 'More Species Sightings First'
+                    assert argument.scientificName == "Abcandonopsis Karanovic, 2004"
+                    assert argument.multimedia.filename[0] == "2.png"
+                    assert argument.individualCount == '2'
+                    assert argument.sex == 'Female'
+                    assert argument.notes == 'More Species Sightings First'
                     break
 
                 case '3':
-                    assert argument.scientificName[0] == "Sida sp. B (C.Dunlop 1739)"
+                    assert argument.scientificName == "Sida sp. B (C.Dunlop 1739)"
                     //Missing elements from a row are null rather than inheriting the general data
-                    assert argument.multimedia[0] == null
+                    assert argument.multimedia == null
 
-                    assert argument.individualCount[0] == '3'
-                    assert argument.sex[0] == 'Male and female'
-                    assert argument.notes[0] == 'More Species Sightings Second'
+                    assert argument.individualCount == '3'
+                    assert argument.sex == 'Male and female'
+                    assert argument.notes == 'More Species Sightings Second'
                     break
 
                 case '4':
-                    assert argument.scientificName[0] == "Deflexula pacifica"
-                    assert argument.multimedia.filename[0][0] == "4.png"
-                    assert argument.individualCount[0] == '4'
-                    assert argument.sex[0] == 'Unknown'
-                    assert argument.notes[0] == 'More Species Sightings Third'
+                    assert argument.scientificName == "Deflexula pacifica"
+                    assert argument.multimedia.filename[0] == "4.png"
+                    assert argument.individualCount == '4'
+                    assert argument.sex == 'Unknown'
+                    assert argument.notes == 'More Species Sightings Third'
                     break;
 
                 default:
@@ -621,22 +621,22 @@ class OutputServiceSpec extends Specification {
         outputService.createOrUpdateRecordsForOutput(activity, output, properties)
 
         then: "1 records will be created, the one row with output species info."
-        1 * outputService.recordService.createRecord(_) >> { argument ->
+        1 * outputService.recordService.createRecord(_, _) >> { Map argument, boolean doNotAlert ->
 
             //Inherited values
-            assert argument.activityId[0] == "activity1"
-            assert argument.outputId[0] == "output1"
-            assert argument.projectActivityId[0] == "projAct1"
-            assert argument.projectId[0] == "project1"
-            assert argument.userId[0] == "user1"
+            assert argument.activityId == "activity1"
+            assert argument.outputId == "output1"
+            assert argument.projectActivityId == "projAct1"
+            assert argument.projectId == "project1"
+            assert argument.userId == "user1"
 
             // Particular values, including species information
-            assert argument.outputSpeciesId[0] == '40557c84-968e-4f44-851e-44a0395b115c'
+            assert argument.outputSpeciesId == '40557c84-968e-4f44-851e-44a0395b115c'
 
-            assert argument.scientificName[0] == "Phocarctos hookeri"
-            assert argument.individualCount[0] == '3'
-            assert argument.sex[0] == 'Male'
-            assert argument.occurrenceRemarks[0] == 'Notes go here'
+            assert argument.scientificName == "Phocarctos hookeri"
+            assert argument.individualCount == '3'
+            assert argument.sex == 'Male'
+            assert argument.occurrenceRemarks == 'Notes go here'
 
             null
         }

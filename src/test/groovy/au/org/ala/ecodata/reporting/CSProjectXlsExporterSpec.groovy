@@ -111,12 +111,12 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         ActivityForm activityForm = form()
         Activity activity = new Activity(activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
                 plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId).save()
-        Record record = new Record(occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
-                projectActivityId: paId).save()
-        record = new Record(occurrenceID: 'occurs124', projectId: projectId, activityId:'abc123', scientificName:'name 2', decimalLatitude:10.0, decimalLongitude: 10.0,
-                projectActivityId: paId).save()
-        record = new Record(occurrenceID: 'occurs125', projectId: projectId, activityId:'abc123', scientificName:'name 3', decimalLatitude:10.0, decimalLongitude: 10.0,
-                projectActivityId: paId).save()
+        new Record(occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
+                projectActivityId: paId).save(flush: true)
+        new Record(occurrenceID: 'occurs124', projectId: projectId, activityId:'abc123', scientificName:'name 2', decimalLatitude:10.0, decimalLongitude: 10.0,
+                projectActivityId: paId).save(flush: true)
+        new Record(occurrenceID: 'occurs125', projectId: projectId, activityId:'abc123', scientificName:'name 3', decimalLatitude:10.0, decimalLongitude: 10.0,
+                projectActivityId: paId).save(flush: true)
         projectService.get(projectId) >> project
         projectActivityService.getAllByProject(projectId, ProjectActivityService.ALL) >> [pa]
         projectActivityService.listRestrictedProjectActivityIds(_, _) >> []
