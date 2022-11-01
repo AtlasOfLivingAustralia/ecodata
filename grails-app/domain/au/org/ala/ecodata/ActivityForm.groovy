@@ -9,7 +9,7 @@ import org.bson.types.ObjectId
 class ActivityForm {
 
     /** The list of properties to be used when binding request data to an ActivityForm */
-    static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections']
+    static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections', 'description']
 
     static mapWith = "mongo"
 
@@ -24,6 +24,7 @@ class ActivityForm {
         createdUserId nullable: true
         lastUpdatedUserId nullable: true
         minOptionalSectionsCompleted nullable: true
+        description nullable: true
     }
 
     static mapping = {
@@ -36,6 +37,9 @@ class ActivityForm {
 
     /** A unique name for this activity form */
     String name
+
+    /** A description for this activity form */
+    String description
 
     /** The purpose of this form - e.g. report, assessment */
     String type
