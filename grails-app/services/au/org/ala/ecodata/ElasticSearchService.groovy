@@ -15,7 +15,6 @@
 
 package au.org.ala.ecodata
 
-
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -45,6 +44,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.geo.builders.CoordinatesBuilder
 import org.elasticsearch.common.geo.builders.PolygonBuilder
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
@@ -597,7 +597,7 @@ class ElasticSearchService {
                 Map document = documentService.getByStatus(docId)
 
                 document = prepareDocumentForIndexing(document)
-                indexDoc(document, DEFAULT_INDEX)
+                document ? indexDoc(document, DEFAULT_INDEX) : null
                 break
 
             case Organisation.class.name:
@@ -763,6 +763,7 @@ class ElasticSearchService {
      */
     def indexAll() {
         log.debug "Clearing the unused index first"
+        indexManager.setMapping(mapping.mappings)
 
         Map newIndexes = indexManager.recreateUnusedIndexes()
 
@@ -1053,7 +1054,7 @@ class ElasticSearchService {
             projectActivity.name = pActivity?.name ?: pActivity?.description
             projectActivity.endDate = pActivity.endDate
             projectActivity.projectActivityId = pActivity.projectActivityId
-            projectActivity.embargoed = (activity.embargoed == true) || (pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date()))
+            projectActivity.embargoed = (activity.embargoed == true) || projectActivityService.isProjectActivityEmbargoed(pActivity)
             projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: null
             projectActivity.methodType = pActivity?.methodType
             projectActivity.spatialAccuracy = pActivity?.spatialAccuracy
@@ -1094,6 +1095,12 @@ class ElasticSearchService {
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
+
+                if (it.dateCreated) {
+                    values.dateCreatedMonth = new SimpleDateFormat("MMMM").format(it.dateCreated)
+                    values.dateCreatedYear = new SimpleDateFormat("yyyy").format(it.dateCreated)
+                }
+
                 records << values
 
                 if (!activity.activityId) {
@@ -1106,6 +1113,14 @@ class ElasticSearchService {
             if (activity?.lastUpdated) {
                 projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
                 projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+                // add updated year & month to activity
+                activity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
+                activity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+            }
+
+            if (activity.dateCreated) {
+                activity.dateCreatedMonth = new SimpleDateFormat("MMMM").format(activity.dateCreated)
+                activity.dateCreatedYear = new SimpleDateFormat("yyyy").format(activity.dateCreated)
             }
 
             if(eventDate){
@@ -1307,11 +1322,14 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean scrollApi = false) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
         SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria)
+        if (scrollApi) {
+            request.scroll(new TimeValue(60000))
+        }
         client.search(request, RequestOptions.DEFAULT)
     }
 

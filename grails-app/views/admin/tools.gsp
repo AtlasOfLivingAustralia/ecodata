@@ -112,6 +112,16 @@
                     e.preventDefault();
                     $('form.createDataDescription').submit();
                 });
+
+                $('#btnRegenerateBioCollectRecords').click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'admin', action:'regenerateRecordsForALAHarvestableProjects')}").done(function(result) {
+                        alert(result);
+                        document.location.reload();
+                    }).fail(function (result) {
+                        alert(result);
+                    });
+                });
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -215,6 +225,16 @@
                         <div><input id="createDataDescription" type="file" name="descriptionData"/></div>
                     </g:uploadForm>
 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnRegenerateBioCollectRecords" class="btn btn-small btn-info" title="Regenerate BioCollect records.">Regenerate BioCollect records</button>
+                </td>
+                <td>
+                    Regenerate BioCollect records updates created Darwin Core Records with current record creation logic.
+                    Use this to update properties of DwC records if a new property is added or tranformation logic for a property has changed.<br>
+                    <b>Note: THIS WILL TAKE A LONG TIME. MUST RUN DURING LOW USAGE.</b>
                 </td>
             </tr>
             </tbody>

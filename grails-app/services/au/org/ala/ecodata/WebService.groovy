@@ -51,6 +51,24 @@ class WebService {
         }
     }
 
+    def getStream(String url, boolean includeUserId) {
+        def conn = null
+        try {
+            conn = configureConnection(url, includeUserId)
+            return conn.inputStream
+        } catch (SocketTimeoutException e) {
+            def error = [error: "Timed out calling web service. URL= ${url}."]
+            log.error error.toString(), e
+            return error
+        } catch (Exception e) {
+            def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}.",
+                         statusCode: conn?.responseCode?:"",
+                         detail: conn?.errorStream?.text]
+            log.error error.toString(), e
+            return error
+        }
+    }
+
     private int defaultTimeout() {
         grailsApplication.config.webservice.readTimeout as int
     }
@@ -63,7 +81,7 @@ class WebService {
         conn.setReadTimeout(readTimeout)
 
         if (includeUserId) {
-            def user = getUserService().getUser()
+            def user = getUserService().currentUser()
             if (user) {
                 conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
             }

@@ -88,7 +88,11 @@ class Document {
     }
 
     boolean isPubliclyViewable() {
-        this['public'] || role in PUBLIC_ROLES || (hosted == ALA_IMAGE_SERVER)
+        this['public'] || role in PUBLIC_ROLES || isImageHostedOnPublicServer()
+    }
+
+    boolean isImageHostedOnPublicServer(){
+        identifier?.startsWith(Holders.config.imagesService.baseURL)
     }
 
     def getUrl() {
@@ -100,7 +104,7 @@ class Document {
     def getThumbnailUrl() {
         if (isImage()) {
 
-            if(hosted == ALA_IMAGE_SERVER){
+            if(isImageHostedOnPublicServer()) {
                 return identifier
             }
 
@@ -123,7 +127,7 @@ class Document {
             return ''
         }
 
-        if(hosted == ALA_IMAGE_SERVER){
+        if (isImageHostedOnPublicServer()) {
             return identifier
         }
 

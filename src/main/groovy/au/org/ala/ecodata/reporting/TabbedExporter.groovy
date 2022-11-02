@@ -2,8 +2,10 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputDataGetter
+import au.org.ala.ecodata.metadata.OutputDateGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import au.org.ala.ecodata.metadata.OutputNumberGetter
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -31,6 +33,8 @@ class TabbedExporter {
     XlsExporter exporter
     Map<String, Object> documentMap
     TimeZone timeZone
+    Boolean useDateGetter = false
+    Boolean useNumberGetter = false
     // These fields map full activity names to shortened names that are compatible with Excel tabs.
     protected Map<String, String> activitySheetNames = [:]
     protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
@@ -213,6 +217,20 @@ class TabbedExporter {
                                 getter:new OutputDataGetter(constraintPath, dataNode, documentMap, timeZone)]
                         fieldConfiguration << field
                     }
+                }
+                else if ((dataNode.dataType == 'date') && useDateGetter) {
+                    field += [
+                            header:outputMetadata.getLabel(viewNode, dataNode),
+                            property:propertyPath,
+                            getter:new OutputDateGetter(propertyPath, dataNode, documentMap, timeZone)]
+                    fieldConfiguration << field
+                }
+                else if ((dataNode.dataType in ['number', 'integer']) && useNumberGetter) {
+                    field += [
+                            header:outputMetadata.getLabel(viewNode, dataNode),
+                            property:propertyPath,
+                            getter:new OutputNumberGetter(propertyPath, dataNode, documentMap, timeZone)]
+                    fieldConfiguration << field
                 }
                 else {
                     field += [

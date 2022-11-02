@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.com.bytecode.opencsv.CSVWriter
 import au.org.ala.web.AuthService
 import grails.converters.JSON
+import grails.util.Holders
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringEscapeUtils
@@ -20,11 +21,13 @@ import org.joda.time.format.ISODateTimeFormat
 
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
+import static grails.async.Promises.task
 
 /**
  * Services for handling the creation of records with images.
  */
 class RecordService {
+    private static final Object LOCK_1 = new Object() {};
     static transactional = false
 
     def grailsApplication
@@ -196,9 +199,9 @@ class RecordService {
      * @param json
      * @return
      */
-    def createRecord(json) {
+    def createRecord(json, boolean doNotAlert = false) {
         Record record = new Record().save(true)
-        updateRecord(record, json)
+        updateRecord(record, json, [:], doNotAlert)
         record
     }
 
@@ -262,9 +265,9 @@ class RecordService {
      * @param json
      * @param fileMap
      */
-    def createRecordWithImages(json, fileMap) {
+    def createRecordWithImages(json, fileMap, boolean doNotAlert = false) {
         Record record = new Record().save(true)
-        def errors = updateRecord(record, json, fileMap)
+        def errors = updateRecord(record, json, fileMap, doNotAlert)
         [record, errors]
     }
 
@@ -311,10 +314,12 @@ class RecordService {
      *
      * @throws Exception in case of a validation failure or any unexpected system exception
      */
-    private void updateRecord(Record record, json, Map imageMap = [:]) {
+    private void updateRecord(Record record, json, Map imageMap = [:], boolean doNotAlert = false) {
 
         def userDetails = userService.getCurrentUserDetails()
-        if (!userDetails && json.userId) {
+        // Always ownership of record to user id in the properties. It is now possible for Administrators to regenerate records for the whole project.
+        // This prevents ownership being assigned to them.
+        if (json.userId) {
             userDetails = authService.getUserForUserId(json.userId)
         }
 
@@ -394,17 +399,27 @@ class RecordService {
                         log.debug "Uploading imageMetadata - ${image.identifier}"
                         def downloadedFile = download(record.occurrenceID, idx, image.identifier)
                         def imageId = uploadImage(record, downloadedFile, image)
-                        record.multimedia[idx].imageId = imageId
-                        record.multimedia[idx].identifier = getImageUrl(imageId)
-                        document.imageId = imageId
-                        documentService.update(document, document.documentId)
+                        if (imageId) {
+                            // successfully uploaded image to server
+                            record.multimedia[idx].imageId = imageId
+                            record.multimedia[idx].identifier = getImageUrl(imageId)
+                            document.imageId = imageId
+                            documentService.update(document, document.documentId)
+                        }
+                        else {
+                            // use document
+                            record.multimedia[idx].identifier = document.url
+                        }
 
                     } else {
                         alreadyLoaded = true
                         //re-use the existing imageId rather than upload again
-                        log.debug "Image already uploaded - ${image.imageId}"
-                        record.multimedia[idx].imageId = image.imageId
-                        record.multimedia[idx].identifier = image.identifier
+                        log.debug "Image already uploaded - ${document.imageId}"
+                        record.multimedia[idx].imageId = document.imageId
+                        record.multimedia[idx].identifier = getImageUrl(document.imageId)
+                        if (record.multimedia[idx].identifier != document.identifier) {
+                            documentService.update([identifier: record.multimedia[idx].identifier], document.documentId)
+                        }
                     }
 
                     setDCTerms(image, record.multimedia[idx])
@@ -437,7 +452,8 @@ class RecordService {
             }
         }
         record.save(flush: true)
-        recordAlertService.alertSubscribers(record)
+        // we do not want to alert users every time admin regenerates records
+        !doNotAlert && recordAlertService.alertSubscribers(record)
     }
 
     String toStringIsoDateTime(def date) {
@@ -514,7 +530,23 @@ class RecordService {
                 eq "status", params.status
                 not { 'in' "projectActivityId", restrictedProjectActivities }
             }
-            //order(params.sort, params.order)
+            order(params.sort, params.order)
+        }
+
+        [total: list?.totalCount, list: list?.collect { toMap(it) }]
+    }
+
+    def list(Map params) {
+        def list = Record.createCriteria().list(max: params.max, offset: params.offset) {
+            params.query?.each { prop, value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                } else {
+                    eq(prop, value)
+                }
+            }
+            order(params.sort, params.order)
         }
 
         [total: list?.totalCount, list: list?.collect { toMap(it) }]
@@ -941,5 +973,134 @@ class RecordService {
         }
 
         return grailsApplication.config.license.default;
+    }
+
+    /**
+     * regenerate records for all BioCollect projects
+     * @return
+     */
+    def regenerateRecordsForBioCollectProjects() {
+        task {
+            // prevent simultaneous record generation when clicked multiple times.
+            synchronized (LOCK_1) {
+                Project.withNewSession { session ->
+                    int projectMax = Holders.grailsApplication.config?.getProperty('records.project.max', Integer, 20)
+                    def pagination = [
+                            max   : projectMax,
+                            offset: 700,
+                            arrange: [
+                                    order : 'desc',
+                                    sort  : 'lastUpdated'
+                            ],
+                            searchCriteria: [
+                                    isMERIT: false,
+                                    isExternal: false,
+                                    status: [ACTIVE]
+                            ]
+                    ]
+
+                    int counter = 1
+                    def projects = projectService.listProjects(pagination)
+                    int total = projects.total
+                    while (projects?.list) {
+                        projects.list.each { Project project ->
+                            log.info("Starting project ${project.name} ${project.projectId} number ${counter++} of ${total}")
+                            regenerateRecordsForProject(project)
+                        }
+
+                        session.clear()
+                        pagination.offset += pagination.max
+                        projects = projectService.listProjects(pagination)
+                    }
+                }
+            }
+        }
+        .onComplete {
+            log.info("Record regeneration task completed")
+        }
+        .onError { Throwable error ->
+            log.info("Record regeneration task stopped with an error", error)
+        }
+    }
+
+    /**
+     * Update or create darwin core records for activities in a project.
+     * @param project
+     * @param counter
+     * @param total
+     * @param session
+     * @return
+     */
+    public void regenerateRecordsForProject(def project) {
+        String projectId = project.projectId
+        int activityMax = Holders.grailsApplication.config?.getProperty('records.activity.max', Integer, 20)
+        Map activityParams = [
+                max    : activityMax,
+                offset : 0,
+                query  : [
+                        projectId: projectId,
+                        status   : [ACTIVE]
+                ],
+                arrange: [sort: 'id', order: 'desc']
+        ]
+
+        Map activities = activityService.list(activityParams)
+
+        while (activities?.list) {
+            activities?.list?.parallelStream().forEach({ Activity activity ->
+                regenerateRecordsForActivity(activity)
+            })
+
+            if (activityParams.offset % 100 == 0) {
+                log.info("Fetching activities from offset ${activityParams.offset} of project ${project.name} ${project.projectId} ")
+                Activity.withSession { session -> session.clear() }
+            }
+
+            activityParams.offset += activityParams.max
+            activities = activityService.list(activityParams)
+        }
+    }
+
+    /**
+     * Update or create darwin core records for species in an activity.
+     * @param activity
+     * @return
+     */
+    public void regenerateRecordsForActivity(Activity activity) {
+        String activityId = activity.activityId
+        Output.withNewSession { outputSession ->
+            Map params = [query: [activityId: activityId]]
+            Map outputs = outputService.list(params)
+
+            outputs?.list?.each { Output output ->
+                try {
+                    regenerateRecordsForOutput(output, activity, true)
+                }
+                catch (Exception e) {
+                    log.error("Exception during processing of output - ${output?.outputId}", e)
+                }
+            }
+        }
+    }
+
+    /**
+     * Update or create darwin core records for species in an output.
+     * @param output
+     * @param activity
+     */
+    public void regenerateRecordsForOutput(Output output, Activity activity, boolean doNotAlert = false) {
+        String outputId = output?.outputId
+        Map props = outputService.toMap(output)
+        outputService.createOrUpdateRecordsForOutput(activity, output, props, doNotAlert)
+
+        // The createOrUpdateRecordsForOutput method can assign outputSpeciesIds so we need to check if
+        // the output has changed.
+        Map before = null
+        Output.withNewSession {
+            before = outputService.toMap(Output.findByOutputId(outputId))
+        }
+        if (props != before) {
+            commonService.updateProperties(output, props)
+        }
     }
 }

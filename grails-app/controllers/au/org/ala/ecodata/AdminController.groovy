@@ -32,6 +32,7 @@ class AdminController {
     EmailService emailService
     HubService hubService
     DataDescriptionService dataDescriptionService
+    RecordService recordService
 
     @AlaSecured("ROLE_ADMIN")
     def index() {}
@@ -583,19 +584,7 @@ class AdminController {
             Output output = Output.findByOutputId(outputId)
             if (output) {
                 Activity activity = Activity.findByActivityId(output.activityId)
-                Map props = outputService.toMap(output)
-                outputService.createOrUpdateRecordsForOutput(activity, output, props)
-
-                // The createOrUpdateRecordsForOutput method can assign outputSpeciesIds so we need to check if
-                // the output has changed.
-                Map before = null
-                Output.withNewSession {
-                    before = outputService.toMap(Output.findByOutputId(outputId))
-                }
-                if (props != before) {
-                    commonService.updateProperties(output, props)
-                }
-
+                recordService.regenerateRecordsForOutput(output, activity)
                 int recordCount = Record.findAllByOutputId(outputId).size()
                 flash.message = "Potentially ${recordCount} records affected"
             } else {
@@ -609,6 +598,21 @@ class AdminController {
 
         render view:'tools'
 
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def regenerateRecordsForALAHarvestableProjects() {
+        def result = [:]
+        try {
+            recordService.regenerateRecordsForBioCollectProjects()
+            result.message = "Submitted regeneration of records"
+        }
+        catch (Exception e) {
+            log.error("An error occurred regenerating records, message: ${e.message}", e)
+            result.message = "An error occurred regenerating records"
+        }
+
+        render text: result as JSON
     }
 
     @AlaSecured("ROLE_ADMIN")
