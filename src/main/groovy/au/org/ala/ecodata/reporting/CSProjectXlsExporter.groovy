@@ -39,7 +39,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Verification status','Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
 
     List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
     List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
@@ -280,6 +280,7 @@ class CSProjectXlsExporter extends ProjectExporter {
                             new ConstantGetter("description", projectActivity.description),
                             new ConstantGetter("status", projectActivity.status),
                             new ConstantGetter("attribution", projectActivity.attribution),
+                            new ConstantGetter("verificationStatus", activity.verificationStatus),
                             generalLatitudeGetter,
                             generalLongitudeGetter,
                             locationCentroidLatitudeGetter,

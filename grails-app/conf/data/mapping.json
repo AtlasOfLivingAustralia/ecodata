@@ -769,10 +769,11 @@
           }
         },
         "verificationStatus": {
-          "type":"string",
-          "fields": {
-            "verificationStatusFacet":{"type":"string", "index":"not_analyzed"}
-          }
+          "type": "keyword",
+          "copy_to": "verificationStatusFacet"
+        },
+        "verificationStatusFacet": {
+          "type":"keyword"
         }
       },
       "dynamic_templates": [
