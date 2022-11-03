@@ -14,6 +14,7 @@ import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.web.json.JSONObject
 
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 
@@ -31,6 +32,7 @@ class SiteService {
     PermissionService permissionService
     ProjectActivityService projectActivityService
     SpatialService spatialService
+    ElasticSearchService elasticSearchService
 
 
     /**
@@ -321,6 +323,10 @@ class SiteService {
             if (canRemoveProject(site, projectId)) {
                 site.projects.remove(projectId)
                 site.save()
+
+                Project project = Project.findByProjectId(projectId)
+                Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
+                elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
 
                 if (deleteOrphans && canDelete(site)) {
                     if (deleteOrphans) {
