@@ -1405,10 +1405,8 @@ class ElasticSearchService {
 
             case 'project':
                 if (projectId) {
-                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId))) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
-                    } else if (userId && permissionService.isUserEditorForProject(userId, projectId)){
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' OR userId:' + userId + ')'
                     } else if (userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                     } else if (!userId) {
