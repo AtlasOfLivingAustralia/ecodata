@@ -219,28 +219,6 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
-    Map list(Map params = [max : 20, offset: 0, arrange: [sort: 'id', order: 'desc']]) {
-        params = params.clone()
-        Map query = params.remove('query')
-        Map arrange = params.remove('arrange')
-        List activities = Activity.createCriteria().list (params) {
-            query?.each { prop, value ->
-                if (value instanceof List) {
-                    inList(prop, value)
-                }
-                else {
-                    eq(prop, value)
-                }
-            }
-
-            if (arrange) {
-                order(arrange.sort, arrange.order)
-            }
-        }
-
-        [total: activities.totalCount, list: activities]
-    }
-
     /**
      * Count activity by project activity
      * @param pActivityId Project Activity identifier
@@ -633,19 +611,24 @@ class ActivityService {
      * @param startDate if supplied will constrain the returned activities to those with 'dateProperty' on or after this date.
      * @param endDate if supplied will constrain the returned activities to those with 'dateProperty' before this date.
      * @param dateProperty the property to use for the date range. (plannedStartDate, plannedEndDate, startDate, endDate)
+     * @param options add pagination and sort options like max, offset, sort and order
      * @return a listbuilof the activities that match the supplied criteria
      */
-    public search(Map searchCriteria, Date startDate, Date endDate, String dateProperty, levelOfDetail = []) {
+    public search(Map searchCriteria, Date startDate, Date endDate, String dateProperty, levelOfDetail = [], options = [:]) {
 
+        def activities = searchAndListActivityDomainObjects(searchCriteria, dateProperty, startDate, endDate, options)
+        activities.collect{toMap(it, levelOfDetail)}
+    }
+
+    public List searchAndListActivityDomainObjects(searchCriteria, String dateProperty, Date startDate, Date endDate, options) {
         def criteria = Activity.createCriteria()
-        def activities = criteria.list {
+        Closure action = {
             ne("status", "deleted")
-            searchCriteria.each { prop,value ->
+            searchCriteria.each { prop, value ->
 
                 if (value instanceof List) {
                     inList(prop, value)
-                }
-                else {
+                } else {
                     eq(prop, value)
                 }
             }
@@ -656,10 +639,8 @@ class ActivityService {
             if (dateProperty && endDate) {
                 lt(dateProperty, endDate)
             }
-
-
         }
-        activities.collect{toMap(it, levelOfDetail)}
+        options ? criteria.list(options, action) : criteria.list(action)
     }
 
     def getAllActivityIdsForProjectActivity(String pActivityId) {

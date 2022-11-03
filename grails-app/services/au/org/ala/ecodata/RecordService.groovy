@@ -987,7 +987,7 @@ class RecordService {
                     int projectMax = Holders.grailsApplication.config?.getProperty('records.project.max', Integer, 20)
                     def pagination = [
                             max   : projectMax,
-                            offset: 700,
+                            offset: 0,
                             arrange: [
                                     order : 'desc',
                                     sort  : 'lastUpdated'
@@ -1037,17 +1037,18 @@ class RecordService {
         Map activityParams = [
                 max    : activityMax,
                 offset : 0,
-                query  : [
-                        projectId: projectId,
-                        status   : [ACTIVE]
-                ],
-                arrange: [sort: 'id', order: 'desc']
+                sort: 'id',
+                order: 'desc'
         ]
 
-        Map activities = activityService.list(activityParams)
+        Map searchCriteria = [
+                projectId: projectId
+        ]
 
-        while (activities?.list) {
-            activities?.list?.parallelStream().forEach({ Activity activity ->
+        List activities = activityService.searchAndListActivityDomainObjects(searchCriteria, null, null, null, activityParams)
+
+        while (activities) {
+            activities?.parallelStream().forEach({ Activity activity ->
                 regenerateRecordsForActivity(activity)
             })
 
@@ -1057,7 +1058,7 @@ class RecordService {
             }
 
             activityParams.offset += activityParams.max
-            activities = activityService.list(activityParams)
+            activities = activityService.searchAndListActivityDomainObjects(searchCriteria, null, null, null, activityParams)
         }
     }
 

@@ -10,8 +10,8 @@ class UpdateProjectActivityStatsJob {
     static triggers = {
         Boolean enabled = grailsApplication.config.getProperty("projectActivity.stats.enabled", Boolean, true)
         if (enabled) {
-//            updates every 24 hours
-            simple(name: "updatePAStats", startDelay: 60 * 1000, repeatInterval: 24 * 60 * 60 * 1000)
+//            updates at 11PM
+            cron name: "11PM", cronExpression: "0 0 23 * * ? *"
         }
     }
 
