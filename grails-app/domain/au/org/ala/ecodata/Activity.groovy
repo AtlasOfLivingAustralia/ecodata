@@ -74,6 +74,10 @@ class Activity {
     Date lastUpdated
     String userId
     Boolean embargoed
+    /**
+     * data quality control
+     */
+    String verificationStatus
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -112,6 +116,7 @@ class Activity {
         userId nullable:true
         embargoed nullable:true
         formVersion nullable: true
+        verificationStatus nullabel: true, inList: ['not applicable', 'not approved', 'not verified', 'under review' , 'approved']
     }
 
 }

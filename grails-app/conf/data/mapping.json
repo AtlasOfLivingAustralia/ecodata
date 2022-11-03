@@ -767,6 +767,13 @@
               "index": false
             }
           }
+        },
+        "verificationStatus": {
+          "type": "keyword",
+          "copy_to": "verificationStatusFacet"
+        },
+        "verificationStatusFacet": {
+          "type":"keyword"
         }
       },
       "dynamic_templates": [
