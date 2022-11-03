@@ -559,7 +559,7 @@ class ElasticSearchService {
                     indexDoc(siteMap, DEFAULT_INDEX)
                 }
 
-                doc.projects?.each { projectId ->
+                doc?.projects?.each { projectId ->
                     def proj = Project.findByProjectId(projectId)
                     Map projectMap = prepareProjectForHomePageIndex(proj)
                     indexDoc(projectMap, HOMEPAGE_INDEX)
