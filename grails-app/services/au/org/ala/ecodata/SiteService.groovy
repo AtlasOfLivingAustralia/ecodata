@@ -11,6 +11,7 @@ import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.core.Session
+import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.web.json.JSONObject
 
@@ -325,8 +326,8 @@ class SiteService {
                 site.save()
 
                 Project project = Project.findByProjectId(projectId)
-                Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
-                elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
+                IndexDocMsg message = new IndexDocMsg(docType: project.class.name, docId: projectId, indexType: EventType.PostUpdate, docIds: [])
+                elasticSearchService.queueIndexingEvent(message)
 
                 if (deleteOrphans && canDelete(site)) {
                     if (deleteOrphans) {
