@@ -2,8 +2,10 @@ package au.org.ala.ecodata.job
 
 import au.org.ala.ecodata.*
 import grails.test.mongodb.MongoSpec
+import grails.util.Holders
 import org.apache.http.HttpStatus
 import org.grails.testing.GrailsUnitTest
+import org.joda.time.DateTimeUtils
 
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
@@ -46,19 +48,19 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
     def "The access expiry job will remove all access for users who have not logged in for a specified amount of time"() {
         setup:
         ZonedDateTime processTime = ZonedDateTime.parse("2021-01-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
-        User user = new User(userId:'u1', userHubs: [new UserHub(hubId:merit.hubId)])
+        List<User> users = (1..18).collect{new User(userId:'u'+it, userHubs: [new UserHub(hubId:merit.hubId)])}
 
         when:
-        job.processInactiveUsers(processTime)
+        int emailsSent = job.processInactiveUsers(processTime, 11)
 
         then:
         1 * hubService.findHubsEligibleForAccessExpiry() >> [merit]
-        1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 100) >> [user]
-        1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 100) >> []
+        1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 11) >> users.subList(0, 10)
+        1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 1) >> []
 
-        1 * permissionService.deleteUserPermissionByUserId(user.userId, merit.hubId) >> [status: HttpStatus.SC_OK]
-        1 * userService.lookupUserDetails(user.userId) >> [email:'test@test.com']
-        1 * emailService.sendTemplatedEmail(
+        10 * permissionService.deleteUserPermissionByUserId(_, merit.hubId) >> [status: HttpStatus.SC_OK]
+        10 * userService.lookupUserDetails(_) >> [email:'test@test.com']
+        10 * emailService.sendTemplatedEmail(
                 'merit',
                 AccessExpiryJob.ACCESS_EXPIRED_EMAIL_KEY+'.subject',
                 AccessExpiryJob.ACCESS_EXPIRED_EMAIL_KEY+'.body',
@@ -67,8 +69,9 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
                 [],
                 merit.emailReplyToAddress,
                 merit.emailFromAddress)
-        user.getUserHub(merit.hubId).accessExpiredDate == Date.from(processTime.toInstant())
-        user.getUserHub(merit.hubId).accessExpired()
+        users.each { it.getUserHub(merit.hubId).accessExpiredDate == Date.from(processTime.toInstant()) }
+        users.each {it.getUserHub(merit.hubId).accessExpired() }
+        emailsSent == 10
     }
 
     def "The access expiry job will send warning emails to users who have not logged in for a specified amount of time"() {
@@ -79,12 +82,12 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         user.save()
 
         when:
-        job.processInactiveUsers(processTime)
+        job.processInactiveUsers(processTime, 10)
 
         then:
         1 * hubService.findHubsEligibleForAccessExpiry() >> [merit]
-        1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 100) >> []
-        1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 100) >> [user]
+        1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 10) >> []
+        1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 10) >> [user]
         0 * permissionService.deleteUserPermissionByUserId(_, _)
 
         1 * userService.lookupUserDetails(user.userId) >> [email:'test@test.com']
@@ -108,7 +111,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         permission.save()
 
         when:
-        job.processExpiredPermissions(processTime)
+        job.processExpiredPermissions(processTime, 10)
 
         then:
         1 * permissionService.findPermissionsByExpiryDate(Date.from(processTime.toInstant())) >> [permission]
@@ -133,13 +136,13 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         user.loginToHub(merit.hubId, DateUtil.parse("2022-01-22T00:00:00Z"))
         user.save()
         ZonedDateTime processTime = ZonedDateTime.parse("2022-03-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         Date monthFromNow = sdf.parse(processTime.plusMonths(1).toString())
         UserPermission permission = new UserPermission(userId:"u1", entityType: Hub.class.name, entityId:'h1', accessLevel: AccessLevel.admin)
         permission.save()
 
         when:
-        job.processWarningPermissions(processTime)
+        job.processWarningPermissions(processTime, 10)
 
         then:
         1 * permissionService.findAllByExpiryDate(monthFromNow) >> [permission]
