@@ -543,6 +543,7 @@ class ElasticSearchService {
             case Project.class.name:
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
+                addYearAndMonthToEntity(doc, projectMap)
                 projectMap["className"] = docType
                 indexHomePage(doc, docType)
                 if(projectMap.siteId){
@@ -658,6 +659,7 @@ class ElasticSearchService {
 
         siteMap.projectList = projects;
         siteMap.surveyList = surveys
+        addYearAndMonthToEntity(siteMap, siteMap)
 
         Document doc = Document.findByRoleAndSiteIdAndType('photoPoint', siteMap.siteId, 'image')
         if (doc) {
@@ -915,6 +917,7 @@ class ElasticSearchService {
         // get list of users of this organisation
         List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
         organisation.users = users;
+        addYearAndMonthToEntity(organisation, organisation)
 
         List meritProjects = Project.findAllByOrganisationIdAndIsMERITAndStatusNotEqual(organisation.organisationId, true, DELETED)
         if (!meritProjects) {
@@ -1096,10 +1099,7 @@ class ElasticSearchService {
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
 
-                if (it.dateCreated) {
-                    values.dateCreatedMonth = new SimpleDateFormat("MMMM").format(it.dateCreated)
-                    values.dateCreatedYear = new SimpleDateFormat("yyyy").format(it.dateCreated)
-                }
+                addYearAndMonthToEntity(it, values)
 
                 records << values
 
@@ -1118,10 +1118,7 @@ class ElasticSearchService {
                 activity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
             }
 
-            if (activity.dateCreated) {
-                activity.dateCreatedMonth = new SimpleDateFormat("MMMM").format(activity.dateCreated)
-                activity.dateCreatedYear = new SimpleDateFormat("yyyy").format(activity.dateCreated)
-            }
+            addYearAndMonthToEntity(activity, activity)
 
             if(eventDate){
                 activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)
@@ -1192,6 +1189,13 @@ class ElasticSearchService {
         activity
     }
 
+    private addYearAndMonthToEntity(entity, mapOfEntity){
+        if (entity.dateCreated) {
+            mapOfEntity.dateCreatedMonth = new SimpleDateFormat("MMMM").format(entity.dateCreated)
+            mapOfEntity.dateCreatedYear = new SimpleDateFormat("yyyy").format(entity.dateCreated)
+        }
+    }
+
     private Map prepareDocumentForIndexing(Map document) {
         if (!document?.projectId)
             return
@@ -1208,6 +1212,7 @@ class ElasticSearchService {
         if (document) {
             // overwrite any project properties that has same name as document properties.
             project.remove('description') // to avoid overwriting of document description by project description
+            addYearAndMonthToEntity(document, document)
             project.putAll(document)
             document = project
 
