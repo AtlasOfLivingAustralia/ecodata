@@ -33,6 +33,7 @@ class AdminController {
     HubService hubService
     DataDescriptionService dataDescriptionService
     RecordService recordService
+    ProjectActivityService projectActivityService
 
     @AlaSecured("ROLE_ADMIN")
     def index() {}
@@ -682,6 +683,19 @@ class AdminController {
                 userService: userService,
                 hubService: hubService,
                 emailService: emailService).execute()
+        render text: [message: 'ok'] as JSON
+    }
+
+    /**
+     * Administrative interface to trigger the project activity stats update.
+     */
+    @AlaSecured("ROLE_ADMIN")
+    def triggerProjectActivityStatsUpdate() {
+        new UpdateProjectActivityStatsJob(
+                projectActivityService: projectActivityService,
+                cacheService: cacheService,
+                grailsApplication: grailsApplication,
+                ).execute()
         render 'ok'
     }
 

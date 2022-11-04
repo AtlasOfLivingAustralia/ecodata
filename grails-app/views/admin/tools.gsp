@@ -122,6 +122,16 @@
                         alert(result);
                     });
                 });
+
+                $('#btnUpdateStats').click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'admin', action:'triggerProjectActivityStatsUpdate')}").done(function(result) {
+                        alert(result);
+                        document.location.reload();
+                    }).fail(function (result) {
+                        alert(result);
+                    });
+                });
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -235,6 +245,14 @@
                     Regenerate BioCollect records updates created Darwin Core Records with current record creation logic.
                     Use this to update properties of DwC records if a new property is added or tranformation logic for a property has changed.<br>
                     <b>Note: THIS WILL TAKE A LONG TIME. MUST RUN DURING LOW USAGE.</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnUpdateStats" class="btn btn-small btn-info" title="Regenerate BioCollect records.">Generate project activity stats</button>
+                </td>
+                <td>
+                    Generate and store project activity stats in cache. This button triggers the stats compute manually.
                 </td>
             </tr>
             </tbody>

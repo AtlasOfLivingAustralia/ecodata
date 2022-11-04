@@ -1,7 +1,8 @@
 package au.org.ala.ecodata
-
+import groovy.util.logging.Slf4j
 import grails.core.GrailsApplication
 
+@Slf4j
 class UpdateProjectActivityStatsJob {
     GrailsApplication grailsApplication
     ProjectActivityService projectActivityService
@@ -16,9 +17,11 @@ class UpdateProjectActivityStatsJob {
     }
 
     def execute () {
+        log.info("Starting cron job - project activity statistics update")
         ProjectActivity.withNewSession {
             iterateOverProjectActivities()
         }
+        log.info("Finished cron job - project activity statistics update")
     }
 
     def iterateOverProjectActivities() {
