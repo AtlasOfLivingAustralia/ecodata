@@ -472,12 +472,18 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         def projectIdsToUpdate = []
 
+        def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
+        queueIndexingEvent(message)
+
+    }
+
+    void queueIndexingEvent(IndexDocMsg msg) {
         try {
-            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
-            _messageQueue.offer(message)
+            _messageQueue.offer(msg)
         } catch (Exception ex) {
             log.error ex.localizedMessage, ex
         }
+
     }
 
     /**
@@ -558,6 +564,12 @@ class ElasticSearchService {
                 siteMap = prepareSiteForIndexing(siteMap, true)
                 if (siteMap) {
                     indexDoc(siteMap, DEFAULT_INDEX)
+                }
+
+                doc?.projects?.each { projectId ->
+                    def proj = Project.findByProjectId(projectId)
+                    Map projectMap = prepareProjectForHomePageIndex(proj)
+                    indexDoc(projectMap, HOMEPAGE_INDEX)
                 }
                 break;
 

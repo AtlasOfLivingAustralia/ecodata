@@ -11,9 +11,11 @@ import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.core.Session
+import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.web.json.JSONObject
 
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 
@@ -31,6 +33,7 @@ class SiteService {
     PermissionService permissionService
     ProjectActivityService projectActivityService
     SpatialService spatialService
+    ElasticSearchService elasticSearchService
 
 
     /**
@@ -321,6 +324,9 @@ class SiteService {
             if (canRemoveProject(site, projectId)) {
                 site.projects.remove(projectId)
                 site.save()
+
+                IndexDocMsg message = new IndexDocMsg(docType: Project.class.name, docId: projectId, indexType: EventType.PostUpdate, docIds: [])
+                elasticSearchService.queueIndexingEvent(message)
 
                 if (deleteOrphans && canDelete(site)) {
                     if (deleteOrphans) {
