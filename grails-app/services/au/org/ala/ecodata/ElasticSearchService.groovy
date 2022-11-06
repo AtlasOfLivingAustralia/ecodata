@@ -472,16 +472,12 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         def projectIdsToUpdate = []
 
-        try {
-            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
-            _messageQueue.offer(message)
-            queueIndexingEvent(message)
-        } catch (Exception ex) {
-            log.error ex.localizedMessage, ex
-        }
+        def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
+        queueIndexingEvent(message)
+
     }
 
-    def queueIndexingEvent(IndexDocMsg msg) {
+    void queueIndexingEvent(IndexDocMsg msg) {
         try {
             _messageQueue.offer(msg)
         } catch (Exception ex) {

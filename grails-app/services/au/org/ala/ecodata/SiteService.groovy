@@ -325,8 +325,7 @@ class SiteService {
                 site.projects.remove(projectId)
                 site.save()
 
-                Project project = Project.findByProjectId(projectId)
-                IndexDocMsg message = new IndexDocMsg(docType: project.class.name, docId: projectId, indexType: EventType.PostUpdate, docIds: [])
+                IndexDocMsg message = new IndexDocMsg(docType: Project.class.name, docId: projectId, indexType: EventType.PostUpdate, docIds: [])
                 elasticSearchService.queueIndexingEvent(message)
 
                 if (deleteOrphans && canDelete(site)) {
