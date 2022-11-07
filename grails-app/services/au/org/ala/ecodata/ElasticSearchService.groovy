@@ -549,7 +549,6 @@ class ElasticSearchService {
             case Project.class.name:
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
-                addYearAndMonthToEntity(doc, projectMap)
                 projectMap["className"] = docType
                 indexHomePage(doc, docType)
                 if(projectMap.siteId){
@@ -1002,6 +1001,7 @@ class ElasticSearchService {
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         }
+        addYearAndMonthToEntity(project, projectMap)
 
         projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
             it.userId
