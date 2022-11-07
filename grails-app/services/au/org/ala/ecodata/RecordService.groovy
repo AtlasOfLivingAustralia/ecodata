@@ -397,20 +397,35 @@ class RecordService {
                     // Rely on document to check whether image has been uploaded to image server. Output data will not have imageId.
                     if (!document.imageId) {
                         log.debug "Uploading imageMetadata - ${image.identifier}"
-                        def downloadedFile = download(record.occurrenceID, idx, image.identifier)
-                        def imageId = uploadImage(record, downloadedFile, image)
-                        if (imageId) {
-                            // successfully uploaded image to server
-                            record.multimedia[idx].imageId = imageId
-                            record.multimedia[idx].identifier = getImageUrl(imageId)
-                            document.imageId = imageId
-                            documentService.update(document, document.documentId)
-                        }
-                        else {
-                            // use document
-                            record.multimedia[idx].identifier = document.url
+                        File downloadedFile
+                        boolean toDelete = false
+                        if (document.filepath && document.filename) {
+                            downloadedFile = new File(documentService.fullPath(document.filepath, document.filename))
                         }
 
+                        if (!downloadedFile.exists() && image.identifier) {
+                            downloadedFile = download(record.occurrenceID, idx, image.identifier)
+                            toDelete = true
+                        }
+
+                        if(downloadedFile) {
+                            def imageId = uploadImage(record, downloadedFile, image)
+                            if (imageId) {
+                                // successfully uploaded image to server
+                                record.multimedia[idx].imageId = imageId
+                                record.multimedia[idx].identifier = getImageUrl(imageId)
+                                document.imageId = imageId
+                                documentService.update(document, document.documentId)
+                            }
+                            else {
+                                // use document
+                                record.multimedia[idx].identifier = document.url
+                            }
+
+                            if (toDelete) {
+                                downloadedFile.delete()
+                            }
+                        }
                     } else {
                         alreadyLoaded = true
                         //re-use the existing imageId rather than upload again
@@ -645,7 +660,7 @@ class RecordService {
     }
 
     private File download(recordId, idx, address) {
-        def directory = grailsApplication.config.app.file.upload.path + File.separator + "record" + File.separator + recordId
+        def directory = grailsApplication.config.temp.dir + File.separator + "record" + File.separator + recordId
         File mediaDir = new File(directory)
         if (!mediaDir.exists()) {
             FileUtils.forceMkdir(mediaDir)
