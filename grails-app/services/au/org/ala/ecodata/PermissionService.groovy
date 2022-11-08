@@ -572,21 +572,27 @@ class PermissionService {
     }
 
     Map deleteUserPermissionByUserId(String userId, String hubId){
+        log.info("Deleting all permissions for user: "+userId+ " related to hub: "+hubId)
         List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
         if (permissions.size() > 0) {
             permissions.each {
-                def isInHub = isEntityOwnedByHub(it.entityId, it.entityType, hubId)
+                boolean isInHub = isEntityOwnedByHub(it.entityId, it.entityType, hubId)
                 if (isInHub){
                     try {
                         it.delete(flush: true, failOnError: true)
-                        log.info("The Permission is removed for this user: " + userId)
+                        if (log.isDebugEnabled()) {
+                            log.debug("Removed permission for entity: "+it.entityId +" for user: " + userId)
+                        }
+
                     } catch (Exception e) {
                         String msg = "Failed to delete UserPermission: ${e.message}"
                         log.error msg, e
                         return [status: 500, error: msg]
                     }
-                }else{
-                    log.info("This entity Id is not a merit : " + it.entityId)
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Not removing permission for entity "+it.entityId+" as it is not associated with the hub")
+                    }
                 }
 
             }

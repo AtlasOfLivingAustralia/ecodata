@@ -106,6 +106,7 @@ if (!google.geocode.url) {
 if (!temp.file.cleanup.days) {
     temp.file.cleanup.days = 1
 }
+access.expiry.maxEmails=500
 
 
 if (!biocollect.scienceType) {
