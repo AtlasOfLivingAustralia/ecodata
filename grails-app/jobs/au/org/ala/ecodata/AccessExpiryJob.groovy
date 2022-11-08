@@ -118,10 +118,10 @@ class AccessExpiryJob {
 
     private int processExpiredUserAccess(Hub hub, Date loginDateEligibleForAccessRemoval, Date processingTime, int maxEmailsToSend) {
         int offset = 0
-        int max = Math.min(BATCH_SIZE, maxEmailsToSend)
+        int max = BATCH_SIZE
         int emailsSent = 0
         List<User> users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, max)
-        while (users) {
+        while (users && emailsSent < maxEmailsToSend) {
             for (User user : users) {
                 UserHub userHub = user.getUserHub(hub.hubId)
                 if (!userHub.accessExpired()) {
@@ -134,10 +134,12 @@ class AccessExpiryJob {
                         emailsSent++
                     }
                 }
+                if (emailsSent >= maxEmailsToSend) {
+                    break
+                }
             }
             offset += BATCH_SIZE
-            max = Math.min(maxEmailsToSend - offset, BATCH_SIZE)
-            users = max > 0 ? userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, max) : null
+            users = userService.findUsersNotLoggedInToHubSince(hub.hubId, loginDateEligibleForAccessRemoval, offset, max)
         }
         emailsSent
     }
@@ -145,11 +147,11 @@ class AccessExpiryJob {
     private int processInactiveUserWarnings(
             Hub hub, Date loginDateEligibleForWarning, Date loginDateEligibleForAccessRemoval, Date processingTime, int maxEmailsToSend) {
         int emailsSent = 0
-        int max = Math.min(BATCH_SIZE, maxEmailsToSend)
+        int max = BATCH_SIZE
         int offset = 0
         List<User> users = userService.findUsersWhoLastLoggedInToHubBetween(
                 hub.hubId, loginDateEligibleForWarning, loginDateEligibleForAccessRemoval, offset, max)
-        while (users) {
+        while (users && emailsSent < maxEmailsToSend) {
             for (User user : users) {
 
                 UserHub userHub = user.getUserHub(hub.hubId)
@@ -162,10 +164,12 @@ class AccessExpiryJob {
                     userHub.inactiveAccessWarningSentDate = processingTime
                     user.save()
                 }
+                if (emailsSent >= maxEmailsToSend) {
+                    break
+                }
             }
             offset += BATCH_SIZE
-            max = Math.min(maxEmailsToSend - offset, BATCH_SIZE)
-            users = max > 0 ? userService.findUsersWhoLastLoggedInToHubBetween(hub.hubId, loginDateEligibleForWarning, loginDateEligibleForAccessRemoval, offset, max) : null
+            users = userService.findUsersWhoLastLoggedInToHubBetween(hub.hubId, loginDateEligibleForWarning, loginDateEligibleForAccessRemoval, offset, max)
         }
         emailsSent
     }
@@ -181,6 +185,7 @@ class AccessExpiryJob {
                 [],
                 hub.emailReplyToAddress,
                 hub.emailFromAddress)
+        log.warn("Sending email for "+userId+", key: "+key)
     }
 
     /**
@@ -194,17 +199,21 @@ class AccessExpiryJob {
         int emailsSent = 0
         Date processingDate = Date.from(processingTime.toInstant())
         List permissions = permissionService.findPermissionsByExpiryDate(processingDate)
-        permissions.each {
 
-            log.info("Deleting expired permission for user ${it.userId} for entity ${it.entityType} with id ${it.entityId}")
-            it.delete()
+        for (UserPermission permission : permissions) {
+
+            log.info("Deleting expired permission for user ${permission.userId} for entity ${permission.entityType} with id ${permission.entityId}")
+            permission.delete()
 
             // Find the hub attached to the expired permission.
-            String hubId = permissionService.findOwningHubId(it)
+            String hubId = permissionService.findOwningHubId(permission)
             Hub hub = Hub.findByHubId(hubId)
 
-            sendEmail(hub, it.userId, PERMISSION_EXPIRED_EMAIL_KEY)
+            sendEmail(hub, permission.userId, PERMISSION_EXPIRED_EMAIL_KEY)
             emailsSent++
+            if (emailsSent >= maxEmailsToSend) {
+                break
+            }
         }
         emailsSent
     }
@@ -221,7 +230,7 @@ class AccessExpiryJob {
         List permissions = permissionService.findAllByExpiryDate(monthFromNow)
         int emailsSent = 0
         DateTime processingDate = new DateTime()
-        permissions.each {
+        for (UserPermission it : permissions) {
             User user = userService.findByUserId(it.userId)
             if (user) {
                 UserHub userHub = user.getUserHub(it.entityId)
@@ -240,6 +249,9 @@ class AccessExpiryJob {
                         userHub.permissionWarningSentDate = Date.from(processingTime.toInstant())
                         user.save()
                     }
+                }
+                if (emailsSent >= maxEmailsToSend) {
+                    break
                 }
             }
         }
