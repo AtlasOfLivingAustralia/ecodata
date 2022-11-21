@@ -13,6 +13,7 @@ class Record {
         status index: true
         activityId index: true
         projectActivityId index: true
+        lastUpdated index: true
         version false
     }
 
