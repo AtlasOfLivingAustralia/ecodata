@@ -2364,7 +2364,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         controller.getMembersForProject()
 
         then:
-        1 * permissionService.getMembersForProject(projectId) >> ['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'editor']].values().toList()
+        1 * permissionService.getMembersForProject(projectId, [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]) >> ['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'editor']].values().toList()
 
         response.status == HttpStatus.SC_OK
         response.getJson().size() == 2

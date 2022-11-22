@@ -8,6 +8,9 @@ import au.org.ala.ecodata.reporting.XlsExporter
 import grails.async.Promise
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.action.search.SearchScrollRequest
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.search.SearchHit
 
 import java.util.zip.ZipEntry
@@ -26,6 +29,7 @@ class DownloadService {
     OutputService outputService
     SiteService siteService
     EmailService emailService
+    WebService webService
 
     def grailsApplication
     def groovyPageRenderer
@@ -369,6 +373,7 @@ class DownloadService {
         String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
         String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
         File file = new File(path)
+        String url
 
         if (thumbnail) {
             file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
@@ -376,6 +381,16 @@ class DownloadService {
         if (file != null && file.exists()) {
             zip.putNextEntry(new ZipEntry(zipName))
             file.withInputStream { i -> zip << i }
+        }
+        else if (doc.getUrl()) {
+            // reporting server does not hold images.
+            // download it by requesting image from BioCollect/MERIT
+            url = doc.getUrl()
+            def stream = webService.getStream(url, true)
+            if (!(stream instanceof Map)) {
+                zip.putNextEntry(new ZipEntry(zipName))
+                zip << stream
+            }
         } else {
             zipName = zipName + ".notfound"
             zip.putNextEntry(new ZipEntry(zipName))
@@ -497,21 +512,16 @@ class DownloadService {
 
         params.max = batchSize
 
-        while (count == batchSize) {
-            SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
-            Map resp = [total:res.hits.totalHits.value, results:[]]
-            log.info "Processed activities: ${resp.total}"
-
-            for (SearchHit hit : res.hits.hits) {
-                if (hit.sourceAsMap.projectId) {
+        SearchResponse results = elasticSearchService.search(params.query, params, searchIndexName, [:], true)
+        while (results.getHits().getHits().length != 0) {
+            for (SearchHit hit : results.getHits().getHits()) {
+                Map result = hit.sourceAsMap
+                if (result.projectId) {
                     ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
                 }
             }
 
-            count = res.hits.hits.size()
-            processed += batchSize
-
-            params.offset = processed
+            results = elasticSearchService.client.scroll(new SearchScrollRequest(results.getScrollId()).scroll(new TimeValue(60000)), RequestOptions.DEFAULT)
         }
 
         log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"

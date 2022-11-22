@@ -789,6 +789,12 @@ facets.data = [
                 helpText: 'Titles of sub-programmes under listed programmes.'
         ],
         [
+                name: "verificationStatusFacet",
+                title: 'Verification status',
+                dataType: 'text',
+                helpText: 'Verification status of an activity'
+        ],
+        [
                 name: "methodType",
                 title: 'Method type',
                 dataType: 'text',

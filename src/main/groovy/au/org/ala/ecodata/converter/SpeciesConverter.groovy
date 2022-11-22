@@ -1,21 +1,17 @@
 package au.org.ala.ecodata.converter
 
-//import org.grails.web.json.JSON
-
 class SpeciesConverter implements RecordFieldConverter {
+    List<String> REPLACE_PATTERN = [
+            "(Unmatched taxon)"
+    ]
 
     List<Map> convert(Map data, Map metadata = [:]) {
         Map record = [:]
 
-        record.guid = data[metadata.name].guid
-        record.name = data[metadata.name].name
-
-        // if there is a valid guid then pass on scientific name (if it is valid)
-        if (record.guid && record.guid != "") {
-          if (data[metadata.name].scientificName) {
-              record.scientificName = data[metadata.name].scientificName
-          }
-        }
+        record.scientificNameID = record.guid = data[metadata.name].guid
+        record.scientificName = getScientificName(data, metadata)
+        record.vernacularName = data[metadata.name].commonName
+        record.name = record.scientificName ?: record.vernacularName
 
         // Force outputSpeciesId generation if not coming in the original data
         if(!data[metadata.name].outputSpeciesId) {
@@ -25,5 +21,25 @@ class SpeciesConverter implements RecordFieldConverter {
         record.outputSpeciesId = data[metadata.name].outputSpeciesId
 
         [record]
+    }
+
+    /**
+     * Get scientific name based on following conditions
+     * 1. get value of scientificName property
+     * 2. get value of name property
+     * @param data
+     * @param metadata
+     * @return
+     */
+    String getScientificName(Map data, Map metadata) {
+        data[metadata.name].scientificName ?: cleanName(data[metadata.name].name)
+    }
+
+    String cleanName (String name) {
+        REPLACE_PATTERN.each {
+            name = name?.replaceAll(it, "")
+        }
+
+        name?.trim()
     }
 }

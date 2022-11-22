@@ -14,6 +14,8 @@ class ProjectActivityService {
     static final SUBSCRIBED_PROPERTIES = [
             'methodName'
     ]
+    static final PA_STATS_CACHE_KEY_PREFIX = 'projectactivity-stats-id-'
+    static final int MAX_QUERY_RESULT_SIZE = 20
 
     def grailsApplication
 
@@ -27,6 +29,7 @@ class ProjectActivityService {
     ElasticSearchService elasticSearchService
     EmailService emailService
     MessageSource messageSource
+    CacheService cacheService
 
     /**
      * Creates an project activity.
@@ -332,11 +335,17 @@ class ProjectActivityService {
     }
 
     void addProjectActivityStats (Map projectActivity) {
-        projectActivity.stats = [:]
-        projectActivity.stats.publicAccess = isProjectActivityDataPublic(projectActivity)
-        projectActivity.stats.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
-        projectActivity.stats.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
-        projectActivity.stats.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+        Map statistics = cacheService.get(PA_STATS_CACHE_KEY_PREFIX + projectActivity?.projectActivityId, {
+            Map stats = [:]
+            stats.publicAccess = isProjectActivityDataPublic(projectActivity)
+            stats.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
+            stats.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
+            stats.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+            stats
+        })
+
+        projectActivity.stats = projectActivity.stats ?: [:]
+        projectActivity.stats.putAll(statistics)
     }
 
     boolean isProjectActivityDataPublic (Map projectActivity) {
@@ -453,5 +462,31 @@ class ProjectActivityService {
         }
 
         projectActivities.collect { toMap(it, levelOfDetail) }
+    }
+
+    /**
+     * Activity linked to a project activity if
+     * 1. EmbargoOption is DAYS and today is before embargoUntil date
+     * 2. EmbargoOption is DATE and today is before embargoUntil date
+     * @param projectActivity
+     * @return
+     */
+    boolean isProjectActivityEmbargoed (projectActivity) {
+        switch (projectActivity?.visibility?.embargoOption) {
+            case EmbargoOption.DAYS:
+            case EmbargoOption.DATE:
+            case "DAYS":
+            case "DATE":
+                if (projectActivity?.visibility?.embargoUntil && projectActivity?.visibility?.embargoUntil.after(new Date())) {
+                    return true
+                }
+        }
+
+        false
+    }
+
+    List<ProjectActivity> list (int offset = 0, int max = MAX_QUERY_RESULT_SIZE) {
+        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'projectId']
+        ProjectActivity.findAllByStatusNotEqual(Status.DELETED, options)
     }
 }

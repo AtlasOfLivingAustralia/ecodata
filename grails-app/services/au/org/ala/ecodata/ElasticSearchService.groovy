@@ -15,7 +15,6 @@
 
 package au.org.ala.ecodata
 
-
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -45,6 +44,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.geo.builders.CoordinatesBuilder
 import org.elasticsearch.common.geo.builders.PolygonBuilder
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
 import org.elasticsearch.index.query.*
@@ -473,12 +473,18 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         def projectIdsToUpdate = []
 
+        def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
+        queueIndexingEvent(message)
+
+    }
+
+    void queueIndexingEvent(IndexDocMsg msg) {
         try {
-            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
-            _messageQueue.offer(message)
+            _messageQueue.offer(msg)
         } catch (Exception ex) {
             log.error ex.localizedMessage, ex
         }
+
     }
 
     /**
@@ -559,6 +565,12 @@ class ElasticSearchService {
                 if (siteMap) {
                     indexDoc(siteMap, DEFAULT_INDEX)
                 }
+
+                doc?.projects?.each { projectId ->
+                    def proj = Project.findByProjectId(projectId)
+                    Map projectMap = prepareProjectForHomePageIndex(proj)
+                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                }
                 break;
 
             case Record.class.name:
@@ -598,7 +610,7 @@ class ElasticSearchService {
                 Map document = documentService.getByStatus(docId)
 
                 document = prepareDocumentForIndexing(document)
-                indexDoc(document, DEFAULT_INDEX)
+                document ? indexDoc(document, DEFAULT_INDEX) : null
                 break
 
             case Organisation.class.name:
@@ -659,6 +671,7 @@ class ElasticSearchService {
 
         siteMap.projectList = projects;
         siteMap.surveyList = surveys
+        addYearAndMonthToEntity(siteMap, siteMap)
 
         Document doc = Document.findByRoleAndSiteIdAndType('photoPoint', siteMap.siteId, 'image')
         if (doc) {
@@ -764,6 +777,7 @@ class ElasticSearchService {
      */
     def indexAll() {
         log.debug "Clearing the unused index first"
+        indexManager.setMapping(mapping.mappings)
 
         Map newIndexes = indexManager.recreateUnusedIndexes()
 
@@ -915,6 +929,7 @@ class ElasticSearchService {
         // get list of users of this organisation
         List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
         organisation.users = users;
+        addYearAndMonthToEntity(organisation, organisation)
 
         List meritProjects = Project.findAllByOrganisationIdAndIsMERITAndStatusNotEqual(organisation.organisationId, true, DELETED)
         if (!meritProjects) {
@@ -987,6 +1002,7 @@ class ElasticSearchService {
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         }
+        addYearAndMonthToEntity(project, projectMap)
 
         projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
             it.userId
@@ -1054,7 +1070,7 @@ class ElasticSearchService {
             projectActivity.name = pActivity?.name ?: pActivity?.description
             projectActivity.endDate = pActivity.endDate
             projectActivity.projectActivityId = pActivity.projectActivityId
-            projectActivity.embargoed = (activity.embargoed == true) || (pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date()))
+            projectActivity.embargoed = (activity.embargoed == true) || projectActivityService.isProjectActivityEmbargoed(pActivity)
             projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: null
             projectActivity.methodType = pActivity?.methodType
             projectActivity.spatialAccuracy = pActivity?.spatialAccuracy
@@ -1095,6 +1111,9 @@ class ElasticSearchService {
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
+
+                addYearAndMonthToEntity(it, values)
+
                 records << values
 
                 if (!activity.activityId) {
@@ -1107,7 +1126,12 @@ class ElasticSearchService {
             if (activity?.lastUpdated) {
                 projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
                 projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+                // add updated year & month to activity
+                activity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
+                activity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
             }
+
+            addYearAndMonthToEntity(activity, activity)
 
             if(eventDate){
                 activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)
@@ -1178,6 +1202,13 @@ class ElasticSearchService {
         activity
     }
 
+    private addYearAndMonthToEntity(entity, mapOfEntity){
+        if (entity.dateCreated) {
+            mapOfEntity.dateCreatedMonth = new SimpleDateFormat("MMMM").format(entity.dateCreated)
+            mapOfEntity.dateCreatedYear = new SimpleDateFormat("yyyy").format(entity.dateCreated)
+        }
+    }
+
     private Map prepareDocumentForIndexing(Map document) {
         if (!document?.projectId)
             return
@@ -1194,6 +1225,7 @@ class ElasticSearchService {
         if (document) {
             // overwrite any project properties that has same name as document properties.
             project.remove('description') // to avoid overwriting of document description by project description
+            addYearAndMonthToEntity(document, document)
             project.putAll(document)
             document = project
 
@@ -1308,11 +1340,14 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean scrollApi = false) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
         SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria)
+        if (scrollApi) {
+            request.scroll(new TimeValue(60000))
+        }
         client.search(request, RequestOptions.DEFAULT)
     }
 
@@ -1391,20 +1426,21 @@ class ElasticSearchService {
                     if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
                     } else if (userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                     } else if (!userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break
 
             case 'allrecords':
                 if (!projectId) {
+                    // should also check for FC_ADMIN role?
                     if (userId && permissionService.isUserAlaAdmin(userId)) {
                         forcedQuery = '(docType:activity)'
                     } else if (userId) {
                         forcedQuery = '((docType:activity)'
-                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor)
+                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.moderator, AccessLevel.editor)
 
                         projectsTheUserIsAMemberOf?.eachWithIndex { item, index ->
                             if (index == 0) {
@@ -1416,12 +1452,12 @@ class ElasticSearchService {
                             forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
                         }
                         if (projectsTheUserIsAMemberOf) {
-                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + userId + ')))'
+                            forcedQuery = forcedQuery + ') OR ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + ')))'
                         } else {
-                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                            forcedQuery = forcedQuery + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                         }
                     } else if (!userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break
@@ -1430,8 +1466,9 @@ class ElasticSearchService {
                 if (projectId) {
                     if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
-                    } else {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                    }
+                    else {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break
@@ -1447,17 +1484,17 @@ class ElasticSearchService {
 
             case 'userprojectactivityrecords':
                 if(projectActivityId && spotterId){
-                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ')'
+                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ' AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 }
                 break
 
             default:
-                forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 break
         }
 
         if (!forcedQuery) {
-            forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+            forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
         }
 
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery

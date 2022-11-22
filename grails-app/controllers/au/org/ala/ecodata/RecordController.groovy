@@ -101,10 +101,10 @@ class RecordController {
                 error = "Invalid max parameter vaue"
             } else if (params.offset && !params.offset.isNumber()) {
                 error = "Invalid offset parameter vaue"
-            } else if (params.sort && params.sort != "asc" && params.sort != "desc") {
-                error = "Invalid sort parameter value (expected: asc, desc)"
-            } else if (params.order && params.order != "lastUpdated") {
-                error = "Invalid order parameter value (expected: lastUpdated)"
+            } else if (params.order && params.order != "asc" && params.order != "desc") {
+                error = "Invalid order parameter value (expected: asc, desc)"
+            } else if (params.sort && params.sort != "lastUpdated") {
+                error = "Invalid sort parameter value (expected: lastUpdated)"
             } else if (params.status && params.status != "active" && params.status != "deleted") {
                 error = "Invalid status parameter value (expected: active or deleted)"
             } else if(params.id){

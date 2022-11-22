@@ -39,10 +39,10 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Verification status','Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
 
     List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
-    List<String> recordProperties = ["occurrenceID", "guid", "activityId", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
+    List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
 
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
@@ -75,6 +75,8 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     public CSProjectXlsExporter(StreamingXlsExporter exporter, Map<String, Object> documentMap,TimeZone timeZone) {
         super(exporter, [], documentMap, timeZone)
+        this.useDateGetter = true
+        this.useNumberGetter = true
         this.documentMap = documentMap
     }
 
@@ -212,6 +214,10 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                 count = batchedActivities.size()
                 processed += batchedActivities.size()
+                Activity.withSession { session ->
+                    batchedActivities.clear()
+                    session.clear()
+                }
             }
         }
         else {
@@ -247,6 +253,10 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                 count = batchedActivities.size()
                 processed += batchedActivities.size()
+                Activity.withSession { session ->
+                    batchedActivities.clear()
+                    session.clear()
+                }
             }
         }
         log.info "Processed: ${processed}"
@@ -270,6 +280,7 @@ class CSProjectXlsExporter extends ProjectExporter {
                             new ConstantGetter("description", projectActivity.description),
                             new ConstantGetter("status", projectActivity.status),
                             new ConstantGetter("attribution", projectActivity.attribution),
+                            new ConstantGetter("verificationStatus", activity.verificationStatus),
                             generalLatitudeGetter,
                             generalLongitudeGetter,
                             locationCentroidLatitudeGetter,
@@ -334,6 +345,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                     if (rows && !rows[0].isEmpty()) {
                         if (!sheet) {
+                            exporter.setDateCellFormat("d-mmm-yy")
                             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
 
                             if (sheet) {
@@ -376,20 +388,52 @@ class CSProjectXlsExporter extends ProjectExporter {
         List activityIdList = []
         activityIdList.addAll(activityIds)
 
-        def records = []
-
+        def records
+        Map params
+        int recordsMax = Holders.grailsApplication.config?.getProperty('export.record.max', Integer, 20)
         if (activityIds == null || activityIds.isEmpty()) {
-            records = recordService.getAllByProject(project.projectId)
+            params = [
+                    max: recordsMax,
+                    offset: 0,
+                    query: [
+                            projectId: project.projectId,
+                            status: Status.ACTIVE
+                    ],
+                    sort: 'activityId',
+                    order: 'asc'
+            ]
         } else {
-            records = recordService.getAllRecordsByActivityList(activityIdList)
+            params = [
+                    max: recordsMax,
+                    offset: 0,
+                    query: [
+                            activityId: activityIdList,
+                            status: Status.ACTIVE
+                    ],
+                    sort: 'activityId',
+                    order: 'asc'
+            ]
         }
 
-        records.each {
-            // need to differentiate between an empty set of activity ids (which means don't export any activities),
-            // and a null value (which means export all activities).
-            if (!restrictedSurveys.contains(it.projectActivityId) && (activityIds == null || activityIds.contains(it.activityId))) {
-                recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
+        records = recordService.list(params)
+        while(records.list) {
+            records.list?.each {
+                // need to differentiate between an empty set of activity ids (which means don't export any activities),
+                // and a null value (which means export all activities).
+                if (!restrictedSurveys.contains(it.projectActivityId) && (activityIds == null || activityIds.contains(it.activityId))) {
+                    recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
+                }
             }
+
+            if (params.offset % 100 == 0) {
+                Record.withSession { session ->
+                    session.clear()
+                }
+            }
+
+            records.list?.clear()
+            params.offset += params.max
+            records = recordService.list(params)
         }
     }
 

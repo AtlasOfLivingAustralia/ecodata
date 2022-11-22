@@ -32,7 +32,7 @@ class Activity {
 
     static graphql = ActivityGraphQLMapper.graphqlMapping()
 
-        static mapping = {
+    static mapping = {
         activityId index: true
         siteId index: true
         projectId index: true
@@ -81,7 +81,10 @@ class Activity {
     Date lastUpdated
     String userId
     Boolean embargoed
-    List tempArgs = []
+    /**
+     * data quality control
+     */
+    String verificationStatus
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -94,7 +97,7 @@ class Activity {
         return progress in [PLANNED, STARTED, FINISHED]
     }
 
-    static transients = ['complete', 'tempArgs']
+    static transients = ['complete']
 
     static constraints = {
         siteId nullable: true
@@ -120,6 +123,7 @@ class Activity {
         userId nullable:true
         embargoed nullable:true
         formVersion nullable: true
+        verificationStatus nullable: true, inList: ['not applicable', 'not approved', 'not verified', 'under review' , 'approved']
     }
 
 }
