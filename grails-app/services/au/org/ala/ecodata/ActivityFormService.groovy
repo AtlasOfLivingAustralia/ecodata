@@ -41,7 +41,7 @@ class ActivityFormService {
 
     /** Returns a list of all versions of an ActivityForm regardless of publication status. */
     ActivityForm[] findVersionedActivityForm(String name) {
-        ActivityForm[] forms = ActivityForm.findAllByNameAndStatusNotEqual(name, PublicationStatus.PUBLISHED, Status.DELETED)
+        ActivityForm[] forms = ActivityForm.findAllByNameAndStatusNotEqual(name, Status.DELETED)
         forms
     }
 
@@ -164,17 +164,21 @@ class ActivityFormService {
                 Map propertiesUsedInScore = referencedFormSections[section.name]
                 if (propertiesUsedInScore) {
                     mergeScoreIntoTemplate(section.template, propertiesUsedInScore, score)
+                    if (section.template.scores == null) {
+                        section.template.scores = []
+                    }
+                    section.template.scores << score.scoreId
                 }
             }
         }
     }
 
-    private Map mergeScoreIntoTemplate(Map template, Map config, Score score) {
+    private void mergeScoreIntoTemplate(Map template, Map config, Score score) {
 
         OutputMetadata metadata = new OutputMetadata(template)
         metadata.dataModelIterator { String path, Map node ->
             if (config[path]) {
-                if (!node.scores) {
+                if (node.scores == null) {
                     node.scores = []
                 }
                 node.scores << [scoreId: score.scoreId, label: score.label, config:config[path]]

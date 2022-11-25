@@ -185,7 +185,7 @@ class MetadataService {
             sections { templateName == templateName}
         }.list()
 
-        ActivityForm form = forms.max{it.version}
+        ActivityForm form = forms.max{it.formVersion}
         Map template = form?.sections?.find{it.templateName == templateName}?.template
         if (!template) {
             log.warn("No template found with name ${templateName}")
@@ -683,21 +683,8 @@ class MetadataService {
      *
      */
     Map toMap(Score score, List views) {
-        Map scoreMap = [
-                scoreId:score.scoreId,
-                category:score.category,
-                outputType:score.outputType,
-                isOutputTarget:score.isOutputTarget,
-                label:score.label,
-                description:score.description,
-                displayType:score.displayType,
-                entity:score.entity,
-                externalId:score.externalId,
-                entityTypes:score.entityTypes]
-        if (views?.contains("config")) {
-            scoreMap.configuration = score.configuration
-        }
-        scoreMap
+        boolean includeConfig = views?.contains("config")
+        score.toMap(includeConfig)
     }
 
     Score createScore(Map properties) {
@@ -928,17 +915,24 @@ class MetadataService {
      * services.json should be identical with fieldcapture
      * @return
      */
-    List<Map> getProjectServices() {
+    List<Service> getServiceList() {
 
-        String servicesJson = settingService.getSetting(SERVICES_KEY)
-        if (!servicesJson){
-            servicesJson = getClass().getResourceAsStream('/data/services.json')?.getText("UTF-8")
+        List services = Service.findAllByStatusNotEqual(Status.DELETED)
+
+        Map scoresByFormSection = [:].withDefault { String formSectionName ->
+            Score.createCriteria().list {
+                or {
+                    eq('configuration.filter.filterValue', formSectionName)
+                    eq('configuration.childAggregations.filter.filterValue', formSectionName)
+                }
+            }
         }
-        List services = JSON.parse(servicesJson)
-
-        List<Score> scores = Score.findAllByStatusNotEqual(DELETED)
         services.each { service ->
-            service.scores = new JSONArray(scores.findAll{it.outputType == service.output})
+            service.outputs?.each { ServiceForm serviceFormConfig ->
+
+                List scores = scoresByFormSection[serviceFormConfig.sectionName]
+                serviceFormConfig.relatedScores = scores
+            }
         }
         services
     }
@@ -969,9 +963,9 @@ class MetadataService {
      */
 
     List<Map> getProjectServicesWithTargets(project){
-        def services =  getProjectServices()
+        List<Service> services = getServiceList()
         List serviceIds = project.custom?.details?.serviceIds?.collect{it as Integer}
-        List projectServices = services?.findAll {it.id in serviceIds }
+        List projectServices = services?.findAll {it.legacyId in serviceIds }
         List targets = project.outputTargets
 
         // Make a copy of the services as we are going to augment them with target information.
@@ -979,7 +973,7 @@ class MetadataService {
             [
                     name:service.name,
                     id: service.id,
-                    scores: service.scores?.collect { score ->
+                    scores: service.scores()?.collect { score ->
                         [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
                     }
             ]
