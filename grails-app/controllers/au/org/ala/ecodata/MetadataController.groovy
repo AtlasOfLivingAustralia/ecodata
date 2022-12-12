@@ -288,4 +288,10 @@ class MetadataController {
         Map indices = metadataService.getIndicesForDataModels()
         render( text: indices as JSON, contentType: 'application/json')
     }
+
+    /** Returns all Services, including associated Scores based on the forms assocaited with each service */
+    def services() {
+        render metadataService.getServiceList() as JSON
+    }
+
 }

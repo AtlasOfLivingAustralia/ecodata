@@ -92,6 +92,10 @@ class BootStrap {
             return [idType:it.idType, externalId:it.externalId]
         }
 
+        JSON.registerObjectMarshaller(Service) {
+            return it.toMap()
+        }
+
       //  JSON.registerObjectMarshaller(JSONNull, {return ""})
 
         // Setup the default ALA hub if necessary as BioCollect won't load without it.

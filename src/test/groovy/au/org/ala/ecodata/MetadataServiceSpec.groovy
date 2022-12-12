@@ -1,10 +1,9 @@
 package au.org.ala.ecodata
 
-import grails.testing.gorm.DataTest
+import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
-import spock.lang.Specification
 
-class MetadataServiceSpec extends Specification implements ServiceUnitTest<MetadataService>, DataTest {
+class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService> {
 
     WebService webService = Mock(WebService)
     SettingService settingService = Mock(SettingService)
@@ -18,8 +17,22 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
         grailsApplication.config.app.facets.geographic.special = [:]
         service.settingService = settingService
         service.webService = webService
-        mockDomain Score
-        mockDomain ActivityForm
+    }
+
+    def cleanup() {
+        Service.findAll().each { it.delete() }
+        Score.findAll().each{ it.delete() }
+        ActivityForm.findAll().each{ it.delete() }
+    }
+
+    private void setupServices() {
+        for (int i in 1..4) {
+            Service service = new Service(legacyId:i, serviceId:'s'+i, name:'Service '+i)
+            service.setOutputs([new ServiceForm(formName:"form 1", sectionName: "section 1")])
+            service.insert()
+
+        }
+
     }
 
     void "getGeographicFacetConfig should correctly identify the facet name for a field id and whether it is grouped"(String fid, boolean grouped, String groupName) {
@@ -55,40 +68,38 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
 
     def "The service list can be retrieved from the database or backup json file"() {
 
+        setup:
+        setupServices()
+
         when: "We retrieve the services and there are none in the database"
-        List services = service.getProjectServices()
-
-        then: "then we fall back on the services.json in the classpath"
-        1 * settingService.getSetting("services.config") >> null
-        services.size() == 41
-
-        when:
-        services = service.getProjectServices()
+        List services = service.getServiceList()
 
         then:
-        1 * settingService.getSetting("services.config") >> "[{\"id\":1, \"name\":\"Service\"}]"
-        services.size() == 1
-        services[0].id == 1
-        services[0].name == "Service"
+        services.size() == 4
+        for (int i in 1..4) {
+            services[i-1].legacyId == i
+            services[i-1].name == "Service "+i
+        }
     }
 
     def "Convert double value to int for Services"(){
         setup:
-
+        setupServices()
         String projectId = "project_10"
         Map project = [projectId: projectId,
                        outputTargets:[
                                [scoreId: "1", target: "10", scoreLabel: "Test Score Label 1", unit: "Ha", scoreName: "areaTreatedHa", outputLabel: "Test Output Label 1"]],
                        custom: [details: [serviceIds:[1.0, 2.0,3.0,4.0]]]]
         Score score = new Score(scoreId:"1", label:"Test Score Label 1", entity:"Activity", isOutputTarget: true,  outputType: "RLP - Baseline data")
-        score.save()
+        score.configuration = [filter:[filterValue:'section 1']]
+        score.insert(flush:true)
 
         when:
         List results = service.getProjectServicesWithTargets(project)
 
         then:
         results.size() == 4
-        results*.name == ["Collecting, or synthesising baseline data", "Communication materials", "Community/stakeholder engagement", "Controlling access"]
+        results*.name == ["Service 1", "Service 2", "Service 3", "Service 4"]
         results[0].scores[0].label == "Test Score Label 1"
         results[0].scores[0].isOutputTarget == true
         results[0].scores[0].target == "10"
@@ -116,5 +127,6 @@ class MetadataServiceSpec extends Specification implements ServiceUnitTest<Metad
 
         then:
         forms.collect{it.name } == ['test', 'abc', 'abc']
+
     }
 }

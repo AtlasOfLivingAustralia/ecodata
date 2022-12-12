@@ -71,6 +71,6 @@ while (projects.hasNext()) {
         }
     }
     if (changed) {
-        db.project.save(project);
+        db.project.replaceOne({_id:project._id}, project);
     }
 }
