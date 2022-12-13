@@ -1,17 +1,23 @@
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.operation.valid.IsValidOp
-import com.vividsolutions.jts.operation.valid.TopologyValidationError
+import au.org.ala.ecodata.graphql.mappers.SiteGraphQLMapper
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.operation.valid.IsValidOp
+import org.locationtech.jts.operation.valid.TopologyValidationError
 import grails.converters.JSON
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetchingEnvironment
 import org.bson.types.ObjectId
 import org.geotools.geojson.geom.GeometryJSON
+import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 class Site {
 
     static String TYPE_COMPOUND = 'compound'
     static String TYPE_PROJECT_AREA = 'projectArea'
     static String TYPE_WORKS_AREA = 'worksArea'
+
+    static graphql = SiteGraphQLMapper.graphqlMapping()
 
     def siteService
 

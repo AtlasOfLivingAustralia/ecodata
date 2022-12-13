@@ -430,7 +430,7 @@ class SearchController {
             render "A download ID is required"
         } else {
             String extension = params.fileExtension ?: 'zip'
-            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.${extension}")
+            File file = new File("${grailsApplication.config.getProperty('temp.dir')}${File.separator}${params.id}.${extension}")
             if (file) {
                 if (extension.toLowerCase() == "zip") {
                     response.setContentType("application/zip")

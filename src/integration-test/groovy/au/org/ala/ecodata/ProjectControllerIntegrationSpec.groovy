@@ -31,7 +31,7 @@ class ProjectControllerIntegrationSpec extends Specification {
         projectController.projectService = projectService
         projectController.projectService.collectoryService = Mock(CollectoryService)
         projectController.projectService.webService = Mock(WebService)
-        projectController.projectService.grailsApplication = [mainContext: [commonService: commonService],config: [collectory: [baseURL: "test"]]]
+        projectController.projectService.grailsApplication.config.collectory.baseURL = "test"
     }
 
     def cleanup() {
@@ -47,11 +47,16 @@ class ProjectControllerIntegrationSpec extends Specification {
         projectController.request.method = 'POST'
 
         when: "creating a project"
-        projectController.update('') // Empty or null ID triggers a create
-        def resp = extractJson(projectController.response.text)
+        def resp
+        Project.withTransaction {
+            projectController.update('') // Empty or null ID triggers a create
+            resp = extractJson(projectController.response.text)
+        }
 
         then: "ensure we get a response including a projectId"
-
+        projectController.response.text.contains("created")
+        projectController.response.status == 200
+        resp != null
         def projectId = resp.projectId
         projectController.response.contentType == 'application/json;charset=UTF-8'
         resp.message == 'created'

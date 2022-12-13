@@ -73,7 +73,7 @@ class OrganisationService {
     private String createCollectoryInstitution(Map organisationProperties) {
 
         String institutionId = null
-        if (Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
+        if (Boolean.valueOf(grailsApplication.config.getProperty('collectory.collectoryIntegrationEnabled'))) {
             try {
                 institutionId = collectoryService.createInstitution(organisationProperties)
             }
@@ -81,7 +81,7 @@ class OrganisationService {
                 // We don't want this to prevent the organisation from being created.
                 String message = "Failed to establish collectory link for organisation ${organisationProperties.name}"
                 log.error(message, e)
-                emailService.sendEmail(message, "Error: ${e.message}", [grailsApplication.config.ecodata.support.email.address])
+                emailService.sendEmail(message, "Error: ${e.message}", [grailsApplication.config.getProperty('ecodata.support.email.address')])
             }
         }
         return institutionId

@@ -1,66 +1,18 @@
-
-import groovy.transform.Field
+import au.org.ala.ecodata.mapper.ElasticSearchBackwardsCompatibilityMapper
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.search.aggregations.Aggregation
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation
-import org.elasticsearch.search.aggregations.bucket.histogram.ParsedHistogram
-import org.elasticsearch.search.aggregations.bucket.range.ParsedRange
-import org.elasticsearch.search.aggregations.metrics.ParsedStats
 
-@Field SearchResponse searchResponse
+model {
+    SearchResponse searchResponse
+}
 
 /** Renders a SearchResponse into the format expected by BioCollect and MERIT */
 json {
 
     hits {
-        total searchResponse.hits?.totalHits.value
+        total searchResponse.hits?.totalHits?.value
         hits tmpl.searchHit(searchResponse.hits?.hits as List)
     }
 
-    facets searchResponse.aggregations?.collectEntries { Aggregation agg ->
-        String type = agg.type
-        Map result
-        long total = 0
-        if (agg.type.endsWith("terms")) {
-            type = 'terms'
-            MultiBucketsAggregation multiBucketsAggregation = (MultiBucketsAggregation) agg
-            result = [(agg.name): [terms: multiBucketsAggregation.buckets.collect { bucket ->
-                total += bucket.docCount
-                [term: bucket.keyAsString, count: bucket.docCount] // keyAsString converts boolean 0/1 to false/true
-            }, _type                    : type, total: total]]
-        }
-        else if (agg.type == 'range') {
-
-            ParsedRange range = (ParsedRange) agg
-            result = [(agg.name): [ranges: range.buckets.collect { bucket ->
-                total += bucket.docCount
-                Map bucketAsMap = [term: bucket.key, count: bucket.docCount]
-                def from = bucket.from
-                if (from && from != Double.NEGATIVE_INFINITY && from != Double.POSITIVE_INFINITY) {
-                    bucketAsMap += [from: from, from_str: bucket.fromAsString]
-                }
-                def to = bucket.to
-                if (to && to != Double.NEGATIVE_INFINITY && to != Double.POSITIVE_INFINITY) {
-                    bucketAsMap += [to: to, to_str: bucket.toAsString]
-                }
-                bucketAsMap
-            }, _type                     : type, total: total]]
-        }
-        else if (agg.type == 'histogram') {
-            ParsedHistogram histogram = (ParsedHistogram) agg
-            result = [(agg.name): [entries: histogram.buckets.collect { bucket ->
-                total += bucket.docCount
-                [key: bucket.key, count: bucket.docCount]
-            }, _type                      : type, total: total]]
-        }
-        else if (agg.type == 'stats') {
-            ParsedStats stats = (ParsedStats) agg
-            result = [(agg.name): [_type: agg.type, min: stats.min, max: stats.max, avg: stats.avg, sum: stats.sum, count: stats.count]]
-        }
-        else {
-            result = [(agg.name):[_type:agg.type, error:"Unknown type: "+agg.type]]
-        }
-        result
-    }
+    facets ElasticSearchBackwardsCompatibilityMapper.mapAggregations(searchResponse.aggregations)
 
 }

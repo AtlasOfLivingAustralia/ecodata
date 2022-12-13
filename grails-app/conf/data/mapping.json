@@ -7,6 +7,7 @@
         "projectId" : {
           "type" : "keyword"
         },
+
         "projects" : {
           "type" : "keyword"
         },

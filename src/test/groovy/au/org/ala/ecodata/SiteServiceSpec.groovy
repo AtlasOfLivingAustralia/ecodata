@@ -15,7 +15,6 @@ import spock.lang.Specification
  * Specification / tests for the SiteService
  */
 
-//@TestMixin(MongoDbTestMixin)
 class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> {
 
     //def service = new SiteService()
@@ -65,7 +64,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         then: "Circles aren't valid geojson so we need to convert them to a polygon"
         geojson.type == 'Polygon'
         geojson.coordinates[0].size() == 101
-        
+
         when: "The site is a line"
         coordinates = [[145.42448043823242,-37.72728027686003],[148.00626754760742,-37.16031654673676],[148.36881637573242,-37.77071473849609],[147.09440231323242,-38.59111377614743]]
         extent = ["source":"drawn","geometry":["type":"LineString","coordinates": coordinates]]

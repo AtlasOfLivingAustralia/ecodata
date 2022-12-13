@@ -39,7 +39,7 @@ class SpeciesReMatchService {
                             name = record.name
                         }
                         def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
-                        def url = "${grailsApplication.config.bie.url}ws/search/auto.jsonp?q=${encodedQuery}&limit=1&idxType=TAXON"
+                        def url = "${grailsApplication.config.getProperty('bie.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=1&idxType=TAXON"
 
                         def results = webService.getJson(url)
                         results?.autoCompleteList?.removeAll { !it.name }

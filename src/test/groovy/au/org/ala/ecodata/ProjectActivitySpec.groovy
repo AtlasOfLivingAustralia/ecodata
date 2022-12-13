@@ -51,25 +51,25 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
 
             createProjectActivity(props)
         }
-        ProjectActivity.metaClass.getDbo = {
-            delegate.properties
-        }
+//        ProjectActivity.metaClass.getDbo = {
+//            delegate.properties
+//        }
     }
 
     void cleanup() {
-        ProjectActivity.withNewTransaction {
+        //ProjectActivity.withNewTransaction {
             ProjectActivity.findAll().each {
                 it.delete()
             }
-        }
-        ProjectActivity.metaClass.getDbo = null
+        //}
+       // ProjectActivity.metaClass.getDbo = null
     }
 
     private def createProjectActivity(props) {
-        ProjectActivity.withNewTransaction {
+        //ProjectActivity.withNewTransaction {
             ProjectActivity projectActivity = new ProjectActivity(props)
             projectActivity.save(failOnError: true, flush: true)
-        }
+        //}
     }
 
     @Unroll
@@ -78,9 +78,9 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
         when:
         def results
 
-        ProjectActivity.withNewSession {
+        //ProjectActivity.withNewSession {
             results = service.search(criteria, LevelOfDetail.flat.name())
-        }
+        //}
         results.sort { a1, a2 -> a1.projectActivityId <=> a2.projectActivityId }
 
         then:
@@ -98,9 +98,9 @@ class ProjectActivitySpec extends MongoSpec implements ServiceUnitTest<ProjectAc
     def "when a project activity is deleted, it should not be returned"(criteria, expectedProjectActivityIds) {
         when:
         def results
-        ProjectActivity.withNewTransaction {
+       //ProjectActivity.withNewTransaction {
             results = service.search(criteria, LevelOfDetail.flat.name())
-        }
+        //}
         results.sort { a1, a2 -> a1.projectActivityId <=> a2.projectActivityId }
 
         then:

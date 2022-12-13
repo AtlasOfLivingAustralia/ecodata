@@ -68,6 +68,7 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 import static org.elasticsearch.index.query.QueryBuilders.*
+
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -218,7 +219,7 @@ class ElasticSearchService {
             log.error "Error: ${message}\nDocument:Error indexing document: ${docId}, type:${docMap['className']}"
 
             if (Environment.current == Environment.PRODUCTION) {
-                String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+                String subject = "Indexing failed on server ${grailsApplication.config.getProperty('grails.serverURL')}"
                 String body = "Type: "+getDocType(doc)+"\n"
                 body += "Index: "+index+"\n"
                 body += "Error: "+e.getMessage()+"\n"
@@ -440,7 +441,7 @@ class ElasticSearchService {
 
     def buildFacetMapping() {
         def facetList = []
-        def facetConfig = grailsApplication.config.app.facets.geographic
+        Map facetConfig = grailsApplication.config.getProperty('app.facets.geographic', Map)
         // These groupings of facets determine the way the layers are used with a site, but can be treated the
         // same for the purposes of indexing the results.
         ['contextual', 'grouped', 'special'].each {
@@ -540,7 +541,7 @@ class ElasticSearchService {
 
         // skip indexing
         if (indexingTempInactive
-                || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
+                || !grailsApplication.config.getProperty('app.elasticsearch.indexOnGormEvents')
                 || !ALLOWED_DOC_TYPES.contains(docType)) {
             return null
         }
@@ -719,7 +720,7 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         // skip indexing
         if (indexingTempInactive
-                || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
+                || !grailsApplication.config.getProperty('app.elasticsearch.indexOnGormEvents')
                 || !ALLOWED_DOC_TYPES.contains(doc.getClass().name)) {
             return null
         }
@@ -1650,7 +1651,7 @@ class ElasticSearchService {
      * @return
      */
     private applyWeightingToFields(QueryStringQueryBuilder queryStringQueryBuilder) {
-        Map fieldsAndBoosts = grailsApplication.config.homepageIdx.elasticsearch.fieldsAndBoosts
+        Map fieldsAndBoosts = grailsApplication.config.getProperty('homepageIdx.elasticsearch.fieldsAndBoosts', Map)
 
         fieldsAndBoosts.each { field, boost ->
             queryStringQueryBuilder.field(field, boost)

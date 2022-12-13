@@ -1,11 +1,12 @@
 package au.org.ala.ecodata
 
-import com.mongodb.*
-import com.mongodb.client.FindIterable
+
+import com.mongodb.BasicDBObject
+import com.mongodb.DBObject
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.Filters
-import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import org.bson.conversions.Bson
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
@@ -14,6 +15,7 @@ import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.web.json.JSONObject
+import org.locationtech.jts.geom.Geometry
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
@@ -580,7 +582,7 @@ class SiteService {
     }
 
     def geometryForPid(pid) {
-        def url = "${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/${pid}"
+        def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/shape/geojson/${pid}"
         webService.getJson(url)
     }
 
@@ -716,9 +718,8 @@ class SiteService {
      */
     void doWithAllSites(Closure action, Integer max = null) {
 
-        def collection = Site.getCollection()
-        def siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        def results = collection.find(siteQuery).batchSize(100)
+        MongoCollection collection = Site.getCollection()
+        def results = collection.find(Filters.ne('status', DELETED)).batchSize(100)
 
         results.each { dbObject ->
             action.call(dbObject)
@@ -776,8 +777,7 @@ class SiteService {
         }
 
         println collection.count(query)
-       // DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
-        DBCursor results = collection.find(query).batchSize(10).limit(max).iterator()
+        MongoCursor results = collection.find(query).batchSize(10).limit(max).iterator()
         int count = 0
         while (results.hasNext()) {
             DBObject site = results.next()
@@ -870,13 +870,13 @@ class SiteService {
 
         def resp = null
         if (geometry?.type == 'Circle') {
-            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.api_key]
-            def url = grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/pointradius/" +
+            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.getProperty('api_key')]
+            def url = grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/shape/upload/pointradius/" +
                     geometry?.coordinates[1] + '/' + geometry?.coordinates[0] + '/' + (geometry?.radius / 1000)
             resp = webService.doPost(url, body)
         } else if (geometry?.type in ['Polygon', 'LineString']) {
-            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.api_key]
-            resp = webService.doPost(grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/geojson", body)
+            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.getProperty('api_key')]
+            resp = webService.doPost(grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/shape/upload/geojson", body)
         }
 
         resp
@@ -892,9 +892,9 @@ class SiteService {
     int calculateGeohashPrecision(Map boundingBox) {
         Geometry geom = GeometryUtils.geoJsonMapToGeometry(boundingBox)
         double area = GeometryUtils.area(geom)
-        List lookupTable = grailsApplication.config.geohash.lookupTable
-        int maxNumberOfGrids = grailsApplication.config.geohash.maxNumberOfGrids as int
-        int maxLengthIndex = grailsApplication.config.geohash.maxLength as int
+        List lookupTable = grailsApplication.config.getProperty('geohash.lookupTable', List)
+        int maxNumberOfGrids = grailsApplication.config.getProperty('geohash.maxNumberOfGrids', Integer)
+        int maxLengthIndex = grailsApplication.config.getProperty('geohash.maxLength', Integer)
         Map step
 
         for(int i = 0; i < maxLengthIndex;  i++) {
