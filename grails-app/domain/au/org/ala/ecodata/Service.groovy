@@ -17,6 +17,11 @@ class Service {
     String name
     List<String> categories
     List<ServiceForm> outputs
+    /**
+     * Allows programs to refer to this service using a different label as service names can be written in contracts
+     * Key: programId, value: [label:'a label'] */
+    Map programLabels
+
     String status = Status.ACTIVE
 
     static constraints = {
@@ -40,7 +45,8 @@ class Service {
                         scoreIds: it.relatedScores.collect{it.scoreId}
                 ]
             },
-            scores: scores()
+            scores: scores(),
+            programLabels: programLabels
         ]
     }
 
