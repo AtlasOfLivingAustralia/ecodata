@@ -92,7 +92,7 @@ class Document {
     }
 
     boolean isImageHostedOnPublicServer(){
-        identifier?.startsWith(Holders.config.imagesService.baseURL)
+        identifier?.startsWith(Holders.config.getProperty('imagesService.baseURL'))
     }
 
     def getUrl() {
