@@ -166,16 +166,6 @@ class ProjectGraphQLMapper {
                 })
             }
 
-            query('projects', [Project]) {
-                argument('term', String)
-                dataFetcher(new DataFetcher() {
-                    @Override
-                    Object get(DataFetchingEnvironment environment) throws Exception {
-                        ProjectGraphQLMapper.buildTestFetcher().get(environment)
-                    }
-                })
-            }
-
             query('searchMeritProject', [Project]) {
                 argument('projectId', String) { nullable true }
                 argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }

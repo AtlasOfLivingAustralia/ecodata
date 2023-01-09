@@ -9,6 +9,12 @@ import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 class OutputTarget {
 
     static graphql = GraphQLMapping.build {
+        operations.get.enabled false
+        operations.list.enabled false
+        operations.count.enabled false
+        operations.create.enabled false
+        operations.update.enabled false
+        operations.delete.enabled false
         exclude('scoreId')
         add('targetMeasure', Score) {
             dataFetcher { OutputTarget outputTarget ->
