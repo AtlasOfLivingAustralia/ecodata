@@ -49,8 +49,11 @@ class DownloadService {
         directoryPath.mkdirs()
         String fileExtension = params.fileExtension?:'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
-
+        // Make the document host url prefix available for use by the task as when the reporting server
+        // needs document access, it also needs access to this prefix.
+        String documentHostUrlPrefix = DocumentHostInterceptor.documentHostUrlPrefix.get()
         Promise p = task {
+            DocumentHostInterceptor.documentHostUrlPrefix.set(documentHostUrlPrefix)
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
                Project.withNewSession {

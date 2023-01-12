@@ -131,7 +131,7 @@ class Document {
             return identifier
         }
 
-        String hostName = GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) ?: ""
+        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?: ""
         log.warn("Hostname for document URL: "+hostName)
         path = path?path+'/':''
 

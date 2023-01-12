@@ -33,7 +33,7 @@ class DocumentSpec extends Specification implements DomainUnitTest<Document>, Co
         def url
         given:
         def document = new Document(filepath: "2021-04", filename: "1.jpeg")
-        GrailsWebRequest.lookup().setAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, 'https://xyz.com', RequestAttributes.SCOPE_REQUEST)
+        DocumentHostInterceptor.documentHostUrlPrefix.set('https://xyz.com')
 
         when:
         url = document.getUrl()
