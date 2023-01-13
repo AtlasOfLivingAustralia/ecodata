@@ -132,7 +132,6 @@ class Document {
         }
 
         String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?: ""
-        log.warn("Hostname for document URL: "+hostName)
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
