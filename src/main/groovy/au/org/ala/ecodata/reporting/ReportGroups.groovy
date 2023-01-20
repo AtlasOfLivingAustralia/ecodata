@@ -159,7 +159,9 @@ class ReportGroups {
 
             int result = bucketIndex(value)
 
-            return result >= 0 ? groupName(result) : groupName((-result)-2)
+            // we put results with an exact date match into the group where the end date of the bucket matches
+            // because activities with the same end date as a report fall into that reporting group.
+            return result >= 0 ? groupName(result - 1) : groupName((-result)-2)
         }
 
         int bucketIndex(String value) {
