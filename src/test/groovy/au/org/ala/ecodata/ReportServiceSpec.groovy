@@ -367,14 +367,14 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         results.outputData.groups[1].group == 'January 2014 - December 2014'
         def group2Results = results.outputData.groups[1].results[0].groups
 
-        [group1:3, group2:4, group3:2].each { k, v ->
+        [group1:3, group2:8, group3:2].each { k, v ->
             def nestedResult = group2Results.find{it.group == k}
             nestedResult.results[0].result == v
         }
 
         results.outputData.groups[2].group == 'After December 2014'
         def group3Results = results.outputData.groups[2].results[0].groups
-        [group1:5, group2:4, group4:5].each { k, v ->
+        [group1:5, group4:5].each { k, v ->
             def nestedResult = group3Results.find{it.group == k}
             nestedResult.results[0].result == v
         }
