@@ -29,7 +29,7 @@ class Service {
 
     static embedded = ['outputs']
     List<Score> scores() {
-        outputs?.collect{it.relatedScores}.unique().flatten()
+        outputs?.collect{it.relatedScores}.flatten().unique({it.scoreId})
     }
 
     Map toMap() {
