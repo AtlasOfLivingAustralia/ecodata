@@ -51,7 +51,10 @@ class CommonService {
                 v = null
             }
 
-            o[k] = v
+            // Dynamic properties with a null value result in a NPE when using the GORM mongo codec mapping.
+            if (v != null || domainDescriptor.hasProperty(k)) {
+                o[k] = v
+            }
         }
         // always flush the update so that that any exceptions are caught before the service returns
         o.save(flush:true)
@@ -95,7 +98,7 @@ class CommonService {
         String cacheKey = 'apikey-'+key
         Map result = cacheService.get(cacheKey, {
             // try the preferred api key store first
-            def url = grailsApplication.config.security.apikey.serviceUrl + key
+            def url = grailsApplication.config.getProperty('security.apikey.serviceUrl') + key
             try {
                 def conn = new URL(url).openConnection()
                 if (conn.getResponseCode() == 200) {

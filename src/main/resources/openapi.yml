@@ -1,0 +1,91 @@
+{
+  "openapi":"3.0.1",
+  "info":{
+    "title":"Ecodata REST services",
+    "description":"REST services for interacting with the ecodata webapp",
+    "termsOfService":"https://www.ala.org.au/terms",
+    "contact":{
+      "name":"Support",
+      "email":"support@ala.org.au"
+    },
+    "license":{
+      "name":"Mozilla Public License 1.1",
+      "url":"https://www.mozilla.org/en-US/MPL/1.1/"
+    },
+    "version":"@info.app.version@"
+  },
+  "servers":[
+    {
+      "url":"http://devt.ala.org.au:8080"
+    }
+  ],
+  "paths":{
+    "/project/findByName":{
+      "get":{
+        "tags":[
+            "project"
+        ],
+        "summary":"Find Project By Name",
+        "description":"Find Project By Name",
+        "operationId":"findProjectByName",
+        "parameters":[
+          {
+            "name":"projectName",
+            "in":"query",
+            "description":"project name",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"Project Details"
+          }
+        }
+      }
+    },
+    "/project/list":{
+      "get":{
+        "tags":[
+            "project"
+        ],
+        "summary":"Get Project list",
+        "description":"Get Project list",
+        "operationId":"projectList",
+        "parameters":[
+          {
+            "name":"brief",
+            "in":"query",
+            "description":"project name",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "name":"includeDeleted",
+            "in":"query",
+            "description":"include Deleted projects",
+            "schema":{
+              "type":"boolean"
+            }
+          },
+          {
+            "name":"citizenScienceOnly",
+            "in":"query",
+            "description":"citizen Science projects Only",
+            "schema":{
+              "type":"boolean"
+            }
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"Project list"
+          }
+        }
+      }
+    }
+  }
+}

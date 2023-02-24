@@ -359,7 +359,7 @@ class ActivityController {
     }
 
     def getDefaultFacets(){
-        List facets = grailsApplication.config.facets.data
+        List facets = grailsApplication.config.getProperty('facets.data', List)
         render text: facets as JSON, contentType: 'application/json'
     }
 }

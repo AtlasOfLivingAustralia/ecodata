@@ -1,7 +1,10 @@
 package au.org.ala.ecodata
 
+import au.org.ala.userdetails.UserDetailsClient
+import au.org.ala.userdetails.UserDetailsFromIdListRequest
 import au.org.ala.web.AuthService
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 
 class UserService {
 
@@ -9,6 +12,7 @@ class UserService {
     AuthService authService
     WebService webService
     GrailsApplication grailsApplication
+    UserDetailsClient userDetailsClient
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
@@ -16,8 +20,13 @@ class UserService {
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
     def getCurrentUserDisplayName() {
-        def currentUser = _currentUser.get()
-        return currentUser ? currentUser.displayName : ""
+        String displayName = authService.displayName
+        if (!displayName) {
+            def currentUser = _currentUser.get()
+            displayName = currentUser ? currentUser.displayName : ""
+        }
+
+        displayName
     }
 
     /**
@@ -54,6 +63,10 @@ class UserService {
     def getRolesForUser(String userId = null) {
         userId = userId ?: getCurrentUserDetails().userId
         authService.getUserForUserId(userId, true)?.roles ?: []
+    }
+
+    def userInRole(Object role){
+        return authService.userInRole(role)
     }
 
     synchronized def getUserForUserId(String userId) {
@@ -119,7 +132,7 @@ class UserService {
      * @param password
      */
     def getUserKey(String username, String password) {
-        webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password], true)
+        webService.doPostWithParams(grailsApplication.config.getProperty('authGetKeyUrl'), [userName: username, password: password], true)
     }
 
     /**

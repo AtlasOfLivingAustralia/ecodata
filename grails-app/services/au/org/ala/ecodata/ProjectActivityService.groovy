@@ -374,12 +374,12 @@ class ProjectActivityService {
     }
 
     def notifyChangeToAdmin(Map body, Map old = [:]) {
-        if (grailsApplication.config.projectActivity.notifyOnChange?.toBoolean()) {
+        if (grailsApplication.config.getProperty('projectActivity.notifyOnChange')?.toBoolean()) {
             List notify = notifiableProperties(body, old)
             if (notify) {
                 String content = getNotificationContent(body, notify)
                 String subject = "New proposed survey method"
-                emailService.sendEmail(subject, content, [grailsApplication.config.ecodata.support.email.address])
+                emailService.sendEmail(subject, content, [grailsApplication.config.getProperty('ecodata.support.email.address')])
             }
         }
     }
@@ -414,7 +414,7 @@ class ProjectActivityService {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
                 Calendar cal = Calendar.getInstance()
                 def time = dateFormat.format(cal.getTime())
-                def dataUrl = "${grailsApplication.config.biocollect.projectActivityDataURL}/${projectActivity.projectId}"
+                def dataUrl = "${grailsApplication.config.getProperty('biocollect.projectActivityDataURL')}/${projectActivity.projectId}"
                 return messageSource.getMessage("projectAcitivity.attribution", [orgName, year, name, dataUrl, time].toArray(), "", Locale.default)
             }
         }

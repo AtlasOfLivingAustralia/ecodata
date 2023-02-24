@@ -1,15 +1,15 @@
 package au.org.ala.ecodata
 
-import junit.framework.TestCase
+import org.grails.testing.GrailsUnitTest
 import spock.lang.Specification
 
 /**
  * Tests for the SchemaBuilder class.
  */
 
-class SchemaBuilderSpec extends Specification {
+class SchemaBuilderSpec extends Specification implements GrailsUnitTest {
 
-    def schemaGenerator = new SchemaBuilder([grails:[serverURL:'http://localhost:8080/'], app:[external:[api:[version:'test']]]], [])
+    def schemaGenerator = new SchemaBuilder(grailsApplication.config, [])
 
     void "The schema for a text property can be generated correctly"() {
         setup:
@@ -88,7 +88,7 @@ class SchemaBuilderSpec extends Specification {
 
         then:
         schema == [
-                id:"http://localhost:8080//ws/documentation/test/output/Test%20Output",
+                id:"http://devt.ala.org.au:8080/ecodata/ws/documentation/draft/output/Test%20Output",
                 $schema:"http://json-schema.org/draft-04/schema#",
                 type:"object",
                 properties:[
@@ -111,7 +111,7 @@ class SchemaBuilderSpec extends Specification {
 
         then:
         schema == [
-                id:"http://localhost:8080//ws/documentation/test/output/Test%20Output",
+                id:"http://devt.ala.org.au:8080/ecodata/ws/documentation/draft/output/Test%20Output",
                 $schema:"http://json-schema.org/draft-04/schema#",
                 type:"object",
                 properties:[
@@ -140,7 +140,7 @@ class SchemaBuilderSpec extends Specification {
 
         then:
         schema == [
-                id:"http://localhost:8080//ws/documentation/test/output/Test%20Output",
+                id:"http://devt.ala.org.au:8080/ecodata/ws/documentation/draft/output/Test%20Output",
                 $schema:"http://json-schema.org/draft-04/schema#",
                 type:"object",
                 properties:[

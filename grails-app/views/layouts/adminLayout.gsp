@@ -11,39 +11,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><g:layoutTitle/></title>
-    <style type="text/css">
-
-    .icon-chevron-right {
-        float: right;
-        margin-top: 2px;
-        margin-right: -6px;
-        opacity: .25;
-    }
-
-    /* Pagination fix */
-    .pagination .disabled, .pagination .currentStep, .pagination .step {
-        float: left;
-        padding: 0 14px;
-        border-right: 1px solid;
-        line-height: 34px;
-        border-right-color: rgba(0, 0, 0, 0.15);
-    }
-
-    .pagination .prevLink {
-        border-right: 1px solid #DDD !important;
-        line-height: 34px;
-        vertical-align: middle;
-        padding: 0 14px;
-        float: left;
-    }
-
-    .pagination .nextLink {
-        vertical-align: middle;
-        line-height: 34px;
-        padding: 0 14px;
-    }
-
-    </style>
 
     <asset:stylesheet src="ecodata.css"/>
     <g:layoutHead/>
@@ -61,7 +28,7 @@
                 <div class="collapse navbar-collapse" id="collapsibleHeaderContent">
                     <div class="d-flex flex-grow-1">
                         <span id="buttonBar" class="ms-auto">
-                            <ec:currentUserDisplayName/>&nbsp;<auth:loginLogout cssClass="nav-item btn btn-info"/>
+                            <ec:currentUserDisplayName/>&nbsp;<button id="btnLogout" class='nav-item btn btn-info'>Logout</button>
                             <button class="btn btn-warning nav-item" id="btnAdministration"><i class="fa fa-cog"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
                         </span>
@@ -91,6 +58,8 @@
                                        title="Scores list"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'getIndexNames')}"
                                        title="List custom indices"/>
+                    <ec:breadcrumbItem href="${createLink(controller: 'graphql', action: 'browser')}"
+                                       title="Graphql API"/>
 
                 </ul>
 
@@ -123,6 +92,10 @@
     </div>
 </div>
 
+<asset:javascript src="bundle-vendor"/>
+<asset:javascript src="bundle-runtime"/>
+<asset:javascript src="admin"/>
+
 <asset:script type="text/javascript">
 
     $(document).ready(function (e) {
@@ -130,7 +103,7 @@
         $.ajaxSetup({ cache: false });
 
         $("#btnLogout").click(function (e) {
-            window.location = "${createLink(controller: 'logout', action:'index')}";
+            window.location = "${createLink(controller: 'admin', action:'logout')}";
         });
 
         $("#btnAdministration").click(function (e) {
@@ -144,12 +117,7 @@
     });
 
 </asset:script>
-
-<!-- JS resources-->
-<asset:javascript src="admin.js"/>
 <asset:deferredScripts/>
-
-
 <!-- Google Analytics -->
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

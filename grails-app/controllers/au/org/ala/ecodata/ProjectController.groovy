@@ -2,8 +2,13 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 class ProjectController {
 
@@ -30,6 +35,35 @@ class ProjectController {
         render "${Project.count()} sites"
     }
 
+    @Operation(
+            method = "GET",
+            tags = "project",
+            operationId = "projectList",
+            summary = "Get Project list",
+            description = "Get Project list",
+            parameters = [
+                    @Parameter(name = "brief",
+                            in = QUERY,
+                            required = false,
+                            description = "project name"),
+                    @Parameter(name = "includeDeleted",
+                            in = QUERY,
+                            required = false,
+                            description = "include Deleted projects",
+                            schema = @Schema(type = "boolean")),
+                    @Parameter(name = "citizenScienceOnly",
+                            in = QUERY,
+                            required = false,
+                            description = "citizen Science projects Only",
+                            schema = @Schema(type = "boolean"))
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Project list",
+                            responseCode = "200"
+                    )
+            ]
+    )
     def list() {
         println 'brief = ' + params.brief
         def list = projectService.list(params.brief, params.includeDeleted, params.citizenScienceOnly)
@@ -326,7 +360,25 @@ class ProjectController {
         render result as JSON
     }
 
-    @RequireApiKey
+    @Operation(
+            method = "GET",
+            tags = "project",
+            operationId = "findProjectByName",
+            summary = "Find Project By Name",
+            description = "Find Project By Name",
+            parameters = [
+                    @Parameter(name = "projectName",
+                    in = QUERY,
+                    required = true,
+                    description = "project name")
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Project Details",
+                            responseCode = "200"
+                    )
+            ]
+    )
     def findByName() {
         if (!params.projectName) {
             render status:400, text: "projectName is a required parameter"
@@ -372,7 +424,7 @@ class ProjectController {
      * @return
      */
     def getScienceTypes(){
-        List scienceTypes = grailsApplication.config.biocollect.scienceType
+        List scienceTypes = grailsApplication.config.getProperty('biocollect.scienceType', List)
         render(text:  scienceTypes as JSON, contentType: 'application/json')
     }
 
@@ -381,7 +433,7 @@ class ProjectController {
      * @return
      */
     def getEcoScienceTypes(){
-        List ecoScienceTypes = grailsApplication.config.biocollect.ecoScienceType
+        List ecoScienceTypes = grailsApplication.config.getProperty('biocollect.ecoScienceType', List)
         render(text:  ecoScienceTypes as JSON, contentType: 'application/json')
     }
 
@@ -390,7 +442,7 @@ class ProjectController {
      * @return
      */
     def getUNRegions(){
-        List regions = grailsApplication.config.uNRegions
+        List regions = grailsApplication.config.getProperty('uNRegions', List)
         render( text: regions as JSON, contentType: 'application/json' )
     }
 
@@ -399,7 +451,7 @@ class ProjectController {
      * @return
      */
     def getCountries(){
-        List countries = grailsApplication.config.countries
+        List countries = grailsApplication.config.getProperty('countries', List)
         render( text: countries as JSON, contentType: 'application/json' )
     }
 
@@ -409,12 +461,12 @@ class ProjectController {
      * @return
      */
     def getDataCollectionWhiteList(){
-        List dataCollectionWhiteList = grailsApplication.config.biocollect.dataCollectionWhiteList
+        List dataCollectionWhiteList = grailsApplication.config.getProperty('biocollect.dataCollectionWhiteList', List)
         render( text: dataCollectionWhiteList as JSON, contentType: 'application/json' )
     }
 
     def getDefaultFacets(){
-        List facets = grailsApplication.config.facets.project
+        List facets = grailsApplication.config.getProperty('facets.project', List)
         render text: facets as JSON, contentType: 'application/json'
     }
 
@@ -431,8 +483,8 @@ class ProjectController {
     }
 
     private def setResponseHeadersForProjectId(response, projectId){
-        response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/project/" + projectId)
-        response.addHeader("location", grailsApplication.config.grails.serverURL + "/project/" +  projectId)
+        response.addHeader("content-location", grailsApplication.config.getProperty('grails.serverURL') + "/project/" + projectId)
+        response.addHeader("location", grailsApplication.config.getProperty('grails.serverURL') + "/project/" +  projectId)
         response.addHeader("entityId", projectId)
     }
 

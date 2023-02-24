@@ -92,7 +92,7 @@ class Document {
     }
 
     boolean isImageHostedOnPublicServer(){
-        identifier?.startsWith(Holders.config.imagesService.baseURL)
+        identifier?.startsWith(Holders.config.getProperty('imagesService.baseURL'))
     }
 
     def getUrl() {
@@ -135,7 +135,7 @@ class Document {
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
-        URI uri = new URI(hostName + Holders.config.app.uploads.url + path + encodedFileName)
+        URI uri = new URI(hostName + Holders.config.getProperty('app.uploads.url') + path + encodedFileName)
         return uri.toString()
     }
 
@@ -145,7 +145,7 @@ class Document {
         if (path) {
             path = path+File.separator
         }
-        return Holders.config.app.file.upload.path + '/' + path  + name
+        return Holders.config.getProperty('app.file.upload.path') + '/' + path  + name
 
     }
 

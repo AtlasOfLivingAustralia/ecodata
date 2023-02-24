@@ -6,14 +6,14 @@ import grails.testing.services.ServiceUnitTest
 
 class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 
-    UserService userService = Stub(UserService)
+    UserService userService = Mock(UserService)
     AuthService authService = Mock(AuthService)
 
     void setup() {
         cleanupData()
         service.userService = userService
-        userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
         service.authService = authService
+        userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
     }
 
     void tearDown() {

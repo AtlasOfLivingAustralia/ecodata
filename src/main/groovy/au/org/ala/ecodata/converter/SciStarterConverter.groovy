@@ -69,18 +69,18 @@ class SciStarterConverter {
                         'name'     : 'image',
                         'transform': { props, target ->
                             String imageUrl = props.image?.toLowerCase()
-                            if (Holders.grailsApplication.config.scistarter.forceHttpsUrls == 'true') {
+                            if (Holders.grailsApplication.config.getProperty('scistarter.forceHttpsUrls') == 'true') {
                                 try {
                                     URL oldUrl = new URL(props.image)
                                     URL newUrl = new URL("https", oldUrl.getHost(), oldUrl.getPort(), oldUrl.getFile())
                                     newUrl.toString()
                                 } catch (MalformedURLException e) {
-                                    "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                                    "${Holders.grailsApplication.config.getProperty('scistarter.baseUrl')}/${props.image}"
                                 }
                             } else if (!imageUrl?.equals(null) && (imageUrl?.contains('http://') || imageUrl?.contains('https://'))) {
                                 props.image
                             } else if (!props.image?.equals(null)) {
-                                "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                                "${Holders.grailsApplication.config.getProperty('scistarter.baseUrl')}/${props.image}"
                             } else {
                                 return null
                             }
@@ -142,7 +142,7 @@ class SciStarterConverter {
                 'topics'      : [
                         'name'     : 'scienceType',
                         'transform': { props, target ->
-                            List approvedScienceType = Holders.grailsApplication.config.biocollect.scienceType
+                            List approvedScienceType = Holders.grailsApplication.config.getProperty('biocollect.scienceType', List)
                             List scienceTypes = []
                             props?.topics?.each { String type ->
                                 String lowerType = type?.toLowerCase()
@@ -160,7 +160,7 @@ class SciStarterConverter {
                 "country"     : [
                         name       : "countries",
                         'transform': { props, target ->
-                            List countries = Holders.grailsApplication.config.countries
+                            List countries = Holders.grailsApplication.config.getProperty('countries', List)
                             String country
                             if (props.country instanceof String) {
                                 country = countries.find { String cntry ->
@@ -180,7 +180,7 @@ class SciStarterConverter {
                 "UN_regions"  : [
                         name       : "uNRegions",
                         'transform': { props, target ->
-                            List uNRegions = Holders.grailsApplication.config.uNRegions
+                            List uNRegions = Holders.grailsApplication.config.getProperty('uNRegions', List)
                             List matchedRegions = []
                             props.UN_regions?.each { String region ->
                                 String matchedRegion = uNRegions.find { String UN_region ->
@@ -310,7 +310,7 @@ class SciStarterConverter {
      * @return
      */
     static Boolean canImportProject(Map project) {
-        List topicWhiteList = Holders.grailsApplication.config.biocollect.scienceType
+        List topicWhiteList = Holders.grailsApplication.config.getProperty('biocollect.scienceType', List)
         List intersect = project.topics?.intersect(topicWhiteList)
         if (intersect?.size() > 0) {
             return true

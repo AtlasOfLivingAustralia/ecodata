@@ -106,6 +106,7 @@ if (!google.geocode.url) {
 if (!temp.file.cleanup.days) {
     temp.file.cleanup.days = 1
 }
+access.expiry.maxEmails=500
 
 
 if (!biocollect.scienceType) {
@@ -526,13 +527,13 @@ if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
 if (!userDetailsSingleUrl) {
-    userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
+    userDetailsSingleUrl = "https://auth-dev.ala.org.au/userDetails/getUserDetails"
 }
 if (!userDetailsUrl) {
-    userDetailsUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+    userDetailsUrl = "https://auth-dev.ala.org.au/userDetails/getUserListFull"
 }
 if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/ws/admin'
+    userDetails.admin.url = 'https://auth-dev.ala.org.au/userdetails/ws/admin'
 }
 
 if (!authGetKeyUrl) {
@@ -579,17 +580,35 @@ grails.cache.config = {
 
 security {
     cas {
+        enabled = false
         appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
         // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
         casServerUrlPrefix = 'https://auth.ala.org.au/cas'
         loginUrl = 'https://auth.ala.org.au/cas/login'
         logoutUrl = 'https://auth.ala.org.au/cas/logout'
         casServerName = 'https://auth.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*']
-        authenticateOnlyIfLoggedInPattern =
+        uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*']
+        authenticateOnlyIfLoggedInPattern = "/graphql/*"
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
     }
+    oidc {
+        enabled = true
+        discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
+        clientId = 'changeMe'
+        secret = 'changeMe'
+        scope = 'openid,profile,email,ala,roles,user_defined'
+        connectTimeout = 5000
+    }
+    jwt {
+        enabled = true
+        discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
+        requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
+        urlPatterns = ["/ws/graphql/*"]
+        requiredScores = ["openid", 'profile', "email", "ala", "roles", "user_defined"]
+    }
 }
+
+grails.gorm.graphql.browser = true
 
 environments {
     development {
@@ -631,6 +650,11 @@ environments {
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+
+        wiremock.port = 8018
+        security.cas.bypass = true
+        security.cas.casServerUrlPrefix="http://devt.ala.org.au:${wiremock.port}/cas"
+        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
         grails.cache.config = {
@@ -642,11 +666,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.hostname = "localhost"
-        // Only for travis CI, they must be overriden by ecodata-config.properties
-        serverName = "http://${grails.hostname}:8080"
-        grails.app.context = "ecodata"
-        grails.serverURL = serverName + "/" + grails.app.context
+        grails.serverURL = "http://devt.ala.org.au:8080"
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
@@ -655,6 +675,8 @@ environments {
         app.file.archive.path = "./build/archive"
 
         wiremock.port = 8018
+        security.oidc.discoveryUri = "http://localhost:${wiremock.port}/cas/oidc/.well-known"
+        security.oidc.allowUnsignedIdTokens = true
         def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
         security.cas.casServerName="${casBaseUrl}"
         security.cas.contextPath=""
@@ -1112,14 +1134,14 @@ geoServer.layerConfiguration = [
                                 "name": "sites.geoIndex",
                                 "shortName": "sites.geoIndex",
                                 "useShortName": false,
-                                "type": "com.vividsolutions.jts.geom.Geometry",
+                                "type": "org.locationtech.jts.geom.Geometry",
                                 "use": true,
                                 "defaultGeometry": true,
                                 "geometryType": "GEO_SHAPE",
                                 "srid": "4326",
                                 "stored": false,
                                 "nested": false,
-                                "binding": "com.vividsolutions.jts.geom.Geometry",
+                                "binding": "org.locationtech.jts.geom.Geometry",
                                 "nillable": true,
                                 "minOccurs": 0,
                                 "maxOccurs": 1
@@ -1138,14 +1160,14 @@ geoServer.layerConfiguration = [
                                 "name": "projectArea.geoIndex",
                                 "shortName": "projectArea.geoIndex",
                                 "useShortName": false,
-                                "type": "com.vividsolutions.jts.geom.Geometry",
+                                "type": "org.locationtech.jts.geom.Geometry",
                                 "use": true,
                                 "defaultGeometry": true,
                                 "geometryType": "GEO_SHAPE",
                                 "srid": "4326",
                                 "stored": false,
                                 "nested": false,
-                                "binding": "com.vividsolutions.jts.geom.Geometry",
+                                "binding": "org.locationtech.jts.geom.Geometry",
                                 "nillable": true,
                                 "minOccurs": 0,
                                 "maxOccurs": 1

@@ -71,7 +71,7 @@ server:
         remote-ip-header: 'X-Forwarded-For'
     servlet:
         session:
-            timeout: 7200
+            timeout: 30m
 management:
     endpoints:
         enabled-by-default: false
@@ -185,6 +185,7 @@ grails:
     mail:
         default:
             from: noreply@volunteer.ala.org.au
+        poolSize: 1
 digest:
     enabled: false
     threshold: 5
@@ -210,4 +211,54 @@ grails:
         codecs:
             - au.org.ala.ecodata.customcodec.AccessLevelCodec
 
+graphql:
+    servlet:
+        mapping: /graphql
+        enabled: true
+        corsEnabled: true
+        # if you want to @ExceptionHandler annotation for custom GraphQLErrors
+        exception-handlers-enabled: true
+        contextSetting: PER_REQUEST_WITH_INSTRUMENTATION
 
+graphiql:
+    mapping: /graphiql
+    endpoint:
+        graphql: /graphql
+        subscriptions: /subscriptions
+    subscriptions:
+        timeout: 30
+        reconnect: false
+    static:
+        basePath: /assets
+    enabled: true
+    pageTitle: GraphiQL
+    cdn:
+        enabled: true
+        version: 0.13.0
+    props:
+        resources:
+            # query: query.graphql
+            # defaultQuery: defaultQuery.graphql
+            # variables: variables.graphql
+        variables:
+            editorTheme: "solarized light"
+    headers:
+        Authorization: "Bearer <your-token>"
+
+
+casUrl: https://auth-test.ala.org.au/cas/logout
+appUrl: http://devt.ala.org.au:8080/admin
+
+
+openapi:
+    title: Ecodata REST services
+    description: REST services for interacting with the ecodata webapp
+    terms: https://www.ala.org.au/terms
+    contact:
+        name: Support
+        email: support@ala.org.au
+    license:
+        name: Mozilla Public License 1.1
+        url: https://www.mozilla.org/en-US/MPL/1.1/
+    version: '@info.app.version@'
+    cachetimeoutms: 0

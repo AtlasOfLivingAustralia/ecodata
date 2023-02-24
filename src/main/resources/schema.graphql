@@ -1,0 +1,872 @@
+"https://www.npmjs.com/package/graphql-to-openapi"
+type Query {
+    query: Query
+
+    activityFormList(
+        max: Int
+        offset: Int
+        sort: String
+        order: String
+        ignoreCase: Boolean): [ActivityForm]
+
+    activityForm(activityFormName: String!): ActivityForm
+
+    managementUnitList (
+        max: Int
+        offset: Int
+        sort: String
+        order: String
+        ignoreCase: Boolean): [ManagementUnit]
+
+    searchManagementUnits(
+        managementUnitId: String
+        name: String
+        startDate: String
+        endDate: String): [ManagementUnit]
+
+    siteList(
+        max: Int
+        offset: Int
+        sort: String
+        order: String
+        ignoreCase: Boolean): [Site]
+
+    sites(
+        term: String!
+        siteIds: [String]
+        page: Int
+        max: Int): [Site]
+
+    activityList(
+        max: Int
+        offset: Int
+        sort: String
+        order: String
+        ignoreCase: Boolean): [Activity]
+
+    activity(
+        activityId: String
+        activityList: [activityList]): [Activity]
+
+    activityByProjectId(
+        projectId: String!): [Activity]
+
+    activitySchemaByName(activityName: String!): Schema
+    activities: [Summary]
+
+    outputList: [Summary]
+    outputTypeByName(outputTypeName: String!): Schema
+
+    outputs(output: [output]): [Output]
+
+    projectActivityList(
+        max: Int
+        offset: Int
+        sort: String
+        order: String
+        ignoreCase: Boolean): [ProjectActivity]
+
+    projectList(
+        max: Int
+        offset: Int
+        sort: String
+        order: String
+        ignoreCase: Boolean): ProjectPagedResult
+
+    project(projectId: String!): Project
+    projects(term: String!): [Project]
+
+    searchMeritProject(
+        projectId: String
+        fromDate: String
+        toDate: String
+        dateRange: DateRange
+        status: [String]
+        organisation: [String]
+        associatedProgram: [String]
+        associatedSubProgram: [String]
+        mainTheme: [String]
+        state: [String]
+        lga: [String]
+        cmz: [String]
+        partnerOrganisationType: [String]
+        primaryOutcome: [String]
+        secondaryOutcomes: [String]
+        tags: [String]
+        managementArea: [String]
+        majorVegetationGroup: [String]
+        biogeographicRegion: [String]
+        marineRegion: [String]
+        otherRegion: [String]
+        grantManagerNominatedProject: [YesNo]
+        federalElectorate: [String]
+        assetsAddressed: [String]
+        userNominatedProject: [String]
+        managementUnit: [String]
+        page: Int
+        max: Int
+        myProjects: Boolean
+        activities: [activities]): [Project]
+
+    searchBioCollectProject(
+        projectId: String
+        hub: String!
+        isWorldWide: Boolean
+        projectStartFromDate: String
+        projectStartToDate: String
+        scienceType: [String]
+        tags: [String]
+        countries: [String]
+        ecoScienceType: [String]
+        status: [ProjectStatus]
+        difficulty: [String]
+        organisation: [String]
+        origin: [String]
+        isBushfire: [Boolean]
+        associatedProgram: [String]
+        typeOfProject: [String]
+        lga: [String]
+        page: Int
+        max: Int
+        myProjects: Boolean
+        activities: [activitiesList]): [Project]
+
+    activityOutput(
+        fromDate: String
+        toDate: String
+        dateRange: DateRange
+        status: [String]
+        organisation: [String]
+        associatedProgram: [String]
+        associatedSubProgram: [String]
+        mainTheme: [String]
+        state: [String]
+        lga: [String]
+        cmz: [String]
+        partnerOrganisationType: [String]
+        primaryOutcome: [String]
+        secondaryOutcomes: [String]
+        tags: [String]
+        managementArea: [String]
+        majorVegetationGroup: [String]
+        biogeographicRegion: [String]
+        marineRegion: [String]
+        otherRegion: [String]
+        grantManagerNominatedProject: [YesNo]
+        federalElectorate: [String]
+        assetsAddressed: [String]
+        userNominatedProject: [String]
+        managementUnit: [String]
+        activityOutputs: [activityOutputs]): activityOutput
+
+    outputTargetsByProgram(
+        fromDate: String
+        toDate: String
+        dateRange: DateRange
+        status: [String]
+        organisation: [String]
+        associatedProgram: [String]
+        associatedSubProgram: [String]
+        mainTheme: [String]
+        state: [String]
+        lga: [String]
+        cmz: [String]
+        partnerOrganisationType: [String]
+        primaryOutcome: [String]
+        secondaryOutcomes: [String]
+        tags: [String]
+        managementArea: [String]
+        majorVegetationGroup: [String]
+        biogeographicRegion: [String]
+        marineRegion: [String]
+        otherRegion: [String]
+        grantManagerNominatedProject: [YesNo]
+        federalElectorate: [String]
+        assetsAddressed: [String]
+        userNominatedProject: [String]
+        managementUnit: [String]
+        programs: [String]
+        outputTargetMeasures: [String]): outputTargetsByProgram
+
+}
+
+input activityOutputs{
+    category: String!
+    outputs: [outputListInput]
+}
+
+input outputListInput{
+    outputType: String!
+    labels: [String]
+}
+
+type ActivityForm{
+    id: ObjectId
+    version: Long
+    name: String
+    gmsId: String
+    category: String
+    activationDate: Date
+    publicationStatus: String
+    createdUserId: String
+    lastUpdatedUserId: String
+    minOptionalSectionsCompleted: Int
+    dateCreated: Date
+    supportsSites: Boolean
+    lastUpdated: Date
+    supportsPhotoPoints: Boolean
+    type: String
+    status: String
+    formVersion: Int
+    formSections: [FormSection]
+    errors: [Error]
+}
+
+type FormSection{id: Long
+    version: Long
+    title: String
+    modelName: String
+    optionalQuestionText: String
+    collapsedByDefault: Boolean
+    templateName: String
+    optional: Boolean
+    name: String
+    formTemplate: SectionTemplate
+    errors: [Error]
+}
+
+type Error{
+    field: String!
+    message: String
+}
+
+type ManagementUnit{
+    id: ObjectId
+    name: String
+    description: String
+    startDate: Date
+    endDate: Date
+    url: String
+    associatedOrganisations: AssociatedOrgEmbedded
+    managementUnitSiteId: String
+    hubId: String
+    dateCreated: Date
+    lastUpdated: Date
+    managementUnitId: String
+    status: String
+    data: [Activity]
+    muPriorities: [muPriorities]
+    outcomes: [outcomes]
+    reportConfig: [reportConfig]
+    errors: [Error]
+
+}
+
+type AssociatedOrgEmbedded {
+    organisationId: String
+    name: String
+    logo: String
+    url: String
+    description: String
+}
+
+type Activity{
+    id: ObjectId
+    siteId: String
+    projectId: String
+    projectActivityId: String
+    managementUnitId: String
+    description: String
+    startDate: Date
+    endDate: Date
+    type: String
+    collector: String
+    censusMethod: String
+    methodAccuracy: String
+    fieldNotes: String
+    notes: String
+    plannedStartDate: Date
+    plannedEndDate: Date
+    progress: String
+    associatedProgram: String
+    associatedSubProgram: String
+    projectStage: String
+    userId: String
+    embargoed: Boolean
+    formVersion: Int
+    dateCreated: Date
+    lastUpdated: Date
+    activityId: String
+    assessment: Boolean
+    status: String
+    outputs: [Output]
+    errors: [Error]
+}
+
+type Output{
+    id: ObjectId
+    assessmentDate: Date
+    name: String
+    dateCreated: Date
+    lastUpdated: Date
+    activityId: String
+    outputId: String
+    status: String
+    data: OutputData
+    errors: [Error]
+}
+
+type muPriorities {
+    category: String
+    priority: String
+}
+
+type outcomes {
+    outcome: String
+    priorities: [priorities]
+    category: String
+    shortDescription: String
+}
+
+type priorities{
+    category: String
+}
+
+type reportConfig{
+    report: String
+    category: String
+    reportType: String
+    activityType: String
+    reportNameFormat: String
+    reportDescriptionFormat: String
+    firstReportingPeriodEnd: String
+    reportingPeriodInMonths: String
+    multiple: Boolean
+    minimumPeriodInMonths: String
+    reportsAlignedToCalendar: Boolean
+}
+
+type Site{
+    id: ObjectId
+    visibility: String
+    name: String
+    externalSiteId: String
+    type: String
+    description: String
+    habitat: String
+    recordingMethod: String
+    landTenure: String
+    protectionMechanism: String
+    notes: String
+    isSciStarter: Boolean
+    catchment: String
+    geoIndex: [object]
+    dateCreated: Date
+    lastUpdated: Date
+    siteId: String
+    status: String
+    siteGeojson: siteGeojson
+    siteShapefiles: siteShapefiles
+    errors: [Error]}
+
+type siteShapefiles{
+    url: String}
+
+type siteGeojson{
+    type: String
+    properties: properties
+    features: [features]
+    geometry: geometry
+}
+
+type properties{
+    id: String
+    name: String
+    type: String
+    notes: [String]}
+
+type features{
+    type: String
+    geometry: featureGeometry
+    properties: featureProperties
+}
+
+type geometry{
+    type: String
+    coordinates: [String]}
+
+type featureGeometry{
+    type: String
+    coordinates: [String]
+}
+
+type featureProperties{
+    id: String}
+
+input activityList{
+    activityType: String
+    output: [outputsInput]
+}
+
+input outputsInput{
+    outputType: String!
+    fields: [String]}
+
+input output{
+    outputType: String!
+    fields: [String]}
+
+type ProjectActivity{
+    id: ObjectId
+    version: Long
+    endDate: Date
+    methodType: String
+    spatialAccuracy: String
+    speciesIdentification: String
+    temporalAccuracy: String
+    nonTaxonomicAccuracy: String
+    dataQualityAssuranceMethods: [String]
+    dataAccessMethods: [String]
+    pActivityFormName: String
+    alerts: [object]
+    restrictRecordToSites: Boolean
+    allowAdditionalSurveySites: Boolean
+    baseLayersName: String
+    publicAccess: Boolean
+    visibility: VisibilityConstraintEmbedded
+    submissionRecords: [SubmissionRecord]
+    legalCustodianOrganisation: String
+    dataAccessExternalURL: String
+    dataQualityAssuranceDescription: String
+    dataManagementPolicyDescription: String
+    dataManagementPolicyURL: String
+    dataManagementPolicyDocument: String
+    excludeProjectSite: String
+    mapLayersConfig: MapLayersConfigurationEmbedded
+    surveySiteOption: String
+    canEditAdminSelectedSites: Boolean
+    dateCreated: Date
+    lastUpdated: Date
+    dataSharingLicense: String
+    commentsAllowed: Boolean
+    methodName: String
+    startDate: Date
+    projectActivityId: String
+    name: String
+    status: String
+    projectId: String
+    description: String
+    isDataManagementPolicyDocumented: Boolean
+    sites: [String]
+    surveyForms: [ActivityForm]
+    errors: [Error]
+}
+
+type VisibilityConstraintEmbedded{
+    embargoForDays: Int
+    embargoOption: EmbargoOption
+    embargoUntil: Date
+    alaAdminEnforcedEmbargo: Boolean}
+
+enum EmbargoOption{
+    NONE
+    DAYS
+    DATE
+}
+
+type  SubmissionRecord{
+    id: ObjectId
+    submissionPublicationDate: Date
+    submissionDoi: String
+    datasetSubmitter: String
+    datasetVersion: String
+    submissionRecordId: String
+    submissionPackage: SubmissionPackage
+    projectActivityId: String
+    submissionId: String
+    errors: [Error]}
+
+type SubmissionPackage{
+    id: ObjectId
+    acknowledgement: String
+    associatedMaterialNane: String
+    associatedMaterialIdentifier: String
+    collectionStartDate: String
+    collectionEndDate: String
+    curationStatus: String
+    curationActivitiesOther: String
+    datasetContact: DatasetContactEmbedded
+    datasetAuthors: DatasetAuthorEmbedded
+    geographicalExtentDescription: String
+    methodDriftDescription: String
+    otherMaterials: String
+    selectedAnimalGroups: [String]
+    selectedAnthropogenic: [String]
+    selectedConservativeMgmt: [String]
+    selectedEconomicResearch: [String]
+    selectedEnvironmentFeatures: [String]
+    selectedFieldsOfResearch: [String]
+    selectedIdentificationMethod: [String]
+    selectedMaterialIdentifier: String
+    selectedMaterialType: String
+    selectedObservedAttributes: [String]
+    selectedObservationMeasurements: [String]
+    selectedPlantGroups: [String]
+    selectedSamplingDesign: [String]
+    selectedSocioEconomic: [String]
+    submissionRecordId: String
+    errors: [Error]}
+
+type DatasetContactEmbedded{
+
+    title: String
+    name: String
+    role: String
+    address: String
+    email: String
+    phone: String
+    organizationName: String}
+
+type DatasetAuthorEmbedded{
+    authorInitials: String
+    authorSurnameOrOrgName: String
+    authorAffiliation: String}
+
+type MapLayersConfigurationEmbedded{
+    baseLayers: BaseLayerEmbedded
+    overlays: OverlayEmbedded}
+
+type BaseLayerEmbedded{
+    code: String
+    displayText: String
+    isSelected: Boolean}
+
+type  OverlayEmbedded{
+    userAccessRestriction: String
+    layerName: String
+    title: String
+    defaultSelected: Boolean
+    boundaryColour: String
+    showPropertyName: Boolean
+    fillColour: String
+    textColour: String
+    inLayerShapeList: Boolean
+    opacity: Float
+    changeLayerColour: Boolean
+    alaId: String
+    alaName: String}
+
+type ProjectPagedResult{
+    results: [Project]
+    totalCount: Long}
+
+type Project{
+    id: ObjectId
+    externalId: String
+    description: String
+    workOrderId: String
+    internalOrderId: String
+    contractStartDate: Date
+    contractEndDate: Date
+    manager: String
+    organisationName: String
+    serviceProviderName: String
+    plannedStartDate: Date
+    plannedEndDate: Date
+    serviceProviderAgreementDate: Date
+    actualStartDate: Date
+    actualEndDate: Date
+    grantId: String
+    risks: RisksEmbedded
+    promoteOnHomepage: String
+    organisationId: String
+    projectType: String
+    dataProviderId: String
+    dataResourceId: String
+    aim: String
+    keywords: String
+    urlAndroid: String
+    urlITunes: String
+    urlWeb: String
+    getInvolved: String
+    scienceType: [String]
+    ecoScienceType: [String]
+    orgIdGrantee: String
+    orgIdSponsor: String
+    orgIdSvcProvider: String
+    projectSiteId: String
+    difficulty: String
+    gear: String
+    task: String
+    userCreated: String
+    userLastModified: String
+    origin: String
+    uNRegions: [String]
+    countries: [String]
+    tags: [String]
+    alaHarvest: Boolean
+    industries: [String]
+    programId: String
+    baseLayer: String
+    isBushfire: Boolean
+    bushfireCategories: [String]
+    mapLayersConfig: MapLayersConfigurationEmbedded
+    managementUnitId: String
+    mapDisplays: [object]
+    terminationReason: String
+    fundingType: String
+    electionCommitmentYear: String
+    hubId: String
+    dateCreated: Date
+    associatedOrgs: AssociatedOrgEmbedded
+    name: String
+    funding: Float
+    isCitizenScience: Boolean
+    lastUpdated: Date
+    fundings: FundingEmbedded
+    hub: Hub
+    isMERIT: Boolean
+    status: String
+    isSciStarter: Boolean
+    isExternal: Boolean
+    projectId: String
+    activities: [Activity]
+    documents: [Document]
+    meriPlan: MeriPlan
+    reports: [Report]
+    sites: [Site]
+    surveys: [ProjectActivity]
+    errors: [Error]}
+
+type activityOutput{
+    outputData: [outputData]}
+
+type outputData{
+    category: String
+    outputType: String
+    result: result
+}
+
+type result{
+    label: String
+    result: Float
+    resultList: OutputData
+    groups: [groups]}
+
+type groups{
+    group: String
+    results: [results]}
+
+type results{
+    count: Int
+    result: Float
+}
+
+type outputTargetsByProgram
+{targets: [targets]}
+
+type targets
+{program: String
+    outputTargetMeasure: [outputTargetMeasure]}
+
+type outputTargetMeasure
+{
+    outputTarget: String
+    count: Int
+    total: Float}
+
+enum DateRange{
+    Jul_2011_Jan_2012
+    Jan_2012_Jul_2012
+    Jul_2012_Jan_2013
+    Jan_2013_Jul_2013
+    Jul_2013_Jan_2014
+    Jan_2014_Jul_2014
+    Jul_2014_Jan_2015
+    Jan_2015_Jul_2015
+    Jul_2015_Jan_2016
+    Jan_2016_Jul_2016
+    Jul_2016_Jan_2017
+    Jan_2017_Jul_2017
+    Jul_2017_Jan_2018
+    Jan_2018_Jul_2018
+    Jul_2018_Jan_2019
+    Jan_2019_Jul_2019
+    Jul_2019_Jan_2020
+    Jan_2020_Jul_2020
+    Jul_2020_Jan_2021
+}
+
+input activities{
+    activityType: String
+    output: [outputInput]
+}
+
+input outputInput{
+    outputType: String!}
+
+input activitiesList{
+
+    activityType: String
+    output: [outputsListInput]}
+
+input outputsListInput{
+    outputType: String!}
+
+enum YesNo{
+    yes
+    no}
+
+enum ProjectStatus {
+    Active
+    Completed}
+
+type RisksEmbedded{
+    dateUpdated: Date
+    overallRisk: String
+    rows: RiskEmbedded
+}
+
+type RiskEmbedded{
+    currentControl: String
+    consequence: String
+    threat: String
+    residualRisk: String
+    riskRating: String
+    description: String
+    likelihood: String
+}
+
+type Report {
+    id: ObjectId
+    reportId: String
+    description: String
+    dateSubmitted: Date
+    submittedBy: String
+    dateApproved: Date
+    approvedBy: String
+    dateReturned: Date
+    returnedBy: String
+    adjustedBy: String
+    dateAdjusted: Date
+    projectId: String
+    dueDate: Date
+    organisationId: String
+    programId: String
+    managementUnitId: String
+    approvalDeltaInWeekdays: Int
+    submissionDeltaInWeekdays: Int
+    activityCount: Int
+    data: [object]
+    progress: String
+    submissionDate: Date
+    activityId: String
+    activityType: String
+    type: String
+    category: String
+    generatedBy: String
+    adjustedReportId: String
+    dateCreated: Date
+    lastUpdated: Date
+    statusChangeHistory: StatusChangeEmbedded
+    toDate: Date
+    fromDate: Date
+    publicationStatus: String
+    name: String
+    status: String
+    errors: [Error]
+}
+
+type StatusChangeEmbedded {
+    changedBy: String
+    comment: String
+    dateChanged: Date
+    category: String
+    status: String}
+
+type Document{
+    id: ObjectId
+    name: String
+    attribution: String
+    licence: String
+    filepath: String
+    type: String
+    role: String
+    projectId: String
+    organisationId: String
+    siteId: String
+    activityId: String
+    outputId: String
+    programId: String
+    reportId: String
+    managementUnitId: String
+    stage: String
+    filename: String
+    dateCreated: Date
+    lastUpdated: Date
+    dateTaken: Date
+    isPrimaryProjectImage: Boolean
+    thirdPartyConsentDeclarationMade: Boolean
+    thirdPartyConsentDeclarationText: String
+    externalUrl: String
+    projectActivityId: String
+    labels: [String]
+    isSciStarter: Boolean
+    hosted: String
+    identifier: String
+    contentType: String
+    hubId: String
+    documentId: String
+    status: String
+    errors: [Error]}
+
+type Hub{
+    id: ObjectId
+    urlPath: String
+    skin: String
+    title: String
+    homePagePath: String
+    defaultProgram: String
+    templateConfiguration: [object]
+    content: [object]
+    customBreadCrumbs: [object]
+    pages: [object]
+    dataColumns: [object]
+    mapLayersConfig: MapLayersConfigurationEmbedded
+    mapDisplays: [object]
+    timeSeriesOnIndex: String
+    emailFromAddress: String
+    emailReplyToAddress: String
+    downloadUrlPrefix: String
+    accessManagementOptions: AccessManagementOptionsEmbedded
+    dateCreated: Date
+    hubId: String
+    lastUpdated: Date
+    availableMapFacets: [object]
+    defaultFacetQuery: [object]
+    supportedPrograms: [object]
+    availableFacets: [object]
+    status: String
+    quickLinks: [object]
+    adminFacets: [object]
+    errors: [Error]}
+
+type AccessManagementOptionsEmbedded{
+    expireUsersAfterPeriodInactive: String
+    warnUsersAfterPeriodInactive: String}
+
+type FundingEmbedded{
+    fundingSourceAmount: Float
+    fundingSource: String
+    fundingType: String}
+
+
+scalar Long
+scalar Date
+scalar ObjectId
+scalar SectionTemplate
+scalar OutputData
+scalar object
+scalar Schema
+scalar Summary
+scalar MeriPlan

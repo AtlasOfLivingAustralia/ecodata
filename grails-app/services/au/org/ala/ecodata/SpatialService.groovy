@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Geometry
+import org.locationtech.jts.geom.Geometry
 import grails.gorm.transactions.Transactional
 
 import groovy.json.JsonParserType
@@ -42,13 +42,13 @@ class SpatialService {
      */
     Map<String,List<String>> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
         int length = geoJson?.toString().size()
-        int threshold = grailsApplication.config.spatial.geoJsonEnvelopeConversionThreshold
+        int threshold = grailsApplication.config.getProperty('spatial.geoJsonEnvelopeConversionThreshold', Integer)
         if(length > threshold){
             Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
             geoJson = GeometryUtils.geometryToGeoJsonMap (geo.getEnvelope())
         }
 
-        String url = grailsApplication.config.spatial.baseUrl+WKT_INTERSECT_URL_PREFIX
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+WKT_INTERSECT_URL_PREFIX
         if (!fieldIds) {
             fieldIds = metadataService.getSpatialLayerIdsToIntersect()
         }
@@ -78,7 +78,7 @@ class SpatialService {
      */
     Map<String,List<String>> intersectPid(String pid, String pidFid = null, List<String> fieldIds = null) {
 
-        String url = grailsApplication.config.spatial.baseUrl+PID_INTERSECT_URL_PREFIX
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+PID_INTERSECT_URL_PREFIX
         if (!fieldIds) {
             fieldIds = metadataService.getSpatialLayerIdsToIntersect()
         }

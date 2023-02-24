@@ -36,12 +36,12 @@ class RecordService {
     OutputService outputService
     ProjectService projectService
     SiteService siteService
-    AuthService authService
     UserService userService
     RecordAlertService recordAlertService
     SensitiveSpeciesService sensitiveSpeciesService
     DocumentService documentService
     CommonService commonService
+    AuthService authService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -360,7 +360,7 @@ class RecordService {
 
         //if no projectId is supplied, use default
         if (!record.projectId) {
-            record.projectId = grailsApplication.config.records.default.projectId
+            record.projectId = grailsApplication.config.getProperty('records.default.projectId')
         }
 
         //use the data resource UID associated with the project
@@ -446,7 +446,7 @@ class RecordService {
                     }
                 }
             } catch (Exception ex) {
-                log.error("Error uploading image to ${grailsApplication.config.imagesService.baseURL} -${ex.message}")
+                log.error("Error uploading image to ${grailsApplication.config.getProperty('imagesService.baseURL')} -${ex.message}")
             }
 
         } else if (imageMap) {
@@ -502,7 +502,7 @@ class RecordService {
     }
 
     private def getImageUrl(imageId) {
-        grailsApplication.config.imagesService.baseURL + "/image/proxyImageThumbnailLarge?imageId=" + imageId
+        grailsApplication.config.getProperty('imagesService.baseURL') + "/image/proxyImageThumbnailLarge?imageId=" + imageId
     }
 
     /**
@@ -595,9 +595,9 @@ class RecordService {
         }
 
         def httpClient = new DefaultHttpClient()
-        def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/updateMetadata/${imageId}")
+        def httpPost = new HttpPost(grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/updateMetadata/${imageId}")
         httpPost.setHeader("X-ALA-userId", "${record.userId}");
-        httpPost.setHeader('apiKey', "${grailsApplication.config.api_key}");
+        httpPost.setHeader('apiKey', "${grailsApplication.config.getProperty('api_key')}");
         httpPost.setEntity(entity)
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
@@ -634,7 +634,7 @@ class RecordService {
                 "rightsHolder"    : imageMetadata.rightsHolder ? imageMetadata.rightsHolder : imageMetadata.creator,
                 "license"         : imageMetadata.license,
                 "dateTaken"       : imageMetadata?.created,
-                "systemSupplier"  : grailsApplication.config.imageSystemSupplier ?: "ecodata"
+                "systemSupplier"  : grailsApplication.config.getProperty('imageSystemSupplier') ?: "ecodata"
         ] as JSON).toString()))
 
         if (record.tags) {
@@ -642,9 +642,9 @@ class RecordService {
         }
 
         def httpClient = new DefaultHttpClient()
-        def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/uploadImage")
+        def httpPost = new HttpPost(grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/uploadImage")
         httpPost.setHeader("X-ALA-userId", "${record.userId}");
-        httpPost.setHeader('apiKey', "${grailsApplication.config.api_key}");
+        httpPost.setHeader('apiKey', "${grailsApplication.config.getProperty('api_key')}");
         httpPost.setEntity(entity)
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
@@ -660,7 +660,7 @@ class RecordService {
     }
 
     private File download(recordId, idx, address) {
-        def directory = grailsApplication.config.temp.dir + File.separator + "record" + File.separator + recordId
+        def directory = grailsApplication.config.getProperty('temp.dir') + File.separator + "record" + File.separator + recordId
         File mediaDir = new File(directory)
         if (!mediaDir.exists()) {
             FileUtils.forceMkdir(mediaDir)
@@ -987,7 +987,7 @@ class RecordService {
             }
         }
 
-        return grailsApplication.config.license.default;
+        return grailsApplication.config.getProperty('license.default');
     }
 
     /**

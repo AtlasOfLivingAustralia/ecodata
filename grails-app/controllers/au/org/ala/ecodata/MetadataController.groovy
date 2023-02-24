@@ -25,7 +25,7 @@ class MetadataController {
     }
 
     @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))
@@ -262,7 +262,7 @@ class MetadataController {
     }
 
     def getGeographicFacetConfig() {
-        render grailsApplication.config.app.facets.geographic as JSON
+        render grailsApplication.config.getProperty('app.facets.geographic', Map) as JSON
     }
 
     /**
@@ -288,4 +288,10 @@ class MetadataController {
         Map indices = metadataService.getIndicesForDataModels()
         render( text: indices as JSON, contentType: 'application/json')
     }
+
+    /** Returns all Services, including associated Scores based on the forms assocaited with each service */
+    def services() {
+        render metadataService.getServiceList() as JSON
+    }
+
 }

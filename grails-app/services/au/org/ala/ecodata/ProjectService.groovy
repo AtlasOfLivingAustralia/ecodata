@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
+import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
 import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.context.MessageSource
@@ -25,7 +26,7 @@ class ProjectService {
     static final ENHANCED = 'enhanced'
     static final PRIVATE_SITES_REMOVED = 'privatesitesremoved'
 
-    def grailsApplication
+    GrailsApplication grailsApplication
     MessageSource messageSource
     SessionLocaleResolver localeResolver
     SiteService siteService
@@ -348,7 +349,7 @@ class ProjectService {
     // instead of the common service, but that is a bit risky for a quick fix.
     // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
     private void bindEmbeddedProperties(Project project, Map properties) {
-        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo']
+        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo', 'outputTargets']
         for (String prop in embeddedPropertyNames) {
             if (properties[prop]) {
                 project.properties = [(prop):properties.remove(prop)]
@@ -440,7 +441,7 @@ class ProjectService {
     private updateCollectoryLinkForProject(Project project, Map props) {
 
 
-        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
+        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.getProperty('collectory.collectoryIntegrationEnabled'))) {
 
             Map projectProps = toMap(project, FLAT)
             task {
@@ -453,7 +454,7 @@ class ProjectService {
                 }
                 String message = "Failed to update collectory link for project ${project.name} (id = ${project.projectId})"
                 log.error(message, error)
-                emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
+                emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.getProperty('ecodata.support.email.address')])
             }
         }
     }
@@ -516,7 +517,7 @@ class ProjectService {
 
             if (destroy) {
                 project.delete(flush: true)
-                webService.doDelete(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + id)
+                webService.doDelete(grailsApplication.config.getProperty('collectory.baseURL') + 'ws/dataProvider/' + id)
             } else {
                 project.status = DELETED
                 project.save(flush: true)
@@ -717,7 +718,7 @@ class ProjectService {
                     Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
                     // get more details about the project
                     try {
-                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                        sciStarterProjectUrl = "${grailsApplication.config.getProperty('scistarter.baseUrl')}${grailsApplication.config.getProperty('scistarter.projectUrl')}/${project.id}?key=${grailsApplication.config.getProperty('scistarter.apiKey')}"
                         String text = webService.get(sciStarterProjectUrl, false);
                         if (text instanceof String) {
                             Map projectDetails = jsonSlurper.parseText(text)
@@ -766,7 +767,7 @@ class ProjectService {
      * @throws Exception
      */
     List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception {
-        String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
+        String scistarterFinderUrl = "${grailsApplication.config.getProperty('scistarter.baseUrl')}${grailsApplication.config.getProperty('scistarter.finderUrl')}?format=json&q="
         String responseText = webService.get(scistarterFinderUrl, false)
         if (responseText instanceof String) {
             ObjectMapper mapper = new ObjectMapper()

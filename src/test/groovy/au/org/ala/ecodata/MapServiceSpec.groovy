@@ -6,6 +6,8 @@ import org.grails.plugins.testing.GrailsMockHttpServletResponse
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoGrid
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.Point
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import spock.lang.Specification
 
@@ -280,8 +282,8 @@ class MapServiceSpec extends Specification implements ServiceUnitTest<MapService
         'double'    | Double.class.name
         'boolean'   | Boolean.class.name
         'date'      | Date.class.name
-        'geo_shape' | com.vividsolutions.jts.geom.Geometry.class.name
-        'geo_point' | com.vividsolutions.jts.geom.Point.class.name
+        'geo_shape' | Geometry.class.name
+        'geo_point' | Point.class.name
     }
 
     def "should create layer for various types of requests"() {

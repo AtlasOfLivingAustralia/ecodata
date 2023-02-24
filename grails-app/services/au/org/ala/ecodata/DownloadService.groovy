@@ -45,7 +45,7 @@ class DownloadService {
      */
     void downloadProjectDataAsync(GrailsParameterMap params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
-        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        File directoryPath = new File("${grailsApplication.config.getProperty('temp.dir')}")
         directoryPath.mkdirs()
         String fileExtension = params.fileExtension?:'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
@@ -58,8 +58,8 @@ class DownloadService {
                }
         }
         p.onComplete {
-            int days = grailsApplication.config.temp.file.cleanup.days as int
-            String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
+            int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
+            String urlPrefix = params.downloadUrl ?: grailsApplication.config.getProperty('async.download.url.prefix')
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
             String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
             emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
@@ -86,7 +86,7 @@ class DownloadService {
 
     def generateReports(Map params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
-        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        File directoryPath = new File("${grailsApplication.config.getProperty('temp.dir')}")
         directoryPath.mkdirs()
         String fileExtension = params.fileExtension?:'zip'
         File file = new File(directoryPath, "${downloadId}.${fileExtension}")
@@ -94,7 +94,7 @@ class DownloadService {
         task {
                 downloadAction(file)
         }.onComplete {
-            int days = grailsApplication.config.temp.file.cleanup.days as int
+            int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
             String url = ''
             // if report url is not supply by FieldCapture, then create a url based on ecodata
             if (!params.reportDownloadBaseUrl)
@@ -371,7 +371,7 @@ class DownloadService {
 
     private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
         String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
-        String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
+        String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
         File file = new File(path)
         String url
 
