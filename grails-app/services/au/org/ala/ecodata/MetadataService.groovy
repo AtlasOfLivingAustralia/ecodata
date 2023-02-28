@@ -1,17 +1,18 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
 import org.grails.web.json.JSONArray
-//import org.grails.plugins.csv.CSVMapReader
-import grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -33,6 +34,7 @@ class MetadataService {
     def webService, cacheService, messageSource, emailService, userService, commonService
     SettingService settingService
     GrailsApplication grailsApplication
+    ExcelImportService excelImportService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -673,7 +675,80 @@ class MetadataService {
         excelImportService.mapSheet(workbook, config)
     }
 
+    List excelWorkbookToMap(InputStream excelWorkbookIn, String outputName, Boolean normalise) {
+        List model = annotatedOutputDataModel(outputName)
+        String sheetName = XlsExporter.sheetName(outputName)
+        Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
+        Sheet sheet = workbook.getSheet(sheetName)
+        int index = 0;
+        def columnMap = excelImportService.getDataHeaders(sheet)
+        def config = [
+                sheet:sheetName,
+                startRow:2,
+                columnMap:columnMap
+        ]
+        List data = excelImportService.mapSheet(workbook, config)
+        List normalisedData = []
+        if(normalise) {
+            data.collect { Map row ->
+                def normalisedRow = [:]
+                row.each { cell ->
+                    excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                }
+                normalisedData << normalisedRow
+            }
+        }
 
+        List rollUpData = []
+        Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER]}
+        groupedBySerial.each {  key, List rows ->
+            rollUpData << rollUpDataIntoSingleElement(rows, model)
+        }
+
+        rollUpData.collect {
+            [[outputName: outputName, data: it]]
+        }
+    }
+
+    boolean isRowValidNextMemberOfArray(Map row, List models) {
+        Map primitiveMembers = row.subMap(DataTypes.getModelsWithPrimitiveData(models)?. collect {it.name})
+        ! primitiveMembers?.every { it.value == null }
+    }
+
+    def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
+        firstRow = firstRow ?: rows.first()
+        rows?.eachWithIndex { Map row, int index->
+//            if (!isRowValidNextMemberOfArray(row, models)) {
+                Map listData = row.subMap(DataTypes.getModelsWithListData(models).collect {it.name})
+                listData?.each { key, value ->
+                    Map model = models?.find { it.name == key }
+                    if ((row == firstRow) && !(firstRow[key] instanceof List)) {
+                        firstRow[key] = [firstRow[key]]
+                    }
+
+                    switch (model.dataType) {
+                        case DataTypes.LIST:
+                            if (isRowValidNextMemberOfArray(value, model.columns)) {
+                                if (!firstRow[key].contains(value))
+                                    firstRow[key].add(value)
+                            }
+
+                            rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                            break
+                        case DataTypes.IMAGE:
+                        case DataTypes.STRINGLIST:
+                        case DataTypes.SET:
+                        case DataTypes.PHOTOPOINTS:
+                            if (!firstRow[key].contains(value))
+                                firstRow[key].add(value)
+                            break
+                    }
+                }
+//            }
+        }
+
+        firstRow
+    }
 
     /**
      * Converts a Score domain object to a Map.

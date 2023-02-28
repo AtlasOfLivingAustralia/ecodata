@@ -65,10 +65,10 @@ class ActivityController {
         List ids = payload.ids
         if (ids) {
             Map resp = activityService.bulkDelete(ids, destroy)
-            render (status: 200, text: [message: 'deleted', details: resp])
+            render (status: 200, text: [message: 'deleted', details: resp] as JSON, contentType: 'application/json')
         } else {
             response.status = 404
-            render status:404, text: [message: 'Please provide property "ids" in JSON payload']
+            render status:404, text: [message: 'Please provide property "ids" in JSON payload'] as JSON, contentType: 'application/json'
         }
     }
 
@@ -313,7 +313,7 @@ class ActivityController {
     def search() {
         def searchCriteria = request.JSON
 
-        def startDate = null, endDate = null, planned = null
+        def startDate = null, endDate = null, planned = null, options = [:]
         def dateProperty = searchCriteria.remove('dateProperty')
         if (dateProperty && searchCriteria.startDate) {
             def startDateStr = searchCriteria.remove('startDate')
@@ -323,8 +323,11 @@ class ActivityController {
             def endDateStr = searchCriteria.remove('endDate')
             endDate = commonService.parse(endDateStr)
         }
+        if (searchCriteria.options) {
+            options = searchCriteria.remove('options')
+        }
 
-        def activityList = activityService.search(searchCriteria, startDate, endDate, dateProperty, 'all')
+        def activityList = activityService.search(searchCriteria, startDate, endDate, dateProperty, 'all', options)
 
         asJson activities:activityList
     }

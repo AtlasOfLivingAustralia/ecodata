@@ -1,7 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.DateUtil
+import org.apache.commons.lang.time.DateUtils
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellReference
+
+import java.text.ParseException
 
 /**
  * Converts a spreadsheet to a Map based on configuration.
@@ -29,6 +33,41 @@ class ExcelImportService {
         results
     }
 
+    /**
+     * https://stackoverflow.com/a/64083527
+     * @param json
+     * @param key
+     * @param value
+     * @return
+     */
+    Map convertDotNotationToObject(Map json, String key, value) {
+        if (key.contains(".")) {
+            String innerKey = key.substring(0, key.indexOf("."))
+            String remaining = key.substring(key.indexOf(".") + 1)
+
+            if (json.containsKey(innerKey)) {
+                convertDotNotationToObject(json.get(innerKey), remaining, value)
+            } else {
+                Map innerJson = [:]
+                json.put(innerKey, innerJson)
+                convertDotNotationToObject(innerJson, remaining, value)
+            }
+        } else {
+            json.put(key, value)
+        }
+    }
+
+    Map getDataHeaders(Sheet sheet) {
+        int headerRowIndex  = 0
+        Map headers = [:]
+        Row row =  sheet.getRow(headerRowIndex)
+        row.eachWithIndex { Cell column, int i ->
+            headers << [(CellReference.convertNumToColString(i)) : getCellValue(column, null)]
+        }
+
+        headers
+    }
+
     private Map mapRow(Map columnMap, Row row, FormulaEvaluator evaluator) {
         Map result = [:]
         columnMap.each {k, name ->
@@ -48,6 +87,22 @@ class ExcelImportService {
         switch (cell.cellType) {
             case CellType.STRING:
                 value = cell.getStringCellValue()
+                // convert to ISO date format
+                if (value?.contains('/') || value.contains('-')) {
+                    Date date
+                    try {
+                        date = DateUtils.parseDate(value,["dd-MM-yyyy", "dd/MM/yyyy"].toArray(new String[0]))
+                    }
+                    catch (ParseException ex){
+
+                    }
+                    finally {
+                        if(date) {
+                            value = DateUtil.format(date)
+                        }
+                    }
+                }
+
                 break
             case CellType.NUMERIC:
                 value = cell.getNumericCellValue()
