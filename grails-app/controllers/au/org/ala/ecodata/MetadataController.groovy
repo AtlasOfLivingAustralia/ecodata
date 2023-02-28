@@ -153,7 +153,7 @@ class MetadataController {
             }
             annotatedModel = annotatedModel.grep{it.dataType != 'list'}
             builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
-            builder.additionalFieldsForDataTypes = grailsApplication.config.additionalFieldsForDataTypes
+            builder.additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
             if(includeDataPathHeader) {
                 builder.buildDataPathHeaderList()
             }
