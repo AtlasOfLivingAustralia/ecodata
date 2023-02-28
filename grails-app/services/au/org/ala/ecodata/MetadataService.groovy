@@ -12,7 +12,6 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import org.grails.web.json.JSONArray
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -35,6 +34,7 @@ class MetadataService {
     SettingService settingService
     GrailsApplication grailsApplication
     ExcelImportService excelImportService
+    ActivityFormService activityFormService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -675,39 +675,45 @@ class MetadataService {
         excelImportService.mapSheet(workbook, config)
     }
 
-    List excelWorkbookToMap(InputStream excelWorkbookIn, String outputName, Boolean normalise) {
-        List model = annotatedOutputDataModel(outputName)
-        String sheetName = XlsExporter.sheetName(outputName)
+    List excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
+        List result = []
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
-        Sheet sheet = workbook.getSheet(sheetName)
-        int index = 0;
-        def columnMap = excelImportService.getDataHeaders(sheet)
-        def config = [
-                sheet:sheetName,
-                startRow:2,
-                columnMap:columnMap
-        ]
-        List data = excelImportService.mapSheet(workbook, config)
-        List normalisedData = []
-        if(normalise) {
-            data.collect { Map row ->
-                def normalisedRow = [:]
-                row.each { cell ->
-                    excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+        ActivityForm form = activityFormService.findActivityForm(activityFormName, formVersion)
+        form?.sections?.each { FormSection section ->
+            String sectionName = section.name
+            List model = annotatedOutputDataModel(sectionName)
+            String sheetName = XlsExporter.sheetName(sectionName)
+            Sheet sheet = workbook.getSheet(sheetName)
+            def columnMap = excelImportService.getDataHeaders(sheet)
+            def config = [
+                    sheet:sheetName,
+                    startRow:2,
+                    columnMap:columnMap
+            ]
+            List data = excelImportService.mapSheet(workbook, config)
+            List normalisedData = []
+            if(normalise) {
+                data.collect { Map row ->
+                    def normalisedRow = [:]
+                    row.each { cell ->
+                        excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                    }
+                    normalisedData << normalisedRow
                 }
-                normalisedData << normalisedRow
             }
+
+            List rollUpData = []
+            Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
+            groupedBySerial.each {  key, List rows ->
+                rollUpData << rollUpDataIntoSingleElement(rows, model)
+            }
+
+            result.addAll(rollUpData.collect {
+                [[outputName: activityFormName, data: it]]
+            })
         }
 
-        List rollUpData = []
-        Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER]}
-        groupedBySerial.each {  key, List rows ->
-            rollUpData << rollUpDataIntoSingleElement(rows, model)
-        }
-
-        rollUpData.collect {
-            [[outputName: outputName, data: it]]
-        }
+        result
     }
 
     boolean isRowValidNextMemberOfArray(Map row, List models) {

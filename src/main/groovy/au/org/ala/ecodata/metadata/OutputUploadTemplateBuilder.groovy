@@ -9,7 +9,8 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 
 @Slf4j
 class OutputUploadTemplateBuilder extends XlsExporter {
-    static final String SERIAL_NUMBER = 'Serial Number'
+    static final String SERIAL_NUMBER_NAME = 'Serial Number'
+    static final String SERIAL_NUMBER_DATA = 'serial'
 
     def model
     def outputName
@@ -100,8 +101,8 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         boolean fillHeader = false
 
         if (includeDataPathHeader){
-            headers.add(SERIAL_NUMBER)
-            dataPathHeader.add("")
+            headers.add(SERIAL_NUMBER_NAME)
+            dataPathHeader.add(SERIAL_NUMBER_DATA)
         }
 
 
