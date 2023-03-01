@@ -122,8 +122,13 @@ class OutputUploadTemplateBuilder extends XlsExporter {
             path = it.path ? it.path : it.name
             switch (it.dataType) {
                 case 'species':
-                case 'image':
                     additionalFieldsForDataTypes?.species.fields.each {
+                        dataPathHeader.add(path + '.' + it.fieldName)
+                        headers.add(it.displayName)
+                    }
+                    break
+                case 'image':
+                    additionalFieldsForDataTypes?.image.fields.each {
                         dataPathHeader.add(path + '.' + it.fieldName)
                         headers.add(it.displayName)
                     }
