@@ -1281,6 +1281,10 @@ if(!additionalFieldsForDataTypes){
                     'type': 'species',
                     'fields': [
                         [
+                                'fieldName': 'name',
+                                'displayName': 'Name'
+                        ],
+                        [
                                 'fieldName': 'scientificName',
                                 'displayName': 'Scientific name'
                         ],
