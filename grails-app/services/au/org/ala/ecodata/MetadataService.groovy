@@ -718,13 +718,19 @@ class MetadataService {
 
     boolean isRowValidNextMemberOfArray(Map row, List models) {
         Map primitiveMembers = row.subMap(DataTypes.getModelsWithPrimitiveData(models)?. collect {it.name})
+        Map dataOfNestedDataTypes = row.subMap(DataTypes.getModelsWithMapData(models)?. collect {it.name})
+        Map dataOfListDataTypes = row.subMap(DataTypes.getDataTypesWithDataAsList(models)?. collect {it.name})
         if (primitiveMembers) {
-            return  ! primitiveMembers?.every { it.value == null }
+            return  ! primitiveMembers?.every { it.value == null || it.value == "" }
         }
-        else {
-            // cases where there are no primitive members
-            return (row.size() > 0) && (primitiveMembers.size() == 0)
+        else if(dataOfNestedDataTypes) {
+            return ! dataOfNestedDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
         }
+        else if (dataOfListDataTypes) {
+            return ! dataOfListDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
+        }
+
+        return false
     }
 
     def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
@@ -751,7 +757,6 @@ class MetadataService {
                         case DataTypes.STRINGLIST:
                         case DataTypes.SET:
                         case DataTypes.PHOTOPOINTS:
-                        case DataTypes.SPECIES:
                             if (!firstRow[key].contains(value))
                                 firstRow[key].add(value)
                             break
