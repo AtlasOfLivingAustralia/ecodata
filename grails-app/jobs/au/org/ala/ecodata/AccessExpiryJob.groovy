@@ -225,30 +225,28 @@ class AccessExpiryJob {
      */
     int processWarningPermissions(ZonedDateTime processingTime, int maxEmailsToSend) {
         log.info("AccessExpiryJob process is searching for users expiring 1 month from today")
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date monthFromNow = sdf.parse(processingTime.plusMonths(1).toString())
-        List permissions = permissionService.findAllByExpiryDate(monthFromNow)
+
+        Date processingTimeAsDate = Date.from(processingTime.toInstant())
+        Date monthFromNow = Date.from(processingTime.plusMonths(1).toInstant())
+        List permissions = permissionService.findAllByExpiryDate(processingTimeAsDate, monthFromNow)
         int emailsSent = 0
-        DateTime processingDate = new DateTime()
+
         for (UserPermission it : permissions) {
             User user = userService.findByUserId(it.userId)
             if (user) {
-                UserHub userHub = user.getUserHub(it.entityId)
+                // Find the hub attached to the expired permission.
+                String hubId = permissionService.findOwningHubId(it)
+                UserHub userHub = user.getUserHub(hubId)
                 if (!userHub.permissionWarningSentDate) {
-                    DateTime expiryDate = new DateTime(it.expiryDate).withZone(DateTimeZone.UTC)
-                    DateTime expiryDateMinus = expiryDate.minusMonths(1)
-                    if (processingDate >= expiryDateMinus) {
-                        // Find the hub attached to the expired permission.
-                        String hubId = permissionService.findOwningHubId(it)
-                        Hub hub = Hub.findByHubId(hubId)
 
-                        log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
+                    Hub hub = Hub.findByHubId(hubId)
+                    log.info("Sending expiring role warning to user ${it.userId} in hub ${hub.urlPath}")
 
-                        sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
-                        emailsSent++
-                        userHub.permissionWarningSentDate = Date.from(processingTime.toInstant())
-                        user.save()
-                    }
+                    sendEmail(hub, it.userId, PERMISSION_WARNING_EMAIL_KEY)
+                    emailsSent++
+                    userHub.permissionWarningSentDate = processingTimeAsDate
+                    user.markDirty('userHubs') // GORM seems to have trouble detecting the embedded object is dirty sometimes.
+                    user.save()
                 }
                 if (emailsSent >= maxEmailsToSend) {
                     break
