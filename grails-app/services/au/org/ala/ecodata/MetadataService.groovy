@@ -719,7 +719,7 @@ class MetadataService {
     boolean isRowValidNextMemberOfArray(Map row, List models) {
         Map primitiveMembers = row.subMap(DataTypes.getModelsWithPrimitiveData(models)?. collect {it.name})
         Map dataOfNestedDataTypes = row.subMap(DataTypes.getModelsWithMapData(models)?. collect {it.name})
-        Map dataOfListDataTypes = row.subMap(DataTypes.getDataTypesWithDataAsList(models)?. collect {it.name})
+        Map dataOfListDataTypes = row.subMap(DataTypes.getModelsWithListData(models)?. collect {it.name})
         if (primitiveMembers) {
             return  ! primitiveMembers?.every { it.value == null || it.value == "" }
         }
