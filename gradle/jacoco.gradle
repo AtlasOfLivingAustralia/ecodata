@@ -3,7 +3,6 @@ jacoco {
     toolVersion = "0.8.8"
 }
 test {
-    useJUnitPlatform()
     jacoco {
         excludes = ['**/Application.groovy',
                     '**/BootStrap.groovy',
@@ -12,12 +11,10 @@ test {
                     '**/*Mock.groovy',
                     'com.skedgo.converter.*']
     }
-    finalizedBy jacocoTestReport
 }
 jacocoTestReport {
     dependsOn test
 
-    finalizedBy jacocoTestCoverageVerification
     afterEvaluate {
         getClassDirectories().setFrom(classDirectories.files.collect {
             fileTree(dir: it,
@@ -35,7 +32,6 @@ jacocoTestReport {
 }
 
 jacocoTestCoverageVerification {
-    dependsOn test
     violationRules {
         rule {
             limit {
