@@ -508,8 +508,8 @@ if (!collectory.baseURL) {
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "https://www.ala.org.au/commonui-bs3"//"https://www2.ala.org.au/commonui"
 }
-    if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
+if (!security.apikey.serviceUrl) {
+    security.apikey.serviceUrl = 'https://auth-test.ala.org.au/apikey/ws/check?apikey='
 }
 if (!biocacheService.baseURL) {
     biocacheService.baseURL = 'https://biocache.ala.org.au/ws'
@@ -526,14 +526,8 @@ if (!security.cas.adminRole) {
 if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if (!userDetailsSingleUrl) {
-    userDetailsSingleUrl = "https://auth-dev.ala.org.au/userDetails/getUserDetails"
-}
-if (!userDetailsUrl) {
-    userDetailsUrl = "https://auth-dev.ala.org.au/userDetails/getUserListFull"
-}
-if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth-dev.ala.org.au/userdetails/ws/admin'
+if (!userDetails.url) {
+    userDetails.url = "https://auth-test.ala.org.au/userdetails/"
 }
 
 if (!authGetKeyUrl) {
@@ -583,10 +577,10 @@ security {
         enabled = false
         appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
         // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
-        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
-        loginUrl = 'https://auth.ala.org.au/cas/login'
-        logoutUrl = 'https://auth.ala.org.au/cas/logout'
-        casServerName = 'https://auth.ala.org.au'
+        casServerUrlPrefix = 'https://auth-test.ala.org.au/cas'
+        loginUrl = 'https://auth-test.ala.org.au/cas/login'
+        logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
+        casServerName = 'https://auth-test.ala.org.au'
         uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*']
         authenticateOnlyIfLoggedInPattern = "/graphql/*"
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
@@ -597,7 +591,8 @@ security {
         clientId = 'changeMe'
         secret = 'changeMe'
         scope = 'openid,profile,email,ala,roles,user_defined'
-        connectTimeout = 5000
+        connectTimeout = 20000
+        readTimeout = 20000
     }
     jwt {
         enabled = true
@@ -605,6 +600,8 @@ security {
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
         requiredScores = ["openid", 'profile', "email", "ala", "roles", "user_defined"]
+        connectTimeoutMs = 20000
+        readTimeoutMs = 20000
     }
 }
 
