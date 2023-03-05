@@ -140,7 +140,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         user.save()
         ZonedDateTime processTime = ZonedDateTime.parse("2022-03-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
-        Date monthFromNow = sdf.parse(processTime.plusMonths(1).toString())
+        Date monthFromNow = Date.from(processTime.plusMonths(1).toInstant())
         UserPermission permission = new UserPermission(userId:"u1", entityType: Hub.class.name, entityId:'h1', accessLevel: AccessLevel.admin)
         permission.save()
 
@@ -148,7 +148,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         job.processWarningPermissions(processTime, 10)
 
         then:
-        1 * permissionService.findAllByExpiryDate(monthFromNow) >> [permission]
+        1 * permissionService.findAllByExpiryDate(Date.from(processTime.toInstant()), monthFromNow) >> [permission]
         1 * permissionService.findOwningHubId(permission) >> merit.hubId
         1 * userService.findByUserId(user.userId) >> user
         1 * userService.lookupUserDetails(permission.userId) >> [email:'test@test.com']
