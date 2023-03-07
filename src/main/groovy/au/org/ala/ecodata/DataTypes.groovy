@@ -46,4 +46,16 @@ class DataTypes {
         }
     }
 
+    static List getSpeciesModels(List models) {
+        models.findAll { model ->
+            [SPECIES].contains(model.dataType)
+        }
+    }
+
+    static List getListModels(List models) {
+        models.findAll { model ->
+            [LIST].contains(model.dataType)
+        }
+    }
+
 }

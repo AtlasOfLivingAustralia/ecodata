@@ -35,6 +35,7 @@ class MetadataService {
     GrailsApplication grailsApplication
     ExcelImportService excelImportService
     ActivityFormService activityFormService
+    SpeciesReMatchService speciesReMatchService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -698,6 +699,8 @@ class MetadataService {
                     row.each { cell ->
                         excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
                     }
+
+                    addOutputSpeciesIdToSpeciesData(normalisedRow, model)
                     normalisedData << normalisedRow
                 }
             }
@@ -766,6 +769,53 @@ class MetadataService {
         }
 
         firstRow
+    }
+
+    Map addOutputSpeciesIdToSpeciesData (Map data, List models) {
+        List speciesModels = DataTypes.getSpeciesModels(models)
+        Map speciesData = data?.subMap(speciesModels.collect {it.name})
+
+        speciesModels?.each { model ->
+            if (speciesData) {
+                Map singleSpeciesData = speciesData[model.name]
+                addOutputSpeciesId(singleSpeciesData)
+                autoPopulateSpeciesData(singleSpeciesData)
+            }
+        }
+
+        List listModels = DataTypes.getListModels(models)
+        Map listData = data?.subMap(listModels.collect {it.name})
+        listModels?.each { model ->
+            addOutputSpeciesIdToSpeciesData(listData[model.name], model.columns)
+        }
+
+        data
+    }
+
+    Map addOutputSpeciesId(Map data){
+        if (!data?.every {it.value == null || it.value == "" }) {
+            if(!data.outputSpeciesId)
+                data.outputSpeciesId = UUID.randomUUID().toString()
+        }
+
+        data
+    }
+
+    Map autoPopulateSpeciesData(Map data){
+        if (!data?.guid && data?.scientificName) {
+            def result = speciesReMatchService.searchBie(data.scientificName, 10)
+            // only if there is a single match
+            if (result?.autoCompleteList?.size() == 1) {
+                data.guid = result?.autoCompleteList[0]?.guid
+                data.commonName = data.commonName ?: result?.autoCompleteList[0]?.commonName
+            }
+        }
+
+        if(!data?.name) {
+            data.name = data?.commonName ? data?.scientificName + '(' + data?.commonName + ')' : data?.scientificName
+        }
+
+        data
     }
 
     /**
