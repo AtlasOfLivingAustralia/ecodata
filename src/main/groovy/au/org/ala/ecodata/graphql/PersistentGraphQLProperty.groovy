@@ -5,6 +5,7 @@ import grails.gorm.validation.PersistentEntityValidator
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLType
 import groovy.transform.CompileStatic
+import org.grails.datastore.mapping.config.Property
 import org.grails.datastore.mapping.model.MappingContext
 import org.grails.datastore.mapping.model.PersistentEntity
 import org.grails.datastore.mapping.model.PersistentProperty
@@ -61,7 +62,8 @@ class PersistentGraphQLProperty extends org.grails.gorm.graphql.entity.property.
             this.nullable = mapping.nullable
         }
         else {
-            this.nullable = property.mapping.mappedForm.nullable
+            Property prop = property.mapping.mappedForm
+            this.nullable = prop.nullable
         }
         this.output = mapping.output
         this.input = mapping.input
