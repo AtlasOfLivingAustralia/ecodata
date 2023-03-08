@@ -9,6 +9,8 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 
 @Slf4j
 class OutputUploadTemplateBuilder extends XlsExporter {
+    static final String SERIAL_NUMBER_NAME = 'Serial Number'
+    static final String SERIAL_NUMBER_DATA = 'serial'
 
     def model
     def outputName
@@ -16,6 +18,8 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     boolean editMode = false
     boolean extraRowsEditable = true
     boolean autoSizeColumns = true
+    boolean includeDataPathHeader = false
+    def additionalFieldsForDataTypes
 
     public OutputUploadTemplateBuilder(filename, outputName, model) {
         super(filename)
@@ -25,7 +29,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.autoSizeColumns = true
     }
 
-    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true) {
+    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true, boolean includeDataPathHeader) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
@@ -33,6 +37,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.editMode = editMode
         this.extraRowsEditable = extraRowsEditable
         this.autoSizeColumns = autoSizeColumns
+        this.includeDataPathHeader = includeDataPathHeader
     }
 
 
@@ -81,6 +86,76 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders)
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
+
+        finalise()
+    }
+
+    void buildDataPathHeaderList() {
+
+        def groupHeaders = []
+        def dataPathHeader = []
+        def headers = []
+        def lastHeader = ""
+        boolean fillHeader = false
+
+        if (includeDataPathHeader){
+            headers.add(SERIAL_NUMBER_NAME)
+            dataPathHeader.add(SERIAL_NUMBER_DATA)
+        }
+
+
+        model.each {
+            def path
+            if (it.header && it.header != lastHeader) {
+                groupHeaders.add(it.header)
+                lastHeader = it.header
+                fillHeader = true
+            } else {
+                groupHeaders.add("")
+            }
+
+
+
+            def label = it.label ?: it.name
+            path = it.path ? it.path : it.name
+            switch (it.dataType) {
+                case 'species':
+                    additionalFieldsForDataTypes?.species.fields.each {
+                        dataPathHeader.add(path + '.' + it.fieldName)
+                        headers.add(it.displayName)
+                    }
+                    break
+                case 'image':
+                    additionalFieldsForDataTypes?.image.fields.each {
+                        dataPathHeader.add(path + '.' + it.fieldName)
+                        headers.add(it.displayName)
+                    }
+                    break
+                case 'geoMap':
+                    additionalFieldsForDataTypes?.geoMap.fields.each {
+                        dataPathHeader.add(path + it.fieldName)
+                        headers.add(it.displayName)
+                    }
+                    break
+                default:
+                    dataPathHeader.add(path)
+                    headers.add(label)
+                    break
+            }
+
+
+        }
+
+        if (!fillHeader) groupHeaders = null
+
+        AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders, dataPathHeader)
+
+        // todo: re-enable validation for data path header
+        if (!includeDataPathHeader) {
+            new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+        }
 
         new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 

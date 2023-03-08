@@ -1271,6 +1271,93 @@ geohash.maxNumberOfGrids = 250
 // hide exact location.
 geohash.maxLength =  5
 
+if(!additionalFieldsForDataTypes){
+    additionalFieldsForDataTypes = [
+            'species': [
+                    'name': 'Scientific name field',
+                    'type': 'species',
+                    'fields': [
+                        [
+                                'fieldName': 'name',
+                                'displayName': 'Name'
+                        ],
+                        [
+                                'fieldName': 'scientificName',
+                                'displayName': 'Scientific name'
+                        ],
+                        [
+                                'fieldName': 'commonName',
+                                'displayName': 'Common name'
+                        ],
+                        [
+                                'fieldName': 'guid',
+                                'displayName': 'ALA identifier'
+                        ]
+                    ]
+            ],
+            'image': [
+                    'name': 'Image field',
+                    'type': 'image',
+                    'fields': [
+                        [
+                                'fieldName': 'url',
+                                'displayName': 'Image URL'
+                        ],
+                        [
+                                'fieldName': 'licence',
+                                'displayName': 'Licence'
+                        ],
+                        [
+                                'fieldName': 'name',
+                                'displayName': 'Image name'
+                        ],
+                        [
+                                'fieldName': 'filename',
+                                'displayName': 'Image filename'
+                        ],
+                        [
+                                'fieldName': 'attribution',
+                                'displayName': 'Attribution'
+                        ],
+                        [
+                                'fieldName': 'notes',
+                                'displayName': 'Notes'
+                        ],
+                        [
+                                'fieldName': 'projectId',
+                                'displayName': 'Project Id'
+                        ],
+                        [
+                            'fieldName': 'projectName',
+                            'displayName': 'Project name'
+                        ],
+                        [
+                            'fieldName': 'dateTaken',
+                            'displayName': 'Date taken'
+                        ]
+                    ]
+            ],
+            'geoMap' : [
+                    'name': 'Geo map field',
+                    'type': 'geoMap',
+                    'fields': [
+                                [
+                                        'fieldName': "",
+                                        'displayName': 'Site identifier (siteId)'
+                                ],
+                                [
+                                        'fieldName': "Latitude",
+                                        'displayName': 'Latitude'
+                                ],
+                                [
+                                        'fieldName': "Longitude",
+                                        'displayName': 'Longitude'
+                                ]
+                        ]
+            ]
+    ]
+}
+
 // Dummy / default username and password for elasticsearch, will be ignored if the server is not setup for
 // basic authentication.
 elasticsearch {

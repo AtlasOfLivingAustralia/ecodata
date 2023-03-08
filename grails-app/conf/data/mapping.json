@@ -7,7 +7,9 @@
         "projectId" : {
           "type" : "keyword"
         },
-
+        "bulkImportId" : {
+          "type" : "keyword"
+        },
         "projects" : {
           "type" : "keyword"
         },

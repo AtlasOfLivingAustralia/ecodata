@@ -5,6 +5,7 @@ import static grails.async.Promises.task
 class SpeciesReMatchService {
     static transactional = false
     def recordService, projectActivityService, webService, grailsApplication
+    CacheService cacheService
 
     /*
     * Re Match GUID based on  scientific name or common name or name.
@@ -38,10 +39,8 @@ class SpeciesReMatchService {
                         if (!name) {
                             name = record.name
                         }
-                        def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
-                        def url = "${grailsApplication.config.getProperty('bie.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=1&idxType=TAXON"
 
-                        def results = webService.getJson(url)
+                        def results = searchBie(name)
                         results?.autoCompleteList?.removeAll { !it.name }
                         results?.autoCompleteList?.each { result ->
                             result.scientificName = result.name
@@ -80,5 +79,14 @@ class SpeciesReMatchService {
                 log.info("Completed - Offset: ${offset}")
             }
         }
+    }
+
+    def searchBie(String name, int limit = 1) {
+        cacheService.get('bie-search-auto', {
+            def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
+            def url = "${grailsApplication.config.getProperty('bie.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=${limit}&idxType=TAXON"
+
+            webService.getJson(url)
+        })
     }
 }

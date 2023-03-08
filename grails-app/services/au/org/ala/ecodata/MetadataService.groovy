@@ -1,17 +1,17 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import org.grails.web.json.JSONArray
-//import org.grails.plugins.csv.CSVMapReader
-import grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -33,6 +33,9 @@ class MetadataService {
     def webService, cacheService, messageSource, emailService, userService, commonService
     SettingService settingService
     GrailsApplication grailsApplication
+    ExcelImportService excelImportService
+    ActivityFormService activityFormService
+    SpeciesReMatchService speciesReMatchService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -673,7 +676,147 @@ class MetadataService {
         excelImportService.mapSheet(workbook, config)
     }
 
+    List excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
+        List result = []
+        Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
+        ActivityForm form = activityFormService.findActivityForm(activityFormName, formVersion)
+        form?.sections?.each { FormSection section ->
+            String sectionName = section.name
+            List model = annotatedOutputDataModel(sectionName)
+            String sheetName = XlsExporter.sheetName(sectionName)
+            Sheet sheet = workbook.getSheet(sheetName)
+            def columnMap = excelImportService.getDataHeaders(sheet)
+            def config = [
+                    sheet:sheetName,
+                    startRow:2,
+                    columnMap:columnMap
+            ]
+            List data = excelImportService.mapSheet(workbook, config)
+            List normalisedData = []
+            if(normalise) {
+                data.collect { Map row ->
+                    def normalisedRow = [:]
+                    row.each { cell ->
+                        excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                    }
 
+                    addOutputSpeciesIdToSpeciesData(normalisedRow, model)
+                    normalisedData << normalisedRow
+                }
+            }
+
+            List rollUpData = []
+            Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
+            groupedBySerial.each {  key, List rows ->
+                rollUpData << rollUpDataIntoSingleElement(rows, model)
+            }
+
+            result.addAll(rollUpData.collect {
+                [[outputName: activityFormName, data: it]]
+            })
+        }
+
+        result
+    }
+
+    boolean isRowValidNextMemberOfArray(Map row, List models) {
+        Map primitiveMembers = row.subMap(DataTypes.getModelsWithPrimitiveData(models)?. collect {it.name})
+        Map dataOfNestedDataTypes = row.subMap(DataTypes.getModelsWithMapData(models)?. collect {it.name})
+        Map dataOfListDataTypes = row.subMap(DataTypes.getModelsWithListData(models)?. collect {it.name})
+        if (primitiveMembers) {
+            return  ! primitiveMembers?.every { it.value == null || it.value == "" }
+        }
+        else if(dataOfNestedDataTypes) {
+            return ! dataOfNestedDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
+        }
+        else if (dataOfListDataTypes) {
+            return ! dataOfListDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
+        }
+
+        return false
+    }
+
+    def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
+        firstRow = firstRow ?: rows.first()
+        rows?.eachWithIndex { Map row, int index->
+//            if (!isRowValidNextMemberOfArray(row, models)) {
+                Map listData = row.subMap(DataTypes.getModelsWithListData(models).collect {it.name})
+                listData?.each { key, value ->
+                    Map model = models?.find { it.name == key }
+                    if ((row == firstRow) && !(firstRow[key] instanceof List)) {
+                        firstRow[key] = [firstRow[key]]
+                    }
+
+                    switch (model.dataType) {
+                        case DataTypes.LIST:
+                            if (isRowValidNextMemberOfArray(value, model.columns)) {
+                                if (!firstRow[key].contains(value))
+                                    firstRow[key].add(value)
+                            }
+
+                            rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                            break
+                        case DataTypes.IMAGE:
+                        case DataTypes.STRINGLIST:
+                        case DataTypes.SET:
+                        case DataTypes.PHOTOPOINTS:
+                            if (!firstRow[key].contains(value))
+                                firstRow[key].add(value)
+                            break
+                    }
+                }
+//            }
+        }
+
+        firstRow
+    }
+
+    Map addOutputSpeciesIdToSpeciesData (Map data, List models) {
+        List speciesModels = DataTypes.getSpeciesModels(models)
+        Map speciesData = data?.subMap(speciesModels.collect {it.name})
+
+        speciesModels?.each { model ->
+            if (speciesData) {
+                Map singleSpeciesData = speciesData[model.name]
+                addOutputSpeciesId(singleSpeciesData)
+                autoPopulateSpeciesData(singleSpeciesData)
+            }
+        }
+
+        List listModels = DataTypes.getListModels(models)
+        Map listData = data?.subMap(listModels.collect {it.name})
+        listModels?.each { model ->
+            addOutputSpeciesIdToSpeciesData(listData[model.name], model.columns)
+        }
+
+        data
+    }
+
+    Map addOutputSpeciesId(Map data){
+        if (!data?.every {it.value == null || it.value == "" }) {
+            if(!data.outputSpeciesId)
+                data.outputSpeciesId = UUID.randomUUID().toString()
+        }
+
+        data
+    }
+
+    Map autoPopulateSpeciesData(Map data){
+        if (!data?.guid && data?.scientificName) {
+            def result = speciesReMatchService.searchBie(data.scientificName, 10)
+            // only if there is a single match
+            if (result?.autoCompleteList?.size() == 1) {
+                data.guid = result?.autoCompleteList[0]?.guid
+                data.commonName = data.commonName ?: result?.autoCompleteList[0]?.commonName
+            }
+        }
+
+        if(!data?.name) {
+            data.name = data?.commonName ? data?.scientificName + '(' + data?.commonName + ')' : data?.scientificName
+        }
+
+        data
+    }
 
     /**
      * Converts a Score domain object to a Map.

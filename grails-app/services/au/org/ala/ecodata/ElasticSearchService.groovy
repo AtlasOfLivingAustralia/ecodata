@@ -741,10 +741,13 @@ class ElasticSearchService {
 
         try{
             switch (docType) {
+                case Activity.class.name:
+                    deleteDocById(docId, PROJECT_ACTIVITY_INDEX)
+                    deleteDocById(docId)
+                    break
                 case Project.class.name:
                     deleteDocById(docId, HOMEPAGE_INDEX)
                 case Site.class.name:
-                case Activity.class.name:
                 case Organisation.class.name:
                     deleteDocById(docId)
             }
@@ -1409,6 +1412,7 @@ class ElasticSearchService {
         String query = params.searchTerm ?: ''
         String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
+        String bulkImportId = params.bulkImportId
         String projectActivityId = params.projectActivityId
         String forcedQuery = ''
         String spotterId = params.spotterId ?: ''
@@ -1485,6 +1489,18 @@ class ElasticSearchService {
             case 'userprojectactivityrecords':
                 if(projectActivityId && spotterId){
                     forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ' AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                }
+                break
+
+            case 'bulkimport':
+                if (bulkImportId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ')'
+                    } else {
+                        forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ' AND projectActivity.embargoed:false)'
+                    }
+                } else {
+                    forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 }
                 break
 
