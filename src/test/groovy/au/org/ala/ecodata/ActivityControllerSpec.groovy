@@ -4,7 +4,6 @@ import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.client.Client
 import spock.lang.Specification
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
@@ -181,7 +180,7 @@ class ActivityControllerSpec extends Specification implements ControllerUnitTest
         then:
         1 * activityService.bulkDelete(['1'], false) >> [ success : true]
         response.status == HttpStatus.SC_OK
-        response.text == '[message:deleted, details:[success:true]]'
+        response.text == '{"message":"deleted","details":{"success":true}}'
     }
 
     void "bulk delete - invalid ids"() {
@@ -196,7 +195,7 @@ class ActivityControllerSpec extends Specification implements ControllerUnitTest
 
         then:
         response.status == HttpStatus.SC_NOT_FOUND
-        response.text == '[message:Please provide property "ids" in JSON payload]'
+        response.text == '{"message":"Please provide property \\"ids\\" in JSON payload"}'
     }
 
     void "Create activity"() {
@@ -554,7 +553,7 @@ class ActivityControllerSpec extends Specification implements ControllerUnitTest
         controller.search()
 
         then:
-        1 * activityService.search([:], commonService.parse('2020-07-01T14:00:00Z'), commonService.parse('2020-08-01T14:00:00Z'), '2020-08-01T14:00:00Z', 'all') >> [activity]
+        1 * activityService.search([:], commonService.parse('2020-07-01T14:00:00Z'), commonService.parse('2020-08-01T14:00:00Z'), '2020-08-01T14:00:00Z', 'all', [:]) >> [activity]
         response.status == HttpStatus.SC_OK
         response.getJson().activities.size() == 1
     }
