@@ -41,12 +41,11 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestClientBuilder
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.common.geo.builders.CoordinatesBuilder
-import org.elasticsearch.common.geo.builders.PolygonBuilder
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
+import org.elasticsearch.geometry.LinearRing
+import org.elasticsearch.geometry.Polygon
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
@@ -56,6 +55,7 @@ import org.elasticsearch.search.aggregations.BucketOrder
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
+import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
@@ -1694,15 +1694,20 @@ class ElasticSearchService {
 
     private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "projectArea.geoIndex") {
         GeoShapeQueryBuilder filter = null
+
         field = field ?: 'projectArea.geoIndex'
         Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder()
-                geographicSearchCriteria.coordinates[0].each { coordinate ->
-                    coordinatesBuilder.coordinate(coordinate[0] as double, coordinate[1] as double)
+                int count = geographicSearchCriteria.coordinates[0].size()
+                double[] xCoords = new double[count]
+                double[] yCoords = new double[count]
+
+                for (int i=0; i<count; i++) {
+                    xCoords[i] = geographicSearchCriteria.coordinates[0][i][0] as double
+                    yCoords[i] = geographicSearchCriteria.coordinates[0][i][1] as double
                 }
-                shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
+                shape = new Polygon(new LinearRing(xCoords, yCoords))
                 break;
             case "Circle":
                 shape = new Circle(

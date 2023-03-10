@@ -263,6 +263,21 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
 
     }
 
+    def "Searches can include a shape component"() {
+        setup:
+        String queryString = "name:test"
+        Map params = new GrailsParameterMap([:], null)
+        String index = ElasticIndex.HOMEPAGE_INDEX
+        Map geoSearchCritera = [type:'Polygon', coordinates:[[[1,0], [1, 1], [0, 1], [0, 0], [1, 0]]]]
+
+        when:
+        service.buildSearchRequest(queryString, params, index, geoSearchCritera)
+
+        then:
+        noExceptionThrown()
+
+    }
+
     def  "the aggs parameters is optional"() {
         setup:
         String queryString = ""
