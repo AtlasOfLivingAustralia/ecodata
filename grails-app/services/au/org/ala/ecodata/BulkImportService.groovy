@@ -1,8 +1,9 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
+import grails.web.databinding.DataBinder
 
-class BulkImportService {
+class BulkImportService implements DataBinder {
     static final DETAILS_MINIMAL = 'minimal'
     CommonService commonService
     ProjectActivityService projectActivityService
@@ -40,22 +41,16 @@ class BulkImportService {
     BulkImport create(Map content) {
         BulkImport bulkImport = new BulkImport(content)
         bulkImport.bulkImportId = Identifiers.getNew(true, null)
+        bindData(bulkImport, content, [include:BulkImport.bindingProperties])
         bulkImport.save(flush: true)
         bulkImport
-    }
-
-    Map get(String id) {
-        BulkImport bulkImport = BulkImport.findByBulkImportId(id)
-        if (bulkImport) {
-            commonService.toBareMap(bulkImport)
-        }
     }
 
     Map update(props) {
         try {
             BulkImport bulkImport = BulkImport.findByBulkImportId(props.bulkImportId)
-            props.remove('id')
-            commonService.updateProperties(bulkImport, props)
+            bindData(bulkImport, props, [include:BulkImport.bindingProperties])
+            bulkImport.save(flush: true)
             return [status: 'ok', bulkImportId: bulkImport.bulkImportId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes

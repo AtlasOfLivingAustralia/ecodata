@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 
 import static org.apache.http.HttpStatus.*
 
@@ -36,7 +37,7 @@ class BulkImportController {
 
     @RequireApiKey
     def create() {
-        def json = request.JSON
+        def json = new JsonSlurper().parse( request.inputStream)
         if (!json.userId) {
             render text: [status: "error", error: 'Missing userId'] as JSON, status: SC_BAD_REQUEST, contentType: 'application/json'
         } else {
@@ -52,7 +53,7 @@ class BulkImportController {
 
     @RequireApiKey
     def update() {
-        def json = request.JSON
+        def json = new JsonSlurper().parse( request.inputStream)
         if (!params.id) {
             render text: [status: "error", error: "Missing id"] as JSON, status: SC_BAD_REQUEST, contentType: "application/json"
         } else if (params.id != json.bulkImportId) {
@@ -72,9 +73,9 @@ class BulkImportController {
         if (!params.id) {
             render text: [status: "error", error: "Missing id"] as JSON, status: SC_BAD_REQUEST, contentType: "application/json"
         } else {
-            Map bulkImport = bulkImportService.get(params.id)
+            BulkImport bulkImport = BulkImport.findByBulkImportId(params.id)
             if (bulkImport) {
-                render text: bulkImport as JSON, contentType: 'application/json', status: SC_OK
+                respond bulkImport
             } else {
                 render text: [status: "error", error: "Bulk import not found"] as JSON, status: SC_NOT_FOUND, contentType: "application/json"
             }

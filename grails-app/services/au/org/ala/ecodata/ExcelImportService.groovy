@@ -68,6 +68,10 @@ class ExcelImportService {
         headers
     }
 
+    boolean looksLikeDate(String value) {
+        value?.contains('/') || value.contains('-')
+    }
+
     private Map mapRow(Map columnMap, Row row, FormulaEvaluator evaluator) {
         Map result = [:]
         columnMap.each {k, name ->
@@ -88,18 +92,16 @@ class ExcelImportService {
             case CellType.STRING:
                 value = cell.getStringCellValue()
                 // convert to ISO date format
-                if (value?.contains('/') || value.contains('-')) {
+                if (looksLikeDate(value)) {
                     Date date
                     try {
                         date = DateUtils.parseDate(value,["dd-MM-yyyy", "dd/MM/yyyy"].toArray(new String[0]))
-                    }
-                    catch (ParseException ex){
-
-                    }
-                    finally {
                         if(date) {
                             value = DateUtil.format(date)
                         }
+                    }
+                    catch (ParseException ex){
+                        // keep the value as is
                     }
                 }
 
