@@ -1278,20 +1278,24 @@ if(!additionalFieldsForDataTypes){
                     'type': 'species',
                     'fields': [
                         [
-                                'fieldName': 'name',
-                                'displayName': 'Name'
+                                'name': 'name',
+                                'label': 'Name',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'scientificName',
-                                'displayName': 'Scientific name'
+                                'name': 'scientificName',
+                                'label': 'Scientific name',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'commonName',
-                                'displayName': 'Common name'
+                                'name': 'commonName',
+                                'label': 'Common name',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'guid',
-                                'displayName': 'ALA identifier'
+                                'name': 'guid',
+                                'label': 'ALA identifier',
+                                "dataType": "text"
                         ]
                     ]
             ],
@@ -1300,40 +1304,55 @@ if(!additionalFieldsForDataTypes){
                     'type': 'image',
                     'fields': [
                         [
-                                'fieldName': 'url',
-                                'displayName': 'Image URL'
+                                'name': 'url',
+                                'label': 'Image URL',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'licence',
-                                'displayName': 'Licence'
+                                'name': 'licence',
+                                'label': 'Licence',
+                                "dataType": "text",
+                                'constraints': [
+                                        'CC BY 3.0',
+                                        'CC BY 0',
+                                        'CC BY 4.0',
+                                        'CC BY-NC'
+                                ]
                         ],
                         [
-                                'fieldName': 'name',
-                                'displayName': 'Image name'
+                                'name': 'name',
+                                'label': 'Image name',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'filename',
-                                'displayName': 'Image filename'
+                                'name': 'filename',
+                                'label': 'Image filename',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'attribution',
-                                'displayName': 'Attribution'
+                                'name': 'attribution',
+                                'label': 'Attribution',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'notes',
-                                'displayName': 'Notes'
+                                'name': 'notes',
+                                'label': 'Notes',
+                                "dataType": "text"
                         ],
                         [
-                                'fieldName': 'projectId',
-                                'displayName': 'Project Id'
+                                'name': 'projectId',
+                                'label': 'Project Id',
+                                "dataType": "text"
                         ],
                         [
-                            'fieldName': 'projectName',
-                            'displayName': 'Project name'
+                            'name': 'projectName',
+                            'label': 'Project name',
+                            "dataType": "text"
                         ],
                         [
-                            'fieldName': 'dateTaken',
-                            'displayName': 'Date taken'
+                            'name': 'dateTaken',
+                            'label': 'Date taken',
+                            "dataType": "date"
                         ]
                     ]
             ],
@@ -1342,16 +1361,21 @@ if(!additionalFieldsForDataTypes){
                     'type': 'geoMap',
                     'fields': [
                                 [
-                                        'fieldName': "",
-                                        'displayName': 'Site identifier (siteId)'
+                                        'name': "",
+                                        'label': 'Site identifier (siteId)',
+                                        "dataType": "text"
                                 ],
                                 [
-                                        'fieldName': "Latitude",
-                                        'displayName': 'Latitude'
+                                        'name': "Latitude",
+                                        'label': 'Latitude',
+                                        "dataType": "number",
+                                        "validate": "min[-90],max[90]"
                                 ],
                                 [
-                                        'fieldName': "Longitude",
-                                        'displayName': 'Longitude'
+                                        'name': "Longitude",
+                                        'label': 'Longitude',
+                                        "dataType": "number",
+                                        "validate": "min[-180],max[180]"
                                 ]
                         ]
             ]
