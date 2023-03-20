@@ -261,6 +261,7 @@ class ProjectActivityService {
         }
 
         mapOfProperties["attribution"] = generateAttributionText(projectActivity)
+        mapOfProperties["containsActivity"] = activityService.searchAndListActivityDomainObjects([projectActivityId: mapOfProperties.projectActivityId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
        /* mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
             submissionService.get(it)
         } */
