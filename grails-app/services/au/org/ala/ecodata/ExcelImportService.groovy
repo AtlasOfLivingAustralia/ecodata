@@ -1,12 +1,11 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.DateUtil
-import org.apache.commons.lang.time.DateUtils
+
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.usermodel.DateUtil
 import org.apache.poi.ss.util.CellReference
 
-import java.text.ParseException
-
+import java.text.SimpleDateFormat
 /**
  * Converts a spreadsheet to a Map based on configuration.
  * Uses the same configuration as the grails excel-import-plugin.
@@ -68,6 +67,10 @@ class ExcelImportService {
         headers
     }
 
+    boolean looksLikeDate(String value) {
+        value?.contains('/') || value.contains('-')
+    }
+
     private Map mapRow(Map columnMap, Row row, FormulaEvaluator evaluator) {
         Map result = [:]
         columnMap.each {k, name ->
@@ -87,25 +90,27 @@ class ExcelImportService {
         switch (cell.cellType) {
             case CellType.STRING:
                 value = cell.getStringCellValue()
-                // convert to ISO date format
-                if (value?.contains('/') || value.contains('-')) {
-                    Date date
-                    try {
-                        date = DateUtils.parseDate(value,["dd-MM-yyyy", "dd/MM/yyyy"].toArray(new String[0]))
-                    }
-                    catch (ParseException ex){
-
-                    }
-                    finally {
-                        if(date) {
-                            value = DateUtil.format(date)
-                        }
-                    }
-                }
-
                 break
             case CellType.NUMERIC:
-                value = cell.getNumericCellValue()
+                CellStyle cellStyle = cell.getCellStyle()
+                String formatString = cellStyle.getDataFormatString()
+                DataFormatter dataFormatter = new DataFormatter()
+                String formattedCellValue = dataFormatter.formatCellValue(cell)
+                Date date = cell.getDateCellValue()
+                if(DateUtil.isCellDateFormatted(cell) && date) {
+                    // first test for time. Assume all other cases are date.
+                    if (formattedCellValue.contains(":")) {
+                        SimpleDateFormat format = new SimpleDateFormat("hh:mm a") // format string for 12-hour clock
+                        value = format.format(date)
+                    }
+                    else {
+                        value = cell.getDateCellValue()
+                        value = au.org.ala.ecodata.DateUtil.format(value)
+                    }
+                }
+                else {
+                    value = cell.getNumericCellValue()
+                }
                 break
             case CellType.FORMULA:
                 CellValue evaluated = evaluator.evaluate(cell)

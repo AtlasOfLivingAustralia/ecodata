@@ -739,33 +739,31 @@ class MetadataService {
     def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
         firstRow = firstRow ?: rows.first()
         rows?.eachWithIndex { Map row, int index->
-//            if (!isRowValidNextMemberOfArray(row, models)) {
-                Map listData = row.subMap(DataTypes.getModelsWithListData(models).collect {it.name})
-                listData?.each { key, value ->
-                    Map model = models?.find { it.name == key }
-                    if ((row == firstRow) && !(firstRow[key] instanceof List)) {
-                        firstRow[key] = [firstRow[key]]
-                    }
+            Map listData = row.subMap(DataTypes.getModelsWithListData(models).collect {it.name})
+            listData?.each { key, value ->
+                Map model = models?.find { it.name == key }
+                if ((row == firstRow) && !(firstRow[key] instanceof List)) {
+                    firstRow[key] = [firstRow[key]]
+                }
 
-                    switch (model.dataType) {
-                        case DataTypes.LIST:
-                            if (isRowValidNextMemberOfArray(value, model.columns)) {
-                                if (!firstRow[key].contains(value))
-                                    firstRow[key].add(value)
-                            }
-
-                            rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
-                            break
-                        case DataTypes.IMAGE:
-                        case DataTypes.STRINGLIST:
-                        case DataTypes.SET:
-                        case DataTypes.PHOTOPOINTS:
+                switch (model.dataType) {
+                    case DataTypes.LIST:
+                        if (isRowValidNextMemberOfArray(value, model.columns)) {
                             if (!firstRow[key].contains(value))
                                 firstRow[key].add(value)
-                            break
-                    }
+                        }
+
+                        rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                        break
+                    case DataTypes.IMAGE:
+                    case DataTypes.STRINGLIST:
+                    case DataTypes.SET:
+                    case DataTypes.PHOTOPOINTS:
+                        if (!firstRow[key].contains(value))
+                            firstRow[key].add(value)
+                        break
                 }
-//            }
+            }
         }
 
         firstRow

@@ -99,6 +99,13 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         def headers = []
         def lastHeader = ""
         boolean fillHeader = false
+        int startIndex = 1
+        List augmentedModel = [[
+            name: SERIAL_NUMBER_DATA,
+            label: SERIAL_NUMBER_NAME,
+            dataType: 'number',
+            required: true
+       ]]
 
         if (includeDataPathHeader){
             headers.add(SERIAL_NUMBER_NAME)
@@ -106,7 +113,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         }
 
 
-        model.each {
+        model.eachWithIndex { it, index ->
             def path
             if (it.header && it.header != lastHeader) {
                 groupHeaders.add(it.header)
@@ -123,25 +130,33 @@ class OutputUploadTemplateBuilder extends XlsExporter {
             switch (it.dataType) {
                 case 'species':
                     additionalFieldsForDataTypes?.species.fields.each {
-                        dataPathHeader.add(path + '.' + it.fieldName)
-                        headers.add(it.displayName)
+                        dataPathHeader.add(path + '.' + it.name)
+                        headers.add(it.label)
+                        augmentedModel.add(startIndex, it)
+                        startIndex ++
                     }
                     break
                 case 'image':
                     additionalFieldsForDataTypes?.image.fields.each {
-                        dataPathHeader.add(path + '.' + it.fieldName)
-                        headers.add(it.displayName)
+                        dataPathHeader.add(path + '.' + it.name)
+                        headers.add(it.label)
+                        augmentedModel.add(startIndex, it)
+                        startIndex ++
                     }
                     break
                 case 'geoMap':
                     additionalFieldsForDataTypes?.geoMap.fields.each {
-                        dataPathHeader.add(path + it.fieldName)
-                        headers.add(it.displayName)
+                        dataPathHeader.add(path + it.name)
+                        headers.add(it.label)
+                        augmentedModel.add(startIndex, it)
+                        startIndex ++
                     }
                     break
                 default:
                     dataPathHeader.add(path)
                     headers.add(label)
+                    augmentedModel.add(startIndex, it)
+                    startIndex ++
                     break
             }
 
@@ -155,6 +170,9 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         // todo: re-enable validation for data path header
         if (!includeDataPathHeader) {
             new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+        }
+        else {
+            new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel).process(2)
         }
 
         new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
@@ -342,7 +360,7 @@ class ValidationProcessor extends OutputModelProcessor {
         this.model = model
     }
 
-    public void process() {
+    public void process(int firstRow = 1) {
 
         // Create a worksheet to store validation lists in.
         def validationSheetName = OutputUploadTemplateBuilder.sheetName("Validation - "+sheet.getSheetName())
@@ -351,6 +369,7 @@ class ValidationProcessor extends OutputModelProcessor {
 
         ExcelValidationContext context = new ExcelValidationContext([currentSheet:sheet, validationSheet:validationSheet])
         ValidationHandler validationHandler = new ValidationHandler()
+        validationHandler.firstRow = firstRow
         model.eachWithIndex{node, i ->
             context.currentColumn = i
             processNode(validationHandler, node, context)
@@ -369,7 +388,8 @@ class ExcelValidationContext implements OutputModelProcessor.ProcessingContext {
 
 
 class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidationContext> {
-
+    int firstRow = 1
+    final int MAX_ROWS = 1000
 
     def addValidation(node, context, constraint = null) {
 
@@ -473,8 +493,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     def columnRange(int col) {
-        final int MAX_ROWS = 1000
-        CellRangeAddressList range = new CellRangeAddressList(1, MAX_ROWS, col, col)
+        CellRangeAddressList range = new CellRangeAddressList(firstRow, MAX_ROWS, col, col)
         return range
     }
 

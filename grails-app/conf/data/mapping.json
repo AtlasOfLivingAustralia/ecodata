@@ -284,6 +284,9 @@
         "isExternal":{
           "type":"boolean"
         },
+        "containsActivity": {
+          "type": "boolean"
+        },
         "externalId": {
           "type":"keyword"
         },
