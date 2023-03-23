@@ -322,7 +322,7 @@ class DownloadService {
                 documentList.each { doc ->
                     if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
                        // if (!documentMap.containsKey(doc.documentId)) {
-                            addFileToZip(zip, recordIdPath, doc, documentMap, paths)
+                            addFileToZip(zip, recordIdPath, doc, documentMap, paths, true)
                        // }
                         recordMap[recordId] << doc
                     }
