@@ -6,7 +6,7 @@ import org.springframework.web.context.request.RequestAttributes
 
 @CompileStatic
 class DocumentHostInterceptor {
-    static final String DOCUMENT_HOST_NAME = "DOCUMENT_HOST_NAME"
+    static ThreadLocal<String> documentHostUrlPrefix = new ThreadLocal<String>()
 
     HubService hubService
     DocumentHostInterceptor () {
@@ -20,7 +20,7 @@ class DocumentHostInterceptor {
                 URI host = new URI(hostName)
                 if (host.scheme && host.host?.endsWith(grailsApplication.config.getProperty('app.allowedHostName'))) {
                     hostName = "${host.scheme}://${host.host}${host.port != -1?':' + host.port : ''}"
-                    GrailsWebRequest.lookup().setAttribute(DOCUMENT_HOST_NAME, hostName, RequestAttributes.SCOPE_REQUEST)
+                    documentHostUrlPrefix.set(hostName)
                 }
             } catch(Exception e) {
                 log.error("Error parsing host name", e)
@@ -33,6 +33,6 @@ class DocumentHostInterceptor {
     boolean after() { true }
 
     void afterView() {
-        // no-op
+        documentHostUrlPrefix.set(null)
     }
 }

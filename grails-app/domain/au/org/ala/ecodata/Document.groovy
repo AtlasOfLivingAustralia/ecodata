@@ -131,7 +131,7 @@ class Document {
             return identifier
         }
 
-        String hostName = GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) ?: ""
+        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?: ""
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')

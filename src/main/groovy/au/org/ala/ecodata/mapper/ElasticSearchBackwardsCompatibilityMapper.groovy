@@ -9,8 +9,6 @@ import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation
 import org.elasticsearch.search.aggregations.bucket.histogram.ParsedHistogram
 import org.elasticsearch.search.aggregations.bucket.range.ParsedRange
 import org.elasticsearch.search.aggregations.metrics.ParsedStats
-import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.context.request.RequestAttributes
 
 /**
  * Converts an ElasticSearch 7+ SearchResponse into a Map format equivalent to the ElasticSearch 1
@@ -77,7 +75,7 @@ class ElasticSearchBackwardsCompatibilityMapper {
 
     static Map mapHitSource(Map source) {
         Map result = source
-        String hostName = GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST)
+        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get()
 
         if (hostName) {
             result = DocumentUrlBuilder.updateDocumentURL(source, hostName)
