@@ -135,7 +135,7 @@ class ProjectActivityService {
     private static updateEmbargoDetails(ProjectActivity projectActivity, Map incomingProperties) {
         if(incomingProperties.visibility) {
             EmbargoOption option = incomingProperties.visibility?.embargoOption as EmbargoOption
-            VisibilityConstraint visibility = new VisibilityConstraint()
+            VisibilityConstraint visibility = projectActivity.visibility ?: new VisibilityConstraint()
 
             // Project admin and Moderator defined embargo settings.
             switch (option) {
@@ -159,7 +159,7 @@ class ProjectActivityService {
             // ALA admin - Defined embargo settings.
             visibility.alaAdminEnforcedEmbargo = incomingProperties.visibility?.alaAdminEnforcedEmbargo
             incomingProperties.remove("visibility")
-            projectActivity.visibility = visibility
+            projectActivity.markDirty('visibility')
         }
     }
 
@@ -388,7 +388,7 @@ class ProjectActivityService {
     def notifiableProperties (Map body, Map old) {
         List notify = []
         SUBSCRIBED_PROPERTIES.each {
-            if (old[it] != body[it]) {
+            if (old.hasProperty(it) && (old[it] != body[it])) {
                 notify.add(it)
             }
         }
