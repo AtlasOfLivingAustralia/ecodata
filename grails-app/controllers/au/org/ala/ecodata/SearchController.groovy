@@ -79,7 +79,7 @@ class SearchController {
             render res
         } else {
             elasticSearchService.buildProjectActivityQuery(params)
-            res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
+            res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX, [:], true)
             respond searchResponse:res
         }
 
