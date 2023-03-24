@@ -266,5 +266,19 @@ class Project {
         meriPlan.outputTargets = this.outputTargets
         return meriPlan
     }
+
+    /**
+     * Note this method does a database query to find the Services that have been configured in the
+     * project MERI plan
+     */
+    List<Service> findProjectServices() {
+        List serviceIds = custom?.details?.serviceIds
+        List services = null
+        if (serviceIds) {
+            services = Service.findAllByLegacyIdInList(serviceIds)
+        }
+        services
+    }
+
 }
 

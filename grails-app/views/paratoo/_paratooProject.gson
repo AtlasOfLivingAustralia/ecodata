@@ -1,0 +1,11 @@
+import au.org.ala.ecodata.paratoo.ParatooProject
+
+model {
+    ParatooProject project
+}
+
+json {
+    id project.id
+    name project.name
+    protocols tmpl.paratooProtocol('protocol', project.protocols)
+}

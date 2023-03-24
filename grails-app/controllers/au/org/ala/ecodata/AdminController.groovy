@@ -34,6 +34,7 @@ class AdminController {
     DataDescriptionService dataDescriptionService
     RecordService recordService
     ProjectActivityService projectActivityService
+    ParatooService paratooService
 
     @AlaSecured(["ROLE_ADMIN"])
     def index() {}
@@ -720,6 +721,13 @@ class AdminController {
             def resultJson = result as JSON
             render resultJson.toString()
         }
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def syncParatooProtocols() {
+        Map errors = paratooService.syncParatooProtocols()
+
+        respond errors
     }
 
     /**
