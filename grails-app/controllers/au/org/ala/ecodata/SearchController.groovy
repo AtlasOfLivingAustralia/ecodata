@@ -453,6 +453,7 @@ class SearchController {
         if (params.containsKey("isMerit") && !params.isMerit.toBoolean()) {
             params.max = 10000
             params.offset = 0
+            params.userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
             if (params.async?.toBoolean()) {
                 if (!params.email) {

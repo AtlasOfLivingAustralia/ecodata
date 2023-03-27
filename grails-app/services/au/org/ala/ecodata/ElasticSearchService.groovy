@@ -106,7 +106,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -589,6 +589,12 @@ class ElasticSearchService {
                 }
                 break
 
+            case Output.class.name:
+                Output output = Output.findByOutputId(docId)
+                if (output) {
+                    indexDocType(output.activityId, Activity.class.name)
+                }
+                break
             case Activity.class.name:
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
