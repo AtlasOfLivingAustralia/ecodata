@@ -46,7 +46,7 @@ class ExcelImportServiceSpec extends Specification implements ServiceUnitTest<Ex
 
     }
 
-    def "should remove empty objects from a nested Map"() {
+    def "should not remove none of primitive types from Map"() {
         given:
         def input = [
                 foo   : null,
@@ -67,16 +67,14 @@ class ExcelImportServiceSpec extends Specification implements ServiceUnitTest<Ex
         given:
         def input = [
                 foo: null,
-                bar: null,
-                baz: null,
-                qux: null
+                bar: [a: null, b: null]
         ]
 
         when:
         def result = service.removeEmptyObjects(input)
 
         then:
-        result == [:]
+        result == [foo: null]
     }
 
     def "should return an empty Map when the input is empty"() {
@@ -117,7 +115,7 @@ class ExcelImportServiceSpec extends Specification implements ServiceUnitTest<Ex
         def result = service.allKeyValueOfObjectAreEmpty(input)
 
         then:
-        result == false
+        result == true
     }
 
     def "should return false when not all values in a Map are empty"() {
