@@ -49,8 +49,11 @@ class DownloadService {
         directoryPath.mkdirs()
         String fileExtension = params.fileExtension?:'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
-
+        // Make the document host url prefix available for use by the task as when the reporting server
+        // needs document access, it also needs access to this prefix.
+        String documentHostUrlPrefix = DocumentHostInterceptor.documentHostUrlPrefix.get()
         Promise p = task {
+            DocumentHostInterceptor.documentHostUrlPrefix.set(documentHostUrlPrefix)
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
                Project.withNewSession {
@@ -319,7 +322,7 @@ class DownloadService {
                 documentList.each { doc ->
                     if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
                        // if (!documentMap.containsKey(doc.documentId)) {
-                            addFileToZip(zip, recordIdPath, doc, documentMap, paths)
+                            addFileToZip(zip, recordIdPath, doc, documentMap, paths, true)
                        // }
                         recordMap[recordId] << doc
                     }
@@ -378,15 +381,15 @@ class DownloadService {
         if (thumbnail) {
             file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
         }
+        String thumbnailURL = doc.getThumbnailUrl(true)
         if (file != null && file.exists()) {
             zip.putNextEntry(new ZipEntry(zipName))
             file.withInputStream { i -> zip << i }
         }
-        else if (doc.getUrl()) {
+        else if (thumbnailURL) {
             // reporting server does not hold images.
             // download it by requesting image from BioCollect/MERIT
-            url = doc.getUrl()
-            def stream = webService.getStream(url, true)
+            def stream = webService.getStream(thumbnailURL, true)
             if (!(stream instanceof Map)) {
                 zip.putNextEntry(new ZipEntry(zipName))
                 zip << stream

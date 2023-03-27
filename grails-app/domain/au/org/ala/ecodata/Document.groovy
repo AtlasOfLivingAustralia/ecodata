@@ -2,8 +2,6 @@ package au.org.ala.ecodata
 
 import grails.util.Holders
 import org.bson.types.ObjectId
-import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.context.request.RequestAttributes
 
 import static au.org.ala.ecodata.Status.ACTIVE
 /**
@@ -101,7 +99,7 @@ class Document {
         return urlFor(filepath, filename)
     }
 
-    def getThumbnailUrl() {
+    def getThumbnailUrl(boolean skipExistCheck = false) {
         if (isImage()) {
 
             if(isImageHostedOnPublicServer()) {
@@ -109,7 +107,7 @@ class Document {
             }
 
             File thumbFile = new File(filePath(THUMBNAIL_PREFIX+filename))
-            if (thumbFile.exists()) {
+            if (skipExistCheck || thumbFile.exists()) {
                 return urlFor(filepath, THUMBNAIL_PREFIX + filename)
             }
             else {
@@ -131,7 +129,7 @@ class Document {
             return identifier
         }
 
-        String hostName = GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) ?: ""
+        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?: ""
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
