@@ -388,7 +388,7 @@ class ProjectActivityService {
     def notifiableProperties (Map body, Map old) {
         List notify = []
         SUBSCRIBED_PROPERTIES.each {
-            if (old.hasProperty(it) && (old[it] != body[it])) {
+            if (body.containsKey(it) && (old[it] != body[it])) {
                 notify.add(it)
             }
         }
