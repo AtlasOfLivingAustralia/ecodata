@@ -698,6 +698,7 @@ class MetadataService {
                     def normalisedRow = [:]
                     row.each { cell ->
                         excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                        excelImportService.removeEmptyObjects(normalisedRow)
                     }
 
                     addOutputSpeciesIdToSpeciesData(normalisedRow, model)

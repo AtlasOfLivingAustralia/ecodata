@@ -56,6 +56,31 @@ class ExcelImportService {
         }
     }
 
+    Map removeEmptyObjects (Map object) {
+        List removeKeys = []
+        object?.each { key, value ->
+            if (value instanceof Map) {
+                if (value.isEmpty() || allKeyValueOfObjectAreEmpty(value)) {
+                    removeKeys.add(key)
+                } else {
+                    removeEmptyObjects(value)
+                }
+            }
+        }
+
+        removeKeys?.each { key ->
+            object.remove(key)
+        }
+
+        object
+    }
+
+    boolean allKeyValueOfObjectAreEmpty(Map object) {
+      object?.every { key, value ->
+        value == null
+      }
+    }
+
     Map getDataHeaders(Sheet sheet) {
         int headerRowIndex  = 0
         Map headers = [:]
