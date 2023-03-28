@@ -1,3 +1,13 @@
+function updateSetting(settingKey, settingValue) {
+    let setting = db.setting.findOne({key: settingKey});
+    if (!setting) {
+        db.setting.insertOne({key: settingKey, value: settingValue});
+    } else {
+        db.setting.replaceOne({key: settingKey}, {key: settingKey, value: settingValue});
+    }
+}
+
+
 const protocols = [
     {
         "id": 1,
@@ -1501,12 +1511,32 @@ const protocols = [
 ];
 
 const settingValue = JSON.stringify(protocols);
-const settingKey = 'paratoo.protocols';
+const protocolSettingKey = 'paratoo.protocols';
 
-let setting = db.setting.findOne({key:settingKey});
-if (!setting) {
-    db.setting.insertOne({key:settingKey, value: settingValue});
-}
-else {
-    db.setting.replaceOne({key:settingKey}, {key: settingKey, value: settingValue});
-}
+updateSetting(protocolSettingKey, settingValue);
+
+let protocolMapping =
+    {
+        "3": [13, 15, 23, 30],
+        "13": [13, 15, 23, 30],
+        "36": [13, 15, 23, 30],
+        "37": [13, 15, 23, 30],
+        "40": [13],
+        "41": [15],
+        "42": [15],
+        "vegetation mapping": [15],
+        "floristics": [15],
+        "plant tissue vouchering": [15],
+        "cover": [15],
+        "basal area": [15],
+        "coarse woody debris": [15],
+        "recruitment": [15],
+        "soils": [30],
+        "vertebrate fauna": [13, 23],
+        "invertebrate fauna": [13],
+        "condition": [15]
+    };
+const mappingValue = JSON.stringify(protocolMapping);
+const protocolMappingSettingKey = 'paratoo.service_protocol_mapping';
+
+updateSetting(protocolMappingSettingKey, mappingValue);

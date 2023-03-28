@@ -7,5 +7,5 @@ model {
 json {
     id protocol.externalId
     name protocol.name
-    version protocol.version as Integer
+    version protocol.formVersion as Integer
 }
