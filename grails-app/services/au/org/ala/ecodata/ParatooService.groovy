@@ -15,6 +15,7 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_PATH = '/api/protocols'
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'Protocol'
     static final String PARTOO_SERVICE_MAPPING_KEY = 'paratoo.service_protocol_mapping'
+    static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
 
     PermissionService permissionService
     GrailsApplication grailsApplication
@@ -75,17 +76,12 @@ class ParatooService {
         projectWithMatchingDataSet
     }
 
-    Map syncParatooProtocols() {
+    private Map syncParatooProtocols(List<Map> protocols) {
 
         Map serviceProtocolMapping = JSON.parse(settingService.getSetting(PARTOO_SERVICE_MAPPING_KEY))
 
-        String paratooCoreUrlPrefix = grailsApplication.config.getProperty('paratoo.core.baseUrl') ?: 'http://localhost:1337'
-
-        String url = paratooCoreUrlPrefix+PARATOO_PROTOCOL_PATH
-
         Map result = [errors:[], messages:[]]
-        Map response = webService.getJson(url)
-        response.data.each { Map protocol ->
+        protocols.each { Map protocol ->
             ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(protocol.id, Status.DELETED)
             if (!form) {
                 form = new ActivityForm(externalId: protocol.id)
@@ -106,38 +102,53 @@ class ParatooService {
                 log.warn "Error saving form with id: "+protocol.id+", name: "+protocol.attributes?.name
             }
             else {
-                // Assign the protocol to the service.
-                List serviceIds = serviceProtocolMapping[(protocol.module)] ?: serviceProtocolMapping[(protocol.id as String)]
-                println serviceIds
-                for (int serviceId : serviceIds) {
-
-                    Service service = Service.findByLegacyId(serviceId)
-                    if (service) {
-                        ServiceForm serviceForm = service.outputs.find { it.externalId == protocol.id }
-                        if (!serviceForm) {
-                            serviceForm = new ServiceForm(formName: PARATOO_PROTOCOL_FORM_TYPE, externalId: protocol.id)
-                            log.info "Attaching protocol ${protocol.id}, name:${protocol.attributes?.name} to Service: ${service.name}"
-                            service.outputs << serviceForm
-                            service.markDirty('outputs')
-                            service.save()
-
-                            if (service.hasErrors()) {
-                                log.warn("Error saving service ${service.name}")
-                                log.warn service.errors
-                            }
-                        } else {
-                            log.info "Protocol ${protocol.id}, name:${protocol.attributes?.name} already attached to Service: ${service.name}. No action required"
-                        }
-                    }
-                    else {
-                        log.warn("Unable to find service with id ${serviceId} for protocol ${protocol.id}")
-                    }
-
-                }
+                createOrUpdateProtocolServiceMapping(serviceProtocolMapping, protocol)
             }
         }
         result
 
+    }
+
+    private void createOrUpdateProtocolServiceMapping(Map serviceProtocolMapping, Map protocol) {
+
+        List serviceIds = serviceProtocolMapping[(protocol.module)] ?: serviceProtocolMapping[(protocol.id as String)]
+        println serviceIds
+        for (int serviceId : serviceIds) {
+
+            Service service = Service.findByLegacyId(serviceId)
+            if (service) {
+                ServiceForm serviceForm = service.outputs.find { it.externalId == protocol.id }
+                if (!serviceForm) {
+                    serviceForm = new ServiceForm(formName: PARATOO_PROTOCOL_FORM_TYPE, externalId: protocol.id)
+                    log.info "Attaching protocol ${protocol.id}, name:${protocol.attributes?.name} to Service: ${service.name}"
+                    service.outputs << serviceForm
+                    service.markDirty('outputs')
+                    service.save()
+
+                    if (service.hasErrors()) {
+                        log.warn("Error saving service ${service.name}")
+                        log.warn service.errors
+                    }
+                } else {
+                    log.info "Protocol ${protocol.id}, name:${protocol.attributes?.name} already attached to Service: ${service.name}. No action required"
+                }
+            } else {
+                log.warn("Unable to find service with id ${serviceId} for protocol ${protocol.id}")
+            }
+        }
+    }
+
+    /** This is a backup method in case the protocols aren't available online */
+    Map syncProtocolsFromSettings() {
+        List protocols = JSON.parse(settingService.getSetting(PARTOO_PROTOCOLS_KEY))
+        syncParatooProtocols(protocols)
+    }
+
+    Map syncProtocolsFromParatoo() {
+        String paratooCoreUrlPrefix = grailsApplication.config.getProperty('paratoo.core.baseUrl') ?: 'http://localhost:1337'
+        String url = paratooCoreUrlPrefix+PARATOO_PROTOCOL_PATH
+        Map response = webService.getJson(url, null,  null, false)
+        syncParatooProtocols(response?.data)
     }
 
     private void mapProtocolToActivityForm(Map protocol, ActivityForm form) {

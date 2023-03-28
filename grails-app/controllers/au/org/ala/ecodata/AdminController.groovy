@@ -724,10 +724,11 @@ class AdminController {
     }
 
     @AlaSecured(["ROLE_ADMIN"])
-    def syncParatooProtocols() {
-        Map errors = paratooService.syncParatooProtocols()
+    def syncParatooProtocols(boolean offline) {
 
-        respond errors
+        Map errors = offline ? paratooService.syncProtocolsFromSettings() : paratooService.syncProtocolsFromParatoo()
+
+        render errors as JSON
     }
 
     /**
