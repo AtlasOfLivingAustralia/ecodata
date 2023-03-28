@@ -590,7 +590,7 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         clientId = 'changeMe'
         secret = 'changeMe'
-        scope = 'openid,profile,email,ala,roles,user_defined'
+        scope = 'openid,profile,ala,roles'
         connectTimeout = 20000
         readTimeout = 20000
     }
@@ -599,7 +599,7 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
-        requiredScores = ["openid", 'profile', "email", "ala", "roles", "user_defined"]
+        requiredScopes = ["openid", 'profile', "ala", "roles"]
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
     }
