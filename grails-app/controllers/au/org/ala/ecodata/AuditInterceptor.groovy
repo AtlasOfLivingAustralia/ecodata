@@ -6,6 +6,7 @@ import grails.config.Config
 
 class AuditInterceptor implements GrailsConfigurationAware {
 
+    int order = 100 // This needs to be after the @RequireApiKey interceptor which makes the userId available via the authService
     String httpRequestHeaderForUserId
     UserService userService
     AuthService authService

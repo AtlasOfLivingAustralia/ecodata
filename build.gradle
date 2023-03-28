@@ -98,6 +98,7 @@ dependencies {
     profile "org.grails.profiles:web"
     implementation "org.grails.plugins:views-json:$grailsViewsVersion"
     implementation "org.grails.plugins:views-json-templates:$grailsViewsVersion"
+    testImplementation "org.grails:views-json-testing-support:$grailsViewsVersion"
 
     implementation 'dk.glasius:external-config:3.0.0'
     implementation "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"

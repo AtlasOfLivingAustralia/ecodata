@@ -1,9 +1,11 @@
 package au.org.ala.ecodata.paratoo
 
+import grails.databinding.BindingFormat
 import grails.validation.Validateable
 
 class ParatooSurveyId implements Validateable {
     String surveyType
-    String time // ISO format
+    @BindingFormat("iso8601")
+    Date time // ISO format
     Long randNum
 }

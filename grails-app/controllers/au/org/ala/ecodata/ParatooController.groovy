@@ -1,10 +1,9 @@
 package au.org.ala.ecodata
 
-
+import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
-import au.org.ala.web.AuthService
-
+import au.org.ala.ecodata.paratoo.ParatooProject
 import org.apache.http.HttpStatus
 import org.springframework.validation.Errors
 
@@ -17,14 +16,15 @@ class ParatooController {
             [userProjects:'GET',
              protocolReadCheck:'GET',
              protocolWriteCheck:'GET',
-             validateToken: 'GET',
+             validateToken: 'POST',
              mintCollectionId: 'POST',
              submitCollection: 'POST',
              collectionIdStatus: 'GET'
             ]
 
     ParatooService paratooService
-    AuthService authService
+    UserService userService
+    WebService webService
 
     private error(int status, String message) {
         respond([message:message, code: status], status:status)
@@ -35,11 +35,35 @@ class ParatooController {
     }
 
     def userProjects() {
-        respond projects:paratooService.userProjects(authService.userId)
+        respond projects:paratooService.userProjects(userService.currentUserDetails.userId)
     }
 
+    @SkipApiKeyCheck
     def validateToken() {
-       respond ([valid:true], status:200)
+        // Possibly an implementation side-effect of the paratoo client but the token is passed in the body here
+        // rather than the header.  We extract it and call a protected method to check the token....
+        String token = request.JSON?.token
+        if (!token) {
+            respond([message:"Missing token in body"], status:HttpStatus.SC_BAD_REQUEST)
+            return
+        }
+
+        // It also has the Bearer string attached according to the implementation so we can use it in the header as is.
+        String url = grailsLinkGenerator.link(action:'noop', absolute:true)
+
+        // Make a call to the URL with the token in the header
+        Map response = webService.getJson(url, null, [Authorization:token], false)
+
+        boolean valid = (response && response.statusCode == HttpStatus.SC_OK)
+        render(valid as String)
+    }
+
+    /**
+     * This method exists so the validateToken method can call it to get the framework to validate the JWT.
+     * If it is reached, it always returns OK
+     */
+    def noop() {
+        respond([statusCode:HttpStatus.SC_OK])
     }
 
     /**
@@ -51,8 +75,8 @@ class ParatooController {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
         }
-        String userId = authService.userId
-        boolean hasProtocol = protocolCheck(userId, projectId, protooclId)
+        String userId = userService.currentUserDetails.userId
+        boolean hasProtocol = paratooService.protocolCheck(userId, projectId, protocolId)
 
         respond([isAuthorized:hasProtocol], status:HttpStatus.SC_OK)
     }
@@ -63,7 +87,8 @@ class ParatooController {
             error(collectionId.errors)
         }
         else {
-            boolean hasProtocol = paratooService.protocolCheck(authService.userId, collectionId.projectId, collectionId.protocol.id)
+            String userId = userService.currentUserDetails.userId
+            boolean hasProtocol = paratooService.protocolCheck(userId, collectionId.projectId, collectionId.protocol.id)
             if (hasProtocol) {
                 respond([orgMintedIdentfier:Identifiers.getNew(true, null)])
             }
@@ -76,10 +101,11 @@ class ParatooController {
     def submitCollection(ParatooCollection collection) {
 
         if (collection.hasErrors()) {
-            error(collection.errors())
+            error(collection.errors)
         }
         else {
-            boolean hasProtocol = paratooService.protocolCheck(authService.userId, collectionId.projectId, collectionId.protocol.id)
+            String userId = userService.currentUserDetails.userId
+            boolean hasProtocol = paratooService.protocolCheck(userId, collection.projectId, collection.protocol.id)
             if (hasProtocol) {
                 // Create a data set and attach to the project.
                 Map result = paratooService.createCollection(collection)
@@ -96,12 +122,12 @@ class ParatooController {
     }
 
     def collectionIdStatus(String collectionId) {
-
-        List projects = paratooService.userProjects(authService.userId, false)
-
-        Project projectWithMatchingDataSet = projects?.find{
-            it.dataSets?.find{it.dataSetId == collectionId }
+        if (!collectionId) {
+            error(HttpStatus.SC_BAD_REQUEST, "Bad request")
+            return
         }
+        String userId = userService.currentUserDetails.userId
+        ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, collectionId)
 
         respond([isSubmitted:(projectWithMatchingDataSet != null)])
     }

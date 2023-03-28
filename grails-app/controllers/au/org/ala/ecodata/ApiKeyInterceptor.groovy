@@ -15,6 +15,8 @@ class ApiKeyInterceptor {
     CommonService commonService
     ActivityService activityService
 
+    int order = -100 // This can go before the ala-ws-security interceptor to do the IP check
+
     def LOCALHOST_IP = '127.0.0.1'
 
     public ApiKeyInterceptor() {

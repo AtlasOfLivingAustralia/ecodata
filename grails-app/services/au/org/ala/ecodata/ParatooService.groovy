@@ -54,7 +54,7 @@ class ParatooService {
 
     Map createCollection(ParatooCollection collection) {
         Project project = Project.findByProjectId(paratooCollection.projectId)
-        Map dataSet = mapParatooCollection(collection)
+        Map dataSet = mapParatooCollection(collection, project)
         List dataSets = project.custom?.dataSets ?: []
         dataSets << dataSet
         projectService.update([custom:[dataSets:dataSets]])
@@ -64,6 +64,15 @@ class ParatooService {
         List projects = userProjects(userId)
         ParatooProject project = projects.find{it.id == projectId}
         project?.protocols?.find{it.externalId == protocolId}
+    }
+
+    ParatooProject findDataSet(String userId, String collectionId) {
+        List projects = userProjects(userId, false)
+
+        Project projectWithMatchingDataSet = projects?.find {
+            it.dataSets?.find { it.dataSetId == collectionId }
+        }
+        projectWithMatchingDataSet
     }
 
     Map syncParatooProtocols() {
@@ -148,6 +157,14 @@ class ParatooService {
                 dataSets: project.custom?.dataSets]
         new ParatooProject(attributes)
 
+    }
+
+    private Map mapParatooCollection(ParatooCollection collection, Project project) {
+        Map dataSet = [:]
+        dataSet.dataSetId = collection.mintedCollectionId
+        dataSet.grantId = project.grantId
+
+        dataSet
     }
 
 }
