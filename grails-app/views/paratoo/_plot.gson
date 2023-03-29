@@ -6,5 +6,5 @@ model {
 
 json {
     uuid plot.siteId
-    name plot.name
+    plot_name plot.name
 }

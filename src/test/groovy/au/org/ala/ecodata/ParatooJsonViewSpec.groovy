@@ -18,7 +18,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                         [id: 3, name: "Protocol 3", version: 1]],
                     project_area_geo_json:null,
                     project_plots:[
-                       [uuid:'s1', name:"Site 1"]
+                       [uuid:'s1', plot_name:"Site 1"]
                     ]
                    ],[
                     id:"p2", name:"Project 2", protocols:[], project_plots:[], project_area_geo_json:[type:"Polygon", coordinates: DUMMY_POLYGON]
