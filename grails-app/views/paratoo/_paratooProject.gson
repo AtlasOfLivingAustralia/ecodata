@@ -8,4 +8,6 @@ json {
     id project.id
     name project.name
     protocols tmpl.paratooProtocol('protocol', project.protocols)
+    project_area_geo_json project.projectArea ? tmpl.projectArea(projectArea:project.projectArea) : null
+    project_plots tmpl.plot('plot', project.plots)
 }

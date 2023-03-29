@@ -6,26 +6,32 @@ import spock.lang.Specification
 
 class ParatooJsonViewSpec extends Specification implements JsonViewTest {
 
+    static List DUMMY_POLYGON = [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]
     def "The /user-projects response is rendered correctly"() {
         setup:
-        int[] projectSpec = [3, 0, 1] as int[]
+        int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
         Map expectedResult = [
                 projects: [[
                     id:"p1", name:"Project 1", protocols: [
                         [id: 1, name: "Protocol 1", version: 1],
                         [id: 2, name: "Protocol 2", version: 1],
-                        [id: 3, name: "Protocol 3", version: 1]]
+                        [id: 3, name: "Protocol 3", version: 1]],
+                    project_area_geo_json:null,
+                    project_plots:[
+                       [uuid:'s1', name:"Site 1"]
+                    ]
                    ],[
-                    id:"p2", name:"Project 2", protocols:[]
+                    id:"p2", name:"Project 2", protocols:[], project_plots:[], project_area_geo_json:[type:"Polygon", coordinates: DUMMY_POLYGON]
                   ],[
                      id:"p3", name:"Project 3", protocols:[
                         [id: 1, name: "Protocol 1", version: 1]
-                     ]
+                     ], project_area_geo_json:null, project_plots:[]
                   ]
                 ]]
 
         when: "The results of /paratoo/user-projects is rendered"
-        def result = render(view: "/paratoo/userProjects", model:[projects:buildProjectsForRendering(projectSpec)])
+        List projects = buildProjectsForRendering(projectSpec)
+        def result = render(view: "/paratoo/userProjects", model:[projects:projects])
 
         then:"The json is correct"
         result.json.projects.size() == expectedResult.projects.size()
@@ -36,24 +42,36 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
 
     }
 
-    private List<ParatooProject> buildProjectsForRendering(int[] projectSpec) {
+    private List<ParatooProject> buildProjectsForRendering(int[][] projectSpec) {
 
         List projects = []
         for (int i=0; i<projectSpec.length; i++) {
-            projects << buildProject(i+1, projectSpec[i])
+            projects << buildProject(i+1, projectSpec[i][0], projectSpec[i][1], projectSpec[i][2] as boolean)
         }
         projects
     }
 
-    private ParatooProject buildProject(int projectIndex, int numberOfProtocols) {
+    private ParatooProject buildProject(int projectIndex, int numberOfProtocols, int numberOfPlots, boolean includeProjectArea) {
         List protocols = []
         for (int i = 0; i<numberOfProtocols; i++) {
             protocols << buildActivityForm(i+1)
         }
-        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", protocols: protocols)
+        List plots = []
+        for (int i=0; i<numberOfPlots; i++) {
+            plots << buildSite(i+1)
+        }
+        Site projectArea = null
+        if (includeProjectArea) {
+            projectArea = buildSite(numberOfPlots+2)
+        }
+        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", protocols: protocols, projectArea: projectArea, plots:plots)
     }
 
     private ActivityForm buildActivityForm(int i) {
         new ActivityForm(externalId: i, name:"Protocol $i", formVersion: 1)
+    }
+
+    private Site buildSite(i) {
+        new Site(siteId:"s$i", name:"Site $i", extent:[type:'Polygon', coordinates:DUMMY_POLYGON])
     }
 }

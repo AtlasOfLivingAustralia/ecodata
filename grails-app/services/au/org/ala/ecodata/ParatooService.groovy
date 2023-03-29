@@ -7,7 +7,7 @@ import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
 
 /**
- * Implements the paratoo "org" interface.
+ * Supports the implementation of the paratoo "org" interface
  */
 @Slf4j
 class ParatooService {
@@ -17,48 +17,61 @@ class ParatooService {
     static final String PARTOO_SERVICE_MAPPING_KEY = 'paratoo.service_protocol_mapping'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
 
-    PermissionService permissionService
     GrailsApplication grailsApplication
     SettingService settingService
     WebService webService
+    ProjectService projectService
+    SiteService siteService
 
     List<ParatooProject> userProjects(String userId, boolean includeProtocols = true) {
 
-        List<Project> projects = findUserProjects(userId)
+        List<ParatooProject> projects = findUserProjects(userId)
 
-        List paratooProjects = projects.collect { Project project ->
-            ParatooProject mappedProject = mapProject(project)
+        projects.each { ParatooProject project ->
             if (includeProtocols) {
-                log.debug "Finding protocols for ${project.projectId} ${project.name}"
+                log.debug "Finding protocols for ${project.id} ${project.name}"
                 List<ActivityForm> protocols = []
                 project.findProjectServices().each { Service service ->
-                    List<Integer> externalServiceForms = service.outputs.findAll{it.externalId }.collect{it.externalId}
-                    externalServiceForms.each {
-                        ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(it, Status.DELETED)
-                        protocols << form
-                    }
+                    protocols += findServiceProtocols(service, protocols)
                 }
-                mappedProject.protocols = protocols
+                project.protocols = protocols
             }
 
             // TODO - include project_area and plots if required
-            mappedProject
+            project
         }
 
-        paratooProjects
+        projects
     }
 
-    private List<Project> findUserProjects(String userId) {
-        List<String> projectIds = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor, AccessLevel.caseManager)
-        Project.findAllByProjectIdInListAndStatusNotEqual(projectIds, Status.DELETED)
+    private List findServiceProtocols(Service service) {
+        List<ActivityForm> protocols
+        List<Integer> externalServiceForms = service.outputs.findAll { it.externalId }.collect { it.externalId }
+        externalServiceForms.each {
+            ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(it, Status.DELETED)
+            protocols << form
+        }
+        protocols
+    }
+
+    private List<ParatooProject> findUserProjects(String userId) {
+        List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
+        List projects = Project.findAllByProjectIdInListAndStatusNotEqual(permissions.collect{it.entityId}, Status.DELETED)
+        List paratooProjects = projects.collect { Project project ->
+            List<Site> sites = siteService.sitesForProject(project.projectId)
+            UserPermission permission = permissions.find{it.entityId == project.projectId}
+            mapProject(project, permission, sites)
+        }
+        paratooProjects
+
     }
 
     Map createCollection(ParatooCollection collection) {
-        Project project = Project.findByProjectId(paratooCollection.projectId)
+        Project project = Project.findByProjectId(collection.projectId)
         Map dataSet = mapParatooCollection(collection, project)
         List dataSets = project.custom?.dataSets ?: []
         dataSets << dataSet
-        projectService.update([custom:[dataSets:dataSets]])
+        projectService.update([custom:[dataSets:dataSets]], collection.projectId, false)
     }
 
     boolean protocolCheck(String userId, String projectId, int protocolId) {
@@ -161,11 +174,14 @@ class ParatooService {
         form.description = protocol.attributes.description
     }
 
-    private ParatooProject mapProject(Project project) {
+    private ParatooProject mapProject(Project project, UserPermission permission, List<Site> sites) {
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
-                dataSets: project.custom?.dataSets]
+                accessLevel: permission.accessLevel,
+                project:project,
+                projectArea: sites.find{it.type == Site.TYPE_PROJECT_AREA},
+                plots: sites.findAll{it.type == Site.TYPE_WORKS_AREA}]
         new ParatooProject(attributes)
 
     }
