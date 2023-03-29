@@ -32,12 +32,10 @@ class ParatooService {
                 log.debug "Finding protocols for ${project.id} ${project.name}"
                 List<ActivityForm> protocols = []
                 project.findProjectServices().each { Service service ->
-                    protocols += findServiceProtocols(service, protocols)
+                    protocols += findServiceProtocols(service)
                 }
                 project.protocols = protocols
             }
-
-            // TODO - include project_area and plots if required
             project
         }
 
@@ -45,7 +43,7 @@ class ParatooService {
     }
 
     private List findServiceProtocols(Service service) {
-        List<ActivityForm> protocols
+        List<ActivityForm> protocols = []
         List<Integer> externalServiceForms = service.outputs.findAll { it.externalId }.collect { it.externalId }
         externalServiceForms.each {
             ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(it, Status.DELETED)
