@@ -204,6 +204,6 @@ class ExcelImportServiceSpec extends Specification implements ServiceUnitTest<Ex
         def headers = service.getDataHeaders(sheet)
 
         then:
-        headers == [A: 'serial', B: 'a', C: 'b.c', D: 'd.e']
+        headers == [A: 'serial', B: 'a', C: 'b.c', D: 'd.e', E:'d.f.name', F:'d.f.scientificName', G:'d.f.commonName', H:'d.f.guid', I:'g.h', J:'g.i.name', K:'g.i.scientificName', L:'g.i.commonName', M:'g.i.guid']
     }
 }
