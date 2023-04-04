@@ -1507,7 +1507,7 @@ class ElasticSearchService {
                         forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ' AND projectActivity.embargoed:false)'
                     }
                 } else {
-                    forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                    forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 }
                 break
 

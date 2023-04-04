@@ -16,8 +16,12 @@ class DataTypes {
     final static String GEOMAP = "geoMap"
     final static String PHOTOPOINTS = "photoPoints"
 
+    static List getDataTypesWithDataAsStringList() {
+        [STRINGLIST, SET]
+    }
+
     static List getDataTypesWithDataAsList(){
-        [STRINGLIST, SET, LIST, IMAGE, PHOTOPOINTS]
+        [LIST, IMAGE, PHOTOPOINTS]
     }
 
     static List getDataTypesWithDataAsMap(){
@@ -43,6 +47,12 @@ class DataTypes {
     static List getModelsWithListData(List models) {
         models.findAll { model ->
             getDataTypesWithDataAsList().contains(model.dataType)
+        }
+    }
+
+    static List getModelsWithStringListData(List models) {
+        models.findAll { model ->
+            getDataTypesWithDataAsStringList().contains(model.dataType)
         }
     }
 

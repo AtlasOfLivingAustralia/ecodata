@@ -722,6 +722,7 @@ class MetadataService {
 
     boolean isRowValidNextMemberOfArray(Map row, List models) {
         Map primitiveMembers = row.subMap(DataTypes.getModelsWithPrimitiveData(models)?. collect {it.name})
+        Map stringListMembers = row.subMap(DataTypes.getModelsWithStringListData(models)?. collect {it.name})
         Map dataOfNestedDataTypes = row.subMap(DataTypes.getModelsWithMapData(models)?. collect {it.name})
         Map dataOfListDataTypes = row.subMap(DataTypes.getModelsWithListData(models)?. collect {it.name})
         if (primitiveMembers) {
@@ -732,6 +733,10 @@ class MetadataService {
         }
         else if (dataOfListDataTypes) {
             return ! dataOfListDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
+        }
+        else if (stringListMembers) {
+            // at least one of the string list members should have a value
+            return ! stringListMembers?.any { it.value != null && it.value != "" }
         }
 
         return false
@@ -757,13 +762,21 @@ class MetadataService {
                         rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
                         break
                     case DataTypes.IMAGE:
-                    case DataTypes.STRINGLIST:
-                    case DataTypes.SET:
                     case DataTypes.PHOTOPOINTS:
                         if (!firstRow[key].contains(value))
                             firstRow[key].add(value)
                         break
                 }
+            }
+
+            Map stringListData = row.subMap(DataTypes.getModelsWithStringListData(models).collect {it.name})
+            stringListData?.each { key, value ->
+                if (!(firstRow[key] instanceof List)) {
+                    firstRow[key] = [firstRow[key]]
+                }
+
+                if (!firstRow[key].contains(value))
+                    firstRow[key].add(value)
             }
         }
 
