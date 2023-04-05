@@ -1,16 +1,15 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import au.org.ala.web.UserDetails
 import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 
 class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImportService>, DomainUnitTest<BulkImport> {
-
+    def authService
     def setup() {
         service.commonService = new CommonService()
-        service.authService = Mock(AuthService)
+        authService = service.authService = Mock(AuthService)
 
         def bulkImport = new BulkImport(
                 bulkImportId: "0",
@@ -57,13 +56,13 @@ class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImp
         def result = service.list([projectId: "1"], [:], null)
 
         then:
+        1 * authService.getUserForUserId("2") >> new au.org.ala.web.UserDetails(id: 1, firstName: 'test', lastName: 'user', userName: "x@y.com", userId: "2", locked: false, roles: [])
         result.total == 1
         result.items.size() == 1
         result.items[0].projectId == "1"
         result.items[0].userId == "2"
         result.items[0].userName == "test user"
         result.items[0].projectName == "Test project"
-        1 * service.authService.getUserForUserId("2") >> new UserDetails(id: 1, firstName: 'test', lastName: 'user', userName: "x@y.com", userId: "2", locked: false, roles: [])
     }
 
     def "update method should update an existing BulkImport object in the database"() {
