@@ -52,11 +52,13 @@ class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImp
     }
 
     def "list method should return imports"() {
+        given:
+        authService.getUserForUserId(_) >> new au.org.ala.web.UserDetails(id: 1, firstName: 'test', lastName: 'user', userName: "x@y.com", userId: "2", locked: false, roles: [])
+
         when:
         def result = service.list([projectId: "1"], [:], null)
 
         then:
-        1 * authService.getUserForUserId("2") >> new au.org.ala.web.UserDetails(id: 1, firstName: 'test', lastName: 'user', userName: "x@y.com", userId: "2", locked: false, roles: [])
         result.total == 1
         result.items.size() == 1
         result.items[0].projectId == "1"
