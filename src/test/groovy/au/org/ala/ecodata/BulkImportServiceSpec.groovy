@@ -56,7 +56,7 @@ class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImp
         authService.getUserForUserId(_) >> new au.org.ala.web.UserDetails(id: 1, firstName: 'test', lastName: 'user', userName: "x@y.com", userId: "2", locked: false, roles: [])
 
         when:
-        def result = service.list([projectId: "1"], [:], null)
+        def result = service.list([projectId: "1"], [max:10, offset:0], null)
 
         then:
         result.total == 1
