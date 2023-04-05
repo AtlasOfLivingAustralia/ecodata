@@ -19,7 +19,7 @@ class BulkImportController {
         int max = params.getInt('max',10)
         String search = params.query ?: ""
         Map query = [:]
-        if (params.hasProperty('userId')) {
+        if (params.containsKey('userId')) {
             query.userId = params.userId
         }
 

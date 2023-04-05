@@ -54,6 +54,8 @@ class ExcelImportService {
         } else {
             json.put(key, value)
         }
+
+        json
     }
 
     Map removeEmptyObjects (Map object) {

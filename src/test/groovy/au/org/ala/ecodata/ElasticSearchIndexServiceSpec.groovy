@@ -233,6 +233,69 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         map.query == 'Test AND (docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
     }
 
+    void "View type: 'bulkimport' - logged in users with ala admin role >> show all records across the projects"() {
+        when:
+        permissionService.isUserAlaAdmin(_) >> true
+        permissionService.isUserAdminForProject(_, _) >> false
+        permissionService.isUserEditorForProject(_, _) >> false
+
+        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+            ['userId': "1234", 'projectId': "", 'view': "bulkimport", "bulkImportId": "123", 'query': ""]
+        }] as HttpServletRequest)
+        service.buildProjectActivityQuery(map)
+
+        then:
+        map.query == '(docType:activity AND bulkImportId:123)'
+    }
+
+    void "View type: 'bulkimport' - no bulk import id"() {
+        when:
+        permissionService.isUserAlaAdmin(_) >> false
+        permissionService.isUserAdminForProject(_, _) >> false
+        permissionService.isUserEditorForProject(_, _) >> false
+        permissionService.getProjectsForUser('1234', AccessLevel.admin, AccessLevel.moderator, AccessLevel.editor) >> ['abc', 'cde']
+
+        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+            ['userId': "1234", 'projectId': "", 'view': "bulkimport", 'query': ""]
+        }] as HttpServletRequest)
+        service.buildProjectActivityQuery(map)
+
+        then:
+        map.query == '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+    }
+
+    void "View type: 'bulkimport', project admin >> show records associated with bulk import "() {
+        when:
+        permissionService.isUserAlaAdmin(_) >> false
+        permissionService.isUserAdminForProject(_, _) >> true
+        permissionService.isUserEditorForProject(_, _) >> false
+        permissionService.getProjectsForUser('1234', AccessLevel.admin, AccessLevel.editor) >> ["123"]
+
+        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+            ['userId': "1234", 'projectId': "123", 'view': "bulkimport", "bulkImportId": "123", 'query': ""]
+        }] as HttpServletRequest)
+        service.buildProjectActivityQuery(map)
+
+        then:
+        map.query == '(docType:activity AND bulkImportId:123)'
+    }
+
+    void "View type: 'bulkimport' - unauthenticated user >> show only public records of import"() {
+        when:
+        permissionService.isUserAlaAdmin(_) >> false
+        permissionService.isUserAdminForProject(_, _) >> false
+        permissionService.isUserEditorForProject(_, _) >> false
+        permissionService.getProjectsForUser(_, _) >> []
+
+        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+            ['userId': "", 'projectId': "", 'view': "bulkimport", "bulkImportId": "123", 'query': ""]
+        }] as HttpServletRequest)
+        service.buildProjectActivityQuery(map)
+
+        then:
+        map.query == '(docType:activity AND bulkImportId:123 AND projectActivity.embargoed:false)'
+    }
+
 
     void  "the include and exclude parameters are optional"() {
         setup:

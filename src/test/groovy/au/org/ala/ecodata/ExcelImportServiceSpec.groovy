@@ -161,4 +161,49 @@ class ExcelImportServiceSpec extends Specification implements ServiceUnitTest<Ex
         then:
         result == false
     }
+
+    def "convertDotNotationToObject: should convert dot notation keys to nested objects"() {
+        given:
+        def json = [:]
+
+        when:
+        service.convertDotNotationToObject(json, "foo.bar.baz", "value")
+
+        then:
+        json == [foo: [bar: [baz: "value"]]]
+    }
+
+    def "convertDotNotationToObject: should update existing inner key values"() {
+        given:
+        def json = [foo: [bar: [baz: "oldValue"]]]
+
+        when:
+        service.convertDotNotationToObject(json, "foo.bar.baz", "newValue")
+
+        then:
+        json == [foo: [bar: [baz: "newValue"]]]
+    }
+
+    def "convertDotNotationToObject: should add new inner keys to existing maps"() {
+        given:
+        def json = [foo: [bar: [:]]]
+
+        when:
+        service.convertDotNotationToObject(json, "foo.bar.baz", "value")
+
+        then:
+        json == [foo: [bar: [baz: "value"]]]
+    }
+
+    def "getDataHeaders: should return the headers for a given sheet"() {
+        given:
+        def workbook = WorkbookFactory.create(new File("src/test/resources/bulk_import_example.xlsx").newInputStream())
+        def sheet = workbook.getSheetAt(0)
+
+        when:
+        def headers = service.getDataHeaders(sheet)
+
+        then:
+        headers == [A: 'serial', B: 'a', C: 'b.c', D: 'd.e', E:'d.f.name', F:'d.f.scientificName', G:'d.f.commonName', H:'d.f.guid', I:'g.h', J:'g.i.name', K:'g.i.scientificName', L:'g.i.commonName', M:'g.i.guid']
+    }
 }
