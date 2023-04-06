@@ -8,7 +8,6 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
-        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
         classpath 'org.grails.plugins:quartz:2.0.13' // Needed to compile *Job classes
         classpath "org.grails.plugins:views-gradle:$grailsViewsVersion"
 
@@ -16,8 +15,6 @@ buildscript {
 }
 
 plugins {
-    //id "com.gorylenko.gradle-git-properties" version "2.2.4"
-    //id 'com.craigburke.client-dependencies' version '1.4.0'
     id "com.github.node-gradle.node" version "3.4.0"
     id 'jacoco'
 }
@@ -34,11 +31,6 @@ apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.grails.plugins.views-json"
 apply plugin:"asset-pipeline"
-
-// Open Clover doesn't support groovy 3 - https://github.com/openclover/clover/issues/121
-if (Boolean.valueOf(enableClover)) {
-    apply from: "${project.projectDir}/gradle/clover.gradle"
-}
 
 if (Boolean.valueOf(enableJacoco)) {
     apply from: "${project.projectDir}/gradle/jacoco.gradle"
@@ -88,8 +80,6 @@ dependencies {
     implementation "org.grails:grails-plugin-databinding"
     implementation "org.grails:grails-plugin-codecs"
     implementation "org.grails.plugins:mongodb:$gormMongoVersion"
-    // Without this override, 4.6.0 is being included which fails
-    //implementation "org.mongodb:bson:4.3.0"
     implementation "org.grails.plugins:gorm-graphql-plugin:2.0.0"
     // Without this override, 18.1 is being included which is not compatible with the graphql-plugin
     implementation "com.graphql-java:graphql-java:14.0"
@@ -156,8 +146,7 @@ dependencies {
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.grails.plugins:geb"
     testImplementation "org.grails:grails-web-testing-support"
-    testImplementation(platform('org.junit:junit-bom:5.9.1'))
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+
     testImplementation "com.github.tomakehurst:wiremock-jre8-standalone:2.33.2"
     testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
@@ -169,6 +158,9 @@ dependencies {
     testRuntimeOnly "net.sourceforge.htmlunit:htmlunit:2.18"
 
     testImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
+
+    // This is needed to support test execution based on @Tag
+    testImplementation "org.spockframework:spock-core:2.2-groovy-3.0"
 
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
     runtimeOnly "org.hsqldb:hsqldb:2.3.1"
@@ -200,7 +192,10 @@ tasks.withType(GroovyCompile) {
 }
 
 tasks.withType(Test) {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        excludeTags("mongo")
+    }
+
 }
 
 tasks.withType(Test) {
@@ -208,6 +203,16 @@ tasks.withType(Test) {
         events "passed", "skipped", "failed"
         exceptionFormat 'full'
     }
+}
+
+tasks.register("mongoSpecTests", Test) {
+    useJUnitPlatform {
+        includeTags "mongo"
+    }
+}
+
+test {
+    dependsOn "mongoSpecTests"
 }
 
 assets {
