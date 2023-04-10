@@ -209,6 +209,7 @@ tasks.register("mongoSpecTests", Test) {
     useJUnitPlatform {
         includeTags "mongo"
     }
+    systemProperty "grails.env", "test"
 }
 
 test {
