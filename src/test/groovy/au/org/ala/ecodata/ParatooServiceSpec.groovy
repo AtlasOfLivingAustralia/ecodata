@@ -45,9 +45,12 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         projects[0].id == "p1"
         projects[0].name == "Project 1"
         projects[0].accessLevel == AccessLevel.admin
-        projects[0].projectArea.siteId == 's1'
+        projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
+
+        and:
+        1 * siteService.geometryAsGeoJson({it.siteId == 's1'}) >> DUMMY_POLYGON
 
     }
 
@@ -73,8 +76,8 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId:'p1', entityType:Project.name)
         userPermission.save(failOnError:true, flush:true)
 
-        Site projectArea = new Site(siteId:'s1', name:'Site 1', type:Site.TYPE_PROJECT_AREA, extent: DUMMY_POLYGON)
-        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_WORKS_AREA, extent: DUMMY_POLYGON)
+        Site projectArea = new Site(siteId:'s1', name:'Site 1', type:Site.TYPE_PROJECT_AREA, extent: [geometry:DUMMY_POLYGON])
+        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_WORKS_AREA, extent: [geometry:DUMMY_POLYGON])
         siteService.sitesForProject('p1') >> [projectArea, plot]
 
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])

@@ -60,9 +60,10 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         for (int i=0; i<numberOfPlots; i++) {
             plots << buildSite(i+1)
         }
-        Site projectArea = null
+        Map projectArea = null
         if (includeProjectArea) {
-            projectArea = buildSite(numberOfPlots+2)
+            Site tmp = buildSite(numberOfPlots+2)
+            projectArea = [type:tmp.extent.geometry.type, coordinates:tmp.extent.geometry.coordinates]
         }
         new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", protocols: protocols, projectArea: projectArea, plots:plots)
     }
@@ -72,6 +73,6 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     }
 
     private Site buildSite(i) {
-        new Site(siteId:"s$i", name:"Site $i", extent:[type:'Polygon', coordinates:DUMMY_POLYGON])
+        new Site(siteId:"s$i", name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
     }
 }

@@ -14,7 +14,7 @@ class ParatooProject {
     AccessLevel accessLevel
     Project project
     List<ActivityForm> protocols
-    Site projectArea = null
+    Map projectArea = null
     List<Site> plots = null
 
     List<Map> getDataSets() {

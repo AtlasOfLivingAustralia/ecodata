@@ -74,6 +74,9 @@ class ParatooService {
 
         // Filter projects that aren't in a program configured to support paratoo
         projects = projects.findAll {
+            if (!it.programId) {
+                return false
+            }
             Program program = Program.findByProgramId(it.programId)
             Map config = program.getInhertitedConfig()
             config?.get(PROGRAM_CONFIG_PARATOO_ITEM)
@@ -213,12 +216,15 @@ class ParatooService {
     }
 
     private ParatooProject mapProject(Project project, UserPermission permission, List<Site> sites) {
+        Site projectArea = sites.find{it.type == Site.TYPE_PROJECT_AREA}
+        Map projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
+
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
                 accessLevel: permission.accessLevel,
                 project:project,
-                projectArea: sites.find{it.type == Site.TYPE_PROJECT_AREA},
+                projectArea: projectAreaGeoJson,
                 plots: sites.findAll{it.type == Site.TYPE_WORKS_AREA}]
         new ParatooProject(attributes)
 

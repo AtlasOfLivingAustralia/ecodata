@@ -1,10 +1,9 @@
-import au.org.ala.ecodata.Site
 
 model {
-    Site projectArea
+    Map projectArea
 }
 
 json {
-    type projectArea.extent?.type
-    coordinates projectArea.extent?.coordinates
+    type projectArea?.type
+    coordinates projectArea?.coordinates
 }
