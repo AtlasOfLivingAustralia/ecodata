@@ -211,6 +211,16 @@ grails:
         codecs:
             - au.org.ala.ecodata.customcodec.AccessLevelCodec
 
+    cors:
+        enabled: true
+        allowedHeaders:
+            - Content-Type
+            - Authorization
+        mappings:
+            '[/ws/paratoo/**]':
+                allowedOrigins:
+                        - '*'
+
 graphql:
     servlet:
         mapping: /graphql

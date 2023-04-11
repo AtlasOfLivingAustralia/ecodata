@@ -16,6 +16,7 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'Protocol'
     static final String PARTOO_SERVICE_MAPPING_KEY = 'paratoo.service_protocol_mapping'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
+    static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParataoo'
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -23,23 +24,38 @@ class ParatooService {
     ProjectService projectService
     SiteService siteService
 
+    /**
+     * The rules we use to find projects eligible for use by paratoo are:
+     * 1. The project is under a program that has flagged eligibility for paratoo
+     * 2. The project is currently active (status = active)
+     * 3. The project has protocols selected.  (The current way this is implemented is via a mapping
+     * to project services.  A hypothetical future implementation for BioCollect could include finding
+     * a ProjectActivity with a compatible activity type)
+     *
+     * @param userId The user of interest
+     * @param includeProtocols
+     * @return
+     */
     List<ParatooProject> userProjects(String userId, boolean includeProtocols = true) {
 
         List<ParatooProject> projects = findUserProjects(userId)
 
         projects.each { ParatooProject project ->
-            if (includeProtocols) {
-                log.debug "Finding protocols for ${project.id} ${project.name}"
-                List<ActivityForm> protocols = []
-                project.findProjectServices().each { Service service ->
-                    protocols += findServiceProtocols(service)
-                }
-                project.protocols = protocols
-            }
-            project
+            project.protocols = findProjectProtocols(project)
         }
 
-        projects
+        projects.findAll{it.protocols}
+    }
+
+    private List findProjectProtocols(ParatooProject project) {
+        log.debug "Finding protocols for ${project.id} ${project.name}"
+        List<ActivityForm> protocols = []
+        project.findProjectServices().each { Service service ->
+            protocols += findServiceProtocols(service)
+        }
+        // TODO a future implementation could also find ProjectActivites configured with
+        // Paratoo activity types to support BioCollect
+        protocols
     }
 
     private List findServiceProtocols(Service service) {
@@ -55,9 +71,23 @@ class ParatooService {
     private List<ParatooProject> findUserProjects(String userId) {
         List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
         List projects = Project.findAllByProjectIdInListAndStatusNotEqual(permissions.collect{it.entityId}, Status.DELETED)
+
+        // Filter projects that aren't in a program configured to support paratoo
+        projects = projects.findAll {
+            Program program = Program.findByProgramId(it.programId)
+            Map config = program.getInhertitedConfig()
+            config?.get(PROGRAM_CONFIG_PARATOO_ITEM)
+        }
+
         List paratooProjects = projects.collect { Project project ->
             List<Site> sites = siteService.sitesForProject(project.projectId)
             UserPermission permission = permissions.find{it.entityId == project.projectId}
+            // If the permission has been set as a favourite then delegate to the Hub permission
+            // so that "readOnly" access for a hub is supported.
+            if (permission.accessLevel == AccessLevel.starred) {
+                Hub hub = Hub.findByHubId(project.getHubId())
+                permission = permissions.find{it.entityId == hub.hubId}
+            }
             mapProject(project, permission, sites)
         }
         paratooProjects
@@ -72,14 +102,24 @@ class ParatooService {
         projectService.update([custom:[dataSets:dataSets]], collection.projectId, false)
     }
 
-    boolean protocolCheck(String userId, String projectId, int protocolId) {
+    boolean protocolReadCheck(String userId, String projectId, int protocolId) {
+        protocolCheck(userId, projectId, protocolId, true)
+    }
+
+    boolean protocolWriteCheck(String userId, String projectId, int protocolId) {
+        protocolCheck(userId, projectId, protocolId, false)
+    }
+
+    private boolean protocolCheck(String userId, String projectId, int protocolId, boolean read) {
         List projects = userProjects(userId)
         ParatooProject project = projects.find{it.id == projectId}
-        project?.protocols?.find{it.externalId == protocolId}
+        boolean protocol = project?.protocols?.find{it.externalId == protocolId}
+        int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
+        protocol && project.accessLevel > minimumAccess
     }
 
     ParatooProject findDataSet(String userId, String collectionId) {
-        List projects = userProjects(userId, false)
+        List projects = findUserProjects(userId)
 
         Project projectWithMatchingDataSet = projects?.find {
             it.dataSets?.find { it.dataSetId == collectionId }

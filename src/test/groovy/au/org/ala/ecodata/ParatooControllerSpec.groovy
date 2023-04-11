@@ -62,25 +62,25 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.protocolCheck(null, 1)
+        controller.hasReadAccess(null, 1)
 
         then:
         response.status == HttpStatus.SC_BAD_REQUEST
 
         when:
         response.reset()
-        controller.protocolCheck("p1", null)
+        controller.hasReadAccess("p1", null)
 
         then:
         response.status == HttpStatus.SC_BAD_REQUEST
 
         when:
         response.reset()
-        controller.protocolCheck('p1', 1)
+        controller.hasReadAccess('p1', 1)
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolReadCheck(userId, 'p1', 1) >> true
 
         and:
         response.status == HttpStatus.SC_OK
@@ -88,11 +88,11 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.protocolCheck('p2', 1)
+        controller.hasReadAccess('p2', 1)
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolCheck(userId, 'p2', 1) >> false
+        1 * paratooService.protocolReadCheck(userId, 'p2', 1) >> false
 
         and:
         response.status == HttpStatus.SC_OK
@@ -120,7 +120,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId: userId]
-        1 * paratooService.protocolCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
 
         and:
         response.status == HttpStatus.SC_OK
@@ -138,7 +138,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolCheck(userId, 'p1', 1) >> false
+        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -167,7 +167,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolCheck(userId, 'p1', 1) >> false
+        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -186,7 +186,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
         1 * paratooService.createCollection({it.mintedCollectionId == "c1"}) >> [:]
 
         and:
@@ -206,7 +206,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
         1 * paratooService.createCollection({it.mintedCollectionId == "c1"}) >> [error:"Error"]
 
         and:

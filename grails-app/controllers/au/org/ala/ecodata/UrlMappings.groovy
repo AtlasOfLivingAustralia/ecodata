@@ -221,27 +221,27 @@ class UrlMappings {
 
         "/ws/paratoo/$projectId/$protocolId/read" {
             controller = 'paratoo'
-            action = 'protocolCheck'
+            action = 'hasReadAccess'
         }
 
         "/ws/paratoo/$projectId/$protocolId/write" {
             controller = 'paratoo'
-            action = 'protocolCheck'
+            action = 'hasWriteAccess'
         }
 
         "/ws/paratoo/validate-token" {
             controller = 'paratoo'
-            action = 'validateToken'
+            action = [POST:'validateToken', OPTIONS:'options']
         }
 
         "/ws/paratoo/mint-identifier" {
             controller = 'paratoo'
-            action = 'mintCollectionId'
+            action = [POST:'mintCollectionId', OPTIONS:'options']
         }
 
         "/ws/paratoo/collection" {
             controller = 'paratoo'
-            action = 'submitCollection'
+            action = [POST:'submitCollection', OPTIONS:'options']
         }
 
         "/ws/paratoo/status/$id" {

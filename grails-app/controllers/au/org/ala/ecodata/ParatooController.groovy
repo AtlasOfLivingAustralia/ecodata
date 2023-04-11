@@ -66,19 +66,31 @@ class ParatooController {
         respond([statusCode:HttpStatus.SC_OK])
     }
 
+    def hasReadAccess(String projectId, Integer protocolId) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, Integer proId ->
+            paratooService.protocolReadCheck(userId, prjId, proId)
+        })
+    }
+
+    def hasWriteAccess(String projectId, Integer protocolId) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, Integer proId ->
+            paratooService.protocolWriteCheck(userId, prjId, proId)
+        })
+    }
+
     /**
      * Used for both read and write - if we need to take into account
      * read only users we need to separate these calls
      */
-    def protocolCheck(String projectId, Integer protocolId) {
+    private void protocolCheck(String projectId, Integer protocolId, Closure checkMethod) {
         if (!projectId || !protocolId) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
         }
         String userId = userService.currentUserDetails.userId
-        boolean hasProtocol = paratooService.protocolCheck(userId, projectId, protocolId)
+        boolean hasAccessToProtocol = checkMethod(userId, projectId, protocolId)
 
-        respond([isAuthorized:hasProtocol], status:HttpStatus.SC_OK)
+        respond([isAuthorized:hasAccessToProtocol], status:HttpStatus.SC_OK)
     }
 
     def mintCollectionId(ParatooCollectionId collectionId) {
@@ -88,7 +100,7 @@ class ParatooController {
         }
         else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolCheck(userId, collectionId.projectId, collectionId.protocol.id)
+            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.projectId, collectionId.protocol.id)
             if (hasProtocol) {
                 respond([orgMintedIdentfier:Identifiers.getNew(true, null)])
             }
@@ -105,7 +117,7 @@ class ParatooController {
         }
         else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolCheck(userId, collection.projectId, collection.protocol.id)
+            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collection.projectId, collection.protocol.id)
             if (hasProtocol) {
                 // Create a data set and attach to the project.
                 Map result = paratooService.createCollection(collection)
@@ -130,6 +142,10 @@ class ParatooController {
         ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, collectionId)
 
         respond([isSubmitted:(projectWithMatchingDataSet != null)])
+    }
+
+    def options() {
+        respond([statusCode:HttpStatus.SC_NO_CONTENT])
     }
 
     def handleException(Exception e) {
