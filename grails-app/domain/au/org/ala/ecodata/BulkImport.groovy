@@ -24,6 +24,26 @@ class BulkImport {
     Date dateCreated
     Date lastUpdated
 
+    /** Custom toMap for the bulk import object */
+    Map toMap() {
+        Map bulkImport = [:]
+        bulkImport.bulkImportId = bulkImportId
+        bulkImport.dataToLoad = dataToLoad
+        bulkImport.projectActivityId = projectActivityId
+        bulkImport.projectId = projectId
+        bulkImport.formName = formName
+        bulkImport.description = description
+        bulkImport.createdActivities = createdActivities
+        bulkImport.validActivities = validActivities
+        bulkImport.invalidActivities = invalidActivities
+        bulkImport.userId = userId
+        bulkImport.status = status
+        bulkImport.dateCreated = dateCreated
+        bulkImport.lastUpdated = lastUpdated
+
+        bulkImport
+    }
+
     /** The list of properties to be used when binding request data to an ActivityForm */
     static bindingProperties = ['dataToLoad', 'projectActivityId', 'projectId', 'formName', 'description', 'createdActivities', 'validActivities', 'invalidActivities', 'userId']
 

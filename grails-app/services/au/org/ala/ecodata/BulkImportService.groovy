@@ -63,7 +63,7 @@ class BulkImportService implements DataBinder {
     }
 
     Map toMap (BulkImport bulkImport, levelOfDetails ) {
-        def map = commonService.toBareMap(bulkImport)
+        def map = bulkImport.toMap()
         if (levelOfDetails == DETAILS_MINIMAL) {
             map.removeAll {key, value -> key in ['dataToLoad', 'createdActivities', 'validActivities', 'invalidActivities', 'id'] }
 
