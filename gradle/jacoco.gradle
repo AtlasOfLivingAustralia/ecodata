@@ -15,7 +15,7 @@ test {
     finalizedBy jacocoTestReport
 }
 jacocoTestReport {
-    dependsOn check
+    dependsOn test
 
     finalizedBy jacocoTestCoverageVerification
     afterEvaluate {
@@ -39,7 +39,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.1
+                minimum = 0.16
             }
         }
     }
