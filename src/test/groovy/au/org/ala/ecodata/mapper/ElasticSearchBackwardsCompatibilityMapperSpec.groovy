@@ -1,9 +1,7 @@
 package au.org.ala.ecodata.mapper
 
-import grails.util.Holders
 import org.elasticsearch.search.aggregations.Aggregations
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms
-import org.grails.testing.GrailsUnitTest
 import spock.lang.Specification
 
 /**
@@ -11,12 +9,7 @@ import spock.lang.Specification
  * by this test.
  * There are functional tests in MERIT that use real data and searches that will catch issues.
  */
-class ElasticSearchBackwardsCompatibilityMapperSpec extends Specification implements GrailsUnitTest {
-
-    void setup() {
-        Holders.grailsApplication = grailsApplication
-    }
-
+class ElasticSearchBackwardsCompatibilityMapperSpec extends Specification {
 
     void "The hit source can be mapped"() {
         setup:
