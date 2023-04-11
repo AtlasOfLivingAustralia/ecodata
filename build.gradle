@@ -19,7 +19,7 @@ plugins {
     id 'jacoco'
 }
 
-version "4.1-biocollect-6.5-SNAPSHOT"
+version "4.1-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 
@@ -159,9 +159,6 @@ dependencies {
 
     testImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
 
-    // This is needed to support test execution based on @Tag
-    testImplementation "org.spockframework:spock-core:2.2-groovy-3.0"
-
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
     runtimeOnly "org.hsqldb:hsqldb:2.3.1"
 }
@@ -192,28 +189,15 @@ tasks.withType(GroovyCompile) {
 }
 
 tasks.withType(Test) {
-    useJUnitPlatform() {
-        excludeTags("mongo")
-    }
-
+    useJUnitPlatform()
 }
 
 tasks.withType(Test) {
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat 'full'
+        showStandardStreams true
     }
-}
-
-tasks.register("mongoSpecTests", Test) {
-    useJUnitPlatform {
-        includeTags "mongo"
-    }
-    systemProperty "grails.env", "test"
-}
-
-test {
-    dependsOn "mongoSpecTests"
 }
 
 assets {

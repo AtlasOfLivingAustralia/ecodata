@@ -6,8 +6,6 @@ import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
  */
-//@TestMixin(GrailsUnitTestMixin)
-//@TestFor(SiteController)
 class SiteControllerSpec extends Specification implements ControllerUnitTest<SiteController> {
 
     SiteService siteService = Stub(SiteService);

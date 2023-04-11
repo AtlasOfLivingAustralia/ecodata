@@ -3,9 +3,8 @@ package au.org.ala.ecodata
 import au.org.ala.web.AuthService
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
-import spock.lang.Tag
 
-@Tag("mongo")
+
 class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImportService> {
     def authService
     def setup() {
@@ -25,7 +24,6 @@ class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImp
                 projectActivityId: "3")
         bulkImport.save(failOnError: true, flush: true)
         new Project(name: "Test project", projectId: "1").save(failOnError: true, flush: true)
-
     }
 
     def cleanup() {
