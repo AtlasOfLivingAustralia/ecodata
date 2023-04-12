@@ -16,7 +16,7 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'Protocol'
     static final String PARTOO_SERVICE_MAPPING_KEY = 'paratoo.service_protocol_mapping'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
-    static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParataoo'
+    static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -70,7 +70,7 @@ class ParatooService {
 
     private List<ParatooProject> findUserProjects(String userId) {
         List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
-        List projects = Project.findAllByProjectIdInListAndStatusNotEqual(permissions.collect{it.entityId}, Status.DELETED)
+        List projects = Project.findAllByProjectIdInListAndStatus(permissions.collect{it.entityId}, Status.ACTIVE)
 
         // Filter projects that aren't in a program configured to support paratoo
         projects = projects.findAll {
@@ -118,7 +118,7 @@ class ParatooService {
         ParatooProject project = projects.find{it.id == projectId}
         boolean protocol = project?.protocols?.find{it.externalId == protocolId}
         int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
-        protocol && project.accessLevel.code > minimumAccess
+        protocol && project.accessLevel.code >= minimumAccess
     }
 
     ParatooProject findDataSet(String userId, String collectionId) {
