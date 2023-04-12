@@ -219,12 +219,12 @@ class UrlMappings {
             action = 'userProjects'
         }
 
-        "/ws/paratoo/$projectId/$protocolId/read" {
+        "/ws/paratoo/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'
             action = 'hasReadAccess'
         }
 
-        "/ws/paratoo/$projectId/$protocolId/write" {
+        "/ws/paratoo/pdp/$projectId/$protocolId/write" {
             controller = 'paratoo'
             action = 'hasWriteAccess'
         }

@@ -118,7 +118,7 @@ class ParatooService {
         ParatooProject project = projects.find{it.id == projectId}
         boolean protocol = project?.protocols?.find{it.externalId == protocolId}
         int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
-        protocol && project.accessLevel > minimumAccess
+        protocol && project.accessLevel.code > minimumAccess
     }
 
     ParatooProject findDataSet(String userId, String collectionId) {
