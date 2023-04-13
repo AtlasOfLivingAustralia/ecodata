@@ -2,12 +2,10 @@ package au.org.ala.ecodata.reporting
 
 import org.apache.poi.hssf.util.HSSFColor
 import org.apache.poi.ss.usermodel.*
-import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 import javax.servlet.http.HttpServletResponse
-
 /**
  * Does basic header styling for an Xls spreadsheet.
  */
@@ -32,9 +30,30 @@ class XlsExporter extends XlsxExporter {
         shortName.replaceAll('/', '-')
     }
 
-    public AdditionalSheet addSheet(name, headers, groupHeaders = null) {
+    public AdditionalSheet addSheet(name, headers, groupHeaders = null, dataPathHeader = null) {
         AdditionalSheet sheet = sheet(sheetName(name))
-        if (groupHeaders != null) {
+
+        if (dataPathHeader != null) {
+            sheet.fillHeader(dataPathHeader)
+            sheet.fillRow(headers, 1)
+
+            def lastHeader = ""
+            def groupNumber = 0
+            int fromCol = 0
+            dataPathHeader.eachWithIndex { item, index ->
+                if (item != "" && lastHeader != item) {
+                    styleRowCells(sheet, 0, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
+                    styleRowCells(sheet, 1, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
+                    groupNumber ++
+                    fromCol = index
+                }
+            }
+
+            styleRowCells(sheet, 0, fromCol, dataPathHeader.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
+            styleRowCells(sheet, 1, fromCol, dataPathHeader.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
+
+        }
+        else if (groupHeaders != null) {
             sheet.fillHeader(groupHeaders)
             sheet.fillRow(headers, 1)
 

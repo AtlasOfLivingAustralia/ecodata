@@ -76,6 +76,14 @@ class UrlMappings {
             controller = 'managementUnit'
         }
 
+        "/ws/bulkImport" { controller = 'bulkImport'
+            action = [GET: 'list', POST:'create']
+        }
+        "/ws/bulkImport/$id" { controller = 'bulkImport'
+            action = [GET: 'get', PUT:'update']
+        }
+
+
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }

@@ -41,12 +41,11 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestClientBuilder
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.common.geo.builders.CoordinatesBuilder
-import org.elasticsearch.common.geo.builders.PolygonBuilder
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
+import org.elasticsearch.geometry.LinearRing
+import org.elasticsearch.geometry.Polygon
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
@@ -56,6 +55,7 @@ import org.elasticsearch.search.aggregations.BucketOrder
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
+import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
@@ -106,7 +106,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -589,6 +589,12 @@ class ElasticSearchService {
                 }
                 break
 
+            case Output.class.name:
+                Output output = Output.findByOutputId(docId)
+                if (output) {
+                    indexDocType(output.activityId, Activity.class.name)
+                }
+                break
             case Activity.class.name:
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
@@ -741,10 +747,13 @@ class ElasticSearchService {
 
         try{
             switch (docType) {
+                case Activity.class.name:
+                    deleteDocById(docId, PROJECT_ACTIVITY_INDEX)
+                    deleteDocById(docId)
+                    break
                 case Project.class.name:
                     deleteDocById(docId, HOMEPAGE_INDEX)
                 case Site.class.name:
-                case Activity.class.name:
                 case Organisation.class.name:
                     deleteDocById(docId)
             }
@@ -983,6 +992,7 @@ class ElasticSearchService {
             // all sites associated with project.
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.get(project.projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
+            projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -1409,6 +1419,7 @@ class ElasticSearchService {
         String query = params.searchTerm ?: ''
         String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
+        String bulkImportId = params.bulkImportId
         String projectActivityId = params.projectActivityId
         String forcedQuery = ''
         String spotterId = params.spotterId ?: ''
@@ -1485,6 +1496,18 @@ class ElasticSearchService {
             case 'userprojectactivityrecords':
                 if(projectActivityId && spotterId){
                     forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ' AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                }
+                break
+
+            case 'bulkimport':
+                if (bulkImportId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ')'
+                    } else {
+                        forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ' AND projectActivity.embargoed:false)'
+                    }
+                } else {
+                    forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 }
                 break
 
@@ -1678,15 +1701,20 @@ class ElasticSearchService {
 
     private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "projectArea.geoIndex") {
         GeoShapeQueryBuilder filter = null
+
         field = field ?: 'projectArea.geoIndex'
         Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder()
-                geographicSearchCriteria.coordinates[0].each { coordinate ->
-                    coordinatesBuilder.coordinate(coordinate[0] as double, coordinate[1] as double)
+                int count = geographicSearchCriteria.coordinates[0].size()
+                double[] xCoords = new double[count]
+                double[] yCoords = new double[count]
+
+                for (int i=0; i<count; i++) {
+                    xCoords[i] = geographicSearchCriteria.coordinates[0][i][0] as double
+                    yCoords[i] = geographicSearchCriteria.coordinates[0][i][1] as double
                 }
-                shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
+                shape = new Polygon(new LinearRing(xCoords, yCoords))
                 break;
             case "Circle":
                 shape = new Circle(

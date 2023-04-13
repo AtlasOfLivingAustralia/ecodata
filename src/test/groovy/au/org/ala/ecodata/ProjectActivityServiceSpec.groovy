@@ -49,4 +49,40 @@ class ProjectActivityServiceSpec extends MongoSpec implements ServiceUnitTest<Pr
         result == true
     }
 
+    def "should return an notifiable property when creating project activity"() {
+        given:
+        def body = [foo: 1, methodName: 2]
+        def old = [:]
+
+        expect:
+        service.notifiableProperties(body, old) == ['methodName']
+    }
+
+    def "should return an empty list when there are no changes to subscribed properties"() {
+        given:
+        def body = [foo: 1, methodName: 2]
+        def old = [foo: 1, methodName: 2]
+
+        expect:
+        service.notifiableProperties(body, old) == []
+    }
+
+    def "should return a list of changed subscribed properties"() {
+        given:
+        def body = [foo: 1, methodName: 2]
+        def old = [foo: 1, methodName: 3]
+
+        expect:
+        service.notifiableProperties(body, old) == ['methodName']
+    }
+
+    def "should not return properties that are not subscribed"() {
+        given:
+        def body = [foo: 1, methodName: 3]
+        def old = [foo: 2, methodName: 3]
+
+        expect:
+        service.notifiableProperties(body, old) == []
+    }
+
 }

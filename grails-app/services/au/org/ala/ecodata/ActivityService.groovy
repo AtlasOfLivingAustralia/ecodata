@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputModelProcessor
 import com.mongodb.BasicDBObject
 import org.grails.datastore.mapping.query.api.BuildableCriteria
-import au.org.ala.ecodata.metadata.*
 
 import javax.persistence.PessimisticLockException
 

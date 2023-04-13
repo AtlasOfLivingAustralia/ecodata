@@ -37,6 +37,7 @@ class Activity {
         siteId index: true
         projectId index: true
         projectActivityId index: true
+        bulkImportId index: true
         version false
     }
 
@@ -50,6 +51,7 @@ class Activity {
     String projectActivityId
     String managementUnitId
     String description
+    String bulkImportId
     Date startDate
     Date endDate
 
@@ -124,6 +126,7 @@ class Activity {
         embargoed nullable:true
         formVersion nullable: true
         verificationStatus nullable: true, inList: ['not applicable', 'not approved', 'not verified', 'under review' , 'approved']
+        bulkImportId nullable: true
     }
 
 }

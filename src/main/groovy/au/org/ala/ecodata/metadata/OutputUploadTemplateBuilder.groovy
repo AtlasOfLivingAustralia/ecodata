@@ -9,6 +9,8 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 
 @Slf4j
 class OutputUploadTemplateBuilder extends XlsExporter {
+    static final String SERIAL_NUMBER_NAME = 'Serial Number'
+    static final String SERIAL_NUMBER_DATA = 'serial'
 
     def model
     def outputName
@@ -16,6 +18,8 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     boolean editMode = false
     boolean extraRowsEditable = true
     boolean autoSizeColumns = true
+    boolean includeDataPathHeader = false
+    def additionalFieldsForDataTypes
 
     public OutputUploadTemplateBuilder(filename, outputName, model) {
         super(filename)
@@ -25,7 +29,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.autoSizeColumns = true
     }
 
-    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true) {
+    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true, boolean includeDataPathHeader) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
@@ -33,6 +37,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.editMode = editMode
         this.extraRowsEditable = extraRowsEditable
         this.autoSizeColumns = autoSizeColumns
+        this.includeDataPathHeader = includeDataPathHeader
     }
 
 
@@ -81,6 +86,94 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders)
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
+
+        finalise()
+    }
+
+    void buildDataPathHeaderList() {
+
+        def groupHeaders = []
+        def dataPathHeader = []
+        def headers = []
+        def lastHeader = ""
+        boolean fillHeader = false
+        int startIndex = 1
+        List augmentedModel = [[
+            name: SERIAL_NUMBER_DATA,
+            label: SERIAL_NUMBER_NAME,
+            dataType: 'number',
+            required: true
+       ]]
+
+        if (includeDataPathHeader){
+            headers.add(SERIAL_NUMBER_NAME)
+            dataPathHeader.add(SERIAL_NUMBER_DATA)
+        }
+
+
+        model.eachWithIndex { it, index ->
+            def path
+            if (it.header && it.header != lastHeader) {
+                groupHeaders.add(it.header)
+                lastHeader = it.header
+                fillHeader = true
+            } else {
+                groupHeaders.add("")
+            }
+
+
+
+            def label = it.label ?: it.name
+            path = it.path ? it.path : it.name
+            switch (it.dataType) {
+                case 'species':
+                    additionalFieldsForDataTypes?.species.fields.each {
+                        dataPathHeader.add(path + '.' + it.name)
+                        headers.add(it.label)
+                        augmentedModel.add(startIndex, it)
+                        startIndex ++
+                    }
+                    break
+                case 'image':
+                    additionalFieldsForDataTypes?.image.fields.each {
+                        dataPathHeader.add(path + '.' + it.name)
+                        headers.add(it.label)
+                        augmentedModel.add(startIndex, it)
+                        startIndex ++
+                    }
+                    break
+                case 'geoMap':
+                    additionalFieldsForDataTypes?.geoMap.fields.each {
+                        dataPathHeader.add(path + it.name)
+                        headers.add(it.label)
+                        augmentedModel.add(startIndex, it)
+                        startIndex ++
+                    }
+                    break
+                default:
+                    dataPathHeader.add(path)
+                    headers.add(label)
+                    augmentedModel.add(startIndex, it)
+                    startIndex ++
+                    break
+            }
+
+
+        }
+
+        if (!fillHeader) groupHeaders = null
+
+        AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders, dataPathHeader)
+
+        // todo: re-enable validation for data path header
+        if (!includeDataPathHeader) {
+            new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+        }
+        else {
+            new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel).process(2)
+        }
 
         new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 
@@ -267,7 +360,7 @@ class ValidationProcessor extends OutputModelProcessor {
         this.model = model
     }
 
-    public void process() {
+    public void process(int firstRow = 1) {
 
         // Create a worksheet to store validation lists in.
         def validationSheetName = OutputUploadTemplateBuilder.sheetName("Validation - "+sheet.getSheetName())
@@ -276,6 +369,7 @@ class ValidationProcessor extends OutputModelProcessor {
 
         ExcelValidationContext context = new ExcelValidationContext([currentSheet:sheet, validationSheet:validationSheet])
         ValidationHandler validationHandler = new ValidationHandler()
+        validationHandler.firstRow = firstRow
         model.eachWithIndex{node, i ->
             context.currentColumn = i
             processNode(validationHandler, node, context)
@@ -294,7 +388,8 @@ class ExcelValidationContext implements OutputModelProcessor.ProcessingContext {
 
 
 class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidationContext> {
-
+    int firstRow = 1
+    final int MAX_ROWS = 1000
 
     def addValidation(node, context, constraint = null) {
 
@@ -398,8 +493,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     def columnRange(int col) {
-        final int MAX_ROWS = 1000
-        CellRangeAddressList range = new CellRangeAddressList(1, MAX_ROWS, col, col)
+        CellRangeAddressList range = new CellRangeAddressList(firstRow, MAX_ROWS, col, col)
         return range
     }
 

@@ -31,6 +31,7 @@ class DocumentService {
     CommonService commonService
     GrailsApplication grailsApplication
     ActivityService activityService
+    WebService webService
 
     /**
      * Converts the domain object into a map of properties, including
@@ -566,16 +567,21 @@ class DocumentService {
     /**
      * Reads the contents of a file associated with a Document and return content as JSON
      */
-    def readJsonDocument(Map document) {
+    Map readJsonDocument(Map document) {
         String fullPath = this.fullPath(document.filepath, document.filename)
         File file = new File(fullPath)
-
+        Map documentData
         if (!file.exists()) {
-            return  [error: fullPath + ' does not exist!']
+            // In the current reporting server setup, documents are not locally stored and need to be
+            // retrieved from the primary server.
+            documentData = webService.getJson(document.url, null, null, true)
         }
-        def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(file)
-        return data
+        else {
+            JsonSlurper jsonSlurper = new JsonSlurper()
+            documentData = jsonSlurper.parse(file)
+        }
+
+        return documentData
     }
 
     void doWithAllDocuments(Closure action) {

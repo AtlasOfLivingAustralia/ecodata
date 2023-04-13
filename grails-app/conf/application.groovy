@@ -508,8 +508,8 @@ if (!collectory.baseURL) {
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "https://www.ala.org.au/commonui-bs3"//"https://www2.ala.org.au/commonui"
 }
-    if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
+if (!security.apikey.serviceUrl) {
+    security.apikey.serviceUrl = 'https://auth-test.ala.org.au/apikey/ws/check?apikey='
 }
 if (!biocacheService.baseURL) {
     biocacheService.baseURL = 'https://biocache.ala.org.au/ws'
@@ -526,14 +526,8 @@ if (!security.cas.adminRole) {
 if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if (!userDetailsSingleUrl) {
-    userDetailsSingleUrl = "https://auth-dev.ala.org.au/userDetails/getUserDetails"
-}
-if (!userDetailsUrl) {
-    userDetailsUrl = "https://auth-dev.ala.org.au/userDetails/getUserListFull"
-}
-if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth-dev.ala.org.au/userdetails/ws/admin'
+if (!userDetails.url) {
+    userDetails.url = "https://auth-test.ala.org.au/userdetails/"
 }
 
 if (!authGetKeyUrl) {
@@ -583,10 +577,10 @@ security {
         enabled = false
         appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
         // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
-        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
-        loginUrl = 'https://auth.ala.org.au/cas/login'
-        logoutUrl = 'https://auth.ala.org.au/cas/logout'
-        casServerName = 'https://auth.ala.org.au'
+        casServerUrlPrefix = 'https://auth-test.ala.org.au/cas'
+        loginUrl = 'https://auth-test.ala.org.au/cas/login'
+        logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
+        casServerName = 'https://auth-test.ala.org.au'
         uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*']
         authenticateOnlyIfLoggedInPattern = "/graphql/*"
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
@@ -597,7 +591,8 @@ security {
         clientId = 'changeMe'
         secret = 'changeMe'
         scope = 'openid,profile,email,ala,roles,user_defined'
-        connectTimeout = 5000
+        connectTimeout = 20000
+        readTimeout = 20000
     }
     jwt {
         enabled = true
@@ -605,6 +600,8 @@ security {
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
         requiredScores = ["openid", 'profile', "email", "ala", "roles", "user_defined"]
+        connectTimeoutMs = 20000
+        readTimeoutMs = 20000
     }
 }
 
@@ -1273,6 +1270,117 @@ geohash.maxNumberOfGrids = 250
 // Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
 // hide exact location.
 geohash.maxLength =  5
+
+if(!additionalFieldsForDataTypes){
+    additionalFieldsForDataTypes = [
+            'species': [
+                    'name': 'Scientific name field',
+                    'type': 'species',
+                    'fields': [
+                        [
+                                'name': 'name',
+                                'label': 'Name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'scientificName',
+                                'label': 'Scientific name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'commonName',
+                                'label': 'Common name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'guid',
+                                'label': 'ALA identifier',
+                                "dataType": "text"
+                        ]
+                    ]
+            ],
+            'image': [
+                    'name': 'Image field',
+                    'type': 'image',
+                    'fields': [
+                        [
+                                'name': 'url',
+                                'label': 'Image URL',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'licence',
+                                'label': 'Licence',
+                                "dataType": "text",
+                                'constraints': [
+                                        'CC BY 3.0',
+                                        'CC BY 0',
+                                        'CC BY 4.0',
+                                        'CC BY-NC'
+                                ]
+                        ],
+                        [
+                                'name': 'name',
+                                'label': 'Image name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'filename',
+                                'label': 'Image filename',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'attribution',
+                                'label': 'Attribution',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'notes',
+                                'label': 'Notes',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'projectId',
+                                'label': 'Project Id',
+                                "dataType": "text"
+                        ],
+                        [
+                            'name': 'projectName',
+                            'label': 'Project name',
+                            "dataType": "text"
+                        ],
+                        [
+                            'name': 'dateTaken',
+                            'label': 'Date taken',
+                            "dataType": "date"
+                        ]
+                    ]
+            ],
+            'geoMap' : [
+                    'name': 'Geo map field',
+                    'type': 'geoMap',
+                    'fields': [
+                                [
+                                        'name': "",
+                                        'label': 'Site identifier (siteId)',
+                                        "dataType": "text"
+                                ],
+                                [
+                                        'name': "Latitude",
+                                        'label': 'Latitude',
+                                        "dataType": "number",
+                                        "validate": "min[-90],max[90]"
+                                ],
+                                [
+                                        'name': "Longitude",
+                                        'label': 'Longitude',
+                                        "dataType": "number",
+                                        "validate": "min[-180],max[180]"
+                                ]
+                        ]
+            ]
+    ]
+}
 
 // Dummy / default username and password for elasticsearch, will be ignored if the server is not setup for
 // basic authentication.

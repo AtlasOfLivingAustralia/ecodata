@@ -1,7 +1,10 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import org.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.grails.web.converters.marshaller.json.MapMarshaller
 
 class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService> {
 
@@ -17,6 +20,9 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         grailsApplication.config.app.facets.geographic.special = [:]
         service.settingService = settingService
         service.webService = webService
+
+        JSON.registerObjectMarshaller(new MapMarshaller())
+        JSON.registerObjectMarshaller(new CollectionMarshaller())
     }
 
     def cleanup() {
@@ -128,5 +134,143 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         then:
         forms.collect{it.name } == ['test', 'abc', 'abc']
 
+    }
+
+    def "excelWorkbookToMap: get content from bulk_import_example.xlsx into a list"() {
+        setup:
+        service.activityFormService = new ActivityFormService()
+        service.cacheService = new CacheService()
+        service.excelImportService = new ExcelImportService()
+        ActivityForm form1 = new ActivityForm(
+                name: 'form1',
+                formVersion: 1,
+                status: Status.ACTIVE,
+                publicationStatus: PublicationStatus.PUBLISHED,
+                type: 'Activity',
+                sections: [
+                        new FormSection (
+                                name: 'form1',
+                                templateName: 'form1',
+                                template: [
+                                        name: 'form1',
+                                        dataModel: [
+                                        [
+                                                name: 'a',
+                                                dataType: 'string',
+                                                label: 'A',
+                                                required: true
+                                        ],
+                                        [
+                                                name: 'b',
+                                                dataType: 'list',
+                                                required: true,
+                                                columns: [
+                                                        [
+                                                                name: 'c',
+                                                                dataType: 'stringList',
+                                                                required: true
+                                                        ]
+                                                ]
+                                        ],
+                                        [
+                                                name: 'd',
+                                                dataType: 'list',
+                                                required: true,
+                                                columns: [
+                                                        [
+                                                                name: 'e',
+                                                                dataType: 'string',
+                                                                required: true
+                                                        ],
+                                                        [
+                                                                name: 'f',
+                                                                dataType: 'species',
+                                                                required: true
+                                                        ]
+                                                ]
+                                        ],
+                                        [
+                                                name: 'g',
+                                                dataType: 'list',
+                                                required: true,
+                                                columns: [
+                                                        [
+                                                                name: 'h',
+                                                                dataType: 'stringList',
+                                                                required: true
+                                                        ],
+                                                        [
+                                                                name: 'i',
+                                                                dataType: 'species',
+                                                                required: true
+                                                        ]
+                                                ]
+                                        ]
+                                ]
+                            ]
+                        )
+                ]
+        )
+        form1.save(flush: true, failOnError: true)
+        def file = new File("src/test/resources/bulk_import_example.xlsx").newInputStream()
+
+        when:
+        def content = service.excelWorkbookToMap(file, 'form1', true, null)
+
+        then:
+        content.size() == 2
+        content[0][0].data.size() == 5
+        content[0][0].data.get("serial") == 1.0
+        content[0][0].data.get("a") == "test a 1"
+        content[0][0].data.get("b") == [[c: ["test bc 1", "test bc 2", "test bc 3"]]]
+        content[0][0].data.get("d").size() == 3
+        content[0][0].data.get("d")[0].e == "test de 1"
+        content[0][0].data.get("d")[0].f.name == "sci name 1 (com name 1)"
+        content[0][0].data.get("d")[0].f.scientificName == "sci name 1"
+        content[0][0].data.get("d")[0].f.commonName == "com name 1"
+        content[0][0].data.get("d")[0].f.guid == "id1"
+        content[0][0].data.get("d")[0].f.outputSpeciesId != null
+        content[0][0].data.get("d")[1].e == null
+        content[0][0].data.get("d")[1].f.name == "sci name 2 (com name 2)"
+        content[0][0].data.get("g").size() == 2
+        content[0][0].data.get("g")[0].h.size() == 2
+        content[0][0].data.get("g")[0].h[0] == "test gh 1"
+        content[0][0].data.get("g")[0].h[1] == "test gh 2"
+        content[0][0].data.get("g")[0].i.name == "sci name 1 (com name 1)"
+        content[0][0].data.get("g")[0].i.scientificName == "sci name 1"
+        content[0][0].data.get("g")[0].i.commonName == "com name 1"
+        content[0][0].data.get("g")[0].i.guid == "gi1"
+        content[0][0].data.get("g")[0].i.outputSpeciesId != null
+        content[0][0].data.get("g")[1].h[0] == "test gh 3"
+        content[0][0].data.get("g")[1].i.name == "sci name 3 (com name 3)"
+        content[0][0].data.get("g")[1].i.scientificName == "sci name 3"
+        content[0][0].data.get("g")[1].i.commonName == "com name 3"
+        content[0][0].data.get("g")[1].i.guid == "gi3"
+        content[0][0].data.get("g")[1].i.outputSpeciesId != null
+
+
+        content[1][0].data.get("serial") == 2.0
+        content[1][0].data.get("a") == "test a 2"
+        content[1][0].data.get("b") == [[c: ["test bc 4", "test bc 5"]]]
+        content[1][0].data.get("d")[0].e == "test de 2"
+        content[1][0].data.get("d")[0].f.name == "sci name 4 (com name 4)"
+        content[1][0].data.get("d")[0].f.scientificName == "sci name 4"
+        content[1][0].data.get("d")[0].f.commonName == "com name 4"
+        content[1][0].data.get("d")[0].f.guid == "id4"
+        content[1][0].data.get("d")[0].f.outputSpeciesId != null
+        content[1][0].data.get("g").size() == 2
+        content[1][0].data.get("g")[0].h.size() == 1
+        content[1][0].data.get("g")[0].h[0] == "test gh 4"
+        content[1][0].data.get("g")[0].i.name == "sci name 4 (com name 4)"
+        content[1][0].data.get("g")[0].i.scientificName == "sci name 4"
+        content[1][0].data.get("g")[0].i.commonName == "com name 4"
+        content[1][0].data.get("g")[0].i.guid == "gi4"
+        content[1][0].data.get("g")[0].i.outputSpeciesId != null
+        content[1][0].data.get("g")[1].h[0] == "test gh 5"
+        content[1][0].data.get("g")[1].i.name == "sci name 5 (com name 5)"
+        content[1][0].data.get("g")[1].i.scientificName == "sci name 5"
+        content[1][0].data.get("g")[1].i.commonName == "com name 5"
+        content[1][0].data.get("g")[1].i.guid == "gi5"
+        content[1][0].data.get("g")[1].i.outputSpeciesId != null
     }
 }

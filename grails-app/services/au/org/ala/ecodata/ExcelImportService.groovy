@@ -1,8 +1,11 @@
 package au.org.ala.ecodata
 
+
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.usermodel.DateUtil
 import org.apache.poi.ss.util.CellReference
 
+import java.text.SimpleDateFormat
 /**
  * Converts a spreadsheet to a Map based on configuration.
  * Uses the same configuration as the grails excel-import-plugin.
@@ -29,6 +32,72 @@ class ExcelImportService {
         results
     }
 
+    /**
+     * https://stackoverflow.com/a/64083527
+     * @param json
+     * @param key
+     * @param value
+     * @return
+     */
+    Map convertDotNotationToObject(Map json, String key, value) {
+        if (key.contains(".")) {
+            String innerKey = key.substring(0, key.indexOf("."))
+            String remaining = key.substring(key.indexOf(".") + 1)
+
+            if (json.containsKey(innerKey)) {
+                convertDotNotationToObject(json.get(innerKey), remaining, value)
+            } else {
+                Map innerJson = [:]
+                json.put(innerKey, innerJson)
+                convertDotNotationToObject(innerJson, remaining, value)
+            }
+        } else {
+            json.put(key, value)
+        }
+
+        json
+    }
+
+    Map removeEmptyObjects (Map object) {
+        List removeKeys = []
+        object?.each { key, value ->
+            if (value instanceof Map) {
+                if (value.isEmpty() || allKeyValueOfObjectAreEmpty(value)) {
+                    removeKeys.add(key)
+                } else {
+                    removeEmptyObjects(value)
+                }
+            }
+        }
+
+        removeKeys?.each { key ->
+            object.remove(key)
+        }
+
+        object
+    }
+
+    boolean allKeyValueOfObjectAreEmpty(Map object) {
+      object?.every { key, value ->
+        value == null
+      }
+    }
+
+    Map getDataHeaders(Sheet sheet) {
+        int headerRowIndex  = 0
+        Map headers = [:]
+        Row row =  sheet.getRow(headerRowIndex)
+        row.eachWithIndex { Cell column, int i ->
+            headers << [(CellReference.convertNumToColString(i)) : getCellValue(column, null)]
+        }
+
+        headers
+    }
+
+    boolean looksLikeDate(String value) {
+        value?.contains('/') || value.contains('-')
+    }
+
     private Map mapRow(Map columnMap, Row row, FormulaEvaluator evaluator) {
         Map result = [:]
         columnMap.each {k, name ->
@@ -50,7 +119,25 @@ class ExcelImportService {
                 value = cell.getStringCellValue()
                 break
             case CellType.NUMERIC:
-                value = cell.getNumericCellValue()
+                CellStyle cellStyle = cell.getCellStyle()
+                String formatString = cellStyle.getDataFormatString()
+                DataFormatter dataFormatter = new DataFormatter()
+                String formattedCellValue = dataFormatter.formatCellValue(cell)
+                Date date = cell.getDateCellValue()
+                if(DateUtil.isCellDateFormatted(cell) && date) {
+                    // first test for time. Assume all other cases are date.
+                    if (formattedCellValue.contains(":")) {
+                        SimpleDateFormat format = new SimpleDateFormat("hh:mm a") // format string for 12-hour clock
+                        value = format.format(date)
+                    }
+                    else {
+                        value = cell.getDateCellValue()
+                        value = au.org.ala.ecodata.DateUtil.format(value)
+                    }
+                }
+                else {
+                    value = cell.getNumericCellValue()
+                }
                 break
             case CellType.FORMULA:
                 CellValue evaluated = evaluator.evaluate(cell)

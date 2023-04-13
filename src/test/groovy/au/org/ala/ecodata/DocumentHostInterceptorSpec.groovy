@@ -13,7 +13,7 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
     }
 
     def cleanup() {
-
+        interceptor.documentHostUrlPrefix.set(null)
     }
 
     void "interceptor must set document host name if request is coming from biocollect hub"() {
@@ -28,7 +28,7 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
             }
 
         then:
-            GrailsWebRequest.lookup().getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) == hostName
+            DocumentHostInterceptor.documentHostUrlPrefix.get() == hostName
     }
 
     void "interceptor must reject requests with a not allowed hostname "() {
@@ -43,7 +43,7 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
         }
 
         then:
-        GrailsWebRequest.lookup().getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) == null
+        DocumentHostInterceptor.documentHostUrlPrefix.get() == null
     }
 
 
@@ -59,6 +59,6 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
         }
 
         then:
-        GrailsWebRequest.lookup().getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) == null
+        DocumentHostInterceptor.documentHostUrlPrefix.get() == null
     }
 }

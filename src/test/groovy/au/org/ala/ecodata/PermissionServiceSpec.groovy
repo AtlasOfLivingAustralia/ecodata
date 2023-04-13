@@ -360,14 +360,21 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
     }
 
-    void "Return all users with role expiring 1 month from now"() {
+    void "Return all users with role expiring 1 month from now"(String fromDate, String toDate, int expected) {
         setup:
         Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
         new UserPermission(entityId:'h1', entityType:Hub.name, userId: "1", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
         new UserPermission(entityId:'h1', entityType:Hub.name, userId: "2", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
 
         expect:
-        service.findAllByExpiryDate(date1).size() == 2
+        service.findAllByExpiryDate(DateUtil.parse(fromDate), DateUtil.parse(toDate)).size() == expected
+
+        where:
+        fromDate | toDate | expected
+        "2022-02-12T00:00:00Z" | "2022-02-12T00:00:00Z" | 2
+        "2022-01-12T00:00:00Z" | "2022-03-12T00:00:00Z" | 2
+        "2022-02-10T00:00:00Z" | "2022-02-11T00:00:00Z" | 0
+        "2022-02-13T00:00:00Z" | "2022-03-10T00:00:00Z" | 0
 
     }
 

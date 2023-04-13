@@ -778,8 +778,18 @@ class PermissionService {
      * Returns a list of permissions that have an expiry date greater than or equal to the
      * supplied date
      */
-    List<UserPermission> findAllByExpiryDate(Date date = new Date()) {
-        UserPermission.findAllByExpiryDateGreaterThanEqualsAndStatusNotEqual(date, DELETED)
+    List<UserPermission> findAllByExpiryDate(Date fromDate, Date toDate) {
+        List permissions
+        if (!fromDate) {
+            permissions = UserPermission.findAllByExpiryDateLessThanAndStatusNotEqual(toDate, DELETED)
+        }
+        else if (!toDate) {
+            permissions = UserPermission.findAllByExpiryDateGreaterThanEqualsAndStatusNotEqual(fromDate, DELETED)
+        }
+        else {
+            permissions = UserPermission.findAllByExpiryDateBetweenAndStatusNotEqual(fromDate, toDate, DELETED)
+        }
+        permissions
     }
 
 }

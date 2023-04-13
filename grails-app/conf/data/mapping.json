@@ -7,7 +7,9 @@
         "projectId" : {
           "type" : "keyword"
         },
-
+        "bulkImportId" : {
+          "type" : "keyword"
+        },
         "projects" : {
           "type" : "keyword"
         },
@@ -281,6 +283,9 @@
         },
         "isExternal":{
           "type":"boolean"
+        },
+        "containsActivity": {
+          "type": "boolean"
         },
         "externalId": {
           "type":"keyword"
