@@ -116,7 +116,7 @@ class ManagementUnit {
             reportConfig += config.projectReports?.collect {
                 [:] + it + [report:"projectReport"]
             }
-    }
+        }
         return reportConfig
     }
 
