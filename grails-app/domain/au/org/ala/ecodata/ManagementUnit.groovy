@@ -110,17 +110,11 @@ class ManagementUnit {
     def getReportConfig() {
         def reportConfig = []
         if(config) {
-            if(config.managementUnitReports) {
-                config.managementUnitReports.each {
-                    it.report = "managementUnitReport"
-                }
-                reportConfig.addAll(config.managementUnitReports)
+            reportConfig += config.managementUnitReports?.collect {
+                [:] + it + [report:"managementUnitReport"]
             }
-            if(config.projectReports) {
-                config.projectReports.each {
-                    it.report = "projectReport"
-                }
-                reportConfig.addAll(config.projectReports)
+            reportConfig += config.projectReports?.collect {
+                [:] + it + [report:"projectReport"]
             }
         }
         return reportConfig
