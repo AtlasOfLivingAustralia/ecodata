@@ -106,7 +106,7 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
     implementation 'org.codehaus.groovy:groovy-dateutil:3.0.8'
 
-    implementation "org.grails.plugins:ala-auth-plugin:$alaSecurityLibsVersion"
+    implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
     implementation "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
     implementation "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
     implementation "au.org.ala:userdetails-service-client:$alaSecurityLibsVersion"
