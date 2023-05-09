@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
@@ -7,15 +8,23 @@ import groovy.json.JsonSlurper
 import spock.lang.Ignore
 import spock.lang.Specification
 
-class ActivityFormServiceSpec extends Specification implements ServiceUnitTest<ActivityFormService>, DataTest {
+class ActivityFormServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityFormService> {
 
     MetadataService metadataService = Mock(MetadataService)
 
     void setup() {
         service.metadataService = metadataService
-        mockDomain(Score)
-        mockDomain(ActivityForm)
+        deleteData()
+    }
 
+    void cleanup() {
+        deleteData()
+    }
+
+    private void deleteData() {
+        ActivityForm.findAll().each {
+            it.delete(flush:true, failOnError:true)
+        }
     }
 
     def "Activity forms cannot be saved without the mandatory fields"() {
@@ -334,8 +343,6 @@ class ActivityFormServiceSpec extends Specification implements ServiceUnitTest<A
         ]
     }
 
-    /** The critera causes a casting issue with MongoStaticApi */
-    @Ignore
     def "The ActivityFormService provides a search method"() {
         setup:
         ActivityForm form = new ActivityForm(name: 'test', formVersion: 1, supportsSites: true, supportsPhotoPoints: true, type: 'Activity')
