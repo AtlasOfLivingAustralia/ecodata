@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 /**
  * Processes requests related to activity forms.
@@ -235,5 +236,21 @@ class ActivityFormService {
             property = property.substring(prefixToRemove.size())
         }
         property
+    }
+
+    List<ActivityForm> search(Map searchCriteria, Map options = null) {
+        BuildableCriteria criteria = ActivityForm.createCriteria()
+        Closure action = {
+            ne("status", Status.DELETED)
+            searchCriteria.each { prop, value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                } else {
+                    eq(prop, value)
+                }
+            }
+        }
+        options ? criteria.list(options, action) : criteria.list(action)
     }
 }

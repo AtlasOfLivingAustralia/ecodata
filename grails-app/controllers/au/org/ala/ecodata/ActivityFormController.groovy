@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import org.apache.http.HttpStatus
 
 /**
  * Responds to requests related to activity forms in ecodata.
@@ -27,6 +28,22 @@ class ActivityFormController {
             activityFormService.addScoreInformationToFormConfiguration(form)
         }
         respond form
+    }
+
+    /**
+     * Returns ActivityForms that match the supplied search criteria
+     */
+    List<ActivityForm> search() {
+        Map searchCriteria = request.JSON
+        if (!searchCriteria) {
+            respond ([status:HttpStatus.SC_BAD_REQUEST], [message:"At least one criteria must be supplied"])
+            return
+        }
+        Map options = null
+        if (searchCriteria.options) {
+            options = searchCriteria.remove('options')
+        }
+        respond activityFormService.search(searchCriteria, options)
     }
 
     /**
