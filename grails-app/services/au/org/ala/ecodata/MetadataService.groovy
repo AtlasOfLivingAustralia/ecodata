@@ -135,8 +135,32 @@ class MetadataService {
         // Remove deprecated activities
         activities = activities.findAll {!it.status || it.status == ACTIVE}
 
-        Map byCategory = [:]
+        groupActivities(activities)
+    }
 
+    /**
+     * Returns a Map of activity types grouped by category.
+     * @param programId Most of the legacy projects are updated recently to insert programId (see github #2741)
+     * @return a Map, key: String, value: List of name, description for each activity in the category
+     */
+    Map activitiesListByProgramId(String programId) {
+        Map config = Program.findByProgramId(programId)?.config
+        List<String> activities = config.activities.collect{it.name}
+
+        List<ActivityForm> forms = activityFormService.search(category:activities)
+        List results = forms.collect {[name:it.name, category:it.category, type:it.type, description:it.description, status:it.status]}
+        results = results.findAll {!it.status || it.status == ACTIVE}
+
+        groupActivities(results)
+    }
+
+    /**
+     * Group by the activity category field, falling back on a default grouping of activity or assessment.
+     * @param activities
+     * @return a Map
+     */
+    private def groupActivities(List activities) {
+        Map byCategory = [:]
         // Group by the activity category field, falling back on a default grouping of activity or assessment.
         activities.each {
             def category = it.category?: it.type == 'Activity' ? 'Activities' : 'Assessment'
@@ -146,7 +170,7 @@ class MetadataService {
             def description = messageSource.getMessage("api.${it.name}.description", null, "", Locale.default)
             byCategory[category] << [name:it.name, type:it.type, description:description]
         }
-        byCategory
+        return byCategory
     }
 
     def programsModel() {
