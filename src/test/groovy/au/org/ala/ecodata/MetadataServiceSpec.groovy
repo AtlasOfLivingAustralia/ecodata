@@ -5,11 +5,14 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
 
 class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService> {
 
     WebService webService = Mock(WebService)
     SettingService settingService = Mock(SettingService)
+    ActivityFormService activityFormService = Mock(ActivityFormService)
 
     def setup() {
         service.grailsApplication = grailsApplication
@@ -20,6 +23,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         grailsApplication.config.app.facets.geographic.special = [:]
         service.settingService = settingService
         service.webService = webService
+        service.activityFormService = activityFormService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -29,6 +33,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         Service.findAll().each { it.delete() }
         Score.findAll().each{ it.delete() }
         ActivityForm.findAll().each{ it.delete() }
+        Program.findAll().each { it.delete() }
     }
 
     private void setupServices() {
@@ -39,6 +44,13 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
         }
 
+    }
+
+    private def createActivity(props) {
+        Activity.withNewTransaction {
+            Activity activity = new Activity(props)
+            activity.save(failOnError: true, flush: true)
+        }
     }
 
     void "getGeographicFacetConfig should correctly identify the facet name for a field id and whether it is grouped"(String fid, boolean grouped, String groupName) {
@@ -133,6 +145,52 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
         then:
         forms.collect{it.name } == ['test', 'abc', 'abc']
+
+    }
+
+    def "Get the activities from program config"() {
+        setup:
+        JSONArray jsonArrayActivities = new JSONArray()
+        JSONObject jsonObjectActivity = new JSONObject()
+        jsonObjectActivity.put("name","Administration, management & reporting")
+        jsonArrayActivities.push(jsonObjectActivity)
+
+        String programId = '123'
+        Program program = new Program(programId:programId, name: 'test 123', description: 'description 1',
+            config:[excludes:["excludes",["DATA_SETS", "MERI_PLAN"]], projectReports:["reportType":"Activity"], activities:jsonArrayActivities])
+        program.save(flush:true, failOnError: true)
+
+
+        List activityForms = new ArrayList()
+        activityForms.add(new ActivityForm(name: 'test', formVersion: 1, supportsSites: true, supportsPhotoPoints: true, type: 'Activity'))
+
+        when:
+        Map result = service.activitiesListByProgramId(programId)
+
+        then:
+        1 * activityFormService.search(_) >> activityForms
+        result != [:]
+
+    }
+
+    def "Program config has no activities"() {
+        setup:
+        Program.findAll().each { it.delete() }
+        String programId = '456'
+        Program program = new Program(programId:programId, name: 'test 123', description: 'description 1',
+            config:[excludes:["excludes",["DATA_SETS", "MERI_PLAN"]], projectReports:["reportType":"Activity"]])
+        program.save(flush:true, failOnError: true)
+
+
+        List activityForms = new ArrayList()
+        activityForms.add(new ActivityForm(name: 'test', formVersion: 1, supportsSites: true, supportsPhotoPoints: true, type: 'Activity'))
+
+        when:
+        Map result = service.activitiesListByProgramId(programId)
+
+        then:
+        1 * activityFormService.search(_) >> []
+        result == [:]
 
     }
 
