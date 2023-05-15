@@ -46,13 +46,6 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     }
 
-    private def createActivity(props) {
-        Activity.withNewTransaction {
-            Activity activity = new Activity(props)
-            activity.save(failOnError: true, flush: true)
-        }
-    }
-
     void "getGeographicFacetConfig should correctly identify the facet name for a field id and whether it is grouped"(String fid, boolean grouped, String groupName) {
 
         expect:
