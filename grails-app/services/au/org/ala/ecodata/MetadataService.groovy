@@ -150,9 +150,6 @@ class MetadataService {
         List forms = activityFormService.search(category:activities)
         forms = forms.findAll{it.publicationStatus == PublicationStatus.PUBLISHED}
         List results = forms.collect {[name:it.name, category:it.category, type:it.type, description:it.description, status:it.status]}
-
-        results = results.findAll {!it.status || it.status == ACTIVE}
-
         groupActivities(results)
     }
 
