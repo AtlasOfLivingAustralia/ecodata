@@ -153,9 +153,18 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
             config:[excludes:["excludes",["DATA_SETS", "MERI_PLAN"]], projectReports:["reportType":"Activity"], activities:jsonArrayActivities])
         program.save(flush:true, failOnError: true)
 
+        ActivityForm form1 = new ActivityForm(name: 'test1', formVersion: 1, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.DRAFT)
+        form1.save(flush: true, failOnError: true)
+        ActivityForm form2 = new ActivityForm(name: 'test2', formVersion: 2, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.DRAFT)
+        form2.save(flush: true, failOnError: true)
+        ActivityForm form3 = new ActivityForm(name: 'test3', formVersion: 3, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.PUBLISHED)
+        form3.save(flush: true, failOnError: true)
+
 
         List activityForms = new ArrayList()
-        activityForms.add(new ActivityForm(name: 'test', formVersion: 1, supportsSites: true, supportsPhotoPoints: true, type: 'Activity'))
+        activityForms.add(form1)
+        activityForms.add(form2)
+        activityForms.add(form3)
 
         when:
         Map result = service.activitiesListByProgramId(programId)
