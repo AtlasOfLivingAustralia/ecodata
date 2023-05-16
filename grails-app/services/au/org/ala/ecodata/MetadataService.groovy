@@ -145,10 +145,8 @@ class MetadataService {
      */
     Map activitiesListByProgramId(String programId) {
         Map config = Program.findByProgramId(programId)?.config
-        List<String> activities = config?.activities.collect{it.name}
-
-        List forms = activityFormService.search(category:activities)
-        forms = forms.findAll{it.publicationStatus == PublicationStatus.PUBLISHED}
+        List<String> activities = config?.activities?.collect{it.name}
+        List forms = activityFormService.search(publicationStatus:PublicationStatus.PUBLISHED,category:activities)
         List results = forms.collect {[name:it.name, category:it.category, type:it.type, description:it.description, status:it.status]}
         groupActivities(results)
     }
