@@ -20,6 +20,10 @@ class MetadataController {
         render metadataService.activitiesList(params.program, params.subprogram) as JSON
     }
 
+    def activitiesListByProgram() {
+        render metadataService.activitiesListByProgramId(params.programId) as JSON
+    }
+
     def programsModel() {
         render metadataService.programsModel()
     }
