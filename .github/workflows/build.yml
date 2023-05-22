@@ -42,17 +42,17 @@ jobs:
           mongodb-version: '5.0'
 
       - name: Build and run jacoco coverage report with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        uses: gradle/gradle-build-action@2.4.2
         with:
           arguments: -PenableJacoco=true jacocoTestCoverageVerification
 
       - name: Clean to remove clover instrumentation
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        uses: gradle/gradle-build-action@2.4.2
         with:
           arguments: clean
 
       - name: Publish the JAR to the repository
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        uses: gradle/gradle-build-action@2.4.2
         with:
           arguments: publish
         env:
