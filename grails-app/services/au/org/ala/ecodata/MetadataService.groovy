@@ -145,8 +145,15 @@ class MetadataService {
      */
     Map activitiesListByProgramId(String programId) {
         Map config = Program.findByProgramId(programId)?.config
-        List<String> activities = config?.activities?.collect{it.name}
-        List forms = activityFormService.search(publicationStatus:PublicationStatus.PUBLISHED,category:activities)
+        List<String> activityNames = config?.activities?.collect{it.name}
+        Map criteria = [publicationStatus:PublicationStatus.PUBLISHED]
+        // If activity names are specified, only return those activities, otherwise return all
+        if (activityNames) {
+            criteria.name = activityNames
+        }
+        List forms = activityFormService.search(criteria) ?: []
+        // The search will return forms with the same name but different version, we need to get the latest formVersion
+        forms = forms.groupBy{it.name}.collect{it.value.max{it.formVersion}}
         List results = forms.collect {[name:it.name, category:it.category, type:it.type, description:it.description, status:it.status]}
         groupActivities(results)
     }
