@@ -7,12 +7,14 @@ import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
+import org.springframework.context.MessageSource
 
 class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService> {
 
     WebService webService = Mock(WebService)
     SettingService settingService = Mock(SettingService)
     ActivityFormService activityFormService = Mock(ActivityFormService)
+    MessageSource messageSource = Mock(MessageSource)
 
     def setup() {
         service.grailsApplication = grailsApplication
@@ -24,6 +26,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         service.settingService = settingService
         service.webService = webService
         service.activityFormService = activityFormService
+        service.messageSource = messageSource
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -141,11 +144,11 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     }
 
-    def "Get the activities from program config"() {
+    def "The MetadataService can return a categorized list of activities filtered by the Program configuration"() {
         setup:
         JSONArray jsonArrayActivities = new JSONArray()
         JSONObject jsonObjectActivity = new JSONObject()
-        jsonObjectActivity.put("name","Administration, management & reporting")
+        jsonObjectActivity.put("name","test1")
         jsonArrayActivities.push(jsonObjectActivity)
 
         String programId = '123'
@@ -153,25 +156,17 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
             config:[excludes:["excludes",["DATA_SETS", "MERI_PLAN"]], projectReports:["reportType":"Activity"], activities:jsonArrayActivities])
         program.save(flush:true, failOnError: true)
 
-        ActivityForm form1 = new ActivityForm(name: 'test1', formVersion: 1, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.DRAFT)
-        form1.save(flush: true, failOnError: true)
-        ActivityForm form2 = new ActivityForm(name: 'test2', formVersion: 2, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.DRAFT)
-        form2.save(flush: true, failOnError: true)
-        ActivityForm form3 = new ActivityForm(name: 'test3', formVersion: 3, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.PUBLISHED)
-        form3.save(flush: true, failOnError: true)
+        ActivityForm form1 = new ActivityForm(name: 'test1', formVersion: 1, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.DRAFT, category:"C1")
 
-
-        List activityForms = new ArrayList()
-        activityForms.add(form1)
-        activityForms.add(form2)
-        activityForms.add(form3)
+        List activityForms = [form1]
 
         when:
         Map result = service.activitiesListByProgramId(programId)
 
         then:
-        1 * activityFormService.search(_) >> activityForms
-        result != [:]
+        1 * activityFormService.search([publicationStatus:PublicationStatus.PUBLISHED, name:["test1"]]) >> activityForms
+        1 * messageSource.getMessage("api.test1.description", null, "", Locale.default) >> "test1 description"
+        result == ["C1":[[name:form1.name, type:form1.type, description:"test1 description"]]]
 
     }
 
