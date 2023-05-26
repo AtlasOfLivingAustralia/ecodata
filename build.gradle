@@ -19,7 +19,7 @@ plugins {
     id 'jacoco'
 }
 
-version "4.2-SNAPSHOT"
+version "4.3-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 
