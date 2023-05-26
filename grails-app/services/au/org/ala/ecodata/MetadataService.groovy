@@ -144,7 +144,7 @@ class MetadataService {
      * @return a Map, key: String, value: List of name, description for each activity in the category
      */
     Map activitiesListByProgramId(String programId) {
-        Map config = Program.findByProgramId(programId)?.config
+        Map config = Program.findByProgramId(programId)?.inheritedConfig
         List<String> activityNames = config?.activities?.collect{it.name}
         Map criteria = [publicationStatus:PublicationStatus.PUBLISHED]
         // If activity names are specified, only return those activities, otherwise return all
