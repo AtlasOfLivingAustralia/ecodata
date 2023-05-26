@@ -11,6 +11,7 @@ class CommonService {
     def messageSource
 
     /**
+     * Deprecated: Use grails/spring dataBinding instead.
      * Updates all properties other than 'id' and converts date strings to BSON dates.
      *
      * Note that dates are assumed to be ISO8601 in UTC with no millisecs
@@ -21,6 +22,7 @@ class CommonService {
      * @param o the domain instance
      * @param props the properties to use
      */
+    @Deprecated
     def updateProperties(o, props, boolean overrideUpdateDate = false) throws Exception{
         assert grailsApplication
         def domainDescriptor = grailsApplication.getArtefact(DomainClassArtefactHandler.TYPE,
@@ -79,10 +81,12 @@ class CommonService {
     }
 
     /**
+     * Deprecated access of the dbo property is deprecated in GORM for mongo
      * Converts the domain object into a map of properties with no additions.
      * @param o a domain instance
      * @return map of properties
      */
+    @Deprecated
     def toBareMap(o) {
         def mapOfProperties = GormMongoUtil.extractDboProperties(o.getProperty("dbo"))
      //   def mapOfProperties = dbo.toMap()

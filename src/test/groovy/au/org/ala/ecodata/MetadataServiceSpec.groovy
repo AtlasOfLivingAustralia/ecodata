@@ -5,11 +5,16 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+import org.springframework.context.MessageSource
 
 class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService> {
 
     WebService webService = Mock(WebService)
     SettingService settingService = Mock(SettingService)
+    ActivityFormService activityFormService = Mock(ActivityFormService)
+    MessageSource messageSource = Mock(MessageSource)
 
     def setup() {
         service.grailsApplication = grailsApplication
@@ -20,6 +25,8 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         grailsApplication.config.app.facets.geographic.special = [:]
         service.settingService = settingService
         service.webService = webService
+        service.activityFormService = activityFormService
+        service.messageSource = messageSource
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -29,6 +36,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         Service.findAll().each { it.delete() }
         Score.findAll().each{ it.delete() }
         ActivityForm.findAll().each{ it.delete() }
+        Program.findAll().each { it.delete() }
     }
 
     private void setupServices() {
@@ -133,6 +141,53 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
         then:
         forms.collect{it.name } == ['test', 'abc', 'abc']
+
+    }
+
+    def "The MetadataService can return a categorized list of activities filtered by the Program configuration"() {
+        setup:
+        JSONArray jsonArrayActivities = new JSONArray()
+        JSONObject jsonObjectActivity = new JSONObject()
+        jsonObjectActivity.put("name","test1")
+        jsonArrayActivities.push(jsonObjectActivity)
+
+        String programId = '123'
+        Program program = new Program(programId:programId, name: 'test 123', description: 'description 1',
+            config:[excludes:["excludes",["DATA_SETS", "MERI_PLAN"]], projectReports:["reportType":"Activity"], activities:jsonArrayActivities])
+        program.save(flush:true, failOnError: true)
+
+        ActivityForm form1 = new ActivityForm(name: 'test1', formVersion: 1, status: Status.ACTIVE, type: 'Activity', publicationStatus: PublicationStatus.DRAFT, category:"C1")
+
+        List activityForms = [form1]
+
+        when:
+        Map result = service.activitiesListByProgramId(programId)
+
+        then:
+        1 * activityFormService.search([publicationStatus:PublicationStatus.PUBLISHED, name:["test1"]]) >> activityForms
+        1 * messageSource.getMessage("api.test1.description", null, "", Locale.default) >> "test1 description"
+        result == ["C1":[[name:form1.name, type:form1.type, description:"test1 description"]]]
+
+    }
+
+    def "Program config has no activities"() {
+        setup:
+        Program.findAll().each { it.delete() }
+        String programId = '456'
+        Program program = new Program(programId:programId, name: 'test 123', description: 'description 1',
+            config:[excludes:["excludes",["DATA_SETS", "MERI_PLAN"]], projectReports:["reportType":"Activity"]])
+        program.save(flush:true, failOnError: true)
+
+
+        List activityForms = new ArrayList()
+        activityForms.add(new ActivityForm(name: 'test', formVersion: 1, supportsSites: true, supportsPhotoPoints: true, type: 'Activity'))
+
+        when:
+        Map result = service.activitiesListByProgramId(programId)
+
+        then:
+        1 * activityFormService.search(_) >> []
+        result == [:]
 
     }
 

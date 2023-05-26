@@ -1035,8 +1035,8 @@ class ElasticSearchService {
                 }
                 // This allows all projects associated with a particular program to be excluded from indexing.
                 // This is required to allow MERIT projects to be loaded before they have been announced.
-                if (program.inhertitedConfig?.visibility) {
-                    projectMap.visibility = program.inhertitedConfig.visibility
+                if (program.inheritedConfig?.visibility) {
+                    projectMap.visibility = program.inheritedConfig.visibility
                 }
             }
             else {
