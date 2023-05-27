@@ -78,7 +78,7 @@ class ParatooService {
                 return false
             }
             Program program = Program.findByProgramId(it.programId)
-            Map config = program.getInhertitedConfig()
+            Map config = program.getInheritedConfig()
             config?.get(PROGRAM_CONFIG_PARATOO_ITEM)
         }
 
