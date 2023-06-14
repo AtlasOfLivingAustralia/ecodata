@@ -24,4 +24,8 @@ class ParatooProject {
     List<Service> findProjectServices() {
         project.findProjectServices()
     }
+
+    List<String> getMonitoringProtocolCategories() {
+        project.getMonitoringProtocolCategories()
+    }
 }

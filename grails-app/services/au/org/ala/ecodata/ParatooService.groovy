@@ -50,9 +50,17 @@ class ParatooService {
     private List findProjectProtocols(ParatooProject project) {
         log.debug "Finding protocols for ${project.id} ${project.name}"
         List<ActivityForm> protocols = []
-        project.findProjectServices().each { Service service ->
-            protocols += findServiceProtocols(service)
+
+        List monitoringProtocolCategories = project.getMonitoringProtocolCategories()
+        if (monitoringProtocolCategories) {
+            protocols += findProtocolsByCategories(monitoringProtocolCategories)
         }
+        // Disabling the service -> protocol mapping for now as they are directly assignable via the
+        // MERI plan
+        //
+        //        project.findProjectServices().each { Service service ->
+        //            protocols += findServiceProtocols(service)
+        //        }
         // TODO a future implementation could also find ProjectActivites configured with
         // Paratoo activity types to support BioCollect
         protocols
@@ -66,6 +74,11 @@ class ParatooService {
             protocols << form
         }
         protocols
+    }
+
+    private List findProtocolsByCategories(List categories) {
+        List<ActivityForm> forms = ActivityForm.findAllByCategoryInListAndExternalAndStatusNotEqual(categories, true, Status.DELETED)
+        forms
     }
 
     private List<ParatooProject> findUserProjects(String userId) {
@@ -165,7 +178,7 @@ class ParatooService {
 
     private void createOrUpdateProtocolServiceMapping(Map serviceProtocolMapping, Map protocol) {
 
-        List serviceIds = serviceProtocolMapping[(protocol.module)] ?: serviceProtocolMapping[(protocol.id as String)]
+        List serviceIds = serviceProtocolMapping[(protocol.attributes.module)] ?: serviceProtocolMapping[(protocol.id as String)]
         println serviceIds
         for (int serviceId : serviceIds) {
 
@@ -199,7 +212,7 @@ class ParatooService {
     }
 
     Map syncProtocolsFromParatoo() {
-        String paratooCoreUrlPrefix = grailsApplication.config.getProperty('paratoo.core.baseUrl') ?: 'http://localhost:1337'
+        String paratooCoreUrlPrefix = grailsApplication.config.getProperty('paratoo.core.baseUrl')
         String url = paratooCoreUrlPrefix+PARATOO_PROTOCOL_PATH
         Map response = webService.getJson(url, null,  null, false)
         syncParatooProtocols(response?.data)
@@ -217,7 +230,10 @@ class ParatooService {
 
     private ParatooProject mapProject(Project project, UserPermission permission, List<Site> sites) {
         Site projectArea = sites.find{it.type == Site.TYPE_PROJECT_AREA}
-        Map projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
+        Map projectAreaGeoJson = null
+        if (projectArea) {
+            projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
+        }
 
         Map attributes = [
                 id:project.projectId,
