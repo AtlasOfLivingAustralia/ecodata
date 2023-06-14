@@ -124,7 +124,7 @@ class Project {
 
     static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
 
-    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
     Date getActualStartDate() {
         if (actualStartDate) {
@@ -282,10 +282,10 @@ class Project {
 
     /** Used to find relevant TERN/paratoo monitoring protocols for a project */
     List<String> getMonitoringProtocolCategories() {
-        List baselineProtocols = custom?.details?.baseline?.rows?.collect{it.protocols}.flatten()
-        List monitoringProtocols = custom?.details?.monitoring?.rows?.collect{it.protocols}.flatten()
+        List baselineProtocols = custom?.details?.baseline?.rows?.collect{it.protocols}?.flatten()
+        List monitoringProtocols = custom?.details?.monitoring?.rows?.collect{it.protocols}?.flatten()
 
-        (baselineProtocols + monitoringProtocols).unique().findAll{it}
+        (baselineProtocols ?: [] + monitoringProtocols ?:[] ).unique().findAll{it}
     }
 
 }

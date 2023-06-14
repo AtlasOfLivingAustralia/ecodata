@@ -71,7 +71,7 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
     }
 
     private void setupData() {
-        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1", custom:[details:[serviceIds:[1]]])
+        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1", custom:[details:[serviceIds:[1], baseline:[rows:[[protocols:['protocol category 1']]]]]])
         project.save(failOnError:true, flush:true)
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId:'p1', entityType:Project.name)
         userPermission.save(failOnError:true, flush:true)
@@ -86,7 +86,7 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:2, formName:"aParatooForm", sectionName:null)])
         service.save(failOnError:true, flush:true)
 
-        ActivityForm activityForm = new ActivityForm(name:"aParatooForm", externalId: 2, type:'Paratoo')
+        ActivityForm activityForm = new ActivityForm(name:"aParatooForm", externalId: 2, type:'Paratoo', category:'protocol category 1', external: true)
         activityForm.save(failOnError:true, flush:true)
     }
 }
