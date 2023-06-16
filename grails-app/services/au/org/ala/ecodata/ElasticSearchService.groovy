@@ -1660,6 +1660,17 @@ class ElasticSearchService {
                 }
                 break
 
+            case 'projectactivityrecords':
+                if (projectActivityId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ')'
+                    }
+                    else {
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                    }
+                }
+                break
+
             case 'myprojectrecords':
                 if (projectId) {
                     if (userId) {
