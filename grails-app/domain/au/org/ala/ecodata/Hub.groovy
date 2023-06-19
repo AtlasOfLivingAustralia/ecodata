@@ -64,6 +64,9 @@ class Hub {
     /** The URL prefix to use when creating a URL a user can use to download a report */
     String downloadUrlPrefix
 
+    /** Fathom analytics site id for hub specific analytics. If not specified, BioCollect will use the default site id. */
+    String fathomSiteId
+
     AccessManagementOptions accessManagementOptions
 
     static mapping = {
@@ -89,6 +92,7 @@ class Hub {
         emailReplyToAddress nullable: true
         downloadUrlPrefix nullable: true
         accessManagementOptions nullable: true
+        fathomSiteId nullable: true
     }
 
     static embedded = ['mapLayersConfig', 'accessManagementOptions']
