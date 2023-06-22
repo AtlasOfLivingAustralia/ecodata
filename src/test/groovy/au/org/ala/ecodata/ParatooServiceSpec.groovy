@@ -48,6 +48,7 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
+        projects[0].protocols*.name == ["aParatooForm 1", "aParatooForm 2", "aParatooForm 3"]
 
         and:
         1 * siteService.geometryAsGeoJson({it.siteId == 's1'}) >> DUMMY_POLYGON
@@ -71,7 +72,12 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
     }
 
     private void setupData() {
-        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1", custom:[details:[serviceIds:[1], baseline:[rows:[[protocols:['protocol category 1']]]]]])
+        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1",
+                custom:[details:[
+                        serviceIds:[1],
+                        baseline:[rows:[[protocols:['protocol category 1']]]],
+                        monitoring:[rows:[[protocols:['protocol category 2', 'protocol category 3']]]]
+                ]])
         project.save(failOnError:true, flush:true)
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId:'p1', entityType:Project.name)
         userPermission.save(failOnError:true, flush:true)
@@ -86,7 +92,11 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:2, formName:"aParatooForm", sectionName:null)])
         service.save(failOnError:true, flush:true)
 
-        ActivityForm activityForm = new ActivityForm(name:"aParatooForm", externalId: 2, type:'Paratoo', category:'protocol category 1', external: true)
+        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", externalId: 2, type:'Paratoo', category:'protocol category 1', external: true)
+        activityForm.save(failOnError:true, flush:true)
+        activityForm = new ActivityForm(name:"aParatooForm 2 ", externalId: 3, type:'Paratoo', category:'protocol category 2', external: true)
+        activityForm.save(failOnError:true, flush:true)
+        activityForm = new ActivityForm(name:"aParatooForm 3", externalId: 4, type:'Paratoo', category:'protocol category 3', external: true)
         activityForm.save(failOnError:true, flush:true)
     }
 }

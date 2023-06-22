@@ -123,8 +123,6 @@ class ParatooController {
      * This method exists so the validateToken method can call it to get the framework to validate the JWT.
      * If it is reached, it always returns OK
      */
-    @GET
-    @Operation(description = "", responses = [@ApiResponse(responseCode = "200")])
     def noop() {
         respond([statusCode:HttpStatus.SC_OK])
     }
@@ -156,7 +154,7 @@ class ParatooController {
      * Used for both read and write - if we need to take into account
      * read only users we need to separate these calls
      */
-        private void protocolCheck(String projectId, Integer protocolId, Closure checkMethod) {
+    private void protocolCheck(String projectId, Integer protocolId, Closure checkMethod) {
         if (!projectId || !protocolId) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
@@ -232,14 +230,10 @@ class ParatooController {
         respond([isSubmitted:(projectWithMatchingDataSet != null)])
     }
 
-    @GET
-    @Operation(description = "", responses = [@ApiResponse(responseCode = "204")])
     def options() {
         respond([statusCode:HttpStatus.SC_NO_CONTENT])
     }
-
-    @GET
-    @Operation(description = "", responses = [@ApiResponse(responseCode = "500")])
+    
     def handleException(Exception e) {
         log.error("An uncaught error was thrown processing: ${request.uri}", e)
         error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "An error was encountered processing the request.")

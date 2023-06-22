@@ -36,7 +36,7 @@ class ParatooService {
      * @param includeProtocols
      * @return
      */
-    List<ParatooProject> userProjects(String userId, boolean includeProtocols = true) {
+    List<ParatooProject> userProjects(String userId) {
 
         List<ParatooProject> projects = findUserProjects(userId)
 
@@ -54,24 +54,6 @@ class ParatooService {
         List monitoringProtocolCategories = project.getMonitoringProtocolCategories()
         if (monitoringProtocolCategories) {
             protocols += findProtocolsByCategories(monitoringProtocolCategories)
-        }
-        // Disabling the service -> protocol mapping for now as they are directly assignable via the
-        // MERI plan
-        //
-        //        project.findProjectServices().each { Service service ->
-        //            protocols += findServiceProtocols(service)
-        //        }
-        // TODO a future implementation could also find ProjectActivites configured with
-        // Paratoo activity types to support BioCollect
-        protocols
-    }
-
-    private List findServiceProtocols(Service service) {
-        List<ActivityForm> protocols = []
-        List<Integer> externalServiceForms = service.outputs.findAll { it.externalId }.collect { it.externalId }
-        externalServiceForms.each {
-            ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(it, Status.DELETED)
-            protocols << form
         }
         protocols
     }
