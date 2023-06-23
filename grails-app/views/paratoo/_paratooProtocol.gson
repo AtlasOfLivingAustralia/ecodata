@@ -1,0 +1,11 @@
+import au.org.ala.ecodata.ActivityForm
+
+model {
+    ActivityForm protocol
+}
+
+json {
+    id protocol.externalId
+    name protocol.name
+    version protocol.formVersion as Integer
+}
