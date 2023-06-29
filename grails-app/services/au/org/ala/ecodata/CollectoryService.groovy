@@ -184,10 +184,6 @@ class CollectoryService {
                 }
             }
         }
-        else if (project.dataResourceId) {
-            // clear dataResourceId field
-            projectService.update([dataResourceId: null, dataProviderId: null], project.projectId, false)
-        }
     }
 
     def updateCollectoryEntryForProjects (Boolean isBiocollect) {
