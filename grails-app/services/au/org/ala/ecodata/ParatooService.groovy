@@ -14,7 +14,6 @@ class ParatooService {
 
     static final String PARATOO_PROTOCOL_PATH = '/api/protocols'
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'Protocol'
-    static final String PARTOO_SERVICE_MAPPING_KEY = 'paratoo.service_protocol_mapping'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
 
@@ -23,6 +22,7 @@ class ParatooService {
     WebService webService
     ProjectService projectService
     SiteService siteService
+    PermissionService permissionService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -47,7 +47,7 @@ class ParatooService {
         projects.findAll{it.protocols}
     }
 
-    private List findProjectProtocols(ParatooProject project) {
+    private static List findProjectProtocols(ParatooProject project) {
         log.debug "Finding protocols for ${project.id} ${project.name}"
         List<ActivityForm> protocols = []
 
@@ -58,35 +58,44 @@ class ParatooService {
         protocols
     }
 
-    private List findProtocolsByCategories(List categories) {
+    private static List findProtocolsByCategories(List categories) {
         List<ActivityForm> forms = ActivityForm.findAllByCategoryInListAndExternalAndStatusNotEqual(categories, true, Status.DELETED)
         forms
     }
 
     private List<ParatooProject> findUserProjects(String userId) {
         List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
-        List projects = Project.findAllByProjectIdInListAndStatus(permissions.collect{it.entityId}, Status.ACTIVE)
 
-        // Filter projects that aren't in a program configured to support paratoo
-        projects = projects.findAll {
-            if (!it.programId) {
+
+        // If the permission has been set as a favourite then delegate to the Hub permission
+        // so that "readOnly" access for a hub is supported, and we don't return projects that a user
+        // has only marked as starred without having hub level permissions
+        Map projectAccessLevel = permissions?.collectEntries { UserPermission permission ->
+            String projectId = permission.entityId
+            if (permission.accessLevel == AccessLevel.starred) {
+                permission = permissionService.findParentPermission(permission)
+            }
+            // Return a Map of projectId to accessLevel
+            [(projectId):permission?.accessLevel]
+        }
+
+        List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevel.keySet()), Status.ACTIVE)
+
+        // Filter projects that aren't in a program configured to support paratoo or don't have permission
+        projects = projects.findAll { Project project ->
+            if (!project.programId) {
                 return false
             }
-            Program program = Program.findByProgramId(it.programId)
+
+            Program program = Program.findByProgramId(project.programId)
             Map config = program.getInheritedConfig()
-            config?.get(PROGRAM_CONFIG_PARATOO_ITEM)
+            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevel[project.projectId]
         }
 
         List paratooProjects = projects.collect { Project project ->
             List<Site> sites = siteService.sitesForProject(project.projectId)
-            UserPermission permission = permissions.find{it.entityId == project.projectId}
-            // If the permission has been set as a favourite then delegate to the Hub permission
-            // so that "readOnly" access for a hub is supported.
-            if (permission.accessLevel == AccessLevel.starred) {
-                Hub hub = Hub.findByHubId(project.getHubId())
-                permission = permissions.find{it.entityId == hub.hubId}
-            }
-            mapProject(project, permission, sites)
+            AccessLevel accessLevel = projectAccessLevel[project.projectId]
+            mapProject(project, accessLevel, sites)
         }
         paratooProjects
 
@@ -127,8 +136,6 @@ class ParatooService {
 
     private Map syncParatooProtocols(List<Map> protocols) {
 
-        Map serviceProtocolMapping = JSON.parse(settingService.getSetting(PARTOO_SERVICE_MAPPING_KEY))
-
         Map result = [errors:[], messages:[]]
         protocols.each { Map protocol ->
             ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(protocol.id, Status.DELETED)
@@ -150,41 +157,9 @@ class ParatooService {
                 result.errors << form.errors
                 log.warn "Error saving form with id: "+protocol.id+", name: "+protocol.attributes?.name
             }
-            else {
-                createOrUpdateProtocolServiceMapping(serviceProtocolMapping, protocol)
-            }
         }
         result
 
-    }
-
-    private void createOrUpdateProtocolServiceMapping(Map serviceProtocolMapping, Map protocol) {
-
-        List serviceIds = serviceProtocolMapping[(protocol.attributes.module)] ?: serviceProtocolMapping[(protocol.id as String)]
-        println serviceIds
-        for (int serviceId : serviceIds) {
-
-            Service service = Service.findByLegacyId(serviceId)
-            if (service) {
-                ServiceForm serviceForm = service.outputs.find { it.externalId == protocol.id }
-                if (!serviceForm) {
-                    serviceForm = new ServiceForm(formName: PARATOO_PROTOCOL_FORM_TYPE, externalId: protocol.id)
-                    log.info "Attaching protocol ${protocol.id}, name:${protocol.attributes?.name} to Service: ${service.name}"
-                    service.outputs << serviceForm
-                    service.markDirty('outputs')
-                    service.save()
-
-                    if (service.hasErrors()) {
-                        log.warn("Error saving service ${service.name}")
-                        log.warn service.errors
-                    }
-                } else {
-                    log.info "Protocol ${protocol.id}, name:${protocol.attributes?.name} already attached to Service: ${service.name}. No action required"
-                }
-            } else {
-                log.warn("Unable to find service with id ${serviceId} for protocol ${protocol.id}")
-            }
-        }
     }
 
     /** This is a backup method in case the protocols aren't available online */
@@ -200,7 +175,7 @@ class ParatooService {
         syncParatooProtocols(response?.data)
     }
 
-    private void mapProtocolToActivityForm(Map protocol, ActivityForm form) {
+    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form) {
         form.name = protocol.attributes.name
         form.formVersion = protocol.attributes.version
         form.type = PARATOO_PROTOCOL_FORM_TYPE
@@ -210,7 +185,7 @@ class ParatooService {
         form.description = protocol.attributes.description
     }
 
-    private ParatooProject mapProject(Project project, UserPermission permission, List<Site> sites) {
+    private ParatooProject mapProject(Project project, AccessLevel accessLevel, List<Site> sites) {
         Site projectArea = sites.find{it.type == Site.TYPE_PROJECT_AREA}
         Map projectAreaGeoJson = null
         if (projectArea) {
@@ -220,7 +195,7 @@ class ParatooService {
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
-                accessLevel: permission.accessLevel,
+                accessLevel: accessLevel,
                 project:project,
                 projectArea: projectAreaGeoJson,
                 plots: sites.findAll{it.type == Site.TYPE_WORKS_AREA}]
@@ -228,7 +203,7 @@ class ParatooService {
 
     }
 
-    private Map mapParatooCollection(ParatooCollection collection, Project project) {
+    private static Map mapParatooCollection(ParatooCollection collection, Project project) {
         Map dataSet = [:]
         dataSet.dataSetId = collection.mintedCollectionId
         dataSet.grantId = project.grantId
