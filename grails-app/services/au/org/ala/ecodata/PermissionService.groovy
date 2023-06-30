@@ -792,4 +792,16 @@ class PermissionService {
         permissions
     }
 
+    /**
+     * Given a UserPermission, finds the user permission for the owning hub of the entity described in the permission.
+     */
+    UserPermission findParentPermission(UserPermission userPermission) {
+        String hubId = findOwningHubId(userPermission)
+        UserPermission parentPermission = null
+        if (hubId) {
+            parentPermission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqual(userPermission.userId, hubId, Hub.name, DELETED)
+        }
+        parentPermission
+    }
+
 }

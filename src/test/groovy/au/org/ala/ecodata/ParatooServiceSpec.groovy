@@ -26,10 +26,12 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         mockDomain(Service)
         mockDomain(UserPermission)
         mockDomain(Program)
+        mockDomain(Hub)
         setupData()
 
         service.siteService = siteService
         service.projectService = projectService
+        service.permissionService = new PermissionService() // Using the real permission service for this test
     }
 
     def cleanup() {
@@ -55,6 +57,43 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
 
     }
 
+    void "Starred projects won't be included unless the user has a hub permission"() {
+
+        setup:
+        UserPermission userPermission = UserPermission.findByUserId(userId)
+        userPermission.accessLevel = AccessLevel.starred
+        userPermission.save(flush:true, failOnError:true)
+
+        when:
+        List<ParatooProject> projects = service.userProjects(userId)
+
+        then:
+        projects.size() == 0
+
+        when: "The user has the MERIT read only role"
+        UserPermission meritReadOnly = new UserPermission(userId:userId, entityId:'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel:AccessLevel.readOnly)
+        meritReadOnly.save(flush:true, failOnError:true)
+        projects = service.userProjects(userId)
+
+        then:
+        projects.size() == 1
+    }
+
+    void "If the user has starred a project and also has a role, the role will be used"() {
+
+            setup:
+            UserPermission userPermission = new UserPermission(userId:userId, entityId:'p1', entityType: 'au.org.ala.ecodata.Project', accessLevel:AccessLevel.starred)
+            userPermission.save(flush:true, failOnError:true)
+
+            when:
+            List<ParatooProject> projects = service.userProjects(userId)
+
+            then:
+            projects.size() == 1
+            projects[0].accessLevel == AccessLevel.admin
+
+    }
+
     void "The service can create a data set from a submitted collection"() {
         setup:
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
@@ -72,7 +111,9 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
     }
 
     private void setupData() {
-        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1",
+        Hub hub = new Hub(hubId:"merit", urlPath:"merit")
+        hub.save(failOnError:true, flush:true)
+        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1", hubId:"merit",
                 custom:[details:[
                         serviceIds:[1],
                         baseline:[rows:[[protocols:['protocol category 1']]]],
