@@ -79,6 +79,21 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         projects.size() == 1
     }
 
+    void "If the user has starred a project and also has a role, the role will be used"() {
+
+            setup:
+            UserPermission userPermission = new UserPermission(userId:userId, entityId:'p1', entityType: 'au.org.ala.ecodata.Project', accessLevel:AccessLevel.starred)
+            userPermission.save(flush:true, failOnError:true)
+
+            when:
+            List<ParatooProject> projects = service.userProjects(userId)
+
+            then:
+            projects.size() == 1
+            projects[0].accessLevel == AccessLevel.admin
+
+    }
+
     void "The service can create a data set from a submitted collection"() {
         setup:
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)

@@ -70,16 +70,23 @@ class ParatooService {
         // If the permission has been set as a favourite then delegate to the Hub permission
         // so that "readOnly" access for a hub is supported, and we don't return projects that a user
         // has only marked as starred without having hub level permissions
-        Map projectAccessLevel = permissions?.collectEntries { UserPermission permission ->
+        Map projectAccessLevels = [:]
+        permissions?.each { UserPermission permission ->
             String projectId = permission.entityId
+            // Don't override an existing permission with a starred permission
             if (permission.accessLevel == AccessLevel.starred) {
-                permission = permissionService.findParentPermission(permission)
+                if (!projectAccessLevels[projectId]) {
+                    permission = permissionService.findParentPermission(permission)
+                    projectAccessLevels[projectId] = permission?.accessLevel
+                }
             }
-            // Return a Map of projectId to accessLevel
-            [(projectId):permission?.accessLevel]
+            else {
+                // Update the map of projectId to accessLevel
+                projectAccessLevels[projectId] = permission.accessLevel
+            }
         }
 
-        List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevel.keySet()), Status.ACTIVE)
+        List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevels.keySet()), Status.ACTIVE)
 
         // Filter projects that aren't in a program configured to support paratoo or don't have permission
         projects = projects.findAll { Project project ->
@@ -89,12 +96,12 @@ class ParatooService {
 
             Program program = Program.findByProgramId(project.programId)
             Map config = program.getInheritedConfig()
-            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevel[project.projectId]
+            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevels[project.projectId]
         }
 
         List paratooProjects = projects.collect { Project project ->
             List<Site> sites = siteService.sitesForProject(project.projectId)
-            AccessLevel accessLevel = projectAccessLevel[project.projectId]
+            AccessLevel accessLevel = projectAccessLevels[project.projectId]
             mapProject(project, accessLevel, sites)
         }
         paratooProjects
