@@ -576,8 +576,7 @@ grails.cache.config = {
 security {
     cas {
         enabled = false
-        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
-        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+        appServerName = 'http://localhost:8080' // or similar, up to the request path part
         casServerUrlPrefix = 'https://auth-test.ala.org.au/cas'
         loginUrl = 'https://auth-test.ala.org.au/cas/login'
         logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
@@ -605,6 +604,10 @@ security {
         readTimeoutMs = 20000
     }
 }
+webservice.jwt = true
+webservice['jwt-scopes'] = "ala/internal users/read ala/attrs users/read"
+webservice['client-id']='changeMe'
+webservice['client-secret'] = 'changeMe'
 
 grails.gorm.graphql.browser = true
 
@@ -613,10 +616,10 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/" //"./models/"
-        grails.hostname = "devt.ala.org.au"
+        grails.hostname = "localhost"
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
-        grails.serverURL = "http://devt.ala.org.au:8080"
+        grails.serverURL = "http://${grails.hostname}:8080"
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
@@ -632,7 +635,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.hostname = "devt.ala.org.au"
+        grails.hostname = "localhost"
         // Only for travis CI, they must be overriden by ecodata-config.properties
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
@@ -651,7 +654,7 @@ environments {
 
         wiremock.port = 8018
         security.cas.bypass = true
-        security.cas.casServerUrlPrefix="http://devt.ala.org.au:${wiremock.port}/cas"
+        security.cas.casServerUrlPrefix="http://localhost:${wiremock.port}/cas"
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
@@ -664,7 +667,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.serverURL = "http://devt.ala.org.au:8080"
+        grails.serverURL = "http://localshot:8080"
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
@@ -675,7 +678,7 @@ environments {
         wiremock.port = 8018
         security.oidc.discoveryUri = "http://localhost:${wiremock.port}/cas/oidc/.well-known"
         security.oidc.allowUnsignedIdTokens = true
-        def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
+        def casBaseUrl = "http://localhost:${wiremock.port}"
         security.cas.casServerName="${casBaseUrl}"
         security.cas.contextPath=""
         security.cas.casServerUrlPrefix="${casBaseUrl}/cas"
