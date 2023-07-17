@@ -13,6 +13,8 @@ var ScoreModel = function (score, config) {
     self.displayType = ko.observable(score.displayType);
     self.isOutputTarget = ko.observable(score.isOutputTarget);
     self.entity = ko.observable(score.entity || 'Activity');
+    self.tags = ko.observableArray(score.tags);
+    self.tagOptions = ko.observableArray(score.tags);
 
     var editorPane = document.getElementById(config.scoreEditorId);
 
@@ -45,7 +47,7 @@ var ScoreModel = function (score, config) {
 
     self.save = function () {
         var model = ko.toJS(self);
-
+        delete model.tagOptions;
         try {
             model.configuration = editor.get();
             delete model.configurationText;

@@ -34,6 +34,12 @@
         <label class="form-label">External ID:</label>  <input class="form-control" type="text" data-bind="value:externalId"/>
     </div>
 
+    <div>
+        <label class="form-label" for="tags">Tags:</label>
+        <select id="tags" multiple="multiple" class="form-control" data-bind="options:tagOptions, selectedOptions:tags">
+        </select>
+    </div>
+
     <div class="my-2">
         <label class="form-label">Display type: </label>
         <select class="form-control" data-bind="value:displayType">
@@ -63,7 +69,9 @@
     var updateScoreUrl = '${g.createLink(controller: 'admin', action:'updateScore', id:score.scoreId?:'')}';
     var editScoreUrl = '${g.createLink(action:'editScore')}';
     var model = new ScoreModel(score, {updateScoreUrl:updateScoreUrl, editScoreUrl:editScoreUrl, scoreEditorId:'score-configuration'});
+
     ko.applyBindings(model);
+    $('#tags').select2({tags:true});
 
 </asset:script>
    </body>
