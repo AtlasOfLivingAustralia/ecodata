@@ -257,7 +257,7 @@ graphiql:
 
 
 casUrl: https://auth-test.ala.org.au/cas/logout
-appUrl: http://devt.ala.org.au:8080/admin
+appUrl: http://localhost:8080/admin
 
 
 openapi:
