@@ -43,6 +43,21 @@ class PermissionService {
         return isAdmin
     }
 
+    boolean isUserEditorForOrganisation(String userId, String organisationId) {
+        boolean isEditor = false
+
+        if (userId && organisationId) {
+            List userPermissions = getUserAccessForEntity(userId, Organisation, organisationId)
+            userPermissions.each {
+                if (it.accessLevel.code >= AccessLevel.editor.code) {
+                    isEditor = true
+                }
+            }
+        }
+
+        return isEditor
+    }
+
     def isUserEditorForProject(String userId, String projectId) {
         def isEditor = false
 
