@@ -63,6 +63,13 @@
         "status": {
           "type" : "keyword"
         },
+        "organisationId": {
+          "type" : "keyword"
+        },
+        "orgIdSvcProvider": {
+          "type" : "keyword",
+          "copy_to": ["organisationId"]
+        },
         "organisationName": {
           "type" : "text",
           "copy_to": ["organisationFacet", "organisationSort"]
@@ -94,6 +101,10 @@
             "logo": {
               "index": false,
               "type": "text"
+            },
+            "organisationId": {
+                "type": "keyword",
+                "copy_to": ["organisationId"]
             }
           }
         },
