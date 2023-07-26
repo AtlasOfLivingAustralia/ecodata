@@ -201,6 +201,9 @@ quartz:
             skipUpdateCheck: true
 
 environments:
+    development:
+        grails.config.locations:
+            - ~/data/ecodata/config/ecodata-config.properties
     test:
         quartz:
             autoStartup: false
