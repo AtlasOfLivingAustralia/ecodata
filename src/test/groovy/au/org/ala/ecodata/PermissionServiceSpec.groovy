@@ -407,4 +407,25 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         '3'    | 'p1'       | false               | [AccessLevel.moderator, AccessLevel.admin]
         '2'    | 'p2'       | true                | [AccessLevel.moderator, AccessLevel.admin]
     }
+
+    def "The isUserEditorForOrganisation method should return true for admin,caseManager and editor roles"() {
+        setup:
+        new UserPermission(entityId:'o1', entityType:Organisation.name, userId: '2', accessLevel:AccessLevel.admin.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'o1', entityType:Organisation.name, userId: '1', accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'o1', entityType:Organisation.name, userId: '3', accessLevel:AccessLevel.caseManager.name()).save(flush:true, failOnError: true)
+        when:
+        Boolean permission = service.isUserEditorForOrganisation(userId, organisationId)
+
+        then:
+        permission == expectedReturnValue
+
+        where:
+        userId | organisationId | expectedReturnValue
+        null   | null           | false
+        ''     | ''             | false
+        '1'    | 'o1'           | true
+        '2'    | 'o1'           | true
+        '3'    | 'o1'           | true
+        '4'    | 'o1'           | false
+    }
 }
