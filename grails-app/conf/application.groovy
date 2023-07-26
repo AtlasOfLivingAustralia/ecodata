@@ -605,7 +605,7 @@ security {
     }
 }
 webservice.jwt = true
-webservice['jwt-scopes'] = "ala/internal users/read ala/attrs users/read"
+webservice['jwt-scopes'] = "ala/internal users/read ala/attrs"
 webservice['client-id']='changeMe'
 webservice['client-secret'] = 'changeMe'
 
@@ -615,7 +615,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/" //"./models/"
+        app.external.model.dir = "~/data/ecodata/models/" //"./models/"
         grails.hostname = "localhost"
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
@@ -623,7 +623,7 @@ environments {
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
-        temp.dir="/data/ecodata/tmp"
+        temp.dir="~/data/ecodata/tmp"
     }
     test {
         // Override disk store so the travis build doesn't fail.
@@ -667,7 +667,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.serverURL = "http://localshot:8080"
+        grails.serverURL = "http://localhost:8080"
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
