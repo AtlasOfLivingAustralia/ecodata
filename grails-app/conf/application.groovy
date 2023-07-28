@@ -604,7 +604,7 @@ security {
         readTimeoutMs = 20000
     }
 }
-webservice.jwt = true
+webservice.jwt = false
 webservice['jwt-scopes'] = "ala/internal users/read ala/attrs"
 webservice['client-id']='changeMe'
 webservice['client-secret'] = 'changeMe'
