@@ -615,15 +615,21 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "~/data/ecodata/models/" //"./models/"
-        grails.hostname = "localhost"
+        app.external.model.dir = "~/data/ecodata/models/"
+        app.file.upload.path="~/data/ecodata/uploads"
+        app.file.archive.path="~/data/ecodata/archives"
+        temp.dir="~/data/ecodata/tmp"
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
-        grails.serverURL = "http://${grails.hostname}:8080"
+        server.host="localhost"
+        server.port=8080
+        grails.hostname = "${server.host}"
+        grails.serverURL = "http://${grails.hostname}:${server.port}"
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
-        temp.dir="~/data/ecodata/tmp"
+
+
     }
     test {
         // Override disk store so the travis build doesn't fail.
