@@ -16,6 +16,8 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'Protocol'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
+    static final List DEFAULT_MODULES =
+            ['plot selection and layout', 'plot description']
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -53,7 +55,8 @@ class ParatooService {
 
         List monitoringProtocolCategories = project.getMonitoringProtocolCategories()
         if (monitoringProtocolCategories) {
-            protocols += findProtocolsByCategories(monitoringProtocolCategories)
+            List categoriesWithDefaults = monitoringProtocolCategories + DEFAULT_MODULES
+            protocols += findProtocolsByCategories(categoriesWithDefaults.unique())
         }
         protocols
     }
