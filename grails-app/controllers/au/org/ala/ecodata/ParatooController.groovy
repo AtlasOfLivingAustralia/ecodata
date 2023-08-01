@@ -116,7 +116,12 @@ class ParatooController {
         Map response = webService.getJson(url, null, [Authorization:token], false)
 
         boolean valid = (response && response.statusCode == HttpStatus.SC_OK)
-        render(valid as String)
+        if (valid) {
+            respond ([valid:true], status:HttpStatus.SC_OK)
+        }
+        else {
+            respond ([valid:false], status:HttpStatus.SC_UNAUTHORIZED)
+        }
     }
 
     /**

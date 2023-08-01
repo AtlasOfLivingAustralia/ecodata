@@ -53,7 +53,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * webService.getJson({it.endsWith'/paratoo/noop'}, null, ['Authorization': token], false) >> [statusCode:HttpStatus.SC_OK]
         response.status == HttpStatus.SC_OK
-        response.text == 'true'
+        response.json == [valid:true]
     }
 
     void "Protocol check"() {
