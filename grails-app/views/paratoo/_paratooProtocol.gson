@@ -8,4 +8,5 @@ json {
     id protocol.externalId
     name protocol.name
     version protocol.formVersion as Integer
+    module protocol.category
 }
