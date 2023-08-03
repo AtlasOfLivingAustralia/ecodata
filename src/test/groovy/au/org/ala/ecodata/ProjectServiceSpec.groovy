@@ -1,14 +1,12 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import au.org.ala.ecodata.converter.ISODateBindingConverter
-
-import java.text.SimpleDateFormat
 
 class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
 
@@ -89,15 +87,39 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         projectId != null
 
         when: "select the new project back from the database"
-        def savedProj = Project.findByProjectId(projectId)
+        // wait for the async save to complete
+        Thread.sleep(2000)
+        def savedProj
+        Project.withNewSession {
+            savedProj = Project.findByProjectId(projectId)
+        }
 
 
         then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
         savedProj.description == projData.description
-        // The collectory update process is on a separate thread so the dataResourceId generally isn't updated in time.
-        //savedProj.dataResourceId == dataResourceId
-        //savedProj['dynamicProperty'] == projData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
+        savedProj.dataResourceId == dataResourceId
+        savedProj['dynamicProperty'] == projData.dynamicProperty
+
+        when:"project update with alaHarvest is false should not remove dataResourceId"
+        service.update([alaHarvest: false], projectId)
+
+        then:
+        Project.withNewSession {
+            savedProj = Project.findByProjectId(projectId)
+        }
+        savedProj.dataResourceId == dataResourceId
+
+        when:"project update with alaHarvest is true should not create a new dataResourceId"
+        webServiceStub.extractIdFromLocationHeader(_) >> "dr3"
+        service.update([alaHarvest: true], projectId)
+
+        then:
+        Thread.sleep(2000)
+        Project.withNewSession {
+            savedProj = Project.findByProjectId(projectId)
+        }
+        savedProj.dataResourceId == dataResourceId
 
         when:
         Project.withNewTransaction {
