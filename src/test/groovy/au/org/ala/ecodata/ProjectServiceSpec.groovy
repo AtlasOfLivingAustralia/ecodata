@@ -23,6 +23,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     String biocollectDataProvider = 'drBiocollect'
     String dataProviderId = 'dp1'
     String dataResourceId = 'dr1'
+    int delay = 5000
 
 
     def setup() {
@@ -88,7 +89,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         when: "select the new project back from the database"
         // wait for the async save to complete
-        Thread.sleep(2000)
+        Thread.sleep(delay)
         def savedProj
         Project.withNewSession {
             savedProj = Project.findByProjectId(projectId)
@@ -115,7 +116,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         service.update([alaHarvest: true], projectId)
 
         then:
-        Thread.sleep(2000)
+        Thread.sleep(delay)
         Project.withNewSession {
             savedProj = Project.findByProjectId(projectId)
         }
