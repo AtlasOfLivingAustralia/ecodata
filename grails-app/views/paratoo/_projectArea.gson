@@ -1,0 +1,9 @@
+
+model {
+    Map projectArea
+}
+
+json {
+    type projectArea?.type
+    coordinates projectArea?.coordinates
+}

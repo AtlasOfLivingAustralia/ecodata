@@ -34,6 +34,9 @@ class Score {
     /** In the case that the score is derived from an Activity, this contains the activity types used */
     List<String> entityTypes
 
+    /** Can be used to categorize scores */
+    List<String> tags
+
 
     /** Embedded document describing how the score should be calculated */
     Map configuration
@@ -45,6 +48,7 @@ class Score {
         description nullable:true
         entityTypes nullable:true
         externalId nullable:true
+        tags: nullable:true
         label unique: true
         scoreId unique: true
     }
@@ -74,12 +78,14 @@ class Score {
                 category:category,
                 outputType:outputType,
                 isOutputTarget:isOutputTarget,
-                label:label,
+                    label:label,
                 description:description,
                 displayType:displayType,
                 entity:entity,
                 externalId:externalId,
-                entityTypes:entityTypes]
+                entityTypes:entityTypes,
+                tags:tags
+        ]
         if (includeConfig) {
             scoreMap.configuration = configuration
         }

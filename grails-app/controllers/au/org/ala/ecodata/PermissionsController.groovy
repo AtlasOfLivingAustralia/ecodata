@@ -1035,6 +1035,22 @@ class PermissionsController {
         }
     }
 
+    def isUserEditorForOrganisation() {
+        String userId = params.userId
+        String organisationId = params.organisationId
+
+        if (userId && organisationId) {
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                render([userIsEditor: permissionService.isUserEditorForOrganisation(userId, organisationId)] as JSON)
+            } else {
+                render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, organisationId'
+        }
+    }
+
     def isUserGrantManagerForOrganisation() {
         String userId = params.userId
         String organisationId = params.organisationId

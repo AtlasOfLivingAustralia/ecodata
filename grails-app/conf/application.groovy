@@ -539,7 +539,8 @@ if (!authCheckKeyUrl) {
 }
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
-
+// Used by ParatooService to sync available protocols
+paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au'
 
 if (!grails.cache.ehcache) {
     grails {
@@ -575,8 +576,7 @@ grails.cache.config = {
 security {
     cas {
         enabled = false
-        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
-        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
+        appServerName = 'http://localhost:8080' // or similar, up to the request path part
         casServerUrlPrefix = 'https://auth-test.ala.org.au/cas'
         loginUrl = 'https://auth-test.ala.org.au/cas/login'
         logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
@@ -590,7 +590,7 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         clientId = 'changeMe'
         secret = 'changeMe'
-        scope = 'openid,profile,email,ala,roles,user_defined'
+        scope = 'openid,profile,ala,roles'
         connectTimeout = 20000
         readTimeout = 20000
     }
@@ -599,11 +599,15 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
-        requiredScores = ["openid", 'profile', "email", "ala", "roles", "user_defined"]
+        requiredScopes = ["openid", 'profile', "ala", "roles"]
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
     }
 }
+webservice.jwt = false
+webservice['jwt-scopes'] = "ala/internal users/read ala/attrs"
+webservice['client-id']='changeMe'
+webservice['client-secret'] = 'changeMe'
 
 grails.gorm.graphql.browser = true
 
@@ -611,15 +615,21 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/" //"./models/"
-        grails.hostname = "devt.ala.org.au"
+        app.external.model.dir = "~/data/ecodata/models/"
+        app.file.upload.path="~/data/ecodata/uploads"
+        app.file.archive.path="~/data/ecodata/archives"
+        temp.dir="~/data/ecodata/tmp"
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
-        grails.serverURL = "http://devt.ala.org.au:8080"
+        server.host="localhost"
+        server.port=8080
+        grails.hostname = "${server.host}"
+        grails.serverURL = "http://${grails.hostname}:${server.port}"
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
-        temp.dir="/data/ecodata/tmp"
+
+
     }
     test {
         // Override disk store so the travis build doesn't fail.
@@ -631,7 +641,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.hostname = "devt.ala.org.au"
+        grails.hostname = "localhost"
         // Only for travis CI, they must be overriden by ecodata-config.properties
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
@@ -650,7 +660,7 @@ environments {
 
         wiremock.port = 8018
         security.cas.bypass = true
-        security.cas.casServerUrlPrefix="http://devt.ala.org.au:${wiremock.port}/cas"
+        security.cas.casServerUrlPrefix="http://localhost:${wiremock.port}/cas"
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
@@ -663,7 +673,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.serverURL = "http://devt.ala.org.au:8080"
+        grails.serverURL = "http://localhost:8080"
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
@@ -674,7 +684,7 @@ environments {
         wiremock.port = 8018
         security.oidc.discoveryUri = "http://localhost:${wiremock.port}/cas/oidc/.well-known"
         security.oidc.allowUnsignedIdTokens = true
-        def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
+        def casBaseUrl = "http://localhost:${wiremock.port}"
         security.cas.casServerName="${casBaseUrl}"
         security.cas.contextPath=""
         security.cas.casServerUrlPrefix="${casBaseUrl}/cas"

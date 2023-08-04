@@ -43,6 +43,21 @@ class PermissionService {
         return isAdmin
     }
 
+    boolean isUserEditorForOrganisation(String userId, String organisationId) {
+        boolean isEditor = false
+
+        if (userId && organisationId) {
+            List userPermissions = getUserAccessForEntity(userId, Organisation, organisationId)
+            userPermissions.each {
+                if (it.accessLevel.code >= AccessLevel.editor.code) {
+                    isEditor = true
+                }
+            }
+        }
+
+        return isEditor
+    }
+
     def isUserEditorForProject(String userId, String projectId) {
         def isEditor = false
 
@@ -644,53 +659,6 @@ class PermissionService {
     }
 
     /**
-     * This code snippet is based on ReportService.userSummary
-     * Produces a list of users containing roles below:
-     * (ROLE_FC_READ_ONLY,ROLE_FC_OFFICER,ROLE_FC_ADMIN)
-     */
-    private def extractUserDetails() {
-        List roles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
-        def userDetailsSummary = [:]
-
-        int batchSize = 500
-
-        String url = grailsApplication.config.getProperty('userDetails.admin.url')
-        url += "/userRole/list?format=json&max=${batchSize}&role="
-        roles.each { role ->
-            int offset = 0
-            Map result = webService.getJson(url+role+'&offset='+offset)
-
-            while (offset < result?.count && !result?.error) {
-
-                List usersForRole = result?.users ?: []
-                usersForRole.each { user ->
-                    if (userDetailsSummary[user.userId]) {
-                        userDetailsSummary[user.userId].role = role
-                    }
-                    else {
-                        user.projects = []
-                        user.name = (user.firstName ?: "" + " " +user.lastName ?: "").trim()
-                        user.role = role
-                        userDetailsSummary[user.userId] = user
-                    }
-
-
-                }
-
-                offset += batchSize
-                result = webService.getJson(url+role+'&offset='+offset)
-            }
-
-            if (!result || result.error) {
-                log.error("Error getting user details for role: "+role)
-                return
-            }
-        }
-
-        userDetailsSummary
-    }
-
-    /**
      * This method finds the hubId of the entity specified in the supplied UserPermission.
      * Currently only Project, Organisation, ManagementUnit, Program are supported.
      */
@@ -707,34 +675,6 @@ class PermissionService {
             }
         }
         hubId
-    }
-
-    def saveUserDetails() {
-        def map = [ROLE_FC_ADMIN: "admin", ROLE_FC_OFFICER: "caseManager", ROLE_FC_READ_ONLY: "readOnly"]
-        String urlPath = "merit"
-        String hubId = hubService.findByUrlPath(urlPath)?.hubId
-
-        //extracts from UserDetails
-        def userDetailsSummary = extractUserDetails()
-
-        //save to userPermission
-        userDetailsSummary.each { key, value ->
-            value.roles.each { role ->
-                if (map[role]) {
-                    UserPermission userP = UserPermission.findByUserIdAndEntityIdAndEntityType(key, hubId, Hub.name)
-                    try {
-                        if (!userP) {
-                            UserPermission up = new UserPermission(userId: key, entityId: hubId, entityType: Hub.name, accessLevel: AccessLevel.valueOf(map[role]))
-                            up.save(flush: true, failOnError: true)
-                        }
-                    } catch (Exception e) {
-                        def msg = "Failed to save UserPermission: ${e.message}"
-                        return [status: 'error', error: msg]
-                    }
-                }
-
-            }
-        }
     }
 
     private Map saveUserToHubEntity(Map params) {
@@ -790,6 +730,18 @@ class PermissionService {
             permissions = UserPermission.findAllByExpiryDateBetweenAndStatusNotEqual(fromDate, toDate, DELETED)
         }
         permissions
+    }
+
+    /**
+     * Given a UserPermission, finds the user permission for the owning hub of the entity described in the permission.
+     */
+    UserPermission findParentPermission(UserPermission userPermission) {
+        String hubId = findOwningHubId(userPermission)
+        UserPermission parentPermission = null
+        if (hubId) {
+            parentPermission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqual(userPermission.userId, hubId, Hub.name, DELETED)
+        }
+        parentPermission
     }
 
 }

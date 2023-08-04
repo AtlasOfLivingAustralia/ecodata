@@ -103,7 +103,7 @@
         $.ajaxSetup({ cache: false });
 
         $("#btnLogout").click(function (e) {
-            window.location = "${createLink(controller: 'admin', action:'logout')}";
+            window.location = "${createLink(uri:'/logout')}";
         });
 
         $("#btnAdministration").click(function (e) {

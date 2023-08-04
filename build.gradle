@@ -8,7 +8,6 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
-        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
         classpath 'org.grails.plugins:quartz:2.0.13' // Needed to compile *Job classes
         classpath "org.grails.plugins:views-gradle:$grailsViewsVersion"
 
@@ -16,13 +15,11 @@ buildscript {
 }
 
 plugins {
-    //id "com.gorylenko.gradle-git-properties" version "2.2.4"
-    //id 'com.craigburke.client-dependencies' version '1.4.0'
     id "com.github.node-gradle.node" version "3.4.0"
     id 'jacoco'
 }
 
-version "4.2.2-SNAPSHOT"
+version "4.3-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 
@@ -34,11 +31,6 @@ apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.grails.plugins.views-json"
 apply plugin:"asset-pipeline"
-
-// Open Clover doesn't support groovy 3 - https://github.com/openclover/clover/issues/121
-if (Boolean.valueOf(enableClover)) {
-    apply from: "${project.projectDir}/gradle/clover.gradle"
-}
 
 if (Boolean.valueOf(enableJacoco)) {
     apply from: "${project.projectDir}/gradle/jacoco.gradle"
@@ -96,6 +88,7 @@ dependencies {
     profile "org.grails.profiles:web"
     implementation "org.grails.plugins:views-json:$grailsViewsVersion"
     implementation "org.grails.plugins:views-json-templates:$grailsViewsVersion"
+    testImplementation "org.grails:views-json-testing-support:$grailsViewsVersion"
 
     implementation 'dk.glasius:external-config:3.0.0'
     implementation "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
@@ -113,10 +106,11 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
     implementation 'org.codehaus.groovy:groovy-dateutil:3.0.8'
 
-    implementation "org.grails.plugins:ala-auth:5.2.0-SNAPSHOT"
-    implementation "org.grails.plugins:ala-ws-security-plugin:4.1.1"
-    implementation "org.grails.plugins:ala-admin-plugin:2.1"
-    implementation "au.org.ala:userdetails-service-client:1.5.0"
+    implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
+    implementation "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
+    implementation "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
+    implementation "au.org.ala:userdetails-service-client:$alaSecurityLibsVersion"
+
     implementation "org.codehaus.gpars:gpars:1.1.0"
     implementation "org.apache.httpcomponents:httpclient:4.5.7"
     implementation "org.imgscalr:imgscalr-lib:4.2"
@@ -167,6 +161,9 @@ dependencies {
 
     testImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
 
+    // This is needed to support test execution based on @Tag
+    testImplementation "org.spockframework:spock-core:2.2-groovy-3.0"
+
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
     runtimeOnly "org.hsqldb:hsqldb:2.3.1"
 }
@@ -197,7 +194,10 @@ tasks.withType(GroovyCompile) {
 }
 
 tasks.withType(Test) {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        excludeTags("mongo")
+    }
+
 }
 
 tasks.withType(Test) {
@@ -206,6 +206,16 @@ tasks.withType(Test) {
         exceptionFormat 'full'
         showStandardStreams true
     }
+}
+
+tasks.register("mongoSpecTests", Test) {
+    useJUnitPlatform {
+        includeTags "mongo"
+    }
+}
+
+test {
+    dependsOn "mongoSpecTests"
 }
 
 assets {
