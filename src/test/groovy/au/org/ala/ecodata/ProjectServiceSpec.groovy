@@ -88,13 +88,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         projectId != null
 
         when: "select the new project back from the database"
-        // wait for the async save to complete
-        Thread.sleep(delay)
         def savedProj
-        Project.withNewSession {
-            savedProj = Project.findByProjectId(projectId)
-        }
-
+        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
 
         then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
@@ -104,22 +99,17 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         when:"project update with alaHarvest is false should not remove dataResourceId"
         service.update([alaHarvest: false], projectId)
+        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
 
         then:
-        Project.withNewSession {
-            savedProj = Project.findByProjectId(projectId)
-        }
         savedProj.dataResourceId == dataResourceId
 
         when:"project update with alaHarvest is true should not create a new dataResourceId"
         webServiceStub.extractIdFromLocationHeader(_) >> "dr3"
         service.update([alaHarvest: true], projectId)
+        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
 
         then:
-        Thread.sleep(delay)
-        Project.withNewSession {
-            savedProj = Project.findByProjectId(projectId)
-        }
         savedProj.dataResourceId == dataResourceId
 
         when:
@@ -145,6 +135,23 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         savedProj.isBushfire == updatedData.isBushfire
         savedProj.bushfireCategories == updatedData.bushfireCategories
 
+    }
+
+    static Project isValueCommitted (String projectId, String property, String expected = null) {
+        int MAX_CHECK = 20, count = 0, delay = 1000
+        Project savedProj
+
+        do {
+            count ++
+            Project.withNewSession {
+                savedProj = Project.findByProjectId(projectId)
+            }
+
+            if( savedProj?.getAt(property) == expected)
+                return savedProj
+
+            Thread.sleep(delay)
+        } while ((count < MAX_CHECK))
     }
 
     def "test project validation"() {
