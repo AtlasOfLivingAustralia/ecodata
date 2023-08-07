@@ -7,6 +7,7 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import spock.lang.Ignore
 
 class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
 
@@ -137,6 +138,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    @Ignore
     static Project isValueCommitted (String projectId, String property, String expected = null) {
         int MAX_CHECK = 20, count = 0, delay = 1000
         Project savedProj
@@ -152,6 +154,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
             Thread.sleep(delay)
         } while ((count < MAX_CHECK))
+
+        return savedProj
     }
 
     def "test project validation"() {
