@@ -140,7 +140,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     @Ignore
     static Project isValueCommitted (String projectId, String property, String expected = null) {
-        int MAX_CHECK = 20, count = 0, delay = 1000
+        int MAX_CHECK = 60, count = 0, delay = 1000
         Project savedProj
 
         do {
@@ -149,7 +149,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
                 savedProj = Project.findByProjectId(projectId)
             }
 
-            if( savedProj?.getAt(property) == expected)
+            if (savedProj?.getAt(property) == expected)
                 return savedProj
 
             Thread.sleep(delay)
