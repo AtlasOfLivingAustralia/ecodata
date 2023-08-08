@@ -78,21 +78,18 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty', isBushfire:true, bushfireCategories: [], alaHarvest: true]
         def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
-        def result, projectId
+        def result, projectId, savedProj
         when:
         Project.withNewTransaction {
             result = service.create(projData)
             projectId = result.projectId
         }
+
+        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
+
         then: "ensure the response contains the id of the new project"
         result.status == 'ok'
         projectId != null
-
-        when: "select the new project back from the database"
-        def savedProj
-        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
-
-        then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
         savedProj.description == projData.description
         savedProj.dataResourceId == dataResourceId
