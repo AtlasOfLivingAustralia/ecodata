@@ -84,7 +84,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             result = service.create(projData)
             projectId = result.projectId
         }
-
         savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
 
         then: "ensure the response contains the id of the new project"
@@ -142,9 +141,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         do {
             count ++
-            Project.withNewSession {
-                savedProj = Project.findByProjectId(projectId)
-            }
+            savedProj = Project.findByProjectId(projectId)
 
             if (savedProj?.getAt(property) == expected)
                 return savedProj
