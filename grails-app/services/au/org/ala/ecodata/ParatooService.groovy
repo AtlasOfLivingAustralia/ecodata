@@ -13,11 +13,11 @@ import groovy.util.logging.Slf4j
 class ParatooService {
 
     static final String PARATOO_PROTOCOL_PATH = '/api/protocols'
-    static final String PARATOO_PROTOCOL_FORM_TYPE = 'Protocol'
+    static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
     static final List DEFAULT_MODULES =
-            ['plot selection and layout', 'plot description']
+            ['Plot Selection and Layout', 'Plot Description']
 
     GrailsApplication grailsApplication
     SettingService settingService
