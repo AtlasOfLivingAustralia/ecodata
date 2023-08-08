@@ -141,12 +141,13 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         do {
             count ++
-            Project.withNewTransaction {
+            Project.withNewSession {
                 savedProj = Project.findByProjectId(projectId)
             }
 
-            if (savedProj?.getAt(property) == expected)
+            if (savedProj?.getAt(property) == expected) {
                 return savedProj
+            }
 
             Thread.sleep(delay)
         } while ((count < MAX_CHECK))
