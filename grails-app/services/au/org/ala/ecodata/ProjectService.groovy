@@ -445,8 +445,9 @@ class ProjectService {
 
             Map projectProps = toMap(project, FLAT)
             task {
-                Project.withNewSession {
+                Project.withNewSession { session ->
                     collectoryService.updateDataResource(projectProps, props)
+                    session.flush()
                 }
             }.onComplete {
                 log.info("Completed task to link project with collectory - ${project.name} (id = ${project.projectId})")
