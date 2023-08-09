@@ -17,10 +17,16 @@ import java.time.format.DateTimeFormatter
 class DateUtil {
 
     private static String dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
-    static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static String dateFormatWithMillis = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
 
+    static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     static Date parse(String dateStr) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat)
+        return format.parse(dateStr.replace("Z", "+0000"))
+    }
+
+    static Date parseWithMilliseconds(String dateStr) {
+        SimpleDateFormat format = new SimpleDateFormat(dateFormatWithMillis)
         return format.parse(dateStr.replace("Z", "+0000"))
     }
 

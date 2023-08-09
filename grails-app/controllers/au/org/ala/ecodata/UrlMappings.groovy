@@ -214,6 +214,41 @@ class UrlMappings {
             controller = 'graphql'
         }
 
+        "/ws/paratoo/user-projects" {
+            controller = 'paratoo'
+            action = 'userProjects'
+        }
+
+        "/ws/paratoo/pdp/$projectId/$protocolId/read" {
+            controller = 'paratoo'
+            action = 'hasReadAccess'
+        }
+
+        "/ws/paratoo/pdp/$projectId/$protocolId/write" {
+            controller = 'paratoo'
+            action = 'hasWriteAccess'
+        }
+
+        "/ws/paratoo/validate-token" {
+            controller = 'paratoo'
+            action = [POST:'validateToken', OPTIONS:'options']
+        }
+
+        "/ws/paratoo/mint-identifier" {
+            controller = 'paratoo'
+            action = [POST:'mintCollectionId', OPTIONS:'options']
+        }
+
+        "/ws/paratoo/collection" {
+            controller = 'paratoo'
+            action = [POST:'submitCollection', OPTIONS:'options']
+        }
+
+        "/ws/paratoo/status/$id" {
+            controller = 'paratoo'
+            action = 'collectionIdStatus'
+        }
+
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
 	}

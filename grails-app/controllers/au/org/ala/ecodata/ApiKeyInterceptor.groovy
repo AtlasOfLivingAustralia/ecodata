@@ -15,15 +15,24 @@ class ApiKeyInterceptor {
     CommonService commonService
     ActivityService activityService
 
+    int order = -100 // This can go before the ala-ws-security interceptor to do the IP check
+
     def LOCALHOST_IP = '127.0.0.1'
 
     public ApiKeyInterceptor() {
-        matchAll().excludes(controller: 'graphql')
+        // These controllers use JWT authorization instead
+        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo')
     }
 
     boolean before() {
         def controller = grailsApplication.getArtefactByLogicalPropertyName("Controller", controllerName)
         Class controllerClass = controller?.clazz
+
+        // The "excludes" configuration in the constructor isn't working
+        if (controllerClass == ParatooController.class) {
+            return true
+        }
+
         def method = controllerClass?.getMethod(actionName?:"index", [] as Class[])
         Map result = [error: '', status : 401]
 

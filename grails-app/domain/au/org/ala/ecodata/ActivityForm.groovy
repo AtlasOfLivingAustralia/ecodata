@@ -32,6 +32,7 @@ class ActivityForm {
     static mapping = {
         name index:true
         compoundIndex name:1, formVersion:-1
+        externalId index:true
     }
 
     ObjectId id
@@ -83,6 +84,17 @@ class ActivityForm {
      * data collected and the way it should be rendered.
      */
     List<FormSection> sections = []
+
+    /** Only true for forms defined externally to ecodata.
+     * The only example we have of these are the paratoo protocols.
+     */
+    boolean external = false
+
+    /**
+     * Paratoo protocol ids are numeric.  We could use a String here and convert it when responding to paratoo
+     * (for consistency with project external ids
+     */
+    int externalId
 
     Date dateCreated
     Date lastUpdated

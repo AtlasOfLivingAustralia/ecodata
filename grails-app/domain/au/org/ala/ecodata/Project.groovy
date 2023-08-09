@@ -124,7 +124,7 @@ class Project {
 
     static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
 
-    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs']
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
     Date getActualStartDate() {
         if (actualStartDate) {
@@ -266,5 +266,27 @@ class Project {
         meriPlan.outputTargets = this.outputTargets
         return meriPlan
     }
+
+    /**
+     * Note this method does a database query to find the Services that have been configured in the
+     * project MERI plan
+     */
+    List<Service> findProjectServices() {
+        List serviceIds = custom?.details?.serviceIds
+        List services = null
+        if (serviceIds) {
+            services = Service.findAllByLegacyIdInList(serviceIds)
+        }
+        services
+    }
+
+    /** Used to find relevant TERN/paratoo monitoring protocols for a project */
+    List<String> getMonitoringProtocolCategories() {
+        List baselineProtocols = custom?.details?.baseline?.rows?.collect{it.protocols}?.flatten() ?:[]
+        List monitoringProtocols = custom?.details?.monitoring?.rows?.collect{it.protocols}?.flatten() ?:[]
+
+        (baselineProtocols + monitoringProtocols).unique().findAll{it}
+    }
+
 }
 

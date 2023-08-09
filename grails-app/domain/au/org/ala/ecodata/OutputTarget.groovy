@@ -27,7 +27,7 @@ class OutputTarget {
         targetDate nullable: true
     }
 
-    static embedded = ['periodTargets']
+    static embedded = ['periodTargets', 'outcomeTargets']
 
     /** The scoreId of the Score entity used to measure progress towards this OutputTarget */
     String scoreId
@@ -37,6 +37,9 @@ class OutputTarget {
 
     /** List of milestone targets related to the same Score as this OutputTarget */
     List<PeriodTarget> periodTargets
+
+    /** Breakdown of the overall target by project outcome addressed by this target measure */
+    List<OutcomeTarget> outcomeTargets
 
     /** Optional date this target will be achieved by (the default is the end of the project) */
     @BindingFormat('iso8601')

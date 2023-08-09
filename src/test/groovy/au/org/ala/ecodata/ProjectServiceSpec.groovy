@@ -1,14 +1,13 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import au.org.ala.ecodata.converter.ISODateBindingConverter
-
-import java.text.SimpleDateFormat
+import spock.lang.Ignore
 
 class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
 
@@ -25,6 +24,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     String biocollectDataProvider = 'drBiocollect'
     String dataProviderId = 'dp1'
     String dataResourceId = 'dr1'
+    int delay = 5000
 
 
     def setup() {
@@ -78,26 +78,36 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty', isBushfire:true, bushfireCategories: [], alaHarvest: true]
         def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
-        def result, projectId
+        def result, projectId, savedProj
         when:
         Project.withNewTransaction {
             result = service.create(projData)
             projectId = result.projectId
+            savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
         }
+
         then: "ensure the response contains the id of the new project"
         result.status == 'ok'
         projectId != null
-
-        when: "select the new project back from the database"
-        def savedProj = Project.findByProjectId(projectId)
-
-
-        then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
         savedProj.description == projData.description
-        // The collectory update process is on a separate thread so the dataResourceId generally isn't updated in time.
-        //savedProj.dataResourceId == dataResourceId
-        //savedProj['dynamicProperty'] == projData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
+//        savedProj.dataResourceId == dataResourceId
+        savedProj['dynamicProperty'] == projData.dynamicProperty
+//        updating on thread not consistently return updated dataResourceId
+//        when:"project update with alaHarvest is false should not remove dataResourceId"
+//        service.update([alaHarvest: false], projectId)
+//        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
+//
+//        then:
+//        savedProj.dataResourceId == dataResourceId
+
+//        when:"project update with alaHarvest is true should not create a new dataResourceId"
+//        webServiceStub.extractIdFromLocationHeader(_) >> "dr3"
+//        service.update([alaHarvest: true], projectId)
+//        savedProj = isValueCommitted(projectId, 'dataResourceId', dataResourceId)
+//
+//        then:
+//        savedProj.dataResourceId == dataResourceId
 
         when:
         Project.withNewTransaction {
@@ -122,6 +132,28 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         savedProj.isBushfire == updatedData.isBushfire
         savedProj.bushfireCategories == updatedData.bushfireCategories
 
+    }
+
+    @Ignore
+    static Project isValueCommitted (String projectId, String property, String expected = null) {
+        int MAX_CHECK = 60, count = 0, delay = 1000
+        Project savedProj
+
+        do {
+            count ++
+            Project.withSession { session ->
+                session.clear()
+                savedProj = Project.findByProjectId(projectId)
+            }
+
+            if (savedProj?.getAt(property) == expected) {
+                return savedProj
+            }
+
+            Thread.sleep(delay)
+        } while ((count < MAX_CHECK))
+
+        return savedProj
     }
 
     def "test project validation"() {

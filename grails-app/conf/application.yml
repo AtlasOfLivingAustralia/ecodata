@@ -201,6 +201,9 @@ quartz:
             skipUpdateCheck: true
 
 environments:
+    development:
+        grails.config.locations:
+            - ~/data/ecodata/config/ecodata-config.properties
     test:
         quartz:
             autoStartup: false
@@ -210,6 +213,16 @@ grails:
     mongodb:
         codecs:
             - au.org.ala.ecodata.customcodec.AccessLevelCodec
+
+    cors:
+        enabled: true
+        allowedHeaders:
+            - Content-Type
+            - Authorization
+        mappings:
+            '[/ws/paratoo/**]':
+                allowedOrigins:
+                        - '*'
 
 graphql:
     servlet:
@@ -247,7 +260,7 @@ graphiql:
 
 
 casUrl: https://auth-test.ala.org.au/cas/logout
-appUrl: http://devt.ala.org.au:8080/admin
+appUrl: http://localhost:8080/admin
 
 
 openapi:

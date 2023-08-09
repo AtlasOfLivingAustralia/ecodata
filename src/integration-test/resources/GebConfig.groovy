@@ -8,7 +8,7 @@ if (!System.getProperty("webdriver.chrome.driver")) {
     System.setProperty("webdriver.chrome.driver", "node_modules/chromedriver/bin/chromedriver")
 }
 driver = { new ChromeDriver() }
-baseUrl = 'http://devt.ala.org.au:8080/'
+baseUrl = 'http://localhost:8080/'
 environments {
 
     reportsDir = 'target/geb-reports'

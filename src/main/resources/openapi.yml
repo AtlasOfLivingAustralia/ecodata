@@ -16,7 +16,7 @@
   },
   "servers":[
     {
-      "url":"http://devt.ala.org.au:8080"
+      "url":"http://localhost:8080"
     }
   ],
   "paths":{

@@ -34,6 +34,7 @@ class AdminController {
     DataDescriptionService dataDescriptionService
     RecordService recordService
     ProjectActivityService projectActivityService
+    ParatooService paratooService
 
     @AlaSecured(["ROLE_ADMIN"])
     def index() {}
@@ -660,12 +661,6 @@ class AdminController {
         render resp as JSON
     }
 
-    @AlaSecured(["ROLE_ADMIN"])
-    def migrateUserDetailsToEcodata() {
-        def resp = permissionService.saveUserDetails()
-        render text: [ message: 'UserDetails data migration done.' ] as JSON
-    }
-
     /**
      * Administrative interface to trigger the access expiry job.  Used in MERIT functional
      * tests.
@@ -722,16 +717,12 @@ class AdminController {
         }
     }
 
-    /**
-     * Do logouts through this app so we can invalidate the session.
-     *
-     * @param casUrl the url for logging out of cas
-     * @param appUrl the url to redirect back to after the logout
-     */
-    def logout = {
-        session.invalidate()
-        redirect(url:"${grailsApplication.config.getProperty('casUrl')}?url=${grailsApplication.config.getProperty('appUrl')}")
-    }
+    @AlaSecured(["ROLE_ADMIN"])
+    def syncParatooProtocols(boolean offline) {
 
+        Map errors = offline ? paratooService.syncProtocolsFromSettings() : paratooService.syncProtocolsFromParatoo()
+
+        render errors as JSON
+    }
 
 }

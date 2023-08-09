@@ -985,7 +985,10 @@ class ElasticSearchService {
                 projectMap.custom.remove('dataSets')
             }
 
-            projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
+            projectMap.outputTargets?.each{
+                it.remove('periodTargets')
+                it.remove('outcomeTargets')
+            } // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
