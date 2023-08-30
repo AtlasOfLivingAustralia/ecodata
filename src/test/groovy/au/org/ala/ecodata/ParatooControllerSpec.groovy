@@ -121,10 +121,11 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId: userId]
         1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
+        1 * paratooService.mintCollectionId(_) >> [orgMintedIdentifier:"id1"]
 
         and:
         response.status == HttpStatus.SC_OK
-        response.json.orgMintedIdentfier != null
+        response.json.orgMintedIdentifier == "id1"
     }
 
     void "We attempt to mint a collection id for a project or protocol we don't have permissions for"() {
@@ -187,7 +188,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
-        1 * paratooService.createCollection({it.mintedCollectionId == "c1"}) >> [:]
+        1 * paratooService.submitCollection({it.mintedCollectionId == "c1"}) >> [:]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -207,7 +208,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
-        1 * paratooService.createCollection({it.mintedCollectionId == "c1"}) >> [error:"Error"]
+        1 * paratooService.submitCollection({it.mintedCollectionId == "c1"}) >> [error:"Error"]
 
         and:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR

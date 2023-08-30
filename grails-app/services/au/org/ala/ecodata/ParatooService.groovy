@@ -1,7 +1,11 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocolId
+import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
@@ -12,7 +16,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class ParatooService {
 
-    static final String PARATOO_PROTOCOL_PATH = '/api/protocols'
+    static final String PARATOO_PROTOCOL_PATH = '/protocols'
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
@@ -25,6 +29,7 @@ class ParatooService {
     ProjectService projectService
     SiteService siteService
     PermissionService permissionService
+    TokenService tokenService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -111,12 +116,60 @@ class ParatooService {
 
     }
 
-    Map createCollection(ParatooCollection collection) {
-        Project project = Project.findByProjectId(collection.projectId)
-        Map dataSet = mapParatooCollection(collection, project)
-        List dataSets = project.custom?.dataSets ?: []
-        dataSets << dataSet
-        projectService.update([custom:[dataSets:dataSets]], collection.projectId, false)
+    Map mintCollectionId(ParatooCollectionId paratooCollectionId) {
+        String projectId = paratooCollectionId.projectId
+        Project project = Project.findByProjectId(projectId)
+        Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
+        dataSet.progress = Activity.STARTED
+
+        String dataSetName = buildName(paratooCollectionId.protocol, paratooCollectionId.surveyId, project)
+
+        dataSet.name = dataSetName
+
+        if (!project.custom) {
+            project.custom = [:]
+        }
+        if (!project.custom.dataSets) {
+            project.custom.dataSets = []
+        }
+        project.custom.dataSets << dataSet
+        Map result = projectService.update([custom:project.custom], projectId, false)
+
+        if (!result.error) {
+            result.orgMintedIdentifier = dataSet.dataSetId
+        }
+        result
+    }
+
+    private static String buildName(ParatooProtocolId protocolId, ParatooSurveyId surveyId, Project project) {
+        ActivityForm protocolForm = ActivityForm.findByExternalIdAndStatusNotEqual(protocolId.id, Status.DELETED)
+        String dataSetName = protocolForm?.name + " - " + surveyId.timeAsDisplayDate() + " (" + project.name + ")"
+        dataSetName
+    }
+
+    Map submitCollection(ParatooCollection collection) {
+        String projectId = collection.projectId
+        Project project = Project.findByProjectId(projectId)
+        Map dataSet = project.custom?.dataSets?.find{it.dataSetId == collection.mintedCollectionId}
+
+        if (!dataSet) {
+            throw new RuntimeException("Unable to find data set with id: "+collection.mintedCollectionId)
+        }
+
+        dataSet.activitiesEndDate = collection.eventTime
+
+        ParatooSurveyId surveyId = ParatooSurveyId.fromMap(dataSet.surveyId)
+        Map surveyData = retrieveSurveyData(surveyId, collection)
+
+        // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
+        dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project)
+
+        // Find the dates in the survey data and update the data set accordingly
+
+
+        Map result = projectService.update([custom:[dataSets:project.custom.dataSets]], projectId, false)
+
+        result
     }
 
     boolean protocolReadCheck(String userId, String projectId, int protocolId) {
@@ -142,6 +195,19 @@ class ParatooService {
             it.dataSets?.find { it.dataSetId == collectionId }
         }
         projectWithMatchingDataSet
+    }
+
+    private String createSiteFromSurveyData(Map surveyData, ParatooCollection collection, ParatooSurveyId surveyId, Project project) {
+        // Create a site representing the location of the collection
+        Map geoJson = extractSpatialData(surveyData)
+
+        String siteName = buildName(collection.protocol, surveyId, project)
+
+        Map result = siteService.create([extent:[geometry:geoJson], name: siteName, type: 'Survey', publicatonStatus: PublicationStatus.PUBLISHED, projects: [project.projectId]])
+        if (result.error) {  // Don't treat this as a fatal error for the purposes of responding to the paratoo request
+            log.error("Error creating a site for survey "+collection.mintedCollectionId+", project "+project.projectId+": "+result.error)
+        }
+        result.siteId
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {
@@ -178,9 +244,13 @@ class ParatooService {
         syncParatooProtocols(protocols)
     }
 
+    private String getParatooBaseUrl() {
+        grailsApplication.config.getProperty('paratoo.core.baseUrl')
+    }
+
+
     Map syncProtocolsFromParatoo() {
-        String paratooCoreUrlPrefix = grailsApplication.config.getProperty('paratoo.core.baseUrl')
-        String url = paratooCoreUrlPrefix+PARATOO_PROTOCOL_PATH
+        String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH
         Map response = webService.getJson(url, null,  null, false)
         syncParatooProtocols(response?.data)
     }
@@ -213,12 +283,130 @@ class ParatooService {
 
     }
 
-    private static Map mapParatooCollection(ParatooCollection collection, Project project) {
+    private static Map mapParatooCollectionId(ParatooCollectionId collectionId, Project project) {
         Map dataSet = [:]
-        dataSet.dataSetId = collection.mintedCollectionId
+        dataSet.dataSetId = Identifiers.getNew(true, null)
+        dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
         dataSet.grantId = project.grantId
-
+        dataSet.activitesStartDate = DateUtil.format(collectionId.surveyId.time)
         dataSet
     }
+
+    Map retrieveSurveyData(ParatooSurveyId surveyId, ParatooCollection collection) {
+
+        // We might be able to replace this call with surveyId.surveyType
+        String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH+'/'+collection.protocol.id
+        Map response = webService.getJson(url, null,  null, false)
+
+        String apiEndpoint = response?.data?.attributes?.endpointPrefix
+        if (!apiEndpoint.endsWith('s')) {
+            apiEndpoint += 's'
+        } // strapi makes the endpoint plural sometimes?
+
+
+        String accessToken = tokenService.getAuthToken(true)
+
+        if (!accessToken) {
+            throw new RuntimeException("Unable to get access token")
+        }
+        int start = 0
+        int limit = 10
+
+        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
+        url = paratooBaseUrl+apiEndpoint+query
+        response = webService.getJson(url, null,  null, false)
+        int total = response.meta?.pagination?.total ?: 0
+
+        Map survey = null
+        while (!survey && start < total) {
+            List data = response?.data
+
+            survey = findMatchingSurvey(surveyId, data)
+            start += limit
+
+            if (!survey) {
+                query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
+                response = webService.getJson(apiEndpoint+query, null,  null, false)
+            }
+        }
+
+        survey
+    }
+
+    private static Map findMatchingSurvey(ParatooSurveyId surveyId, List data) {
+        data?.find {
+            Map tmpSurveyId = it.attributes?.surveyId
+            tmpSurveyId.surveyType == surveyId.surveyType &&
+            DateUtil.format(DateUtil.parseWithMilliseconds(tmpSurveyId.time)) == surveyId.timeAsISOString() &&
+            tmpSurveyId.randNum == surveyId.randNum
+        }
+    }
+
+    private static Map extractSpatialData(Map survey) {
+        if (!survey) {
+            return null
+        }
+        if (survey.attributes) {
+            survey = survey.attributes
+        }
+
+        Map siteData = null
+        if (survey.plot_visit) {
+            siteData = extractSiteDataFromPlotVisit(survey)
+        }
+        // else { ... } - other survey types can embed spatial data in different ways
+        siteData
+    }
+
+    private static Map extractSiteDataFromPlotVisit(Map survey) {
+        Map plotLayout = survey.plot_visit.data?.attributes?.plot_layout?.data?.attributes
+
+        Map plotGeoJson = toGeoJson(plotLayout.plot_points)
+        Map faunaPlotGeoJson = toGeoJson(plotLayout.fauna_plot_point)
+
+        // TODO maybe turn this into a feature with properties to distinguish the fauna plot?
+        // Or a multi-polygon?
+
+        plotGeoJson
+    }
+
+    static Map toGeoJson(List points) {
+        List coords = points?.findAll { !exclude(it) }.collect {
+            [it.lng, it.lat]
+        }
+        Map plotGeometry = coords ? [
+                type       : 'Polygon',
+                coordinates: [closePolygonIfRequired(coords)]
+        ] : null
+
+        plotGeometry
+    }
+
+    static List closePolygonIfRequired(List points) {
+        if (points[0][0] != points[-1][0] && points[0][1] != points[-1][1]) {
+            points << points[0]
+        }
+        points
+    }
+
+    static boolean exclude(Map point) {
+        point.name?.data?.attributes?.symbol == "C" // The plot layout has a centre point that we don't want
+    }
+
+
+        // Protocol = 2 (vegetation mapping survey).
+        // endpoint /api/vegetation-mapping-surveys is useless
+        // (possibly because the protocol is called vegetation-mapping-surveys and there is a module/component inside
+        // called vegetation-mapping-survey and the strapi pluralisation is causing issues?)
+        // Instead if you query: https://dev.core-api.paratoo.tern.org.au/api/vegetation-mapping-observations?populate=deep
+        // You can get multiple observations with different points linked to the same surveyId.
+
+        // Protocol = 7 (drone survey) - No useful spatial data
+
+        // Protocol = 10 & 11 (Photopoints - Compact Panorama & Photopoints - Device Panorama) - same endpoint.
+        // Has plot-layout / plot-visit
+
+        // Protocol = 12 (Floristics - enhanced)
+        // Has plot-layout / plot-visit
 
 }

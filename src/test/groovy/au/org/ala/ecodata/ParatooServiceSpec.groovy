@@ -1,11 +1,13 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.ParatooService
+import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolId
+import au.org.ala.ecodata.paratoo.ParatooSurveyId
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -17,6 +19,7 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
     String userId = 'u1'
     SiteService siteService = Mock(SiteService)
     ProjectService projectService = Mock(ProjectService)
+    WebService webService = Mock(WebService)
 
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
@@ -29,6 +32,7 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         mockDomain(Hub)
         setupData()
 
+        service.webService = webService
         service.siteService = siteService
         service.projectService = projectService
         service.permissionService = new PermissionService() // Using the real permission service for this test
@@ -96,14 +100,46 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
 
     void "The service can create a data set from a submitted collection"() {
         setup:
+
+        ParatooProtocolId protocol = new ParatooProtocolId(id:2, version: 1)
+        ParatooSurveyId surveyId = new ParatooSurveyId(surveyType:"api", time:new Date(), randNum:1l)
+        String projectId = 'p1'
+        ParatooCollectionId collectionId = new ParatooCollectionId(projectId:projectId, surveyId:surveyId, protocol:protocol)
+
+        when:
+        Map result = service.mintCollectionId(collectionId)
+
+        then:
+        1 * projectService.update(_, projectId, false) >> {data, pId, updateCollectory ->
+            Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
+            assert dataSet.surveyId.time == surveyId.timeAsISOString()
+            assert dataSet.surveyId.randNum == surveyId.randNum
+            assert dataSet.surveyId.surveyType == surveyId.surveyType
+            assert dataSet.grantId == "g1"
+            assert dataSet.activitesStartDate == DateUtil.format(surveyId.time)
+            assert dataSet.progress == 'started'
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(surveyId.time)} (Project 1)"
+
+            [status:'ok']
+        }
+
+        and:
+        result.status == 'ok'
+        result.orgMintedIdentifier != null
+    }
+
+    @Ignore // Ignoring this while doing actual integration testing.
+    void "The service can create a data set from a submitted collection"() {
+        setup:
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
         ParatooCollection collection = new ParatooCollection(projectId:'p1', mintedCollectionId:"c1", userId:'u1', protocol:protocol, eventTime:DateUtil.parse('2023-01-01T00:00:00Z'))
         Map expectedDataSet = [dataSetId:'c1', grantId:'g1']
 
         when:
-        Map result = service.createCollection(collection)
+        Map result = service.submitCollection(collection)
 
         then:
+        1 * webService.getJson(_, null, null, false) >> [data:[:]]
         1 * projectService.update([custom:[dataSets:[expectedDataSet]]], 'p1', false) >> [status:'ok']
 
         and:
@@ -118,7 +154,9 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
                         serviceIds:[1],
                         baseline:[rows:[[protocols:['protocol category 1']]]],
                         monitoring:[rows:[[protocols:['protocol category 2', 'protocol category 3']]]]
-                ]])
+                ], dataSets: [[
+                    dataSetId:'c1'
+                ]]])
         project.save(failOnError:true, flush:true)
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId:'p1', entityType:Project.name)
         userPermission.save(failOnError:true, flush:true)

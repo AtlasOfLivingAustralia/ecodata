@@ -184,7 +184,14 @@ class ParatooController {
             String userId = userService.currentUserDetails.userId
             boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.projectId, collectionId.protocol.id)
             if (hasProtocol) {
-                respond([orgMintedIdentfier:Identifiers.getNew(true, null)])
+                Map mintResults = paratooService.mintCollectionId(collectionId)
+                if (mintResults.error) {
+                    error(mintResults.error)
+                }
+                else {
+                    respond([orgMintedIdentifier:mintResults.orgMintedIdentifier])
+                }
+
             }
             else {
                 error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
@@ -206,8 +213,7 @@ class ParatooController {
             String userId = userService.currentUserDetails.userId
             boolean hasProtocol = paratooService.protocolWriteCheck(userId, collection.projectId, collection.protocol.id)
             if (hasProtocol) {
-                // Create a data set and attach to the project.
-                Map result = paratooService.createCollection(collection)
+                Map result = paratooService.submitCollection(collection)
                 if (!result.error) {
                     respond([success: true])
                 } else {
