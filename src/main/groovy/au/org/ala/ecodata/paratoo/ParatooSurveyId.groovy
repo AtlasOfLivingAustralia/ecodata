@@ -12,7 +12,7 @@ class ParatooSurveyId implements Validateable {
     Long randNum
 
     String timeAsISOString() {
-        DateUtil.format(time)
+        DateUtil.formatWithMilliseconds(time) // We preserve the milliseconds here because of Monitor unlike other times ecodata
     }
 
     String timeAsDisplayDate() {
@@ -30,7 +30,7 @@ class ParatooSurveyId implements Validateable {
     static ParatooSurveyId fromMap(Map map) {
         new ParatooSurveyId(
                 surveyType: map.surveyType,
-                time: DateUtil.parse(map.time),
+                time: DateUtil.parseWithMilliseconds(map.time),
                 randNum: map.randNum
         )
     }

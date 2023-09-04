@@ -21,6 +21,7 @@ class ParatooService {
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
     static final String PARATOO_APP_NAME = "Monitor"
+    static final String MONITOR_AUTH_HEADER = "x-authentication"
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description']
 
@@ -286,7 +287,7 @@ class ParatooService {
 
     private static Map mapParatooCollectionId(ParatooCollectionId collectionId, Project project) {
         Map dataSet = [:]
-        dataSet.dataSetId = Identifiers.getNew(true, null)
+        dataSet.dataSetId = collectionId.encodeAsMintedCollectionId()
         dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
         dataSet.grantId = project.grantId
         dataSet.activitesStartDate = DateUtil.format(collectionId.surveyId.time)
@@ -307,6 +308,7 @@ class ParatooService {
 
 
         String accessToken = tokenService.getAuthToken(true)
+        Map authHeader = [MONITOR_AUTH_HEADER:accessToken]
 
         if (!accessToken) {
             throw new RuntimeException("Unable to get access token")
@@ -314,9 +316,9 @@ class ParatooService {
         int start = 0
         int limit = 10
 
-        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
+        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
         url = paratooBaseUrl+apiEndpoint+query
-        response = webService.getJson(url, null,  null, false)
+        response = webService.getJson(url, null,  authHeader, false)
         int total = response.meta?.pagination?.total ?: 0
 
         Map survey = null
@@ -327,8 +329,8 @@ class ParatooService {
             start += limit
 
             if (!survey) {
-                query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
-                response = webService.getJson(apiEndpoint+query, null,  null, false)
+                query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
+                response = webService.getJson(apiEndpoint+query, null,  authHeader, false)
             }
         }
 
