@@ -138,8 +138,8 @@ class ParatooController {
     @Operation(description = "Checks that a user has read permissions for the particular project and protocol", responses = [@ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"], summary = "For authorizing with the PDP which checks read permissions")
     def hasReadAccess(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
-                      @RequestBody(required = true, content = @Content(schema = @Schema(type = "integer"))) Integer protocolId) {
-        protocolCheck(projectId, protocolId, { String userId, String prjId, Integer proId ->
+                      @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
             paratooService.protocolReadCheck(userId, prjId, proId)
         })
     }
@@ -149,8 +149,8 @@ class ParatooController {
     @Operation(description = "Checks that a user has write permissions for the particular project and protocol", responses = [@ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"], summary = "For authorizing with the PDP which checks write permissions")
     def hasWriteAccess(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
-                       @RequestBody(required = true, content = @Content(schema = @Schema(type = "integer"))) Integer protocolId) {
-        protocolCheck(projectId, protocolId, { String userId, String prjId, Integer proId ->
+                       @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
             paratooService.protocolWriteCheck(userId, prjId, proId)
         })
     }
@@ -159,7 +159,7 @@ class ParatooController {
      * Used for both read and write - if we need to take into account
      * read only users we need to separate these calls
      */
-    private void protocolCheck(String projectId, Integer protocolId, Closure checkMethod) {
+    private void protocolCheck(String projectId, String protocolId, Closure checkMethod) {
         if (!projectId || !protocolId) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return

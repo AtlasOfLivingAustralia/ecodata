@@ -62,7 +62,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.hasReadAccess(null, 1)
+        controller.hasReadAccess(null, "guid-1")
 
         then:
         response.status == HttpStatus.SC_BAD_REQUEST
@@ -76,11 +76,11 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.hasReadAccess('p1', 1)
+        controller.hasReadAccess('p1', "guid-1")
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolReadCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolReadCheck(userId, 'p1', "guid-1") >> true
 
         and:
         response.status == HttpStatus.SC_OK
@@ -88,11 +88,11 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.hasReadAccess('p2', 1)
+        controller.hasReadAccess('p2', "guid-1")
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolReadCheck(userId, 'p2', 1) >> false
+        1 * paratooService.protocolReadCheck(userId, 'p2', "guid-1") >> false
 
         and:
         response.status == HttpStatus.SC_OK
@@ -120,7 +120,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId: userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
         1 * paratooService.mintCollectionId(_) >> [orgMintedIdentifier:"id1"]
 
         and:
@@ -139,7 +139,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> false
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -168,7 +168,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> false
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -187,7 +187,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
         1 * paratooService.submitCollection({it.mintedCollectionId == "c1"}) >> [:]
 
         and:
@@ -207,7 +207,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
         1 * paratooService.submitCollection({it.mintedCollectionId == "c1"}) >> [error:"Error"]
 
         and:
@@ -246,7 +246,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         [
             "projectId":"p1",
             "protocol": [
-              "id": 1,
+              "id": "guid-1",
               "version": 1
             ],
             "surveyId": [
@@ -264,7 +264,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
                 "projectId":"p1",
                 "userId": "u1",
                 "protocol": [
-                        "id": 1,
+                        "id": "guid-1",
                         "version": 1
                 ],
                 "eventTime":"2023-01-01T00:00:00Z"

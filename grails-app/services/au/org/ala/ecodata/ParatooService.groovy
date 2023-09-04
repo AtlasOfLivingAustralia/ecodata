@@ -174,15 +174,15 @@ class ParatooService {
         result
     }
 
-    boolean protocolReadCheck(String userId, String projectId, int protocolId) {
+    boolean protocolReadCheck(String userId, String projectId, String protocolId) {
         protocolCheck(userId, projectId, protocolId, true)
     }
 
-    boolean protocolWriteCheck(String userId, String projectId, int protocolId) {
+    boolean protocolWriteCheck(String userId, String projectId, String protocolId) {
         protocolCheck(userId, projectId, protocolId, false)
     }
 
-    private boolean protocolCheck(String userId, String projectId, int protocolId, boolean read) {
+    private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
         List projects = userProjects(userId)
         ParatooProject project = projects.find{it.id == projectId}
         boolean protocol = project?.protocols?.find{it.externalId == protocolId}
@@ -216,15 +216,17 @@ class ParatooService {
 
         Map result = [errors:[], messages:[]]
         protocols.each { Map protocol ->
-            ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(protocol.id, Status.DELETED)
+            String id = protocol.attributes.id
+            String name = protocol.attributes.name
+            ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(id, Status.DELETED)
             if (!form) {
-                form = new ActivityForm(externalId: protocol.id)
-                String message = "Creating form with id: "+protocol.id+", name: "+protocol.attributes?.name
+                form = new ActivityForm(externalId: id)
+                String message = "Creating form with id: "+id+", name: "+name
                 result.messages << message
                 log.info message
             }
             else {
-                String message = "Updating form with id: "+protocol.id+", name: "+protocol.attributes?.name
+                String message = "Updating form with id: "+id+", name: "+name
                 result.messages << message
                 log.info message
             }
@@ -233,7 +235,7 @@ class ParatooService {
 
             if (form.hasErrors()) {
                 result.errors << form.errors
-                log.warn "Error saving form with id: "+protocol.id+", name: "+protocol.attributes?.name
+                log.warn "Error saving form with id: "+id+", name: "+name
             }
         }
         result

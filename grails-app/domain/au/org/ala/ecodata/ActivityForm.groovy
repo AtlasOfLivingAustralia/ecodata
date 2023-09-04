@@ -27,6 +27,7 @@ class ActivityForm {
         lastUpdatedUserId nullable: true
         minOptionalSectionsCompleted nullable: true
         description nullable: true
+        externalId nullable: true
     }
 
     static mapping = {
@@ -91,10 +92,9 @@ class ActivityForm {
     boolean external = false
 
     /**
-     * Paratoo protocol ids are numeric.  We could use a String here and convert it when responding to paratoo
-     * (for consistency with project external ids
+     * Used to store a guid representing a Monitor protocol id
      */
-    int externalId
+    String externalId
 
     Date dateCreated
     Date lastUpdated

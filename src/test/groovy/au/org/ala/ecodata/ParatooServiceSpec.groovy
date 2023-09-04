@@ -107,7 +107,7 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
     void "The service can create a data set from a submitted collection"() {
         setup:
 
-        ParatooProtocolId protocol = new ParatooProtocolId(id:2, version: 1)
+        ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
         ParatooSurveyId surveyId = new ParatooSurveyId(surveyType:"api", time:new Date(), randNum:1l)
         String projectId = 'p1'
         ParatooCollectionId collectionId = new ParatooCollectionId(projectId:projectId, surveyId:surveyId, protocol:protocol)
@@ -174,14 +174,14 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])
         program.save(failOnError:true, flush:true)
 
-        Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:2, formName:"aParatooForm", sectionName:null)])
+        Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:"guid-2", formName:"aParatooForm", sectionName:null)])
         service.save(failOnError:true, flush:true)
 
-        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", externalId: 2, type:'Paratoo', category:'protocol category 1', external: true)
+        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", externalId: "guid-2", type:'Paratoo', category:'protocol category 1', external: true)
         activityForm.save(failOnError:true, flush:true)
-        activityForm = new ActivityForm(name:"aParatooForm 2 ", externalId: 3, type:'Paratoo', category:'protocol category 2', external: true)
+        activityForm = new ActivityForm(name:"aParatooForm 2 ", externalId: "guid-3", type:'Paratoo', category:'protocol category 2', external: true)
         activityForm.save(failOnError:true, flush:true)
-        activityForm = new ActivityForm(name:"aParatooForm 3", externalId: 4, type:'Paratoo', category:'protocol category 3', external: true)
+        activityForm = new ActivityForm(name:"aParatooForm 3", externalId: "guid-4", type:'Paratoo', category:'protocol category 3', external: true)
         activityForm.save(failOnError:true, flush:true)
     }
 }
