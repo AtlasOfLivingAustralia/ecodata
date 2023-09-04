@@ -20,6 +20,7 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
+    static final String PARATOO_APP_NAME = "Monitor"
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description']
 
@@ -289,6 +290,7 @@ class ParatooService {
         dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
         dataSet.grantId = project.grantId
         dataSet.activitesStartDate = DateUtil.format(collectionId.surveyId.time)
+        dataSet.collectionApp = PARATOO_APP_NAME
         dataSet
     }
 
