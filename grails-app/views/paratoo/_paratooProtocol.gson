@@ -5,7 +5,7 @@ model {
 }
 
 json {
-    id protocol.externalId
+    identifier protocol.externalId
     name protocol.name
     version protocol.formVersion as Integer
     module protocol.category
