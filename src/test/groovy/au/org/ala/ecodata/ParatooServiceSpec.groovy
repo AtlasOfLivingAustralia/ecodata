@@ -5,8 +5,11 @@ import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolId
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import grails.converters.JSON
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
+import org.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -36,6 +39,9 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         service.siteService = siteService
         service.projectService = projectService
         service.permissionService = new PermissionService() // Using the real permission service for this test
+
+        JSON.registerObjectMarshaller(new MapMarshaller())
+        JSON.registerObjectMarshaller(new CollectionMarshaller())
     }
 
     def cleanup() {
