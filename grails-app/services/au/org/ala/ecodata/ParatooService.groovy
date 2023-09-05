@@ -185,7 +185,7 @@ class ParatooService {
     private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
         List projects = userProjects(userId)
         ParatooProject project = projects.find{it.id == projectId}
-        boolean protocol = project?.protocols?.find{it.externalId == protocolId}
+        boolean protocol = project?.protocols?.find{it.externalIds.find{it.externalId == protocolId}}
         int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
         protocol && project.accessLevel.code >= minimumAccess
     }
