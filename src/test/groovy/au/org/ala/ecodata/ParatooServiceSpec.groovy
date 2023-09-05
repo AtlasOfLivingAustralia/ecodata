@@ -119,10 +119,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can create a data set from a submitted collection"() {
         setup:
 
-        ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
-        ParatooSurveyId surveyId = new ParatooSurveyId(surveyType:"api", time:new Date(), randNum:1l)
         String projectId = 'p1'
-        ParatooCollectionId collectionId = new ParatooCollectionId(projectId:projectId, surveyId:surveyId, protocol:protocol)
+        ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
+        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), randNum:1l)
+        ParatooCollectionId collectionId = new ParatooCollectionId(surveyId:surveyId)
 
         when:
         Map result = service.mintCollectionId(collectionId)

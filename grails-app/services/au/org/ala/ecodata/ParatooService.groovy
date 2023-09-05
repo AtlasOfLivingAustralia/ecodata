@@ -119,12 +119,12 @@ class ParatooService {
     }
 
     Map mintCollectionId(ParatooCollectionId paratooCollectionId) {
-        String projectId = paratooCollectionId.projectId
+        String projectId = paratooCollectionId.surveyId.projectId
         Project project = Project.findByProjectId(projectId)
         Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
         dataSet.progress = Activity.STARTED
 
-        String dataSetName = buildName(paratooCollectionId.protocol, paratooCollectionId.surveyId, project)
+        String dataSetName = buildName(paratooCollectionId.surveyId, project)
 
         dataSet.name = dataSetName
 
@@ -143,8 +143,8 @@ class ParatooService {
         result
     }
 
-    private static String buildName(ParatooProtocolId protocolId, ParatooSurveyId surveyId, Project project) {
-        ActivityForm protocolForm = ActivityForm.findByExternalId(protocolId.id)
+    private static String buildName(ParatooSurveyId surveyId, Project project) {
+        ActivityForm protocolForm = ActivityForm.findByExternalId(surveyId.protocol.id)
         String dataSetName = protocolForm?.name + " - " + surveyId.timeAsDisplayDate() + " (" + project.name + ")"
         dataSetName
     }

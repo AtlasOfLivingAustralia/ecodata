@@ -6,6 +6,10 @@ import grails.validation.Validateable
 
 
 class ParatooSurveyId implements Validateable {
+
+    String projectId
+    ParatooProtocolId protocol
+
     String surveyType
     @BindingFormat("iso8601")
     Date time // ISO format
@@ -23,15 +27,23 @@ class ParatooSurveyId implements Validateable {
         [
                 surveyType: surveyType,
                 time: timeAsISOString(),
-                randNum: randNum
+                randNum: randNum,
+                projectId: projectId,
+                protocol: [id:protocol.id, version:protocol.version]
         ]
+    }
+
+    static constraints = {
+        protocol validator: { val, obj -> val.validate() }
     }
 
     static ParatooSurveyId fromMap(Map map) {
         new ParatooSurveyId(
                 surveyType: map.surveyType,
                 time: DateUtil.parseWithMilliseconds(map.time),
-                randNum: map.randNum
+                randNum: map.randNum,
+                projectId: map.projectId,
+                protocol: new ParatooProtocolId(id: map.protocol.id, version: map.protocol.version)
         )
     }
 
