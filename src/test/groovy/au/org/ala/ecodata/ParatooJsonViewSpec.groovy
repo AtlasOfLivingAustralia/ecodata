@@ -13,9 +13,9 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         Map expectedResult = [
                 projects: [[
                     id:"p1", name:"Project 1", protocols: [
-                        [identifier: "guid-1", name: "Protocol 1", version: 1, module: "module-1"],
-                        [identifier: "guid-2", name: "Protocol 2", version: 1, module: "module-2"],
-                        [identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3"]],
+                        [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: "module-1"],
+                        [id:2, identifier: "guid-2", name: "Protocol 2", version: 1, module: "module-2"],
+                        [id:3, identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3"]],
                     project_area_geo_json:null,
                     project_plots:[
                        [uuid:'s1', plot_name:"Site 1"]
@@ -24,7 +24,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                     id:"p2", name:"Project 2", protocols:[], project_plots:[], project_area_geo_json:[type:"Polygon", coordinates: DUMMY_POLYGON]
                   ],[
                      id:"p3", name:"Project 3", protocols:[
-                        [identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
+                        [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
                      ], project_area_geo_json:null, project_plots:[]
                   ]
                 ]]
@@ -69,7 +69,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     }
 
     private ActivityForm buildActivityForm(int i) {
-        new ActivityForm(externalId: "guid-$i", name:"Protocol $i", formVersion: 1, category: "module-$i")
+        new ActivityForm(externalIds: [new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"guid-$i"), new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId:i)], name:"Protocol $i", formVersion: 1, category: "module-$i")
     }
 
     private Site buildSite(i) {

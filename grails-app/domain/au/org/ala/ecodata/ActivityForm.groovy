@@ -15,7 +15,8 @@ class ActivityForm {
 
     static mapWith = "mongo"
 
-    static embedded = ['sections']
+    static embedded = ['sections', 'externalIds']
+    static hasMany = [externalIds:ExternalId]
 
     static constraints = {
         name unique: ['formVersion']
@@ -27,13 +28,13 @@ class ActivityForm {
         lastUpdatedUserId nullable: true
         minOptionalSectionsCompleted nullable: true
         description nullable: true
-        externalId nullable: true
+        externalIds nullable: true
     }
 
     static mapping = {
         name index:true
         compoundIndex name:1, formVersion:-1
-        externalId index:true
+        externalIds index:true
     }
 
     ObjectId id
@@ -91,10 +92,8 @@ class ActivityForm {
      */
     boolean external = false
 
-    /**
-     * Used to store a guid representing a Monitor protocol id
-     */
-    String externalId
+    /** Associates a list of ids from external systems with this ActivityForm. Used for monitor protocols*/
+    List<ExternalId> externalIds
 
     Date dateCreated
     Date lastUpdated
@@ -129,6 +128,15 @@ class ActivityForm {
 
     FormSection getFormSection(String name) {
         sections.find{it.name == name}
+    }
+
+    static ActivityForm findByExternalId(String externalId) {
+        where {
+            externalIds {
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
     }
 
 

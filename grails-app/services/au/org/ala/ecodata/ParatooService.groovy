@@ -144,7 +144,7 @@ class ParatooService {
     }
 
     private static String buildName(ParatooProtocolId protocolId, ParatooSurveyId surveyId, Project project) {
-        ActivityForm protocolForm = ActivityForm.findByExternalIdAndStatusNotEqual(protocolId.id, Status.DELETED)
+        ActivityForm protocolForm = ActivityForm.findByExternalId(protocolId.id)
         String dataSetName = protocolForm?.name + " - " + surveyId.timeAsDisplayDate() + " (" + project.name + ")"
         dataSetName
     }
@@ -216,11 +216,16 @@ class ParatooService {
 
         Map result = [errors:[], messages:[]]
         protocols.each { Map protocol ->
-            String id = protocol.attributes.id
+            String id = protocol.id
+            String guid = protocol.attributes.identifier
             String name = protocol.attributes.name
-            ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(id, Status.DELETED)
+            ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
-                form = new ActivityForm(externalId: id)
+                form = new ActivityForm()
+                form.externalIds = []
+                form.externalIds << new ExternalId(idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: id)
+                form.externalIds << new ExternalId(idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId: guid)
+
                 String message = "Creating form with id: "+id+", name: "+name
                 result.messages << message
                 log.info message
@@ -230,6 +235,7 @@ class ParatooService {
                 result.messages << message
                 log.info message
             }
+
             mapProtocolToActivityForm(protocol, form)
             form.save()
 

@@ -6,6 +6,7 @@ import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolId
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
 import grails.converters.JSON
+import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
@@ -17,7 +18,7 @@ import spock.lang.Specification
  * Tests for the ParatooService.
  * The tests are incomplete as some of the behaviour needs to be specified.
  */
-class ParatooServiceSpec extends Specification implements ServiceUnitTest<ParatooService>, DataTest {
+class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooService>{
 
     String userId = 'u1'
     SiteService siteService = Mock(SiteService)
@@ -27,12 +28,13 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
     def setup() {
-        mockDomain(Project)
-        mockDomain(ActivityForm)
-        mockDomain(Service)
-        mockDomain(UserPermission)
-        mockDomain(Program)
-        mockDomain(Hub)
+//        mockDomain(Project)
+//        mockDomain(ActivityForm)
+//        mockDomain(Service)
+//        mockDomain(UserPermission)
+//        mockDomain(Program)
+//        mockDomain(Hub)
+        deleteAll()
         setupData()
 
         service.webService = webService
@@ -44,7 +46,17 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         JSON.registerObjectMarshaller(new CollectionMarshaller())
     }
 
+    private void deleteAll() {
+        Hub.findAll().each {it.delete()}
+        Project.findAll().each {it.delete()}
+        ActivityForm.findAll().each {it.delete()}
+        Service.findAll().each {it.delete()}
+        UserPermission.findAll().each {it.delete()}
+        Program.findAll().each {it.delete()}
+    }
+
     def cleanup() {
+       deleteAll()
     }
 
     void "The service can map user projects into a format useful for the paratoo API"() {
@@ -177,11 +189,16 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:"guid-2", formName:"aParatooForm", sectionName:null)])
         service.save(failOnError:true, flush:true)
 
-        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", externalId: "guid-2", type:'Paratoo', category:'protocol category 1', external: true)
+        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", type:'EMSA', category:'protocol category 1', external: true)
+        activityForm.externalIds = [new ExternalId(externalId: "guid-2", idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError:true, flush:true)
-        activityForm = new ActivityForm(name:"aParatooForm 2 ", externalId: "guid-3", type:'Paratoo', category:'protocol category 2', external: true)
+
+        activityForm = new ActivityForm(name:"aParatooForm 2 ", type:'EMSA', category:'protocol category 2', external: true)
+        activityForm.externalIds = [new ExternalId(externalId: "guid-3", idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError:true, flush:true)
-        activityForm = new ActivityForm(name:"aParatooForm 3", externalId: "guid-4", type:'Paratoo', category:'protocol category 3', external: true)
+
+        activityForm = new ActivityForm(name:"aParatooForm 3", type:'EMSA', category:'protocol category 3', external: true)
+        activityForm.externalIds = [new ExternalId(externalId: "guid-4", idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError:true, flush:true)
     }
 }
