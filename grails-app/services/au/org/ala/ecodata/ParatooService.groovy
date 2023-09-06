@@ -203,7 +203,7 @@ class ParatooService {
         // Create a site representing the location of the collection
         Map geoJson = extractSpatialData(surveyData)
 
-        String siteName = buildName(collection.protocol, surveyId, project)
+        String siteName = buildName(surveyId, project)
 
         Map result = siteService.create([extent:[geometry:geoJson], name: siteName, type: 'Survey', publicatonStatus: PublicationStatus.PUBLISHED, projects: [project.projectId]])
         if (result.error) {  // Don't treat this as a fatal error for the purposes of responding to the paratoo request
@@ -306,10 +306,12 @@ class ParatooService {
     Map retrieveSurveyData(ParatooSurveyId surveyId, ParatooCollection collection) {
 
         // We might be able to replace this call with surveyId.surveyType
-        String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH+'/'+collection.protocol.id
-        Map response = webService.getJson(url, null,  null, false)
+//        String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH+'/'+collection.protocol.id
+//        Map response = webService.getJson(url, null,  null, false)
+//
+//        String apiEndpoint = response?.data?.attributes?.endpointPrefix
 
-        String apiEndpoint = response?.data?.attributes?.endpointPrefix
+        String apiEndpoint = surveyId.surveyType
         if (!apiEndpoint.endsWith('s')) {
             apiEndpoint += 's'
         } // strapi makes the endpoint plural sometimes?
@@ -325,21 +327,17 @@ class ParatooService {
         int limit = 10
 
         String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
-        url = paratooBaseUrl+apiEndpoint+query
-        response = webService.getJson(url, null,  authHeader, false)
+        String url = paratooBaseUrl+'/'+apiEndpoint
+        Map response = webService.getJson(url+query, null,  authHeader, false)
         int total = response.meta?.pagination?.total ?: 0
 
-        Map survey = null
-        while (!survey && start < total) {
-            List data = response?.data
-
-            survey = findMatchingSurvey(surveyId, data)
+        Map survey = findMatchingSurvey(surveyId, response.data)
+        while (!survey && start+limit < total) {
             start += limit
 
-            if (!survey) {
-                query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
-                response = webService.getJson(apiEndpoint+query, null,  authHeader, false)
-            }
+            query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
+            response = webService.getJson(url+query, null,  authHeader, false)
+            survey = findMatchingSurvey(surveyId, response.data)
         }
 
         survey
@@ -349,7 +347,7 @@ class ParatooService {
         data?.find {
             Map tmpSurveyId = it.attributes?.surveyId
             tmpSurveyId.surveyType == surveyId.surveyType &&
-            DateUtil.format(DateUtil.parseWithMilliseconds(tmpSurveyId.time)) == surveyId.timeAsISOString() &&
+            tmpSurveyId.time == surveyId.timeAsISOString() &&
             tmpSurveyId.randNum == surveyId.randNum
         }
     }
