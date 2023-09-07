@@ -16,6 +16,7 @@ class Site {
     static String TYPE_COMPOUND = 'compound'
     static String TYPE_PROJECT_AREA = 'projectArea'
     static String TYPE_WORKS_AREA = 'worksArea'
+    static String TYPE_SURVEY_AREA = 'surveyArea'
 
     static graphql = SiteGraphQLMapper.graphqlMapping()
 

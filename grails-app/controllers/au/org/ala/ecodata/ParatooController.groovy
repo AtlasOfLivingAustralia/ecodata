@@ -29,6 +29,7 @@ import org.springframework.validation.Errors
 
 import javax.ws.rs.GET
 import javax.ws.rs.POST
+import javax.ws.rs.PUT
 import javax.ws.rs.Path
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
@@ -239,6 +240,35 @@ class ParatooController {
         ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, collectionId)
 
         respond([isSubmitted:(projectWithMatchingDataSet != null)])
+    }
+
+    @POST
+    @Path("/plot-selections")
+    def addPlotSelection() {
+       addOrUpdatePlotSelection()
+    }
+
+    @PUT
+    @Path("/plot-selections")
+    def updatePlotSelection() {
+        addOrUpdatePlotSelection()
+    }
+
+    private def addOrUpdatePlotSelection() {
+        Map data = request.JSON
+        if (!data.data) {
+            error(HttpStatus.SC_BAD_REQUEST, "Bad request")
+            return
+        }
+        String userId = userService.currentUserDetails.userId
+        Map result = paratooService.plotSelections(userId, data.data)
+
+        if (result.error) {
+            respond([message:result.error], status:HttpStatus.SC_INTERNAL_SERVER_ERROR)
+        }
+        else {
+            respond(data, status:HttpStatus.SC_OK)
+        }
     }
 
     def options() {

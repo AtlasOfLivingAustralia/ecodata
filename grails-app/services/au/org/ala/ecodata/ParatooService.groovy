@@ -343,6 +343,7 @@ class ParatooService {
         survey
     }
 
+
     private static Map findMatchingSurvey(ParatooSurveyId surveyId, List data) {
         data?.find {
             Map tmpSurveyId = it.attributes?.surveyId
@@ -403,8 +404,49 @@ class ParatooService {
         point.name?.data?.attributes?.symbol == "C" // The plot layout has a centre point that we don't want
     }
 
+    Map plotSelections(String userId, Map plotSelectionData) {
 
-        // Protocol = 2 (vegetation mapping survey).
+        List projects = userProjects(userId)
+        if (!projects) {
+            return [error:'User has no projects eligible for Monitor site data']
+        }
+
+        Map siteData = mapPlotSelection(plotSelectionData)
+        // The projects should be specified in the data but they aren't in the swagger so for now we'll
+        // assign the site to multiple projects.
+        siteData.projects = projects.collect{it.project.projectId}
+
+        Site site = Site.findByExternalSiteId(siteData.externalSiteId)
+        Map result
+        if (site) {
+            result = siteService.update(siteData, site.siteId)
+        }
+        else {
+            result = siteService.create(siteData)
+        }
+
+        result
+    }
+
+    private static Map mapPlotSelection(Map plotSelectionData) {
+        Map site = [:]
+        site.name = buildSiteName(plotSelectionData)
+        site.description = plotSelectionData.plot_label
+        site.notes = plotSelectionData.comment
+        site.externalSiteId = plotSelectionData.uuid
+        site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
+        site.type = Site.TYPE_SURVEY_AREA
+        site.extent = [geometry:[type:'Point', coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]]]
+
+        site
+    }
+
+    private static String buildSiteName(Map plotSelectionData) {
+        plotSelectionData.plot_name.state + plotSelectionData.plot_name.program + plotSelectionData.plot_name.bioregion + plotSelectionData.plot_name.unique_digits
+    }
+
+
+    // Protocol = 2 (vegetation mapping survey).
         // endpoint /api/vegetation-mapping-surveys is useless
         // (possibly because the protocol is called vegetation-mapping-surveys and there is a module/component inside
         // called vegetation-mapping-survey and the strapi pluralisation is causing issues?)

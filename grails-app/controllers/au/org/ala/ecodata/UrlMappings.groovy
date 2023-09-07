@@ -249,6 +249,11 @@ class UrlMappings {
             action = 'collectionIdStatus'
         }
 
+        "/ws/paratoo/plot-selections" {
+            controller = 'paratoo'
+            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection']
+        }
+
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
 	}
