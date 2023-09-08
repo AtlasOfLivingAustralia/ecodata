@@ -4,7 +4,7 @@ import grails.databinding.BindingFormat
 import grails.validation.Validateable
 
 class ParatooCollection implements Validateable {
-    String mintedCollectionId
+    String orgMintedIdentifier
     ParatooProtocolId protocol
     String projectId
     String userId

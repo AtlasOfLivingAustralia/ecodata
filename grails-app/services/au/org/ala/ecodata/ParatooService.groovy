@@ -152,10 +152,10 @@ class ParatooService {
     Map submitCollection(ParatooCollection collection) {
         String projectId = collection.projectId
         Project project = Project.findByProjectId(projectId)
-        Map dataSet = project.custom?.dataSets?.find{it.dataSetId == collection.mintedCollectionId}
+        Map dataSet = project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedIdentifier}
 
         if (!dataSet) {
-            throw new RuntimeException("Unable to find data set with id: "+collection.mintedCollectionId)
+            throw new RuntimeException("Unable to find data set with id: "+collection.orgMintedIdentifier)
         }
 
         dataSet.activitiesEndDate = collection.eventTime
@@ -210,7 +210,7 @@ class ParatooService {
 
         Map result = siteService.create([extent:[geometry:geoJson], name: siteName, type: 'Survey', publicatonStatus: PublicationStatus.PUBLISHED, projects: [project.projectId]])
         if (result.error) {  // Don't treat this as a fatal error for the purposes of responding to the paratoo request
-            log.error("Error creating a site for survey "+collection.mintedCollectionId+", project "+project.projectId+": "+result.error)
+            log.error("Error creating a site for survey "+collection.orgMintedIdentifier+", project "+project.projectId+": "+result.error)
         }
         result.siteId
     }

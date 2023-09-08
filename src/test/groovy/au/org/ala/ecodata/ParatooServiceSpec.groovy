@@ -150,7 +150,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can create a data set from a submitted collection"() {
         setup:
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
-        ParatooCollection collection = new ParatooCollection(projectId:'p1', mintedCollectionId:"c1", userId:'u1', protocol:protocol, eventTime:DateUtil.parse('2023-01-01T00:00:00Z'))
+        ParatooCollection collection = new ParatooCollection(projectId:'p1', orgMintedIdentifier:"c1", userId:'u1', protocol:protocol, eventTime:DateUtil.parse('2023-01-01T00:00:00Z'))
         Map expectedDataSet = [dataSetId:'c1', grantId:'g1']
 
         when:
