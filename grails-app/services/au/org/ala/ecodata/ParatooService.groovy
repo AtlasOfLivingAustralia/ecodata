@@ -158,7 +158,7 @@ class ParatooService {
 
     Map submitCollection(ParatooCollection collection, ParatooProject project) {
 
-        Map dataSet = project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedIdentifier}
+        Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedIdentifier}
 
         if (!dataSet) {
             throw new RuntimeException("Unable to find data set with orgMintedIdentifier: "+collection.orgMintedIdentifier)
