@@ -188,7 +188,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.mintedCollectionId == "c1"}) >> [:]
+        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}) >> [:]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -208,7 +208,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.mintedCollectionId == "c1"}) >> [error:"Error"]
+        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}) >> [error:"Error"]
 
         and:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR
@@ -259,7 +259,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     private Map buildCollectionJson() {
         [
-                "mintedCollectionId":"c1",
+                "orgMintedIdentifier":"c1",
                 "projectId":"p1",
                 "userId": "u1",
                 "protocol": [
