@@ -263,6 +263,8 @@ class ParatooController {
         String userId = userService.currentUserDetails.userId
         Map result = paratooService.plotSelections(userId, data.data)
 
+        data.id = data.uuid // This is done for the benefit of the client
+
         if (result.error) {
             respond([message:result.error], status:HttpStatus.SC_INTERNAL_SERVER_ERROR)
         }
