@@ -118,9 +118,11 @@ class ParatooService {
 
     }
 
-    Map mintCollectionId(ParatooCollectionId paratooCollectionId) {
+    Map mintCollectionId(String userId, ParatooCollectionId paratooCollectionId) {
         String projectId = paratooCollectionId.surveyId.projectId
         Project project = Project.findByProjectId(projectId)
+        paratooCollectionId.surveyId.eventTime = new Date()
+        paratooCollectionId.surveyId.userId = userId
         Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
         dataSet.progress = Activity.PLANNED
 

@@ -188,7 +188,7 @@ class ParatooController {
             String userId = userService.currentUserDetails.userId
             boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.surveyId.projectId, collectionId.surveyId.protocol.id)
             if (hasProtocol) {
-                Map mintResults = paratooService.mintCollectionId(collectionId)
+                Map mintResults = paratooService.mintCollectionId(userId, collectionId)
                 if (mintResults.error) {
                     error(mintResults.error)
                 }

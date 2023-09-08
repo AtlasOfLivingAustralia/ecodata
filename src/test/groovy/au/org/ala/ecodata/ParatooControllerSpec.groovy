@@ -121,7 +121,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId: userId]
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.mintCollectionId(_) >> [orgMintedIdentifier:"id1"]
+        1 * paratooService.mintCollectionId(userId, _) >> [orgMintedIdentifier:"id1"]
 
         and:
         response.status == HttpStatus.SC_OK

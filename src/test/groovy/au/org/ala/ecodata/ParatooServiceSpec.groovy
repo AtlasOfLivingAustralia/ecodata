@@ -125,7 +125,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooCollectionId collectionId = new ParatooCollectionId(surveyId:surveyId)
 
         when:
-        Map result = service.mintCollectionId(collectionId)
+        Map result = service.mintCollectionId('u1', collectionId)
 
         then:
         1 * projectService.update(_, projectId, false) >> {data, pId, updateCollectory ->
