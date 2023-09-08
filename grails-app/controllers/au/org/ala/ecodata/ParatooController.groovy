@@ -4,6 +4,7 @@ import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
+import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -34,6 +35,7 @@ import javax.ws.rs.Path
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @au.ala.org.ws.security.RequireApiKey
+@Slf4j
 @OpenAPIDefinition(
         info = @Info(
         title = "Ecodata APIs",
@@ -207,7 +209,12 @@ class ParatooController {
     def submitCollection(@RequestBody(description = "The event time for this request is not the same as the one for minting identifiers. An identifier's event time denotes when the collection was made, this event time denotes when the collection was submitted to the server.",
                         required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooCollection.class))) ParatooCollection collection) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("ParatooController::submitCollection")
+            log.debug(request.JSON.toString())
+        }
         if (collection.hasErrors()) {
+            log.warn("Validation error passed to /collection: "+collection.errors)
             error(collection.errors)
         }
         else {
