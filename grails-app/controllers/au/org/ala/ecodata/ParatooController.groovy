@@ -219,9 +219,11 @@ class ParatooController {
         }
         else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collection.projectId, collection.protocol.id)
+            Map dataSet = paratooService.findDataSet(userId, collection.orgMintedIdentifier)
+
+            boolean hasProtocol = paratooService.protocolWriteCheck(userId, dataSet.project.id, collection.protocol.id)
             if (hasProtocol) {
-                Map result = paratooService.submitCollection(collection)
+                Map result = paratooService.submitCollection(collection, dataSet.project)
                 if (!result.error) {
                     respond([success: true])
                 } else {
@@ -246,12 +248,12 @@ class ParatooController {
         String userId = userService.currentUserDetails.userId
         Map matchingDataSet = paratooService.findDataSet(userId, id)
 
-        if (!matchingDataSet) {
+        if (!matchingDataSet.dataSet) {
             error(HttpStatus.SC_NOT_FOUND, "No data set found with mintedCollectionId=$id")
             return
         }
 
-        respond([isSubmitted:(matchingDataSet.progress == Activity.STARTED)])
+        respond([isSubmitted:(matchingDataSet.dataSet.progress == Activity.STARTED)])
     }
 
     @POST

@@ -149,9 +149,8 @@ class ParatooService {
         dataSetName
     }
 
-    Map submitCollection(ParatooCollection collection) {
-        String projectId = collection.projectId
-        Project project = Project.findByProjectId(projectId)
+    Map submitCollection(ParatooCollection collection, ParatooProject project) {
+
         Map dataSet = project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedIdentifier}
 
         if (!dataSet) {
@@ -195,11 +194,11 @@ class ParatooService {
         List projects = findUserProjects(userId)
 
         Map dataSet = null
-        projects?.find {
+        ParatooProject project = projects?.find {
             dataSet = it.dataSets?.find { it.dataSetId == collectionId }
             dataSet
         }
-        dataSet
+        [dataSet:dataSet, project:project]
     }
 
     private String createSiteFromSurveyData(Map surveyData, ParatooCollection collection, ParatooSurveyId surveyId, Project project) {
