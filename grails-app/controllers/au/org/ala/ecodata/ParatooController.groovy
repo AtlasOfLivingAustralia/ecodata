@@ -85,6 +85,7 @@ class ParatooController {
     }
 
     private error(Errors errors) {
+        log.warn("Validation errors encountered on ${request.requestURL}: "+errors)
         respond errors
     }
 
@@ -214,7 +215,6 @@ class ParatooController {
             log.debug(request.JSON.toString())
         }
         if (collection.hasErrors()) {
-            log.warn("Validation error passed to /collection: "+collection.errors)
             error(collection.errors)
         }
         else {
