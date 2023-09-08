@@ -171,7 +171,7 @@ class ParatooService {
         Map surveyData = retrieveSurveyData(surveyId, collection)
 
         // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
-        dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project)
+        dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project)
 
         // Find the dates in the survey data and update the data set accordingly
 
@@ -335,7 +335,7 @@ class ParatooService {
         int start = 0
         int limit = 10
 
-        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
+        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
         String url = paratooBaseUrl+'/'+apiEndpoint
         Map response = webService.getJson(url+query, null,  authHeader, false)
         int total = response.meta?.pagination?.total ?: 0
@@ -344,7 +344,7 @@ class ParatooService {
         while (!survey && start+limit < total) {
             start += limit
 
-            query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
+            query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
             response = webService.getJson(url+query, null,  authHeader, false)
             survey = findMatchingSurvey(surveyId, response.data)
         }
