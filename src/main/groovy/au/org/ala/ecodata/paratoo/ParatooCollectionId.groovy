@@ -13,7 +13,7 @@ class ParatooCollectionId implements Validateable {
     }
 
     String encodeAsMintedCollectionId() {
-        String jsonString = ([surveyId:surveyId.toMap()] as JSON).toString()
+        String jsonString = (surveyId.toMap() as JSON).toString()
         jsonString.encodeAsBase64()
     }
 }
