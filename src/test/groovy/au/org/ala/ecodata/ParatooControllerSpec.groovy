@@ -222,12 +222,12 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         request.method = "GET"
-        params.collectionId = "c1"
+        params.id = "c1"
         controller.collectionIdStatus()
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, 'c1') >> new ParatooProject()
+        1 * paratooService.findDataSet(userId, 'c1') >> [progress:Activity.STARTED]
 
         and:
         response.status == HttpStatus.SC_OK

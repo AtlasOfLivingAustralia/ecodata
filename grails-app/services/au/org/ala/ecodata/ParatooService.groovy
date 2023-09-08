@@ -122,7 +122,7 @@ class ParatooService {
         String projectId = paratooCollectionId.surveyId.projectId
         Project project = Project.findByProjectId(projectId)
         Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
-        dataSet.progress = Activity.STARTED
+        dataSet.progress = Activity.PLANNED
 
         String dataSetName = buildName(paratooCollectionId.surveyId, project)
 
@@ -159,6 +159,7 @@ class ParatooService {
         }
 
         dataSet.activitiesEndDate = collection.eventTime
+        dataSet.progress = Activity.STARTED
 
         ParatooSurveyId surveyId = ParatooSurveyId.fromMap(dataSet.surveyId)
         Map surveyData = retrieveSurveyData(surveyId, collection)
@@ -190,13 +191,15 @@ class ParatooService {
         protocol && project.accessLevel.code >= minimumAccess
     }
 
-    ParatooProject findDataSet(String userId, String collectionId) {
+    Map findDataSet(String userId, String collectionId) {
         List projects = findUserProjects(userId)
 
-        Project projectWithMatchingDataSet = projects?.find {
-            it.dataSets?.find { it.dataSetId == collectionId }
+        Map dataSet = null
+        projects?.find {
+            dataSet = it.dataSets?.find { it.dataSetId == collectionId }
+            dataSet
         }
-        projectWithMatchingDataSet
+        dataSet
     }
 
     private String createSiteFromSurveyData(Map surveyData, ParatooCollection collection, ParatooSurveyId surveyId, Project project) {

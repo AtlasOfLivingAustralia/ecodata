@@ -237,9 +237,14 @@ class ParatooController {
             return
         }
         String userId = userService.currentUserDetails.userId
-        ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, id)
+        Map matchingDataSet = paratooService.findDataSet(userId, id)
 
-        respond([isSubmitted:(projectWithMatchingDataSet != null)])
+        if (!matchingDataSet) {
+            error(HttpStatus.SC_NOT_FOUND, "No data set found with mintedCollectionId=$id")
+            return
+        }
+
+        respond([isSubmitted:(matchingDataSet.progress == Activity.STARTED)])
     }
 
     @POST
