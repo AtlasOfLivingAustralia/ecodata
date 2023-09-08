@@ -1,7 +1,6 @@
 package au.org.ala.ecodata.paratoo
 
 
-import grails.converters.JSON
 import grails.validation.Validateable
 
 class ParatooCollectionId implements Validateable {
@@ -10,10 +9,5 @@ class ParatooCollectionId implements Validateable {
 
     static constraints = {
         surveyId validator: { val, obj -> val.validate() }
-    }
-
-    String encodeAsMintedCollectionId() {
-        String jsonString = (surveyId.toMap() as JSON).toString()
-        jsonString.encodeAsBase64()
     }
 }

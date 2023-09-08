@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
+import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolId
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
@@ -121,13 +122,10 @@ class ParatooService {
     Map mintCollectionId(String userId, ParatooCollectionId paratooCollectionId) {
         String projectId = paratooCollectionId.surveyId.projectId
         Project project = Project.findByProjectId(projectId)
-        paratooCollectionId.surveyId.eventTime = new Date()
-        paratooCollectionId.surveyId.userId = userId
+
         Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
         dataSet.progress = Activity.PLANNED
-
         String dataSetName = buildName(paratooCollectionId.surveyId, project)
-
         dataSet.name = dataSetName
 
         if (!project.custom) {
@@ -136,11 +134,18 @@ class ParatooService {
         if (!project.custom.dataSets) {
             project.custom.dataSets = []
         }
+        ParatooMintedIdentifier orgMintedIdentifier = new ParatooMintedIdentifier(
+                surveyId: paratooCollectionId.surveyId,
+                eventTime: new Date(),
+                userId: userId,
+                projectId: projectId
+        )
+        dataSet.orgMintedIdentifier = orgMintedIdentifier.encodeAsMintedCollectionId()
         project.custom.dataSets << dataSet
         Map result = projectService.update([custom:project.custom], projectId, false)
 
         if (!result.error) {
-            result.orgMintedIdentifier = dataSet.dataSetId
+            result.orgMintedIdentifier = dataSet.orgMintedIdentifier
         }
         result
     }
@@ -156,7 +161,7 @@ class ParatooService {
         Map dataSet = project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedIdentifier}
 
         if (!dataSet) {
-            throw new RuntimeException("Unable to find data set with id: "+collection.orgMintedIdentifier)
+            throw new RuntimeException("Unable to find data set with orgMintedIdentifier: "+collection.orgMintedIdentifier)
         }
 
         dataSet.activitiesEndDate = collection.eventTime
@@ -197,7 +202,7 @@ class ParatooService {
 
         Map dataSet = null
         ParatooProject project = projects?.find {
-            dataSet = it.dataSets?.find { it.dataSetId == collectionId }
+            dataSet = it.dataSets?.find { it.orgMintedIdentifier == collectionId }
             dataSet
         }
         [dataSet:dataSet, project:project]
@@ -299,7 +304,7 @@ class ParatooService {
 
     private static Map mapParatooCollectionId(ParatooCollectionId collectionId, Project project) {
         Map dataSet = [:]
-        dataSet.dataSetId = collectionId.encodeAsMintedCollectionId()
+        dataSet.dataSetId = Identifiers.getNew(true, '')
         dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
         dataSet.grantId = project.grantId
         dataSet.activitesStartDate = DateUtil.format(collectionId.surveyId.time)
