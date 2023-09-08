@@ -432,7 +432,7 @@ class ParatooService {
 
     private static Map mapPlotSelection(Map plotSelectionData) {
         Map site = [:]
-        site.name = buildSiteName(plotSelectionData)
+        site.name = plotSelectionData.plot_label
         site.description = plotSelectionData.plot_label
         site.notes = plotSelectionData.comment
         site.externalSiteId = plotSelectionData.uuid
@@ -441,10 +441,6 @@ class ParatooService {
         site.extent = [geometry:[type:'Point', coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]]]
 
         site
-    }
-
-    private static String buildSiteName(Map plotSelectionData) {
-        plotSelectionData.plot_name.state + plotSelectionData.plot_name.program + plotSelectionData.plot_name.bioregion + plotSelectionData.plot_name.unique_digits
     }
 
 
