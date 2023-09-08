@@ -231,13 +231,13 @@ class ParatooController {
     @Path("/status/{identifier}")
     @Operation(responses = [@ApiResponse(responseCode = "200", description = "Returns true if Org has stored the supplied identifier", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"])
-    def collectionIdStatus(String collectionId) {
-        if (!collectionId) {
+    def collectionIdStatus(String id) {
+        if (!id) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
         }
         String userId = userService.currentUserDetails.userId
-        ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, collectionId)
+        ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, id)
 
         respond([isSubmitted:(projectWithMatchingDataSet != null)])
     }
