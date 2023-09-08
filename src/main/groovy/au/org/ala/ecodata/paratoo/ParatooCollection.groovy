@@ -14,8 +14,8 @@ class ParatooCollection implements Validateable {
 
     static constraints = {
         protocol validator: { val, obj -> val.validate() }
-        projectId nullable: false
-        userId nullable: false
-        eventTime nullable: false
+        projectId nullable: true
+        userId nullable: true
+        eventTime nullable: true
     }
 }
