@@ -168,7 +168,7 @@ class ParatooController {
         String userId = userService.currentUserDetails.userId
         boolean hasAccessToProtocol = checkMethod(userId, projectId, protocolId)
 
-        respond([isAuthorized:hasAccessToProtocol], status:HttpStatus.SC_OK)
+        respond([isAuthorised:hasAccessToProtocol], status:HttpStatus.SC_OK)
     }
 
     @POST

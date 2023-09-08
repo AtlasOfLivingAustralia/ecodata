@@ -84,7 +84,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         and:
         response.status == HttpStatus.SC_OK
-        response.json == [isAuthorized:true]
+        response.json == [isAuthorised:true]
 
         when:
         response.reset()
@@ -96,7 +96,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         and:
         response.status == HttpStatus.SC_OK
-        response.json == [isAuthorized:false]
+        response.json == [isAuthorised:false]
     }
 
     void "Mint collection id called with invalid body"() {
