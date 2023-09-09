@@ -5,6 +5,8 @@ import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolId
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import au.org.ala.ws.tokens.TokenService
+import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
@@ -24,6 +26,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     SiteService siteService = Mock(SiteService)
     ProjectService projectService = Mock(ProjectService)
     WebService webService = Mock(WebService)
+    TokenService tokenService = Mock(TokenService)
 
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
@@ -41,6 +44,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         service.siteService = siteService
         service.projectService = projectService
         service.permissionService = new PermissionService() // Using the real permission service for this test
+        service.tokenService = tokenService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -146,18 +150,20 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result.orgMintedIdentifier != null
     }
 
-    @Ignore // Ignoring this while doing actual integration testing.
     void "The service can create a data set from a submitted collection"() {
         setup:
+        String projectId = 'p1'
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
-        ParatooCollection collection = new ParatooCollection(projectId:'p1', orgMintedIdentifier:"c1", userId:'u1', protocol:protocol, eventTime:DateUtil.parse('2023-01-01T00:00:00Z'))
-        Map expectedDataSet = [dataSetId:'c1', grantId:'g1']
-
+        ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
+        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', randNum:1, projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
+        Map expectedDataSet = dataSet+[progress:Activity.STARTED]
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
         when:
-        Map result = service.submitCollection(collection)
+        Map result = service.submitCollection(collection, project)
 
         then:
-        1 * webService.getJson(_, null, null, false) >> [data:[:]]
+        1 * webService.getJson({it.indexOf('/s1s') >= 0}, null, _, false) >> [data:[], meta:[pagination:[total:0]]]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.update([custom:[dataSets:[expectedDataSet]]], 'p1', false) >> [status:'ok']
 
         and:

@@ -164,19 +164,22 @@ class ParatooService {
             throw new RuntimeException("Unable to find data set with orgMintedIdentifier: "+collection.orgMintedIdentifier)
         }
 
-        dataSet.activitiesEndDate = collection.eventTime
         dataSet.progress = Activity.STARTED
 
         ParatooSurveyId surveyId = ParatooSurveyId.fromMap(dataSet.surveyId)
         Map surveyData = retrieveSurveyData(surveyId, collection)
 
-        // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
-        dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project)
+        if (surveyData) {
+            // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
+            dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project)
+        }
+        else {
+            log.warn("Unable to retrieve survey data for: "+collection.orgMintedIdentifier)
+        }
 
-        // Find the dates in the survey data and update the data set accordingly
+        // TODO Find the dates in the survey data and update the data set accordingly
 
-
-        Map result = projectService.update([custom:[dataSets:project.custom.dataSets]], projectId, false)
+        Map result = projectService.update([custom:project.project.custom], project.id, false)
 
         result
     }
