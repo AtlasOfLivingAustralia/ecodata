@@ -338,7 +338,7 @@ class ParatooService {
         int start = 0
         int limit = 10
 
-        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
+        String query = "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit"
         String url = paratooBaseUrl+'/'+apiEndpoint
         Map response = webService.getJson(url+query, null,  authHeader, false)
         int total = response.meta?.pagination?.total ?: 0
@@ -347,7 +347,7 @@ class ParatooService {
         while (!survey && start+limit < total) {
             start += limit
 
-            query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
+            query = "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit"
             response = webService.getJson(url+query, null,  authHeader, false)
             survey = findMatchingSurvey(surveyId, response.data)
         }
