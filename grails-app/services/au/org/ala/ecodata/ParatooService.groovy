@@ -22,7 +22,7 @@ class ParatooService {
     static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
     static final String PARATOO_APP_NAME = "Monitor"
-    static final String MONITOR_AUTH_HEADER = "x-authentication"
+    static final String MONITOR_AUTH_HEADER = "X-Authentication"
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description']
 
@@ -330,7 +330,7 @@ class ParatooService {
 
 
         String accessToken = tokenService.getAuthToken(true)
-        Map authHeader = [MONITOR_AUTH_HEADER:accessToken]
+        Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
 
         if (!accessToken) {
             throw new RuntimeException("Unable to get access token")
@@ -338,7 +338,7 @@ class ParatooService {
         int start = 0
         int limit = 10
 
-        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
+        String query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
         String url = paratooBaseUrl+'/'+apiEndpoint
         Map response = webService.getJson(url+query, null,  authHeader, false)
         int total = response.meta?.pagination?.total ?: 0
@@ -347,7 +347,7 @@ class ParatooService {
         while (!survey && start+limit < total) {
             start += limit
 
-            query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit&auth=$accessToken"
+            query = "?populate=deep&sort=updatedAt&start=$start&limit=$limit"
             response = webService.getJson(url+query, null,  authHeader, false)
             survey = findMatchingSurvey(surveyId, response.data)
         }
