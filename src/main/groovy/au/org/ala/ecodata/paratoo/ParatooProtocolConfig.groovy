@@ -65,7 +65,7 @@ class ParatooProtocolConfig {
         new PropertyAccessor(path).get(surveyData)
     }
 
-    Map getGeometry(Map survey) {
+    Map getGeoJson(Map survey) {
         if (!survey) {
             return null
         }
@@ -89,6 +89,15 @@ class ParatooProtocolConfig {
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
         Map plotLayout = getProperty(survey, plotLayoutPath)
+
+        if (!plotLayout) {
+            log.warn("No plot_layout found in survey at path ${plotLayoutPath}")
+            return null
+        }
+
+        //Map plotSelection = getProperty(survey, plotSelectionPath)
+        //Map plotVisit = getProperty(survey, plotVisitPath)
+        // Plot selection & plot visit will be useful for metadata - name, comments, description etc.
 
         Map plotGeoJson = toGeoJson(plotLayout.plot_points)
         Map faunaPlotGeoJson = toGeoJson(plotLayout.fauna_plot_point)

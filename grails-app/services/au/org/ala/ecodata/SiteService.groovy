@@ -195,6 +195,29 @@ class SiteService {
         }
     }
 
+    /**
+     * Knows to to create an object suitable for the create/update methods from geojson.
+     * This is due to historical issues of how sites are represented in ecodata
+     */
+    static Map propertiesFromGeoJson(Map geoJson, String source) {
+        Map properties = [:]
+        Map geometry = geoJson
+        if (geoJson.type == "Feature") {
+            properties = geoJson.properties
+            geometry = geoJson.geometry
+        }
+        Map site = [name:properties.name, description:properties.description, externalId:properties.externalId, notes:properties.notes]
+        site.extent = [geometry:geometry, source:source]
+
+        if (geometry.type == 'Point') {
+            site.extent.source = 'point'  // Can't display points unless source = 'point'
+            site.extent.geometry.decimalLatitute = geometry.coordiates[1] // Some views still rely on these
+            site.extent.geometry.decimalLongitude = geometry.coordinates[0]
+        }
+
+        site
+    }
+
     def create(props) {
       //  assert getCommonService()
         def site = new Site(siteId: Identifiers.getNew(true,''))

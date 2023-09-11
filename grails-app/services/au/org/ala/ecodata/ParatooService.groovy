@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.metadata.PropertyAccessor
+
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
@@ -224,11 +224,15 @@ class ParatooService {
     private String createSiteFromSurveyData(Map surveyData, ParatooCollection collection, ParatooSurveyId surveyId, Project project, ParatooProtocolConfig config) {
         String siteId = null
         // Create a site representing the location of the collection
-        Map geoJson = config.getGeometry(surveyData)
+        Map geoJson = config.getGeoJson(surveyData)
         if (geoJson) {
             String siteName = buildName(surveyId, project)
-
-            Map result = siteService.create([extent:[geometry:geoJson], name: siteName, type: 'Survey', publicatonStatus: PublicationStatus.PUBLISHED, projects: [project.projectId]])
+            Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
+            siteProps.name = siteName
+            siteProps.type = 'Survey'
+            siteProps.publicationStatus = PublicationStatus.PUBLISHED
+            siteProps.projects = [project.projectId]
+            Map result = siteService.create(siteProps)
             if (result.error) {  // Don't treat this as a fatal error for the purposes of responding to the paratoo request
                 log.error("Error creating a site for survey "+collection.orgMintedIdentifier+", project "+project.projectId+": "+result.error)
             }

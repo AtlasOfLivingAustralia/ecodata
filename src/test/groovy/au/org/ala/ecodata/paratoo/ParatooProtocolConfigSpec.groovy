@@ -27,6 +27,6 @@ class ParatooProtocolConfigSpec extends Specification {
         expect:
         config.getStartDate(surveyData) == '2023-09-08T23:39:00.520Z'
         config.getEndDate(surveyData) == null
-        config.getGeometry(surveyData) == [type:'Point', coordinates:[ 149.0651536, -35.2592398]]
+        config.getGeoJson(surveyData) == [type:'Point', coordinates:[149.0651536, -35.2592398]]
     }
 }
