@@ -326,8 +326,8 @@ class ParatooService {
         Map dataSet = [:]
         dataSet.dataSetId = Identifiers.getNew(true, '')
         dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
+        dataSet.protocol = collectionId.surveyId.protocol.id
         dataSet.grantId = project.grantId
-        dataSet.activitesStartDate = DateUtil.format(collectionId.surveyId.time)
         dataSet.collectionApp = PARATOO_APP_NAME
         dataSet
     }
