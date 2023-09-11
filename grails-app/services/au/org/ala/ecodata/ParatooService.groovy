@@ -175,8 +175,8 @@ class ParatooService {
         if (surveyData) {
             // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
             dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project, config)
-            dataSet.activitiesStartDate = config.getStartDate(surveyData)
-            dataSet.activitiesEndDate = config.getEndDate(surveyData)
+            dataSet.startDate = config.getStartDate(surveyData)
+            dataSet.endDate = config.getEndDate(surveyData)
         }
         else {
             log.warn("Unable to retrieve survey data for: "+collection.orgMintedIdentifier)

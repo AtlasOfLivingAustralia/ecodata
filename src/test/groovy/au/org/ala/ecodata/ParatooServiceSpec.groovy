@@ -140,7 +140,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             assert dataSet.surveyId.randNum == surveyId.randNum
             assert dataSet.surveyId.surveyType == surveyId.surveyType
             assert dataSet.grantId == "g1"
-            assert dataSet.activitesStartDate == DateUtil.format(surveyId.time)
+            assert dataSet.startDate == DateUtil.format(surveyId.time)
             assert dataSet.progress == 'planned'
             assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(surveyId.time)} (Project 1)"
 
