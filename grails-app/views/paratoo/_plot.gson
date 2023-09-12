@@ -5,6 +5,6 @@ model {
 }
 
 json {
-    uuid plot.siteId
+    uuid plot.externalSiteId
     plot_name plot.name
 }

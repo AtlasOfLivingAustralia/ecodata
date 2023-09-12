@@ -311,13 +311,15 @@ class ParatooService {
             projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
         }
 
+        List<Site> plotSelections = sites.findAll{it.type == Site.TYPE_SURVEY_AREA}
+
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
                 accessLevel: accessLevel,
                 project:project,
                 projectArea: projectAreaGeoJson,
-                plots: sites.findAll{it.type == Site.TYPE_WORKS_AREA}]
+                plots: plotSelections]
         new ParatooProject(attributes)
 
     }

@@ -16,16 +16,16 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: "module-1"],
                         [id:2, identifier: "guid-2", name: "Protocol 2", version: 1, module: "module-2"],
                         [id:3, identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3"]],
-                    project_area_geo_json:null,
-                    project_plots:[
+                    project_area:null,
+                    plot_selections:[
                        [uuid:'s1', plot_name:"Site 1"]
                     ]
                    ],[
-                    id:"p2", name:"Project 2", protocols:[], project_plots:[], project_area_geo_json:[type:"Polygon", coordinates: DUMMY_POLYGON]
+                    id:"p2", name:"Project 2", protocols:[], plot_selections:[], project_area:[type:"Polygon", coordinates: DUMMY_POLYGON]
                   ],[
                      id:"p3", name:"Project 3", protocols:[
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
-                     ], project_area_geo_json:null, project_plots:[]
+                     ], project_area:null, plot_selections:[]
                   ]
                 ]]
 
@@ -73,6 +73,6 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     }
 
     private Site buildSite(i) {
-        new Site(siteId:"s$i", name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
+        new Site(siteId:"s$i", externalSiteId:"s$i", name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
     }
 }

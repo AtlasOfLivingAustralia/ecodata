@@ -188,7 +188,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         userPermission.save(failOnError:true, flush:true)
 
         Site projectArea = new Site(siteId:'s1', name:'Site 1', type:Site.TYPE_PROJECT_AREA, extent: [geometry:DUMMY_POLYGON])
-        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_WORKS_AREA, extent: [geometry:DUMMY_POLYGON])
+        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON])
         siteService.sitesForProject('p1') >> [projectArea, plot]
 
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])
