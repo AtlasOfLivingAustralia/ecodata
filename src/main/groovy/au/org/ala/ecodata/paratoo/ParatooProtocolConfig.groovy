@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.paratoo
 
+import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import groovy.util.logging.Slf4j
 
@@ -22,12 +23,19 @@ class ParatooProtocolConfig {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
 
+    private static String removeMilliseconds(String isoDateWithMillis) {
+        if (!isoDateWithMillis) {
+            return isoDateWithMillis
+        }
+        DateUtil.format(DateUtil.parseWithMilliseconds(isoDateWithMillis))
+    }
+
     String getStartDate(Map surveyData) {
-        getProperty(surveyData, startDatePath)
+        removeMilliseconds(getProperty(surveyData, startDatePath))
     }
 
     String getEndDate(Map surveyData) {
-        getProperty(surveyData, endDatePath)
+        removeMilliseconds(getProperty(surveyData, endDatePath))
     }
 
     Map getSurveyId(Map surveyData) {

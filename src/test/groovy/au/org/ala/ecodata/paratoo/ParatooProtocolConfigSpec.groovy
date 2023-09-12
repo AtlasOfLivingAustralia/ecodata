@@ -25,7 +25,7 @@ class ParatooProtocolConfigSpec extends Specification {
         ParatooProtocolConfig config = new ParatooProtocolConfig(vegetationMappingConfig)
 
         expect:
-        config.getStartDate(surveyData) == '2023-09-08T23:39:00.520Z'
+        config.getStartDate(surveyData) == '2023-09-08T23:39:00Z'
         config.getEndDate(surveyData) == null
         config.getGeoJson(surveyData) == [type:'Point', coordinates:[149.0651536, -35.2592398]]
     }
