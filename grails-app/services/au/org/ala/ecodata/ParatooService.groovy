@@ -398,14 +398,20 @@ class ParatooService {
     }
 
     private static Map mapPlotSelection(Map plotSelectionData) {
-        Map site = [:]
-        site.name = plotSelectionData.plot_label
-        site.description = plotSelectionData.plot_label
-        site.notes = plotSelectionData.comment
-        site.externalSiteId = plotSelectionData.uuid
+        Map geoJson = [:]
+        geoJson.type = 'Feature'
+        geoJson.geometry = [
+                [type:'Point', coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]]
+        ]
+        geoJson.properties = [
+                name : plotSelectionData.plot_label,
+                externalSiteId: plotSelectionData.uuid,
+                description: plotSelectionData.plot_label,
+                notes: plotSelectionData.comment
+        ]
+        Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
-        site.extent = [geometry:[type:'Point', coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]]]
 
         site
     }
