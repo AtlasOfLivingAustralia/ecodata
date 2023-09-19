@@ -270,7 +270,7 @@ class ParatooController {
 
     private def addOrUpdatePlotSelection() {
         Map data = request.JSON
-        if (!data.data) {
+        if (!data.data || !data.data.plot_label || !data.data.recommended_location) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
         }

@@ -401,7 +401,8 @@ class ParatooService {
         Map geoJson = [:]
         geoJson.type = 'Feature'
         geoJson.geometry = [
-                [type:'Point', coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]]
+                type:'Point',
+                coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]
         ]
         geoJson.properties = [
                 name : plotSelectionData.plot_label,

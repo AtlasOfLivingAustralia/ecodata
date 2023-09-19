@@ -171,6 +171,28 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         and:
         result == [status:'ok']
     }
+    
+    void "The service can create a site from a submitted plot-selection"() {
+        setup:
+        Map data = [
+                "plot_name":["state":1,"program":9,"bioregion":3,"unique_digits":"2222"],
+                "plot_label":"CTMAUA2222",
+                "recommended_location":["lat":-35.2592424,"lng":149.0651439],
+                "recommended_location_point":12,
+                "uuid":"lmpisy5p9g896lad4ut",
+                "comment":"Test",
+                "plot_selection_survey":5]
+
+        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalSiteId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':['p1'], 'type':'surveyArea']
+
+        String userId = 'u1'
+
+        when:
+        service.plotSelections(userId, data)
+
+        then:
+        1 * siteService.create(expected)
+    }
 
     private void setupData() {
         Hub hub = new Hub(hubId:"merit", urlPath:"merit")
