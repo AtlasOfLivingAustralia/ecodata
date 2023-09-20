@@ -183,7 +183,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "comment":"Test",
                 "plot_selection_survey":5]
 
-        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalSiteId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':['p1'], 'type':'surveyArea']
+        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':['p1'], 'type':'surveyArea']
 
         String userId = 'u1'
 

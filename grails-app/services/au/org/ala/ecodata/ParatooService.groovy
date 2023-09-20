@@ -385,7 +385,7 @@ class ParatooService {
         // assign the site to multiple projects.
         siteData.projects = projects.collect{it.project.projectId}
 
-        Site site = Site.findByExternalSiteId(siteData.externalSiteId)
+        Site site = Site.findByExternalId(siteData.externalId)
         Map result
         if (site) {
             result = siteService.update(siteData, site.siteId)
@@ -398,18 +398,7 @@ class ParatooService {
     }
 
     private static Map mapPlotSelection(Map plotSelectionData) {
-        Map geoJson = [:]
-        geoJson.type = 'Feature'
-        geoJson.geometry = [
-                type:'Point',
-                coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]
-        ]
-        geoJson.properties = [
-                name : plotSelectionData.plot_label,
-                externalSiteId: plotSelectionData.uuid,
-                description: plotSelectionData.plot_label,
-                notes: plotSelectionData.comment
-        ]
+        Map geoJson = ParatooProtocolConfig.plotSelectionToGeoJson(plotSelectionData)
         Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA

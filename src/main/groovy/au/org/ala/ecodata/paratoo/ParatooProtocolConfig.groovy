@@ -18,7 +18,11 @@ class ParatooProtocolConfig {
     String startDatePath
     String endDatePath
     String surveyIdPath = 'attributes.surveyId'
-    String plotLayoutPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes'
+    String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
+    String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
+    String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
+    String plotLayoutDimensionLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_dimension.data.attributes.label'
+    String plotLayoutTypeLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_type.data.attributes.label'
     String getApiEndpoint(ParatooSurveyId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
@@ -78,14 +82,14 @@ class ParatooProtocolConfig {
             return null
         }
 
-        Map geometry = null
+        Map geoJson = null
         if (usesPlotLayout) {
-            geometry = extractSiteDataFromPlotVisit(survey)
+            geoJson = extractSiteDataFromPlotVisit(survey)
         }
         else if (geometryPath) {
-            geometry = extractSiteDataFromPath(survey)
+            geoJson = extractSiteDataFromPath(survey)
         }
-        geometry
+        geoJson
     }
 
     boolean matches(Map surveyData, ParatooSurveyId surveyId) {
@@ -96,19 +100,34 @@ class ParatooProtocolConfig {
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
-        Map plotLayout = getProperty(survey, plotLayoutPath)
+        def plotLayoutId = getProperty(survey, plotLayoutIdPath) // Currently an int, may become uuid?
 
-        if (!plotLayout) {
-            log.warn("No plot_layout found in survey at path ${plotLayoutPath}")
+        if (!plotLayoutId) {
+            log.warn("No plot_layout found in survey at path ${plotLayoutIdPath}")
             return null
         }
+        List plotLayoutPoints = getProperty(survey, plotLayoutPointsPath)
+        Map plotSelection = getProperty(survey, plotSelectionPath)
+        Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
 
-        //Map plotSelection = getProperty(survey, plotSelectionPath)
-        //Map plotVisit = getProperty(survey, plotVisitPath)
-        // Plot selection & plot visit will be useful for metadata - name, comments, description etc.
+        String plotLayoutDimensionLabel = getProperty(survey, plotLayoutDimensionLabelPath)
+        String plotLayoutTypeLabel = getProperty(survey, plotLayoutTypeLabelPath)
 
-        Map plotGeoJson = toGeoJson(plotLayout.plot_points)
-        Map faunaPlotGeoJson = toGeoJson(plotLayout.fauna_plot_point)
+        String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + plotLayoutDimensionLabel + ')'
+
+        Map plotGeometory = toGeometry(plotLayoutPoints)
+        Map plotGeoJson = [
+            type: 'Feature',
+            geometry: plotGeometory,
+            properties: [
+                    name: name,
+                    externalId: plotLayoutId,
+                    description: name,
+                    notes: plotSelectionGeoJson?.properties?.notes
+            ]
+        ]
+
+        //Map faunaPlotGeoJson = toGeometry(plotLayout.fauna_plot_point)
 
         // TODO maybe turn this into a feature with properties to distinguish the fauna plot?
         // Or a multi-polygon?
@@ -116,7 +135,7 @@ class ParatooProtocolConfig {
         plotGeoJson
     }
 
-    private static Map toGeoJson(List points) {
+    private static Map toGeometry(List points) {
         List coords = points?.findAll { !exclude(it) }.collect {
             [it.lng, it.lat]
         }
@@ -137,5 +156,21 @@ class ParatooProtocolConfig {
 
     private static boolean exclude(Map point) {
         point.name?.data?.attributes?.symbol == "C" // The plot layout has a centre point that we don't want
+    }
+
+    static Map plotSelectionToGeoJson(Map plotSelectionData) {
+        Map geoJson = [:]
+        geoJson.type = 'Feature'
+        geoJson.geometry = [
+                type:'Point',
+                coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]
+        ]
+        geoJson.properties = [
+                name : plotSelectionData.plot_label,
+                externalId: plotSelectionData.uuid,
+                description: plotSelectionData.plot_label,
+                notes: plotSelectionData.comment
+        ]
+        geoJson
     }
 }
