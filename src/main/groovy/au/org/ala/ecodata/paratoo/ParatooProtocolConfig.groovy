@@ -15,8 +15,8 @@ class ParatooProtocolConfig {
     String geometryType = 'Polygon'
 
     String geometryPath
-    String startDatePath
-    String endDatePath
+    String startDatePath = 'attributes.start_date_time'
+    String endDatePath = 'attributes.end_date_time'
     String surveyIdPath = 'attributes.surveyId'
     String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
     String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
