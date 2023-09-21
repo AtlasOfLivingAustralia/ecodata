@@ -226,13 +226,18 @@ class ParatooService {
         // Create a site representing the location of the collection
         Map geoJson = config.getGeoJson(surveyData)
         if (geoJson) {
-            String siteName = buildName(surveyId, project)
             Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
-            siteProps.name = siteName
-            siteProps.type = 'Survey'
+            siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            Map result = siteService.create(siteProps)
+            Site site = Site.findByTypeAndExternalId(Site.TYPE_SURVEY_AREA, siteProps.externalId)
+            Map result
+            if (!site) {
+                result = siteService.create(siteProps)
+            }
+            else {
+                result = [siteId:site.siteId]
+            }
             if (result.error) {  // Don't treat this as a fatal error for the purposes of responding to the paratoo request
                 log.error("Error creating a site for survey "+collection.orgMintedIdentifier+", project "+project.projectId+": "+result.error)
             }
