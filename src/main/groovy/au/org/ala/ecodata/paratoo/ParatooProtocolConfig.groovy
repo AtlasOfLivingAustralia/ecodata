@@ -148,7 +148,7 @@ class ParatooProtocolConfig {
     }
 
     private static List closePolygonIfRequired(List points) {
-        if (points[0][0] != points[-1][0] && points[0][1] != points[-1][1]) {
+        if (points[0][0] != points[-1][0] || points[0][1] != points[-1][1]) {
             points << points[0]
         }
         points
