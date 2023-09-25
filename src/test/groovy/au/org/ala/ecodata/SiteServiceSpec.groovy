@@ -206,6 +206,55 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
     }
 
+    def "Data can be extracted from geojson"() {
+        setup:
+        def geojsonPolygon =
+                [
+                        type: 'Feature',
+                        geometry: [
+                                type: 'Polygon',
+                                coordinates: [
+                                        [
+                                                [ 1, 2 ], [ 3, 4 ], [ 5, 6 ], [ 1, 2 ]
+                                        ]
+                                ]
+                        ],
+                        properties: [
+                                name: 'Site 1'
+                        ]
+                ]
+        def geoJsonPoint = [
+                type: 'Feature',
+                geometry: [
+                        type: 'Point',
+                        coordinates: [1, 2]
+                ],
+                properties: [
+                        name: 'Site 1'
+                ]
+        ]
+
+        when:
+        Map result = service.propertiesFromGeoJson(geojsonPolygon, 'upload')
+
+        then:
+        result.extent.geometry.type == geojsonPolygon.geometry.type
+        result.extent.geometry.coordinates == geojsonPolygon.geometry.coordinates
+        result.extent.source == 'upload'
+        result.name == "Site 1"
+
+        when:
+        result = service.propertiesFromGeoJson(geoJsonPoint, 'upload')
+
+        then:
+        result.extent.geometry.type == geoJsonPoint.geometry.type
+        result.extent.geometry.coordinates == geoJsonPoint.geometry.coordinates
+        result.extent.source == 'point'
+        result.extent.geometry.decimalLatitude == geoJsonPoint.geometry.coordinates[1]
+        result.extent.geometry.decimalLongitude == geoJsonPoint.geometry.coordinates[0]
+        result.name == "Site 1"
+    }
+
 
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]

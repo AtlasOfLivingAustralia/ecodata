@@ -62,7 +62,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.hasReadAccess(null, 1)
+        controller.hasReadAccess(null, "guid-1")
 
         then:
         response.status == HttpStatus.SC_BAD_REQUEST
@@ -76,27 +76,27 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         response.reset()
-        controller.hasReadAccess('p1', 1)
+        controller.hasReadAccess('p1', "guid-1")
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolReadCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolReadCheck(userId, 'p1', "guid-1") >> true
 
         and:
         response.status == HttpStatus.SC_OK
-        response.json == [isAuthorized:true]
+        response.json == [isAuthorised:true]
 
         when:
         response.reset()
-        controller.hasReadAccess('p2', 1)
+        controller.hasReadAccess('p2', "guid-1")
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolReadCheck(userId, 'p2', 1) >> false
+        1 * paratooService.protocolReadCheck(userId, 'p2', "guid-1") >> false
 
         and:
         response.status == HttpStatus.SC_OK
-        response.json == [isAuthorized:false]
+        response.json == [isAuthorised:false]
     }
 
     void "Mint collection id called with invalid body"() {
@@ -120,11 +120,12 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId: userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.mintCollectionId(userId, _) >> [orgMintedIdentifier:"id1"]
 
         and:
         response.status == HttpStatus.SC_OK
-        response.json.orgMintedIdentfier != null
+        response.json.orgMintedIdentifier == "id1"
     }
 
     void "We attempt to mint a collection id for a project or protocol we don't have permissions for"() {
@@ -138,7 +139,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> false
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -159,15 +160,17 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     void "We attempt to submit a collection for a project or protocol we don't have permissions for"() {
         setup:
         String userId = 'u1'
+        Map collection = buildCollectionJson()
 
         when:
         request.method = "POST"
-        request.json = buildCollectionJson()
+        request.json = collection
         controller.submitCollection()
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> false
+        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -178,16 +181,19 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     void "We submit a collection for a project and protocol"() {
         setup:
         String userId = 'u1'
+        Map collection = buildCollectionJson()
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[:]]
 
         when:
         request.method = "POST"
-        request.json = buildCollectionJson()
+        request.json = collection
         controller.submitCollection()
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
-        1 * paratooService.createCollection({it.mintedCollectionId == "c1"}) >> [:]
+        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> searchResults
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}, searchResults.project) >> [:]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -198,16 +204,19 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     void "We submit a collection for a project and protocol and an error is encountered"() {
         setup:
         String userId = 'u1'
+        Map collection = buildCollectionJson()
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[:]]
 
         when:
         request.method = "POST"
-        request.json = buildCollectionJson()
+        request.json = collection
         controller.submitCollection()
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', 1) >> true
-        1 * paratooService.createCollection({it.mintedCollectionId == "c1"}) >> [error:"Error"]
+        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> searchResults
+        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}, searchResults.project) >> [error:"Error"]
 
         and:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR
@@ -221,12 +230,12 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         when:
         request.method = "GET"
-        params.collectionId = "c1"
+        params.id = "c1"
         controller.collectionIdStatus()
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, 'c1') >> new ParatooProject()
+        1 * paratooService.findDataSet(userId, 'c1') >> [dataSet:[progress:Activity.STARTED]]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -243,27 +252,26 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     private Map buildCollectionIdJson() {
         [
-            "projectId":"p1",
-            "protocol": [
-              "id": 1,
-              "version": 1
-            ],
             "surveyId": [
                     surveyType: "Bird",
                     time: "2023-01-01T00:00:00Z",
-                    randNum: 1234
+                    randNum: 1234,
+                    "projectId":"p1",
+                    "protocol": [
+                            "id": "guid-1",
+                            "version": 1
+                    ]
             ]
         ]
-
     }
 
     private Map buildCollectionJson() {
         [
-                "mintedCollectionId":"c1",
+                "orgMintedIdentifier":"c1",
                 "projectId":"p1",
                 "userId": "u1",
                 "protocol": [
-                        "id": 1,
+                        "id": "guid-1",
                         "version": 1
                 ],
                 "eventTime":"2023-01-01T00:00:00Z"

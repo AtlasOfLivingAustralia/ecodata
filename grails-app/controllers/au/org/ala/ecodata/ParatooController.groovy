@@ -4,6 +4,7 @@ import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
+import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -29,10 +30,12 @@ import org.springframework.validation.Errors
 
 import javax.ws.rs.GET
 import javax.ws.rs.POST
+import javax.ws.rs.PUT
 import javax.ws.rs.Path
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @au.ala.org.ws.security.RequireApiKey
+@Slf4j
 @OpenAPIDefinition(
         info = @Info(
         title = "Ecodata APIs",
@@ -82,6 +85,7 @@ class ParatooController {
     }
 
     private error(Errors errors) {
+        log.warn("Validation errors encountered on ${request.requestURL}: "+errors)
         respond errors
     }
 
@@ -138,8 +142,8 @@ class ParatooController {
     @Operation(description = "Checks that a user has read permissions for the particular project and protocol", responses = [@ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"], summary = "For authorizing with the PDP which checks read permissions")
     def hasReadAccess(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
-                      @RequestBody(required = true, content = @Content(schema = @Schema(type = "integer"))) Integer protocolId) {
-        protocolCheck(projectId, protocolId, { String userId, String prjId, Integer proId ->
+                      @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
             paratooService.protocolReadCheck(userId, prjId, proId)
         })
     }
@@ -149,8 +153,8 @@ class ParatooController {
     @Operation(description = "Checks that a user has write permissions for the particular project and protocol", responses = [@ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"], summary = "For authorizing with the PDP which checks write permissions")
     def hasWriteAccess(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
-                       @RequestBody(required = true, content = @Content(schema = @Schema(type = "integer"))) Integer protocolId) {
-        protocolCheck(projectId, protocolId, { String userId, String prjId, Integer proId ->
+                       @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
             paratooService.protocolWriteCheck(userId, prjId, proId)
         })
     }
@@ -159,7 +163,7 @@ class ParatooController {
      * Used for both read and write - if we need to take into account
      * read only users we need to separate these calls
      */
-    private void protocolCheck(String projectId, Integer protocolId, Closure checkMethod) {
+    private void protocolCheck(String projectId, String protocolId, Closure checkMethod) {
         if (!projectId || !protocolId) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
@@ -167,7 +171,7 @@ class ParatooController {
         String userId = userService.currentUserDetails.userId
         boolean hasAccessToProtocol = checkMethod(userId, projectId, protocolId)
 
-        respond([isAuthorized:hasAccessToProtocol], status:HttpStatus.SC_OK)
+        respond([isAuthorised:hasAccessToProtocol], status:HttpStatus.SC_OK)
     }
 
     @POST
@@ -182,9 +186,16 @@ class ParatooController {
         }
         else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.projectId, collectionId.protocol.id)
+            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.surveyId.projectId, collectionId.surveyId.protocol.id)
             if (hasProtocol) {
-                respond([orgMintedIdentfier:Identifiers.getNew(true, null)])
+                Map mintResults = paratooService.mintCollectionId(userId, collectionId)
+                if (mintResults.error) {
+                    error(mintResults.error)
+                }
+                else {
+                    respond([orgMintedIdentifier:mintResults.orgMintedIdentifier])
+                }
+
             }
             else {
                 error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
@@ -199,15 +210,20 @@ class ParatooController {
     def submitCollection(@RequestBody(description = "The event time for this request is not the same as the one for minting identifiers. An identifier's event time denotes when the collection was made, this event time denotes when the collection was submitted to the server.",
                         required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooCollection.class))) ParatooCollection collection) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("ParatooController::submitCollection")
+            log.debug(request.JSON.toString())
+        }
         if (collection.hasErrors()) {
             error(collection.errors)
         }
         else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collection.projectId, collection.protocol.id)
+            Map dataSet = paratooService.findDataSet(userId, collection.orgMintedIdentifier)
+
+            boolean hasProtocol = paratooService.protocolWriteCheck(userId, dataSet.project.id, collection.protocol.id)
             if (hasProtocol) {
-                // Create a data set and attach to the project.
-                Map result = paratooService.createCollection(collection)
+                Map result = paratooService.submitCollection(collection, dataSet.project)
                 if (!result.error) {
                     respond([success: true])
                 } else {
@@ -224,15 +240,59 @@ class ParatooController {
     @Path("/status/{identifier}")
     @Operation(responses = [@ApiResponse(responseCode = "200", description = "Returns true if Org has stored the supplied identifier", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"])
-    def collectionIdStatus(String collectionId) {
-        if (!collectionId) {
+    def collectionIdStatus(String id) {
+        if (!id) {
             error(HttpStatus.SC_BAD_REQUEST, "Bad request")
             return
         }
         String userId = userService.currentUserDetails.userId
-        ParatooProject projectWithMatchingDataSet = paratooService.findDataSet(userId, collectionId)
+        Map matchingDataSet = paratooService.findDataSet(userId, id)
 
-        respond([isSubmitted:(projectWithMatchingDataSet != null)])
+        if (!matchingDataSet.dataSet) {
+            error(HttpStatus.SC_NOT_FOUND, "No data set found with mintedCollectionId=$id")
+            return
+        }
+
+        respond([isSubmitted:(matchingDataSet.dataSet.progress == Activity.STARTED)])
+    }
+
+    @POST
+    @Path("/plot-selections")
+    def addPlotSelection() {
+       addOrUpdatePlotSelection()
+    }
+
+    @PUT
+    @Path("/plot-selections")
+    def updatePlotSelection() {
+        addOrUpdatePlotSelection()
+    }
+
+    private def addOrUpdatePlotSelection() {
+        Map data = request.JSON
+        if (!data.data || !data.data.plot_label || !data.data.recommended_location) {
+            error(HttpStatus.SC_BAD_REQUEST, "Bad request")
+            return
+        }
+        String userId = userService.currentUserDetails.userId
+        Map result = paratooService.plotSelections(userId, data.data)
+
+        if (result.error) {
+            respond([message:result.error], status:HttpStatus.SC_INTERNAL_SERVER_ERROR)
+        }
+        else {
+            respond(buildPlotSelectionsResponse(data.data), status:HttpStatus.SC_OK)
+        }
+    }
+
+    private static Map buildPlotSelectionsResponse(Map data) {
+        [
+            "data": [
+                "id": data.uuid,
+                "attributes": data
+            ],
+            meta: [:]
+        ]
     }
 
     def options() {

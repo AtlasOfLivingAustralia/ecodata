@@ -1,0 +1,766 @@
+{
+  "id": 2,
+  "attributes": {
+    "surveyId": {
+      "time": "2023-09-22T01:03:15.556Z",
+      "randNum": 43389075,
+      "protocol": {
+        "id": "5005b0af-4360-4a8c-a203-b2c9e440547e",
+        "version": 1
+      },
+      "projectId": "49472be4-cd7d-4e55-ae96-c91e8f152a34",
+      "surveyType": "basal-area-dbh-measure-survey"
+    },
+    "start_date": "2023-09-22T00:59:47.807Z",
+    "createdAt": "2023-09-22T01:05:19.981Z",
+    "updatedAt": "2023-09-22T01:05:19.981Z",
+    "plot_size": {
+      "data": {
+        "id": 1,
+        "attributes": {
+          "symbol": "P40",
+          "label": "40x40 m",
+          "description": "",
+          "uri": "",
+          "createdAt": "2023-09-14T05:59:43.261Z",
+          "updatedAt": "2023-09-14T05:59:43.261Z",
+          "survey_method": {
+            "data": {
+              "id": 1,
+              "attributes": {
+                "symbol": "T",
+                "label": "Transects",
+                "description": "",
+                "uri": "https://linked.data.gov.au/def/nrm/ba3bc90d-ebed-5e4e-a2ef-8e5d4d485fef",
+                "createdAt": "2023-09-14T05:59:34.972Z",
+                "updatedAt": "2023-09-14T05:59:34.972Z"
+              }
+            }
+          },
+          "transect_number": {
+            "data": null
+          }
+        }
+      }
+    },
+    "basal_dbh_instrument": {
+      "data": {
+        "id": 1,
+        "attributes": {
+          "symbol": "DIA",
+          "label": "Diameter Tape Measure",
+          "description": "A diameter tape was used to measure DBH.",
+          "uri": "https://linked.data.gov.au/def/nrm/237b799a-a1f3-5a1e-b88a-69429d05523a",
+          "createdAt": "2023-09-14T05:59:37.957Z",
+          "updatedAt": "2023-09-14T05:59:37.957Z"
+        }
+      }
+    },
+    "plot_visit": {
+      "data": {
+        "id": 9,
+        "attributes": {
+          "start_date": "2023-09-22T00:54:22.157Z",
+          "end_date": "2023-09-23T00:00:00.000Z",
+          "visit_field_name": "Plot test",
+          "createdAt": "2023-09-22T00:55:48.249Z",
+          "updatedAt": "2023-09-22T00:55:48.249Z",
+          "plot_layout": {
+            "data": {
+              "id": 4,
+              "attributes": {
+                "replicate": 1,
+                "is_the_plot_permanently_marked": true,
+                "orientation": 1,
+                "createdAt": "2023-09-14T06:00:11.996Z",
+                "updatedAt": "2023-09-14T06:00:11.996Z",
+                "plot_selection": {
+                  "data": {
+                    "id": 4,
+                    "attributes": {
+                      "plot_label": "SATFLB0001",
+                      "uuid": "a6f84a0e-2239-4bfa-aac6-6d2c99e252f4",
+                      "comment": "some comment",
+                      "createdAt": "2023-09-14T05:59:34.907Z",
+                      "updatedAt": "2023-09-14T05:59:34.907Z",
+                      "plot_name": {
+                        "id": 4,
+                        "unique_digits": "0001",
+                        "state": {
+                          "data": {
+                            "id": 5,
+                            "attributes": {
+                              "symbol": "SA",
+                              "label": "South Australia",
+                              "description": "",
+                              "uri": "https://linked.data.gov.au/def/nrm/5648c02d-6120-5cb1-858a-d92e970c1da0",
+                              "createdAt": "2023-09-14T05:59:33.984Z",
+                              "updatedAt": "2023-09-14T05:59:33.984Z"
+                            }
+                          }
+                        },
+                        "program": {
+                          "data": {
+                            "id": 7,
+                            "attributes": {
+                              "symbol": "S",
+                              "label": "Super Sites",
+                              "description": "",
+                              "uri": "",
+                              "createdAt": "2023-09-14T05:59:34.035Z",
+                              "updatedAt": "2023-09-14T05:59:34.035Z"
+                            }
+                          }
+                        },
+                        "bioregion": {
+                          "data": {
+                            "id": 27,
+                            "attributes": {
+                              "symbol": "FLB",
+                              "label": "Flinders Lofty Block",
+                              "description": "",
+                              "uri": "",
+                              "createdAt": "2023-09-14T05:59:34.233Z",
+                              "updatedAt": "2023-09-14T05:59:38.572Z",
+                              "states": {
+                                "data": [
+                                  {
+                                    "id": 5,
+                                    "attributes": {
+                                      "symbol": "SA",
+                                      "label": "South Australia",
+                                      "description": "",
+                                      "uri": "https://linked.data.gov.au/def/nrm/5648c02d-6120-5cb1-858a-d92e970c1da0",
+                                      "createdAt": "2023-09-14T05:59:33.984Z",
+                                      "updatedAt": "2023-09-14T05:59:33.984Z"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "recommended_location": {
+                        "id": 4,
+                        "lat": -35.0004723472134,
+                        "lng": 138.66067886352542
+                      },
+                      "recommended_location_point": {
+                        "data": {
+                          "id": 1,
+                          "attributes": {
+                            "symbol": "C",
+                            "description": "Centre",
+                            "label": "Centre",
+                            "uri": "",
+                            "createdAt": "2023-09-14T05:59:34.718Z",
+                            "updatedAt": "2023-09-14T05:59:34.718Z"
+                          }
+                        }
+                      },
+                      "plot_selection_survey": {
+                        "data": null
+                      }
+                    }
+                  }
+                },
+                "plot_type": {
+                  "data": {
+                    "id": 1,
+                    "attributes": {
+                      "symbol": "C",
+                      "label": "Control",
+                      "description": "",
+                      "uri": "",
+                      "createdAt": "2023-09-14T05:59:53.672Z",
+                      "updatedAt": "2023-09-14T05:59:53.672Z"
+                    }
+                  }
+                },
+                "permanently_marked": {
+                  "id": 3,
+                  "NW": true,
+                  "NE": false,
+                  "SW": false,
+                  "SE": false,
+                  "Centre": false,
+                  "marker": {
+                    "data": {
+                      "id": 2,
+                      "attributes": {
+                        "symbol": "SSS",
+                        "label": "Survey stake - steel",
+                        "description": "",
+                        "uri": "",
+                        "createdAt": "2023-09-14T05:59:53.465Z",
+                        "updatedAt": "2023-09-14T05:59:53.465Z"
+                      }
+                    }
+                  }
+                },
+                "plot_dimension": {
+                  "data": {
+                    "id": 1,
+                    "attributes": {
+                      "symbol": "100m",
+                      "label": "100 x 100",
+                      "description": "100 m by 100 m (1 hectare)",
+                      "uri": "",
+                      "createdAt": "2023-09-14T05:59:53.412Z",
+                      "updatedAt": "2023-09-14T05:59:53.412Z"
+                    }
+                  }
+                },
+                "plot_points": [
+                  {
+                    "id": 76,
+                    "lat": -34.97222197296049,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 12,
+                        "attributes": {
+                          "symbol": "W1",
+                          "description": "West 1",
+                          "label": "West 1",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.771Z",
+                          "updatedAt": "2023-09-14T05:59:34.771Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 77,
+                    "lat": -34.97204230990367,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 13,
+                        "attributes": {
+                          "symbol": "W2",
+                          "description": "West 2",
+                          "label": "West 2",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.775Z",
+                          "updatedAt": "2023-09-14T05:59:34.775Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 78,
+                    "lat": -34.971862646846844,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 14,
+                        "attributes": {
+                          "symbol": "W3",
+                          "description": "West 3",
+                          "label": "West 3",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.779Z",
+                          "updatedAt": "2023-09-14T05:59:34.779Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 79,
+                    "lat": -34.97168298379002,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 15,
+                        "attributes": {
+                          "symbol": "W4",
+                          "description": "West 4",
+                          "label": "West 4",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.783Z",
+                          "updatedAt": "2023-09-14T05:59:34.783Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 80,
+                    "lat": -34.9715033207332,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 16,
+                        "attributes": {
+                          "symbol": "W5",
+                          "description": "West 5",
+                          "label": "West 5",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.787Z",
+                          "updatedAt": "2023-09-14T05:59:34.787Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 81,
+                    "lat": -34.971413489204785,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 24,
+                        "attributes": {
+                          "symbol": "NW",
+                          "description": "North West",
+                          "label": "North West",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.827Z",
+                          "updatedAt": "2023-09-14T05:59:34.827Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 83,
+                    "lat": -34.971413489204785,
+                    "lng": 138.63731723494544,
+                    "name": {
+                      "data": {
+                        "id": 17,
+                        "attributes": {
+                          "symbol": "N1",
+                          "description": "North 1",
+                          "label": "North 1",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.795Z",
+                          "updatedAt": "2023-09-14T05:59:34.795Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 82,
+                    "lat": -34.971413489204785,
+                    "lng": 138.6375364888752,
+                    "name": {
+                      "data": {
+                        "id": 18,
+                        "attributes": {
+                          "symbol": "N2",
+                          "description": "North 2",
+                          "label": "North 2",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.799Z",
+                          "updatedAt": "2023-09-14T05:59:34.799Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 84,
+                    "lat": -34.971413489204785,
+                    "lng": 138.63775574280498,
+                    "name": {
+                      "data": {
+                        "id": 19,
+                        "attributes": {
+                          "symbol": "N3",
+                          "description": "North 3",
+                          "label": "North 3",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.803Z",
+                          "updatedAt": "2023-09-14T05:59:34.803Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 85,
+                    "lat": -34.971413489204785,
+                    "lng": 138.63797499673475,
+                    "name": {
+                      "data": {
+                        "id": 20,
+                        "attributes": {
+                          "symbol": "N4",
+                          "description": "North 4",
+                          "label": "North 4",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.808Z",
+                          "updatedAt": "2023-09-14T05:59:34.808Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 86,
+                    "lat": -34.971413489204785,
+                    "lng": 138.63819425066453,
+                    "name": {
+                      "data": {
+                        "id": 21,
+                        "attributes": {
+                          "symbol": "N5",
+                          "description": "North 5",
+                          "label": "North 5",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.811Z",
+                          "updatedAt": "2023-09-14T05:59:34.811Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 87,
+                    "lat": -34.971413489204785,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 25,
+                        "attributes": {
+                          "symbol": "NE",
+                          "description": "North East",
+                          "label": "North East",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.831Z",
+                          "updatedAt": "2023-09-14T05:59:34.831Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 88,
+                    "lat": -34.9715033207332,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 6,
+                        "attributes": {
+                          "symbol": "E5",
+                          "description": "East 5",
+                          "label": "East 5",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.744Z",
+                          "updatedAt": "2023-09-14T05:59:34.744Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 89,
+                    "lat": -34.97168298379002,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 5,
+                        "attributes": {
+                          "symbol": "E4",
+                          "description": "East 4",
+                          "label": "East 4",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.740Z",
+                          "updatedAt": "2023-09-14T05:59:34.740Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 90,
+                    "lat": -34.971862646846844,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 4,
+                        "attributes": {
+                          "symbol": "E3",
+                          "description": "East 3",
+                          "label": "East 3",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.736Z",
+                          "updatedAt": "2023-09-14T05:59:34.736Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 91,
+                    "lat": -34.97204230990367,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 3,
+                        "attributes": {
+                          "symbol": "E2",
+                          "description": "East 2",
+                          "label": "East 2",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.731Z",
+                          "updatedAt": "2023-09-14T05:59:34.731Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 92,
+                    "lat": -34.97222197296049,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 2,
+                        "attributes": {
+                          "symbol": "E1",
+                          "description": "East 1",
+                          "label": "East 1",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.726Z",
+                          "updatedAt": "2023-09-14T05:59:34.726Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 93,
+                    "lat": -34.9723118044889,
+                    "lng": 138.63830387762943,
+                    "name": {
+                      "data": {
+                        "id": 23,
+                        "attributes": {
+                          "symbol": "SE",
+                          "description": "South East",
+                          "label": "South East",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.823Z",
+                          "updatedAt": "2023-09-14T05:59:34.823Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 94,
+                    "lat": -34.9723118044889,
+                    "lng": 138.63819425066453,
+                    "name": {
+                      "data": {
+                        "id": 11,
+                        "attributes": {
+                          "symbol": "S5",
+                          "description": "South 5",
+                          "label": "South 5",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.767Z",
+                          "updatedAt": "2023-09-14T05:59:34.767Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 95,
+                    "lat": -34.9723118044889,
+                    "lng": 138.63797499673475,
+                    "name": {
+                      "data": {
+                        "id": 10,
+                        "attributes": {
+                          "symbol": "S4",
+                          "description": "South 4",
+                          "label": "South 4",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.763Z",
+                          "updatedAt": "2023-09-14T05:59:34.763Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 96,
+                    "lat": -34.9723118044889,
+                    "lng": 138.63775574280498,
+                    "name": {
+                      "data": {
+                        "id": 9,
+                        "attributes": {
+                          "symbol": "S3",
+                          "description": "South 3",
+                          "label": "South 3",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.760Z",
+                          "updatedAt": "2023-09-14T05:59:34.760Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 97,
+                    "lat": -34.9723118044889,
+                    "lng": 138.6375364888752,
+                    "name": {
+                      "data": {
+                        "id": 8,
+                        "attributes": {
+                          "symbol": "S2",
+                          "description": "South 2",
+                          "label": "South 2",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.756Z",
+                          "updatedAt": "2023-09-14T05:59:34.756Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 98,
+                    "lat": -34.9723118044889,
+                    "lng": 138.63731723494544,
+                    "name": {
+                      "data": {
+                        "id": 7,
+                        "attributes": {
+                          "symbol": "S1",
+                          "description": "South 1",
+                          "label": "South 1",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.751Z",
+                          "updatedAt": "2023-09-14T05:59:34.751Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 99,
+                    "lat": -34.97186264684684,
+                    "lng": 138.63775574280498,
+                    "name": {
+                      "data": {
+                        "id": 1,
+                        "attributes": {
+                          "symbol": "C",
+                          "description": "Centre",
+                          "label": "Centre",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.718Z",
+                          "updatedAt": "2023-09-14T05:59:34.718Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 100,
+                    "lat": -34.9723118044889,
+                    "lng": 138.63720760798054,
+                    "name": {
+                      "data": {
+                        "id": 22,
+                        "attributes": {
+                          "symbol": "SW",
+                          "description": "South West",
+                          "label": "South West",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:34.815Z",
+                          "updatedAt": "2023-09-14T05:59:34.815Z"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "fauna_plot_point": [
+                  {
+                    "id": 6,
+                    "lat": -34.971864821496084,
+                    "lng": 138.63764986019743,
+                    "name": {
+                      "data": {
+                        "id": 1,
+                        "attributes": {
+                          "symbol": "C",
+                          "description": "Centre",
+                          "label": "Centre",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:44.422Z",
+                          "updatedAt": "2023-09-14T05:59:44.422Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 7,
+                    "lat": -34.971403261821905,
+                    "lng": 138.6371026907952,
+                    "name": {
+                      "data": {
+                        "id": 2,
+                        "attributes": {
+                          "symbol": "NW",
+                          "description": "North-West",
+                          "label": "North-West",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:44.427Z",
+                          "updatedAt": "2023-09-14T05:59:44.427Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 9,
+                    "lat": -34.972304399720215,
+                    "lng": 138.63709732396242,
+                    "name": {
+                      "data": {
+                        "id": 3,
+                        "attributes": {
+                          "symbol": "SW",
+                          "description": "South-West",
+                          "label": "South-West",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:44.434Z",
+                          "updatedAt": "2023-09-14T05:59:44.434Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 10,
+                    "lat": -34.972304399720215,
+                    "lng": 138.6381916652405,
+                    "name": {
+                      "data": {
+                        "id": 4,
+                        "attributes": {
+                          "symbol": "SE",
+                          "description": "South-East",
+                          "label": "South-East",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:44.438Z",
+                          "updatedAt": "2023-09-14T05:59:44.438Z"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": 8,
+                    "lat": -34.9714076576406,
+                    "lng": 138.63819166764344,
+                    "name": {
+                      "data": {
+                        "id": 5,
+                        "attributes": {
+                          "symbol": "NE",
+                          "description": "North-East",
+                          "label": "North-East",
+                          "uri": "",
+                          "createdAt": "2023-09-14T05:59:44.442Z",
+                          "updatedAt": "2023-09-14T05:59:44.442Z"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -219,6 +219,7 @@ grails:
         allowedHeaders:
             - Content-Type
             - Authorization
+            - x-authentication
         mappings:
             '[/ws/paratoo/**]':
                 allowedOrigins:

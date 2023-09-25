@@ -5,17 +5,15 @@ import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.operation.valid.IsValidOp
 import org.locationtech.jts.operation.valid.TopologyValidationError
 import grails.converters.JSON
-import graphql.schema.DataFetcher
-import graphql.schema.DataFetchingEnvironment
 import org.bson.types.ObjectId
 import org.geotools.geojson.geom.GeometryJSON
-import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 class Site {
 
     static String TYPE_COMPOUND = 'compound'
     static String TYPE_PROJECT_AREA = 'projectArea'
     static String TYPE_WORKS_AREA = 'worksArea'
+    static String TYPE_SURVEY_AREA = 'surveyArea'
 
     static graphql = SiteGraphQLMapper.graphqlMapping()
 
@@ -38,7 +36,7 @@ class Site {
     String siteId
     String status = 'active'
     String visibility
-    String externalSiteId
+    String externalId
     List projects = []
     String name
     String type
@@ -64,7 +62,7 @@ class Site {
     static constraints = {
         visibility nullable: true
         name nullable: true
-        externalSiteId nullable:true
+        externalId nullable:true
         type nullable:true
         description nullable:true, maxSize: 40000
         habitat nullable:true

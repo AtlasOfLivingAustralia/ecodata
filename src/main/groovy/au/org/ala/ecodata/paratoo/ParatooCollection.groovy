@@ -4,7 +4,7 @@ import grails.databinding.BindingFormat
 import grails.validation.Validateable
 
 class ParatooCollection implements Validateable {
-    String mintedCollectionId
+    String orgMintedIdentifier
     ParatooProtocolId protocol
     String projectId
     String userId
@@ -14,5 +14,8 @@ class ParatooCollection implements Validateable {
 
     static constraints = {
         protocol validator: { val, obj -> val.validate() }
+        projectId nullable: true
+        userId nullable: true
+        eventTime nullable: true
     }
 }

@@ -540,7 +540,7 @@ if (!authCheckKeyUrl) {
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
-paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au'
+paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au/api'
 
 if (!grails.cache.ehcache) {
     grails {
@@ -702,6 +702,8 @@ environments {
         // Schedule the audit thread frequently during functional tests to get less indexing errors because
         // the data was cleaned up before the audit ran
         audit.thread.schedule.interval = 500l;
+
+        paratoo.core.baseUrl = "http://localhost:${wiremock.port}/monitor"
     }
     production {
         grails.logging.jul.usebridge = false

@@ -3,6 +3,6 @@ package au.org.ala.ecodata.paratoo
 import grails.validation.Validateable
 
 class ParatooProtocolId implements Validateable {
-    Integer id
+    String id
     Integer version
 }
