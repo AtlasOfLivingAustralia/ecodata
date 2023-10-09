@@ -42,6 +42,21 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
 
     }
 
+    def "The /user-role response is rendered correctly"() {
+
+        when:
+        int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
+        List projects = buildProjectsForRendering(projectSpec)
+
+        def result = render(view: "/paratoo/userRoles", model:[projects:projects])
+
+        then:"The json is correct"
+        result.json[0] == [(projects[0].id):'project_admin']
+        result.json[1] == [(projects[1].id):'project_admin']
+        result.json[2] == [(projects[2].id):'project_admin']
+
+    }
+
     private List<ParatooProject> buildProjectsForRendering(int[][] projectSpec) {
 
         List projects = []
@@ -65,7 +80,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
             Site tmp = buildSite(numberOfPlots+2)
             projectArea = [type:tmp.extent.geometry.type, coordinates:tmp.extent.geometry.coordinates]
         }
-        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", protocols: protocols, projectArea: projectArea, plots:plots)
+        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", protocols: protocols, projectArea: projectArea, plots:plots, accessLevel: AccessLevel.admin)
     }
 
     private ActivityForm buildActivityForm(int i) {
