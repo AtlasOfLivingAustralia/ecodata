@@ -786,10 +786,10 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
 
         and:
         List<Map> dataDescriptionSheetData = ExportTestUtils.readSheet(outputFile, projectXlsExporter.dataDictionarySheetName, projectXlsExporter.dataDictionaryHeaders, excelImportService)
-        dataDescriptionSheetData[-2]['Name used in Excel export'] == 'method'
-        dataDescriptionSheetData[-2]['Header used in Excel export'] == 'Baseline Method'
-        dataDescriptionSheetData[-1]['Name used in Excel export'] == 'baseline'
-        dataDescriptionSheetData[-1]['Header used in Excel export'] == 'Baseline'
+        dataDescriptionSheetData[-2]['Name used in Excel export'] == 'protocols'
+        dataDescriptionSheetData[-2]['Header used in Excel export'] == 'Baseline Protocol'
+        dataDescriptionSheetData[-1]['Name used in Excel export'] == 'relatedTargetMeasures'
+        dataDescriptionSheetData[-1]['Header used in Excel export'] == 'Related Target Measures'
     }
 
 
