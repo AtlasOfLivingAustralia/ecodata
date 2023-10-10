@@ -47,13 +47,14 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         when:
         int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
         List projects = buildProjectsForRendering(projectSpec)
+        projects[2].accessLevel = AccessLevel.readOnly
 
         def result = render(view: "/paratoo/userRoles", model:[projects:projects])
 
         then:"The json is correct"
-        result.json[0] == [(projects[0].id):'project_admin']
-        result.json[1] == [(projects[1].id):'project_admin']
-        result.json[2] == [(projects[2].id):'project_admin']
+        result.json[0] == [(projects[0].id):[name:"Project Admin", type:'project_admin']]
+        result.json[1] == [(projects[1].id):[name:"Project Admin", type:'project_admin']]
+        result.json[2] == [(projects[2].id):[name:"Authenticated", type:'authenticated']]
 
     }
 

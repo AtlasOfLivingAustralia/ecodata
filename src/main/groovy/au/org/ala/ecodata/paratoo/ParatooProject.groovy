@@ -32,14 +32,27 @@ class ParatooProject {
         project.getMonitoringProtocolCategories()
     }
 
-    String getParatooAccessLevel() {
+    String getParatooAccessLevelType() {
         String paratooAccessLevel = READ_ONLY
         switch (accessLevel) {
+            case AccessLevel.editor:
             case AccessLevel.admin:
             case AccessLevel.caseManager:
                 paratooAccessLevel = EDITABLE
                 break;
         }
         paratooAccessLevel
+    }
+
+    String getParatooAccessLevelName() {
+        String paratooAccessLevelName = 'Authenticated'
+        switch (accessLevel) {
+            case AccessLevel.editor:
+            case AccessLevel.admin:
+            case AccessLevel.caseManager:
+                paratooAccessLevelName = 'Project Admin'
+                break;
+        }
+        paratooAccessLevelName
     }
 }

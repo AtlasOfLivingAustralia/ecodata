@@ -4,4 +4,4 @@ model {
     ParatooProject project
 }
 
-json([(project.id):project.paratooAccessLevel])
+json([(project.id):[name:project.paratooAccessLevelName, type:project.paratooAccessLevelType]])
