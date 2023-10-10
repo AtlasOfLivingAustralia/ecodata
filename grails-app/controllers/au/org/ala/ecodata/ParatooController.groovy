@@ -98,6 +98,15 @@ class ParatooController {
         respond projects:paratooService.userProjects(userService.currentUserDetails.userId)
     }
 
+    @GET
+    @Path("/user-role")
+    @Operation(summary = "Returns the roles the user has on each project",
+            responses = [@ApiResponse(responseCode = "200", description = "Project roles assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Project.class)))),
+                         @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"])
+    def userRoles() {
+        respond projects:paratooService.userProjects(userService.currentUserDetails.userId)
+    }
+
     @SkipApiKeyCheck
     @POST
     @Path("/validate-token")
