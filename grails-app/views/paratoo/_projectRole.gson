@@ -1,7 +1,0 @@
-import au.org.ala.ecodata.paratoo.ParatooProject
-
-model {
-    ParatooProject project
-}
-
-json([(project.id):[name:project.paratooAccessLevelName, type:project.paratooAccessLevelType]])

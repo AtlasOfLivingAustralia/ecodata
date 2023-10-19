@@ -19,18 +19,23 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                     project_area:null,
                     plot_selections:[
                        [uuid:'s1', plot_name:"Site 1"]
-                    ]
+                    ],
+                    role:"project_admin"
                    ],[
-                    id:"p2", name:"Project 2", protocols:[], plot_selections:[], project_area:[type:"Polygon", coordinates: DUMMY_POLYGON]
+                    id:"p2", name:"Project 2", protocols:[], plot_selections:[],
+                    project_area:[type:"Polygon", coordinates: DUMMY_POLYGON],
+                    role:"authenticated"
                   ],[
                      id:"p3", name:"Project 3", protocols:[
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
-                     ], project_area:null, plot_selections:[]
+                     ], project_area:null, plot_selections:[], role:'authenticated'
                   ]
                 ]]
 
         when: "The results of /paratoo/user-projects is rendered"
         List projects = buildProjectsForRendering(projectSpec)
+        projects[1].accessLevel = AccessLevel.editor
+        projects[2].accessLevel = AccessLevel.projectParticipant
         def result = render(view: "/paratoo/userProjects", model:[projects:projects])
 
         then:"The json is correct"
@@ -39,22 +44,6 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         result.json.projects[1] == expectedResult.projects[1]
         result.json.projects[2] == expectedResult.projects[2]
 
-
-    }
-
-    def "The /user-role response is rendered correctly"() {
-
-        when:
-        int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
-        List projects = buildProjectsForRendering(projectSpec)
-        projects[2].accessLevel = AccessLevel.readOnly
-
-        def result = render(view: "/paratoo/userRoles", model:[projects:projects])
-
-        then:"The json is correct"
-        result.json[0] == [(projects[0].id):[name:"Project Admin", type:'project_admin']]
-        result.json[1] == [(projects[1].id):[name:"Project Admin", type:'project_admin']]
-        result.json[2] == [(projects[2].id):[name:"Authenticated", type:'authenticated']]
 
     }
 

@@ -82,9 +82,7 @@ class ParatooService {
         List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
 
 
-        // If the permission has been set as a favourite then delegate to the Hub permission
-        // so that "readOnly" access for a hub is supported, and we don't return projects that a user
-        // has only marked as starred without having hub level permissions
+        // If the permission has been set as a favourite then delegate to the Hub permission.
         Map projectAccessLevels = [:]
         permissions?.each { UserPermission permission ->
             String projectId = permission.entityId
@@ -111,7 +109,9 @@ class ParatooService {
 
             Program program = Program.findByProgramId(project.programId)
             Map config = program.getInheritedConfig()
-            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevels[project.projectId]
+            // The Monitor/Paratoo app is "write only" (i.e. there is no view mode for the data), so we don't support
+            // the read only role
+            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevels[project.projectId] && projectAccessLevels[project.projectId] != AccessLevel.readOnly
         }
 
         List paratooProjects = projects.collect { Project project ->
@@ -326,6 +326,7 @@ class ParatooService {
                 accessLevel: accessLevel,
                 project:project,
                 projectArea: projectAreaGeoJson,
+                projectAreaSite: projectArea,
                 plots: plotSelections]
         new ParatooProject(attributes)
 
@@ -416,6 +417,55 @@ class ParatooService {
         site
     }
 
+    Map updateProjectSites(ParatooProject project, Map siteData) {
+        if (siteData.plot_selections) {
+            linkProjectToSites(project, siteData.plot_selections)
+        }
+        if (siteData.project_area_type && siteData.project_area_coordinates) {
+            updateProjectArea(project, siteData.project_area_type, siteData.project_area_coordinates)
+        }
+    }
+
+
+    private Map linkProjectToSites(ParatooProject project, List siteExternalIds) {
+        List errors = []
+        List<Site> sites = Site.findAllByExternalIdInList(siteExternalIds)
+        sites.each { Site site ->
+            site.projects = site.projects ?: []
+            site.projects << project.id
+            site.save()
+            if (site.hasErrors()) {
+                errors << site.errors
+            }
+        }
+        [success:!errors, error:errors]
+    }
+
+    private Map updateProjectArea(ParatooProject project, String type, List coordinates) {
+        Map geometry = [
+                type:type,
+                coordinates: coordinates.collect{[it.lng, it.lat]}
+        ]
+        Site projectArea = project.projectAreaSite
+        if (projectArea) {
+            projectArea.extent.geometry.type = geometry.type
+            projectArea.extent.geometry.coordinates = geometry.coordinates
+            siteService.update(projectArea.extent, projectArea.siteId)
+        }
+        else {
+
+            Map site = [
+                    name:'Monitor project area',
+                    type:Site.TYPE_PROJECT_AREA,
+                    extent: [
+                            source:'drawn',
+                            geometry:geometry
+                    ],
+                    projects: [project.id]
+            ]
+            siteService.create(site)
+        }
+    }
 
     // Protocol = 2 (vegetation mapping survey).
         // endpoint /api/vegetation-mapping-surveys is useless
