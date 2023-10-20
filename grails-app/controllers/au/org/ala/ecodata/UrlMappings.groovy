@@ -254,6 +254,16 @@ class UrlMappings {
             action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection']
         }
 
+        "/ws/paratoo/user-role" {
+            controller = 'paratoo'
+            action = [GET: 'userRoles', OPTIONS: 'options']
+        }
+
+        "/ws/paratoo/projects" {
+            controller = 'paratoo'
+            action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
+        }
+
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
 	}

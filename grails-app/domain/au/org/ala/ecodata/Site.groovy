@@ -59,6 +59,9 @@ class Site {
      */
     List features
 
+    /** Tracks whether a Site has been used in a report and follows the Report publication lifecycle */
+    String publicationStatus
+
     static constraints = {
         visibility nullable: true
         name nullable: true
@@ -75,6 +78,7 @@ class Site {
         extent nullable: true
         features nullable: true
         catchment nullable: true
+        publicationStatus nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
             if(value){

@@ -10,4 +10,5 @@ json {
     protocols tmpl.paratooProtocol('protocol', project.protocols)
     project_area project.projectArea ? tmpl.projectArea(projectArea:project.projectArea) : null
     plot_selections tmpl.plot('plot', project.plots)
+    role project.paratooRole
 }

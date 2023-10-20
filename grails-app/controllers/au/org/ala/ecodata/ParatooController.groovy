@@ -66,14 +66,17 @@ import javax.ws.rs.Path
 class ParatooController {
 
     static responseFormats = ['json']
-    static allowedMethods =
-            [userProjects:'GET',
-             protocolReadCheck:'GET',
-             protocolWriteCheck:'GET',
-             validateToken: 'POST',
-             mintCollectionId: 'POST',
-             submitCollection: 'POST',
-             collectionIdStatus: 'GET'
+    static allowedMethods = [
+            userProjects:'GET',
+            protocolReadCheck:'GET',
+            protocolWriteCheck:'GET',
+            validateToken: 'POST',
+            mintCollectionId: 'POST',
+            submitCollection: 'POST',
+            collectionIdStatus: 'GET',
+            addPlotSelection: ['POST', 'PUT'],
+            updatePlotSelection: ['POST', 'PUT'],
+            updateProjectSites: ['PUT']
             ]
 
     ParatooService paratooService
@@ -95,15 +98,6 @@ class ParatooController {
     responses = [@ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Project.class)))),
     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"])
     def userProjects() {
-        respond projects:paratooService.userProjects(userService.currentUserDetails.userId)
-    }
-
-    @GET
-    @Path("/user-role")
-    @Operation(summary = "Returns the roles the user has on each project",
-            responses = [@ApiResponse(responseCode = "200", description = "Project roles assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Project.class)))),
-                         @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")], tags = ["Org Interface"])
-    def userRoles() {
         respond projects:paratooService.userProjects(userService.currentUserDetails.userId)
     }
 
@@ -302,6 +296,21 @@ class ParatooController {
             ],
             meta: [:]
         ]
+    }
+
+    @PUT
+    @Path("/projects")
+    def updateProjectSites(String id) {
+        String userId = userService.currentUserDetails.userId
+        List projects = paratooService.userProjects(userId)
+        ParatooProject project = projects?.find{it.id == id}
+        if (!project) {
+            error(HttpStatus.SC_FORBIDDEN, "Project not available")
+            return
+        }
+        Map data = request.JSON
+
+        paratooService.updateProjectSites(userId, project, data)
     }
 
     def options() {
