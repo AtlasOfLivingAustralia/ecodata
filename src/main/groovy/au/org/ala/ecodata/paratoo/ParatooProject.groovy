@@ -9,8 +9,9 @@ import au.org.ala.ecodata.Site
 /** DTO for a response to the paratoo app */
 class ParatooProject {
 
-    static String READ_ONLY = 'authenticated'
-    static String EDITABLE = 'project_admin'
+    static String EDITOR = 'authenticated'
+    static String ADMIN = 'project_admin'
+    static String PUBLIC = 'public'
 
     String id
     String name
@@ -18,6 +19,7 @@ class ParatooProject {
     Project project
     List<ActivityForm> protocols
     Map projectArea = null
+    Site projectAreaSite = null
     List<Site> plots = null
 
     List<Map> getDataSets() {
@@ -32,14 +34,21 @@ class ParatooProject {
         project.getMonitoringProtocolCategories()
     }
 
-    String getParatooAccessLevel() {
-        String paratooAccessLevel = READ_ONLY
+    String getParatooRole() {
+        String paratooRole
         switch (accessLevel) {
             case AccessLevel.admin:
             case AccessLevel.caseManager:
-                paratooAccessLevel = EDITABLE
-                break;
+                paratooRole = ADMIN
+                break
+            case AccessLevel.projectParticipant:
+            case AccessLevel.editor:
+                paratooRole = EDITOR
+                break
+            default:
+                paratooRole = PUBLIC
         }
-        paratooAccessLevel
+        paratooRole
     }
+
 }

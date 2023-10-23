@@ -98,9 +98,9 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         projects.size() == 0
 
-        when: "The user has the MERIT read only role"
-        UserPermission meritReadOnly = new UserPermission(userId:userId, entityId:'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel:AccessLevel.readOnly)
-        meritReadOnly.save(flush:true, failOnError:true)
+        when: "The user has the MERIT grant manager role"
+        UserPermission meritGrantManager = new UserPermission(userId:userId, entityId:'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel:AccessLevel.caseManager)
+        meritGrantManager.save(flush:true, failOnError:true)
         projects = service.userProjects(userId)
 
         then:
@@ -194,6 +194,21 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * siteService.create(expected)
     }
 
+    void "The service can link a site to a project"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
+        Map data = [plot_selections:['s2']]
+
+
+        when:
+        service.updateProjectSites(project, data)
+        Site s2 = Site.findBySiteId('s2')
+
+        then:
+        s2.projects.indexOf(projectId) >= 0
+    }
+
     private void setupData() {
         Hub hub = new Hub(hubId:"merit", urlPath:"merit")
         hub.save(failOnError:true, flush:true)
@@ -210,7 +225,9 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         userPermission.save(failOnError:true, flush:true)
 
         Site projectArea = new Site(siteId:'s1', name:'Site 1', type:Site.TYPE_PROJECT_AREA, extent: [geometry:DUMMY_POLYGON])
-        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON])
+        projectArea.save(failOnError:true, flush:true)
+        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:['p1'])
+        plot.save(failOnError:true, flush:true)
         siteService.sitesForProject('p1') >> [projectArea, plot]
 
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])
