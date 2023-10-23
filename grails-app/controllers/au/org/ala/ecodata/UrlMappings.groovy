@@ -259,7 +259,7 @@ class UrlMappings {
             action = [GET: 'userRoles', OPTIONS: 'options']
         }
 
-        "/ws/paratoo/projects" {
+        "/ws/paratoo/projects/$id" {
             controller = 'paratoo'
             action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }
