@@ -9,6 +9,9 @@ import au.org.ala.ecodata.Site
 /** DTO for a response to the paratoo app */
 class ParatooProject {
 
+    static String READ_ONLY = 'authenticated'
+    static String EDITABLE = 'project_admin'
+
     String id
     String name
     AccessLevel accessLevel
@@ -27,5 +30,16 @@ class ParatooProject {
 
     List<String> getMonitoringProtocolCategories() {
         project.getMonitoringProtocolCategories()
+    }
+
+    String getParatooAccessLevel() {
+        String paratooAccessLevel = READ_ONLY
+        switch (accessLevel) {
+            case AccessLevel.admin:
+            case AccessLevel.caseManager:
+                paratooAccessLevel = EDITABLE
+                break;
+        }
+        paratooAccessLevel
     }
 }

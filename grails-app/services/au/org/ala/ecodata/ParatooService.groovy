@@ -12,6 +12,8 @@ import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
 
+import java.net.http.HttpHeaders
+
 /**
  * Supports the implementation of the paratoo "org" interface
  */
@@ -24,7 +26,7 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_DATA_MAPPING_KEY = 'paratoo.surveyData.mapping'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
     static final String PARATOO_APP_NAME = "Monitor"
-    static final String MONITOR_AUTH_HEADER = "X-Authentication"
+    static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description']
 
@@ -348,6 +350,9 @@ class ParatooService {
         String apiEndpoint = config.getApiEndpoint(surveyId)
 
         String accessToken = tokenService.getAuthToken(true)
+        if (!accessToken?.startsWith('Bearer')) {
+            accessToken = 'Bearer '+accessToken
+        }
         Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
 
         if (!accessToken) {
