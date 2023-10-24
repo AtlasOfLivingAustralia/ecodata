@@ -4,8 +4,6 @@ import au.org.ala.ecodata.DataDescription
 import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.ManagementUnitService
-import au.org.ala.ecodata.OrganisationService
-import au.org.ala.ecodata.ProgramService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.OrganisationService
@@ -378,7 +376,7 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.outputTargets) {
                 List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
-                List targets = approvedMetrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
+                List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
                     target.deliveredTotal = totalMetrics.find{it.label == target.scoreLabel}?.result?.result
                 }
@@ -386,6 +384,15 @@ class ProjectXlsExporter extends ProjectExporter {
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
             }
         }
+    }
+
+    /** Returns true if the target is a number (or string representation of a number) and is not zero
+     * For legacy reasons, some targets are strings */
+    private static boolean hasTarget(target) {
+        if (target instanceof String) {
+            return target && target != "0"
+        }
+        target && target != 0
     }
 
     private void exportProject(Map project) {
