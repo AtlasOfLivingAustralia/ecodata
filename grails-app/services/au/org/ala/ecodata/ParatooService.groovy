@@ -392,9 +392,8 @@ class ParatooService {
         }
 
         Map siteData = mapPlotSelection(plotSelectionData)
-        // The projects should be specified in the data but they aren't in the swagger so for now we'll
-        // assign the site to multiple projects.
-        siteData.projects = projects.collect{it.project.projectId}
+        // The project/s for the site will be specified by a subsequent call to /projects
+        siteData.projects = []
 
         Site site = Site.findByExternalId(siteData.externalId)
         Map result
