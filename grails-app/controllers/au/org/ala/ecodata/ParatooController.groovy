@@ -310,7 +310,7 @@ class ParatooController {
         }
         Map data = request.JSON
 
-        paratooService.updateProjectSites(userId, project, data)
+        paratooService.updateProjectSites(project, data)
     }
 
     def options() {
