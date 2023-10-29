@@ -1,19 +1,10 @@
 package au.org.ala.ecodata
 
-
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.paratoo.ParatooCollectionId
-import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
-import au.org.ala.ecodata.paratoo.ParatooProject
-import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
-import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import au.org.ala.ecodata.paratoo.*
 import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
-
-import java.net.http.HttpHeaders
-
 /**
  * Supports the implementation of the paratoo "org" interface
  */
@@ -173,10 +164,13 @@ class ParatooService {
 
         ParatooProtocolConfig config = getProtocolConfig(surveyId.protocol.id)
         Map surveyData = retrieveSurveyData(surveyId, config)
+        List surveyObservations = retrieveSurveyObservations(surveyId, config)
 
         if (surveyData) {
             // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
             dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project, config)
+            List species = createSpeciesFromSurveyData(surveyObservations, collection, config, dataSet )
+            dataSet.areSpeciesRecorded = species?.size() > 0
             dataSet.startDate = config.getStartDate(surveyData)
             dataSet.endDate = config.getEndDate(surveyData)
         }
@@ -221,6 +215,48 @@ class ParatooService {
             dataSet
         }
         [dataSet:dataSet, project:project]
+    }
+
+    private List createSpeciesFromSurveyData(List surveyObservations, ParatooCollection collection, ParatooProtocolConfig config, Map dataSet) {
+        // delete records
+        Record.where {
+            dataSetId == dataSet.dataSetId
+        }.deleteAll()
+
+        createRecords(surveyObservations, config, collection, dataSet)
+    }
+
+    private static List createRecords (List surveyObservations, ParatooProtocolConfig config, ParatooCollection collection, Map dataSet) {
+        List result = []
+        surveyObservations?.each { observation ->
+            def obs = transformSpeciesObservation(observation, config, collection, dataSet)
+            def record = new Record(obs)
+            try {
+                record.save(flush: true, failOnError: true)
+                result.add(record)
+            } catch (Exception e) {
+                log.error("Error saving record: ${record.name} ${record.projectId}", e)
+            }
+        }
+
+        result
+    }
+
+    private static Map transformSpeciesObservation (Map observation, ParatooProtocolConfig config, ParatooSurveyId surveyId, ParatooCollection collection, Map dataSet) {
+        def lat = config.getDecimalLatitude(observation), lng = config.getDecimalLongitude(observation)
+        Map result = [
+                dataSetId: dataSet.dataSetId,
+                projectId: surveyId.projectId,
+                eventDate: config.getEventDate(observation),
+                decimalLatitude: lat,
+                decimalLongitude: lng,
+                individualCount: config.getIndividualCount(observation),
+//                numberOfOrganisms: config.getNumberOfOrganisms(observation),
+                recordedBy: config.getRecordedBy(observation)
+        ]
+
+        result << config.parseSpecies(config.getSpecies(observation))
+        result
     }
 
     private String createSiteFromSurveyData(Map surveyData, ParatooCollection collection, ParatooSurveyId surveyId, Project project, ParatooProtocolConfig config) {
@@ -379,9 +415,45 @@ class ParatooService {
         survey
     }
 
+    List retrieveSurveyObservations(ParatooSurveyId surveyId, ParatooProtocolConfig config) {
+
+        String apiEndpoint = config.observationEndpoint
+        String accessToken = tokenService.getAuthToken(true)
+        if (!accessToken?.startsWith('Bearer')) {
+            accessToken = 'Bearer '+accessToken
+        }
+        Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
+
+        if (!accessToken) {
+            throw new RuntimeException("Unable to get access token")
+        }
+        int start = 0
+        int limit = 10
+
+
+        String url = paratooBaseUrl+'/'+apiEndpoint
+        String query = buildSurveyQueryString(start, limit)
+        Map response = webService.getJson(url+query, null,  authHeader, false)
+        List data = config.findObservationsBelongingToSurvey(response.data, surveyId) ?: []
+        int total = response.meta?.pagination?.total ?: 0
+        while (!data && start+limit < total) {
+            start += limit
+
+            query = buildSurveyQueryString(start, limit)
+            response = webService.getJson(url+query, null,  authHeader, false)
+            data.addAll(config.findObservationsBelongingToSurvey(response.data, surveyId))
+        }
+
+        data
+    }
+
 
     private static Map findMatchingSurvey(ParatooSurveyId surveyId, List data, ParatooProtocolConfig config) {
         data?.find { config.matches(it, surveyId) }
+    }
+
+    private static List findSurveyData(ParatooSurveyId surveyId, Map surveyData, ParatooProtocolConfig config) {
+        surveyData?.data?.findAll { config.matches(it) }
     }
 
     Map plotSelections(String userId, Map plotSelectionData) {

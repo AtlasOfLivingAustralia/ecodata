@@ -2,10 +2,11 @@ package au.org.ala.ecodata.paratoo
 
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import org.geotools.geojson.geom.GeometryJSON
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
+
+import static org.joda.time.DateTime.parse
 
 class ParatooProtocolConfigSpec extends Specification {
 
@@ -15,6 +16,11 @@ class ParatooProtocolConfigSpec extends Specification {
     }
 
     private Map readSurveyData(String name) {
+        URL url = getClass().getResource("/paratoo/${name}.json")
+        new JsonSlurper().parse(url)
+    }
+
+    private Map readSurveyObservations(String name) {
         URL url = getClass().getResource("/paratoo/${name}.json")
         new JsonSlurper().parse(url)
     }
@@ -77,6 +83,47 @@ class ParatooProtocolConfigSpec extends Specification {
                         type:"Polygon",
                         coordinates:[[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]],
                 properties:["name":"SATFLB0001 - Control (100 x 100)", externalId:4, description:"SATFLB0001 - Control (100 x 100)", notes:"some comment"]]
+
+    }
+
+    def "The observations from opportunistic-survey can be filtered" () {
+        setup:
+        Map surveyObservations = readSurveyObservations('opportunisticSurveyObservations')
+        Map opportunisticSurveyConfig = [
+                apiEndpoint:'opportunistic-surveys',
+                observationEndpoint: 'opportunistic-observations',
+                surveyType: 'opportunistic-survey',
+                usesPlotLayout:false,
+                geometryType: 'Point',
+                startDatePath: 'attributes.startdate',
+                endDatePath: 'attributes.updatedAt',
+                observationSurveyIdPath: 'attributes.opportunistic_survey.data.attributes.surveyId'
+        ]
+        ParatooProtocolConfig config = new ParatooProtocolConfig(opportunisticSurveyConfig)
+        ParatooSurveyId paratooSurveyId = new ParatooSurveyId(
+                surveyType: 'opportunistic-survey',
+                time: parse("2023-10-24T00:59:48.456Z").toDate(),
+                randNum: 80454523,
+                projectId: '0d02b422-5bf7-495f-b9f2-fa0a3046937f',
+                protocol: new ParatooProtocolId(id: "068d17e8-e042-ae42-1e42-cff4006e64b0", version: 1)
+        )
+        List data = config.findObservationsBelongingToSurvey(surveyObservations.data, paratooSurveyId)
+
+        expect:
+        data.size() == 1
+        data[0].attributes.observation_id == 'OPP001'
+
+        when:
+        Map species = config.parseSpecies(config.getSpecies(data[0]))
+
+        then:
+        species.scientificName == "Dromaius novaehollandiae"
+        species.name == "Dromaius novaehollandiae (Emu)"
+        species.vernacularName == "Emu"
+        config.getDecimalLatitude(data[0]) == -35.272
+        config.getDecimalLongitude(data[0]) == 149.116
+        config.getIndividualCount(data[0]) == 1
+        config.getRecordedBy(data[0]) == "xyz, abc"
 
     }
 }

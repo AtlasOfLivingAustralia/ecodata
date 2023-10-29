@@ -14,17 +14,22 @@ class Record {
         activityId index: true
         projectActivityId index: true
         lastUpdated index: true
+        dataSetId index: true
         version false
     }
 
     ObjectId id
     String projectId //ID of the project within ecodata
     String projectActivityId
+    String dataSetId
     String activityId
     String occurrenceID
     String outputSpeciesId  // reference to output species outputSpeciesId.
     String userId
     String eventDate //should be a date in "yyyy-MM-dd" or "2014-11-24T04:55:48+11:00" format
+    String scientificName
+    String name
+    String vernacularName
     Double decimalLatitude
     Double decimalLongitude
     Double generalizedDecimalLatitude
@@ -66,6 +71,10 @@ class Record {
         outputItemId nullable: true
         status nullable: true
         outputSpeciesId nullable: true
+        dataSetId nullable: true
+        name nullable: true
+        vernacularName nullable: true
+        scientificName nullable: true
     }
 
     String getRecordNumber(sightingsUrl){

@@ -414,6 +414,17 @@ class ProjectController {
         }
     }
 
+    @RequireApiKey
+    def fetchDataSetRecords (String projectId, String dataSetId) {
+        if (projectId && dataSetId) {
+            List records = projectService.fetchDataSetRecords(projectId, dataSetId)
+            render text: records as JSON, contentType: 'application/json'
+        }
+        else {
+            render status: 400, text: "projectId and dataSetId are required parameters"
+        }
+    }
+
     def importProjectsFromSciStarter(){
         Integer count = projectService.importProjectsFromSciStarter()?:0
         render(text: [count: count] as JSON, contentType: 'application/json');

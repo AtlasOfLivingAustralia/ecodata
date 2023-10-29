@@ -4,6 +4,8 @@ import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import groovy.util.logging.Slf4j
 
+import java.util.regex.Matcher
+
 /**
  * Configuration about how to work with a Paratoo/Monitor protocol
  */
@@ -11,6 +13,8 @@ import groovy.util.logging.Slf4j
 class ParatooProtocolConfig {
 
     String apiEndpoint
+    String observationEndpoint
+    String surveyType
     boolean usesPlotLayout = true
     String geometryType = 'Polygon'
 
@@ -18,6 +22,12 @@ class ParatooProtocolConfig {
     String startDatePath = 'attributes.start_date_time'
     String endDatePath = 'attributes.end_date_time'
     String surveyIdPath = 'attributes.surveyId'
+    String observationSurveyIdPath = ''
+    String observationSpeciesPath = 'attributes.species'
+    String observationRecordedByPath = 'attributes.observers.observer'
+    String observationIndividualCountPath = 'attributes.number_of_individuals'
+    String observationEventDatePath = 'attributes.date_time'
+    String observationGeometryPath = 'attributes.location'
     String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
     String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
     String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
@@ -46,19 +56,82 @@ class ParatooProtocolConfig {
         getProperty(surveyData, surveyIdPath)
     }
 
+    String getSpecies (Map observation) {
+        getProperty(observation, observationSpeciesPath)
+    }
+
+    Map parseSpecies (String species) {
+        extractSpeciesName(species)
+    }
+
+    List findObservationsBelongingToSurvey (List surveyData, ParatooSurveyId surveyId) {
+        surveyData?.findAll { Map data ->
+            Map dataLinkedToSurvey = getSurveyIdOfObservation( data )
+            surveyEqualityTest(dataLinkedToSurvey, surveyId)
+        }
+    }
+
+    Map getSurveyIdOfObservation (Map data) {
+        getProperty(data, observationSurveyIdPath)
+    }
+
+    Map getEventDate (Map data) {
+        getProperty(data, observationEventDatePath)
+    }
+
+    Double getDecimalLatitude (Map data) {
+        def shape = extractObservationSiteDataFromPath(data)
+        switch (shape.type) {
+            case 'Point':
+                return shape.coordinates[1]
+        }
+    }
+
+    Double getDecimalLongitude (Map data) {
+        def shape = extractObservationSiteDataFromPath(data)
+        switch (shape.type) {
+            case 'Point':
+                return shape.coordinates[0]
+        }
+
+    }
+
+    Integer getIndividualCount (Map data) {
+        getProperty(data, observationIndividualCountPath)
+    }
+
+    String getRecordedBy (Map data) {
+        def result = getProperty(data, observationRecordedByPath)
+        if (result instanceof List) {
+            return result.join(', ')
+        }
+        else if (result instanceof  String) {
+            return result
+        }
+    }
+
+    private Map extractObservationSiteDataFromPath(Map surveyData) {
+        def geometryData = getProperty(surveyData, observationGeometryPath)
+        extractGeometryFromSiteData(geometryData)
+    }
+
     private Map extractSiteDataFromPath(Map surveyData) {
-        Map geometry = null
         def geometryData = getProperty(surveyData, geometryPath)
+        extractGeometryFromSiteData(geometryData)
+    }
+
+    private Map extractGeometryFromSiteData(geometryData) {
+        Map geometry = null
         if (geometryData) {
             switch (geometryType) {
                 case 'Point':
-                    geometry = [type:'Point', coordinates:[geometryData.lng, geometryData.lat]]
+                    geometry = [type: 'Point', coordinates: [geometryData.lng, geometryData.lat]]
                     break
             }
+        } else {
+            log.warn("Unable to get spatial data from survey: " + apiEndpoint + ", " + geometryPath)
         }
-        else {
-            log.warn("Unable to get spatial data from survey: "+apiEndpoint+", "+geometryPath)
-        }
+
         geometry
     }
 
@@ -94,6 +167,10 @@ class ParatooProtocolConfig {
 
     boolean matches(Map surveyData, ParatooSurveyId surveyId) {
         Map tmpSurveyId = getSurveyId(surveyData)
+        surveyEqualityTest(tmpSurveyId, surveyId)
+    }
+
+    static boolean surveyEqualityTest(Map tmpSurveyId, ParatooSurveyId surveyId) {
         tmpSurveyId.surveyType == surveyId.surveyType &&
                 tmpSurveyId.time == surveyId.timeAsISOString() &&
                 tmpSurveyId.randNum == surveyId.randNum
@@ -172,5 +249,29 @@ class ParatooProtocolConfig {
                 notes: plotSelectionData.comment
         ]
         geoJson
+    }
+
+    static Map extractSpeciesName (String species) {
+        Map result
+        Matcher m = (species =~ /([^\[]*)\[([^\]]*)\]\s*\(scientific: ([^\)]*)\)/)
+        if (m.matches()) {
+            def scientificName = m.group(3).trim()
+            def commonName = m.group(1)?.trim()
+            def name = "$scientificName ($commonName)"
+            result = [
+                vernacularName: commonName,
+                scientificName: scientificName,
+                name: name
+            ]
+        }
+        else {
+            result = [
+                    vernacularName: species,
+                    scientificName: species,
+                    name: species
+            ]
+        }
+
+        result
     }
 }
