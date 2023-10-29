@@ -4,8 +4,8 @@ import au.org.ala.ecodata.GeometryUtils
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.SiteService
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.MultiPolygon
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.MultiPolygon
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory

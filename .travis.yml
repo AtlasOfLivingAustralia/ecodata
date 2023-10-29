@@ -2,17 +2,14 @@ os: linux
 dist: bionic
 language: groovy
 jdk:
-  - openjdk8
+  - openjdk11
 branches:
   only:
   - master
   - dev
   - hot-fix
   - /^feature\/.*$/
-  - grails3
-  - grails3-dev
   - /^hotfix\/.*$/
-  - grails4
 
 services:
   - mongodb
@@ -41,12 +38,14 @@ before_script:
   - sleep 10
 
 script:
-  - ./gradlew -PenableClover=true cloverGenerateReport
+  - ./gradlew -PenableJacoco=true jacocoTestCoverageVerification
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
 
 env:
   global:
+  - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2
+  - TRAVIS_NODE_VERSION="12.13.0"
   - secure: bIwDtP92h7r2iGMpwneKwZYjh2kK9gIDkaEHHIuNnatZsyLvqm/FukeJIbeYlXACiOHJVslQu4bpTwYvdI5UzD5KPSUMY4bu+hwtuIgQofF4zArpNzCDA3QW4Jqs87TsvjGs8zfNT5JSM6xt4RoALqpCleiwL9eH3bFIpZx/dIk=
   - secure: IR4hXjbAtG2ipfd8/rRZYg+Vdu50qUYxXUxa9VqHkla6PmmYNkTVknf+oZWYzBSJ+mW9fGjM6fh4KCzopvYzMjlotcHutDbVsEgWCjKR1h+9uE1urbExiaiTRNQMd1X3TyTPp+DL5Z6hGE6JmKikYEjff6pR88iLniXz5gJ8ENk=

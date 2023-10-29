@@ -1,16 +1,17 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import grails.core.GrailsApplication
+import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import org.grails.web.json.JSONArray
-//import org.grails.plugins.csv.CSVMapReader
-import grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -29,8 +30,12 @@ class MetadataService {
     private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
     private static final String SERVICES_KEY = "services.config"
-    def grailsApplication, webService, cacheService, messageSource, emailService, userService, commonService
+    def webService, cacheService, messageSource, emailService, userService, commonService
     SettingService settingService
+    GrailsApplication grailsApplication
+    ExcelImportService excelImportService
+    ActivityFormService activityFormService
+    SpeciesReMatchService speciesReMatchService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -130,8 +135,36 @@ class MetadataService {
         // Remove deprecated activities
         activities = activities.findAll {!it.status || it.status == ACTIVE}
 
-        Map byCategory = [:]
+        groupActivities(activities)
+    }
 
+    /**
+     * Returns a Map of activity types grouped by category.
+     * @param programId Most of the legacy projects are updated recently to insert programId (see github #2741)
+     * @return a Map, key: String, value: List of name, description for each activity in the category
+     */
+    Map activitiesListByProgramId(String programId) {
+        Map config = Program.findByProgramId(programId)?.inheritedConfig
+        List<String> activityNames = config?.activities?.collect{it.name}
+        Map criteria = [publicationStatus:PublicationStatus.PUBLISHED]
+        // If activity names are specified, only return those activities, otherwise return all
+        if (activityNames) {
+            criteria.name = activityNames
+        }
+        List forms = activityFormService.search(criteria) ?: []
+        // The search will return forms with the same name but different version, we need to get the latest formVersion
+        forms = forms.groupBy{it.name}.collect{it.value.max{it.formVersion}}
+        List results = forms.collect {[name:it.name, category:it.category, type:it.type, description:it.description, status:it.status]}
+        groupActivities(results)
+    }
+
+    /**
+     * Group by the activity category field, falling back on a default grouping of activity or assessment.
+     * @param activities
+     * @return a Map
+     */
+    private def groupActivities(List activities) {
+        Map byCategory = [:]
         // Group by the activity category field, falling back on a default grouping of activity or assessment.
         activities.each {
             def category = it.category?: it.type == 'Activity' ? 'Activities' : 'Assessment'
@@ -141,12 +174,12 @@ class MetadataService {
             def description = messageSource.getMessage("api.${it.name}.description", null, "", Locale.default)
             byCategory[category] << [name:it.name, type:it.type, description:description]
         }
-        byCategory
+        return byCategory
     }
 
     def programsModel() {
         return cacheService.get('programs-model',{
-            String filename = (grailsApplication.config.app.external.model.dir as String) + 'programs-model.json'
+            String filename = grailsApplication.config.getProperty('app.external.model.dir') + 'programs-model.json'
             JSON.parse(new File(filename).text)
         })
     }
@@ -183,7 +216,7 @@ class MetadataService {
             sections { templateName == templateName}
         }.list()
 
-        ActivityForm form = forms.max{it.version}
+        ActivityForm form = forms.max{it.formVersion}
         Map template = form?.sections?.find{it.templateName == templateName}?.template
         if (!template) {
             log.warn("No template found with name ${templateName}")
@@ -226,7 +259,7 @@ class MetadataService {
 
     def institutionList() {
         return cacheService.get('institutions',{
-            webService.getJson(grailsApplication.config.collectory.baseURL + 'ws/institution')
+            webService.getJson(grailsApplication.config.getProperty('collectory.baseURL') + 'ws/institution')
         })
     }
 
@@ -257,11 +290,11 @@ class MetadataService {
     }
 
     def updateProgramsModel(model) {
-        writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'programs-model', 'json')
+        writeWithBackup(model, grailsApplication.config.getProperty('app.external.model.dir'), '', 'programs-model', 'json')
         // make sure it gets reloaded
         cacheService.clear('programs-model')
-        String bodyText = "The programs-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
-        emailService.emailSupport("Program model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
+        String bodyText = "The programs-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.getProperty('grails.serverURL')} server"
+        emailService.emailSupport("Program model updated in ${grailsApplication.config.getProperty('grails.serverURL')}", bodyText)
     }
 
     // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
@@ -269,7 +302,7 @@ class MetadataService {
     def getNvisClassesForPoint(Double lat, Double lon) {
         def retMap = [:]
 
-        def nvisLayers = grailsApplication.config.app.facets.geographic.special
+        Map nvisLayers = grailsApplication.config.getProperty('app.facets.geographic.special', Map)
 
         nvisLayers.each { name, path ->
             def classesJsonFile = new File(path + '.json')
@@ -339,8 +372,8 @@ class MetadataService {
 
         def features = performLayerIntersect(lat, lng)
         def localityValue = ''
-        if(grailsApplication.config.google.api.key) {
-            def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}&key=${grailsApplication.config.google.api.key}"
+        if(grailsApplication.config.getProperty('google.api.key')) {
+            def localityUrl = grailsApplication.config.getProperty('google.geocode.url') + "${lat},${lng}&key=${grailsApplication.config.getProperty('google.api.key')}"
             def result = webService.getJson(localityUrl)
             localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
         }
@@ -365,8 +398,8 @@ class MetadataService {
     def performLayerIntersect(lat,lng) {
 
 
-        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
-        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
+        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
 
         // Extract all of the layer field ids from the facet configuration so we can make a single web service call to the spatial portal.
         def fieldIds = contextualLayers.collect { k, v -> v }
@@ -375,7 +408,7 @@ class MetadataService {
         }
 
         // Do the intersect
-        def featuresUrl = grailsApplication.config.spatial.intersectUrl + "${fieldIds.join(',')}/${lat}/${lng}"
+        def featuresUrl = grailsApplication.config.getProperty('spatial.intersectUrl') + "${fieldIds.join(',')}/${lat}/${lng}"
         def features = webService.getJson(featuresUrl)
 
         def facetTerms = [:]
@@ -435,8 +468,8 @@ class MetadataService {
 
     /** Returns a list of spatial portal layer/field ids that ecodata will intersect every site against to support facetted geographic searches */
     List<String> getSpatialLayerIdsToIntersect() {
-        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
-        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
+        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
         def fieldIds = contextualLayers.collect { k, v -> v }
         groupedFacets.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
@@ -450,7 +483,7 @@ class MetadataService {
      * @param fid the field id.
      */
     Map getGeographicFacetConfig(String fid) {
-        Map config = grailsApplication.config.app.facets.geographic
+        Map config = grailsApplication.config.getProperty('app.facets.geographic', Map)
         Map facetConfig = null
         config.contextual.each { String groupName, String groupFid ->
             if (fid == groupFid) {
@@ -491,7 +524,7 @@ class MetadataService {
         for(int i = 0; i < pointsArray?.size(); i++) {
             log.info("${(i+1)}/${pointsArray.size()} batch process started..")
 
-            def featuresUrl = grailsApplication.config.spatial.intersectBatchUrl + "?fids=${fieldIds.join(',')}&points=${pointsArray[i]}"
+            def featuresUrl = grailsApplication.config.getProperty('spatial.intersectBatchUrl') + "?fids=${fieldIds.join(',')}&points=${pointsArray[i]}"
             def status = webService.getJsonRepeat(featuresUrl)
             if(status?.error){
                 throw new Exception("Webservice error, failed to get JSON after 12 tries.. - ${status}")
@@ -560,8 +593,8 @@ class MetadataService {
             log.error("Missing result for ${lat}, ${lng}")
         }
 
-        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
-        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
+        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
         def facetTerms = [:]
 
         contextualLayers.each { name, fid ->
@@ -614,8 +647,8 @@ class MetadataService {
             def features = [:]
             if (includeLocality) {
                 def localityValue = ''
-                if(grailsApplication.config.google.api.key) {
-                    def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}&key=${grailsApplication.config.google.api.key}"
+                if(grailsApplication.config.getProperty('google.api.key')) {
+                    def localityUrl = grailsApplication.config.getProperty('google.geocode.url') + "${lat},${lng}&key=${grailsApplication.config.getProperty('google.api.key')}"
                     def result = webService.getJson(localityUrl)
                     localityValue = (result?.results && result.results) ? result.results[0].formatted_address : ''
                 }
@@ -671,7 +704,159 @@ class MetadataService {
         excelImportService.mapSheet(workbook, config)
     }
 
+    List excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
+        List result = []
+        Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
+        ActivityForm form = activityFormService.findActivityForm(activityFormName, formVersion)
+        form?.sections?.each { FormSection section ->
+            String sectionName = section.name
+            List model = annotatedOutputDataModel(sectionName)
+            String sheetName = XlsExporter.sheetName(sectionName)
+            Sheet sheet = workbook.getSheet(sheetName)
+            def columnMap = excelImportService.getDataHeaders(sheet)
+            def config = [
+                    sheet:sheetName,
+                    startRow:2,
+                    columnMap:columnMap
+            ]
+            List data = excelImportService.mapSheet(workbook, config)
+            List normalisedData = []
+            if(normalise) {
+                data.collect { Map row ->
+                    def normalisedRow = [:]
+                    row.each { cell ->
+                        excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                        excelImportService.removeEmptyObjects(normalisedRow)
+                    }
 
+                    addOutputSpeciesIdToSpeciesData(normalisedRow, model)
+                    normalisedData << normalisedRow
+                }
+            }
+
+            List rollUpData = []
+            Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
+            groupedBySerial.each {  key, List rows ->
+                rollUpData << rollUpDataIntoSingleElement(rows, model)
+            }
+
+            result.addAll(rollUpData.collect {
+                [[outputName: activityFormName, data: it]]
+            })
+        }
+
+        result
+    }
+
+    boolean isRowValidNextMemberOfArray(Map row, List models) {
+        Map primitiveMembers = row.subMap(DataTypes.getModelsWithPrimitiveData(models)?. collect {it.name})
+        Map stringListMembers = row.subMap(DataTypes.getModelsWithStringListData(models)?. collect {it.name})
+        Map dataOfNestedDataTypes = row.subMap(DataTypes.getModelsWithMapData(models)?. collect {it.name})
+        Map dataOfListDataTypes = row.subMap(DataTypes.getModelsWithListData(models)?. collect {it.name})
+        if (primitiveMembers) {
+            return  ! primitiveMembers?.every { it.value == null || it.value == "" }
+        }
+        else if(dataOfNestedDataTypes) {
+            return ! dataOfNestedDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
+        }
+        else if (dataOfListDataTypes) {
+            return ! dataOfListDataTypes?.every { it.value?.every { it.value == null || it.value == ""} }
+        }
+        else if (stringListMembers) {
+            // at least one of the string list members should have a value
+            return ! stringListMembers?.any { it.value != null && it.value != "" }
+        }
+
+        return false
+    }
+
+    def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
+        firstRow = firstRow ?: rows.first()
+        rows?.eachWithIndex { Map row, int index->
+            Map listData = row.subMap(DataTypes.getModelsWithListData(models).collect {it.name})
+            listData?.each { key, value ->
+                Map model = models?.find { it.name == key }
+                if ((row == firstRow) && !(firstRow[key] instanceof List)) {
+                    firstRow[key] = [firstRow[key]]
+                }
+
+                switch (model.dataType) {
+                    case DataTypes.LIST:
+                        if (isRowValidNextMemberOfArray(value, model.columns)) {
+                            if (!firstRow[key].contains(value))
+                                firstRow[key].add(value)
+                        }
+
+                        rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                        break
+                    case DataTypes.IMAGE:
+                    case DataTypes.PHOTOPOINTS:
+                        if (!firstRow[key].contains(value))
+                            firstRow[key].add(value)
+                        break
+                }
+            }
+
+            Map stringListData = row.subMap(DataTypes.getModelsWithStringListData(models).collect {it.name})
+            stringListData?.each { key, value ->
+                if (!(firstRow[key] instanceof List)) {
+                    firstRow[key] = [firstRow[key]]
+                }
+
+                if (!firstRow[key].contains(value))
+                    firstRow[key].add(value)
+            }
+        }
+
+        firstRow
+    }
+
+    Map addOutputSpeciesIdToSpeciesData (Map data, List models) {
+        List speciesModels = DataTypes.getSpeciesModels(models)
+        Map speciesData = data?.subMap(speciesModels.collect {it.name})
+
+        speciesModels?.each { model ->
+            if (speciesData) {
+                Map singleSpeciesData = speciesData[model.name]
+                addOutputSpeciesId(singleSpeciesData)
+                autoPopulateSpeciesData(singleSpeciesData)
+            }
+        }
+
+        List listModels = DataTypes.getListModels(models)
+        Map listData = data?.subMap(listModels.collect {it.name})
+        listModels?.each { model ->
+            addOutputSpeciesIdToSpeciesData(listData[model.name], model.columns)
+        }
+
+        data
+    }
+
+    Map addOutputSpeciesId(Map data){
+        if (!data?.every {it.value == null || it.value == "" }) {
+            if(!data.outputSpeciesId)
+                data.outputSpeciesId = UUID.randomUUID().toString()
+        }
+
+        data
+    }
+
+    Map autoPopulateSpeciesData(Map data){
+        if (!data?.guid && data?.scientificName) {
+            def result = speciesReMatchService.searchBie(data.scientificName, 10)
+            // only if there is a single match
+            if (result?.autoCompleteList?.size() == 1) {
+                data.guid = result?.autoCompleteList[0]?.guid
+                data.commonName = data.commonName ?: result?.autoCompleteList[0]?.commonName
+            }
+        }
+
+        if(!data?.name) {
+            data.name = data?.commonName ? data?.scientificName + '(' + data?.commonName + ')' : data?.scientificName
+        }
+
+        data
+    }
 
     /**
      * Converts a Score domain object to a Map.
@@ -681,21 +866,8 @@ class MetadataService {
      *
      */
     Map toMap(Score score, List views) {
-        Map scoreMap = [
-                scoreId:score.scoreId,
-                category:score.category,
-                outputType:score.outputType,
-                isOutputTarget:score.isOutputTarget,
-                label:score.label,
-                description:score.description,
-                displayType:score.displayType,
-                entity:score.entity,
-                externalId:score.externalId,
-                entityTypes:score.entityTypes]
-        if (views?.contains("config")) {
-            scoreMap.configuration = score.configuration
-        }
-        scoreMap
+        boolean includeConfig = views?.contains("config")
+        score.toMap(includeConfig)
     }
 
     Score createScore(Map properties) {
@@ -863,7 +1035,7 @@ class MetadataService {
             modelIndices.each { String indexName,  List details ->
                 List dataType = details?.collect { it.dataType }
                 List existingDataTypes = allIndices?.get(indexName)?.collect { it.dataType }
-                List defaultDataTypes = grailsApplication.config.facets.data?.grep { it.name == indexName }?.collect { it.dataType }
+                List defaultDataTypes = grailsApplication.config.getProperty('facets.data', List)?.grep { it.name == indexName }?.collect { it.dataType }
                 List allDataTypes = []
                 if(dataType){
                     allDataTypes.addAll(dataType)
@@ -926,17 +1098,24 @@ class MetadataService {
      * services.json should be identical with fieldcapture
      * @return
      */
-    List<Map> getProjectServices() {
+    List<Service> getServiceList() {
 
-        String servicesJson = settingService.getSetting(SERVICES_KEY)
-        if (!servicesJson){
-            servicesJson = getClass().getResourceAsStream('/data/services.json')?.getText("UTF-8")
+        List services = Service.findAllByStatusNotEqual(Status.DELETED)
+
+        Map scoresByFormSection = [:].withDefault { String formSectionName ->
+            Score.createCriteria().list {
+                or {
+                    eq('configuration.filter.filterValue', formSectionName)
+                    eq('configuration.childAggregations.filter.filterValue', formSectionName)
+                }
+            }
         }
-        List services = JSON.parse(servicesJson)
-
-        List<Score> scores = Score.findAllByStatusNotEqual(DELETED)
         services.each { service ->
-            service.scores = new JSONArray(scores.findAll{it.outputType == service.output})
+            service.outputs?.each { ServiceForm serviceFormConfig ->
+
+                List scores = scoresByFormSection[serviceFormConfig.sectionName]
+                serviceFormConfig.relatedScores = scores
+            }
         }
         services
     }
@@ -967,9 +1146,9 @@ class MetadataService {
      */
 
     List<Map> getProjectServicesWithTargets(project){
-        def services =  getProjectServices()
+        List<Service> services = getServiceList()
         List serviceIds = project.custom?.details?.serviceIds?.collect{it as Integer}
-        List projectServices = services?.findAll {it.id in serviceIds }
+        List projectServices = services?.findAll {it.legacyId in serviceIds }
         List targets = project.outputTargets
 
         // Make a copy of the services as we are going to augment them with target information.
@@ -977,7 +1156,7 @@ class MetadataService {
             [
                     name:service.name,
                     id: service.id,
-                    scores: service.scores?.collect { score ->
+                    scores: service.scores()?.collect { score ->
                         [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
                     }
             ]

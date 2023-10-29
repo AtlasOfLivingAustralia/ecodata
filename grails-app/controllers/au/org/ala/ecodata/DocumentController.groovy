@@ -63,7 +63,7 @@ class DocumentController {
                 response.status = 404
                 render status:404, text: 'No such id'
             } else {
-                String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${document.filepath}${File.separator}${document.filename}"
+                String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${document.filepath}${File.separator}${document.filename}"
 
                 File file = new File(path)
 

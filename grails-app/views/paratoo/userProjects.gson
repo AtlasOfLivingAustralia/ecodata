@@ -1,0 +1,9 @@
+import au.org.ala.ecodata.paratoo.ParatooProject
+
+model {
+    List<ParatooProject> projects
+}
+
+json {
+    projects tmpl.paratooProject('project', projects)
+}

@@ -1,16 +1,24 @@
 package au.org.ala.ecodata
 
+
+import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 import org.springframework.validation.Errors
 
 import static au.org.ala.ecodata.Status.COMPLETED
+import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.Interval
 
+import static au.org.ala.ecodata.Status.COMPLETED
 
 class Project {
+
+    static graphql = ProjectGraphQLMapper.graphqlMapping()
 
     /*
     Associations:
@@ -83,6 +91,7 @@ class Project {
     MapLayersConfiguration mapLayersConfig
     /** configure how activity is displayed on map for example point, heatmap or cluster. */
     List mapDisplays
+    List tempArgs = []
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -111,9 +120,11 @@ class Project {
     /** Electorate Reporting Comment */
     String comment
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds']
+    List<OutputTarget> outputTargets
 
-    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
+
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
     Date getActualStartDate() {
         if (actualStartDate) {
@@ -244,5 +255,38 @@ class Project {
             }
         }
     }
+
+    MeriPlan getMeriPlan() {
+        if(!custom) {
+            return null
+        }
+
+        MeriPlan meriPlan = new MeriPlan()
+        meriPlan.details = custom.get("details")
+        meriPlan.outputTargets = this.outputTargets
+        return meriPlan
+    }
+
+    /**
+     * Note this method does a database query to find the Services that have been configured in the
+     * project MERI plan
+     */
+    List<Service> findProjectServices() {
+        List serviceIds = custom?.details?.serviceIds
+        List services = null
+        if (serviceIds) {
+            services = Service.findAllByLegacyIdInList(serviceIds)
+        }
+        services
+    }
+
+    /** Used to find relevant TERN/paratoo monitoring protocols for a project */
+    List<String> getMonitoringProtocolCategories() {
+        List baselineProtocols = custom?.details?.baseline?.rows?.collect{it.protocols}?.flatten() ?:[]
+        List monitoringProtocols = custom?.details?.monitoring?.rows?.collect{it.protocols}?.flatten() ?:[]
+
+        (baselineProtocols + monitoringProtocols).unique().findAll{it}
+    }
+
 }
 

@@ -1,11 +1,23 @@
 apply plugin:"jacoco"
 jacoco {
-    toolVersion = "0.8.4"
-    excludes = ['**/TimezoneMapper.java']
+    toolVersion = "0.8.8"
+}
+test {
+    useJUnitPlatform()
+    jacoco {
+        excludes = ['**/Application.groovy',
+                    '**/BootStrap.groovy',
+                    '**/UrlMappings.groovy',
+                    '**/*GrailsPlugin.groovy',
+                    '**/*Mock.groovy',
+                    'com.skedgo.converter.*']
+    }
+    finalizedBy jacocoTestReport
 }
 jacocoTestReport {
-    dependsOn test
+    dependsOn check
 
+    finalizedBy jacocoTestCoverageVerification
     afterEvaluate {
         getClassDirectories().setFrom(classDirectories.files.collect {
             fileTree(dir: it,
@@ -19,5 +31,16 @@ jacocoTestReport {
         xml.enabled false
         csv.enabled false
         html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.1
+            }
+        }
     }
 }

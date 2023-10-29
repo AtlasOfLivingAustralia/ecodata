@@ -22,7 +22,7 @@ import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
 
-    def outputService, siteService, projectService, authService,
+    def outputService, siteService, projectService,
         collectoryService, organisationService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     ActivityFormService activityFormService
@@ -32,18 +32,15 @@ class AdminController {
     EmailService emailService
     HubService hubService
     DataDescriptionService dataDescriptionService
+    RecordService recordService
+    ProjectActivityService projectActivityService
+    ParatooService paratooService
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def index() {}
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def tools() {}
-
-    @AlaSecured("ROLE_ADMIN")
-    def users() {
-        def userList = authService.getAllUserNameList()
-        [ userNamesList: userList ]
-    }
 
     @RequireApiKey
     def syncCollectoryOrgs() {
@@ -54,16 +51,16 @@ class AdminController {
             render (status: 200)
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def settings() {
         def settings = [
-                [key:'app.external.model.dir', value: grailsApplication.config.app.external.model.dir,
+                [key:'app.external.model.dir', value: grailsApplication.config.getProperty('app.external.model.dir'),
                         comment: 'location of the application meta-models such as the list of activities and ' +
                                 'the output data models'],
-                [key:'app.dump.location', value: grailsApplication.config.app.dump.location,
+                [key:'app.dump.location', value: grailsApplication.config.getProperty('app.dump.location'),
                         comment: 'directory where DB dump files will be created']
         ]
-        def config = grailsApplication.config.flatten()
+        def config = grailsApplication.config
         ['ala.baseURL','grails.serverURL','grails.config.locations','collectory.baseURL',
                 'headerAndFooter.baseURL','ecodata.use.uuids'
         ].each {
@@ -80,14 +77,14 @@ class AdminController {
         render model as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def reloadConfig = {
         // clear any cached external config
         cacheService.clear()
 
         // reload system config
         def resolver = new PathMatchingResourcePatternResolver()
-        def resource = resolver.getResource(grailsApplication.config.reloadable.cfgs[0])
+        def resource = resolver.getResource(grailsApplication.config.getProperty('reloadable.cfgs', List)[0])
         def stream = null
 
         try {
@@ -120,9 +117,9 @@ class AdminController {
             render res + "</ul>"
         }
         catch (FileNotFoundException fnf) {
-            println "No external config to reload configuration. Looking for ${grailsApplication.config.reloadable.cfgs[0]}"
+            println "No external config to reload configuration. Looking for ${grailsApplication.config.getProperty('reloadable.cfgs', List)[0]}"
             fnf.printStackTrace()
-            render "No external config to reload configuration. Looking for ${grailsApplication.config.reloadable.cfgs[0]}"
+            render "No external config to reload configuration. Looking for ${grailsApplication.config.getProperty('reloadable.cfgs', List)[0]}"
         }
         catch (Exception gre) {
             println "Unable to reload configuration. Please correct problem and try again: " + gre.getMessage()
@@ -147,7 +144,7 @@ class AdminController {
         asJson map
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def showCache() {
         render cacheService.cache
     }
@@ -170,7 +167,7 @@ class AdminController {
         render 'done'
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def count() {
         def res = [
             projects: Project.collection.count(),
@@ -182,7 +179,7 @@ class AdminController {
         render res
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateDocumentThumbnails() {
 
         def results = Document.findAllByStatusAndType('active', 'image')
@@ -195,7 +192,7 @@ class AdminController {
      * Refreshes site metadata (geographical facets & geocodes) for every site in the system.
      * @return {"result":"success"} if the operation is successful.
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def reloadSiteMetadata() {
         String dateStr = params.lastUpdatedBefore
         Date date = null
@@ -208,7 +205,7 @@ class AdminController {
         render result as grails.converters.JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateSitesWithoutCentroids() {
         def code = 'success'
 
@@ -254,7 +251,7 @@ class AdminController {
         render result as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def linkWithAuth(){
         actor {
             recordImportService.linkWithAuth()
@@ -263,7 +260,7 @@ class AdminController {
         render model as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def linkWithImages(){
         actor {
             recordImportService.linkWithImages()
@@ -272,7 +269,7 @@ class AdminController {
         render model as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def importFromUrl(){
         def model = [:]
 
@@ -312,7 +309,7 @@ class AdminController {
         render model as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def importFile(){
 
         def model = [:]
@@ -336,16 +333,16 @@ class AdminController {
         render model as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def audit() { }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def auditMessagesByEntity() { }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def auditMessagesByProject() { }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     private boolean createStageReportsFromTimeline(project) {
         def timeline = project.timeline
 
@@ -464,30 +461,30 @@ class AdminController {
     * Initiate species rematch.
     */
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def initiateSpeciesRematch() {
         speciesReMatchService.rematch()
         render ([message:' ok'] as JSON)
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def metadata() {
         [activitiesMetadata: metadataService.activitiesModel()]
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def editActivityFormDefinitions() {
         def model = [availableActivities:activityFormService.activityVersionsByName()]
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def programsModel() {
         List activityTypesList = metadataService.activitiesList().collect {key, value -> [name:key, list:value]}.sort{it.name}
 
         [programsModel: metadataService.programsModel(), activityTypes:activityTypesList]
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateProgramsModel() {
         def model = request.JSON
         log.debug model.toString()
@@ -497,7 +494,7 @@ class AdminController {
         render result
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def editActivityFormTemplates() {
         def model = [availableActivities:activityFormService.activityVersionsByName()]
         if (params.open) {
@@ -509,25 +506,25 @@ class AdminController {
     /**
      * Duplicates ActivityFormController.get to implement interactive authorization rules.
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     ActivityForm findActivityForm(String name, Integer formVersion) {
         render activityFormService.findActivityForm(name, formVersion) as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def createScore() {
         Score score = new Score([entity:'Activity', configuration:[:]])
         render view:'editScore', model:[score:score]
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def editScore(String id) {
         Score score = Score.findByScoreId(id)
 
         render view:'editScore', model:[score:score]
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateScore(String id) {
         // Using JsonSluper instead of request.JSON to avoid JSONNull being serialized to the String "null" when
         // mapped to a Map type in the domain object.
@@ -542,12 +539,12 @@ class AdminController {
         }
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def deleteScore(String id) {
         respond metadataService.deleteScore(id, params.getBoolean('destroy', false))
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def searchScores() {
 
         def searchCriteria = request.JSON
@@ -576,26 +573,14 @@ class AdminController {
         [scores:scores, count:scores.totalCount]
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     /** The synchronization is to prevent a double submit from double creating duplicates */
     synchronized def regenerateRecordsForOutput(String outputId) {
         try {
             Output output = Output.findByOutputId(outputId)
             if (output) {
                 Activity activity = Activity.findByActivityId(output.activityId)
-                Map props = outputService.toMap(output)
-                outputService.createOrUpdateRecordsForOutput(activity, output, props)
-
-                // The createOrUpdateRecordsForOutput method can assign outputSpeciesIds so we need to check if
-                // the output has changed.
-                Map before = null
-                Output.withNewSession {
-                    before = outputService.toMap(Output.findByOutputId(outputId))
-                }
-                if (props != before) {
-                    commonService.updateProperties(output, props)
-                }
-
+                recordService.regenerateRecordsForOutput(output, activity)
                 int recordCount = Record.findAllByOutputId(outputId).size()
                 flash.message = "Potentially ${recordCount} records affected"
             } else {
@@ -611,19 +596,34 @@ class AdminController {
 
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
+    def regenerateRecordsForALAHarvestableProjects() {
+        def result = [:]
+        try {
+            recordService.regenerateRecordsForBioCollectProjects()
+            result.message = "Submitted regeneration of records"
+        }
+        catch (Exception e) {
+            log.error("An error occurred regenerating records, message: ${e.message}", e)
+            result.message = "An error occurred regenerating records"
+        }
+
+        render text: result as JSON
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
     def getIndexNames() {
         Map model = [indexNames: metadataService.getIndicesForDataModels()]
         render view: 'indexNames', model: model
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateCollectoryEntryForBiocollectProjects () {
         collectoryService.updateCollectoryEntryForBiocollectProjects()
         render text: [ message: 'Successfully submit synchronisation job.' ] as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def buildGeoServerDependencies() {
         def result = mapService.buildGeoServerDependencies()
         def message, code
@@ -632,7 +632,7 @@ class AdminController {
         render text: [message: message] as JSON, status: code
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def displayUnIndexedFields() {
         String index = params.get('index', ElasticIndex.HOMEPAGE_INDEX)
         String q = "_ignored:*"
@@ -661,27 +661,34 @@ class AdminController {
         render resp as JSON
     }
 
-    @AlaSecured("ROLE_ADMIN")
-    def migrateUserDetailsToEcodata() {
-        def resp = permissionService.saveUserDetails()
-        render text: [ message: 'UserDetails data migration done.' ] as JSON
-    }
-
     /**
      * Administrative interface to trigger the access expiry job.  Used in MERIT functional
      * tests.
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def triggerAccessExpiryJob() {
         new AccessExpiryJob(
                 permissionService: permissionService,
                 userService: userService,
                 hubService: hubService,
                 emailService: emailService).execute()
+        render text: [message: 'ok'] as JSON
+    }
+
+    /**
+     * Administrative interface to trigger the project activity stats update.
+     */
+    @AlaSecured(["ROLE_ADMIN"])
+    def triggerProjectActivityStatsUpdate() {
+        new UpdateProjectActivityStatsJob(
+                projectActivityService: projectActivityService,
+                cacheService: cacheService,
+                grailsApplication: grailsApplication,
+                ).execute()
         render 'ok'
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def createDataDescription() {
         if (request.respondsTo('getFile')) {
             MultipartFile excel = request.getFile('descriptionData')
@@ -708,6 +715,14 @@ class AdminController {
             def resultJson = result as JSON
             render resultJson.toString()
         }
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def syncParatooProtocols(boolean offline) {
+
+        Map errors = offline ? paratooService.syncProtocolsFromSettings() : paratooService.syncProtocolsFromParatoo()
+
+        render errors as JSON
     }
 
 }

@@ -70,8 +70,8 @@ class CommentController {
             if(!comment.hasErrors()){
                 Map model = commentService.getCommentProperties(comment)
 
-                response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
-                response.addHeader("location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
+                response.addHeader("content-location", grailsApplication.config.getProperty('grails.serverURL') + "/comment/" + comment.getId().toString())
+                response.addHeader("location", grailsApplication.config.getProperty('grails.serverURL') + "/comment/" + comment.getId().toString())
                 response.addHeader("entityId", comment.getId().toString())
                 response.setContentType("application/json")
                 render new JSON(model)

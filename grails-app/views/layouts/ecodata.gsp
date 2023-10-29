@@ -23,7 +23,7 @@
                 <div class="nav-collapse collapse">
                     <div class="navbar-text pull-right">
                         <span id="buttonBar">
-                            <ec:currentUserDisplayName />&nbsp;<hf:loginLogout cssClass="btn btn-small" logoutUrl="${createLink(controller:'logout', action:'logout')}"/>
+                            <ec:currentUserDisplayName />&nbsp;<button id="btnLogout" class='btn btn-small'>Logout</button>
                             %{--<button class="btn btn-small btn-info" id="btnProfile"><i class="icon-user icon-white"></i>&nbsp;My Profile</button>--}%
                             <button class="btn btn-warning btn-small" id="btnAdministration"><i class="icon-cog icon-white"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
@@ -45,7 +45,7 @@
         $.ajaxSetup({ cache: false });
 
         $("#btnLogout").click(function (e) {
-            window.location = "${createLink(controller: 'logout', action:'index')}";
+            window.location = "${createLink(controller: 'admin', action:'logout')}";
         });
 
         $("#btnAdministration").click(function (e) {

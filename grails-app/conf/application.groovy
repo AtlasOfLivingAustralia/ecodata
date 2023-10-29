@@ -110,6 +110,7 @@ if (!google.geocode.url) {
 if (!temp.file.cleanup.days) {
     temp.file.cleanup.days = 1
 }
+access.expiry.maxEmails=500
 
 
 if (!biocollect.scienceType) {
@@ -512,7 +513,7 @@ if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "https://www.ala.org.au/commonui-bs3"//"https://www2.ala.org.au/commonui"
 }
 if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
+    security.apikey.serviceUrl = 'https://auth-test.ala.org.au/apikey/ws/check?apikey='
 }
 if (!biocacheService.baseURL) {
     biocacheService.baseURL = 'https://biocache.ala.org.au/ws'
@@ -529,14 +530,8 @@ if (!security.cas.adminRole) {
 if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if (!userDetailsSingleUrl) {
-    userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
-}
-if (!userDetailsUrl) {
-    userDetailsUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserListFull"
-}
-if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/ws/admin'
+if (!userDetails.url) {
+    userDetails.url = "https://auth-test.ala.org.au/userdetails/"
 }
 
 if (!authGetKeyUrl) {
@@ -548,7 +543,8 @@ if (!authCheckKeyUrl) {
 }
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
-
+// Used by ParatooService to sync available protocols
+paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au/api'
 
 if (!grails.cache.ehcache) {
     grails {
@@ -583,31 +579,59 @@ grails.cache.config = {
 
 security {
     cas {
-        appServerName = 'http://devt.ala.org.au:8080' // or similar, up to the request path part
-        // service = 'http://devt.ala.org.au:8080' // optional, if set it will always be used as the return path from CAS
-        casServerUrlPrefix = 'https://auth.ala.org.au/cas'
-        loginUrl = 'https://auth.ala.org.au/cas/login'
-        logoutUrl = 'https://auth.ala.org.au/cas/logout'
-        casServerName = 'https://auth.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*']
-        authenticateOnlyIfLoggedInPattern =
-        uriExclusionFilterPattern = ['/assets/.*', '/images/.*', '/css/.*', '/js/.*', '/less/.*', '/activityForm/get.*']
+        enabled = false
+        appServerName = 'http://localhost:8080' // or similar, up to the request path part
+        casServerUrlPrefix = 'https://auth-test.ala.org.au/cas'
+        loginUrl = 'https://auth-test.ala.org.au/cas/login'
+        logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
+        casServerName = 'https://auth-test.ala.org.au'
+        uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*']
+        authenticateOnlyIfLoggedInPattern = "/graphql/*"
+        uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
+    }
+    oidc {
+        enabled = true
+        discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
+        clientId = 'changeMe'
+        secret = 'changeMe'
+        scope = 'openid,profile,ala,roles'
+        connectTimeout = 20000
+        readTimeout = 20000
+    }
+    jwt {
+        enabled = true
+        discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
+        requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
+        urlPatterns = ["/ws/graphql/*"]
+        requiredScopes = ["openid", 'profile', "ala", "roles"]
+        connectTimeoutMs = 20000
+        readTimeoutMs = 20000
     }
 }
+webservice.jwt = false
+webservice['jwt-scopes'] = "ala/internal users/read ala/attrs"
+webservice['client-id']='changeMe'
+webservice['client-secret'] = 'changeMe'
+
+grails.gorm.graphql.browser = true
 
 environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/" //"./models/"
-        grails.hostname = "devt.ala.org.au"
+        app.external.model.dir = "~/data/ecodata/models/"
+        app.file.upload.path="~/data/ecodata/uploads"
+        app.file.archive.path="~/data/ecodata/archives"
+        temp.dir="~/data/ecodata/tmp"
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
-        grails.serverURL = "http://devt.ala.org.au:8080"
+        server.host="localhost"
+        server.port=8080
+        grails.hostname = "${server.host}"
+        grails.serverURL = "http://${grails.hostname}:${server.port}"
         app.uploads.url = "/document/download/"
-        grails.mail.host = "localhost"
-        grails.mail.port = 1025
-        temp.dir = "/data/ecodata/tmp"
+        grails.mail.host="localhost"
+        grails.mail.port=1025
     }
     test {
         // Override disk store so the travis build doesn't fail.
@@ -619,7 +643,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.hostname = "devt.ala.org.au"
+        grails.hostname = "localhost"
         // Only for travis CI, they must be overriden by ecodata-config.properties
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
@@ -635,6 +659,11 @@ environments {
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
+
+        wiremock.port = 8018
+        security.cas.bypass = true
+        security.cas.casServerUrlPrefix="http://localhost:${wiremock.port}/cas"
+        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
         grails.cache.config = {
@@ -646,11 +675,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
-        grails.hostname = "localhost"
-        // Only for travis CI, they must be overriden by ecodata-config.properties
-        serverName = "http://${grails.hostname}:8080"
-        grails.app.context = "ecodata"
-        grails.serverURL = serverName + "/" + grails.app.context
+        grails.serverURL = "http://localhost:8080"
         app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
@@ -659,12 +684,14 @@ environments {
         app.file.archive.path = "./build/archive"
 
         wiremock.port = 8018
-        def casBaseUrl = "http://devt.ala.org.au:${wiremock.port}"
-        security.cas.casServerName = "${casBaseUrl}"
-        security.cas.contextPath = ""
-        security.cas.casServerUrlPrefix = "${casBaseUrl}/cas"
-        security.cas.loginUrl = "${security.cas.casServerUrlPrefix}/login"
-        security.cas.casLoginUrl = "${security.cas.casServerUrlPrefix}/login"
+        security.oidc.discoveryUri = "http://localhost:${wiremock.port}/cas/oidc/.well-known"
+        security.oidc.allowUnsignedIdTokens = true
+        def casBaseUrl = "http://localhost:${wiremock.port}"
+        security.cas.casServerName="${casBaseUrl}"
+        security.cas.contextPath=""
+        security.cas.casServerUrlPrefix="${casBaseUrl}/cas"
+        security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
+        security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
 
         userDetails.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
@@ -677,6 +704,8 @@ environments {
         // Schedule the audit thread frequently during functional tests to get less indexing errors because
         // the data was cleaned up before the audit ran
         audit.thread.schedule.interval = 500l;
+
+        paratoo.core.baseUrl = "http://localhost:${wiremock.port}/monitor"
     }
     production {
         grails.logging.jul.usebridge = false
@@ -771,8 +800,14 @@ facets.data = [
                 helpText: 'Titles of sub-programmes under listed programmes.'
         ],
         [
-                name    : "methodType",
-                title   : 'Method type',
+                name: "verificationStatusFacet",
+                title: 'Verification status',
+                dataType: 'text',
+                helpText: 'Verification status of an activity'
+        ],
+        [
+                name: "methodType",
+                title: 'Method type',
                 dataType: 'text',
                 helpText: ''
         ],
@@ -1107,20 +1142,20 @@ geoServer.layerConfiguration = [
                 "timeAttribute": "dateCreated",
                 "attributes"   : [
                         [
-                                "name"           : "sites.geoIndex",
-                                "shortName"      : "sites.geoIndex",
-                                "useShortName"   : false,
-                                "type"           : "com.vividsolutions.jts.geom.Geometry",
-                                "use"            : true,
+                                "name": "sites.geoIndex",
+                                "shortName": "sites.geoIndex",
+                                "useShortName": false,
+                                "type": "org.locationtech.jts.geom.Geometry",
+                                "use": true,
                                 "defaultGeometry": true,
-                                "geometryType"   : "GEO_SHAPE",
-                                "srid"           : "4326",
-                                "stored"         : false,
-                                "nested"         : false,
-                                "binding"        : "com.vividsolutions.jts.geom.Geometry",
-                                "nillable"       : true,
-                                "minOccurs"      : 0,
-                                "maxOccurs"      : 1
+                                "geometryType": "GEO_SHAPE",
+                                "srid": "4326",
+                                "stored": false,
+                                "nested": false,
+                                "binding": "org.locationtech.jts.geom.Geometry",
+                                "nillable": true,
+                                "minOccurs": 0,
+                                "maxOccurs": 1
                         ]
                 ]
         ],
@@ -1133,20 +1168,20 @@ geoServer.layerConfiguration = [
                 "timeAttribute": "dateCreated",
                 "attributes"   : [
                         [
-                                "name"           : "projectArea.geoIndex",
-                                "shortName"      : "projectArea.geoIndex",
-                                "useShortName"   : false,
-                                "type"           : "com.vividsolutions.jts.geom.Geometry",
-                                "use"            : true,
+                                "name": "projectArea.geoIndex",
+                                "shortName": "projectArea.geoIndex",
+                                "useShortName": false,
+                                "type": "org.locationtech.jts.geom.Geometry",
+                                "use": true,
                                 "defaultGeometry": true,
-                                "geometryType"   : "GEO_SHAPE",
-                                "srid"           : "4326",
-                                "stored"         : false,
-                                "nested"         : false,
-                                "binding"        : "com.vividsolutions.jts.geom.Geometry",
-                                "nillable"       : true,
-                                "minOccurs"      : 0,
-                                "maxOccurs"      : 1
+                                "geometryType": "GEO_SHAPE",
+                                "srid": "4326",
+                                "stored": false,
+                                "nested": false,
+                                "binding": "org.locationtech.jts.geom.Geometry",
+                                "nillable": true,
+                                "minOccurs": 0,
+                                "maxOccurs": 1
                         ]
                 ]
         ]
@@ -1249,6 +1284,117 @@ geohash.maxNumberOfGrids = 250
 // Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
 // hide exact location.
 geohash.maxLength = 5
+
+if(!additionalFieldsForDataTypes){
+    additionalFieldsForDataTypes = [
+            'species': [
+                    'name': 'Scientific name field',
+                    'type': 'species',
+                    'fields': [
+                        [
+                                'name': 'name',
+                                'label': 'Name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'scientificName',
+                                'label': 'Scientific name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'commonName',
+                                'label': 'Common name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'guid',
+                                'label': 'ALA identifier',
+                                "dataType": "text"
+                        ]
+                    ]
+            ],
+            'image': [
+                    'name': 'Image field',
+                    'type': 'image',
+                    'fields': [
+                        [
+                                'name': 'url',
+                                'label': 'Image URL',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'licence',
+                                'label': 'Licence',
+                                "dataType": "text",
+                                'constraints': [
+                                        'CC BY 3.0',
+                                        'CC BY 0',
+                                        'CC BY 4.0',
+                                        'CC BY-NC'
+                                ]
+                        ],
+                        [
+                                'name': 'name',
+                                'label': 'Image name',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'filename',
+                                'label': 'Image filename',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'attribution',
+                                'label': 'Attribution',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'notes',
+                                'label': 'Notes',
+                                "dataType": "text"
+                        ],
+                        [
+                                'name': 'projectId',
+                                'label': 'Project Id',
+                                "dataType": "text"
+                        ],
+                        [
+                            'name': 'projectName',
+                            'label': 'Project name',
+                            "dataType": "text"
+                        ],
+                        [
+                            'name': 'dateTaken',
+                            'label': 'Date taken',
+                            "dataType": "date"
+                        ]
+                    ]
+            ],
+            'geoMap' : [
+                    'name': 'Geo map field',
+                    'type': 'geoMap',
+                    'fields': [
+                                [
+                                        'name': "",
+                                        'label': 'Site identifier (siteId)',
+                                        "dataType": "text"
+                                ],
+                                [
+                                        'name': "Latitude",
+                                        'label': 'Latitude',
+                                        "dataType": "number",
+                                        "validate": "min[-90],max[90]"
+                                ],
+                                [
+                                        'name': "Longitude",
+                                        'label': 'Longitude',
+                                        "dataType": "number",
+                                        "validate": "min[-180],max[180]"
+                                ]
+                        ]
+            ]
+    ]
+}
 
 // Dummy / default username and password for elasticsearch, will be ignored if the server is not setup for
 // basic authentication.

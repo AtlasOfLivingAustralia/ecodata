@@ -51,6 +51,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
     File outputFile
 
     void setup() {
+        grailsApplication.config.export.record.max = 1
         Holders.grailsApplication = grailsApplication
         defineBeans {
             projectActivityService(ProjectActivityService)
@@ -74,6 +75,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         csProjectXlsExporter.siteService = siteService
         csProjectXlsExporter.activityService = activityService
         csProjectXlsExporter.recordService = recordService
+        csProjectXlsExporter.recordService.grailsApplication = grailsApplication
         csProjectXlsExporter.userService = userService
         csProjectXlsExporter.permissionService = permissionService
         csProjectXlsExporter.activityFormService = activityFormService
@@ -85,9 +87,10 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
 
     def cleanup() {
         Activity.collection.remove(new BasicDBObject())
+        Record.collection.remove(new BasicDBObject())
     }
 
-    def "Project activity sheet must not contain a list of sites associated with project activity"() {
+    def "Project activity sheet must not contain a list of sites associated with project activity and records sheet must contain all records"() {
         setup:
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("UTC")))
         calendar.set(Calendar.YEAR, 2015) //2005-12-31
@@ -108,12 +111,16 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         ActivityForm activityForm = form()
         Activity activity = new Activity(activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
                 plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId).save()
+        Record record = new Record(occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
+                projectActivityId: paId).save(flush: true)
         projectService.get(projectId) >> project
         projectActivityService.getAllByProject(projectId, ProjectActivityService.ALL) >> [pa]
         projectActivityService.listRestrictedProjectActivityIds(_, _) >> []
         activityService.toMap(_, []) >> [activityId:'abc123', type:'Type 1', description:'Test', progress:Activity.STARTED,
                                                  plannedStartDate:new Date(), plannedEndDate: new Date(), projectActivityId: paId, outputs:[[name: "test", data: ['item1': 1], name: "test", outputId: "abc"]]]
         activityFormService.findActivityForm(pa.pActivityFormName) >> activityForm
+        recordService.list(_) >> [total: 1, list: [[occurrenceID: 'occurs123', projectId: projectId,  activityId:'abc123', scientificName:'name 1', decimalLatitude:10.0, decimalLongitude: 10.0,
+                                                    projectActivityId: paId]]]
 
         when:
         csProjectXlsExporter.export(projectId, activities)
@@ -129,6 +136,10 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         List activityHeaders = summaryRow.subList(0, 7)
         activityHeaders == csProjectXlsExporter.surveyHeaders.subList(0, 7)
         activityHeaders.contains('Site IDs') == false
+        Sheet recordsSheet = workbook.getSheet('DwC Records')
+        recordsSheet.physicalNumberOfRows == 2
+        List recordRow1 =  ExportTestUtils.readRow(1, recordsSheet)
+        recordRow1[0] == 'occurs123'
     }
 
 

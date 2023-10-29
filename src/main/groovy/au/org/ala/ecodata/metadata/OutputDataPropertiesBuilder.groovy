@@ -13,7 +13,7 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     private Map<String, Object> documentMap
     private def imageMapper = {
         if (it.imageId)
-            return Holders.grailsApplication.config.imagesService.baseURL + "/image/details?imageId=" + it.imageId
+            return Holders.grailsApplication.config.getProperty('imagesService.baseURL') + "/image/details?imageId=" + it.imageId
         def doc = documentMap[it.documentId]
         return doc?.externalUrl ?: doc?.identifier ?: doc?.thumbnail ?: it.identifier ?: it.documentId
     }

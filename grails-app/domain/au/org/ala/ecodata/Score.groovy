@@ -34,6 +34,9 @@ class Score {
     /** In the case that the score is derived from an Activity, this contains the activity types used */
     List<String> entityTypes
 
+    /** Can be used to categorize scores */
+    List<String> tags
+
 
     /** Embedded document describing how the score should be calculated */
     Map configuration
@@ -45,6 +48,7 @@ class Score {
         description nullable:true
         entityTypes nullable:true
         externalId nullable:true
+        tags: nullable:true
         label unique: true
         scoreId unique: true
     }
@@ -59,5 +63,32 @@ class Score {
         if (scoreId == null) {
             scoreId = Identifiers.getNew(true, "")
         }
+    }
+
+    /**
+     * Converts a Score domain object to a Map.
+     * @param score the Score to convert.
+     * @param views specifies the data to include in the Map.  Only current supported value is "configuration",
+     * which will return the score and it's associated configuration.
+     *
+     */
+    Map toMap(boolean includeConfig = false) {
+        Map scoreMap = [
+                scoreId:scoreId,
+                category:category,
+                outputType:outputType,
+                isOutputTarget:isOutputTarget,
+                    label:label,
+                description:description,
+                displayType:displayType,
+                entity:entity,
+                externalId:externalId,
+                entityTypes:entityTypes,
+                tags:tags
+        ]
+        if (includeConfig) {
+            scoreMap.configuration = configuration
+        }
+        scoreMap
     }
 }

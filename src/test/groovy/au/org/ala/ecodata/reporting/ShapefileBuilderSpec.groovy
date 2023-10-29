@@ -3,7 +3,7 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.SiteService
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.Coordinate
 import grails.converters.JSON
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller

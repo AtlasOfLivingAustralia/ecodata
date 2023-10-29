@@ -107,11 +107,11 @@ class DateTimeParser {
     /**
      * Format a calendar.
      * <p>
-     * The resuling formatted string will be in the calendar timezone
+     * The resulting formatted string will be in the calendar timezone
      *
      * @param calendar The calendar object
      *
-     * @return The formatted strin
+     * @return The formatted string
      */
     String format(Calendar calendar) {
             DateFormat format = style.format.clone()
@@ -126,7 +126,7 @@ class DateTimeParser {
      *
      * @param date The date
      *
-     * @return The formatted strin
+     * @return The formatted string
      */
     String format(Date date) {
         DateFormat format = style.format.clone()

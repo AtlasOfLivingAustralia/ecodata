@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.ManagementUnitGraphQLMapper
 import org.bson.types.ObjectId
 import org.springframework.validation.Errors
 
@@ -7,6 +8,8 @@ import org.springframework.validation.Errors
  * A mu acts as a container for projects, more or less.
  */
 class ManagementUnit {
+
+    static graphql = ManagementUnitGraphQLMapper.graphqlMapping()
 
     static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
                                 'startDate', 'endDate', 'associatedOrganisations', 'config', 'shortName', 'geographicInfo']
@@ -102,5 +105,23 @@ class ManagementUnit {
 
     String toString() {
         return "Name: "+name+ ", description: "+description
+    }
+
+    def getReportConfig() {
+        def reportConfig = []
+        if(config) {
+            reportConfig += config.managementUnitReports?.collect {
+                [:] + it + [report:"managementUnitReport"]
+            }
+            reportConfig += config.projectReports?.collect {
+                [:] + it + [report:"projectReport"]
+            }
+        }
+        return reportConfig
+    }
+
+    def getActivityData(String managementUnitId) {
+        List<Report> reports = Report.findAllByManagementUnitIdAndStatusNotEqual(managementUnitId,Status.DELETED)
+       return Activity.findAll{activityId in reports.activityId}
     }
 }

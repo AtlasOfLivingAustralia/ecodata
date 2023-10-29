@@ -49,8 +49,8 @@ class RecordAlertService {
             values.occurrenceID = record.occurrenceID
             values.pActivityName = pActivity?.name
             values.projectName = project?.name
-            values.activityUrl = grailsApplication.config.biocollect.activity.url + record?.activityId
-            values.projectUrl = grailsApplication.config.biocollect.project.url + project?.projectId
+            values.activityUrl = grailsApplication.config.getProperty('biocollect.activity.url') + record?.activityId
+            values.projectUrl = grailsApplication.config.getProperty('biocollect.project.url') + project?.projectId
 
             String body = groovyPageRenderer.render(template: "/email/speciesAlert", model:[values: values])
             emailService.sendEmail("Species Alert", body, pActivity?.alert?.emailAddresses?.collect{it})

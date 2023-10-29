@@ -2364,7 +2364,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         controller.getMembersForProject()
 
         then:
-        1 * permissionService.getMembersForProject(projectId) >> ['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'editor']].values().toList()
+        1 * permissionService.getMembersForProject(projectId, [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]) >> ['1': [userId: '1', role: 'admin'], '2' : [userId : '2', role : 'editor']].values().toList()
 
         response.status == HttpStatus.SC_OK
         response.getJson().size() == 2
@@ -2680,5 +2680,24 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         null   | null      | null                   | 400
         '1'    | null      | ['admin']              | 400
         '1'    | '1'       | ['admin']              | 200
+    }
+
+
+    void "The isUserEditorForOrganisation method delegates to the PermissionsService" () {
+        setup:
+        String userId = '123'
+        String organisationId = 'o1'
+        new Organisation(organisationId:organisationId, name:'test').save()
+
+        when:
+        params.userId = userId
+        params.organisationId = organisationId
+        controller.isUserEditorForOrganisation()
+        def result = response.getJson()
+
+        then:
+        1 * permissionService.isUserEditorForOrganisation(userId, organisationId) >> true
+        response.status == HttpStatus.SC_OK
+        result == [userIsEditor:true]
     }
 }

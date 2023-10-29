@@ -1,12 +1,15 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
 import grails.core.support.GrailsConfigurationAware
 import grails.config.Config
 
 class AuditInterceptor implements GrailsConfigurationAware {
 
+    int order = 100 // This needs to be after the @RequireApiKey interceptor which makes the userId available via the authService
     String httpRequestHeaderForUserId
-    def userService
+    UserService userService
+    AuthService authService
 
     public AuditInterceptor() {
         matchAll()
@@ -15,7 +18,7 @@ class AuditInterceptor implements GrailsConfigurationAware {
     boolean before() {
         // userId is set from either the request param userId or failing that it tries to get it from
         // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
-        def userId = request.getHeader(httpRequestHeaderForUserId)?: request.getUserPrincipal()?.attributes?.userid
+        def userId = authService.getUserId() ?: request.getHeader(httpRequestHeaderForUserId)
         if (userId) {
             def userDetails = userService.setCurrentUser(userId)
             if (userDetails) {

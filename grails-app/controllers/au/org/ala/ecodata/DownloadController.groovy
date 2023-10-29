@@ -7,7 +7,7 @@ class DownloadController {
             render "A download ID is required"
         } else {
             String extension = params.format ?: 'zip'
-            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${id}.${extension}")
+            File file = new File("${grailsApplication.config.getProperty('temp.dir')}${File.separator}${id}.${extension}")
             if (file.exists()) {
                 response.setContentType("application/zip")
                 response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')

@@ -430,7 +430,7 @@ class SearchController {
             render "A download ID is required"
         } else {
             String extension = params.fileExtension ?: 'zip'
-            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.${extension}")
+            File file = new File("${grailsApplication.config.getProperty('temp.dir')}${File.separator}${params.id}.${extension}")
             if (file) {
                 if (extension.toLowerCase() == "zip") {
                     response.setContentType("application/zip")
@@ -453,6 +453,7 @@ class SearchController {
         if (params.containsKey("isMerit") && !params.isMerit.toBoolean()) {
             params.max = 10000
             params.offset = 0
+            params.userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
             if (params.async?.toBoolean()) {
                 if (!params.email) {

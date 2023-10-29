@@ -18,14 +18,14 @@ class SensitiveSpeciesService {
 
     void loadSensitiveData() {
         log.info("Loading sensitive data.")
-        googleMapsUrl = "${grailsApplication.config.google.maps.geocode.url}"
-        mapsApiKey = "${grailsApplication.config.google.api.key}"
+        googleMapsUrl = "${grailsApplication.config.getProperty('google.maps.geocode.url')}"
+        mapsApiKey = "${grailsApplication.config.getProperty('google.api.key')}"
         try {
-            File data = new File("${grailsApplication.config.sensitive.species.data}")
+            File data = new File("${grailsApplication.config.getProperty('sensitive.species.data')}")
             if(data?.exists()){
                 sensitiveSpeciesData = new XmlParser().parseText(data.getText('UTF-8'))
             } else {
-                log.error("Sensitive species file (${grailsApplication.config.sensitive.species.data}) not found.")
+                log.error("Sensitive species file (${grailsApplication.config.getProperty('sensitive.species.data')}) not found.")
             }
         } catch (Exception ex) {
             log.error("Error loading sensitive data xml file. ${ex}")

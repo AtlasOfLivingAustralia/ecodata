@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.HubLoginTime
-import au.org.ala.web.AuthService
 import grails.converters.JSON
 
 class UserController {

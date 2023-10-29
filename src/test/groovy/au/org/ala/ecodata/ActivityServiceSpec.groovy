@@ -182,6 +182,26 @@ class ActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityS
 
     }
 
+    def "activities can be paginated and sorted"(options, criteria, expectedActivityIds) {
+        when:
+        def results
+        Activity.withNewTransaction {
+            // There is probably a neater way to do this but the MongoDbTestMixin doesn't work with the ServiceUnitTestMixin
+
+            results = service.search(criteria, null, null, null, LevelOfDetail.NO_OUTPUTS.name(), options)
+            results.sort { a1, a2 -> a1.activityId <=> a2.activityId }
+        }
+        then:
+        results.collect { it.activityId } == expectedActivityIds
+
+        where:
+        options | criteria | expectedActivityIds
+        [max:1, offset:0, sort: "activityId", order: "desc"]  | [:] | ['activity5']
+        [max:1, offset:0, sort: "activityId", order: "asc"]  | [:] | ['activity0']
+        [:] | [:] | ['activity0', 'activity1', 'activity2', 'activity3', 'activity4', 'activity5']
+
+    }
+
     def "when an activity is cancelled or deferred, existing Output data should be deleted"(String progressToAssign, boolean shouldBeDeleted) {
         setup:
         String id = 'activity1'

@@ -39,4 +39,16 @@ enum AccessLevel {
     int getCode() {
         return code
     }
+
+    boolean includes(String permission) {
+        switch(permission) {
+            case 'read':
+                return code >= editor.code
+            case 'update':
+                return code >= editor.code
+            case 'administer':
+                return code >= admin.code
+        }
+        false
+    }
 }

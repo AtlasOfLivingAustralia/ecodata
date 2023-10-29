@@ -76,6 +76,14 @@ class UrlMappings {
             controller = 'managementUnit'
         }
 
+        "/ws/bulkImport" { controller = 'bulkImport'
+            action = [GET: 'list', POST:'create']
+        }
+        "/ws/bulkImport/$id" { controller = 'bulkImport'
+            action = [GET: 'get', PUT:'update']
+        }
+
+
         "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
@@ -201,6 +209,50 @@ class UrlMappings {
         "/ws/document/download/$filename" {
             controller = 'document'
             action = 'download'
+        }
+
+        "/ws/graphql" {
+            controller = 'graphql'
+        }
+
+        "/ws/paratoo/user-projects" {
+            controller = 'paratoo'
+            action = 'userProjects'
+        }
+
+        "/ws/paratoo/pdp/$projectId/$protocolId/read" {
+            controller = 'paratoo'
+            action = 'hasReadAccess'
+        }
+
+        "/ws/paratoo/pdp/$projectId/$protocolId/write" {
+            controller = 'paratoo'
+            action = 'hasWriteAccess'
+        }
+
+        "/ws/paratoo/validate-token" {
+            controller = 'paratoo'
+            action = [POST:'validateToken', OPTIONS:'options']
+        }
+
+        "/ws/paratoo/mint-identifier" {
+            controller = 'paratoo'
+            action = [POST:'mintCollectionId', OPTIONS:'options']
+        }
+
+        "/ws/paratoo/collection" {
+            controller = 'paratoo'
+            action = [POST:'submitCollection', OPTIONS:'options']
+        }
+
+        "/ws/paratoo/status/$id" {
+            controller = 'paratoo'
+            action = 'collectionIdStatus'
+        }
+
+        "/ws/paratoo/plot-selections" {
+            controller = 'paratoo'
+            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection']
         }
 
         "/"(redirect:[controller:"documentation"])

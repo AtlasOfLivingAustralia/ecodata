@@ -15,7 +15,6 @@ import spock.lang.Specification
  * Specification / tests for the SiteService
  */
 
-//@TestMixin(MongoDbTestMixin)
 class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> {
 
     //def service = new SiteService()
@@ -58,6 +57,9 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         geojson.type == 'Polygon'
         geojson.coordinates == [coordinates]
 
+        and: "It can be validated"
+        service.isGeoJsonValid((geojson as JSON).toString())
+
         when: "The site is a drawn circle"
         extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], coordinates: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
         geojson = service.geometryAsGeoJson([extent:extent])
@@ -65,7 +67,8 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         then: "Circles aren't valid geojson so we need to convert them to a polygon"
         geojson.type == 'Polygon'
         geojson.coordinates[0].size() == 101
-        
+        service.isGeoJsonValid((geojson as JSON).toString())
+
         when: "The site is a line"
         coordinates = [[145.42448043823242,-37.72728027686003],[148.00626754760742,-37.16031654673676],[148.36881637573242,-37.77071473849609],[147.09440231323242,-38.59111377614743]]
         extent = ["source":"drawn","geometry":["type":"LineString","coordinates": coordinates]]
@@ -74,6 +77,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         then: "Is site a valid GeoJSON"
         geojson.type == 'LineString'
         geojson.coordinates == coordinates
+        service.isGeoJsonValid((geojson as JSON).toString())
     }
 
     def "Duplicate coordinates must be removed"() {
@@ -200,6 +204,55 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         precision   | bbox
         4           | ["type":"Polygon","coordinates":[[[132.890625,-31.53076171875],[156.796875,-31.53076171875],[156.796875,-16.435546875],[132.890625,-16.435546875],[132.890625,-31.53076171875]]]]
         5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
+    }
+
+    def "Data can be extracted from geojson"() {
+        setup:
+        def geojsonPolygon =
+                [
+                        type: 'Feature',
+                        geometry: [
+                                type: 'Polygon',
+                                coordinates: [
+                                        [
+                                                [ 1, 2 ], [ 3, 4 ], [ 5, 6 ], [ 1, 2 ]
+                                        ]
+                                ]
+                        ],
+                        properties: [
+                                name: 'Site 1'
+                        ]
+                ]
+        def geoJsonPoint = [
+                type: 'Feature',
+                geometry: [
+                        type: 'Point',
+                        coordinates: [1, 2]
+                ],
+                properties: [
+                        name: 'Site 1'
+                ]
+        ]
+
+        when:
+        Map result = service.propertiesFromGeoJson(geojsonPolygon, 'upload')
+
+        then:
+        result.extent.geometry.type == geojsonPolygon.geometry.type
+        result.extent.geometry.coordinates == geojsonPolygon.geometry.coordinates
+        result.extent.source == 'upload'
+        result.name == "Site 1"
+
+        when:
+        result = service.propertiesFromGeoJson(geoJsonPoint, 'upload')
+
+        then:
+        result.extent.geometry.type == geoJsonPoint.geometry.type
+        result.extent.geometry.coordinates == geoJsonPoint.geometry.coordinates
+        result.extent.source == 'point'
+        result.extent.geometry.decimalLatitude == geoJsonPoint.geometry.coordinates[1]
+        result.extent.geometry.decimalLongitude == geoJsonPoint.geometry.coordinates[0]
+        result.name == "Site 1"
     }
 
 

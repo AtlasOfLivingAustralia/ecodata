@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
@@ -148,7 +147,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
 
     }
 
-    void "if previously harvested project is disabled, its dataResourceId should be cleared"() {
+    void "if previously harvested project is disabled, its dataResourceId should not be cleared"() {
         setup:
         String dataResourceId = 'dr1234'
         String projectId = '1234'
@@ -159,7 +158,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
 
         then:
         0 * webServiceMock.doPost(_, _)
-        1 * projectService.update(['dataResourceId':null, 'dataProviderId':null], projectId, false)
+        0 * projectService.update(_, _, _)
     }
 
 

@@ -22,7 +22,7 @@ class ProjectActivityController {
         if (id) {
             def list = []
             list.addAll(projectActivityService.getAllByProject(id, params.view, params?.version))
-            if( params.stats?.asBoolean() ){
+            if( params.getBoolean('stats', false) ){
                 list.each { pActivity ->
                     projectActivityService.addProjectActivityStats(pActivity)
                 }
@@ -47,7 +47,7 @@ class ProjectActivityController {
             result = [status: 404, text: 'No such id'];
         } else {
             result = projectActivityService.get(id, params.view, params?.version)
-            if( params.stats?.asBoolean() ){
+            if( params.getBoolean('stats', false) ){
                 projectActivityService.addProjectActivityStats(result)
             }
 

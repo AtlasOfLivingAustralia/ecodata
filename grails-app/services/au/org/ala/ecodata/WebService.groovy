@@ -51,23 +51,44 @@ class WebService {
         }
     }
 
-    private int defaultTimeout() {
-        grailsApplication.config.webservice.readTimeout as int
+    def getStream(String url, boolean includeUserId) {
+        def conn = null
+        try {
+            conn = configureConnection(url, includeUserId)
+            return conn.inputStream
+        } catch (SocketTimeoutException e) {
+            def error = [error: "Timed out calling web service. URL= ${url}."]
+            log.error error.toString(), e
+            return error
+        } catch (Exception e) {
+            def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}.",
+                         statusCode: conn?.responseCode?:"",
+                         detail: conn?.errorStream?.text]
+            log.error error.toString(), e
+            return error
+        }
     }
 
-    private URLConnection configureConnection(String url, boolean includeUserId, Integer timeout = null) {
+    private int defaultTimeout() {
+        grailsApplication.config.getProperty('webservice.readTimeout', Integer)
+    }
+
+    private URLConnection configureConnection(String url, boolean includeUserId, Integer timeout = null, boolean includeApiKey = false) {
         URLConnection conn = new URL(url).openConnection()
 
         def readTimeout = timeout?:defaultTimeout()
-        conn.setConnectTimeout(grailsApplication.config.webservice.connectTimeout as int)
+        conn.setConnectTimeout(grailsApplication.config.getProperty('webservice.connectTimeout', Integer))
         conn.setReadTimeout(readTimeout)
 
         if (includeUserId) {
-            def user = getUserService().getUser()
+            def user = getUserService().currentUser()
             if (user) {
-                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)
             }
 
+        }
+        if (includeApiKey) {
+            conn.setRequestProperty("Authorization", grailsApplication.config.getProperty('api_key'));
         }
         conn
     }
@@ -80,7 +101,7 @@ class WebService {
 
         HttpURLConnection conn = configureConnection(url, includeUserId, readTimeout)
         if (includeApiKey) {
-            conn.setRequestProperty("Authorization", grailsApplication.config.api_key);
+            conn.setRequestProperty("Authorization", grailsApplication.config.getProperty('api_key'));
         }
 
         response.setContentType(conn.getContentType())
@@ -99,10 +120,10 @@ class WebService {
     }
 
 
-    def getJson(String url, Integer timeout = null, Map headers = null) {
+    def getJson(String url, Integer timeout = null, Map headers = null, boolean includeApiKey = false) {
         def conn = null
         try {
-            conn = configureConnection(url, false, timeout)
+            conn = configureConnection(url, false, timeout, includeApiKey)
             if (headers) {
                 headers.each {key, value  ->
                     conn.setRequestProperty(key, value)
@@ -214,11 +235,11 @@ class WebService {
             conn.setRequestMethod("POST")
             conn.setDoOutput(true)
             conn.setRequestProperty("Content-Type", "application/json;charset=${charEncoding}");
-            conn.setRequestProperty("Authorization", "${grailsApplication.config.api_key}");
+            conn.setRequestProperty("Authorization", "${grailsApplication.config.getProperty('api_key')}");
 
             def user = getUserService().getCurrentUserDetails()
             if (user && user.userId) {
-                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)
                 conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding))
             }
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
@@ -249,14 +270,14 @@ class WebService {
             conn.setDoOutput(true)
             conn.setRequestProperty("Content-Type", "text/plain;charset=${charEncoding}");
             if (includeAuthKey) {
-                conn.setRequestProperty("Authorization", "${grailsApplication.config.api_key}");
+                conn.setRequestProperty("Authorization", "${grailsApplication.config.getProperty('api_key')}");
 
             }
 
             if (addALACookie) {
                 def user = getUserService().getCurrentUserDetails()
                 if (user && user.userId) {
-                    conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                    conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)
                     conn.setRequestProperty("Cookie", "ALA-Auth=" + java.net.URLEncoder.encode(user.userName, charEncoding))
                 }
             }
@@ -287,15 +308,15 @@ class WebService {
     }
 
     def doDelete(String url) {
-        url += (url.indexOf('?') == -1 ? '?' : '&') + "api_key=${grailsApplication.config.api_key}"
+        url += (url.indexOf('?') == -1 ? '?' : '&') + "api_key=${grailsApplication.config.getProperty('api_key')}"
         def conn = null
         try {
             conn = new URL(url).openConnection()
             conn.setRequestMethod("DELETE")
-            conn.setRequestProperty("Authorization", grailsApplication.config.api_key);
+            conn.setRequestProperty("Authorization", grailsApplication.config.getProperty('api_key'));
             def user = getUserService().getUser()
             if (user) {
-                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)
             }
             return conn.getResponseCode()
         } catch(Exception e){

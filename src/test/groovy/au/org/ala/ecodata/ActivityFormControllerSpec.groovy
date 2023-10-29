@@ -181,4 +181,34 @@ class ActivityFormControllerSpec extends Specification implements ControllerUnit
         responseData.status == Status.ACTIVE
         responseData.type == 'ActivityUpdated'
     }
+
+    void "The controller delegates a search request to the ActivityFormService"() {
+        setup:
+        Map criteria = [type:"Protocol", options:[max:10]]
+
+        when:
+        request.method = 'POST'
+        request.json = criteria
+        controller.search()
+
+        then:
+        1 * activityFormService.search([type:"Protocol"], [max:10]) >> [[name:"Test form", formVersion:2]]
+        response.status == HttpStatus.SC_OK
+        List<Map> responseData = response.json
+        responseData.size() == 1
+        responseData[0].name == "Test form"
+        responseData[0].formVersion == 2
+    }
+
+    void "The search request requires at least one criteria"() {
+
+        when:
+        request.method = 'POST'
+        request.json = [:]
+        controller.search()
+
+        then:
+        0 * activityFormService.search(_,_)
+        response.status == HttpStatus.SC_BAD_REQUEST
+    }
 }

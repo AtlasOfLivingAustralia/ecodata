@@ -9,12 +9,12 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
 
     PermissionService permissionService = Mock(PermissionService)
     CommonService commonService = Stub(CommonService)
-    Hub hub = new Hub(urlPath:'test', hubId:'id', status:'active')
+    Hub hub = new Hub(urlPath:'test', hubId:'id', status:'active', fathomSiteId: '123')
 
     void setup() {
         service.permissionService = permissionService
         service.commonService = commonService
-        commonService.toBareMap(_) >> {args -> [urlPath:args[0].urlPath, hubId:args[0].hubId, status:args[0].status]}
+        commonService.toBareMap(_) >> {args -> [urlPath:args[0].urlPath, hubId:args[0].hubId, status:args[0].status, fathomSiteId: args[0].fathomSiteId]}
 
         Hub.findAll().each{it.delete(flush:true)}
         hub.save(failOnError:true, flush:true)
@@ -33,6 +33,7 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         then:
         result.urlPath == path
         result.hubId == hub.hubId
+        result.fathomSiteId == hub.fathomSiteId
     }
 
     void "hub permissions will be returned when a hub is queried by URL path"() {

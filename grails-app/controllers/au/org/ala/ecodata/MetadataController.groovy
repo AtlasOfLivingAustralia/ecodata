@@ -20,12 +20,16 @@ class MetadataController {
         render metadataService.activitiesList(params.program, params.subprogram) as JSON
     }
 
+    def activitiesListByProgram() {
+        render metadataService.activitiesListByProgramId(params.programId) as JSON
+    }
+
     def programsModel() {
         render metadataService.programsModel()
     }
 
     @RequireApiKey
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))
@@ -85,7 +89,7 @@ class MetadataController {
     def excelOutputTemplate() {
 
         def outputName, listName, data, expandList
-        boolean editMode, allowExtraRows, autosizeColumns
+        boolean editMode, allowExtraRows, autosizeColumns, includeDataPathHeader
         def json = request.getJSON()
         if (json) {
             outputName = json.type
@@ -93,6 +97,7 @@ class MetadataController {
             editMode = Boolean.valueOf(json.editMode)
             allowExtraRows = Boolean.valueOf(json.allowExtraRows)
             autosizeColumns = json.autosizeColumns != null ? Boolean.valueOf(json.autosizeColumns) : true
+            includeDataPathHeader = json.includeDataPathHeader != null ? Boolean.valueOf(json.includeDataPathHeader) : false
             data = JSON.parse(json.data)
 
 
@@ -104,6 +109,7 @@ class MetadataController {
             editMode = params.getBoolean('editMode', false)
             allowExtraRows = params.getBoolean('allowExtraRows', false)
             autosizeColumns = params.getBoolean('autosizeColumns', true)
+            includeDataPathHeader = params.getBoolean('includeDataPathHeader', false)
         }
 
 
@@ -145,12 +151,19 @@ class MetadataController {
                 def listColumns = it.columns
                 listColumns.each {
                     it.header = nestedListName
+                    it.path = nestedListName + '.' + it.name
                     annotatedModel.add(it)
                 }
             }
             annotatedModel = annotatedModel.grep{it.dataType != 'list'}
             builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
-            builder.buildGroupHeaderList()
+            builder.additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
+            if(includeDataPathHeader) {
+                builder.buildDataPathHeaderList()
+            }
+            else {
+                builder.buildGroupHeaderList()
+            }
         } else {
             builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
             builder.build()
@@ -190,6 +203,38 @@ class MetadataController {
         if (file && outputName) {
 
             def data = metadataService.excelWorkbookToMap(file.inputStream, outputName, listName)
+
+            def result
+            if (!data) {
+                response.status = 400
+                result = [status:400, error:'No data was found that matched the output description identified by the type parameter, please check the template you used to upload the data. ']
+            }
+            else {
+                result = [status: 200, data:data]
+            }
+            render result as JSON
+
+        }
+        else {
+            response.status = 400
+            def result = [status: 400, error:'Missing mandatory parameter(s).  Please ensure you supply the "type" and "data" parameters']
+
+            render result as JSON
+        }
+
+    }
+
+    def extractOutputDataFromActivityExcelTemplate() {
+
+        MultipartFile file = null
+        if (request.respondsTo('getFile')) {
+            file = request.getFile('data')
+        }
+        String outputName = params.type
+
+        if (file && outputName) {
+
+            def data = metadataService.excelWorkbookToMap(file.inputStream, outputName, true)
 
             def result
             if (!data) {
@@ -262,7 +307,7 @@ class MetadataController {
     }
 
     def getGeographicFacetConfig() {
-        render grailsApplication.config.app.facets.geographic as JSON
+        render grailsApplication.config.getProperty('app.facets.geographic', Map) as JSON
     }
 
     /**
@@ -288,4 +333,10 @@ class MetadataController {
         Map indices = metadataService.getIndicesForDataModels()
         render( text: indices as JSON, contentType: 'application/json')
     }
+
+    /** Returns all Services, including associated Scores based on the forms assocaited with each service */
+    def services() {
+        render metadataService.getServiceList() as JSON
+    }
+
 }

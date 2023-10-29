@@ -16,6 +16,7 @@ class UserPermission {
     AccessLevel accessLevel
     String entityType
     String status = ACTIVE
+    List<String> permissions = []
     Date expiryDate
 
     static constraints = {
@@ -32,5 +33,17 @@ class UserPermission {
         accessLevel index: true
         expiryDate index: true
         version false
+    }
+
+    boolean hasPermission(String permission) {
+        boolean hasPermission = false
+        if (permissions) {
+            hasPermission = permissions.contains(permission)
+        }
+        else {
+            // fallback to role definitions
+            hasPermission = accessLevel.includes(permission)
+        }
+        hasPermission
     }
 }

@@ -1,24 +1,17 @@
 package au.org.ala.ecodata
 
 import grails.gorm.DetachedCriteria
+import org.grails.datastore.gorm.schemaless.DynamicAttributes
 import org.springframework.validation.Errors
 
 class GormMongoUtil {
 
     // convert object to map
+    @Deprecated
+    /** The dbo property of domain objects is deprecated */
     static Map extractDboProperties(obj) {
         obj.collectEntries { field ->
             [field.key, field.value]
-        }
-    }
-
-    static Map extractDboPropertiesWithDateConversion(obj) {
-        obj.collectEntries { field ->
-            def value = field.value
-            if (field.value instanceof Date) {
-                value = DateUtil.format(field.value)
-            }
-            [field.key, value]
         }
     }
 

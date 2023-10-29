@@ -86,12 +86,7 @@ class ActivityService {
     def doWithAllActivities(Closure action) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
         def collection = Activity.getCollection()
-
-       // collection.setDBDecoderFactory
         BasicDBObject query = new BasicDBObject('status', ACTIVE)
-     //   query.append("activityId", "19b0b4db-5b74-4907-b14b-dccc3bac0f07")
-        //query.append('activityId', 'd6d2f4b6-1479-4647-ac94-e48d91651b6b')
-        //Activity.setMapping()
         def results = collection.find(query).batchSize(100)
 
         results.each { dbObject ->
@@ -609,19 +604,24 @@ class ActivityService {
      * @param startDate if supplied will constrain the returned activities to those with 'dateProperty' on or after this date.
      * @param endDate if supplied will constrain the returned activities to those with 'dateProperty' before this date.
      * @param dateProperty the property to use for the date range. (plannedStartDate, plannedEndDate, startDate, endDate)
+     * @param options add pagination and sort options like max, offset, sort and order
      * @return a listbuilof the activities that match the supplied criteria
      */
-    public search(Map searchCriteria, Date startDate, Date endDate, String dateProperty, levelOfDetail = []) {
+    public search(Map searchCriteria, Date startDate, Date endDate, String dateProperty, levelOfDetail = [], options = [:]) {
 
+        def activities = searchAndListActivityDomainObjects(searchCriteria, dateProperty, startDate, endDate, options)
+        activities.collect{toMap(it, levelOfDetail)}
+    }
+
+    public List searchAndListActivityDomainObjects(searchCriteria, String dateProperty, Date startDate, Date endDate, options) {
         def criteria = Activity.createCriteria()
-        def activities = criteria.list {
+        Closure action = {
             ne("status", "deleted")
-            searchCriteria.each { prop,value ->
+            searchCriteria.each { prop, value ->
 
                 if (value instanceof List) {
                     inList(prop, value)
-                }
-                else {
+                } else {
                     eq(prop, value)
                 }
             }
@@ -632,10 +632,8 @@ class ActivityService {
             if (dateProperty && endDate) {
                 lt(dateProperty, endDate)
             }
-
-
         }
-        activities.collect{toMap(it, levelOfDetail)}
+        options ? criteria.list(options, action) : criteria.list(action)
     }
 
     def getAllActivityIdsForProjectActivity(String pActivityId) {

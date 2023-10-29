@@ -537,19 +537,22 @@ class PermissionsController {
     }
 
     /**
-     * Get a list of users with {@link AccessLevel#editor editor} level access or higher
+     * Get a list of users with {@link AccessLevel#projectParticipant projectParticipant} level access or higher
      * for a given {@link Project project} (via {@link Project#projectId projectId})
-     *
+     * @params
+     * id - project id
+     * role - optional - filter list of roles to include
      * @return
      */
     def getMembersForProject() {
         String projectId = params.id
+        List<AccessLevel> roles = params.getList("role")?.collect { AccessLevel.valueOf(it) } ?: [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]
 
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
             if (project) {
-                List members = permissionService.getMembersForProject(projectId)
-                render members as JSON
+                List members = permissionService.getMembersForProject(projectId, roles)
+                render text: members as JSON
             } else {
                 render status: 404, text: "Project not found for projectId: ${projectId}"
             }
@@ -1024,6 +1027,22 @@ class PermissionsController {
             Organisation organisation = Organisation.findByOrganisationId(organisationId)
             if (organisation) {
                 render([userIsAdmin: permissionService.isUserAdminForOrganisation(userId, organisationId)] as JSON)
+            } else {
+                render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, organisationId'
+        }
+    }
+
+    def isUserEditorForOrganisation() {
+        String userId = params.userId
+        String organisationId = params.organisationId
+
+        if (userId && organisationId) {
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                render([userIsEditor: permissionService.isUserEditorForOrganisation(userId, organisationId)] as JSON)
             } else {
                 render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
             }

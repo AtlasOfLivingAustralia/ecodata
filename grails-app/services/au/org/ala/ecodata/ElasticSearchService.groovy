@@ -15,7 +15,6 @@
 
 package au.org.ala.ecodata
 
-
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -42,11 +41,11 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestClientBuilder
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.common.geo.builders.CoordinatesBuilder
-import org.elasticsearch.common.geo.builders.PolygonBuilder
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.geometry.Circle
 import org.elasticsearch.geometry.Geometry
+import org.elasticsearch.geometry.LinearRing
+import org.elasticsearch.geometry.Polygon
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
@@ -56,6 +55,7 @@ import org.elasticsearch.search.aggregations.BucketOrder
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
+import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 
@@ -68,6 +68,7 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 import static org.elasticsearch.index.query.QueryBuilders.*
+
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -105,7 +106,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -218,7 +219,7 @@ class ElasticSearchService {
             log.error "Error: ${message}\nDocument:Error indexing document: ${docId}, type:${docMap['className']}"
 
             if (Environment.current == Environment.PRODUCTION) {
-                String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+                String subject = "Indexing failed on server ${grailsApplication.config.getProperty('grails.serverURL')}"
                 String body = "Type: "+getDocType(doc)+"\n"
                 body += "Index: "+index+"\n"
                 body += "Error: "+e.getMessage()+"\n"
@@ -440,7 +441,7 @@ class ElasticSearchService {
 
     def buildFacetMapping() {
         def facetList = []
-        def facetConfig = grailsApplication.config.app.facets.geographic
+        Map facetConfig = grailsApplication.config.getProperty('app.facets.geographic', Map)
         // These groupings of facets determine the way the layers are used with a site, but can be treated the
         // same for the purposes of indexing the results.
         ['contextual', 'grouped', 'special'].each {
@@ -472,12 +473,18 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         def projectIdsToUpdate = []
 
+        def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
+        queueIndexingEvent(message)
+
+    }
+
+    void queueIndexingEvent(IndexDocMsg msg) {
         try {
-            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
-            _messageQueue.offer(message)
+            _messageQueue.offer(msg)
         } catch (Exception ex) {
             log.error ex.localizedMessage, ex
         }
+
     }
 
     /**
@@ -534,7 +541,7 @@ class ElasticSearchService {
 
         // skip indexing
         if (indexingTempInactive
-                || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
+                || !grailsApplication.config.getProperty('app.elasticsearch.indexOnGormEvents')
                 || !ALLOWED_DOC_TYPES.contains(docType)) {
             return null
         }
@@ -558,6 +565,12 @@ class ElasticSearchService {
                 if (siteMap) {
                     indexDoc(siteMap, DEFAULT_INDEX)
                 }
+
+                doc?.projects?.each { projectId ->
+                    def proj = Project.findByProjectId(projectId)
+                    Map projectMap = prepareProjectForHomePageIndex(proj)
+                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                }
                 break;
 
             case Record.class.name:
@@ -576,6 +589,12 @@ class ElasticSearchService {
                 }
                 break
 
+            case Output.class.name:
+                Output output = Output.findByOutputId(docId)
+                if (output) {
+                    indexDocType(output.activityId, Activity.class.name)
+                }
+                break
             case Activity.class.name:
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
@@ -597,7 +616,7 @@ class ElasticSearchService {
                 Map document = documentService.getByStatus(docId)
 
                 document = prepareDocumentForIndexing(document)
-                indexDoc(document, DEFAULT_INDEX)
+                document ? indexDoc(document, DEFAULT_INDEX) : null
                 break
 
             case Organisation.class.name:
@@ -658,6 +677,7 @@ class ElasticSearchService {
 
         siteMap.projectList = projects;
         siteMap.surveyList = surveys
+        addYearAndMonthToEntity(siteMap, siteMap)
 
         Document doc = Document.findByRoleAndSiteIdAndType('photoPoint', siteMap.siteId, 'image')
         if (doc) {
@@ -706,7 +726,7 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         // skip indexing
         if (indexingTempInactive
-                || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
+                || !grailsApplication.config.getProperty('app.elasticsearch.indexOnGormEvents')
                 || !ALLOWED_DOC_TYPES.contains(doc.getClass().name)) {
             return null
         }
@@ -727,10 +747,13 @@ class ElasticSearchService {
 
         try{
             switch (docType) {
+                case Activity.class.name:
+                    deleteDocById(docId, PROJECT_ACTIVITY_INDEX)
+                    deleteDocById(docId)
+                    break
                 case Project.class.name:
                     deleteDocById(docId, HOMEPAGE_INDEX)
                 case Site.class.name:
-                case Activity.class.name:
                 case Organisation.class.name:
                     deleteDocById(docId)
             }
@@ -763,6 +786,7 @@ class ElasticSearchService {
      */
     def indexAll() {
         log.debug "Clearing the unused index first"
+        indexManager.setMapping(mapping.mappings)
 
         Map newIndexes = indexManager.recreateUnusedIndexes()
 
@@ -914,6 +938,7 @@ class ElasticSearchService {
         // get list of users of this organisation
         List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
         organisation.users = users;
+        addYearAndMonthToEntity(organisation, organisation)
 
         List meritProjects = Project.findAllByOrganisationIdAndIsMERITAndStatusNotEqual(organisation.organisationId, true, DELETED)
         if (!meritProjects) {
@@ -960,13 +985,17 @@ class ElasticSearchService {
                 projectMap.custom.remove('dataSets')
             }
 
-            projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
+            projectMap.outputTargets?.each{
+                it.remove('periodTargets')
+                it.remove('outcomeTargets')
+            } // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
             // all sites associated with project.
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.get(project.projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
+            projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -986,6 +1015,7 @@ class ElasticSearchService {
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         }
+        addYearAndMonthToEntity(project, projectMap)
 
         projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
             it.userId
@@ -1008,8 +1038,8 @@ class ElasticSearchService {
                 }
                 // This allows all projects associated with a particular program to be excluded from indexing.
                 // This is required to allow MERIT projects to be loaded before they have been announced.
-                if (program.inhertitedConfig?.visibility) {
-                    projectMap.visibility = program.inhertitedConfig.visibility
+                if (program.inheritedConfig?.visibility) {
+                    projectMap.visibility = program.inheritedConfig.visibility
                 }
             }
             else {
@@ -1053,7 +1083,7 @@ class ElasticSearchService {
             projectActivity.name = pActivity?.name ?: pActivity?.description
             projectActivity.endDate = pActivity.endDate
             projectActivity.projectActivityId = pActivity.projectActivityId
-            projectActivity.embargoed = (activity.embargoed == true) || (pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date()))
+            projectActivity.embargoed = (activity.embargoed == true) || projectActivityService.isProjectActivityEmbargoed(pActivity)
             projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: null
             projectActivity.methodType = pActivity?.methodType
             projectActivity.spatialAccuracy = pActivity?.spatialAccuracy
@@ -1094,6 +1124,9 @@ class ElasticSearchService {
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
+
+                addYearAndMonthToEntity(it, values)
+
                 records << values
 
                 if (!activity.activityId) {
@@ -1106,7 +1139,12 @@ class ElasticSearchService {
             if (activity?.lastUpdated) {
                 projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
                 projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+                // add updated year & month to activity
+                activity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
+                activity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
             }
+
+            addYearAndMonthToEntity(activity, activity)
 
             if(eventDate){
                 activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)
@@ -1177,6 +1215,13 @@ class ElasticSearchService {
         activity
     }
 
+    private addYearAndMonthToEntity(entity, mapOfEntity){
+        if (entity.dateCreated) {
+            mapOfEntity.dateCreatedMonth = new SimpleDateFormat("MMMM").format(entity.dateCreated)
+            mapOfEntity.dateCreatedYear = new SimpleDateFormat("yyyy").format(entity.dateCreated)
+        }
+    }
+
     private Map prepareDocumentForIndexing(Map document) {
         if (!document?.projectId)
             return
@@ -1193,6 +1238,7 @@ class ElasticSearchService {
         if (document) {
             // overwrite any project properties that has same name as document properties.
             project.remove('description') // to avoid overwriting of document description by project description
+            addYearAndMonthToEntity(document, document)
             project.putAll(document)
             document = project
 
@@ -1307,11 +1353,14 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    SearchResponse search(String query, Map params, String index, Map geoSearchCriteria = [:], boolean scrollApi = false) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
         SearchRequest request = buildSearchRequest(query, params, index, geoSearchCriteria)
+        if (scrollApi) {
+            request.scroll(new TimeValue(60000))
+        }
         client.search(request, RequestOptions.DEFAULT)
     }
 
@@ -1373,6 +1422,7 @@ class ElasticSearchService {
         String query = params.searchTerm ?: ''
         String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
+        String bulkImportId = params.bulkImportId
         String projectActivityId = params.projectActivityId
         String forcedQuery = ''
         String spotterId = params.spotterId ?: ''
@@ -1390,20 +1440,21 @@ class ElasticSearchService {
                     if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
                     } else if (userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                     } else if (!userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break
 
             case 'allrecords':
                 if (!projectId) {
+                    // should also check for FC_ADMIN role?
                     if (userId && permissionService.isUserAlaAdmin(userId)) {
                         forcedQuery = '(docType:activity)'
                     } else if (userId) {
                         forcedQuery = '((docType:activity)'
-                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor)
+                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.moderator, AccessLevel.editor)
 
                         projectsTheUserIsAMemberOf?.eachWithIndex { item, index ->
                             if (index == 0) {
@@ -1415,12 +1466,12 @@ class ElasticSearchService {
                             forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
                         }
                         if (projectsTheUserIsAMemberOf) {
-                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + userId + ')))'
+                            forcedQuery = forcedQuery + ') OR ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + ')))'
                         } else {
-                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                            forcedQuery = forcedQuery + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                         }
                     } else if (!userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break
@@ -1429,8 +1480,9 @@ class ElasticSearchService {
                 if (projectId) {
                     if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
-                    } else {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                    }
+                    else {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break
@@ -1446,17 +1498,29 @@ class ElasticSearchService {
 
             case 'userprojectactivityrecords':
                 if(projectActivityId && spotterId){
-                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ')'
+                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ' AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                }
+                break
+
+            case 'bulkimport':
+                if (bulkImportId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ')'
+                    } else {
+                        forcedQuery = '(docType:activity AND bulkImportId:' + bulkImportId + ' AND projectActivity.embargoed:false)'
+                    }
+                } else {
+                    forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 }
                 break
 
             default:
-                forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                 break
         }
 
         if (!forcedQuery) {
-            forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+            forcedQuery = '(docType:activity AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
         }
 
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
@@ -1613,7 +1677,7 @@ class ElasticSearchService {
      * @return
      */
     private applyWeightingToFields(QueryStringQueryBuilder queryStringQueryBuilder) {
-        Map fieldsAndBoosts = grailsApplication.config.homepageIdx.elasticsearch.fieldsAndBoosts
+        Map fieldsAndBoosts = grailsApplication.config.getProperty('homepageIdx.elasticsearch.fieldsAndBoosts', Map)
 
         fieldsAndBoosts.each { field, boost ->
             queryStringQueryBuilder.field(field, boost)
@@ -1640,15 +1704,20 @@ class ElasticSearchService {
 
     private static QueryBuilder buildGeoFilter(Map geographicSearchCriteria, String field = "projectArea.geoIndex") {
         GeoShapeQueryBuilder filter = null
+
         field = field ?: 'projectArea.geoIndex'
         Geometry shape = null
         switch (geographicSearchCriteria.type) {
             case "Polygon":
-                CoordinatesBuilder coordinatesBuilder = new CoordinatesBuilder()
-                geographicSearchCriteria.coordinates[0].each { coordinate ->
-                    coordinatesBuilder.coordinate(coordinate[0] as double, coordinate[1] as double)
+                int count = geographicSearchCriteria.coordinates[0].size()
+                double[] xCoords = new double[count]
+                double[] yCoords = new double[count]
+
+                for (int i=0; i<count; i++) {
+                    xCoords[i] = geographicSearchCriteria.coordinates[0][i][0] as double
+                    yCoords[i] = geographicSearchCriteria.coordinates[0][i][1] as double
                 }
-                shape = new PolygonBuilder(coordinatesBuilder).toPolygonGeometry()
+                shape = new Polygon(new LinearRing(xCoords, yCoords))
                 break;
             case "Circle":
                 shape = new Circle(

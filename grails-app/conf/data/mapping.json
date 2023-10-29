@@ -7,6 +7,9 @@
         "projectId" : {
           "type" : "keyword"
         },
+        "bulkImportId" : {
+          "type" : "keyword"
+        },
         "projects" : {
           "type" : "keyword"
         },
@@ -60,6 +63,13 @@
         "status": {
           "type" : "keyword"
         },
+        "organisationId": {
+          "type" : "keyword"
+        },
+        "orgIdSvcProvider": {
+          "type" : "keyword",
+          "copy_to": ["organisationId"]
+        },
         "organisationName": {
           "type" : "text",
           "copy_to": ["organisationFacet", "organisationSort"]
@@ -91,6 +101,10 @@
             "logo": {
               "index": false,
               "type": "text"
+            },
+            "organisationId": {
+                "type": "keyword",
+                "copy_to": ["organisationId"]
             }
           }
         },
@@ -280,6 +294,9 @@
         },
         "isExternal":{
           "type":"boolean"
+        },
+        "containsActivity": {
+          "type": "boolean"
         },
         "externalId": {
           "type":"keyword"
@@ -767,6 +784,13 @@
               "index": false
             }
           }
+        },
+        "verificationStatus": {
+          "type": "keyword",
+          "copy_to": "verificationStatusFacet"
+        },
+        "verificationStatusFacet": {
+          "type":"keyword"
         }
       },
       "dynamic_templates": [

@@ -30,7 +30,7 @@ class GeoServerController {
     def getLayerName () {
         def type = params.type ?: ""
         def indices = params.indices ?: ""
-        def dataType = params.dataType ?: grailsApplication.config.geoServer.defaultDataType
+        def dataType = params.dataType ?: grailsApplication.config.getProperty('geoServer.defaultDataType')
         List listOfIndex = indices.split(',')
         def name = mapService.getLayerNameForType (type, listOfIndex, dataType)
         if (name) {

@@ -1,0 +1,590 @@
+---
+paths:
+  "/pdp/{projectId}/{protocolId}/read":
+    get:
+      description: Checks that a user has read permissions for the particular project
+        and protocol
+      responses:
+        '200':
+          description: Returns if user has read permission for supplied project and
+            protocol
+          content:
+            application/json:
+              schema:
+                properties:
+                  isAuthorised:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      summary: For authorizing with the PDP which checks read permissions
+      parameters:
+        - name: projectId
+          in: path
+          description: ''
+          deprecated: false
+          required: true
+          schema:
+            type: integer
+        - name: protocolId
+          in: path
+          description: ''
+          deprecated: false
+          required: true
+          schema:
+            type: integer
+  "/pdp/{projectId}/{protocolId}/write":
+    get:
+      description: Checks that a user has write permissions for the particular project
+        and protocol
+      responses:
+        '200':
+          description: Returns if user has write permission for supplied project and
+            protocol
+          content:
+            application/json:
+              schema:
+                properties:
+                  isAuthorised:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      summary: For authorizing with the PDP which checks write permissions
+      parameters:
+        - name: projectId
+          in: path
+          description: ''
+          deprecated: false
+          required: true
+          schema:
+            type: integer
+        - name: protocolId
+          in: path
+          description: ''
+          deprecated: false
+          required: true
+          schema:
+            type: integer
+  "/user-projects":
+    get:
+      description: Gets all projects that a user is assigned to
+      responses:
+        '200':
+          description: Returns all projects for an authenticated user
+          content:
+            application/json:
+              schema:
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        protocols:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              version:
+                                type: integer
+                        project_area_geo_json:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            coordinates:
+                              type: array
+                              items:
+                                type: array
+                                items:
+                                  type: integer
+                        project_plots:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              plot_name:
+                                type: string
+              example:
+                projects:
+                  - id: 1
+                    name: Bird survey TEST Project
+                    protocols:
+                      - id: 1
+                        name: Bird survey
+                        version: 1
+                    project_area_geo_json:
+                      type: Polygon
+                      coordinates:
+                        - - - 152.875206
+                            - -27.392517
+                          - - 152.875206
+                            - -27.387906
+                          - - 152.883124
+                            - -27.387906
+                          - - 152.883124
+                            - -27.392517
+                    project_plots:
+                      - uuid: TODO1
+                        plot_name: QDASEQ0001
+                      - uuid: TODO3
+                        plot_name: QDASEQ0003
+                  - id: 2
+                    name: Plot Description TEST Project
+                    protocols:
+                      - id: 20
+                        name: Plot Layout
+                        version: 1
+                      - id: 19
+                        name: Plot Location
+                        version: 1
+                    project_area_geo_json:
+                    project_plots:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      summary: Gets all projects for an authenticated user
+  "/mint-identifier":
+    post:
+      description: "Creates an identifier that is stored in Org as a cross-reference
+        to Core. Allows a particular survey to be derived from the data contained
+        in the identifier. User's may not have connection to the server when they
+        are performing a collection, so an identifier is created locally. When they
+        are ready to submit the collection (i.e., have access to the server), they
+        hit this endpoint to have the actual identifier minted. \n\n The identifier
+        is encrypted using SJCL and is returned to the user as such. "
+      responses:
+        '200':
+          description: Returns the encrypted minted identifier
+          content:
+            application/json:
+              schema:
+                properties:
+                  orgMintedIdentifier:
+                    type: string
+              example:
+                orgMintedIdentifier: some_long_identifier_string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      requestBody:
+        description: Note that the survey ID is created by the client application
+          and is arbitrarily defined. It should simply uniquely identify a particular
+          survey
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - projectId
+                - protocol
+                - surveyId
+              type: object
+              properties:
+                projectId:
+                  type: integer
+                protocol:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    version:
+                      type: integer
+                surveyId:
+                  type: object
+                  properties:
+                    surveyType:
+                      type: string
+                      minLength: 1
+                    time:
+                      type: string
+                      format: date-time
+                    randNum:
+                      type: integer
+            example:
+              projectId: 10
+              protocol:
+                id: 3
+                version: 1
+              surveyId:
+                surveyType: bird-survey
+                time: '2021-10-13T01:16:47.225Z'
+                randNum: 79539331
+      summary: For creating an identifier which is based off the userId, project ID,
+        protocol ID, protocol version, event time, and survey ID
+  "/collection":
+    post:
+      description: ''
+      responses:
+        '200':
+          description: Returns true if Org successfully stored the supplied identifier
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      requestBody:
+        description: The event time for this request is not the same as the one for
+          minting identifiers. An identifier's event time denotes when the collection
+          was made, this event time denotes when the collection was submitted to the
+          server.
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - orgMintedIdentifier
+                - eventTime
+                - userId
+                - projectId
+                - protocol
+              type: object
+              properties:
+                orgMintedIdentifier:
+                  type: string
+                  minLength: 1
+                eventTime:
+                  type: string
+                  format: date-time
+                userId:
+                  type: integer
+                projectId:
+                  type: integer
+                protocol:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    version:
+                      type: integer
+            example:
+              orgMintedIdentifier: some_long_identifier_string
+              eventTime: '2021-08-23T23:31:05.216Z'
+              userId: 9824
+              projectId: 341
+              protocol:
+                id: 9
+                version: 3
+      summary: Allows Core to notify Org of a successful submitted collection. Stores
+        the minted identifier in Org as a cross-reference
+  "/status/{identifier}":
+    get:
+      deprecated: false
+      description: Uses the identifier hash to see if said identifier has already
+        been stored in the database
+      responses:
+        '200':
+          description: Returns true if Org has stored the supplied identifier
+          content:
+            application/json:
+              schema:
+                properties:
+                  isSubmitted:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      summary: Allows Org to check if an identifier has been issued and stored
+      parameters:
+        - name: identifier
+          in: path
+          description: The SHA256 hash of the identifier
+          deprecated: false
+          required: true
+          schema:
+            type: string
+  "/challenge":
+    post:
+      description: The returned user ID is a string, as this is what WebAuthn expects.
+        But remember that Paratoo expects user IDs to be integers.
+      responses:
+        '200':
+          description: Returns a generated challenge, replying party (rp) name, and
+            user data
+          content:
+            application/json:
+              schema:
+                properties:
+                  challenge:
+                    type: string
+                  rp:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      displayName:
+                        type: string
+              example:
+                challenge: MSz8EzSI33BIA3fS
+                rp:
+                  name: Paratoo-Org
+                user:
+                  id: 9081
+                  name: l_skyw@lker
+                  displayName: skywalker@tatooine.com
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      requestBody:
+        description: "WebAuthn requires user info to be a user ID, name (not username),
+          and display name. Given that Org does not use all these fields, we've mapped
+          them to fit. \n\nUser ID remains the same, the supplied username will be
+          mapped to WebAuthn's 'name' field, and the supplied email will be mapped
+          to WebAuthn's 'display name' field."
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - userInfo
+              type: object
+              properties:
+                userInfo:
+                  type: object
+                  required:
+                    - userId
+                    - username
+                    - userEmail
+                  properties:
+                    userId:
+                      type: integer
+                    username:
+                      type: string
+                      minLength: 1
+                    userEmail:
+                      type: string
+                      format: email
+            example:
+              userInfo:
+                userId: 3154
+                username: l_skywalker
+                userEmail: skywalker@tatooine.com
+      summary: Generates a challenge for use by WebAuthn when registering
+  "/login-challenge":
+    post:
+      description: ''
+      responses:
+        '200':
+          description: Returns a generated challenge and credential ID (as a Uint8Array)
+          content:
+            application/json:
+              schema:
+                properties:
+                  challenge:
+                    type: string
+                  credentialId:
+                    type: array
+                    items:
+                      type: integer
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 403
+                message: Forbidden
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                "$ref": "#/components/schemas/Error"
+              example:
+                code: 404
+                message: Not found
+      tags:
+        - Org Interface
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                uuid:
+                  type: string
+      summary: Generates a challenge for use by WebAuthn when authenticating
+  "/validate-token":
+    post:
+      description: Before Core makes a PDP request via the project membership enforcer,
+        it must check that the JWT it was provided is valid. As Org issues these JWTs,
+        Core must check with Org to ensure the validity.
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: boolean
+      tags:
+        - Org Interface
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                token:
+                  type: string
+                  pattern: "^Bearer "
+      summary: Validates JWT tokens issued by Org

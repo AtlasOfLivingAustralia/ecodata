@@ -18,7 +18,7 @@ class OutputDataGetterSpec extends Specification {
         result == dataNode.textField
 
         when:
-        char[] longData = new char[OutputDataGetter.MAX_CELL_LENGTH]
+        char[] longData = new char[OutputDataGetter.getMaxCellLength()]
         Arrays.fill(longData, 'x' as char)
         dataNode.textField = new String(longData)
         result = outputDataGetter.getFormattedValue(dataNode)
@@ -27,14 +27,14 @@ class OutputDataGetterSpec extends Specification {
         result == dataNode.textField
 
         when:
-        longData = new char[OutputDataGetter.MAX_CELL_LENGTH+1]
+        longData = new char[OutputDataGetter.getMaxCellLength()+1]
         Arrays.fill(longData, 'x' as char)
         dataNode.textField = new String(longData)
         result = outputDataGetter.getFormattedValue(dataNode)
 
         then:
-        result.size() == OutputDataGetter.MAX_CELL_LENGTH
-        result == dataNode.textField.substring(0, OutputDataGetter.MAX_CELL_LENGTH)
+        result.size() == OutputDataGetter.getMaxCellLength()
+        result == dataNode.textField.substring(0, OutputDataGetter.getMaxCellLength())
 
     }
 
@@ -51,7 +51,7 @@ class OutputDataGetterSpec extends Specification {
         result == "1,2,3"
 
         when:
-        char[] longData = new char[OutputDataGetter.MAX_CELL_LENGTH-6]
+        char[] longData = new char[OutputDataGetter.getMaxCellLength()-6]
         Arrays.fill(longData, 'x' as char)
         dataNode.stringListField << new String(longData)
         result = outputDataGetter.getFormattedValue(dataNode)
@@ -60,14 +60,14 @@ class OutputDataGetterSpec extends Specification {
         result == "1,2,3,"+dataNode.stringListField[3]
 
         when:
-        longData = new char[OutputDataGetter.MAX_CELL_LENGTH-5]
+        longData = new char[OutputDataGetter.getMaxCellLength()-5]
         Arrays.fill(longData, 'x' as char)
         dataNode.stringListField << new String(longData)
         result = outputDataGetter.getFormattedValue(dataNode)
 
         then:
-        result.size() == OutputDataGetter.MAX_CELL_LENGTH
-        result == ("1,2,3,"+dataNode.stringListField[3]).substring(0, OutputDataGetter.MAX_CELL_LENGTH)
+        result.size() == OutputDataGetter.getMaxCellLength()
+        result == ("1,2,3,"+dataNode.stringListField[3]).substring(0, OutputDataGetter.getMaxCellLength())
 
     }
 

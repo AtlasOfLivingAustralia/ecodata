@@ -10,11 +10,18 @@ class ISODateBindingConverter implements FormattedValueConverter {
 
     static final String FORMAT = 'iso8601'
 
+    private static final String EXAMPLE_DATE_WITH_MILLIS = '2020-01-01T00:00:00.000Z'
     @Override
     Object convert(Object value, String format) {
         Date result = null
         if (format == FORMAT) {
-            result = DateUtil.parse(value)
+            String valueStr = (String)value
+            if (valueStr.length() == EXAMPLE_DATE_WITH_MILLIS.length()) {
+                result = DateUtil.parseWithMilliseconds(value)
+            }
+            else {
+                result = DateUtil.parse(value)
+            }
         }
         result
     }

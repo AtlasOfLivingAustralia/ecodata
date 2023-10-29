@@ -1,0 +1,1 @@
+db.record.createIndex( { "lastUpdated": 1 });

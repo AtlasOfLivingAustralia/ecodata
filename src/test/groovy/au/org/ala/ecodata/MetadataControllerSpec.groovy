@@ -52,4 +52,38 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
 
     }
 
+    def "Get excel template that can be populated with data header"() {
+        setup:
+        String outputName = 'test'
+        def model = [modelName:'test', dataModel:[[dataType:'text',name:'testField']],
+                     viewModel:[[type:"row", items:[source:'testField',type:'text', preLabel:'testField']]]]
+        def annotatedModel = [[dataType:'text',name:'testField', preLabel:'Test Field', label:'Test Field', source:'testField', type:'text']]
+
+        when:
+        params.type = outputName
+        params.listName = null
+        params.expandList = 'true'
+        params.includeDataPathHeader = 'true'
+        controller.excelOutputTemplate()
+
+        then:
+        1 * metadataService.getOutputDataModelByName(outputName) >> model
+        1 * metadataService.annotatedOutputDataModel(outputName, true) >> annotatedModel
+        response.status == HttpStatus.SC_OK
+        response.contentType == "application/vnd.ms-excel"
+        response.headerNames.contains("Content-disposition")
+        response.header("Content-disposition") == 'attachment; filename="test.xlsx";'
+
+        OutputStream outStream = new FileOutputStream(outputFile)
+        outStream.setBytes(response.contentAsByteArray)
+        Workbook workbook =  ExportTestUtils.readWorkbook(outputFile)
+        Sheet sheet = workbook.getSheet(outputName)
+        sheet.physicalNumberOfRows == 2 //header row
+        sheet.head().getPhysicalNumberOfCells() == 2 //one field
+        sheet.head().getCell(0).toString() == 'serial'
+        sheet.head().getCell(1).toString() == 'testField'
+        sheet.getRow(1).getCell(0).toString() == 'Serial Number'
+        sheet.getRow(1).getCell(1).toString() == 'Test Field'
+    }
+
 }

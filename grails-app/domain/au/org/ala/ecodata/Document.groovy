@@ -2,8 +2,6 @@ package au.org.ala.ecodata
 
 import grails.util.Holders
 import org.bson.types.ObjectId
-import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.context.request.RequestAttributes
 
 import static au.org.ala.ecodata.Status.ACTIVE
 /**
@@ -89,7 +87,11 @@ class Document {
     }
 
     boolean isPubliclyViewable() {
-        this['public'] || role in PUBLIC_ROLES || (hosted == ALA_IMAGE_SERVER)
+        this['public'] || role in PUBLIC_ROLES || isImageHostedOnPublicServer()
+    }
+
+    boolean isImageHostedOnPublicServer(){
+        identifier?.startsWith(Holders.config.getProperty('imagesService.baseURL'))
     }
 
     def getUrl() {
@@ -98,15 +100,15 @@ class Document {
         return urlFor(filepath, filename)
     }
 
-    def getThumbnailUrl() {
+    def getThumbnailUrl(boolean skipExistCheck = false) {
         if (isImage()) {
 
-            if(hosted == ALA_IMAGE_SERVER){
+            if(isImageHostedOnPublicServer()) {
                 return identifier
             }
 
             File thumbFile = new File(filePath(THUMBNAIL_PREFIX+filename))
-            if (thumbFile.exists()) {
+            if (skipExistCheck || thumbFile.exists()) {
                 return urlFor(filepath, THUMBNAIL_PREFIX + filename)
             }
             else {
@@ -128,15 +130,15 @@ class Document {
             return getImageURL()
         }
 
-        if (hosted == ALA_IMAGE_SERVER) {
+        if (isImageHostedOnPublicServer()) {
             return identifier
         }
 
-        String hostName = GrailsWebRequest.lookup()?.getAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, RequestAttributes.SCOPE_REQUEST) ?: ""
+        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?: ""
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
-        URI uri = new URI(hostName + Holders.config.app.uploads.url + path + encodedFileName)
+        URI uri = new URI(hostName + Holders.config.getProperty('app.uploads.url') + path + encodedFileName)
         return uri.toString()
     }
 
@@ -146,13 +148,13 @@ class Document {
         if (path) {
             path = path+File.separator
         }
-        return Holders.config.app.file.upload.path + '/' + path  + name
+        return Holders.config.getProperty('app.file.upload.path') + '/' + path  + name
 
     }
 
     String getImageURL () {
         if (imageId) {
-            Holders.getGrailsApplication().config.getProperty("image.baseURL") +  "/proxyImage?id=" + imageId
+            Holders.getGrailsApplication().config.getProperty("imagesService.baseURL") +  "/proxyImage?id=" + imageId
         }
     }
 

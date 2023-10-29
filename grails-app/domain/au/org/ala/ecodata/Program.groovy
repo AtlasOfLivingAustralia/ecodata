@@ -69,7 +69,7 @@ class Program {
         program.assets = assets
         program.outcomes = outcomes
         program.priorities = priorities
-        program.inheritedConfig = getInhertitedConfig()
+        program.inheritedConfig = getInheritedConfig()
         program.config = config
         program.risks = risks
         program.parent = populateParentProgramSummary(parent)
@@ -104,7 +104,7 @@ class Program {
 
     }
 
-    Map getInhertitedConfig() {
+    Map getInheritedConfig() {
         Program program = this
         Deque<Map> allConfig = new LinkedList<Map>()
         while(program != null) {

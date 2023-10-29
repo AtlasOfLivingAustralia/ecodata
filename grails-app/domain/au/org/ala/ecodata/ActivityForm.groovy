@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-
+import au.org.ala.ecodata.graphql.mappers.ActivityFormGraphQLMapper
 import org.bson.types.ObjectId
 
 /**
@@ -8,12 +8,15 @@ import org.bson.types.ObjectId
  */
 class ActivityForm {
 
+    static graphql = ActivityFormGraphQLMapper.graphqlMapping()
+
     /** The list of properties to be used when binding request data to an ActivityForm */
-    static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections']
+    static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections', 'description']
 
     static mapWith = "mongo"
 
-    static embedded = ['sections']
+    static embedded = ['sections', 'externalIds']
+    static hasMany = [externalIds:ExternalId]
 
     static constraints = {
         name unique: ['formVersion']
@@ -24,11 +27,14 @@ class ActivityForm {
         createdUserId nullable: true
         lastUpdatedUserId nullable: true
         minOptionalSectionsCompleted nullable: true
+        description nullable: true
+        externalIds nullable: true
     }
 
     static mapping = {
         name index:true
         compoundIndex name:1, formVersion:-1
+        externalIds index:true
     }
 
     ObjectId id
@@ -36,6 +42,9 @@ class ActivityForm {
 
     /** A unique name for this activity form */
     String name
+
+    /** A description for this activity form */
+    String description
 
     /** The purpose of this form - e.g. report, assessment */
     String type
@@ -78,6 +87,14 @@ class ActivityForm {
      */
     List<FormSection> sections = []
 
+    /** Only true for forms defined externally to ecodata.
+     * The only example we have of these are the paratoo protocols.
+     */
+    boolean external = false
+
+    /** Associates a list of ids from external systems with this ActivityForm. Used for monitor protocols*/
+    List<ExternalId> externalIds
+
     Date dateCreated
     Date lastUpdated
 
@@ -111,6 +128,15 @@ class ActivityForm {
 
     FormSection getFormSection(String name) {
         sections.find{it.name == name}
+    }
+
+    static ActivityForm findByExternalId(String externalId) {
+        where {
+            externalIds {
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
     }
 
 

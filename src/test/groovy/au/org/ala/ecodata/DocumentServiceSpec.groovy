@@ -29,6 +29,7 @@ class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentS
         grailsApplication.config.app = [file: [archive: [path: tempArchiveDir.getAbsolutePath()], upload: [path: tempUploadDir.getAbsolutePath()]], uploads: [url: '/document/download/']]
         service.grailsApplication = grailsApplication
         Holders.config.app = grailsApplication.config.app
+        service.webService = Mock(WebService)
     }
 
     def cleanup() {
@@ -152,6 +153,17 @@ class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentS
 
         cleanup:
         d.delete(flush: true)
+    }
+
+    def "If a local copy of the file doesn't exist, the DocumentService should try the URL"() {
+        setup:
+        Map doc = [name:'doc1', path:'path1', url:'https://host/document/download']
+
+        when:
+        service.readJsonDocument(doc)
+
+        then:
+        1 * service.webService.getJson(doc.url, null, null, true)
     }
 
 }

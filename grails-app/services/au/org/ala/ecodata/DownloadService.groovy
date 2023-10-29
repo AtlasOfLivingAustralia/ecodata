@@ -8,6 +8,9 @@ import au.org.ala.ecodata.reporting.XlsExporter
 import grails.async.Promise
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.action.search.SearchScrollRequest
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.search.SearchHit
 
 import java.util.zip.ZipEntry
@@ -26,6 +29,7 @@ class DownloadService {
     OutputService outputService
     SiteService siteService
     EmailService emailService
+    WebService webService
 
     def grailsApplication
     def groovyPageRenderer
@@ -41,12 +45,15 @@ class DownloadService {
      */
     void downloadProjectDataAsync(GrailsParameterMap params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
-        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        File directoryPath = new File("${grailsApplication.config.getProperty('temp.dir')}")
         directoryPath.mkdirs()
         String fileExtension = params.fileExtension?:'zip'
         FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
-
+        // Make the document host url prefix available for use by the task as when the reporting server
+        // needs document access, it also needs access to this prefix.
+        String documentHostUrlPrefix = DocumentHostInterceptor.documentHostUrlPrefix.get()
         Promise p = task {
+            DocumentHostInterceptor.documentHostUrlPrefix.set(documentHostUrlPrefix)
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
                Project.withNewSession {
@@ -54,8 +61,8 @@ class DownloadService {
                }
         }
         p.onComplete {
-            int days = grailsApplication.config.temp.file.cleanup.days as int
-            String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
+            int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
+            String urlPrefix = params.downloadUrl ?: grailsApplication.config.getProperty('async.download.url.prefix')
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
             String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
             emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
@@ -82,7 +89,7 @@ class DownloadService {
 
     def generateReports(Map params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
-        File directoryPath = new File("${grailsApplication.config.temp.dir}")
+        File directoryPath = new File("${grailsApplication.config.getProperty('temp.dir')}")
         directoryPath.mkdirs()
         String fileExtension = params.fileExtension?:'zip'
         File file = new File(directoryPath, "${downloadId}.${fileExtension}")
@@ -90,7 +97,7 @@ class DownloadService {
         task {
                 downloadAction(file)
         }.onComplete {
-            int days = grailsApplication.config.temp.file.cleanup.days as int
+            int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
             String url = ''
             // if report url is not supply by FieldCapture, then create a url based on ecodata
             if (!params.reportDownloadBaseUrl)
@@ -315,7 +322,7 @@ class DownloadService {
                 documentList.each { doc ->
                     if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
                        // if (!documentMap.containsKey(doc.documentId)) {
-                            addFileToZip(zip, recordIdPath, doc, documentMap, paths)
+                            addFileToZip(zip, recordIdPath, doc, documentMap, paths, true)
                        // }
                         recordMap[recordId] << doc
                     }
@@ -367,15 +374,26 @@ class DownloadService {
 
     private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
         String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
-        String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
+        String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
         File file = new File(path)
+        String url
 
         if (thumbnail) {
             file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
         }
+        String thumbnailURL = doc.getThumbnailUrl(true)
         if (file != null && file.exists()) {
             zip.putNextEntry(new ZipEntry(zipName))
             file.withInputStream { i -> zip << i }
+        }
+        else if (thumbnailURL) {
+            // reporting server does not hold images.
+            // download it by requesting image from BioCollect/MERIT
+            def stream = webService.getStream(thumbnailURL, true)
+            if (!(stream instanceof Map)) {
+                zip.putNextEntry(new ZipEntry(zipName))
+                zip << stream
+            }
         } else {
             zipName = zipName + ".notfound"
             zip.putNextEntry(new ZipEntry(zipName))
@@ -497,21 +515,16 @@ class DownloadService {
 
         params.max = batchSize
 
-        while (count == batchSize) {
-            SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
-            Map resp = [total:res.hits.totalHits.value, results:[]]
-            log.info "Processed activities: ${resp.total}"
-
-            for (SearchHit hit : res.hits.hits) {
-                if (hit.sourceAsMap.projectId) {
+        SearchResponse results = elasticSearchService.search(params.query, params, searchIndexName, [:], true)
+        while (results.getHits().getHits().length != 0) {
+            for (SearchHit hit : results.getHits().getHits()) {
+                Map result = hit.sourceAsMap
+                if (result.projectId) {
                     ids[hit.sourceAsMap.projectId] << hit.sourceAsMap.activityId
                 }
             }
 
-            count = res.hits.hits.size()
-            processed += batchSize
-
-            params.offset = processed
+            results = elasticSearchService.client.scroll(new SearchScrollRequest(results.getScrollId()).scroll(new TimeValue(60000)), RequestOptions.DEFAULT)
         }
 
         log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"

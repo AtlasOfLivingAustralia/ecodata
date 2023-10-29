@@ -6,14 +6,14 @@ import grails.testing.services.ServiceUnitTest
 
 class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 
-    UserService userService = Stub(UserService)
+    UserService userService = Mock(UserService)
     AuthService authService = Mock(AuthService)
 
     void setup() {
         cleanupData()
         service.userService = userService
-        userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
         service.authService = authService
+        userService.getUserForUserId(_) >> { String userId -> [userId:userId, displayName:"a user"]}
     }
 
     void tearDown() {
@@ -360,14 +360,21 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
 
     }
 
-    void "Return all users with role expiring 1 month from now"() {
+    void "Return all users with role expiring 1 month from now"(String fromDate, String toDate, int expected) {
         setup:
         Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
         new UserPermission(entityId:'h1', entityType:Hub.name, userId: "1", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
         new UserPermission(entityId:'h1', entityType:Hub.name, userId: "2", accessLevel:AccessLevel.admin.name(), expiryDate: date1).save(flush:true, failOnError: true)
 
         expect:
-        service.findAllByExpiryDate(date1).size() == 2
+        service.findAllByExpiryDate(DateUtil.parse(fromDate), DateUtil.parse(toDate)).size() == expected
+
+        where:
+        fromDate | toDate | expected
+        "2022-02-12T00:00:00Z" | "2022-02-12T00:00:00Z" | 2
+        "2022-01-12T00:00:00Z" | "2022-03-12T00:00:00Z" | 2
+        "2022-02-10T00:00:00Z" | "2022-02-11T00:00:00Z" | 0
+        "2022-02-13T00:00:00Z" | "2022-03-10T00:00:00Z" | 0
 
     }
 
@@ -399,5 +406,26 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         '1'    | 'p1'       | false               | [AccessLevel.admin]
         '3'    | 'p1'       | false               | [AccessLevel.moderator, AccessLevel.admin]
         '2'    | 'p2'       | true                | [AccessLevel.moderator, AccessLevel.admin]
+    }
+
+    def "The isUserEditorForOrganisation method should return true for admin,caseManager and editor roles"() {
+        setup:
+        new UserPermission(entityId:'o1', entityType:Organisation.name, userId: '2', accessLevel:AccessLevel.admin.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'o1', entityType:Organisation.name, userId: '1', accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'o1', entityType:Organisation.name, userId: '3', accessLevel:AccessLevel.caseManager.name()).save(flush:true, failOnError: true)
+        when:
+        Boolean permission = service.isUserEditorForOrganisation(userId, organisationId)
+
+        then:
+        permission == expectedReturnValue
+
+        where:
+        userId | organisationId | expectedReturnValue
+        null   | null           | false
+        ''     | ''             | false
+        '1'    | 'o1'           | true
+        '2'    | 'o1'           | true
+        '3'    | 'o1'           | true
+        '4'    | 'o1'           | false
     }
 }

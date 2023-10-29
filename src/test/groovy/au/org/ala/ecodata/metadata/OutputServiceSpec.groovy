@@ -168,7 +168,7 @@ class OutputServiceSpec extends Specification implements ServiceUnitTest<OutputS
 
         then:
         response.status != "error"
-        2 * mockRecordService.createRecord(_) >> [[:]]
+        2 * mockRecordService.createRecord(_,_) >> [[:]]
         Output.count() == 1
     }
 }

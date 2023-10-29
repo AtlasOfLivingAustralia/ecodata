@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
 import grails.test.mongodb.MongoSpec
-import spock.lang.Specification
 
 /**
  * Tests the mappings in the Program class.
@@ -49,7 +48,7 @@ class ProgramSpec extends MongoSpec {
         p3.save(flush:true, failOnError: true)
 
         when:
-        Map config = p3.getInhertitedConfig()
+        Map config = p3.getInheritedConfig()
 
 
         then:

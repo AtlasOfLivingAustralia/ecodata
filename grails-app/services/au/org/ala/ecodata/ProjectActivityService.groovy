@@ -14,6 +14,8 @@ class ProjectActivityService {
     static final SUBSCRIBED_PROPERTIES = [
             'methodName'
     ]
+    static final PA_STATS_CACHE_KEY_PREFIX = 'projectactivity-stats-id-'
+    static final int MAX_QUERY_RESULT_SIZE = 20
 
     def grailsApplication
 
@@ -27,6 +29,7 @@ class ProjectActivityService {
     ElasticSearchService elasticSearchService
     EmailService emailService
     MessageSource messageSource
+    CacheService cacheService
 
     /**
      * Creates an project activity.
@@ -132,7 +135,7 @@ class ProjectActivityService {
     private static updateEmbargoDetails(ProjectActivity projectActivity, Map incomingProperties) {
         if(incomingProperties.visibility) {
             EmbargoOption option = incomingProperties.visibility?.embargoOption as EmbargoOption
-            VisibilityConstraint visibility = new VisibilityConstraint()
+            VisibilityConstraint visibility = projectActivity.visibility ?: new VisibilityConstraint()
 
             // Project admin and Moderator defined embargo settings.
             switch (option) {
@@ -156,7 +159,7 @@ class ProjectActivityService {
             // ALA admin - Defined embargo settings.
             visibility.alaAdminEnforcedEmbargo = incomingProperties.visibility?.alaAdminEnforcedEmbargo
             incomingProperties.remove("visibility")
-            projectActivity.visibility = visibility
+            projectActivity.markDirty('visibility')
         }
     }
 
@@ -258,6 +261,7 @@ class ProjectActivityService {
         }
 
         mapOfProperties["attribution"] = generateAttributionText(projectActivity)
+        mapOfProperties["containsActivity"] = activityService.searchAndListActivityDomainObjects([projectActivityId: mapOfProperties.projectActivityId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
        /* mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
             submissionService.get(it)
         } */
@@ -332,11 +336,17 @@ class ProjectActivityService {
     }
 
     void addProjectActivityStats (Map projectActivity) {
-        projectActivity.stats = [:]
-        projectActivity.stats.publicAccess = isProjectActivityDataPublic(projectActivity)
-        projectActivity.stats.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
-        projectActivity.stats.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
-        projectActivity.stats.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+        Map statistics = cacheService.get(PA_STATS_CACHE_KEY_PREFIX + projectActivity?.projectActivityId, {
+            Map stats = [:]
+            stats.publicAccess = isProjectActivityDataPublic(projectActivity)
+            stats.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
+            stats.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
+            stats.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+            stats
+        })
+
+        projectActivity.stats = projectActivity.stats ?: [:]
+        projectActivity.stats.putAll(statistics)
     }
 
     boolean isProjectActivityDataPublic (Map projectActivity) {
@@ -365,12 +375,12 @@ class ProjectActivityService {
     }
 
     def notifyChangeToAdmin(Map body, Map old = [:]) {
-        if (grailsApplication.config.projectActivity.notifyOnChange?.toBoolean()) {
+        if (grailsApplication.config.getProperty('projectActivity.notifyOnChange')?.toBoolean()) {
             List notify = notifiableProperties(body, old)
             if (notify) {
                 String content = getNotificationContent(body, notify)
                 String subject = "New proposed survey method"
-                emailService.sendEmail(subject, content, [grailsApplication.config.ecodata.support.email.address])
+                emailService.sendEmail(subject, content, [grailsApplication.config.getProperty('ecodata.support.email.address')])
             }
         }
     }
@@ -378,7 +388,7 @@ class ProjectActivityService {
     def notifiableProperties (Map body, Map old) {
         List notify = []
         SUBSCRIBED_PROPERTIES.each {
-            if (old[it] != body[it]) {
+            if (body.containsKey(it) && (old[it] != body[it])) {
                 notify.add(it)
             }
         }
@@ -405,7 +415,7 @@ class ProjectActivityService {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
                 Calendar cal = Calendar.getInstance()
                 def time = dateFormat.format(cal.getTime())
-                def dataUrl = "${grailsApplication.config.biocollect.projectActivityDataURL}/${projectActivity.projectId}"
+                def dataUrl = "${grailsApplication.config.getProperty('biocollect.projectActivityDataURL')}/${projectActivity.projectId}"
                 return messageSource.getMessage("projectAcitivity.attribution", [orgName, year, name, dataUrl, time].toArray(), "", Locale.default)
             }
         }
@@ -453,5 +463,31 @@ class ProjectActivityService {
         }
 
         projectActivities.collect { toMap(it, levelOfDetail) }
+    }
+
+    /**
+     * Activity linked to a project activity if
+     * 1. EmbargoOption is DAYS and today is before embargoUntil date
+     * 2. EmbargoOption is DATE and today is before embargoUntil date
+     * @param projectActivity
+     * @return
+     */
+    boolean isProjectActivityEmbargoed (projectActivity) {
+        switch (projectActivity?.visibility?.embargoOption) {
+            case EmbargoOption.DAYS:
+            case EmbargoOption.DATE:
+            case "DAYS":
+            case "DATE":
+                if (projectActivity?.visibility?.embargoUntil && projectActivity?.visibility?.embargoUntil.after(new Date())) {
+                    return true
+                }
+        }
+
+        false
+    }
+
+    List<ProjectActivity> list (int offset = 0, int max = MAX_QUERY_RESULT_SIZE) {
+        Map options = [offset:offset, max: Math.min(max, MAX_QUERY_RESULT_SIZE), sort:'projectId']
+        ProjectActivity.findAllByStatusNotEqual(Status.DELETED, options)
     }
 }

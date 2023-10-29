@@ -4,7 +4,6 @@ import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import org.bson.types.ObjectId
-import org.hsqldb.rights.User
 import spock.lang.Specification
 
 class AuditControllerSpec extends Specification implements ControllerUnitTest<AuditController>, DataTest {

@@ -73,7 +73,7 @@ class SubmissionService {
 
     def checkSubmission () {
 
-        def aekosPollingUrl = grailsApplication.config.aekosPolling?.url //?: "http://shared-uat.aekos.org.au:8080/shared-web/api/doi/submission_id"
+        def aekosPollingUrl = grailsApplication.config.getProperty('aekosPolling.url') //?: "http://shared-uat.aekos.org.au:8080/shared-web/api/doi/submission_id"
 
         def submissionRecList = SubmissionRecord.findAllBySubmissionDoi('Pending')
 

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import org.apache.http.HttpStatus
 
 /**
  * Responds to requests related to activity forms in ecodata.
@@ -30,10 +31,26 @@ class ActivityFormController {
     }
 
     /**
+     * Returns ActivityForms that match the supplied search criteria
+     */
+    List<ActivityForm> search() {
+        Map searchCriteria = request.JSON
+        if (!searchCriteria) {
+            respond ([status:HttpStatus.SC_BAD_REQUEST], [message:"At least one criteria must be supplied"])
+            return
+        }
+        Map options = null
+        if (searchCriteria.options) {
+            options = searchCriteria.remove('options')
+        }
+        respond activityFormService.search(searchCriteria, options)
+    }
+
+    /**
      * Updates the activity form identified by the name and version in the payload.
      * @return
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def update() {
 
         // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
@@ -48,7 +65,7 @@ class ActivityFormController {
         respond form
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def create() {
         // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
         // "null" to be saved in templates (it will happen in any embedded Maps).
@@ -67,7 +84,7 @@ class ActivityFormController {
      * @param name the name of the activity form.
      * @return the new form.
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def newDraftForm(String name) {
         respond activityFormService.newDraft(name)
     }
@@ -77,7 +94,7 @@ class ActivityFormController {
      * @param name the name of the activity form.
      * @return the new form.
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def publish(String name, Integer formVersion) {
         respond activityFormService.publish(name, formVersion)
     }
@@ -87,12 +104,12 @@ class ActivityFormController {
      * @param name the name of the activity form.
      * @return the new form.
      */
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def unpublish(String name, Integer formVersion) {
         respond activityFormService.unpublish(name, formVersion)
     }
 
-    @AlaSecured("ROLE_ADMIN")
+    @AlaSecured(["ROLE_ADMIN"])
     def findUsesOfForm(String name, Integer formVersion) {
         int count = Activity.countByTypeAndFormVersionAndStatusNotEqual(name, formVersion, Status.DELETED)
         Map result = [count:count]

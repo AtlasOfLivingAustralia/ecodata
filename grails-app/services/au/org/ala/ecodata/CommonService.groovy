@@ -11,6 +11,7 @@ class CommonService {
     def messageSource
 
     /**
+     * Deprecated: Use grails/spring dataBinding instead.
      * Updates all properties other than 'id' and converts date strings to BSON dates.
      *
      * Note that dates are assumed to be ISO8601 in UTC with no millisecs
@@ -21,6 +22,7 @@ class CommonService {
      * @param o the domain instance
      * @param props the properties to use
      */
+    @Deprecated
     def updateProperties(o, props, boolean overrideUpdateDate = false) throws Exception{
         assert grailsApplication
         def domainDescriptor = grailsApplication.getArtefact(DomainClassArtefactHandler.TYPE,
@@ -51,7 +53,10 @@ class CommonService {
                 v = null
             }
 
-            o[k] = v
+            // Dynamic properties with a null value result in a NPE when using the GORM mongo codec mapping.
+            if (v != null || domainDescriptor.hasProperty(k)) {
+                o[k] = v
+            }
         }
         // always flush the update so that that any exceptions are caught before the service returns
         o.save(flush:true)
@@ -76,10 +81,12 @@ class CommonService {
     }
 
     /**
+     * Deprecated access of the dbo property is deprecated in GORM for mongo
      * Converts the domain object into a map of properties with no additions.
      * @param o a domain instance
      * @return map of properties
      */
+    @Deprecated
     def toBareMap(o) {
         def mapOfProperties = GormMongoUtil.extractDboProperties(o.getProperty("dbo"))
      //   def mapOfProperties = dbo.toMap()
@@ -95,7 +102,7 @@ class CommonService {
         String cacheKey = 'apikey-'+key
         Map result = cacheService.get(cacheKey, {
             // try the preferred api key store first
-            def url = grailsApplication.config.security.apikey.serviceUrl + key
+            def url = grailsApplication.config.getProperty('security.apikey.serviceUrl') + key
             try {
                 def conn = new URL(url).openConnection()
                 if (conn.getResponseCode() == 200) {

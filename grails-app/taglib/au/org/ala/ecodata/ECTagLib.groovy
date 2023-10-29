@@ -6,7 +6,7 @@ class ECTagLib {
 
     static namespace = "ec"
 
-    def userService, authService, metadataService
+    def userService, metadataService, authService
 
     /**
      * @attr active

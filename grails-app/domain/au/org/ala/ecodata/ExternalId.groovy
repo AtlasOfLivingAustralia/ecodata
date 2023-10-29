@@ -8,7 +8,9 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode
 class ExternalId implements Comparable {
 
-    enum IdType { INTERNAL_ORDER_NUMBER, TECH_ONE_CODE, WORK_ORDER, GRANT_AWARD, GRANT_OPPORTUNITY }
+    enum IdType {
+        INTERNAL_ORDER_NUMBER, TECH_ONE_CODE, WORK_ORDER, GRANT_AWARD, GRANT_OPPORTUNITY, RELATED_PROJEC,
+        MONITOR_PROTOCOL_INTERNAL_ID, MONITOR_PROTOCOL_GUID, TECH_ONE_CONTRACT_NUMBER }
 
     static constraints = {
     }
