@@ -310,7 +310,7 @@ class ParatooController {
         }
         Map data = request.JSON
 
-        Map result = paratooService.updateProjectSites(project, data)
+        Map result = paratooService.updateProjectSites(project, data.data)
 
         if (result?.error) {
             respond([message:result.error], status:HttpStatus.SC_INTERNAL_SERVER_ERROR)
