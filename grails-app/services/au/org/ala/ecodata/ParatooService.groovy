@@ -441,10 +441,7 @@ class ParatooService {
     }
 
     private Map updateProjectArea(ParatooProject project, String type, List coordinates) {
-        Map geometry = [
-                type:type,
-                coordinates: coordinates.collect{[it.lng, it.lat]}
-        ]
+        Map geometry = ParatooProtocolConfig.toGeometry(coordinates)
         Site projectArea = project.projectAreaSite
         if (projectArea) {
             projectArea.extent.geometry.type = geometry.type
