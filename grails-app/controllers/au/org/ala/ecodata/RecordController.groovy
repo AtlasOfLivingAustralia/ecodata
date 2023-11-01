@@ -1,21 +1,17 @@
 package au.org.ala.ecodata
 
-import org.apache.http.HttpStatus
-import org.apache.http.entity.ContentType
-import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.context.request.RequestAttributes
-
-import java.text.SimpleDateFormat
-
-import static au.org.ala.ecodata.Status.*
-import static javax.servlet.http.HttpServletResponse.*
-
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
+import org.apache.http.HttpStatus
+import org.apache.http.entity.ContentType
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
+import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.Status.DELETED
+import static javax.servlet.http.HttpServletResponse.*
 /**
  * Controller for record CRUD operations with support for handling images.
  */
@@ -573,7 +569,7 @@ class RecordController {
             if(project?.alaHarvest) {
                 // Simulate BioCollect as the hostname calling this method. This is done to get the correct URL for
                 // documents.
-                GrailsWebRequest.lookup().setAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, grailsApplication.config.getProperty("biocollect.baseURL"), RequestAttributes.SCOPE_REQUEST)
+//                GrailsWebRequest.lookup().setAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, grailsApplication.config.getProperty("biocollect.baseURL"), RequestAttributes.SCOPE_REQUEST)
                 recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
             } else
                 response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON
