@@ -43,7 +43,7 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
-    @PreAuthorise
+//    @PreAuthorise
     def listHarvestDataResource() {
         def result, error
         try {
@@ -93,7 +93,7 @@ class RecordController {
      * @param status = active | deleted | default:active
      *
      */
-    @PreAuthorise
+//    @PreAuthorise
     def listRecordsForDataResourceId (){
         def result = [], error, project
         Date lastUpdated = null
@@ -563,7 +563,7 @@ class RecordController {
      * @param projectId
      * @return
      */
-    @PreAuthorise
+//    @PreAuthorise
     def getDarwinCoreArchiveForProject (String projectId) {
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
