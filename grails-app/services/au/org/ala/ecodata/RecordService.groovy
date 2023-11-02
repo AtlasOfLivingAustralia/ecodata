@@ -48,6 +48,7 @@ class RecordService {
     CommonService commonService
     MapService mapService
     AuthService authService
+    WebService webService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -1504,9 +1505,16 @@ class RecordService {
      * @return
      */
     String getEmlXML(Project project) {
-        Map proj = projectService.toMap(project)
-        String xml = mapService.bindDataToXMLTemplate("classpath:data/eventcore/eml.template", proj, true)
-        addXMLDeclaration(xml)
+        String url = grailsApplication.config.getProperty('collectory.baseURL') + "ws/eml/${project.dataResourceId}"
+        def resp = webService.get(url)
+        if (resp instanceof String) {
+            return resp
+        }
+        else {
+            Map proj = projectService.toMap(project)
+            String xml = mapService.bindDataToXMLTemplate("classpath:data/eventcore/eml.template", proj, true)
+            addXMLDeclaration(xml)
+        }
     }
 
     String addXMLDeclaration (String xml) {

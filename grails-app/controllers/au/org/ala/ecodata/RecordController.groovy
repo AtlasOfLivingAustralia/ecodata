@@ -39,8 +39,7 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
-//    @PreAuthorise
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey
     def listHarvestDataResource() {
         def result, error
         try {
@@ -88,10 +87,12 @@ class RecordController {
      * @param sort = asc | desc | default:asc
      * @param lastUpdated = date | dd/MM/yyyy | default:null
      * @param status = active | deleted | default:active
+     * @deprecated ALA's records harvester will use getDarwinCoreArchiveForProject once Events system is setup.
+     * To access it use archiveURL property from {@link RecordController#listHarvestDataResource}.
      *
      */
-//    @PreAuthorise
-    @RequireApiKey
+    @Deprecated
+    @au.ala.org.ws.security.RequireApiKey
     def listRecordsForDataResourceId (){
         def result = [], error, project
         Date lastUpdated = null
@@ -561,15 +562,14 @@ class RecordController {
      * @param projectId
      * @return
      */
-//    @PreAuthorise
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey
     def getDarwinCoreArchiveForProject (String projectId) {
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
             if(project?.alaHarvest) {
                 // Simulate BioCollect as the hostname calling this method. This is done to get the correct URL for
                 // documents.
-//                GrailsWebRequest.lookup().setAttribute(DocumentHostInterceptor.DOCUMENT_HOST_NAME, grailsApplication.config.getProperty("biocollect.baseURL"), RequestAttributes.SCOPE_REQUEST)
+                DocumentHostInterceptor.documentHostUrlPrefix.set(grailsApplication.config.getProperty("biocollect.baseURL"))
                 recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
             } else
                 response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON
