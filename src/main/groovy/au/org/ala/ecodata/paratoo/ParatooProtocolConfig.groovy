@@ -135,7 +135,7 @@ class ParatooProtocolConfig {
         plotGeoJson
     }
 
-    private static Map toGeometry(List points) {
+    static Map toGeometry(List points) {
         List coords = points?.findAll { !exclude(it) }.collect {
             [it.lng, it.lat]
         }

@@ -183,7 +183,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "comment":"Test",
                 "plot_selection_survey":5]
 
-        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':['p1'], 'type':'surveyArea']
+        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':[], 'type':'surveyArea']
 
         String userId = 'u1'
 
@@ -200,13 +200,40 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
         Map data = [plot_selections:['s2']]
 
-
         when:
         service.updateProjectSites(project, data)
         Site s2 = Site.findBySiteId('s2')
 
         then:
         s2.projects.indexOf(projectId) >= 0
+    }
+
+    void "The service can create a project area"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
+        Map data = [project_area_type:'polygon', project_area_coordinates: [
+                [
+                    "lat": -34.96643621094802,
+                    "lng": 138.6845397949219
+                ],
+                [
+                    "lat": -35.003565839769166,
+                    "lng": 138.66394042968753
+                ],
+                [
+                    "lat": -34.955744257334246,
+                    "lng": 138.59973907470706
+                ]
+        ]]
+        Map expectedSite = [name:"Monitor project area", type:Site.TYPE_PROJECT_AREA, projects:[projectId],
+            extent:[source:"drawn", geometry: [type:'Polygon', coordinates:[[[138.6845397949219, -34.96643621094802], [138.66394042968753, -35.003565839769166], [138.59973907470706, -34.955744257334246], [138.6845397949219, -34.96643621094802]]]]]]
+
+        when:
+        service.updateProjectSites(project, data)
+
+        then:
+        1 * siteService.create(expectedSite)
     }
 
     private void setupData() {

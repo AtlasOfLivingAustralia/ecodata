@@ -243,7 +243,26 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     }
 
+    void "The /projects call delegates to the paratooService"() {
+        setup:
+        String userId = 'u1'
+        String projectId = 'projectId'
+        List<ParatooProject> projects = stubUserProjects()
 
+        when:
+        request.method = "PUT"
+        params.id = projectId
+        Map result = controller.updateProjectSites()
+
+        then:
+        1 * userService.currentUserDetails >> [userId:userId]
+        1 * paratooService.userProjects(userId) >> projects
+        1 * paratooService.updateProjectSites(projects[0], _) >> [success:true]
+
+        and:
+        response.status == HttpStatus.SC_OK
+
+    }
 
     private List<ParatooProject> stubUserProjects() {
         ParatooProject project = new ParatooProject(id:'projectId')

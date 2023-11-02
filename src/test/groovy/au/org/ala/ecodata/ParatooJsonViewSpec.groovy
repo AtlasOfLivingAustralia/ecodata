@@ -18,7 +18,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                         [id:3, identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3"]],
                     project_area:null,
                     plot_selections:[
-                       [uuid:'s1', plot_name:"Site 1"]
+                       [uuid:'s1', name:"Site 1"]
                     ],
                     role:"project_admin"
                    ],[
