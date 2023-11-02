@@ -3,11 +3,13 @@ package au.org.ala.ecodata
 import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
+import au.org.ala.ecodata.paratoo.ParatooPlotSelection
 import au.org.ala.ecodata.paratoo.ParatooProject
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.info.Contact
 import io.swagger.v3.oas.annotations.info.Info
@@ -20,7 +22,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.*
 import io.swagger.v3.oas.annotations.servers.Server
 import io.swagger.v3.oas.annotations.servers.ServerVariable
-import io.swagger.v3.oas.annotations.enums.ParameterIn
 import org.apache.http.HttpStatus
 import org.springframework.validation.Errors
 
@@ -47,16 +48,16 @@ import javax.ws.rs.Path
 @SecuritySchemes([
         @SecurityScheme(name = "openIdConnect",
                 type = SecuritySchemeType.OPENIDCONNECT,
-                openIdConnectUrl = "https://auth.ala.org.au/cas/oidc/.well-known",
+                openIdConnectUrl = "https://auth-test.ala.org.au/cas/oidc/.well-known",
                 scheme = "bearer"
         ),
         @SecurityScheme(name = "oauth",
                 type = SecuritySchemeType.OAUTH2,
                 flows = @OAuthFlows(
                         clientCredentials = @OAuthFlow(
-                            authorizationUrl = "https://auth.ala.org.au/cas/oidc/authorize",
-                            tokenUrl = "https://auth.ala.org.au/cas/oidc/token",
-                            refreshUrl = "https://auth.ala.org.au/cas/oidc/refresh",
+                            authorizationUrl = "https://auth-test.ala.org.au/cas/oidc/authorize",
+                            tokenUrl = "https://auth-test.ala.org.au/cas/oidc/token",
+                            refreshUrl = "https://auth-test.ala.org.au/cas/oidc/refresh",
                             scopes = [
                                     @OAuthScope(name="openid"),
                                     @OAuthScope(name="profile"),
@@ -67,7 +68,8 @@ import javax.ws.rs.Path
                 ),
                 scheme = "bearer"
         ),
-        @SecurityScheme(name = "openIdConnect",
+        @SecurityScheme(
+                name = "openIdConnect",
                 type = SecuritySchemeType.HTTP,
                 bearerFormat = "JWT",
                 scheme = "bearer"
@@ -300,9 +302,6 @@ class ParatooController {
     @Path("/status/{id}")
     @Operation(
             method = "GET",
-            parameters = [
-                    @Parameter(name = "id", description = "The value for mintedCollectionId", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
-            ],
             responses = [
                     @ApiResponse(responseCode = "200", description = "Returns true if Org has stored the supplied identifier", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -328,13 +327,37 @@ class ParatooController {
 
     @POST
     @Path("/plot-selections")
-    def addPlotSelection() {
+    @Operation(
+            method = "POST",
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Plot selection added", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface"
+    )
+    def addPlotSelection(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
         addOrUpdatePlotSelection()
     }
 
     @PUT
     @Path("/plot-selections")
-    def updatePlotSelection() {
+    @Operation(
+            method = "PUT",
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Plot selection updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface"
+    )
+    def updatePlotSelection(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
         addOrUpdatePlotSelection()
     }
 

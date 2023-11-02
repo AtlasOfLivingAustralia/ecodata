@@ -4,12 +4,50 @@ import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.security.OAuthFlow
+import io.swagger.v3.oas.annotations.security.OAuthFlows
+import io.swagger.v3.oas.annotations.security.OAuthScope
+import io.swagger.v3.oas.annotations.security.SecurityScheme
+import io.swagger.v3.oas.annotations.security.SecuritySchemes
+import io.swagger.v3.oas.annotations.servers.Server
+import io.swagger.v3.oas.annotations.servers.ServerVariable
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
-
+@Server(url = "https://api.test.ala.org.au/{basePath}",
+        variables = [@ServerVariable(name = "basePath", defaultValue = "ecodata")])
+@SecuritySchemes([
+        @SecurityScheme(name = "openIdConnect",
+                type = SecuritySchemeType.OPENIDCONNECT,
+                openIdConnectUrl = "https://auth-test.ala.org.au/cas/oidc/.well-known",
+                scheme = "bearer"
+        ),
+        @SecurityScheme(name = "oauth",
+                type = SecuritySchemeType.OAUTH2,
+                flows = @OAuthFlows(
+                        clientCredentials = @OAuthFlow(
+                                authorizationUrl = "https://auth-test.ala.org.au/cas/oidc/authorize",
+                                tokenUrl = "https://auth-test.ala.org.au/cas/oidc/token",
+                                refreshUrl = "https://auth-test.ala.org.au/cas/oidc/refresh",
+                                scopes = [
+                                        @OAuthScope(name="openid"),
+                                        @OAuthScope(name="profile"),
+                                        @OAuthScope(name="ala"),
+                                        @OAuthScope(name="roles")
+                                ]
+                        )
+                ),
+                scheme = "bearer"
+        ),
+        @SecurityScheme(
+                name = "openIdConnect",
+                type = SecuritySchemeType.HTTP,
+                bearerFormat = "JWT",
+                scheme = "bearer"
+        )])
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService

@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 /*
  * Copyright (C) 2020 Atlas of Living Australia
  * All Rights Reserved.
@@ -16,7 +18,7 @@ package au.org.ala.ecodata
  * 
  * Created by Temi on 16/1/20.
  */
-
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class BaseLayer {
     String code
     String displayText

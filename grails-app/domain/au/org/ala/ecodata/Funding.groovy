@@ -1,10 +1,12 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @EqualsAndHashCode
 @ToString
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class Funding {
     String fundingSource
     String fundingType

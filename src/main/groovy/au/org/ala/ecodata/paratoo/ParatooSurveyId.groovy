@@ -3,8 +3,9 @@ package au.org.ala.ecodata.paratoo
 import au.org.ala.ecodata.DateUtil
 import grails.databinding.BindingFormat
 import grails.validation.Validateable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
-
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooSurveyId implements Validateable {
 
     String projectId

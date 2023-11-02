@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class Overlay {
     String alaId
     String alaName
