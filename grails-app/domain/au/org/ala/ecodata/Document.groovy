@@ -66,6 +66,7 @@ class Document {
     String identifier
     /* To be replaced by reportId */
     String stage
+    String imageId
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText
@@ -125,6 +126,10 @@ class Document {
             return ''
         }
 
+        if (imageId) {
+            return getImageURL()
+        }
+
         if (isImageHostedOnPublicServer()) {
             return identifier
         }
@@ -145,6 +150,12 @@ class Document {
         }
         return Holders.config.getProperty('app.file.upload.path') + '/' + path  + name
 
+    }
+
+    String getImageURL () {
+        if (imageId) {
+            Holders.getGrailsApplication().config.getProperty("imagesService.baseURL") +  "/proxyImage?id=" + imageId
+        }
     }
 
     static constraints = {
@@ -180,5 +191,6 @@ class Document {
         identifier nullable: true
         contentType nullable: true
         hubId nullable: true
+        imageId nullable: true
     }
 }

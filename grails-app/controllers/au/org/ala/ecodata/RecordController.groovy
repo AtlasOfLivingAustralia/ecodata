@@ -1,18 +1,17 @@
 package au.org.ala.ecodata
 
-import org.apache.http.HttpStatus
-
-import java.text.SimpleDateFormat
-
-import static au.org.ala.ecodata.Status.*
-import static javax.servlet.http.HttpServletResponse.*
-
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
+import org.apache.http.HttpStatus
+import org.apache.http.entity.ContentType
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
+import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.Status.DELETED
+import static javax.servlet.http.HttpServletResponse.*
 /**
  * Controller for record CRUD operations with support for handling images.
  */
@@ -40,7 +39,7 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
-    @PreAuthorise
+    @au.ala.org.ws.security.RequireApiKey
     def listHarvestDataResource() {
         def result, error
         try {
@@ -88,9 +87,12 @@ class RecordController {
      * @param sort = asc | desc | default:asc
      * @param lastUpdated = date | dd/MM/yyyy | default:null
      * @param status = active | deleted | default:active
+     * @deprecated ALA's records harvester will use getDarwinCoreArchiveForProject once Events system is setup.
+     * To access it use archiveURL property from {@link RecordController#listHarvestDataResource}.
      *
      */
-    @PreAuthorise
+    @Deprecated
+    @au.ala.org.ws.security.RequireApiKey
     def listRecordsForDataResourceId (){
         def result = [], error, project
         Date lastUpdated = null
@@ -552,6 +554,27 @@ class RecordController {
             render record as JSON
         } else{
             render (status: 404, text: 'No such id')
+        }
+    }
+
+    /**
+     * Get Darwin Core Archive for a project that has ala harvest enabled.
+     * @param projectId
+     * @return
+     */
+    @au.ala.org.ws.security.RequireApiKey
+    def getDarwinCoreArchiveForProject (String projectId) {
+        if (projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if(project?.alaHarvest) {
+                // Simulate BioCollect as the hostname calling this method. This is done to get the correct URL for
+                // documents.
+                DocumentHostInterceptor.documentHostUrlPrefix.set(grailsApplication.config.getProperty("biocollect.baseURL"))
+                recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
+            } else
+                response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON
+        } else {
+            response status: HttpStatus.SC_BAD_REQUEST, text: [error: "projectId is required"] as JSON, contentType: ContentType.APPLICATION_JSON
         }
     }
 

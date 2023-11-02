@@ -9,7 +9,7 @@ class GenericFieldConverter implements RecordFieldConverter {
         Double latitude = getLatitude(data)
         Double longitude = getLongitude(data)
 
-        // Don't override decimalLongitud or decimalLatitude in case they are null, site info could've already set them
+        // Don't override decimalLongitude or decimalLatitude in case they are null, site info could've already set them
         if(latitude) {
             record.decimalLatitude = latitude
         }
@@ -20,8 +20,8 @@ class GenericFieldConverter implements RecordFieldConverter {
 
 
         Map dwcMappings = extractDwcMapping(metadata)
-
-        record << getDwcAttributes(data, dwcMappings)
+        Map dwcAttributes = getDwcAttributes(data, dwcMappings, metadata)
+        record = RecordConverter.overrideAllExceptLists(dwcAttributes, record)
 
         if (data.dwcAttribute) {
             record[data.dwcAttribute] = data.value
