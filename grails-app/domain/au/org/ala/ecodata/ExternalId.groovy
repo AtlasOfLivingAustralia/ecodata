@@ -1,11 +1,13 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import groovy.transform.EqualsAndHashCode
 
 /**
  * Associates an id held in an external system with a Project
  */
 @EqualsAndHashCode
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ExternalId implements Comparable {
 
     enum IdType {

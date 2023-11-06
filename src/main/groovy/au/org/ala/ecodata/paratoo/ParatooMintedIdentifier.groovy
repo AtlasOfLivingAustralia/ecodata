@@ -3,7 +3,9 @@ package au.org.ala.ecodata.paratoo
 import au.org.ala.ecodata.DateUtil
 import grails.converters.JSON
 import grails.databinding.BindingFormat
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooMintedIdentifier {
     ParatooSurveyId surveyId
     @BindingFormat("iso8601")

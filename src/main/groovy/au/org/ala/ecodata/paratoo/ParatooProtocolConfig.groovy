@@ -3,11 +3,13 @@ package au.org.ala.ecodata.paratoo
 import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import groovy.util.logging.Slf4j
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 /**
  * Configuration about how to work with a Paratoo/Monitor protocol
  */
 @Slf4j
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProtocolConfig {
 
     String apiEndpoint
