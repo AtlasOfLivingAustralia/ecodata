@@ -1,53 +1,11 @@
 package au.org.ala.ecodata
+
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.security.OAuthFlow
-import io.swagger.v3.oas.annotations.security.OAuthFlows
-import io.swagger.v3.oas.annotations.security.OAuthScope
-import io.swagger.v3.oas.annotations.security.SecurityScheme
-import io.swagger.v3.oas.annotations.security.SecuritySchemes
-import io.swagger.v3.oas.annotations.servers.Server
-import io.swagger.v3.oas.annotations.servers.ServerVariable
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
-@Server(url = "https://api.test.ala.org.au/{basePath}",
-        variables = [@ServerVariable(name = "basePath", defaultValue = "ecodata")])
-@SecuritySchemes([
-        @SecurityScheme(name = "openIdConnect",
-                type = SecuritySchemeType.OPENIDCONNECT,
-                openIdConnectUrl = "https://auth-test.ala.org.au/cas/oidc/.well-known",
-                scheme = "bearer"
-        ),
-        @SecurityScheme(name = "oauth",
-                type = SecuritySchemeType.OAUTH2,
-                flows = @OAuthFlows(
-                        clientCredentials = @OAuthFlow(
-                                authorizationUrl = "https://auth-test.ala.org.au/cas/oidc/authorize",
-                                tokenUrl = "https://auth-test.ala.org.au/cas/oidc/token",
-                                refreshUrl = "https://auth-test.ala.org.au/cas/oidc/refresh",
-                                scopes = [
-                                        @OAuthScope(name="openid"),
-                                        @OAuthScope(name="profile"),
-                                        @OAuthScope(name="ala"),
-                                        @OAuthScope(name="roles")
-                                ]
-                        )
-                ),
-                scheme = "bearer"
-        ),
-        @SecurityScheme(
-                name = "openIdConnect",
-                type = SecuritySchemeType.HTTP,
-                bearerFormat = "JWT",
-                scheme = "bearer"
-        )])
+
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
@@ -73,35 +31,6 @@ class ProjectController {
         render "${Project.count()} sites"
     }
 
-    @Operation(
-            method = "GET",
-            tags = "project",
-            operationId = "projectList",
-            summary = "Get Project list",
-            description = "Get Project list",
-            parameters = [
-                    @Parameter(name = "brief",
-                            in = QUERY,
-                            required = false,
-                            description = "project name"),
-                    @Parameter(name = "includeDeleted",
-                            in = QUERY,
-                            required = false,
-                            description = "include Deleted projects",
-                            schema = @Schema(type = "boolean")),
-                    @Parameter(name = "citizenScienceOnly",
-                            in = QUERY,
-                            required = false,
-                            description = "citizen Science projects Only",
-                            schema = @Schema(type = "boolean"))
-            ],
-            responses = [
-                    @ApiResponse(
-                            description = "Project list",
-                            responseCode = "200"
-                    )
-            ]
-    )
     def list() {
         println 'brief = ' + params.brief
         def list = projectService.list(params.brief, params.includeDeleted, params.citizenScienceOnly)
@@ -398,25 +327,6 @@ class ProjectController {
         render result as JSON
     }
 
-    @Operation(
-            method = "GET",
-            tags = "project",
-            operationId = "findProjectByName",
-            summary = "Find Project By Name",
-            description = "Find Project By Name",
-            parameters = [
-                    @Parameter(name = "projectName",
-                    in = QUERY,
-                    required = true,
-                    description = "project name")
-            ],
-            responses = [
-                    @ApiResponse(
-                            description = "Project Details",
-                            responseCode = "200"
-                    )
-            ]
-    )
     def findByName() {
         if (!params.projectName) {
             render status:400, text: "projectName is a required parameter"

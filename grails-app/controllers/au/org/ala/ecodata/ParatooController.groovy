@@ -5,6 +5,7 @@ import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooPlotSelection
 import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooToken
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -48,8 +49,7 @@ import javax.ws.rs.Path
 @SecuritySchemes([
         @SecurityScheme(name = "openIdConnect",
                 type = SecuritySchemeType.OPENIDCONNECT,
-                openIdConnectUrl = "https://auth-test.ala.org.au/cas/oidc/.well-known",
-                scheme = "bearer"
+                openIdConnectUrl = "https://auth-test.ala.org.au/cas/oidc/.well-known"
         ),
         @SecurityScheme(name = "oauth",
                 type = SecuritySchemeType.OAUTH2,
@@ -61,19 +61,22 @@ import javax.ws.rs.Path
                             scopes = [
                                     @OAuthScope(name="openid"),
                                     @OAuthScope(name="profile"),
-                                    @OAuthScope(name="ala"),
-                                    @OAuthScope(name="roles")
+                                    @OAuthScope(name="ala", description = "CAS scope"),
+                                    @OAuthScope(name="roles", description = "CAS scope"),
+                                    @OAuthScope(name="ala/attrs", description = "Cognito scope"),
+                                    @OAuthScope(name="ala/roles", description = "Cognito scope")
                             ]
                         )
                 ),
                 scheme = "bearer"
         ),
         @SecurityScheme(
-                name = "openIdConnect",
+                name = "jwt",
                 type = SecuritySchemeType.HTTP,
                 bearerFormat = "JWT",
                 scheme = "bearer"
         )])
+@Path("/ws/paratoo")
 class ParatooController {
 
     static responseFormats = ['json']
@@ -104,12 +107,12 @@ class ParatooController {
     }
 
     @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/user-projects")
     @Operation(
             method = "GET",
             summary = "Gets all projects for an authenticated user",
             description = "Gets all projects that a user is assigned to",
-            requestBody = @RequestBody(description = ""),
             responses = [
                     @ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Project.class)))),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -133,10 +136,10 @@ class ParatooController {
             ],
             tags = "Org Interface"
     )
-    def validateToken() {
+    def validateToken(@RequestBody(description = "The JWT token", required = true, content = @Content(schema = @Schema(implementation = ParatooToken.class))) ParatooToken body) {
         // Possibly an implementation side-effect of the paratoo client but the token is passed in the body here
         // rather than the header.  We extract it and call a protected method to check the token....
-        String token = request.JSON?.token
+        String token = body?.token
         if (!token) {
             respond([message: "Missing token in body"], status: HttpStatus.SC_BAD_REQUEST)
             return
@@ -165,7 +168,7 @@ class ParatooController {
     }
 
     @GET
-    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/pdp/{projectId}/{protocolId}/read")
     @Operation(
             method = "GET",
@@ -189,6 +192,7 @@ class ParatooController {
     }
 
     @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/pdp/{projectId}/{protocolId}/write")
     @Operation(
             method = "GET",
@@ -228,6 +232,7 @@ class ParatooController {
     }
 
     @POST
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/mint-identifier")
     @Operation(
             method = "POST",
@@ -261,6 +266,7 @@ class ParatooController {
     }
 
     @POST
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/collection")
     @Operation(
             method = "POST",
@@ -299,6 +305,7 @@ class ParatooController {
     }
 
     @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/status/{id}")
     @Operation(
             method = "GET",
@@ -326,6 +333,7 @@ class ParatooController {
     }
 
     @POST
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/plot-selections")
     @Operation(
             method = "POST",
@@ -344,6 +352,7 @@ class ParatooController {
     }
 
     @PUT
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/plot-selections")
     @Operation(
             method = "PUT",
