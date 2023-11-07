@@ -1,10 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.paratoo.ParatooCollectionId
-import au.org.ala.ecodata.paratoo.ParatooProject
-import au.org.ala.ecodata.paratoo.ParatooProtocolId
-import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import au.org.ala.ecodata.paratoo.*
 import au.org.ala.ws.tokens.TokenService
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
@@ -167,20 +163,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can create a site from a submitted plot-selection"() {
         setup:
         Map data = [
-                "plot_name":["state":1,"program":9,"bioregion":3,"unique_digits":"2222"],
                 "plot_label":"CTMAUA2222",
                 "recommended_location":["lat":-35.2592424,"lng":149.0651439],
-                "recommended_location_point":12,
                 "uuid":"lmpisy5p9g896lad4ut",
-                "comment":"Test",
-                "plot_selection_survey":5]
+                "comment":"Test"]
 
         Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':[], 'type':'surveyArea']
 
         String userId = 'u1'
 
         when:
-        service.addOrUpdatePlotSelections(userId, data)
+        service.addOrUpdatePlotSelections(userId, new ParatooPlotSelectionData(data))
 
         then:
         1 * siteService.create(expected)
