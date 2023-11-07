@@ -9,12 +9,9 @@ import au.org.ala.ws.tokens.TokenService
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
-import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import spock.lang.Ignore
-import spock.lang.Specification
 
 /**
  * Tests for the ParatooService.
@@ -32,12 +29,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
     def setup() {
-//        mockDomain(Project)
-//        mockDomain(ActivityForm)
-//        mockDomain(Service)
-//        mockDomain(UserPermission)
-//        mockDomain(Program)
-//        mockDomain(Hub)
+
         deleteAll()
         setupData()
 
@@ -188,7 +180,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String userId = 'u1'
 
         when:
-        service.plotSelections(userId, data)
+        service.addOrUpdatePlotSelections(userId, data)
 
         then:
         1 * siteService.create(expected)

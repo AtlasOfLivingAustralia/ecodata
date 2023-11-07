@@ -251,7 +251,7 @@ class UrlMappings {
 
         "/ws/paratoo/plot-selections" {
             controller = 'paratoo'
-            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection']
+            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection', GET:'getPlotSelections']
         }
 
         "/ws/paratoo/user-role" {

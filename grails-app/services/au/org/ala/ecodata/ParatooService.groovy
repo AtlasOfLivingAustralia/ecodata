@@ -384,7 +384,7 @@ class ParatooService {
         data?.find { config.matches(it, surveyId) }
     }
 
-    Map plotSelections(String userId, Map plotSelectionData) {
+    Map addOrUpdatePlotSelections(String userId, Map plotSelectionData) {
 
         List projects = userProjects(userId)
         if (!projects) {
@@ -431,10 +431,12 @@ class ParatooService {
         List<Site> sites = Site.findAllByExternalIdInList(siteExternalIds)
         sites.each { Site site ->
             site.projects = site.projects ?: []
-            site.projects << project.id
-            site.save()
-            if (site.hasErrors()) {
-                errors << site.errors
+            if (!site.projects.contains(project.id)) {
+                site.projects << project.id
+                site.save()
+                if (site.hasErrors()) {
+                    errors << site.errors
+                }
             }
         }
         [success:!errors, error:errors]

@@ -1,0 +1,9 @@
+import au.org.ala.ecodata.Site
+
+model {
+    List<Site> plots
+}
+
+json {
+    data tmpl.plotSelection('plot', plots)
+}

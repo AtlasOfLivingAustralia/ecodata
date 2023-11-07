@@ -370,6 +370,34 @@ class ParatooController {
         addOrUpdatePlotSelection()
     }
 
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/plot-selections")
+    @Operation(
+            method = "GET",
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "All plots the user has permission for", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface"
+    )
+    def getPlotSelections() {
+        String userId = userService.currentUserDetails.userId
+        List<ParatooProject> projects = paratooService.userProjects(userId)
+        // Plots can be reused between projects so we need to ensure they are unique
+        List plotSelections = []
+        projects.each {
+            if (it.plots) {
+                plotSelections.addAll(it.plots)
+            }
+        }
+        plotSelections = plotSelections.unique {it.siteId} ?: []
+        respond plots:plotSelections
+    }
+
     private def addOrUpdatePlotSelection() {
         Map data = request.JSON
         if (!data.data || !data.data.plot_label || !data.data.recommended_location) {
@@ -377,7 +405,7 @@ class ParatooController {
             return
         }
         String userId = userService.currentUserDetails.userId
-        Map result = paratooService.plotSelections(userId, data.data)
+        Map result = paratooService.addOrUpdatePlotSelections(userId, data.data)
 
         if (result.error) {
             respond([message: result.error], status: HttpStatus.SC_INTERNAL_SERVER_ERROR)
