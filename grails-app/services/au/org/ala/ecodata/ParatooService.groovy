@@ -4,6 +4,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
+import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
@@ -384,7 +385,7 @@ class ParatooService {
         data?.find { config.matches(it, surveyId) }
     }
 
-    Map plotSelections(String userId, Map plotSelectionData) {
+    Map addOrUpdatePlotSelections(String userId, ParatooPlotSelectionData plotSelectionData) {
 
         List projects = userProjects(userId)
         if (!projects) {
@@ -407,7 +408,7 @@ class ParatooService {
         result
     }
 
-    private static Map mapPlotSelection(Map plotSelectionData) {
+    private static Map mapPlotSelection(ParatooPlotSelectionData plotSelectionData) {
         Map geoJson = ParatooProtocolConfig.plotSelectionToGeoJson(plotSelectionData)
         Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
@@ -431,10 +432,12 @@ class ParatooService {
         List<Site> sites = Site.findAllByExternalIdInList(siteExternalIds)
         sites.each { Site site ->
             site.projects = site.projects ?: []
-            site.projects << project.id
-            site.save()
-            if (site.hasErrors()) {
-                errors << site.errors
+            if (!site.projects.contains(project.id)) {
+                site.projects << project.id
+                site.save()
+                if (site.hasErrors()) {
+                    errors << site.errors
+                }
             }
         }
         [success:!errors, error:errors]

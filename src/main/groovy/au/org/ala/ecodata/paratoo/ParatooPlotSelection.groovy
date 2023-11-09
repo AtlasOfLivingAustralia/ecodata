@@ -12,6 +12,8 @@ class ParatooPlotSelection implements Validateable {
 class ParatooPlotSelectionData {
     String plot_label
     ParatooPlotSelectionLocation recommended_location
+    String uuid
+    String comment
 }
 
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])

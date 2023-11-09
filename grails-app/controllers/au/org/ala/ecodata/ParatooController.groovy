@@ -4,6 +4,7 @@ import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooPlotSelection
+import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooToken
 import groovy.util.logging.Slf4j
@@ -348,7 +349,7 @@ class ParatooController {
     )
     def addPlotSelection(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
             required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
-        addOrUpdatePlotSelection()
+        addOrUpdatePlotSelection(plotSelection)
     }
 
     @PUT
@@ -367,26 +368,54 @@ class ParatooController {
     )
     def updatePlotSelection(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
             required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
-        addOrUpdatePlotSelection()
+        addOrUpdatePlotSelection(plotSelection)
     }
 
-    private def addOrUpdatePlotSelection() {
-        Map data = request.JSON
-        if (!data.data || !data.data.plot_label || !data.data.recommended_location) {
-            error(HttpStatus.SC_BAD_REQUEST, "Bad request")
-            return
-        }
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/plot-selections")
+    @Operation(
+            method = "GET",
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "All plots the user has permission for", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface"
+    )
+    def getPlotSelections() {
         String userId = userService.currentUserDetails.userId
-        Map result = paratooService.plotSelections(userId, data.data)
+        List<ParatooProject> projects = paratooService.userProjects(userId)
+        // Plots can be reused between projects so we need to ensure they are unique
+        List plotSelections = []
+        projects.each {
+            if (it.plots) {
+                plotSelections.addAll(it.plots)
+            }
+        }
+        plotSelections = plotSelections.unique {it.siteId} ?: []
+        respond plots:plotSelections
+    }
+
+    private def addOrUpdatePlotSelection(ParatooPlotSelection plotSelection) {
+
+//        if (!data.data || !data.data.plot_label || !data.data.recommended_location) {
+//            error(HttpStatus.SC_BAD_REQUEST, "Bad request")
+//            return
+//        }
+        String userId = userService.currentUserDetails.userId
+        Map result = paratooService.addOrUpdatePlotSelections(userId, plotSelection.data)
 
         if (result.error) {
             respond([message: result.error], status: HttpStatus.SC_INTERNAL_SERVER_ERROR)
         } else {
-            respond(buildPlotSelectionsResponse(data.data), status: HttpStatus.SC_OK)
+            respond(buildPlotSelectionsResponse(plotSelection.data), status: HttpStatus.SC_OK)
         }
     }
 
-    private static Map buildPlotSelectionsResponse(Map data) {
+    private static Map buildPlotSelectionsResponse(ParatooPlotSelectionData data) {
         [
                 "data": [
                         "id"        : data.uuid,

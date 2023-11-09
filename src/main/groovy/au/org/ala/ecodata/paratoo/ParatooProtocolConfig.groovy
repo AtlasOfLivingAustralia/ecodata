@@ -160,7 +160,8 @@ class ParatooProtocolConfig {
         point.name?.data?.attributes?.symbol == "C" // The plot layout has a centre point that we don't want
     }
 
-    static Map plotSelectionToGeoJson(Map plotSelectionData) {
+    // Accepts a Map or ParatooPlotSelectionData as this is used by two separate calls.
+    static Map plotSelectionToGeoJson(def plotSelectionData) {
         Map geoJson = [:]
         geoJson.type = 'Feature'
         geoJson.geometry = [
