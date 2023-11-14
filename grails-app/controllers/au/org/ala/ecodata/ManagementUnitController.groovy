@@ -1,13 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.reporting.ManagementUnitXlsExporter
-import au.org.ala.ecodata.reporting.XlsExporter
-import org.apache.http.HttpStatus
-
-import java.text.ParseException
-import java.time.Instant
-
-
 @RequireApiKey
 class ManagementUnitController {
 
@@ -98,24 +90,6 @@ class ManagementUnitController {
         respond managementUnitService.managementUnitSiteMap(ids)
     }
 
-
-    /**
-     * startDate and endDate need to be ISO 8601
-     *
-     * Get reports of all management units in a given period
-     */
-    def generateReportsInPeriod(){
-        try{
-            Map message = managementUnitService.generateReportsInPeriods(params.startDate, params.endDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email,params.getBoolean("summaryFlag", false))
-            respond(message, status:200)
-       }catch ( ParseException e){
-            def message = [message: 'Error: You need to provide startDate and endDate in the format of ISO 8601']
-            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
-       }catch(Exception e){
-            def message = [message: 'Fatal: ' + e.message]
-            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
-        }
-    }
     /**
      * Get financial years of managment unit reports cover
      * @return

@@ -17,6 +17,7 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
  */
 @Slf4j
 class ReportService {
+    static final String MU = 'managementUnit', ORG = 'organisation'
 
     ActivityService activityService
     ElasticSearchService elasticSearchService
@@ -26,6 +27,9 @@ class ReportService {
     MetadataService metadataService
     UserService userService
     AuthService authService
+    DownloadService downloadService
+    ManagementUnitService managementUnitService
+    OrganisationService organisationService
 
     def findScoresByLabel(List labels) {
         Score.findAllByLabelInList(labels)
@@ -462,5 +466,64 @@ class ReportService {
     Date[] getPeriodOfManagmentUnitReport(String[] muIds ){
         List<String> activityIds = Report.findAllByManagementUnitIdInList(muIds.toList()).activityId
         Date[] period = activityService.getPeriod(activityIds)
+    }
+
+    /**
+     * Generate report for entity
+     * @param startDate
+     * @param endDate
+     * @param reportDownloadBaseUrl  Base url of downloading generated report
+     * @param senderEmail
+     * @param systemEmail
+     * @param receiverEmail
+     * @param entity managementUnit or organisation
+     * @param hubId
+     * @return
+     */
+    Map generateReportsInPeriods(String startDate, String endDate, String reportDownloadBaseUrl, String senderEmail, String systemEmail, String receiverEmail, boolean isSummary, String entity, String hubId ){
+        List<Map> reports
+        switch (entity) {
+            case ORG:
+                reports =  organisationService.getReportingActivities(startDate, endDate, hubId)
+                break
+            case MU:
+            default:
+                reports =  managementUnitService.getReportingActivities(startDate, endDate)
+                break
+        }
+
+        int countOfReports = reports.sum{it.activities?.count{it.progress!=Activity.PLANNED}}
+
+        Map params = [:]
+        params.fileExtension = "xlsx"
+        params.reportDownloadBaseUrl = reportDownloadBaseUrl
+        params.senderEmail = senderEmail
+        params.systemEmail = systemEmail
+        params.email = receiverEmail
+
+        Closure doDownload = { File file ->
+            XlsExporter exporter = new XlsExporter(file.absolutePath)
+            switch (entity) {
+                case ORG:
+                    OrganisationXlsExporter orgXlsExporter = new OrganisationXlsExporter(exporter, [], [:])
+                    orgXlsExporter.export(reports, isSummary)
+                    break
+                case MU:
+                default:
+                    ManagementUnitXlsExporter muXlsExporter = new ManagementUnitXlsExporter(exporter)
+                    muXlsExporter.export(reports, isSummary)
+                    break
+            }
+            exporter.sizeColumns()
+            exporter.save()
+        }
+        String downloadId = downloadService.generateReports(params, doDownload)
+        Map message =[:]
+        if (countOfReports>0){
+            message = [message:"Your will receive an email notification when report is generated", details:downloadId]
+        }else{
+            message = [message:"Your download will be emailed to you when it is complete. <p> WARNING, the period you requested may not have reports.", details: downloadId]
+        }
+        return message
     }
 }

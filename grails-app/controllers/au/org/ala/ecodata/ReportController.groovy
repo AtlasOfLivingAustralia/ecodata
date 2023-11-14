@@ -1,13 +1,15 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import org.grails.web.json.JSONObject
+import org.apache.http.HttpStatus
 
+import java.text.ParseException
 
 class ReportController {
 
     static responseFormats = ['json', 'xml']
     def reportingService
+    ReportService reportService
 
     def get(String id) {
         respond reportingService.get(id, false)
@@ -88,5 +90,23 @@ class ReportController {
         Map params = request.JSON
 
         render reportingService.aggregateReports(params.searchCriteria, params.reportConfig) as JSON
+    }
+
+    /**
+     * startDate and endDate need to be ISO 8601
+     *
+     * Get reports of all management units in a given period
+     */
+    def generateReportsInPeriod(){
+        try{
+            Map message = reportService.generateReportsInPeriods(params.startDate, params.endDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email,params.getBoolean("summaryFlag", false), params.entity, params.hubId)
+            respond(message, status:200)
+        }catch ( ParseException e){
+            def message = [message: 'Error: You need to provide startDate and endDate in the format of ISO 8601']
+            respond(message, status: HttpStatus.SC_NOT_ACCEPTABLE)
+        }catch(Exception e){
+            def message = [message: 'Fatal: ' + e.message]
+            respond(message, status:HttpStatus.SC_NOT_ACCEPTABLE)
+        }
     }
 }
