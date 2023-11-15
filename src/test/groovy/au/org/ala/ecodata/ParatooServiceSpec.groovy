@@ -186,7 +186,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map data = [plot_selections:['s2']]
 
         when:
-        service.updateProjectSites(project, data)
+        service.updateProjectSites(project, data, [project])
         Site s2 = Site.findBySiteId('s2')
 
         then:
@@ -215,7 +215,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             extent:[source:"drawn", geometry: [type:'Polygon', coordinates:[[[138.6845397949219, -34.96643621094802], [138.66394042968753, -35.003565839769166], [138.59973907470706, -34.955744257334246], [138.6845397949219, -34.96643621094802]]]]]]
 
         when:
-        service.updateProjectSites(project, data)
+        service.updateProjectSites(project, data, [project])
 
         then:
         1 * siteService.create(expectedSite)
@@ -240,7 +240,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projectArea.save(failOnError:true, flush:true)
         Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:['p1'])
         plot.save(failOnError:true, flush:true)
-        siteService.sitesForProject('p1') >> [projectArea, plot]
+        siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])
         program.save(failOnError:true, flush:true)

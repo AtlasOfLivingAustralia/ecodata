@@ -116,7 +116,7 @@ class ParatooService {
         }
 
         List paratooProjects = projects.collect { Project project ->
-            List<Site> sites = siteService.sitesForProject(project.projectId)
+            List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
             AccessLevel accessLevel = projectAccessLevels[project.projectId]
             mapProject(project, accessLevel, sites)
         }
@@ -422,12 +422,12 @@ class ParatooService {
         site
     }
 
-    Map updateProjectSites(ParatooProject project, Map siteData) {
+    Map updateProjectSites(ParatooProject project, Map siteData, List<ParatooProject> userProjects) {
         if (siteData.plot_selections) {
             List siteExternalIds = siteData.plot_selections
             siteExternalIds = siteExternalIds.findAll{it} // Remove null / empty ids
             if (siteExternalIds) {
-                linkProjectToSites(project, siteExternalIds)
+                linkProjectToSites(project, siteExternalIds, userProjects)
             }
 
         }
@@ -437,13 +437,21 @@ class ParatooService {
     }
 
 
-    private Map linkProjectToSites(ParatooProject project, List siteExternalIds) {
+    private Map linkProjectToSites(ParatooProject project, List siteExternalIds, List<ParatooProject> userProjects) {
         List errors = []
 
         List<Site> sites = Site.findAllByTypeAndExternalIdInList(Site.TYPE_SURVEY_AREA, siteExternalIds)
         sites.each { Site site ->
             site.projects = site.projects ?: []
             if (!site.projects.contains(project.id)) {
+                // Validate that the user has permission to link the site to the project by checking
+                // if the user has permission on any other projects this site is linked to.
+                if (site.projects) {
+                    if (!userProjects.collect{it.id}.containsAll(site.projects)) {
+                        errors << "User does not have permission to link site ${site.externalId} to project ${project.id}"
+                        return
+                    }
+                }
                 site.projects << project.id
                 site.save()
                 if (site.hasErrors()) {

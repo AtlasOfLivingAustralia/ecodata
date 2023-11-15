@@ -259,7 +259,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.userProjects(userId) >> projects
-        1 * paratooService.updateProjectSites(projects[0], _) >> [success:true]
+        1 * paratooService.updateProjectSites(projects[0], _, projects) >> [success:true]
 
         and:
         response.status == HttpStatus.SC_OK
