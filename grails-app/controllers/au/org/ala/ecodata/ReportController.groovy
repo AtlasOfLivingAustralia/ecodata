@@ -97,6 +97,7 @@ class ReportController {
      *
      * Get reports of all management units in a given period
      */
+    @RequireApiKey
     def generateReportsInPeriod(){
         try{
             Map message = reportService.generateReportsInPeriods(params.startDate, params.endDate, params.reportDownloadBaseUrl, params.senderEmail, params.systemEmail,params.email,params.getBoolean("summaryFlag", false), params.entity, params.hubId)

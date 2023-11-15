@@ -492,7 +492,7 @@ class ReportService {
                 break
         }
 
-        int countOfReports = reports.sum{it.activities?.count{it.progress!=Activity.PLANNED}}
+        int countOfReports = reports ? reports.sum{it.activities?.count{it.progress!=Activity.PLANNED}} : 0
 
         Map params = [:]
         params.fileExtension = "xlsx"
