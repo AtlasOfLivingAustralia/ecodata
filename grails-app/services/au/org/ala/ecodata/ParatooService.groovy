@@ -298,7 +298,12 @@ class ParatooService {
 
     Map syncProtocolsFromParatoo() {
         String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH
-        Map response = webService.getJson(url, null,  null, false)
+        String accessToken = tokenService.getAuthToken(true)
+        if (!accessToken?.startsWith('Bearer')) {
+            accessToken = 'Bearer '+accessToken
+        }
+        Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
+        Map response = webService.getJson(url, null,  authHeader, false)
         syncParatooProtocols(response?.data)
     }
 
@@ -419,7 +424,12 @@ class ParatooService {
 
     Map updateProjectSites(ParatooProject project, Map siteData) {
         if (siteData.plot_selections) {
-            linkProjectToSites(project, siteData.plot_selections)
+            List siteExternalIds = siteData.plot_selections
+            siteExternalIds = siteExternalIds.findAll{it} // Remove null / empty ids
+            if (siteExternalIds) {
+                linkProjectToSites(project, siteExternalIds)
+            }
+
         }
         if (siteData.project_area_type && siteData.project_area_coordinates) {
             updateProjectArea(project, siteData.project_area_type, siteData.project_area_coordinates)
@@ -429,7 +439,8 @@ class ParatooService {
 
     private Map linkProjectToSites(ParatooProject project, List siteExternalIds) {
         List errors = []
-        List<Site> sites = Site.findAllByExternalIdInList(siteExternalIds)
+
+        List<Site> sites = Site.findAllByTypeAndExternalIdInList(Site.TYPE_SURVEY_AREA, siteExternalIds)
         sites.each { Site site ->
             site.projects = site.projects ?: []
             if (!site.projects.contains(project.id)) {
