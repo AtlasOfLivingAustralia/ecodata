@@ -401,10 +401,6 @@ class ParatooController {
 
     private def addOrUpdatePlotSelection(ParatooPlotSelection plotSelection) {
 
-//        if (!data.data || !data.data.plot_label || !data.data.recommended_location) {
-//            error(HttpStatus.SC_BAD_REQUEST, "Bad request")
-//            return
-//        }
         String userId = userService.currentUserDetails.userId
         Map result = paratooService.addOrUpdatePlotSelections(userId, plotSelection.data)
 

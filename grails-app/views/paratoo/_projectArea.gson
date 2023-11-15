@@ -5,5 +5,5 @@ model {
 
 json {
     type projectArea?.type
-    coordinates projectArea?.coordinates
+    coordinates tmpl.coordinate('coordinates', projectArea?.coordinates?[0])
 }

@@ -23,7 +23,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                     role:"project_admin"
                    ],[
                     id:"p2", name:"Project 2", protocols:[], plot_selections:[],
-                    project_area:[type:"Polygon", coordinates: DUMMY_POLYGON],
+                    project_area:[type:"Polygon", coordinates: DUMMY_POLYGON[0].collect{[lat:it[1], lng:it[0]]}],
                     role:"authenticated"
                   ],[
                      id:"p3", name:"Project 3", protocols:[
