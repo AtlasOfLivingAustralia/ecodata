@@ -426,8 +426,26 @@ class ParatooController {
     }
 
     @PUT
-    @Path("/projects")
-    def updateProjectSites(String id) {
+    @Path("/projects/{id}")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Operation(
+            method = "PUT",
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Updated project", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            requestBody = @RequestBody(
+                    description = "Project sites to update",
+                    required = true,
+                    content = @Content(
+                            mediaType = 'application/json',
+                            schema = @Schema(implementation = Map.class)
+                    )
+            ),
+            tags = "Org Interface"
+    )
+    def updateProjectSites(@Parameter(name = "id", description = "Project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))String id) {
         String userId = userService.currentUserDetails.userId
         List projects = paratooService.userProjects(userId)
         ParatooProject project = projects?.find { it.id == id }
