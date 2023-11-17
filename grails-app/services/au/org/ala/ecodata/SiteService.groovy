@@ -116,6 +116,10 @@ class SiteService {
         Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
     }
 
+    List<Site> sitesForProjectWithTypes(String project, List<String> types) {
+        Site.findAllByProjectsAndTypeInListAndStatusNotEqual(project, types, DELETED)
+    }
+
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
     }
