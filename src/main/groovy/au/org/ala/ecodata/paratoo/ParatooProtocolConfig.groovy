@@ -98,7 +98,7 @@ class ParatooProtocolConfig {
         Map tmpSurveyId = getSurveyId(surveyData)
         tmpSurveyId.surveyType == surveyId.surveyType &&
                 tmpSurveyId.time == surveyId.timeAsISOString() &&
-                tmpSurveyId.randNum == surveyId.randNum
+                tmpSurveyId.uuid == surveyId.uuid
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {

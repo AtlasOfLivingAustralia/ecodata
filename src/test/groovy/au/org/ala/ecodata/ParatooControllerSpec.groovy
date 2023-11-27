@@ -303,7 +303,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
             "surveyId": [
                     surveyType: "Bird",
                     time: "2023-01-01T00:00:00Z",
-                    randNum: 1234,
+                    uuid: "1234",
                     "projectId":"p1",
                     "protocol": [
                             "id": "guid-1",
