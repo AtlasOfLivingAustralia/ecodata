@@ -183,6 +183,7 @@ class UrlMappings {
 
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
+        "/ws/report/generateReportsInPeriod"(controller:"report", action:"generateReportsInPeriod")
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")

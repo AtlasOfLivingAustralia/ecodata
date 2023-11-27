@@ -526,9 +526,6 @@ if (!security.cas.adminRole) {
 if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if (!userDetails.url) {
-    userDetails.url = "https://auth-test.ala.org.au/userdetails/"
-}
 
 if (!authGetKeyUrl) {
     authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
@@ -541,6 +538,10 @@ if (!authCheckKeyUrl) {
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
 paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au/api'
+
+auth.baseUrl = 'https://auth-test.ala.org.au'
+userDetails.web.url = "${auth.baseUrl}/userdetails/"
+userDetails.api.url = "${auth.baseUrl}/userdetails/userDetails/"
 
 if (!grails.cache.ehcache) {
     grails {
