@@ -115,7 +115,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         String projectId = 'p1'
         ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
-        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), randNum:1l)
+        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), uuid:"1l")
         ParatooCollectionId collectionId = new ParatooCollectionId(surveyId:surveyId)
 
         when:
@@ -125,7 +125,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * projectService.update(_, projectId, false) >> {data, pId, updateCollectory ->
             Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
             assert dataSet.surveyId.time == surveyId.timeAsISOString()
-            assert dataSet.surveyId.randNum == surveyId.randNum
+            assert dataSet.surveyId.uuid == surveyId.uuid
             assert dataSet.surveyId.surveyType == surveyId.surveyType
             assert dataSet.protocol == surveyId.protocol.id
             assert dataSet.grantId == "g1"
@@ -145,7 +145,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String projectId = 'p1'
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
         ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
-        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', randNum:1, projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
+        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', uuid:"1", projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
         Map expectedDataSet = dataSet+[progress:Activity.STARTED]
         ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
         when:

@@ -3,7 +3,7 @@
   "attributes": {
     "surveyId": {
       "time": "2023-09-22T01:03:15.556Z",
-      "randNum": 43389075,
+      "uuid": "43389075",
       "protocol": {
         "id": "5005b0af-4360-4a8c-a203-b2c9e440547e",
         "version": 1

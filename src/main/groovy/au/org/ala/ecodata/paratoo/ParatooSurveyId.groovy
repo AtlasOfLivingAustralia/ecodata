@@ -13,7 +13,7 @@ class ParatooSurveyId implements Validateable {
     String surveyType
     @BindingFormat("iso8601")
     Date time // ISO format
-    Long randNum
+    String uuid
 
     String timeAsISOString() {
         DateUtil.formatWithMilliseconds(time) // We preserve the milliseconds here because of Monitor unlike other times ecodata
@@ -27,7 +27,7 @@ class ParatooSurveyId implements Validateable {
         [
                 surveyType: surveyType,
                 time: timeAsISOString(),
-                randNum: randNum,
+                uuid: uuid,
                 projectId: projectId,
                 protocol: [id:protocol.id, version:protocol.version]
         ]
@@ -41,7 +41,7 @@ class ParatooSurveyId implements Validateable {
         new ParatooSurveyId(
                 surveyType: map.surveyType,
                 time: DateUtil.parseWithMilliseconds(map.time),
-                randNum: map.randNum,
+                uuid: map.uuid,
                 projectId: map.projectId,
                 protocol: new ParatooProtocolId(id: map.protocol.id, version: map.protocol.version)
         )
