@@ -25,6 +25,9 @@ class Site {
         sites may have 0..n Activities/Assessments - mapped from the Activity side
     */
 
+    static hasMany = [externalIds:ExternalId]
+    static embedded = ['externalIds']
+
     static mapping = {
         name index: true
         siteId index: true
@@ -32,11 +35,12 @@ class Site {
         version false
     }
 
+    static transients = ['externalId']
     ObjectId id
     String siteId
     String status = 'active'
     String visibility
-    String externalId
+
     List projects = []
     String name
     String type
@@ -130,5 +134,39 @@ class Site {
                 }
             }
         }
+    }
+
+    /**
+     * The MERIT and BioCollect UIs have a site page that allows the user to enter an external Id
+     * for the Site without specifying the type.
+     * Hence we treat this as the "Default" external Id which is either the first unspecified external Id
+     * or the first external Id if there are no unspecified external Ids.
+     * @return
+     */
+    private ExternalId defaultExternalId() {
+        if (!externalIds) {
+            return null
+        }
+        externalIds?.find {it.idType == ExternalId.IdType.UNSPECIFIED}
+        if (!defaultExternalId) {
+            defaultExternalId = externalIds[0]
+        }
+        defaultExternalId
+    }
+
+    String getExternalId() {
+        ExternalId defaultExternalId = defaultExternalId()
+        defaultExternalId?.externalId
+    }
+
+    void setExternalId(String externalId) {
+        ExternalId defaultExternalId = defaultExternalId()
+        if (defaultExternalId) {
+            defaultExternalId.externalId = externalId
+
+        } else {
+            externalIds = [new ExternalId(idType: ExternalId.IdType.UNSPECIFIED, externalId: externalId)]
+        }
+        markDirty('externalIds')
     }
 }

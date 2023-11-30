@@ -212,7 +212,7 @@ class SiteService {
             properties = geoJson.properties
             geometry = geoJson.geometry
         }
-        Map site = [name:properties.name, description:properties.description, externalId:properties.externalId, notes:properties.notes]
+        Map site = [name:properties.name, description:properties.description, notes:properties.notes]
         site.extent = [geometry:geometry, source:source]
 
         if (geometry.type == 'Point') {

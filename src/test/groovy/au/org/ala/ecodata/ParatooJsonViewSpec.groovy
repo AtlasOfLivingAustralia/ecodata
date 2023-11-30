@@ -78,6 +78,6 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     }
 
     private Site buildSite(i) {
-        new Site(siteId:"s$i", externalId:"s$i", name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
+        new Site(siteId:"s$i", externalIds:[[idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"s$i"]], name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
     }
 }

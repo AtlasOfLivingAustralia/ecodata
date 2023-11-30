@@ -418,6 +418,7 @@ class ParatooService {
         Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
+        site.externalIds = [[idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:geoJson.properties.externalId]]
 
         site
     }
