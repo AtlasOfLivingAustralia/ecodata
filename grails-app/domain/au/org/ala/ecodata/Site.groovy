@@ -35,7 +35,7 @@ class Site {
         version false
     }
 
-    static transients = ['externalId']
+    static transients = ['externalId', 'defaultExternalId']
     ObjectId id
     String siteId
     String status = 'active'
@@ -96,6 +96,7 @@ class Site {
                 }
             }
         }
+        externalIds nullable: true
     }
 
     def getAssociations(){
@@ -147,7 +148,7 @@ class Site {
         if (!externalIds) {
             return null
         }
-        externalIds?.find {it.idType == ExternalId.IdType.UNSPECIFIED}
+        ExternalId defaultExternalId = externalIds?.find {it.idType == ExternalId.IdType.UNSPECIFIED}
         if (!defaultExternalId) {
             defaultExternalId = externalIds[0]
         }
