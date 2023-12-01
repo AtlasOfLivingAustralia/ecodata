@@ -233,7 +233,10 @@ class ParatooService {
             siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            Site site = Site.findByTypeAndExternalId(Site.TYPE_SURVEY_AREA, siteProps.externalId)
+            if (geoJson.properties?.externalId) {
+                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: geoJson.properties.externalId)]
+            }
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteProps.externalId)
             Map result
             if (!site) {
                 result = siteService.create(siteProps)
@@ -401,7 +404,7 @@ class ParatooService {
         // The project/s for the site will be specified by a subsequent call to /projects
         siteData.projects = []
 
-        Site site = Site.findByExternalId(siteData.externalId)
+        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteData.externalId)
         Map result
         if (site) {
             result = siteService.update(siteData, site.siteId)
@@ -418,6 +421,7 @@ class ParatooService {
         Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
+        site.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId:geoJson.properties.externalId)]
 
         site
     }
@@ -437,26 +441,32 @@ class ParatooService {
     }
 
 
-    private Map linkProjectToSites(ParatooProject project, List siteExternalIds, List<ParatooProject> userProjects) {
+    private static Map linkProjectToSites(ParatooProject project, List siteExternalIds, List<ParatooProject> userProjects) {
         List errors = []
 
-        List<Site> sites = Site.findAllByTypeAndExternalIdInList(Site.TYPE_SURVEY_AREA, siteExternalIds)
-        sites.each { Site site ->
-            site.projects = site.projects ?: []
-            if (!site.projects.contains(project.id)) {
-                // Validate that the user has permission to link the site to the project by checking
-                // if the user has permission on any other projects this site is linked to.
-                if (site.projects) {
-                    if (!userProjects.collect{it.id}.containsAll(site.projects)) {
-                        errors << "User does not have permission to link site ${site.externalId} to project ${project.id}"
-                        return
+        siteExternalIds.each { String siteExternalId ->
+
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteExternalId)
+            if (site) {
+                site.projects = site.projects ?: []
+                if (!site.projects.contains(project.id)) {
+                    // Validate that the user has permission to link the site to the project by checking
+                    // if the user has permission on any other projects this site is linked to.
+                    if (site.projects) {
+                        if (!userProjects.collect{it.id}.containsAll(site.projects)) {
+                            errors << "User does not have permission to link site ${site.externalId} to project ${project.id}"
+                            return
+                        }
+                    }
+                    site.projects << project.id
+                    site.save()
+                    if (site.hasErrors()) {
+                        errors << site.errors
                     }
                 }
-                site.projects << project.id
-                site.save()
-                if (site.hasErrors()) {
-                    errors << site.errors
-                }
+            }
+            else {
+                errors << "No site exists with externalId = ${siteExternalId}"
             }
         }
         [success:!errors, error:errors]
@@ -484,20 +494,4 @@ class ParatooService {
             siteService.create(site)
         }
     }
-
-    // Protocol = 2 (vegetation mapping survey).
-        // endpoint /api/vegetation-mapping-surveys is useless
-        // (possibly because the protocol is called vegetation-mapping-surveys and there is a module/component inside
-        // called vegetation-mapping-survey and the strapi pluralisation is causing issues?)
-        // Instead if you query: https://dev.core-api.paratoo.tern.org.au/api/vegetation-mapping-observations?populate=deep
-        // You can get multiple observations with different points linked to the same surveyId.
-
-        // Protocol = 7 (drone survey) - No useful spatial data
-
-        // Protocol = 10 & 11 (Photopoints - Compact Panorama & Photopoints - Device Panorama) - same endpoint.
-        // Has plot-layout / plot-visit
-
-        // Protocol = 12 (Floristics - enhanced)
-        // Has plot-layout / plot-visit
-
 }

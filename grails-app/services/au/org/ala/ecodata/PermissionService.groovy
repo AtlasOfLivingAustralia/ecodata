@@ -224,7 +224,7 @@ class PermissionService {
             out.put(it.userId,rec);
 
         }
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userIds ? authService.getUserDetailsById(userIds) : null
 
         if (userList) {
             def users = userList['users']
@@ -343,7 +343,7 @@ class PermissionService {
             out.put(it.userId,toMap(it,false))
         }
 
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userIds ? authService.getUserDetailsById(userIds) : null
         if (userList) {
             def users = userList['users']
 
