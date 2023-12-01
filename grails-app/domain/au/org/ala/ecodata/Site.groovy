@@ -170,4 +170,15 @@ class Site {
         }
         markDirty('externalIds')
     }
+
+
+    static Site findByExternalId(ExternalId.IdType idType, String externalId) {
+        where {
+            externalIds {
+                idType == idType
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
+    }
 }
