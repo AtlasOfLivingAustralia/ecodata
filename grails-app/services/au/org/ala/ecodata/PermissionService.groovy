@@ -229,11 +229,12 @@ class PermissionService {
         if (userList) {
             def users = userList['users']
 
-            users.each { k, v ->
+            users.each { k, u ->
                 Map rec = out.get(k)
                 if (rec) {
-                    rec.displayName = v?.displayName
-                    rec.userName = v?.userName
+                    rec.displayName = u?.displayName
+                    rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+                    rec.email = u?.email
                 }
             }
         }
@@ -275,11 +276,12 @@ class PermissionService {
         if (userList) {
             def users = userList['users']
 
-            users.each { k, v ->
+            users.each { k, u ->
                 Map rec = out.get(k)
                 if (rec) {
-                    rec.displayName = v?.displayName
-                    rec.userName = v?.userName
+                    rec.displayName = u?.displayName
+                    rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+                    rec.email = u?.email
                 }
             }
         }
@@ -295,7 +297,8 @@ class PermissionService {
             rec.role = it.accessLevel?.toString()
             rec.userId = it.userId
             rec.displayName = u?.displayName
-            rec.userName = u?.userName
+            rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+            rec.email = u?.email
             out.add(rec)
         }
         out
@@ -347,11 +350,12 @@ class PermissionService {
         if (userList) {
             def users = userList['users']
 
-            users.each { k, v ->
+            users.each { k, u ->
                 Map rec = out.get(k)
                 if (rec) {
-                    rec.displayName = v?.displayName
-                    rec.userName = v?.userName
+                    rec.displayName = u?.displayName
+                    rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+                    rec.email = u?.email
                 }
             }
         }
@@ -399,7 +403,8 @@ class PermissionService {
         if (includeUserDetails) {
             def u = userService.getUserForUserId(userPermission.userId)
             mapped.displayName = u?.displayName
-            mapped.userName = u?.userName
+            mapped.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+            mapped.email = u?.email
         }
         mapped
     }
