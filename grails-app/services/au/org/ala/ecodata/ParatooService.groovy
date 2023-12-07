@@ -29,7 +29,7 @@ class ParatooService {
     static final String PARATOO_APP_NAME = "Monitor"
     static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List DEFAULT_MODULES =
-            ['Plot Selection and Layout', 'Plot Description']
+            ['Plot Selection and Layout', 'Plot Description', 'Opportune']
 
     GrailsApplication grailsApplication
     SettingService settingService
