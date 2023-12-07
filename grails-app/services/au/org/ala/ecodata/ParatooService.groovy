@@ -29,7 +29,7 @@ class ParatooService {
     static final String PARATOO_APP_NAME = "Monitor"
     static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List DEFAULT_MODULES =
-            ['Plot Selection and Layout', 'Plot Description']
+            ['Plot Selection and Layout', 'Plot Description', 'Opportune']
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -422,6 +422,7 @@ class ParatooService {
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
         site.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId:geoJson.properties.externalId)]
+        site.publicationStatus = PublicationStatus.PUBLISHED // Mark the plot as read only as it is managed by the Monitor app
 
         site
     }
