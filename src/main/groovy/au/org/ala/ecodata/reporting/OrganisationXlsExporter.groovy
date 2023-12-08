@@ -36,7 +36,7 @@ class OrganisationXlsExporter extends TabbedExporter {
     List<String> activityProperties =  ['type','description','progress', 'lastUpdated']
     List<String> commonActivityHeadersSummary =  ["Organisation ID",'Organisation Name','Organisation ABN', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Financial Year', 'Current Report Status', 'Date of status change', 'Changed by']
     List<String> commonActivityHeaders =  commonActivityHeadersSummary + activityHeaders
-    List<String> commonActivityPropertiesSummary = ["organisationId",'organisationName','abn', REPORT_PREFIX+'reportId', REPORT_PREFIX+'reportName', REPORT_PREFIX+'reportDescription', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy']
+    List<String> commonActivityPropertiesSummary = ["organisationId",'organisationName','organisationAbn', REPORT_PREFIX+'reportId', REPORT_PREFIX+'reportName', REPORT_PREFIX+'reportDescription', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy']
     List<String> commonActivityProperties = commonActivityPropertiesSummary +
             activityProperties.collect {
                 ACTIVITY_DATA_PREFIX+it
