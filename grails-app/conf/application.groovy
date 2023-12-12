@@ -692,7 +692,8 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
         security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
 
-        userDetails.url = "${casBaseUrl}/userdetails/"
+        userDetails.web.url = "${casBaseUrl}/userdetails/"
+        userDetails.api.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
         authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
