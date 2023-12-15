@@ -100,6 +100,16 @@ class ParatooProtocolConfig {
         getProperty(data, observationIndividualCountPath)
     }
 
+    /**
+     * todo: this is a temporary hack to get around the fact that the survey doesn't have a field for this and it has to
+     * be interpreted from the protocol
+     * @param data
+     * @return
+     */
+    String getIndividualOrGroup (Map data) {
+        'Individuals'
+    }
+
     String getRecordedBy (Map data) {
         def result = getProperty(data, observationRecordedByPath)
         if (result instanceof List) {

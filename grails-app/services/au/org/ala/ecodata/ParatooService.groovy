@@ -251,7 +251,7 @@ class ParatooService {
                 decimalLatitude: lat,
                 decimalLongitude: lng,
                 individualCount: config.getIndividualCount(observation),
-//                numberOfOrganisms: config.getNumberOfOrganisms(observation),
+                individualsOrGroups: config.getIndividualOrGroup(observation),
                 recordedBy: config.getRecordedBy(observation)
         ]
 
