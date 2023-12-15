@@ -1,10 +1,8 @@
 package au.org.ala.ecodata
 
 import au.org.ala.userdetails.UserDetailsClient
-import au.org.ala.userdetails.UserDetailsFromIdListRequest
 import au.org.ala.web.AuthService
 import grails.core.GrailsApplication
-import grails.plugin.cache.Cacheable
 
 class UserService {
 
@@ -104,6 +102,7 @@ class UserService {
      * @param username
      * @param authKey
      */
+    @Deprecated
     String authorize(userName, authKey) {
         String userId = ""
 
@@ -131,6 +130,7 @@ class UserService {
      * @param username
      * @param password
      */
+    @Deprecated
     def getUserKey(String username, String password) {
         webService.doPostWithParams(grailsApplication.config.getProperty('authGetKeyUrl'), [userName: username, password: password], true)
     }
