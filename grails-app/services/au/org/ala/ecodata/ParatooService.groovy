@@ -30,6 +30,7 @@ class ParatooService {
     static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description', 'Opportune']
+    static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -70,6 +71,9 @@ class ParatooService {
         if (monitoringProtocolCategories) {
             List categoriesWithDefaults = monitoringProtocolCategories + DEFAULT_MODULES
             protocols += findProtocolsByCategories(categoriesWithDefaults.unique())
+            if (!project.isParaooAdmin()) {
+                protocols = protocols.findAll{!(it.name in ADMIN_ONLY_PROTOCOLS)}
+            }
         }
         protocols
     }

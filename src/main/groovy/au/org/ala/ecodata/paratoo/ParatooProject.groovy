@@ -53,4 +53,8 @@ class ParatooProject {
         paratooRole
     }
 
+    boolean isParaooAdmin() {
+        getParatooRole() == ADMIN
+    }
+
 }
