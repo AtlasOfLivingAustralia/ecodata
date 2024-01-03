@@ -352,6 +352,8 @@ class ParatooService {
         dataSet.protocol = collectionId.surveyId.protocol.id
         dataSet.grantId = project.grantId
         dataSet.collectionApp = PARATOO_APP_NAME
+        dataSet.dateCreated = DateUtil.format(new Date())
+        dataSet.lastUpdated = DateUtil.format(new Date())
         dataSet
     }
 
