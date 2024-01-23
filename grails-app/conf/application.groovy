@@ -527,14 +527,6 @@ if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
 
-if (!authGetKeyUrl) {
-    authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
-}
-
-if (!authCheckKeyUrl) {
-    authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
-}
-
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
 paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au/api'
@@ -656,8 +648,6 @@ environments {
         app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://locahost:8018"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
-        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
-        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
 
         wiremock.port = 8018
         security.cas.bypass = true
@@ -695,8 +685,6 @@ environments {
         userDetails.web.url = "${casBaseUrl}/userdetails/"
         userDetails.api.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
-        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
-        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
         security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
 
         grails.mail.host = 'localhost'

@@ -71,6 +71,11 @@ class OrganisationController {
         }
     }
 
+
+    /**
+     * Deprecated since these APIs are not used by mobile apps.
+     */
+    @Deprecated
     @PreAuthorise
     def search() {
 

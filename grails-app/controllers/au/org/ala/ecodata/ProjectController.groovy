@@ -335,6 +335,10 @@ class ProjectController {
         }
     }
 
+    /**
+     * Deprecated since these APIs are not used by mobile apps.
+     */
+    @Deprecated
     @PreAuthorise
     def eSearch() {
         String error = ""
