@@ -117,7 +117,9 @@ class ProjectActivityController {
      * List projectActivities for the given projectId
      *
      * @param id project identifier.
+     * Deprecated since these APIs are not used by mobile apps.
      */
+    @Deprecated
     @PreAuthorise (idType="projectId")
     def list(String id){
         response.setContentType('application/json; charset="UTF-8"')

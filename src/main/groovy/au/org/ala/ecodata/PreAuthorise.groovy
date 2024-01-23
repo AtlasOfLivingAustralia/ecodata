@@ -14,7 +14,7 @@ import java.lang.annotation.Target
 @Documented
 public @interface PreAuthorise {
     String id() default "id"
-    boolean basicAuth() default true      // Check username against authKey?
+    boolean basicAuth() default true      // Check JWT token
     String accessLevel() default "editor" // What is the minimum access level needed to access the method?
     String idType() default ""
 }
