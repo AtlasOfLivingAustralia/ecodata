@@ -31,9 +31,8 @@ import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
 import javax.ws.rs.Path
-
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
-@au.ala.org.ws.security.RequireApiKey
+@au.ala.org.ws.security.RequireApiKey(scopes=["profile", "email", "openid"])
 @Slf4j
 @OpenAPIDefinition(
         info = @Info(
