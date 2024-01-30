@@ -592,7 +592,7 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
-        requiredScopes = ["openid", 'profile', "ala", "roles"]
+        requiredScopes = []
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
     }
