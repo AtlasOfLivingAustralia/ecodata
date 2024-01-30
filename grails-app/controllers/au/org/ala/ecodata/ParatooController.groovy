@@ -25,7 +25,7 @@ import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
-@au.ala.org.ws.security.RequireApiKey(scopes=["profile", "email", "openid"])
+@au.ala.org.ws.security.RequireApiKey(scopes=["profile", "openid"])
 @OpenAPIDefinition(
         info = @Info(
         title = "Ecodata APIs",
