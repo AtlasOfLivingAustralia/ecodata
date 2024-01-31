@@ -46,6 +46,12 @@ class UrlMappings {
             controller = 'activity'
             action = 'activitiesForProject'
         }
+
+        "/ws/activitiesForProjectActivity/$id" {
+            controller = 'activity'
+            action = 'activitiesForProjectActivity'
+        }
+
         "/ws/deleteByProjectActivity/$id" {
             controller = 'activity'
             action = 'deleteByProjectActivity'

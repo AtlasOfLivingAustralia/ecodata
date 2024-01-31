@@ -185,6 +185,24 @@ class ActivityController {
         }
     }
 
+    /**
+     * Returns a detailed list of all activities associated with a project activity
+     *
+     * @param id of the project activity
+     */
+    def activitiesForProjectActivity(String id) {
+        if (id) {
+            def activityList = []
+
+            activityList.addAll activityService.findAllForProjectActivityId(id, "all")
+
+            asJson([list: activityList])
+        } else {
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+    }
+
     def listForUser(String id){
 
         def sort = params.sort ?: "lastUpdated"
