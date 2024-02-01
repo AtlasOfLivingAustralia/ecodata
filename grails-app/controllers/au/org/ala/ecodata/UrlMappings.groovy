@@ -212,7 +212,7 @@ class UrlMappings {
         }
 
         "/ws/graphql" {
-            controller = 'graphql'
+            controller = 'graphqlWs'
         }
 
         "/ws/paratoo/user-projects" {
