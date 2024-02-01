@@ -2,6 +2,7 @@ package au.org.ala.ecodata.graphql.mappers
 
 import au.org.ala.ecodata.Activity
 import au.org.ala.ecodata.Document
+import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.Program
 import au.org.ala.ecodata.Project
@@ -80,15 +81,21 @@ class ProjectGraphQLMapper {
                 }
             }
 
-            add('program', [Program]) {
-                dataFetcher { Program program ->
+            add('program', Program) {
+                dataFetcher { Project project ->
                     Program.findByProgramIdAndStatusNotEqual(project.programId, Status.DELETED)
                 }
             }
 
-            add('organisation', [Organisation]) {
-                dataFetcher { Organisation organisation ->
+            add('organisation', Organisation) {
+                dataFetcher { Project project ->
                     Organisation.findByOrganisationIdAndStatusNotEqual(project.organisationId, Status.DELETED)
+                }
+            }
+
+            add('managementUnit', ManagementUnit) {
+                dataFetcher { Project project ->
+                    ManagementUnit.findByManagementUnitIdAndStatusNotEqual(project.managementUnitId, Status.DELETED)
                 }
             }
 
