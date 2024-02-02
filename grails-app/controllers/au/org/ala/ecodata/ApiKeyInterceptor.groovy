@@ -21,7 +21,7 @@ class ApiKeyInterceptor {
 
     public ApiKeyInterceptor() {
         // These controllers use JWT authorization instead
-        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo').excludes(controller: 'harvest').excludes('graphqlWs')
+        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo').excludes(controller: 'harvest').excludes(controller:'graphqlWs')
     }
 
     boolean before() {
