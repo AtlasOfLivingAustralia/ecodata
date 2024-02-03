@@ -44,11 +44,11 @@ class ProjectGraphQLMapper {
             Map activityModel = [:] //new Helper().getActivityOutputModels()
             String[] duplicateOutputs = [] //activityModel["activities"].outputs.name.flatten().groupBy { it }.findAll { it.value.size() > 1}.keySet()
 
-            List<String> restrictedProperties = []
+            List<String> restrictedProperties = ['name']
             restrictedProperties.each { String prop ->
                 property(prop) {
                     dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
-                        boolean canRead = env.environment.context.acl.canRead(env.source, project)
+                        boolean canRead = env.environment.context.hasPermission(project)
                         if (canRead) {
                             return project[prop]
                         }
@@ -179,10 +179,12 @@ class ProjectGraphQLMapper {
             // get project by ID
             query('project', Project) {
                 argument('projectId', String)
-                dataFetcher(new SingleEntityDataFetcher<Project>(Project.gormPersistentEntity) {
+
+                dataFetcher(new DataFetcher() {
                     @Override
-                    protected DetachedCriteria buildCriteria(DataFetchingEnvironment environment) {
-                        Project.where { projectId == environment.getArgument('projectId') }
+                    Object get(DataFetchingEnvironment environment) throws Exception {
+                        Project project = Project.findByProjectIdAndStatusNotEqual(environment.getArgument('projectId'), Status.DELETED)
+                        (project && environment.source.hasPermission(project)) ? project : null
                     }
                 })
             }
