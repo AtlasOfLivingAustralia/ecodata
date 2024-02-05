@@ -9,7 +9,9 @@ import org.apache.http.HttpStatus
 class GraphqlInterceptor {
 
     GraphqlInterceptor() {
-        match uri: '/ws/graphql/**' // Web services - uses the supplied JWT bearer token to authorize
+        //match uri: '/ws/graphql/**' // Web services - uses the supplied JWT bearer token to authorize.
+        // WS endpoints now use the GraphSQLWsController which decodes the JWT then forwards on.
+
         match uri: '/graphql/**'  // Admin UI - uses the jee session state to authorize
     }
 

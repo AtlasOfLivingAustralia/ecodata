@@ -44,7 +44,7 @@ class EcodataGraphQLContextBuilder implements GraphQLContextBuilder {
             user?.userId
         }
 
-        boolean hasPermission(Map entity) {
+        boolean hasPermission(entity) {
             if (!userId) {
                 return false
             }

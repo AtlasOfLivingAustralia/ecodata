@@ -58,8 +58,8 @@ class PermissionService {
         return isEditor
     }
 
-    def isUserEditorForProject(String userId, String projectId) {
-        def isEditor = false
+    boolean isUserEditorForProject(String userId, String projectId) {
+        boolean isEditor = false
 
         if (userId && projectId) {
             def ups = getUserAccessForEntity(userId, Project, projectId)
@@ -70,10 +70,10 @@ class PermissionService {
             }
         }
 
-        return isEditor // bolean
+        return isEditor
     }
 
-    def isUserEditorForProjects(String userId, String projectIds) {
+    Boolean isUserEditorForProjects(String userId, String projectIds) {
         Boolean userHasPermission = false
 
         if (userId && projectIds) {
@@ -89,8 +89,7 @@ class PermissionService {
             }
         }
 
-        log.debug "userHasPermission = ${userHasPermission}"
-        return userHasPermission // bolean
+        return userHasPermission
     }
 
     Boolean canUserModerateProjects(String userId, String projectIds) {
@@ -109,8 +108,7 @@ class PermissionService {
             }
         }
 
-        log.debug "userHasPermission = ${userHasPermission}"
-        return userHasPermission // bolean
+        return userHasPermission
     }
 
     /**
