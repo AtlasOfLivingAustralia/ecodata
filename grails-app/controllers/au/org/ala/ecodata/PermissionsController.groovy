@@ -1151,7 +1151,9 @@ class PermissionsController {
      * Get user permissions for the given projectId
      *
      * @param id project identifier.
+     * Deprecated since these APIs are not used by mobile apps.
      */
+    @Deprecated
     @PreAuthorise(idType="projectId")
     def getByProject(String id) {
         response.setContentType('application/json; charset="UTF-8"')
@@ -1162,7 +1164,9 @@ class PermissionsController {
      * Get user permissions for the given organisationId
      *
      * @param id organisation identifier.
+     * Deprecated since these APIs are not used by mobile apps.
      */
+    @Deprecated
     @PreAuthorise(idType="organisationId")
     def getByOrganisation(String id) {
         response.setContentType('application/json; charset="UTF-8"')

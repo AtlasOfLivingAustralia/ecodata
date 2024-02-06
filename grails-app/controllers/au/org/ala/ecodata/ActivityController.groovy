@@ -332,6 +332,10 @@ class ActivityController {
         asJson activities:activityList
     }
 
+    /**
+     * Deprecated since these APIs are not used by mobile apps.
+     */
+    @Deprecated
     @PreAuthorise (idType="projectActivityId")
     def list(String id){
 
@@ -343,6 +347,10 @@ class ActivityController {
         render elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
     }
 
+    /**
+     * Deprecated since these APIs are not used by mobile apps.
+     */
+    @Deprecated
     @PreAuthorise(idType = "activityId")
     def getActivity(String id) {
         String error = ''
