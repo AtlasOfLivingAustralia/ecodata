@@ -194,6 +194,19 @@ class ParatooService {
         result
     }
 
+    private static Map mapActivity(Map surveyData, Map activity, ParatooProtocolConfig config) {
+        activity.startDate = config.getStartDate(surveyData)
+        activity.endDate = config.getEndDate(surveyData)
+        activity.type = ''// map activity type from protocol
+
+        Map output = [
+                name: 'Unstructured',
+                data: surveyData
+        ]
+        activity.outputs = [output]
+        activity
+    }
+
     private ParatooProtocolConfig getProtocolConfig(String protocolId) {
         String result = settingService.getSetting(PARATOO_PROTOCOL_DATA_MAPPING_KEY)
         Map protocolDataConfig = JSON.parse(result ?: '{}')
@@ -275,7 +288,16 @@ class ParatooService {
                 log.info message
             }
             else {
-                String message = "Updating form with id: "+id+", name: "+name
+                String message = "Updating form with id: "+id+", guid: "+guid+", name: "+name+", new id: "+id
+                // Paratoo internal protocol ids are not stable so if we match the guid, we may need to update
+                // the id as that is used in other API methods.
+                ExternalId paratooInternalId = form.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}
+                if (paratooInternalId) {
+                    paratooInternalId.externalId = id
+                }
+                else {
+                    result.errors << "Error: Missing internal id for form with id: "+id+", name: "+name
+                }
                 result.messages << message
                 log.info message
             }
