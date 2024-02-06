@@ -288,11 +288,12 @@ class ParatooService {
                 log.info message
             }
             else {
-                String message = "Updating form with id: "+id+", guid: "+guid+", name: "+name+", new id: "+id
+                ExternalId paratooInternalId = form.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}
+
                 // Paratoo internal protocol ids are not stable so if we match the guid, we may need to update
                 // the id as that is used in other API methods.
-                ExternalId paratooInternalId = form.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}
                 if (paratooInternalId) {
+                    String message = "Updating form with id: "+paratooInternalId.externalId+", guid: "+guid+", name: "+name+", new id: "+id
                     paratooInternalId.externalId = id
                 }
                 else {
