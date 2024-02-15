@@ -1,11 +1,13 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import groovy.transform.EqualsAndHashCode
 
 /**
  * Container for geographic information about a project that is not derived from spatial data. (e.g. Sites)
  */
 @EqualsAndHashCode
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class GeographicInfo {
 
     static constraints = {

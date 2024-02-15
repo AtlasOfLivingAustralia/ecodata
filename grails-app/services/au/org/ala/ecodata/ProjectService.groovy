@@ -45,6 +45,7 @@ class ProjectService {
     UserService userService
     ActivityFormService activityFormService
     RecordService recordService
+    LockService lockService
 
   /*  def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -226,6 +227,10 @@ class ProjectService {
 
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
+                Lock lock = lockService.get(project.projectId)
+                if (lock) {
+                    mapOfProperties.lock = lock
+                }
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)

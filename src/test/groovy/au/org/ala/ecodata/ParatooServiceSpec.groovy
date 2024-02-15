@@ -1,20 +1,13 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.paratoo.ParatooCollectionId
-import au.org.ala.ecodata.paratoo.ParatooProject
-import au.org.ala.ecodata.paratoo.ParatooProtocolId
-import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import au.org.ala.ecodata.paratoo.*
 import au.org.ala.ws.tokens.TokenService
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
-import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import spock.lang.Ignore
-import spock.lang.Specification
 
 /**
  * Tests for the ParatooService.
@@ -32,12 +25,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
     def setup() {
-//        mockDomain(Project)
-//        mockDomain(ActivityForm)
-//        mockDomain(Service)
-//        mockDomain(UserPermission)
-//        mockDomain(Program)
-//        mockDomain(Hub)
+
         deleteAll()
         setupData()
 
@@ -127,7 +115,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         String projectId = 'p1'
         ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
-        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), randNum:1l)
+        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), uuid:"1l")
         ParatooCollectionId collectionId = new ParatooCollectionId(surveyId:surveyId)
 
         when:
@@ -137,7 +125,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * projectService.update(_, projectId, false) >> {data, pId, updateCollectory ->
             Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
             assert dataSet.surveyId.time == surveyId.timeAsISOString()
-            assert dataSet.surveyId.randNum == surveyId.randNum
+            assert dataSet.surveyId.uuid == surveyId.uuid
             assert dataSet.surveyId.surveyType == surveyId.surveyType
             assert dataSet.protocol == surveyId.protocol.id
             assert dataSet.grantId == "g1"
@@ -157,7 +145,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String projectId = 'p1'
         ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
         ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
-        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', randNum:1, projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
+        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', uuid:"1", projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
         Map expectedDataSet = dataSet+[progress:Activity.STARTED]
         ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
         when:
@@ -175,20 +163,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can create a site from a submitted plot-selection"() {
         setup:
         Map data = [
-                "plot_name":["state":1,"program":9,"bioregion":3,"unique_digits":"2222"],
                 "plot_label":"CTMAUA2222",
                 "recommended_location":["lat":-35.2592424,"lng":149.0651439],
-                "recommended_location_point":12,
                 "uuid":"lmpisy5p9g896lad4ut",
-                "comment":"Test",
-                "plot_selection_survey":5]
+                "comment":"Test"]
 
-        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', 'externalId':'lmpisy5p9g896lad4ut', 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':['p1'], 'type':'surveyArea']
+        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', publicationStatus:'published', 'externalIds':[new ExternalId(externalId:'lmpisy5p9g896lad4ut', idType:ExternalId.IdType.MONITOR_PLOT_GUID)], 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':[], 'type':'surveyArea']
 
         String userId = 'u1'
 
         when:
-        service.plotSelections(userId, data)
+        service.addOrUpdatePlotSelections(userId, new ParatooPlotSelectionData(data))
 
         then:
         1 * siteService.create(expected)
@@ -200,13 +185,40 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
         Map data = [plot_selections:['s2']]
 
-
         when:
-        service.updateProjectSites(project, data)
+        service.updateProjectSites(project, data, [project])
         Site s2 = Site.findBySiteId('s2')
 
         then:
         s2.projects.indexOf(projectId) >= 0
+    }
+
+    void "The service can create a project area"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
+        Map data = [project_area_type:'polygon', project_area_coordinates: [
+                [
+                    "lat": -34.96643621094802,
+                    "lng": 138.6845397949219
+                ],
+                [
+                    "lat": -35.003565839769166,
+                    "lng": 138.66394042968753
+                ],
+                [
+                    "lat": -34.955744257334246,
+                    "lng": 138.59973907470706
+                ]
+        ]]
+        Map expectedSite = [name:"Monitor project area", type:Site.TYPE_PROJECT_AREA, projects:[projectId],
+            extent:[source:"drawn", geometry: [type:'Polygon', coordinates:[[[138.6845397949219, -34.96643621094802], [138.66394042968753, -35.003565839769166], [138.59973907470706, -34.955744257334246], [138.6845397949219, -34.96643621094802]]]]]]
+
+        when:
+        service.updateProjectSites(project, data, [project])
+
+        then:
+        1 * siteService.create(expectedSite)
     }
 
     private void setupData() {
@@ -228,7 +240,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projectArea.save(failOnError:true, flush:true)
         Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:['p1'])
         plot.save(failOnError:true, flush:true)
-        siteService.sitesForProject('p1') >> [projectArea, plot]
+        siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])
         program.save(failOnError:true, flush:true)

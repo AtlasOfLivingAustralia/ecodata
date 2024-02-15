@@ -70,6 +70,9 @@ class SiteService {
             def map = [:]
             if (levelOfDetail.contains(RAW)) {
                 map = commonService.toBareMap(o)
+                // Treat the default externalId as the externalId property for backwards
+                // compatibility with the MERIT and BioCollect UI
+                map['externalId'] = o.externalId
             } else {
                 map = toMap(o, levelOfDetail)
             }
@@ -116,6 +119,10 @@ class SiteService {
         Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
     }
 
+    List<Site> sitesForProjectWithTypes(String project, List<String> types) {
+        Site.findAllByProjectsAndTypeInListAndStatusNotEqual(project, types, DELETED)
+    }
+
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
     }
@@ -137,7 +144,11 @@ class SiteService {
      */
     def toMap(site, levelOfDetail = [], version = null) {
         def mapOfProperties = site instanceof Site ? GormMongoUtil.extractDboProperties(site.getProperty("dbo")) : site
-       // def mapOfProperties = site instanceof Site ? site.getProperty("dbo") : site
+        // Treat the default externalId as the externalId property for backwards
+        // compatibility with the MERIT and BioCollect UI
+        if (site instanceof Site) {
+            mapOfProperties['externalId'] = site.externalId
+        }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
@@ -208,7 +219,7 @@ class SiteService {
             properties = geoJson.properties
             geometry = geoJson.geometry
         }
-        Map site = [name:properties.name, description:properties.description, externalId:properties.externalId, notes:properties.notes]
+        Map site = [name:properties.name, description:properties.description, notes:properties.notes]
         site.extent = [geometry:geometry, source:source]
 
         if (geometry.type == 'Point') {
@@ -289,8 +300,12 @@ class SiteService {
             }
         }
 
-        //getCommonService().updateProperties(site, props)
+        // The commonService won't update externalId because it's a transient property
+        if (props.externalId) {
+            site.externalId = props.externalId
+        }
         commonService.updateProperties(site, props)
+
     }
 
 

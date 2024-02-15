@@ -138,13 +138,13 @@ public class IniReader {
      */
     public int getIntegerValue(String section, String key) {
         String str = document.get(section + "\\" + key);
-        Integer ret;
+        int ret;
         try {
-            ret = new Integer(str);
+            ret = Integer.parseInt(str);
         } catch (Exception e) {
-            ret = new Integer(0);
+            ret = 0;
         }
-        return ret.intValue();
+        return ret;
     }
 
     /**

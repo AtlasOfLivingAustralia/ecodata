@@ -146,6 +146,23 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         Site.findBySiteId(result.siteId).name == 'Site 1'
     }
 
+    def "An externalId can be supplied and the Site will convert it to the correct format"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', externalId:'e1'])
+            session.flush()
+        }
+        then:
+        def site = Site.findBySiteId(result.siteId)
+        site.name == 'Site 1'
+        site.externalId == 'e1'
+        site.externalIds.size() == 1
+        site.externalIds[0].externalId == 'e1'
+        site.externalIds[0].idType == ExternalId.IdType.UNSPECIFIED
+    }
+
+
     def "A new site should not allow the siteId to be supplied"() {
         when:
         def result

@@ -1,0 +1,9 @@
+
+model {
+    List coordinates
+}
+
+json {
+    lat coordinates[1]
+    lng coordinates[0]
+}

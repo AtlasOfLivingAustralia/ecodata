@@ -3,7 +3,7 @@
   "attributes": {
     "surveyId": {
       "time": "2022-09-21T01:55:45.107Z",
-      "randNum": 28027518,
+      "uuid": "28027518",
       "surveyType": "floristics-veg-survey-lite"
     },
     "start_date_time": "2022-09-21T01:55:44.186Z",

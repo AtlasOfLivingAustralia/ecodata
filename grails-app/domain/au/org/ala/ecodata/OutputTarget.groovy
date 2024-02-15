@@ -1,11 +1,13 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import grails.databinding.BindingFormat
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 /**
  * Stores details of a target a project plans to achieve.
  */
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class OutputTarget {
 
     static graphql = GraphQLMapping.build {

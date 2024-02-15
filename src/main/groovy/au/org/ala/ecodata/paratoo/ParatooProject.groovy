@@ -5,8 +5,10 @@ import au.org.ala.ecodata.ActivityForm
 import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.Service
 import au.org.ala.ecodata.Site
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 /** DTO for a response to the paratoo app */
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProject {
 
     static String EDITOR = 'authenticated'
@@ -49,6 +51,10 @@ class ParatooProject {
                 paratooRole = PUBLIC
         }
         paratooRole
+    }
+
+    boolean isParaooAdmin() {
+        getParatooRole() == ADMIN
     }
 
 }

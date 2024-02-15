@@ -1,6 +1,12 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.paratoo.*
+import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooCollectionId
+import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
+import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
+import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
+import au.org.ala.ecodata.paratoo.ParatooSurveyId
 import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import grails.core.GrailsApplication
@@ -19,7 +25,8 @@ class ParatooService {
     static final String PARATOO_APP_NAME = "Monitor"
     static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List DEFAULT_MODULES =
-            ['Plot Selection and Layout', 'Plot Description']
+            ['Plot Selection and Layout', 'Plot Description', 'Opportune']
+    static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -60,6 +67,9 @@ class ParatooService {
         if (monitoringProtocolCategories) {
             List categoriesWithDefaults = monitoringProtocolCategories + DEFAULT_MODULES
             protocols += findProtocolsByCategories(categoriesWithDefaults.unique())
+            if (!project.isParaooAdmin()) {
+                protocols = protocols.findAll{!(it.name in ADMIN_ONLY_PROTOCOLS)}
+            }
         }
         protocols
     }
@@ -106,7 +116,7 @@ class ParatooService {
         }
 
         List paratooProjects = projects.collect { Project project ->
-            List<Site> sites = siteService.sitesForProject(project.projectId)
+            List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
             AccessLevel accessLevel = projectAccessLevels[project.projectId]
             mapProject(project, accessLevel, sites)
         }
@@ -181,6 +191,19 @@ class ParatooService {
         Map result = projectService.update([custom:project.project.custom], project.id, false)
 
         result
+    }
+
+    private static Map mapActivity(Map surveyData, Map activity, ParatooProtocolConfig config) {
+        activity.startDate = config.getStartDate(surveyData)
+        activity.endDate = config.getEndDate(surveyData)
+        activity.type = ''// map activity type from protocol
+
+        Map output = [
+                name: 'Unstructured',
+                data: surveyData
+        ]
+        activity.outputs = [output]
+        activity
     }
 
     private ParatooProtocolConfig getProtocolConfig(String protocolId) {
@@ -268,7 +291,10 @@ class ParatooService {
             siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            Site site = Site.findByTypeAndExternalId(Site.TYPE_SURVEY_AREA, siteProps.externalId)
+            if (geoJson.properties?.externalId) {
+                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: geoJson.properties.externalId)]
+            }
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteProps.externalId)
             Map result
             if (!site) {
                 result = siteService.create(siteProps)
@@ -303,7 +329,17 @@ class ParatooService {
                 log.info message
             }
             else {
-                String message = "Updating form with id: "+id+", name: "+name
+                ExternalId paratooInternalId = form.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}
+
+                // Paratoo internal protocol ids are not stable so if we match the guid, we may need to update
+                // the id as that is used in other API methods.
+                if (paratooInternalId) {
+                    String message = "Updating form with id: "+paratooInternalId.externalId+", guid: "+guid+", name: "+name+", new id: "+id
+                    paratooInternalId.externalId = id
+                }
+                else {
+                    result.errors << "Error: Missing internal id for form with id: "+id+", name: "+name
+                }
                 result.messages << message
                 log.info message
             }
@@ -333,7 +369,12 @@ class ParatooService {
 
     Map syncProtocolsFromParatoo() {
         String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH
-        Map response = webService.getJson(url, null,  null, false)
+        String accessToken = tokenService.getAuthToken(true)
+        if (!accessToken?.startsWith('Bearer')) {
+            accessToken = 'Bearer '+accessToken
+        }
+        Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
+        Map response = webService.getJson(url, null,  authHeader, false)
         syncParatooProtocols(response?.data)
     }
 
@@ -375,6 +416,8 @@ class ParatooService {
         dataSet.protocol = collectionId.surveyId.protocol.id
         dataSet.grantId = project.grantId
         dataSet.collectionApp = PARATOO_APP_NAME
+        dataSet.dateCreated = DateUtil.format(new Date())
+        dataSet.lastUpdated = DateUtil.format(new Date())
         dataSet
     }
 
@@ -452,11 +495,7 @@ class ParatooService {
         data?.find { config.matches(it, surveyId) }
     }
 
-    private static List findSurveyData(ParatooSurveyId surveyId, Map surveyData, ParatooProtocolConfig config) {
-        surveyData?.data?.findAll { config.matches(it) }
-    }
-
-    Map plotSelections(String userId, Map plotSelectionData) {
+    Map addOrUpdatePlotSelections(String userId, ParatooPlotSelectionData plotSelectionData) {
 
         List projects = userProjects(userId)
         if (!projects) {
@@ -464,11 +503,10 @@ class ParatooService {
         }
 
         Map siteData = mapPlotSelection(plotSelectionData)
-        // The projects should be specified in the data but they aren't in the swagger so for now we'll
-        // assign the site to multiple projects.
-        siteData.projects = projects.collect{it.project.projectId}
+        // The project/s for the site will be specified by a subsequent call to /projects
+        siteData.projects = []
 
-        Site site = Site.findByExternalId(siteData.externalId)
+        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteData.externalId)
         Map result
         if (site) {
             result = siteService.update(siteData, site.siteId)
@@ -480,18 +518,25 @@ class ParatooService {
         result
     }
 
-    private static Map mapPlotSelection(Map plotSelectionData) {
+    private static Map mapPlotSelection(ParatooPlotSelectionData plotSelectionData) {
         Map geoJson = ParatooProtocolConfig.plotSelectionToGeoJson(plotSelectionData)
         Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
         site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
+        site.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId:geoJson.properties.externalId)]
+        site.publicationStatus = PublicationStatus.PUBLISHED // Mark the plot as read only as it is managed by the Monitor app
 
         site
     }
 
-    Map updateProjectSites(ParatooProject project, Map siteData) {
+    Map updateProjectSites(ParatooProject project, Map siteData, List<ParatooProject> userProjects) {
         if (siteData.plot_selections) {
-            linkProjectToSites(project, siteData.plot_selections)
+            List siteExternalIds = siteData.plot_selections
+            siteExternalIds = siteExternalIds.findAll{it} // Remove null / empty ids
+            if (siteExternalIds) {
+                linkProjectToSites(project, siteExternalIds, userProjects)
+            }
+
         }
         if (siteData.project_area_type && siteData.project_area_coordinates) {
             updateProjectArea(project, siteData.project_area_type, siteData.project_area_coordinates)
@@ -499,25 +544,39 @@ class ParatooService {
     }
 
 
-    private Map linkProjectToSites(ParatooProject project, List siteExternalIds) {
+    private static Map linkProjectToSites(ParatooProject project, List siteExternalIds, List<ParatooProject> userProjects) {
         List errors = []
-        List<Site> sites = Site.findAllByExternalIdInList(siteExternalIds)
-        sites.each { Site site ->
-            site.projects = site.projects ?: []
-            site.projects << project.id
-            site.save()
-            if (site.hasErrors()) {
-                errors << site.errors
+
+        siteExternalIds.each { String siteExternalId ->
+
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteExternalId)
+            if (site) {
+                site.projects = site.projects ?: []
+                if (!site.projects.contains(project.id)) {
+                    // Validate that the user has permission to link the site to the project by checking
+                    // if the user has permission on any other projects this site is linked to.
+                    if (site.projects) {
+                        if (!userProjects.collect{it.id}.containsAll(site.projects)) {
+                            errors << "User does not have permission to link site ${site.externalId} to project ${project.id}"
+                            return
+                        }
+                    }
+                    site.projects << project.id
+                    site.save()
+                    if (site.hasErrors()) {
+                        errors << site.errors
+                    }
+                }
+            }
+            else {
+                errors << "No site exists with externalId = ${siteExternalId}"
             }
         }
         [success:!errors, error:errors]
     }
 
     private Map updateProjectArea(ParatooProject project, String type, List coordinates) {
-        Map geometry = [
-                type:type,
-                coordinates: coordinates.collect{[it.lng, it.lat]}
-        ]
+        Map geometry = ParatooProtocolConfig.toGeometry(coordinates)
         Site projectArea = project.projectAreaSite
         if (projectArea) {
             projectArea.extent.geometry.type = geometry.type
@@ -538,20 +597,4 @@ class ParatooService {
             siteService.create(site)
         }
     }
-
-    // Protocol = 2 (vegetation mapping survey).
-        // endpoint /api/vegetation-mapping-surveys is useless
-        // (possibly because the protocol is called vegetation-mapping-surveys and there is a module/component inside
-        // called vegetation-mapping-survey and the strapi pluralisation is causing issues?)
-        // Instead if you query: https://dev.core-api.paratoo.tern.org.au/api/vegetation-mapping-observations?populate=deep
-        // You can get multiple observations with different points linked to the same surveyId.
-
-        // Protocol = 7 (drone survey) - No useful spatial data
-
-        // Protocol = 10 & 11 (Photopoints - Compact Panorama & Photopoints - Device Panorama) - same endpoint.
-        // Has plot-layout / plot-visit
-
-        // Protocol = 12 (Floristics - enhanced)
-        // Has plot-layout / plot-visit
-
 }

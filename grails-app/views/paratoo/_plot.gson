@@ -6,5 +6,5 @@ model {
 
 json {
     uuid plot.externalId
-    plot_name plot.name
+    name plot.name
 }

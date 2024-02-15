@@ -3,12 +3,11 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 
 import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
-
 /**
  * Exposes web services to perform CRUD operations on an organisation.
  */
 class OrganisationController {
-
+    static responseFormats = ['json', 'xml']
     OrganisationService organisationService
     ElasticSearchService elasticSearchService
 
@@ -72,6 +71,11 @@ class OrganisationController {
         }
     }
 
+
+    /**
+     * Deprecated since these APIs are not used by mobile apps.
+     */
+    @Deprecated
     @PreAuthorise
     def search() {
 
@@ -95,7 +99,6 @@ class OrganisationController {
             render status: 400, text: error
         }
     }
-
 
     private Map buildParams(Map params) {
 

@@ -526,21 +526,14 @@ if (!security.cas.adminRole) {
 if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if (!userDetails.url) {
-    userDetails.url = "https://auth-test.ala.org.au/userdetails/"
-}
-
-if (!authGetKeyUrl) {
-    authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
-}
-
-if (!authCheckKeyUrl) {
-    authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
-}
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
-paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au/api'
+paratoo.core.baseUrl = 'https://dev.core-api.monitor.tern.org.au/api'
+
+auth.baseUrl = 'https://auth-test.ala.org.au'
+userDetails.web.url = "${auth.baseUrl}/userdetails/"
+userDetails.api.url = "${auth.baseUrl}/userdetails/userDetails/"
 
 if (!grails.cache.ehcache) {
     grails {
@@ -599,7 +592,7 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
-        requiredScopes = ["openid", 'profile', "ala", "roles"]
+        requiredScopes = []
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
     }
@@ -655,8 +648,6 @@ environments {
         app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://locahost:8018"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
-        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
-        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
 
         wiremock.port = 8018
         security.cas.bypass = true
@@ -691,10 +682,9 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
         security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
 
-        userDetails.url = "${casBaseUrl}/userdetails/"
+        userDetails.web.url = "${casBaseUrl}/userdetails/"
+        userDetails.api.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
-        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
-        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
         security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
 
         grails.mail.host = 'localhost'

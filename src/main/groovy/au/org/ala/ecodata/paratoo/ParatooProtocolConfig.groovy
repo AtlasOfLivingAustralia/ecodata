@@ -3,6 +3,7 @@ package au.org.ala.ecodata.paratoo
 import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import groovy.util.logging.Slf4j
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 import java.util.regex.Matcher
 
@@ -10,6 +11,7 @@ import java.util.regex.Matcher
  * Configuration about how to work with a Paratoo/Monitor protocol
  */
 @Slf4j
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProtocolConfig {
 
     String apiEndpoint
@@ -183,7 +185,7 @@ class ParatooProtocolConfig {
     static boolean surveyEqualityTest(Map tmpSurveyId, ParatooSurveyId surveyId) {
         tmpSurveyId.surveyType == surveyId.surveyType &&
                 tmpSurveyId.time == surveyId.timeAsISOString() &&
-                tmpSurveyId.randNum == surveyId.randNum
+                tmpSurveyId.uuid == surveyId.uuid
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
@@ -222,7 +224,7 @@ class ParatooProtocolConfig {
         plotGeoJson
     }
 
-    private static Map toGeometry(List points) {
+    static Map toGeometry(List points) {
         List coords = points?.findAll { !exclude(it) }.collect {
             [it.lng, it.lat]
         }
@@ -245,7 +247,8 @@ class ParatooProtocolConfig {
         point.name?.data?.attributes?.symbol == "C" // The plot layout has a centre point that we don't want
     }
 
-    static Map plotSelectionToGeoJson(Map plotSelectionData) {
+    // Accepts a Map or ParatooPlotSelectionData as this is used by two separate calls.
+    static Map plotSelectionToGeoJson(def plotSelectionData) {
         Map geoJson = [:]
         geoJson.type = 'Feature'
         geoJson.geometry = [

@@ -16,6 +16,8 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         formattedStringConverter(ISODateBindingConverter)
     }}
 
+    static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
+
     def setup() {
         controller.userService = userService
         controller.paratooService = paratooService
@@ -243,11 +245,57 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     }
 
+    void "The /projects call delegates to the paratooService"() {
+        setup:
+        String userId = 'u1'
+        String projectId = 'projectId'
+        List<ParatooProject> projects = stubUserProjects()
 
+        when:
+        request.method = "PUT"
+        params.id = projectId
+        Map result = controller.updateProjectSites()
+
+        then:
+        1 * userService.currentUserDetails >> [userId:userId]
+        1 * paratooService.userProjects(userId) >> projects
+        1 * paratooService.updateProjectSites(projects[0], _, projects) >> [success:true]
+
+        and:
+        response.status == HttpStatus.SC_OK
+
+    }
+
+    void "The getPlotSelections call returns all user plots, ignoring duplicates"() {
+        String userId = 'u1'
+        List<ParatooProject> projects = stubUserProjects()
+        for (int i=0; i<projects.size(); i++) {
+            for (int j=0; j<3; j++) {
+                projects[i].plots << stubPlot("s${j+1}", projects[i].id)
+            }
+        }
+        // Add a duplicate site
+        projects[0].plots << stubPlot("s1", projects[0].id)
+
+        when:
+        controller.getPlotSelections()
+
+        then:
+        1 * userService.currentUserDetails >> [userId:userId]
+        1 * paratooService.userProjects(userId) >> projects
+
+        and:
+        model.plots.size() == 3
+        response.status == HttpStatus.SC_OK
+    }
 
     private List<ParatooProject> stubUserProjects() {
-        ParatooProject project = new ParatooProject(id:'projectId')
+        ParatooProject project = new ParatooProject(id:'projectId', plots:[])
         [project]
+    }
+
+    private Site stubPlot(String siteId, String projectId) {
+        new Site(siteId:siteId, name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:[projectId])
     }
 
     private Map buildCollectionIdJson() {
@@ -255,7 +303,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
             "surveyId": [
                     surveyType: "Bird",
                     time: "2023-01-01T00:00:00Z",
-                    randNum: 1234,
+                    uuid: "1234",
                     "projectId":"p1",
                     "protocol": [
                             "id": "guid-1",

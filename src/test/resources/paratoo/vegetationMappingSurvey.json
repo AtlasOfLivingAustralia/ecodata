@@ -122,7 +122,7 @@
           "start_date_time": "2023-09-08T23:39:00.520Z",
           "surveyId": {
             "time": "2023-09-09T00:51:34.001Z",
-            "randNum": 39297148,
+            "uuid": "39297148",
             "protocol": {
               "id": "cd2cbbc7-2f17-4b0f-91b4-06f46e9c90f2",
               "version": 1

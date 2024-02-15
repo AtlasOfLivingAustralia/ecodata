@@ -21,7 +21,7 @@ class ApiKeyInterceptor {
 
     public ApiKeyInterceptor() {
         // These controllers use JWT authorization instead
-        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo').excludes(controller: 'harvest')
+        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo').excludes(controller: 'harvest').excludes(controller:'graphqlWs')
     }
 
     boolean before() {
@@ -41,7 +41,8 @@ class ApiKeyInterceptor {
             PreAuthorise pa = method.getAnnotation(PreAuthorise) ?: controllerClass.getAnnotation(PreAuthorise)
 
             if (pa.basicAuth()) {
-                request.userId = userService.authorize(request.getHeader('userName'), request.getHeader('authKey'))
+                au.org.ala.web.UserDetails user = userService.getUserFromJWT()
+                request.userId = user?.userId
                 if(permissionService.isUserAlaAdmin(request.userId)) {
                     /* Don't enforce check for ALA admin.*/
                 }
