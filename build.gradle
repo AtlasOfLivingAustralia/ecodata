@@ -17,6 +17,7 @@ buildscript {
 plugins {
     id "com.github.node-gradle.node" version "3.4.0"
     id 'jacoco'
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
 version "4.4-SNAPSHOT"
