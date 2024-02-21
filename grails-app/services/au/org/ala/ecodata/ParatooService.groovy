@@ -298,12 +298,15 @@ class ParatooService {
                 if (paratooInternalId) {
                     String message = "Updating form with id: "+paratooInternalId.externalId+", guid: "+guid+", name: "+name+", new id: "+id
                     paratooInternalId.externalId = id
+                    result.messages << message
+                    log.info message
                 }
                 else {
-                    result.errors << "Error: Missing internal id for form with id: "+id+", name: "+name
+                    String error = "Error: Missing internal id for form with id: "+id+", name: "+name
+                    result.errors << error
+                    log.error error
                 }
-                result.messages << message
-                log.info message
+
             }
 
             mapProtocolToActivityForm(protocol, form)
