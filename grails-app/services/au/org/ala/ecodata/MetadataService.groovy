@@ -22,6 +22,9 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class MetadataService {
 
+    static final String BUILD_VERSION_PROPERTY = "git.build.version"
+    private static final String GIT_PROPERTIES_FILE = "git.properties"
+
     // The spatial portal returns n/a when the point does not intersect a layer.
     private static final String SPATIAL_PORTAL_NO_MATCH_VALUE = 'n/a'
 
@@ -1182,7 +1185,11 @@ class MetadataService {
 
     /** Returns a value from the gradle git plugin generated git.properties */
     String getGitProperty(String propertyName) {
-        getFromPropertyFile("git.properties", propertyName)
+        getFromPropertyFile(GIT_PROPERTIES_FILE, propertyName)
+    }
+
+    String getVersion() {
+       getGitProperty(BUILD_VERSION_PROPERTY)
     }
 
     /** Returns a value from the gradle/spring boot generated build-info.properties */

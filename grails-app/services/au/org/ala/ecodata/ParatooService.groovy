@@ -39,6 +39,7 @@ class ParatooService {
     SiteService siteService
     PermissionService permissionService
     TokenService tokenService
+    MetadataService metadataService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -147,7 +148,9 @@ class ParatooService {
                 surveyId: paratooCollectionId.surveyId,
                 eventTime: new Date(),
                 userId: userId,
-                projectId: projectId
+                projectId: projectId,
+                system: "MERIT",
+                version: metadataService.getBuildProperty(metadataService.getVersion())
         )
         dataSet.orgMintedIdentifier = orgMintedIdentifier.encodeAsMintedCollectionId()
         project.custom.dataSets << dataSet
