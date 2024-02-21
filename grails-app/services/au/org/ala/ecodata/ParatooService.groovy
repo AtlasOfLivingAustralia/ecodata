@@ -276,9 +276,11 @@ class ParatooService {
     private Map syncParatooProtocols(List<Map> protocols) {
 
         Map result = [errors:[], messages:[]]
+        List guids = []
         protocols.each { Map protocol ->
             String id = protocol.id
             String guid = protocol.attributes.identifier
+            guids << guid
             String name = protocol.attributes.name
             ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
@@ -317,6 +319,18 @@ class ParatooService {
                 result.errors << form.errors
                 log.warn "Error saving form with id: "+id+", name: "+name
             }
+        }
+
+        List allProtocolForms = ActivityForm.findAll {
+            externalIds {
+                idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID
+            }
+            status != Status.DELETED
+        }
+
+        List deletions = allProtocolForms.findAll{it.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID && !(it.externalId in guids)}}
+        deletions.each { ActivityForm activityForm ->
+            result.messages << "Form ${activityForm.name} with guid: ${activityForm.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID}.externalId} has been deleted"
         }
         result
 
