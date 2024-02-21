@@ -28,8 +28,10 @@ class ParatooMintedIdentifier {
                 projectId: projectId,
                 protocolId: surveyId.protocol.id,
                 protocolVersion: surveyId.protocol.version,
-                system: system,
-                version: version
+                org_provenance: [
+                        system: system,
+                        version: version
+                ]
         ]
         String jsonString = (data as JSON).toString()
         jsonString.encodeAsBase64()

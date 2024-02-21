@@ -150,9 +150,10 @@ class ParatooService {
                 userId: userId,
                 projectId: projectId,
                 system: "MERIT",
-                version: metadataService.getBuildProperty(metadataService.getVersion())
+                version: metadataService.getVersion()
         )
         dataSet.orgMintedIdentifier = orgMintedIdentifier.encodeAsMintedCollectionId()
+        log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
         project.custom.dataSets << dataSet
         Map result = projectService.update([custom:project.custom], projectId, false)
 

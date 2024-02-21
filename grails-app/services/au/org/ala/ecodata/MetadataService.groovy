@@ -1189,7 +1189,7 @@ class MetadataService {
     }
 
     String getVersion() {
-       getGitProperty(BUILD_VERSION_PROPERTY)
+        getGitProperty(BUILD_VERSION_PROPERTY)
     }
 
     /** Returns a value from the gradle/spring boot generated build-info.properties */
