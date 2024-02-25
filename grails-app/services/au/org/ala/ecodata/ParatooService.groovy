@@ -39,6 +39,7 @@ class ParatooService {
     SiteService siteService
     PermissionService permissionService
     TokenService tokenService
+    MetadataService metadataService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -147,9 +148,12 @@ class ParatooService {
                 surveyId: paratooCollectionId.surveyId,
                 eventTime: new Date(),
                 userId: userId,
-                projectId: projectId
+                projectId: projectId,
+                system: "MERIT",
+                version: metadataService.getVersion()
         )
         dataSet.orgMintedIdentifier = orgMintedIdentifier.encodeAsMintedCollectionId()
+        log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
         project.custom.dataSets << dataSet
         Map result = projectService.update([custom:project.custom], projectId, false)
 
@@ -272,9 +276,11 @@ class ParatooService {
     private Map syncParatooProtocols(List<Map> protocols) {
 
         Map result = [errors:[], messages:[]]
+        List guids = []
         protocols.each { Map protocol ->
             String id = protocol.id
             String guid = protocol.attributes.identifier
+            guids << guid
             String name = protocol.attributes.name
             ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
@@ -295,12 +301,15 @@ class ParatooService {
                 if (paratooInternalId) {
                     String message = "Updating form with id: "+paratooInternalId.externalId+", guid: "+guid+", name: "+name+", new id: "+id
                     paratooInternalId.externalId = id
+                    result.messages << message
+                    log.info message
                 }
                 else {
-                    result.errors << "Error: Missing internal id for form with id: "+id+", name: "+name
+                    String error = "Error: Missing internal id for form with id: "+id+", name: "+name
+                    result.errors << error
+                    log.error error
                 }
-                result.messages << message
-                log.info message
+
             }
 
             mapProtocolToActivityForm(protocol, form)
@@ -310,6 +319,18 @@ class ParatooService {
                 result.errors << form.errors
                 log.warn "Error saving form with id: "+id+", name: "+name
             }
+        }
+
+        List allProtocolForms = ActivityForm.findAll {
+            externalIds {
+                idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID
+            }
+            status != Status.DELETED
+        }
+
+        List deletions = allProtocolForms.findAll{it.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID && !(it.externalId in guids)}}
+        deletions.each { ActivityForm activityForm ->
+            result.messages << "Form ${activityForm.name} with guid: ${activityForm.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID}.externalId} has been deleted"
         }
         result
 

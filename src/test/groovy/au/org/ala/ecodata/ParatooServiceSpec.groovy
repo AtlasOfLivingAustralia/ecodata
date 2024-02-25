@@ -21,6 +21,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     WebService webService = Mock(WebService)
     TokenService tokenService = Mock(TokenService)
     SettingService settingService = Mock(SettingService)
+    MetadataService metadataService = Mock(MetadataService)
 
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
@@ -35,6 +36,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         service.permissionService = new PermissionService() // Using the real permission service for this test
         service.tokenService = tokenService
         service.settingService = settingService
+        service.metadataService = metadataService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
