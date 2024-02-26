@@ -198,6 +198,8 @@ class ParatooService {
         result
     }
 
+
+
     private static Map mapActivity(Map surveyData, Map activity, ParatooProtocolConfig config) {
         activity.startDate = config.getStartDate(surveyData)
         activity.endDate = config.getEndDate(surveyData)
@@ -282,6 +284,7 @@ class ParatooService {
             String guid = protocol.attributes.identifier
             guids << guid
             String name = protocol.attributes.name
+            ParatooProtocolConfig protocolConfig = getProtocolConfig(id)
             ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
                 form = new ActivityForm()
@@ -312,7 +315,8 @@ class ParatooService {
 
             }
 
-            mapProtocolToActivityForm(protocol, form)
+            List tags = protocolConfig?.tags ?: [ActivityForm.SURVEY_TAG]
+            mapProtocolToActivityForm(protocol, form, tags)
             form.save()
 
             if (form.hasErrors()) {
@@ -358,7 +362,7 @@ class ParatooService {
         syncParatooProtocols(response?.data)
     }
 
-    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form) {
+    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form, List tags) {
         form.name = protocol.attributes.name
         form.formVersion = protocol.attributes.version
         form.type = PARATOO_PROTOCOL_FORM_TYPE
@@ -366,6 +370,7 @@ class ParatooService {
         form.external = true
         form.publicationStatus = PublicationStatus.PUBLISHED
         form.description = protocol.attributes.description
+        form.tags = tags
     }
 
     private ParatooProject mapProject(Project project, AccessLevel accessLevel, List<Site> sites) {
