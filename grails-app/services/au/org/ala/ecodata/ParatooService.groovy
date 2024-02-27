@@ -200,7 +200,7 @@ class ParatooService {
 
 
 
-    private static Map mapActivity(Map surveyData, Map activity, ParatooProtocolConfig config) {
+    private static Map mapActivity(String mintedCollectionId, Map surveyData, Map activity, ParatooProtocolConfig config) {
         activity.startDate = config.getStartDate(surveyData)
         activity.endDate = config.getEndDate(surveyData)
         activity.type = ''// map activity type from protocol
@@ -210,7 +210,7 @@ class ParatooService {
                 data: surveyData
         ]
         activity.outputs = [output]
-        activity
+        activity.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: mintedCollectionId)]
     }
 
     private ParatooProtocolConfig getProtocolConfig(String protocolId) {
@@ -371,6 +371,7 @@ class ParatooService {
         form.publicationStatus = PublicationStatus.PUBLISHED
         form.description = protocol.attributes.description
         form.tags = tags
+        form.externalIds
     }
 
     private ParatooProject mapProject(Project project, AccessLevel accessLevel, List<Site> sites) {
