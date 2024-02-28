@@ -191,7 +191,7 @@ class ParatooService {
             dataSet.startDate = config.getStartDate(surveyData)
             dataSet.endDate = config.getEndDate(surveyData)
 
-            createActivityFromSurveyData(surveyId, collection.orgMintedIdentifier, surveyData, config)
+            createActivityFromSurveyData(surveyId, collection.orgMintedIdentifier, surveyData, config, project)
         }
         else {
             log.warn("Unable to retrieve survey data for: "+collection.orgMintedIdentifier)
@@ -202,20 +202,21 @@ class ParatooService {
         result
     }
 
-    private void createActivityFromSurveyData(ParatooSurveyId paratooSurveyId, String mintedCollectionId, Map surveyData, ParatooProtocolConfig config) {
+    private void createActivityFromSurveyData(ParatooSurveyId paratooSurveyId, String mintedCollectionId, Map surveyData, ParatooProtocolConfig config, ParatooProject project) {
         ActivityForm form = ActivityForm.findByExternalId(paratooSurveyId.protocol.id)
         if (!form) {
             log.error("No activity form found for protocol: "+paratooSurveyId.protocol.id)
         }
         else {
-            Map activity = mapActivity(mintedCollectionId, paratooSurveyId, surveyData, form, config)
+            Map activity = mapActivity(mintedCollectionId, paratooSurveyId, surveyData, form, config, project)
             activityService.create(activity)
         }
 
     }
 
-    private static Map mapActivity(String mintedCollectionId, ParatooSurveyId surveyId, Map surveyData, ActivityForm activityForm, ParatooProtocolConfig config) {
+    private static Map mapActivity(String mintedCollectionId, ParatooSurveyId surveyId, Map surveyData, ActivityForm activityForm, ParatooProtocolConfig config, ParatooProject project) {
         Map activity = [:]
+        activity.projectId = project.id
         activity.startDate = config.getStartDate(surveyData)
         activity.endDate = config.getEndDate(surveyData)
         activity.type = activityForm.name
@@ -274,10 +275,11 @@ class ParatooService {
             siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            if (geoJson.properties?.externalId) {
-                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: geoJson.properties.externalId)]
+            String externalId = geoJson.properties?.externalId
+            if (externalId) {
+                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
             }
-            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteProps.externalId)
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
             Map result
             if (!site) {
                 result = siteService.create(siteProps)
