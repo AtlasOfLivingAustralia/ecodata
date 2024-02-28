@@ -5,10 +5,10 @@
       "time": "2023-09-22T01:03:15.556Z",
       "uuid": "43389075",
       "protocol": {
-        "id": "5005b0af-4360-4a8c-a203-b2c9e440547e",
+        "id": "1",
         "version": 1
       },
-      "projectId": "49472be4-cd7d-4e55-ae96-c91e8f152a34",
+      "projectId": "p1",
       "surveyType": "basal-area-dbh-measure-survey"
     },
     "start_date": "2023-09-22T00:59:47.807Z",
@@ -199,7 +199,7 @@
                     }
                   }
                 },
-                "plot_dimension": {
+                "plot_dimensions": {
                   "data": {
                     "id": 1,
                     "attributes": {

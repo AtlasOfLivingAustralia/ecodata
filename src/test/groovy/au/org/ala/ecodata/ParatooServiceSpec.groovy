@@ -6,6 +6,7 @@ import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import groovy.json.JsonSlurper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 
@@ -40,6 +41,11 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
+    }
+
+    private Map readSurveyData(String name) {
+        URL url = getClass().getResource("/paratoo/${name}.json")
+        new JsonSlurper().parse(url)
     }
 
     private void deleteAll() {
@@ -221,6 +227,38 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         1 * siteService.create(expectedSite)
+    }
+
+    void "The service can create a site from a submitted collection"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProtocolId protocol = new ParatooProtocolId(id:"1", version: 1)
+        ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
+        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'basal-area-dbh-measure-survey', uuid:"43389075", projectId:projectId, protocol: protocol, time:'2023-09-22T01:03:15.556Z']]
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
+        Map surveyData = readSurveyData('basalAreaDbh')
+        Map site
+
+        when:
+        Map result = service.submitCollection(collection, project)
+
+        then:
+        1 * webService.getJson({it.indexOf('/basal-area-dbh-measure-survey') >= 0}, null, _, false) >> [data:[surveyData], meta:[pagination:[total:0]]]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        1 * projectService.update(_, projectId, false) >> [status:'ok']
+        1 * siteService.create(_) >> {site = it[0]; [siteId:'s1']}
+
+        and:
+        site.name == "SATFLB0001 - Control (100 x 100)"
+        site.description == "SATFLB0001 - Control (100 x 100)"
+        site.notes == "some comment"
+        site.type == "surveyArea"
+        site.publicationStatus == "published"
+        site.externalIds[0].externalId == "4"
+        site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
+
+        result == [status:'ok']
+
     }
 
     private void setupData() {

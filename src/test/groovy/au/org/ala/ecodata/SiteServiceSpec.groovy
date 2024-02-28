@@ -272,6 +272,22 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         result.name == "Site 1"
     }
 
+    def "Sites can be found by externalId (including type)"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', siteId:"s1", externalIds:[new ExternalId(externalId:'e1', idType:ExternalId.IdType.MONITOR_PLOT_GUID)]])
+            session.flush()
+        }
+        then:
+        def site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1')
+        site.name == 'Site 1'
+        site.externalIds.size() == 1
+        site.externalIds[0].externalId == 'e1'
+        site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
+
+    }
+
 
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]

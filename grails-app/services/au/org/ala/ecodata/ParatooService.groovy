@@ -7,6 +7,7 @@ import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
 import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
+import au.org.ala.ecodata.paratoo.ParatooProtocolId
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
 import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
@@ -40,6 +41,7 @@ class ParatooService {
     PermissionService permissionService
     TokenService tokenService
     MetadataService metadataService
+    ActivityService activityService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -188,6 +190,8 @@ class ParatooService {
             dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project, config)
             dataSet.startDate = config.getStartDate(surveyData)
             dataSet.endDate = config.getEndDate(surveyData)
+
+            createActivityFromSurveyData(surveyId, collection.orgMintedIdentifier, surveyData, config)
         }
         else {
             log.warn("Unable to retrieve survey data for: "+collection.orgMintedIdentifier)
@@ -198,12 +202,24 @@ class ParatooService {
         result
     }
 
+    private void createActivityFromSurveyData(ParatooSurveyId paratooSurveyId, String mintedCollectionId, Map surveyData, ParatooProtocolConfig config) {
+        ActivityForm form = ActivityForm.findByExternalId(paratooSurveyId.protocol.id)
+        if (!form) {
+            log.error("No activity form found for protocol: "+paratooSurveyId.protocol.id)
+        }
+        else {
+            Map activity = mapActivity(mintedCollectionId, paratooSurveyId, surveyData, form, config)
+            activityService.create(activity)
+        }
 
+    }
 
-    private static Map mapActivity(String mintedCollectionId, Map surveyData, Map activity, ParatooProtocolConfig config) {
+    private static Map mapActivity(String mintedCollectionId, ParatooSurveyId surveyId, Map surveyData, ActivityForm activityForm, ParatooProtocolConfig config) {
+        Map activity = [:]
         activity.startDate = config.getStartDate(surveyData)
         activity.endDate = config.getEndDate(surveyData)
-        activity.type = ''// map activity type from protocol
+        activity.type = activityForm.name
+        activity.description =  activityForm.name + " - " + surveyId.timeAsDisplayDate()
 
         Map output = [
                 name: 'Unstructured',
@@ -211,6 +227,8 @@ class ParatooService {
         ]
         activity.outputs = [output]
         activity.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: mintedCollectionId)]
+
+        activity
     }
 
     private ParatooProtocolConfig getProtocolConfig(String protocolId) {

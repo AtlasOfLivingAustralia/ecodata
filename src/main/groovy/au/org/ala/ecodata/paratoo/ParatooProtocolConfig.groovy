@@ -24,7 +24,7 @@ class ParatooProtocolConfig {
     String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
     String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
     String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
-    String plotLayoutDimensionLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_dimension.data.attributes.label'
+    String plotLayoutDimensionLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_dimensions.data.attributes.label'
     String plotLayoutTypeLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_type.data.attributes.label'
     String getApiEndpoint(ParatooSurveyId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
