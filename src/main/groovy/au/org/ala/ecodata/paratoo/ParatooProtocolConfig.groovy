@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProtocolConfig {
 
+    String name
     String apiEndpoint
     boolean usesPlotLayout = true
     List tags
