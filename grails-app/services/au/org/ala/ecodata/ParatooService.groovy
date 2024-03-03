@@ -7,6 +7,7 @@ import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
 import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
+import au.org.ala.ecodata.paratoo.ParatooProtocolId
 import au.org.ala.ecodata.paratoo.ParatooSurveyId
 import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
@@ -40,6 +41,7 @@ class ParatooService {
     PermissionService permissionService
     TokenService tokenService
     MetadataService metadataService
+    ActivityService activityService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -188,6 +190,8 @@ class ParatooService {
             dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project, config)
             dataSet.startDate = config.getStartDate(surveyData)
             dataSet.endDate = config.getEndDate(surveyData)
+
+            createActivityFromSurveyData(surveyId, collection.orgMintedIdentifier, surveyData, config, project)
         }
         else {
             log.warn("Unable to retrieve survey data for: "+collection.orgMintedIdentifier)
@@ -198,16 +202,33 @@ class ParatooService {
         result
     }
 
-    private static Map mapActivity(Map surveyData, Map activity, ParatooProtocolConfig config) {
+    private void createActivityFromSurveyData(ParatooSurveyId paratooSurveyId, String mintedCollectionId, Map surveyData, ParatooProtocolConfig config, ParatooProject project) {
+        ActivityForm form = ActivityForm.findByExternalId(paratooSurveyId.protocol.id)
+        if (!form) {
+            log.error("No activity form found for protocol: "+paratooSurveyId.protocol.id)
+        }
+        else {
+            Map activity = mapActivity(mintedCollectionId, paratooSurveyId, surveyData, form, config, project)
+            activityService.create(activity)
+        }
+
+    }
+
+    private static Map mapActivity(String mintedCollectionId, ParatooSurveyId surveyId, Map surveyData, ActivityForm activityForm, ParatooProtocolConfig config, ParatooProject project) {
+        Map activity = [:]
+        activity.projectId = project.id
         activity.startDate = config.getStartDate(surveyData)
         activity.endDate = config.getEndDate(surveyData)
-        activity.type = ''// map activity type from protocol
+        activity.type = activityForm.name
+        activity.description =  activityForm.name + " - " + surveyId.timeAsDisplayDate()
 
         Map output = [
                 name: 'Unstructured',
                 data: surveyData
         ]
         activity.outputs = [output]
+        activity.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: mintedCollectionId)]
+
         activity
     }
 
@@ -254,10 +275,11 @@ class ParatooService {
             siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            if (geoJson.properties?.externalId) {
-                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: geoJson.properties.externalId)]
+            String externalId = geoJson.properties?.externalId
+            if (externalId) {
+                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
             }
-            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteProps.externalId)
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
             Map result
             if (!site) {
                 result = siteService.create(siteProps)
@@ -282,6 +304,7 @@ class ParatooService {
             String guid = protocol.attributes.identifier
             guids << guid
             String name = protocol.attributes.name
+            ParatooProtocolConfig protocolConfig = getProtocolConfig(id)
             ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
                 form = new ActivityForm()
@@ -312,7 +335,8 @@ class ParatooService {
 
             }
 
-            mapProtocolToActivityForm(protocol, form)
+            List tags = protocolConfig?.tags ?: [ActivityForm.SURVEY_TAG]
+            mapProtocolToActivityForm(protocol, form, tags)
             form.save()
 
             if (form.hasErrors()) {
@@ -358,7 +382,7 @@ class ParatooService {
         syncParatooProtocols(response?.data)
     }
 
-    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form) {
+    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form, List tags) {
         form.name = protocol.attributes.name
         form.formVersion = protocol.attributes.version
         form.type = PARATOO_PROTOCOL_FORM_TYPE
@@ -366,6 +390,8 @@ class ParatooService {
         form.external = true
         form.publicationStatus = PublicationStatus.PUBLISHED
         form.description = protocol.attributes.description
+        form.tags = tags
+        form.externalIds
     }
 
     private ParatooProject mapProject(Project project, AccessLevel accessLevel, List<Site> sites) {
