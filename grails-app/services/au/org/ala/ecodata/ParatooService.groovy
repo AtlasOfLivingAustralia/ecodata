@@ -32,6 +32,7 @@ class ParatooService {
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description', 'Opportune']
     static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
+    static final String INTERVENTION_PROTOCOL_TAG = 'intervention'
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -66,7 +67,7 @@ class ParatooService {
         projects.findAll{it.protocols}
     }
 
-    private static List findProjectProtocols(ParatooProject project) {
+    private List findProjectProtocols(ParatooProject project) {
         log.debug "Finding protocols for ${project.id} ${project.name}"
         List<ActivityForm> protocols = []
 
@@ -77,6 +78,11 @@ class ParatooService {
             if (!project.isParaooAdmin()) {
                 protocols = protocols.findAll{!(it.name in ADMIN_ONLY_PROTOCOLS)}
             }
+            // Temporarily exclude intervention protocols until they are ready
+            if (grailsApplication.config.getProperty('paratoo.excludeInterventionProtocols', Boolean.class, true)) {
+                protocols = protocols.findAll{!(INTERVENTION_PROTOCOL_TAG in it.tags)}
+            }
+
         }
         protocols
     }
@@ -304,7 +310,7 @@ class ParatooService {
             String guid = protocol.attributes.identifier
             guids << guid
             String name = protocol.attributes.name
-            ParatooProtocolConfig protocolConfig = getProtocolConfig(id)
+            ParatooProtocolConfig protocolConfig = getProtocolConfig(guid)
             ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
                 form = new ActivityForm()
