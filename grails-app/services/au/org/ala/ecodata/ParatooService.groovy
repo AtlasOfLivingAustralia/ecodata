@@ -349,8 +349,6 @@ class ParatooService {
                 result.errors << form.errors
                 log.warn "Error saving form with id: "+id+", name: "+name
             }
-
-            println (protocolTmp as JSON)
         }
 
         List allProtocolForms = ActivityForm.findAll {
