@@ -304,7 +304,7 @@ class ParatooService {
             String guid = protocol.attributes.identifier
             guids << guid
             String name = protocol.attributes.name
-            ParatooProtocolConfig protocolConfig = getProtocolConfig(id)
+            ParatooProtocolConfig protocolConfig = getProtocolConfig(guid)
             ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
                 form = new ActivityForm()
@@ -343,6 +343,8 @@ class ParatooService {
                 result.errors << form.errors
                 log.warn "Error saving form with id: "+id+", name: "+name
             }
+
+            println (protocolTmp as JSON)
         }
 
         List allProtocolForms = ActivityForm.findAll {
