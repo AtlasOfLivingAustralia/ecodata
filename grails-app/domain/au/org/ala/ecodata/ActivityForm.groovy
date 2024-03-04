@@ -8,6 +8,10 @@ import org.bson.types.ObjectId
  */
 class ActivityForm {
 
+    static String SURVEY_TAG = "survey"
+    static String INTERVENTION_TAG = "intervention"
+    static String SITE_TAG = "site"
+
     static graphql = ActivityFormGraphQLMapper.graphqlMapping()
 
     /** The list of properties to be used when binding request data to an ActivityForm */
@@ -100,6 +104,9 @@ class ActivityForm {
 
     String createdUserId
     String lastUpdatedUserId
+
+    /** Currently only used to describe whether this form is collecting survey data (and hence a data set summary will be created) */
+    List tags = []
 
     boolean isPublished() {
         return publicationStatus == PublicationStatus.PUBLISHED

@@ -39,7 +39,10 @@ class Activity {
         projectActivityId index: true
         bulkImportId index: true
         version false
+        externalIds index:true
     }
+
+    static hasMany = [externalIds:ExternalId]
 
     ObjectId id
     String activityId
@@ -54,6 +57,7 @@ class Activity {
     String bulkImportId
     Date startDate
     Date endDate
+    List<ExternalId> externalIds
 
     /** The type of activity performed.  This field must match the name of an ActivityForm */
     String type
@@ -127,6 +131,16 @@ class Activity {
         formVersion nullable: true
         verificationStatus nullable: true, inList: ['not applicable', 'not approved', 'not verified', 'under review' , 'approved']
         bulkImportId nullable: true
+        externalIds nullable: true
+    }
+
+    static Activity findByExternalId(String externalId) {
+        where {
+            externalIds {
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
     }
 
 }

@@ -144,7 +144,7 @@
                   }
                 },
                 "permanently_marked": null,
-                "plot_dimension": {
+                "plot_dimensions": {
                   "data": {
                     "id": 1,
                     "attributes": {
