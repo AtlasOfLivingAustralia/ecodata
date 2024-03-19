@@ -27,7 +27,7 @@ class ParatooProtocolConfig {
     String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
     String plotLayoutDimensionLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_dimensions.data.attributes.label'
     String plotLayoutTypeLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_type.data.attributes.label'
-    String getApiEndpoint(ParatooSurveyId surveyId) {
+    String getApiEndpoint(ParatooCollectionId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
 
@@ -66,8 +66,8 @@ class ParatooProtocolConfig {
         geometry
     }
 
-    private static String defaultEndpoint(ParatooSurveyId surveyId) {
-        String apiEndpoint = surveyId.surveyType
+    private static String defaultEndpoint(ParatooCollectionId surveyId) {
+        String apiEndpoint = surveyId.survey_metadata?.survey_details?.survey_model
         if (!apiEndpoint.endsWith('s')) {
             apiEndpoint += 's'
         } // strapi makes the endpoint plural sometimes?
@@ -96,11 +96,11 @@ class ParatooProtocolConfig {
         geoJson
     }
 
-    boolean matches(Map surveyData, ParatooSurveyId surveyId) {
+    boolean matches(Map surveyData, ParatooCollectionId surveyId) {
         Map tmpSurveyId = getSurveyId(surveyData)
-        tmpSurveyId.surveyType == surveyId.surveyType &&
-                tmpSurveyId.time == surveyId.timeAsISOString() &&
-                tmpSurveyId.uuid == surveyId.uuid
+        tmpSurveyId.surveyType == surveyId.survey_metadata.survey_details.survey_model &&
+                tmpSurveyId.time == surveyId.survey_metadata.survey_details.time &&
+                tmpSurveyId.uuid == surveyId.survey_metadata.survey_details.uuid
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {

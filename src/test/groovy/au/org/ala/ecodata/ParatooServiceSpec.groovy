@@ -23,6 +23,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     TokenService tokenService = Mock(TokenService)
     SettingService settingService = Mock(SettingService)
     MetadataService metadataService = Mock(MetadataService)
+    ActivityService activityService = Mock(ActivityService)
 
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
@@ -38,6 +39,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         service.tokenService = tokenService
         service.settingService = settingService
         service.metadataService = metadataService
+        service.activityService = activityService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -46,6 +48,13 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     private Map readSurveyData(String name) {
         URL url = getClass().getResource("/paratoo/${name}.json")
         new JsonSlurper().parse(url)
+    }
+
+    private ParatooCollectionId buildCollectionId(String name) {
+        Map collectionIdJson = readSurveyData(name?:"mintCollectionIdPayload")
+        ParatooCollectionId collectionId = ParatooCollectionId.fromMap(collectionIdJson)
+        collectionId.survey_metadata.survey_details.protocol_id = 'guid-2'
+        collectionId
     }
 
     private void deleteAll() {
@@ -120,11 +129,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     void "The service can create a data set from a submitted collection"() {
         setup:
-
+        ParatooCollectionId collectionId = buildCollectionId()
         String projectId = 'p1'
-        ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
-        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), uuid:"1l")
-        ParatooCollectionId collectionId = new ParatooCollectionId(surveyId:surveyId)
 
         when:
         Map result = service.mintCollectionId('u1', collectionId)
@@ -132,13 +138,14 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         1 * projectService.update(_, projectId, false) >> {data, pId, updateCollectory ->
             Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
-            assert dataSet.surveyId.time == surveyId.timeAsISOString()
-            assert dataSet.surveyId.uuid == surveyId.uuid
-            assert dataSet.surveyId.surveyType == surveyId.surveyType
-            assert dataSet.protocol == surveyId.protocol.id
+            assert dataSet.surveyId != null
+            assert dataSet.surveyId.eventTime != null
+            assert dataSet.surveyId.userId == 'org1'
+            assert dataSet.surveyId.survey_metadata.orgMintedUUID == dataSet.dataSetId
+            assert dataSet.protocol == collectionId.protocolId
             assert dataSet.grantId == "g1"
             assert dataSet.progress == 'planned'
-            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(surveyId.time)} (Project 1)"
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(collectionId.eventTime)} (Project 1)"
 
             [status:'ok']
         }
@@ -151,16 +158,24 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can create a data set from a submitted collection"() {
         setup:
         String projectId = 'p1'
-        ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
-        ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
-        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', uuid:"1", projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
+        String orgMintedId = 'd1'
+        ParatooCollection collection = new ParatooCollection(
+                orgMintedUUID:orgMintedId,
+                coreProvenance: [
+                    "system_core": "<system-core>",
+                    "version_core": "<core-version>"
+                ]
+        )
+        ParatooCollectionId paratooCollectionId = buildCollectionId()
+        Map dataSet =  [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSet = dataSet+[progress:Activity.STARTED]
         ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
         when:
         Map result = service.submitCollection(collection, project)
 
         then:
-        1 * webService.getJson({it.indexOf('/s1s') >= 0}, null, _, false) >> [data:[], meta:[pagination:[total:0]]]
+        1 * webService.getJson({it.indexOf('/coarse-woody-debris-surveys') >= 0}, null, _, false) >> [data:[], meta:[pagination:[total:0]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.update([custom:[dataSets:[expectedDataSet]]], 'p1', false) >> [status:'ok']
 
@@ -232,9 +247,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can create a site from a submitted collection"() {
         setup:
         String projectId = 'p1'
-        ParatooProtocolId protocol = new ParatooProtocolId(id:"1", version: 1)
-        ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
-        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'basal-area-dbh-measure-survey', uuid:"43389075", projectId:projectId, protocol: protocol, time:'2023-09-22T01:03:15.556Z']]
+        String orgMintedId = 'd1'
+        ParatooCollection collection = new ParatooCollection(
+                orgMintedUUID:orgMintedId,
+                coreProvenance: [
+                        "system_core": "<system-core>",
+                        "version_core": "<core-version>"
+                ]
+        )
+        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload")
+        Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
         ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
         Map surveyData = readSurveyData('basalAreaDbh')
         Map site
@@ -243,7 +265,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map result = service.submitCollection(collection, project)
 
         then:
-        1 * webService.getJson({it.indexOf('/basal-area-dbh-measure-survey') >= 0}, null, _, false) >> [data:[surveyData], meta:[pagination:[total:0]]]
+        1 * webService.getJson({it.indexOf('/basal-area-dbh-measure-surveys') >= 0}, null, _, false) >> [data:[surveyData], meta:[pagination:[total:0]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.update(_, projectId, false) >> [status:'ok']
         1 * siteService.create(_) >> {site = it[0]; [siteId:'s1']}
@@ -264,7 +286,13 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     private void setupData() {
         Hub hub = new Hub(hubId:"merit", urlPath:"merit")
         hub.save(failOnError:true, flush:true)
-        Project project = new Project(projectId:"p1", name:"Project 1", grantId:"g1", programId:"prog1", hubId:"merit",
+        Project project = new Project(
+                projectId:"p1",
+                name:"Project 1",
+                grantId:"g1",
+                programId:"prog1",
+                hubId:"merit",
+                organisationId: "org1",
                 custom:[details:[
                         serviceIds:[1],
                         baseline:[rows:[[protocols:['protocol category 1']]]],
