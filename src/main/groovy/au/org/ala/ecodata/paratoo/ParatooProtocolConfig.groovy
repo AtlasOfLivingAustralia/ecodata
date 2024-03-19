@@ -98,9 +98,14 @@ class ParatooProtocolConfig {
 
     boolean matches(Map surveyData, ParatooCollectionId surveyId) {
         Map tmpSurveyId = getSurveyId(surveyData)
-        tmpSurveyId.surveyType == surveyId.survey_metadata.survey_details.survey_model &&
-                tmpSurveyId.time == surveyId.survey_metadata.survey_details.time &&
-                tmpSurveyId.uuid == surveyId.survey_metadata.survey_details.uuid
+        if (!tmpSurveyId) {
+            log.error("Cannot find surveyId:")
+            log.debug(surveyData)
+            return false
+        }
+        tmpSurveyId?.surveyType == surveyId.survey_metadata?.survey_details.survey_model &&
+                tmpSurveyId?.time == surveyId.survey_metadata?.survey_details.time &&
+                tmpSurveyId?.uuid == surveyId.survey_metadata?.survey_details.uuid
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
