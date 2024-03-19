@@ -283,7 +283,6 @@ class ParatooController {
 
         if (log.isDebugEnabled()) {
             log.debug("ParatooController::submitCollection")
-            log.debug(request.JSON.toString())
         }
         if (collection.hasErrors()) {
             error(collection.errors)

@@ -263,7 +263,7 @@ class ParatooService {
 
         Map dataSet = null
         ParatooProject project = projects?.find {
-            dataSet = it.dataSets?.find { it.orgMintedUUID == orgMintedUUID }
+            dataSet = it.dataSets?.find { it.dataSetId == orgMintedUUID }
             dataSet
         }
         [dataSet:dataSet, project:project]
