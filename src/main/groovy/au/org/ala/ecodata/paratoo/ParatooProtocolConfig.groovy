@@ -21,7 +21,7 @@ class ParatooProtocolConfig {
     String geometryPath
     String startDatePath = 'attributes.start_date_time'
     String endDatePath = 'attributes.end_date_time'
-    String surveyIdPath = 'attributes.surveyId'
+    String surveyIdPath = 'attributes.survey_metadata'
     String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
     String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
     String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
@@ -103,9 +103,7 @@ class ParatooProtocolConfig {
             log.debug(surveyData.toString())
             return false
         }
-        tmpSurveyId?.surveyType == surveyId.survey_metadata?.survey_details.survey_model &&
-                tmpSurveyId?.time == surveyId.survey_metadata?.survey_details.time &&
-                tmpSurveyId?.uuid == surveyId.survey_metadata?.survey_details.uuid
+        tmpSurveyId?.orgMintedUUID == surveyId.survey_metadata?.orgMintedUUID
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {

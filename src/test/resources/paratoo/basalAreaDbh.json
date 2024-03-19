@@ -1,15 +1,25 @@
 {
   "id": 2,
   "attributes": {
-    "surveyId": {
-      "time": "2023-09-22T01:03:15.556Z",
-      "uuid": "43389075",
-      "protocol": {
-        "id": "1",
-        "version": 1
+    "survey_metadata": {
+      "orgMintedUUID": "d1",
+      "survey_details": {
+        "survey_model": "basal-area-dbh-measure-survey",
+        "time": "2023-09-22T01:03:15.556Z",
+        "uuid": "43389075",
+        "project_id": "p1",
+        "protocol_id": "guid-2",
+        "protocol_version": "1"
       },
-      "projectId": "p1",
-      "surveyType": "basal-area-dbh-measure-survey"
+      "provenance":{
+        "version_app": "0.0.1-xxxxx",
+        "version_core": "0.1.0-1fb53f81",
+        "version_core_documentation": "0.0.1-xxxxx",
+        "version_org": "4.4-SNAPSHOT",
+        "system_app": "monitor",
+        "system_core": "Monitor-dummy-data-production",
+        "system_org": "MERIT"
+      }
     },
     "start_date": "2023-09-22T00:59:47.807Z",
     "createdAt": "2023-09-22T01:05:19.981Z",
