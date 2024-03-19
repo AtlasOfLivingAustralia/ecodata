@@ -173,7 +173,7 @@ class ParatooService {
 
     Map submitCollection(ParatooCollection collection, ParatooProject project) {
 
-        Map dataSet = project.project.custom?.dataSets?.find{it.surveyId.survey_metadata?.orgMintedUUID == collection.orgMintedUUID}
+        Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
         if (!dataSet) {
             throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
