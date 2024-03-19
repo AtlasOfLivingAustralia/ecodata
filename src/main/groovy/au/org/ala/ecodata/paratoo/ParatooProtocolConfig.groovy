@@ -100,7 +100,7 @@ class ParatooProtocolConfig {
         Map tmpSurveyId = getSurveyId(surveyData)
         if (!tmpSurveyId) {
             log.error("Cannot find surveyId:")
-            log.debug(surveyData)
+            log.debug(surveyData.toString())
             return false
         }
         tmpSurveyId?.surveyType == surveyId.survey_metadata?.survey_details.survey_model &&
