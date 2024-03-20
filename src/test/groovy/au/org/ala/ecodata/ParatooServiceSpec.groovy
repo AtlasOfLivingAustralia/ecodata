@@ -26,6 +26,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     ActivityService activityService = Mock(ActivityService)
 
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
+    static Map DUMMY_PLOT = ['type':'Point', coordinates: [1,2]]
 
     def setup() {
 
@@ -234,7 +235,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                     "lng": 138.59973907470706
                 ]
         ]]
-        Map expectedSite = [name:"Monitor project area", type:Site.TYPE_PROJECT_AREA, projects:[projectId],
+        Map expectedSite = [name:"Monitor Project Extent", type:Site.TYPE_PROJECT_AREA, projects:[projectId],
             extent:[source:"drawn", geometry: [type:'Polygon', coordinates:[[[138.6845397949219, -34.96643621094802], [138.66394042968753, -35.003565839769166], [138.59973907470706, -34.955744257334246], [138.6845397949219, -34.96643621094802]]]]]]
 
         when:
@@ -306,7 +307,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Site projectArea = new Site(siteId:'s1', name:'Site 1', type:Site.TYPE_PROJECT_AREA, extent: [geometry:DUMMY_POLYGON])
         projectArea.save(failOnError:true, flush:true)
-        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:['p1'])
+        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_PLOT], projects:['p1'])
         plot.save(failOnError:true, flush:true)
         siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 

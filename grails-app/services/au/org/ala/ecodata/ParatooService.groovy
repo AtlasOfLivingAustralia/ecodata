@@ -404,7 +404,10 @@ class ParatooService {
             projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
         }
 
-        List<Site> plotSelections = sites.findAll{it.type == Site.TYPE_SURVEY_AREA}
+        // Monitor has users selecting a point as an approximate survey location then
+        // laying out the plot using GPS when at the site.  We only want to return the approximate planning
+        // sites from this call
+        List<Site> plotSelections = sites.findAll{it.type == Site.TYPE_SURVEY_AREA && it.extent?.geometry?.type == 'Point'}
 
         Map attributes = [
                 id:project.projectId,
