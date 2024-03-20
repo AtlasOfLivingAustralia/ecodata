@@ -575,7 +575,7 @@ class ParatooService {
         else {
 
             Map site = [
-                    name:'Monitor project area',
+                    name:'Monitor Project Extent',
                     type:Site.TYPE_PROJECT_AREA,
                     extent: [
                             source:'drawn',
