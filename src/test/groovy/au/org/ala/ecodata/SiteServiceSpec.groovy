@@ -146,6 +146,23 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         Site.findBySiteId(result.siteId).name == 'Site 1'
     }
 
+    def "An externalId can be supplied and the Site will convert it to the correct format"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', externalId:'e1'])
+            session.flush()
+        }
+        then:
+        def site = Site.findBySiteId(result.siteId)
+        site.name == 'Site 1'
+        site.externalId == 'e1'
+        site.externalIds.size() == 1
+        site.externalIds[0].externalId == 'e1'
+        site.externalIds[0].idType == ExternalId.IdType.UNSPECIFIED
+    }
+
+
     def "A new site should not allow the siteId to be supplied"() {
         when:
         def result
@@ -204,6 +221,71 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         precision   | bbox
         4           | ["type":"Polygon","coordinates":[[[132.890625,-31.53076171875],[156.796875,-31.53076171875],[156.796875,-16.435546875],[132.890625,-16.435546875],[132.890625,-31.53076171875]]]]
         5           | ["type":"Polygon","coordinates":[[[148.59386444091797,-22.8820269764962],[148.79093170166016,-22.8820269764962],[148.79093170166016,-22.761302755997598],[148.59386444091797,-22.761302755997598],[148.59386444091797,-22.8820269764962]]]]
+    }
+
+    def "Data can be extracted from geojson"() {
+        setup:
+        def geojsonPolygon =
+                [
+                        type: 'Feature',
+                        geometry: [
+                                type: 'Polygon',
+                                coordinates: [
+                                        [
+                                                [ 1, 2 ], [ 3, 4 ], [ 5, 6 ], [ 1, 2 ]
+                                        ]
+                                ]
+                        ],
+                        properties: [
+                                name: 'Site 1'
+                        ]
+                ]
+        def geoJsonPoint = [
+                type: 'Feature',
+                geometry: [
+                        type: 'Point',
+                        coordinates: [1, 2]
+                ],
+                properties: [
+                        name: 'Site 1'
+                ]
+        ]
+
+        when:
+        Map result = service.propertiesFromGeoJson(geojsonPolygon, 'upload')
+
+        then:
+        result.extent.geometry.type == geojsonPolygon.geometry.type
+        result.extent.geometry.coordinates == geojsonPolygon.geometry.coordinates
+        result.extent.source == 'upload'
+        result.name == "Site 1"
+
+        when:
+        result = service.propertiesFromGeoJson(geoJsonPoint, 'upload')
+
+        then:
+        result.extent.geometry.type == geoJsonPoint.geometry.type
+        result.extent.geometry.coordinates == geoJsonPoint.geometry.coordinates
+        result.extent.source == 'point'
+        result.extent.geometry.decimalLatitude == geoJsonPoint.geometry.coordinates[1]
+        result.extent.geometry.decimalLongitude == geoJsonPoint.geometry.coordinates[0]
+        result.name == "Site 1"
+    }
+
+    def "Sites can be found by externalId (including type)"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', siteId:"s1", externalIds:[new ExternalId(externalId:'e1', idType:ExternalId.IdType.MONITOR_PLOT_GUID)]])
+            session.flush()
+        }
+        then:
+        def site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1')
+        site.name == 'Site 1'
+        site.externalIds.size() == 1
+        site.externalIds[0].externalId == 'e1'
+        site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
+
     }
 
 

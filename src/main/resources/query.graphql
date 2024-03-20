@@ -60,7 +60,7 @@ query siteList(
     $order: String,
     $ignoreCase: Boolean)
 {siteList(max:$max, offset: $offset, sort:$sort, order:$order,ignoreCase:$ignoreCase){id,visibility,name,
-    externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+    externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
     catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
         type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}}},
 
@@ -70,7 +70,7 @@ query sites(
     $page: Int
     $max: Int)
 {sites(term:$term, siteIds: $siteIds, page:$page, max:$max){id,visibility,name,
-    externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+    externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
     catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
         type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}}},
 
@@ -186,7 +186,7 @@ query projectList(
         dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
         activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
         dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
-        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
         catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
             type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
         methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
@@ -234,7 +234,7 @@ query project(
         dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
         activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
         dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
-        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
         catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
             type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
         methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
@@ -284,7 +284,7 @@ query projects(
         dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
         activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
         dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
-        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
         catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
             type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
         methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
@@ -369,7 +369,7 @@ query searchMeritProject(
         dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
         activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
         dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
-        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
         catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
             type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
         methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,
@@ -443,7 +443,7 @@ query searchBioCollectProject(
         dateAdjusted,projectId,dueDate,organisationId,programId,managementUnitId,approvalDeltaInWeekdays,submissionDeltaInWeekdays,
         activityCount,data,progress,submissionDate,activityId,activityType,type,category,generatedBy,adjustedReportId,
         dateCreated,lastUpdated,statusChangeHistory{changedBy,comment,dateChanged,category,status},toDate,fromDate,publicationStatus,name,status,errors{field,message}},sites{id,visibility,name,
-        externalSiteId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
+        externalId,type,description,habitat,recordingMethod,landTenure,protectionMechanism,isSciStarter,notes,
         catchment,geoIndex,dateCreated,lastUpdated,siteId,status,errors{field,message},siteShapefiles{url},siteGeojson{
             type,properties{id,name,type,notes},features{type,geometry{type,coordinates},properties{id}},geometry{type,coordinates}}},surveys{id,version,endDate,
         methodType,spatialAccuracy,speciesIdentification,temporalAccuracy,nonTaxonomicAccuracy,dataQualityAssuranceMethods,

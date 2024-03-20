@@ -18,6 +18,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     ActivityService activityService = Mock(ActivityService)
     ReportingService reportingService = Mock(ReportingService)
     MetadataService metadataService = Mock(MetadataService)
+    LockService lockService = Mock(LockService)
 
     String collectoryBaseUrl = ''
     String meritDataProvider = 'drMerit'
@@ -50,7 +51,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         service.documentService = documentService
         service.grailsApplication = grailsApplication
         service.metadataService = metadataService
-
+        service.lockService = lockService
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
         webServiceStub.extractIdFromLocationHeader(_) >> dataResourceId
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, _) >> [:]

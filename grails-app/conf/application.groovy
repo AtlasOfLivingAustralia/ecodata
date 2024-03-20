@@ -529,7 +529,8 @@ if (!ecodata.use.uuids) {
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
-paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au'
+paratoo.core.baseUrl = 'https://dev.core-api.monitor.tern.org.au/api'
+paratoo.excludeInterventionProtocols = true
 
 auth.baseUrl = 'https://auth-test.ala.org.au'
 userDetails.web.url = "${auth.baseUrl}/userdetails/"
@@ -682,7 +683,8 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
         security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
 
-        userDetails.url = "${casBaseUrl}/userdetails/"
+        userDetails.web.url = "${casBaseUrl}/userdetails/"
+        userDetails.api.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
         security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
 
@@ -691,6 +693,8 @@ environments {
         // Schedule the audit thread frequently during functional tests to get less indexing errors because
         // the data was cleaned up before the audit ran
         audit.thread.schedule.interval = 500l;
+
+        paratoo.core.baseUrl = "http://localhost:${wiremock.port}/monitor"
     }
     production {
         grails.logging.jul.usebridge = false

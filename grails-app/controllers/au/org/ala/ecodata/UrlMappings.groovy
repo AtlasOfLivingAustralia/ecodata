@@ -183,6 +183,7 @@ class UrlMappings {
 
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
+        "/ws/report/generateReportsInPeriod"(controller:"report", action:"generateReportsInPeriod")
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
@@ -211,7 +212,7 @@ class UrlMappings {
         }
 
         "/ws/graphql" {
-            controller = 'graphql'
+            controller = 'graphqlWs'
         }
 
         "/ws/paratoo/user-projects" {
@@ -247,6 +248,21 @@ class UrlMappings {
         "/ws/paratoo/status/$id" {
             controller = 'paratoo'
             action = 'collectionIdStatus'
+        }
+
+        "/ws/paratoo/plot-selections" {
+            controller = 'paratoo'
+            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection', GET:'getPlotSelections']
+        }
+
+        "/ws/paratoo/user-role" {
+            controller = 'paratoo'
+            action = [GET: 'userRoles', OPTIONS: 'options']
+        }
+
+        "/ws/paratoo/projects/$id" {
+            controller = 'paratoo'
+            action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }
 
         "/"(redirect:[controller:"documentation"])

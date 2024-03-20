@@ -1,11 +1,13 @@
 import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.ExternalId
 
 model {
     ActivityForm protocol
 }
 
 json {
-    id protocol.externalId
+    id protocol.externalIds?.find {it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}?.externalId as int
+    identifier protocol.externalIds?.find {it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID}?.externalId
     name protocol.name
     version protocol.formVersion as Integer
     module protocol.category

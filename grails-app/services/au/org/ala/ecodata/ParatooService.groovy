@@ -1,10 +1,20 @@
 package au.org.ala.ecodata
 
+
 import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooCollectionId
+import au.org.ala.ecodata.paratoo.ParatooMintedIdentifier
+import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
 import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
+import au.org.ala.ecodata.paratoo.ParatooProtocolId
+import au.org.ala.ecodata.paratoo.ParatooSurveyId
+import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
+
+import java.net.http.HttpHeaders
 
 /**
  * Supports the implementation of the paratoo "org" interface
@@ -12,12 +22,17 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class ParatooService {
 
-    static final String PARATOO_PROTOCOL_PATH = '/api/protocols'
+    static final String PARATOO_PROTOCOL_PATH = '/protocols'
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
-    static final String PARTOO_PROTOCOLS_KEY = 'paratoo.protocols'
+    static final String PARATOO_PROTOCOLS_KEY = 'paratoo.protocols'
+    static final String PARATOO_PROTOCOL_DATA_MAPPING_KEY = 'paratoo.surveyData.mapping'
     static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
+    static final String PARATOO_APP_NAME = "Monitor"
+    static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List DEFAULT_MODULES =
-            ['Plot Selection and Layout', 'Plot Description']
+            ['Plot Selection and Layout', 'Plot Description', 'Opportune']
+    static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
+    static final String INTERVENTION_PROTOCOL_TAG = 'intervention'
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -25,6 +40,9 @@ class ParatooService {
     ProjectService projectService
     SiteService siteService
     PermissionService permissionService
+    TokenService tokenService
+    MetadataService metadataService
+    ActivityService activityService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -49,7 +67,7 @@ class ParatooService {
         projects.findAll{it.protocols}
     }
 
-    private static List findProjectProtocols(ParatooProject project) {
+    private List findProjectProtocols(ParatooProject project) {
         log.debug "Finding protocols for ${project.id} ${project.name}"
         List<ActivityForm> protocols = []
 
@@ -57,6 +75,14 @@ class ParatooService {
         if (monitoringProtocolCategories) {
             List categoriesWithDefaults = monitoringProtocolCategories + DEFAULT_MODULES
             protocols += findProtocolsByCategories(categoriesWithDefaults.unique())
+            if (!project.isParaooAdmin()) {
+                protocols = protocols.findAll{!(it.name in ADMIN_ONLY_PROTOCOLS)}
+            }
+            // Temporarily exclude intervention protocols until they are ready
+            if (grailsApplication.config.getProperty('paratoo.excludeInterventionProtocols', Boolean.class, true)) {
+                protocols = protocols.findAll{!(INTERVENTION_PROTOCOL_TAG in it.tags)}
+            }
+
         }
         protocols
     }
@@ -70,9 +96,7 @@ class ParatooService {
         List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
 
 
-        // If the permission has been set as a favourite then delegate to the Hub permission
-        // so that "readOnly" access for a hub is supported, and we don't return projects that a user
-        // has only marked as starred without having hub level permissions
+        // If the permission has been set as a favourite then delegate to the Hub permission.
         Map projectAccessLevels = [:]
         permissions?.each { UserPermission permission ->
             String projectId = permission.entityId
@@ -99,11 +123,13 @@ class ParatooService {
 
             Program program = Program.findByProgramId(project.programId)
             Map config = program.getInheritedConfig()
-            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevels[project.projectId]
+            // The Monitor/Paratoo app is "write only" (i.e. there is no view mode for the data), so we don't support
+            // the read only role
+            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevels[project.projectId] && projectAccessLevels[project.projectId] != AccessLevel.readOnly
         }
 
         List paratooProjects = projects.collect { Project project ->
-            List<Site> sites = siteService.sitesForProject(project.projectId)
+            List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
             AccessLevel accessLevel = projectAccessLevels[project.projectId]
             mapProject(project, accessLevel, sites)
         }
@@ -111,62 +137,230 @@ class ParatooService {
 
     }
 
-    Map createCollection(ParatooCollection collection) {
-        Project project = Project.findByProjectId(collection.projectId)
-        Map dataSet = mapParatooCollection(collection, project)
-        List dataSets = project.custom?.dataSets ?: []
-        dataSets << dataSet
-        projectService.update([custom:[dataSets:dataSets]], collection.projectId, false)
+    Map mintCollectionId(String userId, ParatooCollectionId paratooCollectionId) {
+        String projectId = paratooCollectionId.surveyId.projectId
+        Project project = Project.findByProjectId(projectId)
+
+        Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
+        dataSet.progress = Activity.PLANNED
+        String dataSetName = buildName(paratooCollectionId.surveyId, project)
+        dataSet.name = dataSetName
+
+        if (!project.custom) {
+            project.custom = [:]
+        }
+        if (!project.custom.dataSets) {
+            project.custom.dataSets = []
+        }
+        ParatooMintedIdentifier orgMintedIdentifier = new ParatooMintedIdentifier(
+                surveyId: paratooCollectionId.surveyId,
+                eventTime: new Date(),
+                userId: userId,
+                projectId: projectId,
+                system: "MERIT",
+                version: metadataService.getVersion()
+        )
+        dataSet.orgMintedIdentifier = orgMintedIdentifier.encodeAsMintedCollectionId()
+        log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
+        project.custom.dataSets << dataSet
+        Map result = projectService.update([custom:project.custom], projectId, false)
+
+        if (!result.error) {
+            result.orgMintedIdentifier = dataSet.orgMintedIdentifier
+        }
+        result
     }
 
-    boolean protocolReadCheck(String userId, String projectId, int protocolId) {
+    private static String buildName(ParatooSurveyId surveyId, Project project) {
+        ActivityForm protocolForm = ActivityForm.findByExternalId(surveyId.protocol.id)
+        String dataSetName = protocolForm?.name + " - " + surveyId.timeAsDisplayDate() + " (" + project.name + ")"
+        dataSetName
+    }
+
+    Map submitCollection(ParatooCollection collection, ParatooProject project) {
+
+        Map dataSet = project.project.custom?.dataSets?.find{it.orgMintedIdentifier == collection.orgMintedIdentifier}
+
+        if (!dataSet) {
+            throw new RuntimeException("Unable to find data set with orgMintedIdentifier: "+collection.orgMintedIdentifier)
+        }
+        dataSet.progress = Activity.STARTED
+
+        ParatooSurveyId surveyId = ParatooSurveyId.fromMap(dataSet.surveyId)
+
+        ParatooProtocolConfig config = getProtocolConfig(surveyId.protocol.id)
+        Map surveyData = retrieveSurveyData(surveyId, config)
+
+        if (surveyData) {
+            // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
+            dataSet.siteId = createSiteFromSurveyData(surveyData, collection, surveyId, project.project, config)
+            dataSet.startDate = config.getStartDate(surveyData)
+            dataSet.endDate = config.getEndDate(surveyData)
+
+            createActivityFromSurveyData(surveyId, collection.orgMintedIdentifier, surveyData, config, project)
+        }
+        else {
+            log.warn("Unable to retrieve survey data for: "+collection.orgMintedIdentifier)
+        }
+
+        Map result = projectService.update([custom:project.project.custom], project.id, false)
+
+        result
+    }
+
+    private void createActivityFromSurveyData(ParatooSurveyId paratooSurveyId, String mintedCollectionId, Map surveyData, ParatooProtocolConfig config, ParatooProject project) {
+        ActivityForm form = ActivityForm.findByExternalId(paratooSurveyId.protocol.id)
+        if (!form) {
+            log.error("No activity form found for protocol: "+paratooSurveyId.protocol.id)
+        }
+        else {
+            Map activity = mapActivity(mintedCollectionId, paratooSurveyId, surveyData, form, config, project)
+            activityService.create(activity)
+        }
+
+    }
+
+    private static Map mapActivity(String mintedCollectionId, ParatooSurveyId surveyId, Map surveyData, ActivityForm activityForm, ParatooProtocolConfig config, ParatooProject project) {
+        Map activity = [:]
+        activity.projectId = project.id
+        activity.startDate = config.getStartDate(surveyData)
+        activity.endDate = config.getEndDate(surveyData)
+        activity.type = activityForm.name
+        activity.description =  activityForm.name + " - " + surveyId.timeAsDisplayDate()
+
+        Map output = [
+                name: 'Unstructured',
+                data: surveyData
+        ]
+        activity.outputs = [output]
+        activity.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: mintedCollectionId)]
+
+        activity
+    }
+
+    private ParatooProtocolConfig getProtocolConfig(String protocolId) {
+        String result = settingService.getSetting(PARATOO_PROTOCOL_DATA_MAPPING_KEY)
+        Map protocolDataConfig = JSON.parse(result ?: '{}')
+        Map config = protocolDataConfig[protocolId]
+        new ParatooProtocolConfig(config ?: [:])
+    }
+
+    boolean protocolReadCheck(String userId, String projectId, String protocolId) {
         protocolCheck(userId, projectId, protocolId, true)
     }
 
-    boolean protocolWriteCheck(String userId, String projectId, int protocolId) {
+    boolean protocolWriteCheck(String userId, String projectId, String protocolId) {
         protocolCheck(userId, projectId, protocolId, false)
     }
 
-    private boolean protocolCheck(String userId, String projectId, int protocolId, boolean read) {
+    private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
         List projects = userProjects(userId)
         ParatooProject project = projects.find{it.id == projectId}
-        boolean protocol = project?.protocols?.find{it.externalId == protocolId}
+        boolean protocol = project?.protocols?.find{it.externalIds.find{it.externalId == protocolId}}
         int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
         protocol && project.accessLevel.code >= minimumAccess
     }
 
-    ParatooProject findDataSet(String userId, String collectionId) {
+    Map findDataSet(String userId, String collectionId) {
         List projects = findUserProjects(userId)
 
-        Project projectWithMatchingDataSet = projects?.find {
-            it.dataSets?.find { it.dataSetId == collectionId }
+        Map dataSet = null
+        ParatooProject project = projects?.find {
+            dataSet = it.dataSets?.find { it.orgMintedIdentifier == collectionId }
+            dataSet
         }
-        projectWithMatchingDataSet
+        [dataSet:dataSet, project:project]
+    }
+
+    private String createSiteFromSurveyData(Map surveyData, ParatooCollection collection, ParatooSurveyId surveyId, Project project, ParatooProtocolConfig config) {
+        String siteId = null
+        // Create a site representing the location of the collection
+        Map geoJson = config.getGeoJson(surveyData)
+        if (geoJson) {
+            Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
+            siteProps.type = Site.TYPE_SURVEY_AREA
+            siteProps.publicationStatus = PublicationStatus.PUBLISHED
+            siteProps.projects = [project.projectId]
+            String externalId = geoJson.properties?.externalId
+            if (externalId) {
+                siteProps.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
+            }
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
+            Map result
+            if (!site) {
+                result = siteService.create(siteProps)
+            }
+            else {
+                result = [siteId:site.siteId]
+            }
+            if (result.error) {  // Don't treat this as a fatal error for the purposes of responding to the paratoo request
+                log.error("Error creating a site for survey "+collection.orgMintedIdentifier+", project "+project.projectId+": "+result.error)
+            }
+            siteId = result.siteId
+        }
+        siteId
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {
 
         Map result = [errors:[], messages:[]]
+        List guids = []
         protocols.each { Map protocol ->
-            ActivityForm form = ActivityForm.findByExternalIdAndStatusNotEqual(protocol.id, Status.DELETED)
+            String id = protocol.id
+            String guid = protocol.attributes.identifier
+            guids << guid
+            String name = protocol.attributes.name
+            ParatooProtocolConfig protocolConfig = getProtocolConfig(guid)
+            ActivityForm form = ActivityForm.findByExternalId(guid)
             if (!form) {
-                form = new ActivityForm(externalId: protocol.id)
-                String message = "Creating form with id: "+protocol.id+", name: "+protocol.attributes?.name
+                form = new ActivityForm()
+                form.externalIds = []
+                form.externalIds << new ExternalId(idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: id)
+                form.externalIds << new ExternalId(idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId: guid)
+
+                String message = "Creating form with id: "+id+", name: "+name
                 result.messages << message
                 log.info message
             }
             else {
-                String message = "Updating form with id: "+protocol.id+", name: "+protocol.attributes?.name
-                result.messages << message
-                log.info message
+                ExternalId paratooInternalId = form.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}
+
+                // Paratoo internal protocol ids are not stable so if we match the guid, we may need to update
+                // the id as that is used in other API methods.
+                if (paratooInternalId) {
+                    String message = "Updating form with id: "+paratooInternalId.externalId+", guid: "+guid+", name: "+name+", new id: "+id
+                    paratooInternalId.externalId = id
+                    result.messages << message
+                    log.info message
+                }
+                else {
+                    String error = "Error: Missing internal id for form with id: "+id+", name: "+name
+                    result.errors << error
+                    log.error error
+                }
+
             }
-            mapProtocolToActivityForm(protocol, form)
+
+            List tags = protocolConfig?.tags ?: [ActivityForm.SURVEY_TAG]
+            mapProtocolToActivityForm(protocol, form, tags)
             form.save()
 
             if (form.hasErrors()) {
                 result.errors << form.errors
-                log.warn "Error saving form with id: "+protocol.id+", name: "+protocol.attributes?.name
+                log.warn "Error saving form with id: "+id+", name: "+name
             }
+        }
+
+        List allProtocolForms = ActivityForm.findAll {
+            externalIds {
+                idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID
+            }
+            status != Status.DELETED
+        }
+
+        List deletions = allProtocolForms.findAll{it.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID && !(it.externalId in guids)}}
+        deletions.each { ActivityForm activityForm ->
+            result.messages << "Form ${activityForm.name} with guid: ${activityForm.externalIds.find{it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID}.externalId} has been deleted"
         }
         result
 
@@ -174,18 +368,27 @@ class ParatooService {
 
     /** This is a backup method in case the protocols aren't available online */
     Map syncProtocolsFromSettings() {
-        List protocols = JSON.parse(settingService.getSetting(PARTOO_PROTOCOLS_KEY))
+        List protocols = JSON.parse(settingService.getSetting(PARATOO_PROTOCOLS_KEY))
         syncParatooProtocols(protocols)
     }
 
+    private String getParatooBaseUrl() {
+        grailsApplication.config.getProperty('paratoo.core.baseUrl')
+    }
+
+
     Map syncProtocolsFromParatoo() {
-        String paratooCoreUrlPrefix = grailsApplication.config.getProperty('paratoo.core.baseUrl')
-        String url = paratooCoreUrlPrefix+PARATOO_PROTOCOL_PATH
-        Map response = webService.getJson(url, null,  null, false)
+        String url = paratooBaseUrl+PARATOO_PROTOCOL_PATH
+        String accessToken = tokenService.getAuthToken(true)
+        if (!accessToken?.startsWith('Bearer')) {
+            accessToken = 'Bearer '+accessToken
+        }
+        Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
+        Map response = webService.getJson(url, null,  authHeader, false)
         syncParatooProtocols(response?.data)
     }
 
-    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form) {
+    private static void mapProtocolToActivityForm(Map protocol, ActivityForm form, List tags) {
         form.name = protocol.attributes.name
         form.formVersion = protocol.attributes.version
         form.type = PARATOO_PROTOCOL_FORM_TYPE
@@ -193,6 +396,8 @@ class ParatooService {
         form.external = true
         form.publicationStatus = PublicationStatus.PUBLISHED
         form.description = protocol.attributes.description
+        form.tags = tags
+        form.externalIds
     }
 
     private ParatooProject mapProject(Project project, AccessLevel accessLevel, List<Site> sites) {
@@ -202,23 +407,174 @@ class ParatooService {
             projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
         }
 
+        List<Site> plotSelections = sites.findAll{it.type == Site.TYPE_SURVEY_AREA}
+
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
                 accessLevel: accessLevel,
                 project:project,
                 projectArea: projectAreaGeoJson,
-                plots: sites.findAll{it.type == Site.TYPE_WORKS_AREA}]
+                projectAreaSite: projectArea,
+                plots: plotSelections]
         new ParatooProject(attributes)
 
     }
 
-    private static Map mapParatooCollection(ParatooCollection collection, Project project) {
+    private static Map mapParatooCollectionId(ParatooCollectionId collectionId, Project project) {
         Map dataSet = [:]
-        dataSet.dataSetId = collection.mintedCollectionId
+        dataSet.dataSetId = Identifiers.getNew(true, '')
+        dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
+        dataSet.protocol = collectionId.surveyId.protocol.id
         dataSet.grantId = project.grantId
-
+        dataSet.collectionApp = PARATOO_APP_NAME
+        dataSet.dateCreated = DateUtil.format(new Date())
+        dataSet.lastUpdated = DateUtil.format(new Date())
         dataSet
     }
 
+    private static String buildSurveyQueryString(int start, int limit) {
+        "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit"
+    }
+
+    Map retrieveSurveyData(ParatooSurveyId surveyId, ParatooProtocolConfig config) {
+
+        String apiEndpoint = config.getApiEndpoint(surveyId)
+
+        String accessToken = tokenService.getAuthToken(true)
+        if (!accessToken?.startsWith('Bearer')) {
+            accessToken = 'Bearer '+accessToken
+        }
+        Map authHeader = [(MONITOR_AUTH_HEADER):accessToken]
+
+        if (!accessToken) {
+            throw new RuntimeException("Unable to get access token")
+        }
+        int start = 0
+        int limit = 10
+
+
+        String url = paratooBaseUrl+'/'+apiEndpoint
+        String query = buildSurveyQueryString(start, limit)
+        Map response = webService.getJson(url+query, null,  authHeader, false)
+        Map survey = findMatchingSurvey(surveyId, response.data, config)
+        int total = response.meta?.pagination?.total ?: 0
+        while (!survey && start+limit < total) {
+            start += limit
+
+            query = buildSurveyQueryString(start, limit)
+            response = webService.getJson(url+query, null,  authHeader, false)
+            survey = findMatchingSurvey(surveyId, response.data, config)
+        }
+
+        survey
+    }
+
+
+    private static Map findMatchingSurvey(ParatooSurveyId surveyId, List data, ParatooProtocolConfig config) {
+        data?.find { config.matches(it, surveyId) }
+    }
+
+    Map addOrUpdatePlotSelections(String userId, ParatooPlotSelectionData plotSelectionData) {
+
+        List projects = userProjects(userId)
+        if (!projects) {
+            return [error:'User has no projects eligible for Monitor site data']
+        }
+
+        Map siteData = mapPlotSelection(plotSelectionData)
+        // The project/s for the site will be specified by a subsequent call to /projects
+        siteData.projects = []
+
+        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteData.externalId)
+        Map result
+        if (site) {
+            result = siteService.update(siteData, site.siteId)
+        }
+        else {
+            result = siteService.create(siteData)
+        }
+
+        result
+    }
+
+    private static Map mapPlotSelection(ParatooPlotSelectionData plotSelectionData) {
+        Map geoJson = ParatooProtocolConfig.plotSelectionToGeoJson(plotSelectionData)
+        Map site = SiteService.propertiesFromGeoJson(geoJson, 'point')
+        site.projects = [] // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
+        site.type = Site.TYPE_SURVEY_AREA
+        site.externalIds = [new ExternalId(idType:ExternalId.IdType.MONITOR_PLOT_GUID, externalId:geoJson.properties.externalId)]
+        site.publicationStatus = PublicationStatus.PUBLISHED // Mark the plot as read only as it is managed by the Monitor app
+
+        site
+    }
+
+    Map updateProjectSites(ParatooProject project, Map siteData, List<ParatooProject> userProjects) {
+        if (siteData.plot_selections) {
+            List siteExternalIds = siteData.plot_selections
+            siteExternalIds = siteExternalIds.findAll{it} // Remove null / empty ids
+            if (siteExternalIds) {
+                linkProjectToSites(project, siteExternalIds, userProjects)
+            }
+
+        }
+        if (siteData.project_area_type && siteData.project_area_coordinates) {
+            updateProjectArea(project, siteData.project_area_type, siteData.project_area_coordinates)
+        }
+    }
+
+
+    private static Map linkProjectToSites(ParatooProject project, List siteExternalIds, List<ParatooProject> userProjects) {
+        List errors = []
+
+        siteExternalIds.each { String siteExternalId ->
+
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteExternalId)
+            if (site) {
+                site.projects = site.projects ?: []
+                if (!site.projects.contains(project.id)) {
+                    // Validate that the user has permission to link the site to the project by checking
+                    // if the user has permission on any other projects this site is linked to.
+                    if (site.projects) {
+                        if (!userProjects.collect{it.id}.containsAll(site.projects)) {
+                            errors << "User does not have permission to link site ${site.externalId} to project ${project.id}"
+                            return
+                        }
+                    }
+                    site.projects << project.id
+                    site.save()
+                    if (site.hasErrors()) {
+                        errors << site.errors
+                    }
+                }
+            }
+            else {
+                errors << "No site exists with externalId = ${siteExternalId}"
+            }
+        }
+        [success:!errors, error:errors]
+    }
+
+    private Map updateProjectArea(ParatooProject project, String type, List coordinates) {
+        Map geometry = ParatooProtocolConfig.toGeometry(coordinates)
+        Site projectArea = project.projectAreaSite
+        if (projectArea) {
+            projectArea.extent.geometry.type = geometry.type
+            projectArea.extent.geometry.coordinates = geometry.coordinates
+            siteService.update(projectArea.extent, projectArea.siteId)
+        }
+        else {
+
+            Map site = [
+                    name:'Monitor project area',
+                    type:Site.TYPE_PROJECT_AREA,
+                    extent: [
+                            source:'drawn',
+                            geometry:geometry
+                    ],
+                    projects: [project.id]
+            ]
+            siteService.create(site)
+        }
+    }
 }

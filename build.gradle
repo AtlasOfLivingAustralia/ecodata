@@ -17,9 +17,10 @@ buildscript {
 plugins {
     id "com.github.node-gradle.node" version "3.4.0"
     id 'jacoco'
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
-version "4.3.2"
+version "4.4-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 
@@ -143,7 +144,7 @@ dependencies {
     // Added due to previous reliance on transitive dependencies from plugins
     implementation 'au.com.bytecode:opencsv:2.4'
     implementation "com.bertramlabs.plugins:asset-pipeline-core:$assetPipelineVersion"
-    implementation 'au.org.ala.plugins:openapi:0.1.0-SNAPSHOT'
+    implementation 'au.org.ala.plugins:openapi:1.2.0-SNAPSHOT'
     implementation "org.hibernate:hibernate-validator:6.2.0.Final"
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.grails.plugins:geb"

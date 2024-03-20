@@ -58,8 +58,8 @@ class PermissionService {
         return isEditor
     }
 
-    def isUserEditorForProject(String userId, String projectId) {
-        def isEditor = false
+    boolean isUserEditorForProject(String userId, String projectId) {
+        boolean isEditor = false
 
         if (userId && projectId) {
             def ups = getUserAccessForEntity(userId, Project, projectId)
@@ -70,10 +70,10 @@ class PermissionService {
             }
         }
 
-        return isEditor // bolean
+        return isEditor
     }
 
-    def isUserEditorForProjects(String userId, String projectIds) {
+    Boolean isUserEditorForProjects(String userId, String projectIds) {
         Boolean userHasPermission = false
 
         if (userId && projectIds) {
@@ -89,8 +89,7 @@ class PermissionService {
             }
         }
 
-        log.debug "userHasPermission = ${userHasPermission}"
-        return userHasPermission // bolean
+        return userHasPermission
     }
 
     Boolean canUserModerateProjects(String userId, String projectIds) {
@@ -109,8 +108,7 @@ class PermissionService {
             }
         }
 
-        log.debug "userHasPermission = ${userHasPermission}"
-        return userHasPermission // bolean
+        return userHasPermission
     }
 
     /**
@@ -224,16 +222,17 @@ class PermissionService {
             out.put(it.userId,rec);
 
         }
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userIds ? authService.getUserDetailsById(userIds) : null
 
         if (userList) {
             def users = userList['users']
 
-            users.each { k, v ->
+            users.each { k, u ->
                 Map rec = out.get(k)
                 if (rec) {
-                    rec.displayName = v?.displayName
-                    rec.userName = v?.userName
+                    rec.displayName = u?.displayName
+                    rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+                    rec.email = u?.email
                 }
             }
         }
@@ -275,11 +274,12 @@ class PermissionService {
         if (userList) {
             def users = userList['users']
 
-            users.each { k, v ->
+            users.each { k, u ->
                 Map rec = out.get(k)
                 if (rec) {
-                    rec.displayName = v?.displayName
-                    rec.userName = v?.userName
+                    rec.displayName = u?.displayName
+                    rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+                    rec.email = u?.email
                 }
             }
         }
@@ -295,7 +295,8 @@ class PermissionService {
             rec.role = it.accessLevel?.toString()
             rec.userId = it.userId
             rec.displayName = u?.displayName
-            rec.userName = u?.userName
+            rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+            rec.email = u?.email
             out.add(rec)
         }
         out
@@ -343,15 +344,16 @@ class PermissionService {
             out.put(it.userId,toMap(it,false))
         }
 
-        def userList = authService.getUserDetailsById(userIds)
+        def userList = userIds ? authService.getUserDetailsById(userIds) : null
         if (userList) {
             def users = userList['users']
 
-            users.each { k, v ->
+            users.each { k, u ->
                 Map rec = out.get(k)
                 if (rec) {
-                    rec.displayName = v?.displayName
-                    rec.userName = v?.userName
+                    rec.displayName = u?.displayName
+                    rec.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+                    rec.email = u?.email
                 }
             }
         }
@@ -399,7 +401,8 @@ class PermissionService {
         if (includeUserDetails) {
             def u = userService.getUserForUserId(userPermission.userId)
             mapped.displayName = u?.displayName
-            mapped.userName = u?.userName
+            mapped.userName = u?.email ?: u?.userName // This is temporary until we update MERIT / BioCollect to use the email field.
+            mapped.email = u?.email
         }
         mapped
     }

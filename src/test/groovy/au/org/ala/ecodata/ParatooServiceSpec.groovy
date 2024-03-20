@@ -1,40 +1,64 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.ParatooService
-import au.org.ala.ecodata.paratoo.ParatooProject
-import au.org.ala.ecodata.paratoo.ParatooProtocolId
-import grails.testing.gorm.DataTest
+import au.org.ala.ecodata.paratoo.*
+import au.org.ala.ws.tokens.TokenService
+import com.nimbusds.oauth2.sdk.token.AccessToken
+import grails.converters.JSON
+import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
-import spock.lang.Specification
+import groovy.json.JsonSlurper
+import org.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.grails.web.converters.marshaller.json.MapMarshaller
 
 /**
  * Tests for the ParatooService.
  * The tests are incomplete as some of the behaviour needs to be specified.
  */
-class ParatooServiceSpec extends Specification implements ServiceUnitTest<ParatooService>, DataTest {
+class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooService>{
 
     String userId = 'u1'
     SiteService siteService = Mock(SiteService)
     ProjectService projectService = Mock(ProjectService)
+    WebService webService = Mock(WebService)
+    TokenService tokenService = Mock(TokenService)
+    SettingService settingService = Mock(SettingService)
+    MetadataService metadataService = Mock(MetadataService)
 
     static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
     def setup() {
-        mockDomain(Project)
-        mockDomain(ActivityForm)
-        mockDomain(Service)
-        mockDomain(UserPermission)
-        mockDomain(Program)
-        mockDomain(Hub)
+
+        deleteAll()
         setupData()
 
+        service.webService = webService
         service.siteService = siteService
         service.projectService = projectService
         service.permissionService = new PermissionService() // Using the real permission service for this test
+        service.tokenService = tokenService
+        service.settingService = settingService
+        service.metadataService = metadataService
+
+        JSON.registerObjectMarshaller(new MapMarshaller())
+        JSON.registerObjectMarshaller(new CollectionMarshaller())
+    }
+
+    private Map readSurveyData(String name) {
+        URL url = getClass().getResource("/paratoo/${name}.json")
+        new JsonSlurper().parse(url)
+    }
+
+    private void deleteAll() {
+        Hub.findAll().each {it.delete()}
+        Project.findAll().each {it.delete()}
+        ActivityForm.findAll().each {it.delete()}
+        Service.findAll().each {it.delete()}
+        UserPermission.findAll().each {it.delete()}
+        Program.findAll().each {it.delete()}
     }
 
     def cleanup() {
+       deleteAll()
     }
 
     void "The service can map user projects into a format useful for the paratoo API"() {
@@ -70,9 +94,9 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
         then:
         projects.size() == 0
 
-        when: "The user has the MERIT read only role"
-        UserPermission meritReadOnly = new UserPermission(userId:userId, entityId:'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel:AccessLevel.readOnly)
-        meritReadOnly.save(flush:true, failOnError:true)
+        when: "The user has the MERIT grant manager role"
+        UserPermission meritGrantManager = new UserPermission(userId:userId, entityId:'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel:AccessLevel.caseManager)
+        meritGrantManager.save(flush:true, failOnError:true)
         projects = service.userProjects(userId)
 
         then:
@@ -96,18 +120,145 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
 
     void "The service can create a data set from a submitted collection"() {
         setup:
-        ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
-        ParatooCollection collection = new ParatooCollection(projectId:'p1', mintedCollectionId:"c1", userId:'u1', protocol:protocol, eventTime:DateUtil.parse('2023-01-01T00:00:00Z'))
-        Map expectedDataSet = [dataSetId:'c1', grantId:'g1']
+
+        String projectId = 'p1'
+        ParatooProtocolId protocol = new ParatooProtocolId(id:"guid-2", version: 1)
+        ParatooSurveyId surveyId = new ParatooSurveyId(projectId:projectId, protocol:protocol, surveyType:"api", time:new Date(), uuid:"1l")
+        ParatooCollectionId collectionId = new ParatooCollectionId(surveyId:surveyId)
 
         when:
-        Map result = service.createCollection(collection)
+        Map result = service.mintCollectionId('u1', collectionId)
 
         then:
+        1 * projectService.update(_, projectId, false) >> {data, pId, updateCollectory ->
+            Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
+            assert dataSet.surveyId.time == surveyId.timeAsISOString()
+            assert dataSet.surveyId.uuid == surveyId.uuid
+            assert dataSet.surveyId.surveyType == surveyId.surveyType
+            assert dataSet.protocol == surveyId.protocol.id
+            assert dataSet.grantId == "g1"
+            assert dataSet.progress == 'planned'
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(surveyId.time)} (Project 1)"
+
+            [status:'ok']
+        }
+
+        and:
+        result.status == 'ok'
+        result.orgMintedIdentifier != null
+    }
+
+    void "The service can create a data set from a submitted collection"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProtocolId protocol = new ParatooProtocolId(id:1, version: 1)
+        ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
+        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'s1', uuid:"1", projectId:projectId, protocol: protocol, time:'2023-09-01T00:00:00.123Z']]
+        Map expectedDataSet = dataSet+[progress:Activity.STARTED]
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
+        when:
+        Map result = service.submitCollection(collection, project)
+
+        then:
+        1 * webService.getJson({it.indexOf('/s1s') >= 0}, null, _, false) >> [data:[], meta:[pagination:[total:0]]]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.update([custom:[dataSets:[expectedDataSet]]], 'p1', false) >> [status:'ok']
 
         and:
         result == [status:'ok']
+    }
+    
+    void "The service can create a site from a submitted plot-selection"() {
+        setup:
+        Map data = [
+                "plot_label":"CTMAUA2222",
+                "recommended_location":["lat":-35.2592424,"lng":149.0651439],
+                "uuid":"lmpisy5p9g896lad4ut",
+                "comment":"Test"]
+
+        Map expected = ['name':'CTMAUA2222', 'description':'CTMAUA2222', publicationStatus:'published', 'externalIds':[new ExternalId(externalId:'lmpisy5p9g896lad4ut', idType:ExternalId.IdType.MONITOR_PLOT_GUID)], 'notes':'Test', 'extent':['geometry':['type':'Point', 'coordinates':[149.0651439, -35.2592424], 'decimalLatitude':-35.2592424, 'decimalLongitude':149.0651439], 'source':'point'], 'projects':[], 'type':'surveyArea']
+
+        String userId = 'u1'
+
+        when:
+        service.addOrUpdatePlotSelections(userId, new ParatooPlotSelectionData(data))
+
+        then:
+        1 * siteService.create(expected)
+    }
+
+    void "The service can link a site to a project"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
+        Map data = [plot_selections:['s2']]
+
+        when:
+        service.updateProjectSites(project, data, [project])
+        Site s2 = Site.findBySiteId('s2')
+
+        then:
+        s2.projects.indexOf(projectId) >= 0
+    }
+
+    void "The service can create a project area"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId))
+        Map data = [project_area_type:'polygon', project_area_coordinates: [
+                [
+                    "lat": -34.96643621094802,
+                    "lng": 138.6845397949219
+                ],
+                [
+                    "lat": -35.003565839769166,
+                    "lng": 138.66394042968753
+                ],
+                [
+                    "lat": -34.955744257334246,
+                    "lng": 138.59973907470706
+                ]
+        ]]
+        Map expectedSite = [name:"Monitor project area", type:Site.TYPE_PROJECT_AREA, projects:[projectId],
+            extent:[source:"drawn", geometry: [type:'Polygon', coordinates:[[[138.6845397949219, -34.96643621094802], [138.66394042968753, -35.003565839769166], [138.59973907470706, -34.955744257334246], [138.6845397949219, -34.96643621094802]]]]]]
+
+        when:
+        service.updateProjectSites(project, data, [project])
+
+        then:
+        1 * siteService.create(expectedSite)
+    }
+
+    void "The service can create a site from a submitted collection"() {
+        setup:
+        String projectId = 'p1'
+        ParatooProtocolId protocol = new ParatooProtocolId(id:"1", version: 1)
+        ParatooCollection collection = new ParatooCollection(projectId:projectId, orgMintedIdentifier:"org1", userId:'u1', protocol:protocol)
+        Map dataSet =  [dataSetId:'d1', orgMintedIdentifier:'org1', grantId:'g1', surveyId:[surveyType:'basal-area-dbh-measure-survey', uuid:"43389075", projectId:projectId, protocol: protocol, time:'2023-09-22T01:03:15.556Z']]
+        ParatooProject project = new ParatooProject(id:projectId, project:new Project(projectId:projectId, custom:[dataSets:[dataSet]]))
+        Map surveyData = readSurveyData('basalAreaDbh')
+        Map site
+
+        when:
+        Map result = service.submitCollection(collection, project)
+
+        then:
+        1 * webService.getJson({it.indexOf('/basal-area-dbh-measure-survey') >= 0}, null, _, false) >> [data:[surveyData], meta:[pagination:[total:0]]]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        1 * projectService.update(_, projectId, false) >> [status:'ok']
+        1 * siteService.create(_) >> {site = it[0]; [siteId:'s1']}
+
+        and:
+        site.name == "SATFLB0001 - Control (100 x 100)"
+        site.description == "SATFLB0001 - Control (100 x 100)"
+        site.notes == "some comment"
+        site.type == "surveyArea"
+        site.publicationStatus == "published"
+        site.externalIds[0].externalId == "4"
+        site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
+
+        result == [status:'ok']
+
     }
 
     private void setupData() {
@@ -118,26 +269,35 @@ class ParatooServiceSpec extends Specification implements ServiceUnitTest<Parato
                         serviceIds:[1],
                         baseline:[rows:[[protocols:['protocol category 1']]]],
                         monitoring:[rows:[[protocols:['protocol category 2', 'protocol category 3']]]]
-                ]])
+                ], dataSets: [[
+                    dataSetId:'c1'
+                ]]])
         project.save(failOnError:true, flush:true)
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId:'p1', entityType:Project.name)
         userPermission.save(failOnError:true, flush:true)
 
         Site projectArea = new Site(siteId:'s1', name:'Site 1', type:Site.TYPE_PROJECT_AREA, extent: [geometry:DUMMY_POLYGON])
-        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_WORKS_AREA, extent: [geometry:DUMMY_POLYGON])
-        siteService.sitesForProject('p1') >> [projectArea, plot]
+        projectArea.save(failOnError:true, flush:true)
+        Site plot = new Site(siteId:'s2', name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:['p1'])
+        plot.save(failOnError:true, flush:true)
+        siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 
         Program program = new Program(programId: "prog1", name:"A program", config:[(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM):true])
         program.save(failOnError:true, flush:true)
 
-        Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:2, formName:"aParatooForm", sectionName:null)])
+        Service service = new Service(name:"S1", serviceId:'1', legacyId: 1, outputs:[new ServiceForm(externalId:"guid-2", formName:"aParatooForm", sectionName:null)])
         service.save(failOnError:true, flush:true)
 
-        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", externalId: 2, type:'Paratoo', category:'protocol category 1', external: true)
+        ActivityForm activityForm = new ActivityForm(name:"aParatooForm 1", type:'EMSA', category:'protocol category 1', external: true)
+        activityForm.externalIds = [new ExternalId(externalId: "guid-2", idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError:true, flush:true)
-        activityForm = new ActivityForm(name:"aParatooForm 2 ", externalId: 3, type:'Paratoo', category:'protocol category 2', external: true)
+
+        activityForm = new ActivityForm(name:"aParatooForm 2 ", type:'EMSA', category:'protocol category 2', external: true)
+        activityForm.externalIds = [new ExternalId(externalId: "guid-3", idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError:true, flush:true)
-        activityForm = new ActivityForm(name:"aParatooForm 3", externalId: 4, type:'Paratoo', category:'protocol category 3', external: true)
+
+        activityForm = new ActivityForm(name:"aParatooForm 3", type:'EMSA', category:'protocol category 3', external: true)
+        activityForm.externalIds = [new ExternalId(externalId: "guid-4", idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError:true, flush:true)
     }
 }

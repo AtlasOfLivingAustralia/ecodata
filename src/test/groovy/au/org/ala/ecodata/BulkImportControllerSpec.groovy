@@ -208,7 +208,7 @@ class BulkImportControllerSpec  extends Specification implements ControllerUnitT
         response.getJson().error == "Missing id"
     }
 
-    def "get: test get missing bulk import id"() {
+    def "get: test wrong bulk import id is provided"() {
 
         when:
         params.id = "123"

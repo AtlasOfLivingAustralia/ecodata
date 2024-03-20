@@ -8,6 +8,10 @@ import org.bson.types.ObjectId
  */
 class ActivityForm {
 
+    static String SURVEY_TAG = "survey"
+    static String INTERVENTION_TAG = "intervention"
+    static String SITE_TAG = "site"
+
     static graphql = ActivityFormGraphQLMapper.graphqlMapping()
 
     /** The list of properties to be used when binding request data to an ActivityForm */
@@ -15,7 +19,8 @@ class ActivityForm {
 
     static mapWith = "mongo"
 
-    static embedded = ['sections']
+    static embedded = ['sections', 'externalIds']
+    static hasMany = [externalIds:ExternalId]
 
     static constraints = {
         name unique: ['formVersion']
@@ -27,12 +32,13 @@ class ActivityForm {
         lastUpdatedUserId nullable: true
         minOptionalSectionsCompleted nullable: true
         description nullable: true
+        externalIds nullable: true
     }
 
     static mapping = {
         name index:true
         compoundIndex name:1, formVersion:-1
-        externalId index:true
+        externalIds index:true
     }
 
     ObjectId id
@@ -90,17 +96,17 @@ class ActivityForm {
      */
     boolean external = false
 
-    /**
-     * Paratoo protocol ids are numeric.  We could use a String here and convert it when responding to paratoo
-     * (for consistency with project external ids
-     */
-    int externalId
+    /** Associates a list of ids from external systems with this ActivityForm. Used for monitor protocols*/
+    List<ExternalId> externalIds
 
     Date dateCreated
     Date lastUpdated
 
     String createdUserId
     String lastUpdatedUserId
+
+    /** Currently only used to describe whether this form is collecting survey data (and hence a data set summary will be created) */
+    List tags = []
 
     boolean isPublished() {
         return publicationStatus == PublicationStatus.PUBLISHED
@@ -129,6 +135,15 @@ class ActivityForm {
 
     FormSection getFormSection(String name) {
         sections.find{it.name == name}
+    }
+
+    static ActivityForm findByExternalId(String externalId) {
+        where {
+            externalIds {
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
     }
 
 
