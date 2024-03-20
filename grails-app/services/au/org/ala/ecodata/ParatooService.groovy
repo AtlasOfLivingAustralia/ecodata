@@ -462,7 +462,7 @@ class ParatooService {
         String query = buildSurveyQueryString(start, limit)
         log.debug("Retrieving survey data from: "+url+query)
         Map response = webService.getJson(url+query, null,  authHeader, false)
-        log.debug(response)
+        log.debug((response as JSON).toString())
         Map survey = findMatchingSurvey(surveyId, response.data, config)
 
         int total = response.meta?.pagination?.total ?: 0
@@ -472,7 +472,7 @@ class ParatooService {
             query = buildSurveyQueryString(start, limit)
             log.debug("Retrieving survey data from: "+url+query)
             response = webService.getJson(url+query, null,  authHeader, false)
-            log.debug(response)
+            log.debug((response as JSON).toString())
             survey = findMatchingSurvey(surveyId, response.data, config)
         }
 
