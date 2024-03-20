@@ -103,7 +103,10 @@ class ParatooProtocolConfig {
             log.debug(surveyData.toString())
             return false
         }
-        tmpSurveyId?.orgMintedUUID == surveyId.survey_metadata?.orgMintedUUID
+
+        tmpSurveyId?.survey_details?.survey_model == surveyId.survey_metadata?.survey_details.survey_model &&
+                tmpSurveyId?.survey_details?.time == surveyId.survey_metadata?.survey_details.time &&
+                tmpSurveyId?.survey_details?.uuid == surveyId.survey_metadata?.survey_details.uuid
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
