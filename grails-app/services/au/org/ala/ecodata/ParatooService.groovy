@@ -460,14 +460,19 @@ class ParatooService {
 
         String url = paratooBaseUrl+'/'+apiEndpoint
         String query = buildSurveyQueryString(start, limit)
+        log.debug("Retrieving survey data from: "+url+query)
         Map response = webService.getJson(url+query, null,  authHeader, false)
+        log.debug(response)
         Map survey = findMatchingSurvey(surveyId, response.data, config)
+
         int total = response.meta?.pagination?.total ?: 0
         while (!survey && start+limit < total) {
             start += limit
 
             query = buildSurveyQueryString(start, limit)
+            log.debug("Retrieving survey data from: "+url+query)
             response = webService.getJson(url+query, null,  authHeader, false)
+            log.debug(response)
             survey = findMatchingSurvey(surveyId, response.data, config)
         }
 
