@@ -1,12 +1,7 @@
 package au.org.ala.ecodata
 
 import au.ala.org.ws.security.SkipApiKeyCheck
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.paratoo.ParatooCollectionId
-import au.org.ala.ecodata.paratoo.ParatooPlotSelection
-import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
-import au.org.ala.ecodata.paratoo.ParatooProject
-import au.org.ala.ecodata.paratoo.ParatooToken
+import au.org.ala.ecodata.paratoo.*
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation

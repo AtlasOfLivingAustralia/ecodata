@@ -194,6 +194,7 @@ class UrlMappings {
         "/ws/project/getDataCollectionWhiteList"(controller: "project"){ action = [GET:"getDataCollectionWhiteList"] }
         "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
+        "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
         "/ws/document/download"(controller:"document", action:"download")

@@ -1,22 +1,22 @@
 package au.org.ala.ecodata
 
-import org.locationtech.jts.geom.*
-import org.locationtech.jts.io.WKTReader
-import org.locationtech.jts.io.WKTWriter
-import org.locationtech.jts.simplify.TopologyPreservingSimplifier
-import org.locationtech.jts.util.GeometricShapeFactory
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.geotools.geojson.geom.GeometryJSON
 import org.geotools.geometry.jts.JTS
+import org.geotools.geometry.jts.JTSFactoryFinder
 import org.geotools.referencing.CRS
 import org.geotools.referencing.GeodeticCalculator
+import org.locationtech.jts.geom.*
+import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.io.WKTWriter
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier
+import org.locationtech.jts.util.GeometricShapeFactory
 import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.referencing.operation.MathTransform
 
 import java.awt.geom.Point2D
-
 /**
  * Helper class for working with site geometry.
  */
@@ -37,6 +37,19 @@ class GeometryUtils {
         Geometry geom = new GeometryJSON().read(geojson)
         MultiPolygon result = convertToMultiPolygon(geom)
         return result
+    }
+
+    static Geometry getFeatureCollectionConvexHull (List features) {
+        // Extract geometries from features
+        List<Geometry> geometries = []
+        features.each { feature -> geometries.add( geoJsonMapToGeometry(feature) ) }
+
+        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory()
+        GeometryCollection geometryCollection = geometryFactory.createGeometryCollection(geometries.toArray(new Geometry[0]))
+        Geometry unionGeometry = geometryCollection.union()
+
+        // Compute convex hull
+        unionGeometry.convexHull()
     }
 
     private static MultiPolygon convertToMultiPolygon(Geometry geom) {

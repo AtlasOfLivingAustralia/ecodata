@@ -44,6 +44,7 @@ class ProjectService {
     OrganisationService organisationService
     UserService userService
     ActivityFormService activityFormService
+    RecordService recordService
     LockService lockService
 
   /*  def getCommonService() {
@@ -1037,6 +1038,20 @@ class ProjectService {
             count += Project.countByProjectIdAndHubId(it?.entityId, hubId)
         }
         count > 0
+    }
+
+    List fetchDataSetRecords (String projectId, String dataSetId) {
+        int batchSize = 10, count = 10, offset = 0
+        List records = []
+        while (batchSize == count) {
+            def response = Record.findAllByProjectIdAndDataSetId(projectId, dataSetId, [max: batchSize, offset: offset])
+            count = records.size()
+            response = response.collect { recordService.toMap(it) }
+            records.addAll(response)
+            offset += count
+        }
+
+        records
     }
 
 }

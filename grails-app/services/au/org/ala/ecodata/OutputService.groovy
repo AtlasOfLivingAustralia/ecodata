@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.ecodata.metadata.OutputMetadata
 
-import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
 class OutputService {
@@ -155,8 +154,12 @@ class OutputService {
                 props.data = saveImages(props.data, props.name, output.outputId, props.activityId);
                 props.data = saveAudio(props.data, props.name, output.outputId, props.activityId);
 
-
-                createOrUpdateRecordsForOutput(activity, output, props)
+                try {
+                    createOrUpdateRecordsForOutput(activity, output, props)
+                }
+                catch (Exception ex) {
+                    log.error("Error creating records for activity - ${activity.activityId}", ex)
+                }
                 commonService.updateProperties(output, props)
 
                 return [status: 'ok', outputId: output.outputId]
@@ -241,7 +244,12 @@ class OutputService {
 
                 List statusUpdate = recordService.updateRecordStatusByOutput(outputId, Status.DELETED)
                 if (!statusUpdate) {
-                    createOrUpdateRecordsForOutput(activity, output, props)
+                    try {
+                        createOrUpdateRecordsForOutput(activity, output, props)
+                    }
+                    catch (Exception ex) {
+                        log.error("Error creating records for activity - ${activity.activityId}", ex)
+                    }
                     commonService.updateProperties(output, props)
                     result = [status: 'ok']
                 } else {
