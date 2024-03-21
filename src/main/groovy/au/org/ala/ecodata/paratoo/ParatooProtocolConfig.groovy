@@ -1,12 +1,17 @@
 package au.org.ala.ecodata.paratoo
 
+import au.org.ala.ecodata.ActivityForm
 import au.org.ala.ecodata.DateUtil
+import au.org.ala.ecodata.FormSection
+import au.org.ala.ecodata.GeometryUtils
+import au.org.ala.ecodata.ParatooService
+import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.PropertyAccessor
-import groovy.util.logging.Slf4j
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import groovy.util.logging.Slf4j
+import org.locationtech.jts.geom.Geometry
 
 import java.util.regex.Matcher
-
 /**
  * Configuration about how to work with a Paratoo/Monitor protocol
  */
@@ -32,6 +37,8 @@ class ParatooProtocolConfig {
     String observationIndividualCountPath = 'attributes.number_of_individuals'
     String observationEventDatePath = 'attributes.date_time'
     String observationGeometryPath = 'attributes.location'
+    String plotVisitPath = 'attributes.plot_visit.data.attributes'
+    String plotLayoutPath = "${plotVisitPath}.plot_layout.data.attributes"
     String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
     String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
     String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
@@ -40,6 +47,7 @@ class ParatooProtocolConfig {
     String getApiEndpoint(ParatooSurveyId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
+    Map overrides = [dataModel: [:], viewModel: [:]]
 
     private static String removeMilliseconds(String isoDateWithMillis) {
         if (!isoDateWithMillis) {
@@ -134,6 +142,42 @@ class ParatooProtocolConfig {
         extractGeometryFromSiteData(geometryData)
     }
 
+    private List extractFeatures (Map observation, ActivityForm form) {
+        List features = []
+        form.sections.each { FormSection section ->
+            OutputMetadata om = new OutputMetadata(section.template)
+            Map paths = om.getNamesForDataType("feature", null )
+            features.addAll(getFeaturesFromPath(observation, paths))
+        }
+
+        features
+    }
+
+    private List getFeaturesFromPath (Map output, Map paths) {
+        List features = []
+        paths.each { String name, node ->
+            if (node instanceof Boolean) {
+                features.add(output[name])
+                // todo later: add featureIds and modelId for compliance with feature behaviour of reports
+            }
+
+            // recursive check for feature
+            if (node instanceof Map) {
+                if (output[name] instanceof Map) {
+                    features.addAll(getFeaturesFromPath(output[name], node))
+                }
+
+                if (output[name] instanceof List) {
+                    output[name].eachWithIndex { row, index ->
+                        features.addAll(getFeaturesFromPath(row, node))
+                    }
+                }
+            }
+        }
+
+        features
+    }
+
     private Map extractGeometryFromSiteData(geometryData) {
         Map geometry = null
         if (geometryData) {
@@ -157,14 +201,14 @@ class ParatooProtocolConfig {
         apiEndpoint
     }
 
-    private static def getProperty(Map surveyData, String path) {
+    static def getProperty(Map surveyData, String path) {
         if (!path) {
             return null
         }
         new PropertyAccessor(path).get(surveyData)
     }
 
-    Map getGeoJson(Map survey) {
+    Map getGeoJson(Map survey, Map observation = null, ActivityForm form = null) {
         if (!survey) {
             return null
         }
@@ -172,12 +216,55 @@ class ParatooProtocolConfig {
         Map geoJson = null
         if (usesPlotLayout) {
             geoJson = extractSiteDataFromPlotVisit(survey)
+            // get list of all features associated with observation
+            if (form && observation) {
+                geoJson.features = extractFeatures(observation, form)
+            }
         }
-        else if (geometryPath) {
-            geoJson = extractSiteDataFromPath(survey)
+        else if (form && observation) {
+            List features = extractFeatures(observation, form)
+            if (features) {
+                Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(features)
+                geoJson = GeometryUtils.geometryToGeoJsonMap(geometry)
+                geoJson.features = features
+            }
         }
         geoJson
     }
+
+    Map getPlotVisit (Map surveyData) {
+        Map plotVisit = getProperty(surveyData, plotVisitPath)
+        List keys = plotVisit?.keySet().toList().minus(ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT)
+        Map result = [:]
+        keys.each { key ->
+            result[key] = plotVisit[key]
+        }
+
+        result
+    }
+
+    Map getPlotLayout (Map surveyData) {
+        Map plotLayout = getProperty(surveyData, plotLayoutPath)
+        List keys = plotLayout?.keySet().toList().minus(ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION)
+        Map result = [:]
+        keys.each { key ->
+            result[key] = plotLayout[key]
+        }
+
+        result
+    }
+
+    Map getPlotSelection (Map surveyData) {
+        Map plotSelection = getProperty(surveyData, plotSelectionPath)
+        List keys = plotSelection?.keySet().toList()
+        Map result = [:]
+        keys.each { key ->
+            result[key] = plotSelection[key]
+        }
+
+        result
+    }
+
 
     boolean matches(Map surveyData, ParatooSurveyId surveyId) {
         Map tmpSurveyId = getSurveyId(surveyData)
@@ -236,6 +323,20 @@ class ParatooProtocolConfig {
         ] : null
 
         plotGeometry
+    }
+
+    Map getSurveyDataFromObservation(Map observation) {
+        String surveyAttribute = apiEndpoint
+        if(surveyAttribute?.endsWith('s')) {
+            surveyAttribute = surveyAttribute.substring(0, surveyAttribute.length() - 1)
+        }
+
+        def survey = observation[surveyAttribute]
+        if (survey instanceof List) {
+            return survey[0]
+        }
+
+        survey
     }
 
     private static List closePolygonIfRequired(List points) {

@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.paratoo
 
-
+import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.ExternalId
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
@@ -39,6 +40,26 @@ class ParatooProtocolConfigSpec extends Specification {
                 endDatePath: null
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(vegetationMappingConfig)
+        ActivityForm activityForm = new ActivityForm(
+                name: "aParatooForm 1",
+                type: 'EMSA',
+                category: 'protocol category 1',
+                external: true,
+                sections: [
+                        [
+                            name: "section 1",
+                            template: [
+                                    dataModel: [[
+                                        name: "field 1",
+                                        type: "text",
+                                        required: true,
+                                        external: true
+                                    ]]
+                            ]
+                        ]
+                ]
+        )
+        activityForm.externalIds = [new ExternalId(externalId: "guid-2", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
 
         expect:
         config.getStartDate(surveyData) == '2023-09-08T23:39:00Z'
@@ -104,7 +125,6 @@ class ParatooProtocolConfigSpec extends Specification {
         ParatooSurveyId paratooSurveyId = new ParatooSurveyId(
                 surveyType: 'opportunistic-survey',
                 time: parse("2023-10-24T00:59:48.456Z").toDate(),
-                randNum: 80454523,
                 projectId: '0d02b422-5bf7-495f-b9f2-fa0a3046937f',
                 protocol: new ParatooProtocolId(id: "068d17e8-e042-ae42-1e42-cff4006e64b0", version: 1)
         )

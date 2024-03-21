@@ -241,7 +241,7 @@ class OutputMetadata {
     }
 
     def isNestedDataModelType(node) {
-        return (node.columns != null && node.dataType != "geoMap")
+        return ((node.columns != null) && (node.columns.size() != 0) && node.dataType != "geoMap")
     }
     def isNestedViewModelType(node) {
         return (node.items != null || node.columns != null)
@@ -256,7 +256,7 @@ class OutputMetadata {
      * ]
      *
      */
-    Map getNamesForDataType(String type, context){
+    Map getNamesForDataType(String type, context, int depth = 0, String path = ""){
         Map names = [:], childrenNames
 
         if(!context && metadata){
@@ -265,8 +265,10 @@ class OutputMetadata {
 
         context?.each { data ->
             if(isNestedDataModelType(data)){
+                String contextPath = "${path}.${data.name}"
+                log.info("${contextPath}")
                 // recursive call for nested data model
-                childrenNames = getNamesForDataType(type, getNestedDataModelNodes(data));
+                childrenNames = getNamesForDataType(type, getNestedDataModelNodes(data), depth + 1, contextPath);
                 if(childrenNames?.size()){
                     names[data.name] = childrenNames
                 }

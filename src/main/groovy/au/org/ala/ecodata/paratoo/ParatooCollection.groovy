@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.paratoo
 
+import grails.converters.JSON
 import grails.databinding.BindingFormat
 import grails.validation.Validateable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -19,5 +20,9 @@ class ParatooCollection implements Validateable {
         projectId nullable: true
         userId nullable: true
         eventTime nullable: true
+    }
+
+    Map parseOrgMintedIdentifier() {
+        JSON.parse(new String(orgMintedIdentifier.decodeBase64()))
     }
 }
