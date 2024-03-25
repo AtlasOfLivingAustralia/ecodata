@@ -67,6 +67,7 @@ class ParatooService {
     ActivityService activityService
     RecordService recordService
     MetadataService metadataService
+    UserService userService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -375,7 +376,7 @@ class ParatooService {
                 projectId        : collection.projectId,
                 publicationStatus: "published",
                 siteId           : siteId,
-                userId           : collection.parseOrgMintedIdentifier()?.userId,
+                userId           : userService.getCurrentUserDetails()?.userId,
                 outputs          : [[
                                             data: surveyObservations,
                                             name: activityForm.name

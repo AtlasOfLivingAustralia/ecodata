@@ -31,6 +31,7 @@ class ParatooProtocolConfigSpec extends Specification {
 
         setup:
         Map surveyData = readSurveyData('vegetationMappingSurvey')
+        Map observation = readSurveyData('vegetationMappingObservation')
         Map vegetationMappingConfig = [
                 apiEndpoint:'vegetation-mapping-observations',
                 usesPlotLayout:false,
@@ -50,8 +51,8 @@ class ParatooProtocolConfigSpec extends Specification {
                             name: "section 1",
                             template: [
                                     dataModel: [[
-                                        name: "field 1",
-                                        type: "text",
+                                        name: "position",
+                                        dataType: "feature",
                                         required: true,
                                         external: true
                                     ]]
@@ -65,6 +66,7 @@ class ParatooProtocolConfigSpec extends Specification {
         config.getStartDate(surveyData) == '2023-09-08T23:39:00Z'
         config.getEndDate(surveyData) == null
         config.getGeoJson(surveyData) == [type:'Point', coordinates:[149.0651536, -35.2592398]]
+        config.getGeoJson(surveyData, observation, activityForm).features == [[type:'Point', coordinates:[149.0651536, -35.2592398]]]
     }
 
     def "The floristics-standard survey can be used with this config"() {
@@ -126,7 +128,8 @@ class ParatooProtocolConfigSpec extends Specification {
                 surveyType: 'opportunistic-survey',
                 time: parse("2023-10-24T00:59:48.456Z").toDate(),
                 projectId: '0d02b422-5bf7-495f-b9f2-fa0a3046937f',
-                protocol: new ParatooProtocolId(id: "068d17e8-e042-ae42-1e42-cff4006e64b0", version: 1)
+                protocol: new ParatooProtocolId(id: "068d17e8-e042-ae42-1e42-cff4006e64b0", version: 1),
+                uuid: "10a03062-2b0d-40bb-a6d7-e72f06788b94"
         )
         List data = config.findObservationsBelongingToSurvey(surveyObservations.data, paratooSurveyId)
 

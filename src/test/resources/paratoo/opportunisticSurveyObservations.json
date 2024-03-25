@@ -87,6 +87,7 @@
               "surveyId": {
                 "time": "2023-10-24T00:59:48.456Z",
                 "randNum": 80454523,
+                "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b94",
                 "protocol": {
                   "id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
                   "version": 1
@@ -184,6 +185,7 @@
             "attributes": {
               "surveyId": {
                 "time": "2023-10-24T00:59:48.456Z",
+                "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b49",
                 "randNum": 80775523,
                 "protocol": {
                   "id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
@@ -283,6 +285,7 @@
               "surveyId": {
                 "time": "2023-10-24T00:59:48.456Z",
                 "randNum": 804993,
+                "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b34",
                 "protocol": {
                   "id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
                   "version": 1

@@ -229,6 +229,10 @@ class ParatooProtocolConfig {
                 geoJson.features = features
             }
         }
+        else if (geometryPath) {
+            geoJson = extractSiteDataFromPath(survey)
+        }
+
         geoJson
     }
 
