@@ -162,13 +162,17 @@ class ParatooService {
     }
 
     Map mintCollectionId(String userId, ParatooCollectionId paratooCollectionId) {
-        String projectId = paratooCollectionId.surveyId.projectId
+        String projectId = paratooCollectionId.projectId
         Project project = Project.findByProjectId(projectId)
 
+        // Update the identifier properties as per the org contract and save the data to the data set
+        String dataSetId = Identifiers.getNew(true, '')
+        paratooCollectionId.eventTime = new Date()
+        paratooCollectionId.survey_metadata.orgMintedUUID = dataSetId
+        paratooCollectionId.userId = project.organisationId // using the organisation as the owner of the data
         Map dataSet = mapParatooCollectionId(paratooCollectionId, project)
-        dataSet.progress = Activity.PLANNED
-        String dataSetName = buildName(paratooCollectionId.surveyId, project)
-        dataSet.name = dataSetName
+
+        dataSet.surveyId = paratooCollectionId.toMap() // No codec to save this to mongo
 
         if (!project.custom) {
             project.custom = [:]
@@ -176,15 +180,9 @@ class ParatooService {
         if (!project.custom.dataSets) {
             project.custom.dataSets = []
         }
-        ParatooMintedIdentifier orgMintedIdentifier = new ParatooMintedIdentifier(
-                surveyId: paratooCollectionId.surveyId,
-                eventTime: new Date(),
-                userId: userId,
-                projectId: projectId,
-                system: "MERIT",
-                version: metadataService.getVersion()
-        )
-        dataSet.orgMintedIdentifier = orgMintedIdentifier.encodeAsMintedCollectionId()
+
+        dataSet.orgMintedIdentifier = paratooCollectionId.encodeAsOrgMintedIdentifier()
+
         log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
         project.custom.dataSets << dataSet
         Map result = projectService.update([custom: project.custom], projectId, false)
@@ -195,9 +193,9 @@ class ParatooService {
         result
     }
 
-    private static String buildName(ParatooSurveyId surveyId, Project project) {
-        ActivityForm protocolForm = ActivityForm.findByExternalId(surveyId.protocol.id)
-        String dataSetName = protocolForm?.name + " - " + surveyId.timeAsDisplayDate() + " (" + project.name + ")"
+    private static String buildName(String protocolId, String displayDate, Project project) {
+        ActivityForm protocolForm = ActivityForm.findByExternalId(protocolId)
+        String dataSetName = protocolForm?.name + " - " + displayDate + " (" + project.name + ")"
         dataSetName
     }
 
@@ -209,20 +207,23 @@ class ParatooService {
      * @return
      */
     Map submitCollection(ParatooCollection collection, ParatooProject project) {
-        boolean forceActivityCreation = true
-        Map dataSet = project.project.custom?.dataSets?.find { it.orgMintedIdentifier == collection.orgMintedIdentifier }
+        boolean forceActivityCreation = false
+
+        Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
         if (!dataSet) {
-            throw new RuntimeException("Unable to find data set with orgMintedIdentifier: " + collection.orgMintedIdentifier)
+            throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
         }
         dataSet.progress = Activity.STARTED
+        dataSet.surveyId.coreSubmitTime = new Date()
+        dataSet.surveyId.survey_metadata.provenance.putAll(collection.coreProvenance)
 
-        ParatooSurveyId surveyId = ParatooSurveyId.fromMap(dataSet.surveyId)
+        ParatooCollectionId surveyId = ParatooCollectionId.fromMap(dataSet.surveyId)
 
-        ParatooProtocolConfig config = getProtocolConfig(surveyId.protocol.id)
-        ActivityForm form = ActivityForm.findByExternalId(surveyId.protocol.id)
+        ParatooProtocolConfig config = getProtocolConfig(surveyId.protocolId)
+        ActivityForm form = ActivityForm.findByExternalId(surveyId.protocolId)
         // reverse lookup gets survey and observations but not plot based data
-        Map surveyDataAndObservations = retrieveSurveyAndObservations(surveyId, config, collection)
+        Map surveyDataAndObservations = retrieveSurveyAndObservations(collection)
         // get survey data from reverse lookup response
         Map surveyData = config.getSurveyDataFromObservation(surveyDataAndObservations)
         // get plot data by querying protocol api endpoint
@@ -239,7 +240,7 @@ class ParatooService {
 
             // make sure activity has not been created for this data set
             if (!dataSet.activityId || forceActivityCreation) {
-                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, collection, dataSet.siteId)
+                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId)
                 List records = recordService.getAllByActivity(activityId)
                 dataSet.areSpeciesRecorded = records?.size() > 0
                 dataSet.activityId = activityId
@@ -248,7 +249,8 @@ class ParatooService {
             dataSet.startDate = config.getStartDate(surveyDataAndObservations)
             dataSet.endDate = config.getEndDate(surveyDataAndObservations)
         } else {
-            log.warn("Unable to retrieve survey data for: " + collection.orgMintedIdentifier)
+            log.warn("Unable to retrieve survey data for: " + collection.orgMintedUUID)
+            log.debug(surveyData)
         }
 
         projectService.update([custom: project.project.custom], project.id, false)
@@ -349,12 +351,12 @@ class ParatooService {
         protocol && project.accessLevel.code >= minimumAccess
     }
 
-    Map findDataSet(String userId, String collectionId) {
+    Map findDataSet(String userId, String orgMintedUUID) {
         List projects = findUserProjects(userId)
 
         Map dataSet = null
         ParatooProject project = projects?.find {
-            dataSet = it.dataSets?.find { it.orgMintedIdentifier == collectionId }
+            dataSet = it.dataSets?.find { it.dataSetId == orgMintedUUID }
             dataSet
         }
         [dataSet: dataSet, project: project]
@@ -368,7 +370,7 @@ class ParatooService {
      * @param siteId
      * @return
      */
-    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollection collection, String siteId) {
+    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, String siteId) {
         Map activityProps = [
                 type             : activityForm.name,
                 formVersion      : activityForm.formVersion,
@@ -434,7 +436,7 @@ class ParatooService {
         output
     }
 
-    private String createSiteFromSurveyData(Map surveyData, Map observation, ParatooCollection collection, ParatooSurveyId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
+    private String createSiteFromSurveyData(Map surveyData, Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
         String siteId = null
         // Create a site representing the location of the collection
         Map geoJson = config.getGeoJson(surveyData, observation, form)
@@ -596,29 +598,39 @@ class ParatooService {
             projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
         }
 
-        List<Site> plotSelections = sites.findAll { it.type == Site.TYPE_SURVEY_AREA }
+        // Monitor has users selecting a point as an approximate survey location then
+        // laying out the plot using GPS when at the site.  We only want to return the approximate planning
+        // sites from this call
+        List<Site> plotSelections = sites.findAll{it.type == Site.TYPE_SURVEY_AREA && it.extent?.geometry?.type == 'Point'}
 
         Map attributes = [
-                id             : project.projectId,
-                name           : project.name,
-                accessLevel    : accessLevel,
-                project        : project,
-                projectArea    : projectAreaGeoJson,
+                id:project.projectId,
+                name:project.name,
+                grantID:project.grantId,
+                accessLevel: accessLevel,
+                project:project,
+                projectArea: projectAreaGeoJson,
                 projectAreaSite: projectArea,
                 plots          : plotSelections]
         new ParatooProject(attributes)
 
     }
 
-    private static Map mapParatooCollectionId(ParatooCollectionId collectionId, Project project) {
+    private static Map mapParatooCollectionId(ParatooCollectionId paratooCollectionId, Project project) {
         Map dataSet = [:]
-        dataSet.dataSetId = Identifiers.getNew(true, '')
-        dataSet.surveyId = collectionId.surveyId.toMap() // No codec to save this to mongo
-        dataSet.protocol = collectionId.surveyId.protocol.id
+        dataSet.dataSetId = paratooCollectionId.survey_metadata.orgMintedUUID
+        dataSet.protocol = paratooCollectionId.protocolId
         dataSet.grantId = project.grantId
         dataSet.collectionApp = PARATOO_APP_NAME
         dataSet.dateCreated = DateUtil.format(new Date())
         dataSet.lastUpdated = DateUtil.format(new Date())
+
+        dataSet.progress = Activity.PLANNED
+        String dataSetName = buildName(
+                paratooCollectionId.protocolId,
+                DateUtil.formatAsDisplayDate(paratooCollectionId.eventTime), project)
+        dataSet.name = dataSetName
+
         dataSet
     }
 
@@ -626,7 +638,7 @@ class ParatooService {
         "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit&filters[createdAt][\$eq]=$createdAt"
     }
 
-    Map retrieveSurveyData(ParatooSurveyId surveyId, ParatooProtocolConfig config, String createdAt) {
+    Map retrieveSurveyData(ParatooCollectionId surveyId, ParatooProtocolConfig config, String createdAt) {
 
         String apiEndpoint = config.getApiEndpoint(surveyId)
         Map authHeader = getAuthHeader()
@@ -636,23 +648,28 @@ class ParatooService {
 
         String url = paratooBaseUrl + '/' + apiEndpoint
         String query = buildSurveyQueryString(start, limit, createdAt)
+        log.debug("Retrieving survey data from: "+url+query)
         Map response = webService.getJson(url + query, null, authHeader, false)
+        log.debug((response as JSON).toString())
         Map survey = findMatchingSurvey(surveyId, response.data, config)
+
         int total = response.meta?.pagination?.total ?: 0
         while (!survey && start + limit < total) {
             start += limit
             query = buildSurveyQueryString(start, limit, createdAt)
+            log.debug("Retrieving survey data from: "+url+query)
             response = webService.getJson(url + query, null, authHeader, false)
+            log.debug((response as JSON).toString())
             survey = findMatchingSurvey(surveyId, response.data, config)
         }
 
         survey
     }
 
-    Map retrieveSurveyAndObservations(ParatooSurveyId surveyId, ParatooProtocolConfig config, ParatooCollection collection) {
+    Map retrieveSurveyAndObservations(ParatooCollection collection) {
         String apiEndpoint = PARATOO_DATA_PATH
         Map payload = [
-                collection_id: collection.orgMintedIdentifier
+                org_minted_uuid: collection.orgMintedUUID
         ]
 
         Map authHeader = getAuthHeader()
@@ -663,7 +680,7 @@ class ParatooService {
     }
 
 
-    private static Map findMatchingSurvey(ParatooSurveyId surveyId, List data, ParatooProtocolConfig config) {
+    private static Map findMatchingSurvey(ParatooCollectionId surveyId, List data, ParatooProtocolConfig config) {
         data?.find { config.matches(it, surveyId) }
     }
 
@@ -757,11 +774,11 @@ class ParatooService {
         } else {
 
             Map site = [
-                    name    : 'Monitor project area',
-                    type    : Site.TYPE_PROJECT_AREA,
-                    extent  : [
-                            source  : 'drawn',
-                            geometry: geometry
+                    name:'Monitor Project Extent',
+                    type:Site.TYPE_PROJECT_AREA,
+                    extent: [
+                            source:'drawn',
+                            geometry:geometry
                     ],
                     projects: [project.id]
             ]

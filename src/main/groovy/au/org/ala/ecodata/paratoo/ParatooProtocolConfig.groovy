@@ -30,7 +30,7 @@ class ParatooProtocolConfig {
     String geometryPath
     String startDatePath = 'attributes.start_date_time'
     String endDatePath = 'attributes.end_date_time'
-    String surveyIdPath = 'attributes.surveyId'
+    String surveyIdPath = 'attributes.survey_metadata'
     String observationSurveyIdPath = ''
     String observationSpeciesPath = 'attributes.species'
     String observationRecordedByPath = 'attributes.observers.observer'
@@ -44,7 +44,7 @@ class ParatooProtocolConfig {
     String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
     String plotLayoutDimensionLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_dimensions.data.attributes.label'
     String plotLayoutTypeLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_type.data.attributes.label'
-    String getApiEndpoint(ParatooSurveyId surveyId) {
+    String getApiEndpoint(ParatooCollectionId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
     Map overrides = [dataModel: [:], viewModel: [:]]
@@ -76,7 +76,7 @@ class ParatooProtocolConfig {
         extractSpeciesName(species)
     }
 
-    List findObservationsBelongingToSurvey (List surveyData, ParatooSurveyId surveyId) {
+    List findObservationsBelongingToSurvey (List surveyData, ParatooCollectionId surveyId) {
         surveyData?.findAll { Map data ->
             Map dataLinkedToSurvey = getSurveyIdOfObservation( data )
             surveyEqualityTest(dataLinkedToSurvey, surveyId)
@@ -193,8 +193,8 @@ class ParatooProtocolConfig {
         geometry
     }
 
-    private static String defaultEndpoint(ParatooSurveyId surveyId) {
-        String apiEndpoint = surveyId.surveyType
+    private static String defaultEndpoint(ParatooCollectionId surveyId) {
+        String apiEndpoint = surveyId.survey_metadata?.survey_details?.survey_model
         if (!apiEndpoint.endsWith('s')) {
             apiEndpoint += 's'
         } // strapi makes the endpoint plural sometimes?
@@ -270,15 +270,21 @@ class ParatooProtocolConfig {
     }
 
 
-    boolean matches(Map surveyData, ParatooSurveyId surveyId) {
+    boolean matches(Map surveyData, ParatooCollectionId collectionId) {
         Map tmpSurveyId = getSurveyId(surveyData)
-        surveyEqualityTest(tmpSurveyId, surveyId)
+        if (!tmpSurveyId) {
+            log.error("Cannot find surveyId:")
+            log.debug(surveyData.toString())
+            return false
+        }
+
+        surveyEqualityTest(tmpSurveyId, collectionId)
     }
 
-    static boolean surveyEqualityTest(Map tmpSurveyId, ParatooSurveyId surveyId) {
-        tmpSurveyId.surveyType == surveyId.surveyType &&
-                tmpSurveyId.time == surveyId.timeAsISOString() &&
-                tmpSurveyId.uuid == surveyId.uuid
+    static boolean surveyEqualityTest(Map tmpSurveyId, ParatooCollectionId collectionId) {
+        tmpSurveyId?.survey_details?.survey_model == collectionId.survey_metadata?.survey_details.survey_model &&
+                tmpSurveyId?.survey_details?.time == collectionId.survey_metadata?.survey_details.time &&
+                tmpSurveyId?.survey_details?.uuid == collectionId.survey_metadata?.survey_details.uuid
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {

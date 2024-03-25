@@ -84,20 +84,29 @@
           "data": {
             "id": 4,
             "attributes": {
-              "surveyId": {
-                "time": "2023-10-24T00:59:48.456Z",
-                "randNum": 80454523,
-                "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b94",
-                "protocol": {
-                  "id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
-                  "version": 1
+              "survey_metadata": {
+                "orgMintedUUID": "d1",
+                "survey_details": {
+                  "survey_model": "opportunistic-survey",
+                  "time": "2023-10-24T00:59:48.456Z",
+                  "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b94",
+                  "project_id": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
+                  "protocol_id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
+                  "protocol_version": "1"
                 },
-                "projectId": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
-                "surveyType": "opportunistic-survey"
+                "provenance":{
+                  "version_app": "0.0.1-xxxxx",
+                  "version_core": "0.1.0-1fb53f81",
+                  "version_core_documentation": "0.0.1-xxxxx",
+                  "version_org": "4.4-SNAPSHOT",
+                  "system_app": "monitor",
+                  "system_core": "Monitor-dummy-data-production",
+                  "system_org": "MERIT"
+                }
               },
               "startdate": null,
-              "createdAt": "2023-10-24T01:01:56.529Z",
-              "updatedAt": "2023-10-24T01:01:56.529Z"
+              "createdAt": "2023-10-24T00:59:48.456Z",
+              "updatedAt": "2023-10-24T00:59:48.456Z"
             }
           }
         }
@@ -183,16 +192,25 @@
           "data": {
             "id": 4,
             "attributes": {
-              "surveyId": {
-                "time": "2023-10-24T00:59:48.456Z",
-                "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b49",
-                "randNum": 80775523,
-                "protocol": {
-                  "id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
-                  "version": 1
+              "survey_metadata": {
+                "orgMintedUUID": "d1",
+                "survey_details": {
+                  "survey_model": "opportunistic-survey",
+                  "time": "2023-10-24T00:59:48.456Z",
+                  "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b49",
+                  "project_id": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
+                  "protocol_id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
+                  "protocol_version": "1"
                 },
-                "projectId": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
-                "surveyType": "opportunistic-survey"
+                "provenance":{
+                  "version_app": "0.0.1-xxxxx",
+                  "version_core": "0.1.0-1fb53f81",
+                  "version_core_documentation": "0.0.1-xxxxx",
+                  "version_org": "4.4-SNAPSHOT",
+                  "system_app": "monitor",
+                  "system_core": "Monitor-dummy-data-production",
+                  "system_org": "MERIT"
+                }
               },
               "startdate": null,
               "createdAt": "2023-10-24T01:01:56.529Z",
@@ -282,16 +300,25 @@
           "data": {
             "id": 4,
             "attributes": {
-              "surveyId": {
-                "time": "2023-10-24T00:59:48.456Z",
-                "randNum": 804993,
-                "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b34",
-                "protocol": {
-                  "id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
-                  "version": 1
+              "survey_metadata": {
+                "orgMintedUUID": "d1",
+                "survey_details": {
+                  "survey_model": "opportunistic-survey",
+                  "time": "2023-10-24T00:59:48.456Z",
+                  "uuid": "10a03062-2b0d-40bb-a6d7-e72f06788b34",
+                  "project_id": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
+                  "protocol_id": "068d17e8-e042-ae42-1e42-cff4006e64b0",
+                  "protocol_version": "1"
                 },
-                "projectId": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
-                "surveyType": "opportunistic-survey"
+                "provenance":{
+                  "version_app": "0.0.1-xxxxx",
+                  "version_core": "0.1.0-1fb53f81",
+                  "version_core_documentation": "0.0.1-xxxxx",
+                  "version_org": "4.4-SNAPSHOT",
+                  "system_app": "monitor",
+                  "system_core": "Monitor-dummy-data-production",
+                  "system_org": "MERIT"
+                }
               },
               "startdate": null,
               "createdAt": "2023-10-24T01:01:56.529Z",

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.testing.web.controllers.ControllerUnitTest
+import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import spock.lang.Specification
 
@@ -163,6 +164,11 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         setup:
         String userId = 'u1'
         Map collection = buildCollectionJson()
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map dataSet = [surveyId:collectionId]
+
 
         when:
         request.method = "POST"
@@ -171,7 +177,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> [project:new ParatooProject(id:'p1'), dataSet:dataSet]
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
 
         and:
@@ -184,7 +190,10 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         setup:
         String userId = 'u1'
         Map collection = buildCollectionJson()
-        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
 
         when:
         request.method = "POST"
@@ -193,9 +202,9 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> searchResults
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}, searchResults.project) >> [:]
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [:]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -207,7 +216,10 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         setup:
         String userId = 'u1'
         Map collection = buildCollectionJson()
-        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
 
         when:
         request.method = "POST"
@@ -216,9 +228,9 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> searchResults
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}, searchResults.project) >> [error:"Error"]
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [error:"Error"]
 
         and:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR
@@ -299,31 +311,22 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     }
 
     private Map buildCollectionIdJson() {
-        [
-            "surveyId": [
-                    surveyType: "Bird",
-                    time: "2023-01-01T00:00:00Z",
-                    uuid: "1234",
-                    "projectId":"p1",
-                    "protocol": [
-                            "id": "guid-1",
-                            "version": 1
-                    ]
-            ]
-        ]
+        readData("mintCollectionIdPayload")
     }
 
     private Map buildCollectionJson() {
         [
-                "orgMintedIdentifier":"c1",
-                "projectId":"p1",
-                "userId": "u1",
-                "protocol": [
-                        "id": "guid-1",
-                        "version": 1
-                ],
-                "eventTime":"2023-01-01T00:00:00Z"
+                "orgMintedUUID":"c1",
+                "coreProvenance": [
+                    "system_core": "Monitor-test",
+                    "version_core": "1"
+                ]
         ]
+    }
+
+    private Map readData(String name) {
+        URL url = getClass().getResource("/paratoo/${name}.json")
+        new JsonSlurper().parse(url)
     }
 
 }

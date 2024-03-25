@@ -8,8 +8,6 @@ import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
 
-import static org.joda.time.DateTime.parse
-
 class ParatooProtocolConfigSpec extends Specification {
 
     def setup() {
@@ -121,15 +119,17 @@ class ParatooProtocolConfigSpec extends Specification {
                 geometryType: 'Point',
                 startDatePath: 'attributes.startdate',
                 endDatePath: 'attributes.updatedAt',
-                observationSurveyIdPath: 'attributes.opportunistic_survey.data.attributes.surveyId'
+                observationSurveyIdPath: 'attributes.opportunistic_survey.data.attributes.survey_metadata'
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(opportunisticSurveyConfig)
-        ParatooSurveyId paratooSurveyId = new ParatooSurveyId(
-                surveyType: 'opportunistic-survey',
-                time: parse("2023-10-24T00:59:48.456Z").toDate(),
-                projectId: '0d02b422-5bf7-495f-b9f2-fa0a3046937f',
-                protocol: new ParatooProtocolId(id: "068d17e8-e042-ae42-1e42-cff4006e64b0", version: 1),
-                uuid: "10a03062-2b0d-40bb-a6d7-e72f06788b94"
+        ParatooCollectionId paratooSurveyId = new ParatooCollectionId(
+                survey_metadata: [
+                        survey_details: [
+                                survey_model: 'opportunistic-survey',
+                                time: "2023-10-24T00:59:48.456Z",
+                                uuid: '10a03062-2b0d-40bb-a6d7-e72f06788b94'
+                        ]
+                ]
         )
         List data = config.findObservationsBelongingToSurvey(surveyObservations.data, paratooSurveyId)
 
