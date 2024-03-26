@@ -675,9 +675,10 @@ class ParatooService {
         Map authHeader = getAuthHeader()
 
         String url = paratooBaseUrl + apiEndpoint
-        Map response = webService.doPost(url, payload, false, authHeader)?.resp
+        Map response = webService.doPost(url, payload, false, authHeader)
         log.debug((response as JSON).toString())
-        response?.collections
+
+        response?.resp?.collections
     }
 
 
