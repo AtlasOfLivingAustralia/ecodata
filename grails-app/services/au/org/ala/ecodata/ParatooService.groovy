@@ -676,6 +676,7 @@ class ParatooService {
 
         String url = paratooBaseUrl + apiEndpoint
         Map response = webService.doPost(url, payload, false, authHeader)?.resp
+        log.debug((response as JSON).toString())
         response?.collections
     }
 
