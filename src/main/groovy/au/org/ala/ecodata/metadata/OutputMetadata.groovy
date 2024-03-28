@@ -266,7 +266,6 @@ class OutputMetadata {
         context?.each { data ->
             if(isNestedDataModelType(data)){
                 String contextPath = "${path}.${data.name}"
-                log.info("${contextPath}")
                 // recursive call for nested data model
                 childrenNames = getNamesForDataType(type, getNestedDataModelNodes(data), depth + 1, contextPath);
                 if(childrenNames?.size()){

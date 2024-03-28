@@ -1,20 +1,23 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.metadata.PropertyAccessor
+
 import au.org.ala.ecodata.paratoo.*
 import au.org.ala.ws.tokens.TokenService
+import grails.async.Promise
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
+import static grails.async.Promises.task
 /**
  * Supports the implementation of the paratoo "org" interface
  */
 @Slf4j
 class ParatooService {
-
+    static final int PARATOO_MAX_RETRIES = 3
     static final String PARATOO_PROTOCOL_PATH = '/protocols'
     static final String PARATOO_DATA_PATH = '/protocols/reverse-lookup'
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
@@ -68,6 +71,7 @@ class ParatooService {
     RecordService recordService
     MetadataService metadataService
     UserService userService
+    ElasticSearchService elasticSearchService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -207,8 +211,6 @@ class ParatooService {
      * @return
      */
     Map submitCollection(ParatooCollection collection, ParatooProject project) {
-        boolean forceActivityCreation = false
-
         Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
         if (!dataSet) {
@@ -217,43 +219,75 @@ class ParatooService {
         dataSet.progress = Activity.STARTED
         dataSet.surveyId.coreSubmitTime = new Date()
         dataSet.surveyId.survey_metadata.provenance.putAll(collection.coreProvenance)
+        String userId = userService.currentUserDetails?.userId
+        Map authHeader = getAuthHeader()
+        Promise promise = task {
+            asyncFetchCollection(collection, authHeader, userId, project)
+        }
+        promise.onError { Throwable e ->
+            log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
+        }
+        def result = projectService.update([custom: project.project.custom], project.id, false)
+        [updateResult: result, promise: promise]
+    }
 
-        ParatooCollectionId surveyId = ParatooCollectionId.fromMap(dataSet.surveyId)
+    Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project) {
+        int counter = 0
+        boolean forceActivityCreation = false
+        Map surveyDataAndObservations = null
+        Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
-        ParatooProtocolConfig config = getProtocolConfig(surveyId.protocolId)
-        ActivityForm form = ActivityForm.findByExternalId(surveyId.protocolId)
-        // reverse lookup gets survey and observations but not plot based data
-        Map surveyDataAndObservations = retrieveSurveyAndObservations(collection)
-        // get survey data from reverse lookup response
-        Map surveyData = config.getSurveyDataFromObservation(surveyDataAndObservations)
-        // get plot data by querying protocol api endpoint
-        Map surveyDataWithPlotInfo = retrieveSurveyData(surveyId, config, surveyData.createdAt)
-        // add plot data to survey observations
-        addPlotDataToObservations(surveyDataWithPlotInfo, surveyDataAndObservations, config)
-        if (surveyDataAndObservations) {
+        if (!dataSet) {
+            throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
+        }
+
+        // wait for 5 seconds before fetching data
+        while(surveyDataAndObservations == null && counter < PARATOO_MAX_RETRIES) {
+            sleep(5 * 1000)
+            try {
+                surveyDataAndObservations = retrieveSurveyAndObservations(collection, authHeader)
+            } catch (Exception e) {
+                log.error("Error fetching collection data for ${collection.orgMintedUUID}: ${e.message}")
+            }
+
+            counter++
+        }
+
+        if (surveyDataAndObservations == null) {
+            log.error("Unable to fetch collection data for ${collection.orgMintedUUID}")
+            return
+        } else {
+            ParatooCollectionId surveyId = ParatooCollectionId.fromMap(dataSet.surveyId)
+            ParatooProtocolConfig config = getProtocolConfig(surveyId.protocolId)
+            ActivityForm form = ActivityForm.findByExternalId(surveyId.protocolId)
+            // get survey data from reverse lookup response
+            Map surveyData = config.getSurveyDataFromObservation(surveyDataAndObservations)
+            // get plot data by querying protocol api endpoint
+            Map surveyDataWithPlotInfo = retrieveSurveyData(surveyId, config, surveyData.createdAt, authHeader)
+            // add plot data to survey observations
+            addPlotDataToObservations(surveyDataWithPlotInfo, surveyDataAndObservations, config)
+            rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata, form.sections[0].template.relationships.apiOutput)
             // transform data to make it compatible with data model
             surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations)
-            rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata)
             // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
             if (!dataSet.siteId)
                 dataSet.siteId = createSiteFromSurveyData(surveyDataWithPlotInfo, surveyDataAndObservations, collection, surveyId, project.project, config, form)
 
             // make sure activity has not been created for this data set
             if (!dataSet.activityId || forceActivityCreation) {
-                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId)
-                List records = recordService.getAllByActivity(activityId)
-                dataSet.areSpeciesRecorded = records?.size() > 0
-                dataSet.activityId = activityId
+                Activity.withSession {
+                    String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId, userId)
+                    List records = recordService.getAllByActivity(activityId)
+                    dataSet.areSpeciesRecorded = records?.size() > 0
+                    dataSet.activityId = activityId
+                }
             }
 
             dataSet.startDate = config.getStartDate(surveyDataAndObservations)
             dataSet.endDate = config.getEndDate(surveyDataAndObservations)
-        } else {
-            log.warn("Unable to retrieve survey data for: " + collection.orgMintedUUID)
-            log.debug(surveyData)
-        }
 
-        projectService.update([custom: project.project.custom], project.id, false)
+            projectService.update([custom: project.project.custom], project.id, false)
+        }
     }
 
     /**
@@ -268,23 +302,32 @@ class ParatooService {
      * @param isChild
      * @return
      */
-    Map rearrangeSurveyData (Map properties, Map rootProperties, Map relationship, List nodesToRemove = [], List ancestors = [] , Boolean isChild = false) {
+    Map rearrangeSurveyData (Map properties, Map rootProperties, Map relationship, Map apiOutputRelationship, List nodesToRemove = [], List ancestors = [] , Boolean isChild = false) {
         if (relationship instanceof Map) {
             relationship.each { String nodeName, Map children ->
                 ancestors.add(nodeName)
-                def nodeObject = rootProperties[nodeName] ?: [:]
-                if (isChild) {
+                def nodeObject = rootProperties[nodeName]
+                if (nodeObject != null) {
                     properties[nodeName] = nodeObject
+                }
+                else {
+                    nodeObject = findObservationDataFromAPIOutput(nodeName, apiOutputRelationship, rootProperties)
+                    if (nodeObject != null) {
+                        properties[nodeName] = nodeObject
+                    }
+                }
+
+                if (isChild) {
                     nodesToRemove.add(nodeName)
                 }
 
                 if (children) {
                     if (nodeObject instanceof Map) {
-                        rearrangeSurveyData(nodeObject, rootProperties, children, nodesToRemove, ancestors, true )
+                        rearrangeSurveyData(nodeObject, rootProperties, children, apiOutputRelationship, nodesToRemove, ancestors, true )
                     }
                     else if (nodeObject instanceof List) {
                         nodeObject.each { Map node ->
-                            rearrangeSurveyData(node, rootProperties, children, nodesToRemove, ancestors, true )
+                            rearrangeSurveyData(node, rootProperties, children, apiOutputRelationship, nodesToRemove, ancestors, true )
                         }
                     }
                 }
@@ -370,7 +413,7 @@ class ParatooService {
      * @param siteId
      * @return
      */
-    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, String siteId) {
+    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, String siteId, String userId) {
         Map activityProps = [
                 type             : activityForm.name,
                 formVersion      : activityForm.formVersion,
@@ -378,7 +421,7 @@ class ParatooService {
                 projectId        : collection.projectId,
                 publicationStatus: "published",
                 siteId           : siteId,
-                userId           : userService.getCurrentUserDetails()?.userId,
+                userId           : userId,
                 outputs          : [[
                                             data: surveyObservations,
                                             name: activityForm.name
@@ -401,18 +444,32 @@ class ParatooService {
             switch (model.dataType) {
                 case "list":
                     String updatedPath = model.name
-                    def rows = getProperty(output, updatedPath)
+                    def rows =[]
+                    try {
+                        rows = getProperty(output, updatedPath)?.first()
+                    }
+                    catch (Exception e) {
+                        log.info("Error getting list for ${model.name}: ${e.message}")
+                    }
+
                     if (rows instanceof Map) {
                         output[updatedPath] = rows = [rows]
                     }
 
                     rows?.each { row ->
-                        recursivelyTransformData(model.columns, row)
+                        if (row != null) {
+                            recursivelyTransformData(model.columns, row)
+                        }
                     }
                     break
                 case "species":
-                    String speciesName = getProperty(output, model.name)
-                    output[model.name] = transformSpeciesName(speciesName)
+                    String speciesName
+                    try {
+                        speciesName = getProperty(output, model.name)?.first()
+                        output[model.name] = transformSpeciesName(speciesName)
+                    } catch (Exception e) {
+                        log.info("Error getting species name for ${model.name}: ${e.message}")
+                    }
                     break
                 case "feature":
                     // used by protocols like bird survey where a point represents a sight a bird has been observed in a
@@ -638,10 +695,11 @@ class ParatooService {
         "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit&filters[createdAt][\$eq]=$createdAt"
     }
 
-    Map retrieveSurveyData(ParatooCollectionId surveyId, ParatooProtocolConfig config, String createdAt) {
-
+    Map retrieveSurveyData(ParatooCollectionId surveyId, ParatooProtocolConfig config, String createdAt, Map authHeader = null) {
         String apiEndpoint = config.getApiEndpoint(surveyId)
-        Map authHeader = getAuthHeader()
+        if (!authHeader) {
+            authHeader = getAuthHeader()
+        }
 
         int start = 0
         int limit = 10
@@ -666,13 +724,15 @@ class ParatooService {
         survey
     }
 
-    Map retrieveSurveyAndObservations(ParatooCollection collection) {
+    Map retrieveSurveyAndObservations(ParatooCollection collection, Map authHeader = null) {
         String apiEndpoint = PARATOO_DATA_PATH
         Map payload = [
                 org_minted_uuid: collection.orgMintedUUID
         ]
 
-        Map authHeader = getAuthHeader()
+        if (!authHeader) {
+            authHeader = getAuthHeader()
+        }
 
         String url = paratooBaseUrl + apiEndpoint
         Map response = webService.doPost(url, payload, false, authHeader)
@@ -680,7 +740,6 @@ class ParatooService {
 
         response?.resp?.collections
     }
-
 
     private static Map findMatchingSurvey(ParatooCollectionId surveyId, List data, ParatooProtocolConfig config) {
         data?.find { config.matches(it, surveyId) }
@@ -1039,7 +1098,7 @@ class ParatooService {
         childrenNode
     }
 
-    public static def deepCopy(def original) {
+    static def deepCopy(def original) {
         def copy
 
         if (original instanceof Map) {
@@ -1214,17 +1273,6 @@ class ParatooService {
 
     String getModelNameFromRef(String ref) {
         ref.replace("#/components/schemas/", "")
-    }
-
-    Map getActivityFormForComponent(String modelName) {
-        Map documentation = getParatooSwaggerDocumentation()
-        Map components = getComponents(documentation)
-        Map component = components[modelName]
-
-        if (component) {
-            log.debug((component as JSON).toString(true))
-            convertToDataModelAndViewModel(component, documentation, modelName)
-        }
     }
 
     Map convertToDataModelAndViewModel(Map component, Map documentation, String name, List required = null, Deque<String> modelVisitStack = null, int depth = 0, String path = "", ParatooProtocolConfig config = null) {
@@ -1493,13 +1541,21 @@ class ParatooService {
                 if (path) {
                     newOrder["type"] = "object"
                     // get model definition for the parent
-                    def value = getProperty(properties, path)
-                    // remove parent from children
-                    paths?.each { String propertyPath ->
-                        removeProperty(properties, propertyPath)
+                    def value = [:]
+                    try {
+                        value = getProperty(properties, path)?.first() ?: [:]
+                        // remove parent from children
+                        paths?.each { String propertyPath ->
+                            removeProperty(properties, propertyPath)
+                        }
+
+                        value = deepCopy(value)
+
+                    }
+                    catch (Exception e) {
+                        log.info("Error getting property for path: ${path}")
                     }
 
-                    value = deepCopy(value)
                     // reorder
                     newOrder.properties = newOrder.properties ?: [:]
                     newOrder.properties[parent] = newOrder.properties[parent] ?: [:]
@@ -1513,10 +1569,6 @@ class ParatooService {
                     newOrder.properties[parent].putAll((properties[parent] ?: [:]))
                 }
 
-//                paths?.each { String propertyPath ->
-//                    removeProperty(properties, propertyPath)
-//                }
-
                 if (children) {
                     // if children are present, then recurse the process through each children
                     newOrder.properties[parent] = newOrder.properties[parent] ?: [type: "object", properties: [:]]
@@ -1526,6 +1578,24 @@ class ParatooService {
         }
 
         newOrder
+    }
+
+    def findObservationDataFromAPIOutput(String modelToFind, Map apiOutputRelationship, Map data) {
+        List paths = findPathFromRelationship(modelToFind, apiOutputRelationship)
+        String path = paths.size() ? paths.first() : null
+        if (path) {
+            path = path.replaceAll(".properties", "")
+            // get model definition for the parent
+            try {
+                return getProperty(data, path)?.first()
+            }
+            catch (Exception e) {
+                log.info("Error getting property for path: ${path}")
+            }
+        }
+        else {
+            return data[modelToFind]
+        }
     }
 
     /**
@@ -1830,11 +1900,13 @@ class ParatooService {
         modelName?.toLowerCase()?.replaceAll("[^a-zA-Z0-9]+", ' ')?.tokenize(' ')?.collect { it.capitalize() }?.join()
     }
 
-    private static def getProperty(Map surveyData, String path) {
-        if (!path) {
+    private  def getProperty(def surveyData, String path) {
+        if (!path || surveyData == null) {
             return null
         }
-        new PropertyAccessor(path).get(surveyData)
+
+        List parts = path.split(/\./)
+        deepCopy(elasticSearchService.getDataFromPath(surveyData, parts))
     }
 
     /**
@@ -1846,6 +1918,10 @@ class ParatooService {
      * @return
      */
     Map transformSpeciesName(String name) {
+        if (!name) {
+            return null
+        }
+
         String regex = "\\(scientific:\\s*(.*?)\\)"
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)

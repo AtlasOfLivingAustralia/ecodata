@@ -113,8 +113,6 @@ class ParatooProtocolConfigSpec extends Specification {
         Map surveyObservations = readSurveyObservations('opportunisticSurveyObservations')
         Map opportunisticSurveyConfig = [
                 apiEndpoint:'opportunistic-surveys',
-                observationEndpoint: 'opportunistic-observations',
-                surveyType: 'opportunistic-survey',
                 usesPlotLayout:false,
                 geometryType: 'Point',
                 startDatePath: 'attributes.startdate',
@@ -131,23 +129,12 @@ class ParatooProtocolConfigSpec extends Specification {
                         ]
                 ]
         )
-        List data = config.findObservationsBelongingToSurvey(surveyObservations.data, paratooSurveyId)
+        def start_date = config.getStartDate(surveyObservations)
+        def end_date = config.getEndDate(surveyObservations)
 
         expect:
-        data.size() == 1
-        data[0].attributes.observation_id == 'OPP001'
-
-        when:
-        Map species = config.parseSpecies(config.getSpecies(data[0]))
-
-        then:
-        species.scientificName == "Dromaius novaehollandiae"
-        species.name == "Dromaius novaehollandiae (Emu)"
-        species.vernacularName == "Emu"
-        config.getDecimalLatitude(data[0]) == -35.272
-        config.getDecimalLongitude(data[0]) == 149.116
-        config.getIndividualCount(data[0]) == 1
-        config.getRecordedBy(data[0]) == "xyz, abc"
+        start_date != null
+        end_date != null
 
     }
 }

@@ -13,6 +13,10 @@ class ListConverter implements RecordFieldConverter {
 
         // delegate the conversion of each column in each row to a specific converter for the column type
         data[outputMetadata.name].each { row ->
+            if (row == null) {
+                return
+            }
+
             Map baseRecord = [:]
             List singleItemModels
             List multiItemModels

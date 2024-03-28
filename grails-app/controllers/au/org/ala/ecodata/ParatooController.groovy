@@ -289,10 +289,10 @@ class ParatooController {
                 boolean hasProtocol = paratooService.protocolWriteCheck(userId, dataSet.project.id, collectionId.protocolId)
                 if (hasProtocol) {
                     Map result = paratooService.submitCollection(collection, dataSet.project)
-                    if (!result.error) {
+                    if (!result.updateResult.error) {
                         respond([success: true])
                     } else {
-                        error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.error)
+                        error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.updateResult.error)
                     }
                 } else {
                     error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")

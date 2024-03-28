@@ -1,17 +1,11 @@
 package au.org.ala.ecodata.paratoo
 
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.DateUtil
-import au.org.ala.ecodata.FormSection
-import au.org.ala.ecodata.GeometryUtils
-import au.org.ala.ecodata.ParatooService
+import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import groovy.util.logging.Slf4j
 import org.locationtech.jts.geom.Geometry
-
-import java.util.regex.Matcher
 /**
  * Configuration about how to work with a Paratoo/Monitor protocol
  */
@@ -21,8 +15,6 @@ class ParatooProtocolConfig {
 
     String name
     String apiEndpoint
-    String observationEndpoint
-    String surveyType
     boolean usesPlotLayout = true
     List tags
     String geometryType = 'Polygon'
@@ -31,12 +23,6 @@ class ParatooProtocolConfig {
     String startDatePath = 'attributes.start_date_time'
     String endDatePath = 'attributes.end_date_time'
     String surveyIdPath = 'attributes.survey_metadata'
-    String observationSurveyIdPath = ''
-    String observationSpeciesPath = 'attributes.species'
-    String observationRecordedByPath = 'attributes.observers.observer'
-    String observationIndividualCountPath = 'attributes.number_of_individuals'
-    String observationEventDatePath = 'attributes.date_time'
-    String observationGeometryPath = 'attributes.location'
     String plotVisitPath = 'attributes.plot_visit.data.attributes'
     String plotLayoutPath = "${plotVisitPath}.plot_layout.data.attributes"
     String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
@@ -57,84 +43,36 @@ class ParatooProtocolConfig {
     }
 
     String getStartDate(Map surveyData) {
-        removeMilliseconds(getProperty(surveyData, startDatePath))
+        String date = getProperty(surveyData, startDatePath)
+        if (date == null) {
+            date = getPropertyFromSurvey(surveyData, startDatePath)
+        }
+
+        removeMilliseconds(date)
+    }
+
+    def getPropertyFromSurvey(Map surveyData, String path) {
+        surveyData = getSurveyDataFromObservation(surveyData)
+        path = path.replaceFirst("^attributes.", '')
+        getProperty(surveyData, path)
     }
 
     String getEndDate(Map surveyData) {
-        removeMilliseconds(getProperty(surveyData, endDatePath))
+        String date = getProperty(surveyData, endDatePath)
+        if (date == null) {
+            date = getPropertyFromSurvey(surveyData, endDatePath)
+        }
+
+        removeMilliseconds(date)
     }
 
     Map getSurveyId(Map surveyData) {
-        getProperty(surveyData, surveyIdPath)
-    }
-
-    String getSpecies (Map observation) {
-        getProperty(observation, observationSpeciesPath)
-    }
-
-    Map parseSpecies (String species) {
-        extractSpeciesName(species)
-    }
-
-    List findObservationsBelongingToSurvey (List surveyData, ParatooCollectionId surveyId) {
-        surveyData?.findAll { Map data ->
-            Map dataLinkedToSurvey = getSurveyIdOfObservation( data )
-            surveyEqualityTest(dataLinkedToSurvey, surveyId)
-        }
-    }
-
-    Map getSurveyIdOfObservation (Map data) {
-        getProperty(data, observationSurveyIdPath)
-    }
-
-    Map getEventDate (Map data) {
-        getProperty(data, observationEventDatePath)
-    }
-
-    Double getDecimalLatitude (Map data) {
-        def shape = extractObservationSiteDataFromPath(data)
-        switch (shape.type) {
-            case 'Point':
-                return shape.coordinates[1]
-        }
-    }
-
-    Double getDecimalLongitude (Map data) {
-        def shape = extractObservationSiteDataFromPath(data)
-        switch (shape.type) {
-            case 'Point':
-                return shape.coordinates[0]
+        Map result = getProperty(surveyData, surveyIdPath)
+        if (result == null) {
+            result = getPropertyFromSurvey(surveyData, surveyIdPath)
         }
 
-    }
-
-    Integer getIndividualCount (Map data) {
-        getProperty(data, observationIndividualCountPath)
-    }
-
-    /**
-     * todo: this is a temporary hack to get around the fact that the survey doesn't have a field for this and it has to
-     * be interpreted from the protocol
-     * @param data
-     * @return
-     */
-    String getIndividualOrGroup (Map data) {
-        'Individuals'
-    }
-
-    String getRecordedBy (Map data) {
-        def result = getProperty(data, observationRecordedByPath)
-        if (result instanceof List) {
-            return result.join(', ')
-        }
-        else if (result instanceof  String) {
-            return result
-        }
-    }
-
-    private Map extractObservationSiteDataFromPath(Map surveyData) {
-        def geometryData = getProperty(surveyData, observationGeometryPath)
-        extractGeometryFromSiteData(geometryData)
+        result
     }
 
     private Map extractSiteDataFromPath(Map surveyData) {
@@ -375,29 +313,5 @@ class ParatooProtocolConfig {
                 notes: plotSelectionData.comment
         ]
         geoJson
-    }
-
-    static Map extractSpeciesName (String species) {
-        Map result
-        Matcher m = (species =~ /([^\[]*)\[([^\]]*)\]\s*\(scientific: ([^\)]*)\)/)
-        if (m.matches()) {
-            def scientificName = m.group(3).trim()
-            def commonName = m.group(1)?.trim()
-            def name = "$scientificName ($commonName)"
-            result = [
-                vernacularName: commonName,
-                scientificName: scientificName,
-                name: name
-            ]
-        }
-        else {
-            result = [
-                    vernacularName: species,
-                    scientificName: species,
-                    name: species
-            ]
-        }
-
-        result
     }
 }

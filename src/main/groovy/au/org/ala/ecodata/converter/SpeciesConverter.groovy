@@ -6,6 +6,10 @@ class SpeciesConverter implements RecordFieldConverter {
     ]
 
     List<Map> convert(Map data, Map metadata = [:]) {
+        if (data == null) {
+           return []
+        }
+
         Map record = [:]
 
         record.scientificNameID = record.guid = data[metadata.name].guid
