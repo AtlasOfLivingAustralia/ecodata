@@ -43,6 +43,10 @@ class ParatooProtocolConfig {
     }
 
     String getStartDate(Map surveyData) {
+        if(startDatePath == null || surveyData == null) {
+            return null
+        }
+
         String date = getProperty(surveyData, startDatePath)
         if (date == null) {
             date = getPropertyFromSurvey(surveyData, startDatePath)
@@ -58,6 +62,10 @@ class ParatooProtocolConfig {
     }
 
     String getEndDate(Map surveyData) {
+        if(endDatePath == null || surveyData == null) {
+            return null
+        }
+
         String date = getProperty(surveyData, endDatePath)
         if (date == null) {
             date = getPropertyFromSurvey(surveyData, endDatePath)
@@ -67,6 +75,10 @@ class ParatooProtocolConfig {
     }
 
     Map getSurveyId(Map surveyData) {
+        if(surveyIdPath == null || surveyData == null) {
+            return null
+        }
+
         Map result = getProperty(surveyData, surveyIdPath)
         if (result == null) {
             result = getPropertyFromSurvey(surveyData, surveyIdPath)
