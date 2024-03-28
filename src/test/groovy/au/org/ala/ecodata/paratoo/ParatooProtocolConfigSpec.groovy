@@ -116,8 +116,7 @@ class ParatooProtocolConfigSpec extends Specification {
                 usesPlotLayout:false,
                 geometryType: 'Point',
                 startDatePath: 'attributes.startdate',
-                endDatePath: 'attributes.updatedAt',
-                observationSurveyIdPath: 'attributes.opportunistic_survey.data.attributes.survey_metadata'
+                endDatePath: 'attributes.updatedAt'
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(opportunisticSurveyConfig)
         ParatooCollectionId paratooSurveyId = new ParatooCollectionId(
@@ -129,12 +128,12 @@ class ParatooProtocolConfigSpec extends Specification {
                         ]
                 ]
         )
-        def start_date = config.getStartDate(surveyObservations)
-        def end_date = config.getEndDate(surveyObservations)
+        def start_date = config.getStartDate(surveyObservations.data[0])
+        def end_date = config.getEndDate(surveyObservations.data[0])
 
         expect:
-        start_date != null
-        end_date != null
+        start_date == null
+        end_date == "2023-10-24T01:01:56Z"
 
     }
 }
