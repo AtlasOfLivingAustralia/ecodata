@@ -2,9 +2,11 @@ package au.org.ala.ecodata.paratoo
 
 import grails.databinding.BindingFormat
 import grails.validation.Validateable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooCollection implements Validateable {
-    String mintedCollectionId
+    String orgMintedIdentifier
     ParatooProtocolId protocol
     String projectId
     String userId
@@ -14,5 +16,8 @@ class ParatooCollection implements Validateable {
 
     static constraints = {
         protocol validator: { val, obj -> val.validate() }
+        projectId nullable: true
+        userId nullable: true
+        eventTime nullable: true
     }
 }

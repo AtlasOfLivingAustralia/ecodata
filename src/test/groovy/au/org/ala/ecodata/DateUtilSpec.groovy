@@ -29,4 +29,12 @@ class DateUtilSpec extends Specification {
         expect:
         DateUtil.format(DateUtil.parse(date)) == date
     }
+
+    def "A date can be parsed and formatted using the ISO 8601 format with milliseconds"() {
+        given:
+        String date = "2021-06-30T00:12:33.123Z"
+
+        expect:
+        DateUtil.formatWithMilliseconds(DateUtil.parseWithMilliseconds(date)) == date
+    }
 }

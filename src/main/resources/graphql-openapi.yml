@@ -992,7 +992,7 @@ paths:
                         name:
                           type: string
                           nullable: true
-                        externalSiteId:
+                        externalId:
                           type: string
                           nullable: true
                         type:
@@ -1176,7 +1176,7 @@ paths:
                         name:
                           type: string
                           nullable: true
-                        externalSiteId:
+                        externalId:
                           type: string
                           nullable: true
                         type:
@@ -3598,7 +3598,7 @@ paths:
                                   name:
                                     type: string
                                     nullable: true
-                                  externalSiteId:
+                                  externalId:
                                     type: string
                                     nullable: true
                                   type:
@@ -5287,7 +5287,7 @@ paths:
                             name:
                               type: string
                               nullable: true
-                            externalSiteId:
+                            externalId:
                               type: string
                               nullable: true
                             type:
@@ -6977,7 +6977,7 @@ paths:
                               name:
                                 type: string
                                 nullable: true
-                              externalSiteId:
+                              externalId:
                                 type: string
                                 nullable: true
                               type:
@@ -8898,7 +8898,7 @@ paths:
                               name:
                                 type: string
                                 nullable: true
-                              externalSiteId:
+                              externalId:
                                 type: string
                                 nullable: true
                               type:
@@ -10744,7 +10744,7 @@ paths:
                               name:
                                 type: string
                                 nullable: true
-                              externalSiteId:
+                              externalId:
                                 type: string
                                 nullable: true
                               type:

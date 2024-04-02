@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.HubLoginTime
-import grails.converters.JSON
 
 class UserController {
 
@@ -10,40 +9,6 @@ class UserController {
 
     UserService userService
     WebService webService
-
-    /**
-     * Get user auth key for the given username and password
-     */
-    @PreAuthorise(basicAuth = false)
-    def getKey() {
-        Map result = [:]
-        String username = request.getHeader('userName')
-        String password = request.getHeader('password')
-
-        if (username && password) {
-            def ret = userService.getUserKey(username, password)
-            if (ret.error) {
-                String error = "Failed to get key for user: "+username
-                log.error(error)
-                result = [status: 'error', statusCode: ret.statusCode, error: error]
-
-            } else if (ret.resp) {
-                result = ret.resp
-
-                def userDetailsResult = userService.lookupUserDetails(username)
-                if (userDetailsResult) {
-                    result.userId = userDetailsResult.userId
-                    result.firstName = userDetailsResult.firstName
-                    result.lastName = userDetailsResult.lastName
-                }
-            }
-        } else {
-            result = [status: 'error', statusCode: 400, error: "Missing username or password"]
-        }
-
-        result.statusCode ? response.setStatus(result.statusCode) : ''
-        render result as JSON
-    }
 
     /**
      * Records the time a User has logged into a hub.

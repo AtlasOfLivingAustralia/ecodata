@@ -1,0 +1,13 @@
+import au.org.ala.ecodata.Site
+
+model {
+    Site plot
+}
+
+json {
+    id plot.externalId
+    attributes {
+        uuid plot.externalId
+        name plot.name
+    }
+}

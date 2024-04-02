@@ -1,11 +1,10 @@
 package au.org.ala.ecodata
 
-
 import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
 import org.bson.conversions.Bson
 
-import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.Status.DELETED
 
 /**
  * Works with Organisations, mostly CRUD operations at this point.
@@ -18,6 +17,8 @@ class OrganisationService {
     static transactional = 'mongo'
 
     def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource, emailService, grailsApplication
+    ReportingService reportingService
+    ActivityService activityService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -174,17 +175,46 @@ class OrganisationService {
      * significant memory and performance overhead when dealing with so many entities
      * at once.
      * @param action the action to be performed on each Organisation.
+     * @param filters list of filters
      */
-    void doWithAllOrganisations(Closure action) {
+    void doWithAllOrganisations(Closure action, List<Filters> filters = []) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
         def collection = Organisation.getCollection()
         //DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
-        Bson query = Filters.ne("status", DELETED);
+        Bson query = Filters.ne("status", DELETED)
+        filters.add(query)
+        query = Filters.and(filters)
         def results = collection.find(query).batchSize(100)
 
         results.each { dbObject ->
             action.call(dbObject)
         }
+    }
+
+    /**
+     *  Get reports of all management units in a period
+     *
+     * @param start
+     * @param end
+     * @param hubId
+     * @return
+     */
+    List<Map> getReportingActivities (String startDate, String endDate, String hubId) {
+        List<Map> organisationDetails = []
+        doWithAllOrganisations({ org ->
+            List<Report> reports = reportingService.search([organisationId: org.organisationId, dateProperty:'toDate', startDate:startDate, endDate:endDate])
+
+             List<Map> activities = activityService.search([activityId:reports.activityId], ['all'])
+
+            Map result = new HashMap(org)
+            result.reports = reports
+            result.activities = activities
+
+            organisationDetails << result
+
+        }, [Filters.eq("hubId", hubId)])
+
+        organisationDetails
     }
 
 }

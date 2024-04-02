@@ -350,7 +350,7 @@ type Site{
     id: ObjectId
     visibility: String
     name: String
-    externalSiteId: String
+    externalId: String
     type: String
     description: String
     habitat: String

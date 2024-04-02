@@ -14,8 +14,8 @@ class UrlMappings {
         "/ws/record/images"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/images/"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/getRecordForOutputSpeciesId/"(controller: "record", action: "getRecordForOutputSpeciesId")
-        "/ws/record/listHarvestDataResource" (controller: "record", action: "listHarvestDataResource")
-        "/ws/record/listRecordsForDataResourceId" (controller: "record", action: "listRecordsForDataResourceId") //dataResourceId
+        "/ws/record/listHarvestDataResource" (controller: "harvest", action: "listHarvestDataResource")
+        "/ws/record/listRecordsForDataResourceId" (controller: "harvest", action: "listRecordsForDataResourceId") //dataResourceId
 
         "/ws/record/$id"(controller: "record"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
 
@@ -189,6 +189,7 @@ class UrlMappings {
 
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
+        "/ws/report/generateReportsInPeriod"(controller:"report", action:"generateReportsInPeriod")
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
@@ -217,7 +218,7 @@ class UrlMappings {
         }
 
         "/ws/graphql" {
-            controller = 'graphql'
+            controller = 'graphqlWs'
         }
 
         "/ws/paratoo/user-projects" {
@@ -253,6 +254,21 @@ class UrlMappings {
         "/ws/paratoo/status/$id" {
             controller = 'paratoo'
             action = 'collectionIdStatus'
+        }
+
+        "/ws/paratoo/plot-selections" {
+            controller = 'paratoo'
+            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection', GET:'getPlotSelections']
+        }
+
+        "/ws/paratoo/user-role" {
+            controller = 'paratoo'
+            action = [GET: 'userRoles', OPTIONS: 'options']
+        }
+
+        "/ws/paratoo/projects/$id" {
+            controller = 'paratoo'
+            action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }
 
         "/"(redirect:[controller:"documentation"])
