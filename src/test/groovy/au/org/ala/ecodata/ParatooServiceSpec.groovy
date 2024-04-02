@@ -188,7 +188,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         waitAll(result.promise)
 
         then:
-        1 * webService.getJson({it.indexOf('/coarse-woody-debris-surveys') >= 0}, null, _, false) >> [data:[], meta:[pagination:[total:0]]]
         1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z"]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
@@ -219,7 +218,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "plot_label"          : "CTMAUA2222",
                 "recommended_location": ["lat": -35.2592424, "lng": 149.0651439],
                 "uuid"                : "lmpisy5p9g896lad4ut",
-                "comment"             : "Test"]
+                "comments"             : "Test"]
 
         Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
 
@@ -289,7 +288,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload")
         Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
-        Map surveyData = readSurveyData('basalAreaDbh')
+        Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
         Map site
 
         when:
@@ -297,8 +296,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         waitAll(result.promise)
 
         then:
-        1 * webService.getJson({ it.indexOf('/basal-area-dbh-measure-surveys') >= 0 }, null, _, false) >> [data: [surveyData], meta: [pagination: [total: 0]]]
-        1 * webService.doPost(*_) >> [resp: [collections: ["basal-area-dbh-measure-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z"]]]]
+        1 * webService.doPost(*_) >> [resp: surveyData]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         2 * projectService.update(_, projectId, false) >> [status: 'ok']
         1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
@@ -319,12 +317,12 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * userService.getCurrentUserDetails() >> [userId: userId]
 
         and:
-        site.name == "SATFLB0001 - Control (100 x 100)"
-        site.description == "SATFLB0001 - Control (100 x 100)"
-        site.notes == "some comment"
+        site.name == "CTMSEH4221 - Control (100 x 100)"
+        site.description == "CTMSEH4221 - Control (100 x 100)"
+        site.notes == "Test again 2024-03-26"
         site.type == "surveyArea"
         site.publicationStatus == "published"
-        site.externalIds[0].externalId == "4"
+        site.externalIds[0].externalId == "12"
         site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
 
         result.updateResult == [status: 'ok']

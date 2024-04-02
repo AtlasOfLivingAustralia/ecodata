@@ -259,20 +259,19 @@ class ParatooService {
         } else {
             ParatooCollectionId surveyId = ParatooCollectionId.fromMap(dataSet.surveyId)
             ParatooProtocolConfig config = getProtocolConfig(surveyId.protocolId)
+            config.surveyId = surveyId
             ActivityForm form = ActivityForm.findByExternalId(surveyId.protocolId)
-            // get survey data from reverse lookup response
-            Map surveyData = config.getSurveyDataFromObservation(surveyDataAndObservations)
-            // get plot data by querying protocol api endpoint
-            Map surveyDataWithPlotInfo = retrieveSurveyData(surveyId, config, surveyData.createdAt, authHeader)
-            // add plot data to survey observations
-            addPlotDataToObservations(surveyDataWithPlotInfo, surveyDataAndObservations, config)
+
+            // addPlotDataToObservations mutates the data at the top level so a shallow copy is OK
+            Map surveyData = new HashMap(surveyDataAndObservations)
+            addPlotDataToObservations(surveyData, surveyDataAndObservations, config)
             rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata, form.sections[0].template.relationships.apiOutput)
             // transform data to make it compatible with data model
             surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations)
             // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
-            if (!dataSet.siteId)
-                dataSet.siteId = createSiteFromSurveyData(surveyDataWithPlotInfo, surveyDataAndObservations, collection, surveyId, project.project, config, form)
-
+            if (!dataSet.siteId) {
+                dataSet.siteId = createSiteFromSurveyData(surveyData, surveyDataAndObservations, collection, surveyId, project.project, config, form)
+            }
             // make sure activity has not been created for this data set
             if (!dataSet.activityId || forceActivityCreation) {
                 Activity.withSession {
@@ -283,8 +282,8 @@ class ParatooService {
                 }
             }
 
-            dataSet.startDate = config.getStartDate(surveyDataAndObservations)
-            dataSet.endDate = config.getEndDate(surveyDataAndObservations)
+            dataSet.startDate = config.getStartDate(surveyData)
+            dataSet.endDate = config.getEndDate(surveyData)
 
             projectService.update([custom: project.project.custom], project.id, false)
         }
@@ -695,35 +694,6 @@ class ParatooService {
         "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit&filters[createdAt][\$eq]=$createdAt"
     }
 
-    Map retrieveSurveyData(ParatooCollectionId surveyId, ParatooProtocolConfig config, String createdAt, Map authHeader = null) {
-        String apiEndpoint = config.getApiEndpoint(surveyId)
-        if (!authHeader) {
-            authHeader = getAuthHeader()
-        }
-
-        int start = 0
-        int limit = 10
-
-        String url = paratooBaseUrl + '/' + apiEndpoint
-        String query = buildSurveyQueryString(start, limit, createdAt)
-        log.debug("Retrieving survey data from: "+url+query)
-        Map response = webService.getJson(url + query, null, authHeader, false)
-        log.debug((response as JSON).toString())
-        Map survey = findMatchingSurvey(surveyId, response.data, config)
-
-        int total = response.meta?.pagination?.total ?: 0
-        while (!survey && start + limit < total) {
-            start += limit
-            query = buildSurveyQueryString(start, limit, createdAt)
-            log.debug("Retrieving survey data from: "+url+query)
-            response = webService.getJson(url + query, null, authHeader, false)
-            log.debug((response as JSON).toString())
-            survey = findMatchingSurvey(surveyId, response.data, config)
-        }
-
-        survey
-    }
-
     Map retrieveSurveyAndObservations(ParatooCollection collection, Map authHeader = null) {
         String apiEndpoint = PARATOO_DATA_PATH
         Map payload = [
@@ -739,10 +709,6 @@ class ParatooService {
         log.debug((response as JSON).toString())
 
         response?.resp?.collections
-    }
-
-    private static Map findMatchingSurvey(ParatooCollectionId surveyId, List data, ParatooProtocolConfig config) {
-        data?.find { config.matches(it, surveyId) }
     }
 
     Map addOrUpdatePlotSelections(String userId, ParatooPlotSelectionData plotSelectionData) {

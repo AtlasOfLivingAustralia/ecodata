@@ -20,20 +20,22 @@ class ParatooProtocolConfig {
     String geometryType = 'Polygon'
 
     String geometryPath
-    String startDatePath = 'attributes.start_date_time'
-    String endDatePath = 'attributes.end_date_time'
-    String surveyIdPath = 'attributes.survey_metadata'
-    String plotVisitPath = 'attributes.plot_visit.data.attributes'
-    String plotLayoutPath = "${plotVisitPath}.plot_layout.data.attributes"
-    String plotLayoutIdPath = 'attributes.plot_visit.data.attributes.plot_layout.data.id'
-    String plotLayoutPointsPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_points'
-    String plotSelectionPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_selection.data.attributes'
-    String plotLayoutDimensionLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_dimensions.data.attributes.label'
-    String plotLayoutTypeLabelPath = 'attributes.plot_visit.data.attributes.plot_layout.data.attributes.plot_type.data.attributes.label'
+    String startDatePath = 'start_date_time'
+    String endDatePath = 'end_date_time'
+    String surveyIdPath = 'survey_metadata'
+    String plotVisitPath = 'plot_visit'
+    String plotLayoutPath = "${plotVisitPath}.plot_layout"
+    String plotLayoutIdPath = "${plotLayoutPath}.id"
+    String plotLayoutPointsPath = "${plotLayoutPath}.plot_points"
+    String plotSelectionPath = "${plotLayoutPath}.plot_selection"
+    String plotLayoutDimensionLabelPath = "${plotLayoutPath}.plot_dimensions.label"
+    String plotLayoutTypeLabelPath = "${plotLayoutPath}.plot_type.label"
     String getApiEndpoint(ParatooCollectionId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
     Map overrides = [dataModel: [:], viewModel: [:]]
+
+    ParatooCollectionId surveyId
 
     private static String removeMilliseconds(String isoDateWithMillis) {
         if (!isoDateWithMillis) {
@@ -151,7 +153,11 @@ class ParatooProtocolConfig {
         apiEndpoint
     }
 
-    static def getProperty(Map surveyData, String path) {
+    def getProperty(Map surveyData, String path) {
+        if (surveyId) {
+            path = surveyId.survey_metadata.survey_details.survey_model+'.'+path
+        }
+
         if (!path) {
             return null
         }
@@ -167,7 +173,7 @@ class ParatooProtocolConfig {
         if (usesPlotLayout) {
             geoJson = extractSiteDataFromPlotVisit(survey)
             // get list of all features associated with observation
-            if (form && observation) {
+            if (geoJson && form && observation) {
                 geoJson.features = extractFeatures(observation, form)
             }
         }
@@ -188,32 +194,30 @@ class ParatooProtocolConfig {
 
     Map getPlotVisit (Map surveyData) {
         Map plotVisit = getProperty(surveyData, plotVisitPath)
-        List keys = plotVisit?.keySet().toList().minus(ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT)
-        Map result = [:]
-        keys.each { key ->
-            result[key] = plotVisit[key]
-        }
-
-        result
+        copyWithExcludedProperty(plotVisit, ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT)
     }
 
     Map getPlotLayout (Map surveyData) {
         Map plotLayout = getProperty(surveyData, plotLayoutPath)
-        List keys = plotLayout?.keySet().toList().minus(ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION)
-        Map result = [:]
-        keys.each { key ->
-            result[key] = plotLayout[key]
-        }
-
-        result
+        copyWithExcludedProperty(plotLayout, ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION)
     }
 
     Map getPlotSelection (Map surveyData) {
         Map plotSelection = getProperty(surveyData, plotSelectionPath)
-        List keys = plotSelection?.keySet().toList()
+        copyWithExcludedProperty(plotSelection)
+    }
+
+    private Map copyWithExcludedProperty(Map map, String property = null) {
+        if (!map) {
+            return [:]
+        }
+        List keys = map.keySet().toList()
+        if (property) {
+            keys = keys.minus(property)
+        }
         Map result = [:]
         keys.each { key ->
-            result[key] = plotSelection[key]
+            result[key] = map[key]
         }
 
         result
@@ -238,6 +242,7 @@ class ParatooProtocolConfig {
     }
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
+
         def plotLayoutId = getProperty(survey, plotLayoutIdPath) // Currently an int, may become uuid?
 
         if (!plotLayoutId) {
@@ -322,7 +327,7 @@ class ParatooProtocolConfig {
                 name : plotSelectionData.plot_label,
                 externalId: plotSelectionData.uuid,
                 description: plotSelectionData.plot_label,
-                notes: plotSelectionData.comment
+                notes: plotSelectionData.comments
         ]
         geoJson
     }
