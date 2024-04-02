@@ -69,43 +69,38 @@ class ParatooProtocolConfigSpec extends Specification {
 
     def "The floristics-standard survey can be used with this config"() {
         setup:
-        Map surveyData = readSurveyData('floristicsStandard')
+        Map surveyData = readSurveyData('floristicsStandardReverseLookup')
         Map floristicsSurveyConfig = [
                 apiEndpoint:'floristics-veg-survey-lites',
                 usesPlotLayout:true,
-                startDatePath: 'attributes.start_date_time',
-                endDatePath: 'attributes.end_date_time',
-                surveyIdPath: 'attributes.surveyId'
+                startDatePath: 'plot_visit.start_date',
+                endDatePath: 'plot_visit.end_date'
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(floristicsSurveyConfig)
+        config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
 
         expect:
-        config.getStartDate(surveyData) == '2022-09-21T01:55:44Z'
-        config.getEndDate(surveyData) == "2022-09-21T01:55:44Z"
-        config.getGeoJson(surveyData) == [type:"Feature", geometry:[type:"Polygon", coordinates:[[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]], properties:[name:"QDASEQ0001 - Control (100 x 100)", externalId:1, description:"QDASEQ0001 - Control (100 x 100)", notes:"some comment"]]
+        config.getStartDate(surveyData.collections) == '2024-03-26T03:03:26Z'
+        config.getEndDate(surveyData.collections) == '2024-03-26T03:03:26Z'
+        config.getGeoJson(surveyData.collections) == [type:"Feature", geometry:[type:"Polygon", coordinates:[[[149.0651452, -35.2592569], [149.0651452, -35.259167068471584], [149.0651452, -35.258987405414764], [149.0651452, -35.25880774235794], [149.0651452, -35.25862807930111], [149.0651452, -35.25844841624429], [149.0651452, -35.25835858471588], [149.06525521373527, -35.25835858471588], [149.06547524120586, -35.25835858471588], [149.06569526867642, -35.25835858471588], [149.06591529614698, -35.25835858471588], [149.06613532361757, -35.25835858471588], [149.06624533735285, -35.25835858471588], [149.06624533735285, -35.25844841624429], [149.06624533735285, -35.25862807930111], [149.06624533735285, -35.25880774235794], [149.06624533735285, -35.258987405414764], [149.06624533735285, -35.259167068471584], [149.06624533735285, -35.2592569], [149.06613532361757, -35.2592569], [149.06591529614698, -35.2592569], [149.06569526867642, -35.2592569], [149.06547524120586, -35.2592569], [149.06525521373527, -35.2592569], [149.06569526867645, -35.25880774235794], [149.0651452, -35.2592569]]]], properties:[name:"CTMSEH4221 - Control (100 x 100)", externalId:12, description:"CTMSEH4221 - Control (100 x 100)", notes:"Test again 2024-03-26"]]
     }
 
     def "The basal-area-dbh-measure-survey can be used with this config"() {
         setup:
-        Map surveyData = readSurveyData('basalAreaDbh')
+        Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
         Map basalAreaDbhMeasureSurveyConfig = [
                 apiEndpoint:'basal-area-dbh-measure-surveys',
                 usesPlotLayout:true,
-                startDatePath: 'attributes.start_date',
-                endDatePath: 'attributes.start_date',
+                startDatePath: 'start_date',
+                endDatePath: 'start_date',
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(basalAreaDbhMeasureSurveyConfig)
+        config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
 
         expect:
-        config.getStartDate(surveyData) == '2023-09-22T00:59:47Z'
-        config.getEndDate(surveyData) == "2023-09-22T00:59:47Z"
-        config.getGeoJson(surveyData) == [
-                type:"Feature",
-                geometry:[
-                        type:"Polygon",
-                        coordinates:[[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]],
-                properties:["name":"SATFLB0001 - Control (100 x 100)", externalId:4, description:"SATFLB0001 - Control (100 x 100)", notes:"some comment"]]
-
+        config.getStartDate(surveyData.collections) == '2024-03-26T03:03:26Z'
+        config.getEndDate(surveyData.collections) == "2024-03-26T03:03:26Z"
+        config.getGeoJson(surveyData.collections) == [type:"Feature", geometry:[type:"Polygon", coordinates:[[[149.0651452, -35.2592569], [149.0651452, -35.259167068471584], [149.0651452, -35.258987405414764], [149.0651452, -35.25880774235794], [149.0651452, -35.25862807930111], [149.0651452, -35.25844841624429], [149.0651452, -35.25835858471588], [149.06525521373527, -35.25835858471588], [149.06547524120586, -35.25835858471588], [149.06569526867642, -35.25835858471588], [149.06591529614698, -35.25835858471588], [149.06613532361757, -35.25835858471588], [149.06624533735285, -35.25835858471588], [149.06624533735285, -35.25844841624429], [149.06624533735285, -35.25862807930111], [149.06624533735285, -35.25880774235794], [149.06624533735285, -35.258987405414764], [149.06624533735285, -35.259167068471584], [149.06624533735285, -35.2592569], [149.06613532361757, -35.2592569], [149.06591529614698, -35.2592569], [149.06569526867642, -35.2592569], [149.06547524120586, -35.2592569], [149.06525521373527, -35.2592569], [149.06569526867645, -35.25880774235794], [149.0651452, -35.2592569]]]], properties:[name:"CTMSEH4221 - Control (100 x 100)", externalId:12, description:"CTMSEH4221 - Control (100 x 100)", notes:"Test again 2024-03-26"]]
     }
 
     def "The observations from opportunistic-survey can be filtered" () {

@@ -22,4 +22,12 @@ class ParatooSurveyMetadata implements Validateable {
         ]
     }
 
+    static ParatooSurveyMetadata fromMap(Map data) {
+        ParatooSurveyMetadata surveyMetadata = new ParatooSurveyMetadata([
+            survey_details: ParatooSurveyDetails.fromMap(data.survey_details),
+            provenance: ParatooProvenance.fromMap(data.provenance),
+            orgMintedUUID: data.orgMintedUUID
+        ])
+    }
+
 }

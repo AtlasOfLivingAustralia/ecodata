@@ -24,12 +24,15 @@ class ParatooProtocolConfig {
     String endDatePath = 'end_date_time'
     String surveyIdPath = 'survey_metadata'
     String plotVisitPath = 'plot_visit'
+    String plotVisitStartDatePath = "${plotVisitPath}.start_date"
+    String plotVisitEndDatePath = "${plotVisitPath}.end_date"
     String plotLayoutPath = "${plotVisitPath}.plot_layout"
     String plotLayoutIdPath = "${plotLayoutPath}.id"
     String plotLayoutPointsPath = "${plotLayoutPath}.plot_points"
     String plotSelectionPath = "${plotLayoutPath}.plot_selection"
     String plotLayoutDimensionLabelPath = "${plotLayoutPath}.plot_dimensions.label"
     String plotLayoutTypeLabelPath = "${plotLayoutPath}.plot_type.label"
+
     String getApiEndpoint(ParatooCollectionId surveyId) {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
@@ -51,7 +54,13 @@ class ParatooProtocolConfig {
 
         String date = getProperty(surveyData, startDatePath)
         if (date == null) {
-            date = getPropertyFromSurvey(surveyData, startDatePath)
+            if (usesPlotLayout) {
+                date = getProperty(surveyData, plotVisitStartDatePath)
+            }
+            else {
+                date = getPropertyFromSurvey(surveyData, startDatePath)
+            }
+
         }
 
         removeMilliseconds(date)
@@ -70,7 +79,15 @@ class ParatooProtocolConfig {
 
         String date = getProperty(surveyData, endDatePath)
         if (date == null) {
-            date = getPropertyFromSurvey(surveyData, endDatePath)
+            if (usesPlotLayout) {
+                date = getProperty(surveyData, plotVisitEndDatePath)
+                if (!date) {
+                    date = getProperty(surveyData, plotVisitStartDatePath)
+                }
+            }
+            else {
+                date = getPropertyFromSurvey(surveyData, endDatePath)
+            }
         }
 
         removeMilliseconds(date)
