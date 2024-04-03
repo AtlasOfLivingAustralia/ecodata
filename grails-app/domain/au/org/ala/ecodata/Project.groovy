@@ -70,6 +70,8 @@ class Project {
     List <String> ecoScienceType = []
     List <String> tags = []
     double funding
+    /** The most recent date the correctness of the project funding was checked */
+    Date fundingVerificatonDate
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
     boolean isExternal = false // An external project only has a listing with the ALA and is not using data capture capabilities
@@ -236,6 +238,7 @@ class Project {
         mapDisplays nullable: true
         terminationReason nullable: true
         fundingType nullable: true
+        fundingVerificatonDate nullable: true
         electionCommitmentYear nullable: true
         geographicInfo nullable:true
         portfolio nullable: true
