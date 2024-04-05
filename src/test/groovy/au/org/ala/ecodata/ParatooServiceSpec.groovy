@@ -5,18 +5,19 @@ import au.org.ala.ws.tokens.TokenService
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import groovy.json.JsonSlurper
 import org.codehaus.jackson.map.ObjectMapper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import static grails.async.Promises.waitAll
 
+import static grails.async.Promises.waitAll
 /**
  * Tests for the ParatooService.
  * The tests are incomplete as some of the behaviour needs to be specified.
  */
-class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooService> {
+class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooService>, DataTest {
 
     String userId = 'u1'
     SiteService siteService = Mock(SiteService)
@@ -48,7 +49,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         service.recordService = recordService
         service.cacheService = new CacheService()
         service.userService = userService
-        service.elasticSearchService = new ElasticSearchService()
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -59,10 +59,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         new JsonSlurper().parse(url)
     }
 
-    private ParatooCollectionId buildCollectionId(String name) {
-        Map collectionIdJson = readSurveyData(name?:"mintCollectionIdPayload")
+    private ParatooCollectionId buildCollectionId(String name = "mintCollectionIdPayload", String protocolId = 'guid-2') {
+        Map collectionIdJson = readSurveyData(name)
         ParatooCollectionId collectionId = ParatooCollectionId.fromMap(collectionIdJson)
-        collectionId.survey_metadata.survey_details.protocol_id = 'guid-2'
+        collectionId.survey_metadata.survey_details.protocol_id = protocolId
         collectionId
     }
 
@@ -180,7 +180,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap()]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
-        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: null, endDate: null, areSpeciesRecorded: false, activityId: '123', siteId: null]
+        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
 
         when:
@@ -188,7 +188,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         waitAll(result.promise)
 
         then:
-        1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z"]]]]
+        1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
         1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
@@ -285,7 +285,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         "version_core": "<core-version>"
                 ]
         )
-        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload")
+        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload","guid-3")
         Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
         Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
@@ -303,7 +303,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * activityService.create(_) >> [activityId: '123']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
-            (["guid-2": [
+            (["guid-3": [
                     "name"          : "Basal Area - DBH",
                     "usesPlotLayout": true,
                     "tags"          : ["survey"],
@@ -317,12 +317,12 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * userService.getCurrentUserDetails() >> [userId: userId]
 
         and:
-        site.name == "CTMSEH4221 - Control (100 x 100)"
-        site.description == "CTMSEH4221 - Control (100 x 100)"
-        site.notes == "Test again 2024-03-26"
+        site.name == "SATFLB0001 - Control (100 x 100)"
+        site.description == "SATFLB0001 - Control (100 x 100)"
+        site.notes == "some comment"
         site.type == "surveyArea"
         site.publicationStatus == "published"
-        site.externalIds[0].externalId == "12"
+        site.externalIds[0].externalId == "2"
         site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
 
         result.updateResult == [status: 'ok']
@@ -371,7 +371,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                                                 name    : "coarse-woody-debris-survey",
                                                 columns : [
                                                         [
-                                                                dataType: "integer",
+                                                                dataType: "list",
                                                                 name    : "coarse-woody-debris-survey-observation"
                                                         ]
                                                 ]
@@ -379,7 +379,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                                 ],
                                 viewModel    : [],
                                 relationships: [
-                                        ecodata  : [:],
+                                        ecodata  : ["coarse-woody-debris-survey":["coarse-woody-debris-survey-observation": [:]]],
                                         apiOutput: [:]
                                 ]
                         ]
@@ -389,7 +389,35 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         activityForm.externalIds = [new ExternalId(externalId: "guid-2", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError: true, flush: true)
 
-        activityForm = new ActivityForm(name: "aParatooForm 2 ", type: 'EMSA', category: 'protocol category 2', external: true)
+        activityForm = new ActivityForm(name: "aParatooForm 2 ", type: 'EMSA', category: 'protocol category 2', external: true,
+                sections: [
+                        new FormSection(name: "section 1", type: "section", template: [
+                                dataModel    : [
+                                        [
+                                                dataType: "list",
+                                                name    : "basal-area-dbh-measure-survey",
+                                                columns : [
+                                                        [
+                                                                dataType: "list",
+                                                                name    : "basal-area-dbh-measure-observation",
+                                                                columns : [
+                                                                        [
+                                                                                dataType: "feature",
+                                                                                name    : "location"
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ]
+                                        ]
+                                ],
+                                viewModel    : [],
+                                relationships: [
+                                        ecodata  : ["basal-area-dbh-measure-survey":["basal-area-dbh-measure-observation": [:]]],
+                                        apiOutput: [:]
+                                ]
+                        ]
+                        )
+                ])
         activityForm.externalIds = [new ExternalId(externalId: "guid-3", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError: true, flush: true)
 
@@ -760,17 +788,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "rearrangeSurveyData should reorder api output according to provided relationship"() {
         setup:
         def mapper = new ObjectMapper()
-        def output = '{"a": {}, "f": 4, "b": {"c": 1, "d": 2}, "e": {"g": 3}}'
+        def output = '{"a": {}, "f": 4, "b": {"c": 1, "d": {}}, "e": {"g": 3}}'
         output = mapper.readValue(output, Map.class)
-        def relationship = '{"b": {"e": {"a": {} } }, "c": {} }'
+        def relationship = '{"d": {"b": {"e": {"a": {} } }}, "c": {} }'
         relationship = mapper.readValue(relationship, Map.class)
-        def apiOutputRelationship = '{ "e": {"e": {} }, "a": "a", "b.c": {"c": {}} }'
+        def apiOutputRelationship = '{ "e": {"e": {} }, "a": "a", "b.c": {"c": {}}, "b.d": {"d": {}} }'
         apiOutputRelationship = mapper.readValue(apiOutputRelationship, Map.class)
         when:
         def result = service.rearrangeSurveyData(output, output, relationship, apiOutputRelationship)
         then:
         result.size() == 3
-        result == ["f": 4, "b": ["c":1, "d": 2, "e": ["g": 3, "a": [:]]], "c": 1]
+        result == ["f": 4, "d": ["b": ["e": ["g": 3, "a": [:]]]], "c": 1]
     }
 
     void "resolveModelReferences should swap model with definitions"() {

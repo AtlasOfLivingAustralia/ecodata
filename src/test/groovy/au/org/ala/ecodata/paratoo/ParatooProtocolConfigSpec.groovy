@@ -2,6 +2,8 @@ package au.org.ala.ecodata.paratoo
 
 import au.org.ala.ecodata.ActivityForm
 import au.org.ala.ecodata.ExternalId
+import au.org.ala.ecodata.FormSection
+import au.org.ala.ecodata.ParatooService
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
@@ -9,10 +11,12 @@ import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
 
 class ParatooProtocolConfigSpec extends Specification {
+    ParatooService paratooService
 
     def setup() {
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
+        paratooService = new ParatooService()
     }
 
     private Map readSurveyData(String name) {
@@ -20,25 +24,18 @@ class ParatooProtocolConfigSpec extends Specification {
         new JsonSlurper().parse(url)
     }
 
-    private Map readSurveyObservations(String name) {
-        URL url = getClass().getResource("/paratoo/${name}.json")
-        new JsonSlurper().parse(url)
-    }
-
     def "The vegetation-mapping-survey can be used with this config"() {
 
         setup:
-        Map surveyData = readSurveyData('vegetationMappingSurvey')
-        Map observation = readSurveyData('vegetationMappingObservation')
+        Map surveyData = readSurveyData('vegetationMappingObservationReverseLookup')
+        Map observation = surveyData?.collections
         Map vegetationMappingConfig = [
-                apiEndpoint:'vegetation-mapping-observations',
-                usesPlotLayout:false,
-                geometryType:'Point',
-                geometryPath:'attributes.position',
-                startDatePath:'attributes.vegetation_mapping_survey.data.attributes.start_date_time',
-                endDatePath: null
+                apiEndpoint               : 'vegetation-mapping-surveys',
+                usesPlotLayout            : false,
+                geometryType              : 'Point'
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(vegetationMappingConfig)
+        config.surveyId = ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata])
         ActivityForm activityForm = new ActivityForm(
                 name: "aParatooForm 1",
                 type: 'EMSA',
@@ -46,30 +43,59 @@ class ParatooProtocolConfigSpec extends Specification {
                 external: true,
                 sections: [
                         [
-                            name: "section 1",
-                            template: [
-                                    dataModel: [[
-                                        name: "position",
-                                        dataType: "feature",
-                                        required: true,
-                                        external: true
-                                    ]]
-                            ]
+                                name    : "section 1",
+                                template: [
+                                        dataModel    : [
+                                                [
+                                                        name    : "vegetation-mapping-survey",
+                                                        dataType: "list",
+                                                        columns : [
+                                                                [
+                                                                        name    : "vegetation-mapping-observation",
+                                                                        dataType: "list",
+                                                                        columns : [
+                                                                                [
+                                                                                        dataType: "feature",
+                                                                                        name    : "position"
+                                                                                ]
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ]
+                                        ],
+                                        relationships: [
+                                                ecodata  : ["vegetation-mapping-survey": ["vegetation-mapping-observation": [:]]],
+                                                apiOutput: ["vegetation-mapping-observation": ["vegetation-mapping-observation": [:]]]
+                                        ]
+                                ]
                         ]
                 ]
         )
-        activityForm.externalIds = [new ExternalId(externalId: "guid-2", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
+        activityForm.externalIds = [new ExternalId(externalId: "guid-3", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
 
-        expect:
-        config.getStartDate(surveyData) == '2023-09-08T23:39:00Z'
-        config.getEndDate(surveyData) == null
-        config.getGeoJson(surveyData) == [type:'Point', coordinates:[149.0651536, -35.2592398]]
-        config.getGeoJson(surveyData, observation, activityForm).features == [[type:'Point', coordinates:[149.0651536, -35.2592398]]]
+        when:
+        transformData(observation, activityForm, config)
+
+        then:
+        config.getStartDate(observation) == '2023-09-08T23:39:00Z'
+        config.getEndDate(observation) == null
+        config.getGeoJson(observation, activityForm).features == [
+                [
+                        type      : "Feature",
+                        geometry  : [type: 'Point', coordinates: [149.0651536, -35.2592398]],
+                        properties: [
+                                name      : "Point",
+                                externalId: 44,
+                                id        : "aParatooForm 1-1"
+                        ]
+                ]
+        ]
     }
 
     def "The floristics-standard survey can be used with this config"() {
         setup:
-        Map surveyData = readSurveyData('floristicsStandardReverseLookup')
+        Map apiOutput = readSurveyData('floristicsStandardReverseLookup')
+        Map observation = apiOutput.collections
         Map floristicsSurveyConfig = [
                 apiEndpoint:'floristics-veg-survey-lites',
                 usesPlotLayout:true,
@@ -77,12 +103,38 @@ class ParatooProtocolConfigSpec extends Specification {
                 endDatePath: 'plot_visit.end_date'
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(floristicsSurveyConfig)
-        config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
+        config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: apiOutput.survey_metadata]))
+        ActivityForm activityForm = new ActivityForm(
+                name: "aParatooForm 1",
+                type: 'EMSA',
+                category: 'protocol category 1',
+                external: true,
+                sections: [
+                        [
+                                name    : "section 1",
+                                template: [
+                                        dataModel    : [[
+                                                                name    : "floristics-veg-survey-lite",
+                                                                dataType: "list",
+                                                                columns : []
+                                                        ]],
+                                        relationships: [
+                                                ecodata  : [:],
+                                                apiOutput: [:]
+                                        ]
+                                ]
+                        ]
+                ]
+        )
 
-        expect:
-        config.getStartDate(surveyData.collections) == '2024-03-26T03:03:26Z'
-        config.getEndDate(surveyData.collections) == '2024-03-26T03:03:26Z'
-        config.getGeoJson(surveyData.collections) == [type:"Feature", geometry:[type:"Polygon", coordinates:[[[149.0651452, -35.2592569], [149.0651452, -35.259167068471584], [149.0651452, -35.258987405414764], [149.0651452, -35.25880774235794], [149.0651452, -35.25862807930111], [149.0651452, -35.25844841624429], [149.0651452, -35.25835858471588], [149.06525521373527, -35.25835858471588], [149.06547524120586, -35.25835858471588], [149.06569526867642, -35.25835858471588], [149.06591529614698, -35.25835858471588], [149.06613532361757, -35.25835858471588], [149.06624533735285, -35.25835858471588], [149.06624533735285, -35.25844841624429], [149.06624533735285, -35.25862807930111], [149.06624533735285, -35.25880774235794], [149.06624533735285, -35.258987405414764], [149.06624533735285, -35.259167068471584], [149.06624533735285, -35.2592569], [149.06613532361757, -35.2592569], [149.06591529614698, -35.2592569], [149.06569526867642, -35.2592569], [149.06547524120586, -35.2592569], [149.06525521373527, -35.2592569], [149.06569526867645, -35.25880774235794], [149.0651452, -35.2592569]]]], properties:[name:"CTMSEH4221 - Control (100 x 100)", externalId:12, description:"CTMSEH4221 - Control (100 x 100)", notes:"Test again 2024-03-26"]]
+
+        when:
+        transformData(observation, activityForm, config)
+
+        then:
+        config.getStartDate(observation) == "2021-08-26T11:26:54Z"
+        config.getEndDate(observation) == "2021-08-26T13:26:54Z"
+        config.getGeoJson(observation) == [type: "Feature", geometry: [type: "Polygon", coordinates: [[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]], properties: [name: "QDASEQ0001 - Control (100 x 100)", externalId: 1, description: "QDASEQ0001 - Control (100 x 100)", notes: "some comment"]]
     }
 
     def "The basal-area-dbh-measure-survey can be used with this config"() {
@@ -96,39 +148,131 @@ class ParatooProtocolConfigSpec extends Specification {
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(basalAreaDbhMeasureSurveyConfig)
         config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
+        Map observation = surveyData?.collections
+        ActivityForm activityForm = new ActivityForm(name: "aParatooForm 2", type: 'EMSA', category: 'protocol category 2', external: true,
+                sections: [
+                        new FormSection(name: "section 1", type: "section", template: [
+                                dataModel    : [
+                                        [
+                                                dataType: "list",
+                                                name    : "basal-area-dbh-measure-survey",
+                                                columns : [
+                                                        [
+                                                                dataType: "list",
+                                                                name    : "basal-area-dbh-measure-observation",
+                                                                columns : [
+                                                                        [
+                                                                                dataType: "feature",
+                                                                                name    : "location"
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ]
+                                        ]
+                                ],
+                                viewModel    : [],
+                                relationships: [
+                                        ecodata  : ["basal-area-dbh-measure-survey":["basal-area-dbh-measure-observation": [:]]],
+                                        apiOutput: [:]
+                                ]
+                        ]
+                        )
+                ])
+        activityForm.externalIds = [new ExternalId(externalId: "guid-3", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
+        transformData(observation, activityForm, config)
 
         expect:
-        config.getStartDate(surveyData.collections) == '2024-03-26T03:03:26Z'
-        config.getEndDate(surveyData.collections) == "2024-03-26T03:03:26Z"
-        config.getGeoJson(surveyData.collections) == [type:"Feature", geometry:[type:"Polygon", coordinates:[[[149.0651452, -35.2592569], [149.0651452, -35.259167068471584], [149.0651452, -35.258987405414764], [149.0651452, -35.25880774235794], [149.0651452, -35.25862807930111], [149.0651452, -35.25844841624429], [149.0651452, -35.25835858471588], [149.06525521373527, -35.25835858471588], [149.06547524120586, -35.25835858471588], [149.06569526867642, -35.25835858471588], [149.06591529614698, -35.25835858471588], [149.06613532361757, -35.25835858471588], [149.06624533735285, -35.25835858471588], [149.06624533735285, -35.25844841624429], [149.06624533735285, -35.25862807930111], [149.06624533735285, -35.25880774235794], [149.06624533735285, -35.258987405414764], [149.06624533735285, -35.259167068471584], [149.06624533735285, -35.2592569], [149.06613532361757, -35.2592569], [149.06591529614698, -35.2592569], [149.06569526867642, -35.2592569], [149.06547524120586, -35.2592569], [149.06525521373527, -35.2592569], [149.06569526867645, -35.25880774235794], [149.0651452, -35.2592569]]]], properties:[name:"CTMSEH4221 - Control (100 x 100)", externalId:12, description:"CTMSEH4221 - Control (100 x 100)", notes:"Test again 2024-03-26"]]
+        config.getStartDate(observation) == '2023-09-22T00:59:47Z'
+        config.getEndDate(observation) == "2023-09-22T00:59:47Z"
+        config.getGeoJson(observation) == [
+                type      : "Feature",
+                geometry  : [
+                        type       : "Polygon",
+                        coordinates: [[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]],
+                properties: ["name": "SATFLB0001 - Control (100 x 100)", externalId: 2, description: "SATFLB0001 - Control (100 x 100)", notes: "some comment"]
+        ]
+        config.getGeoJson(observation, activityForm).features == [[
+                type      : "Feature",
+                geometry  : [
+                        type       : "Point",
+                        coordinates: [149.0651491, -35.2592444]
+                ],
+                properties: ["name": "Point", externalId: 37, id: "aParatooForm 2-1"]
+        ]]
     }
 
-    def "The observations from opportunistic-survey can be filtered" () {
+    def "The observations from opportunistic-survey can be filtered"() {
         setup:
-        Map surveyObservations = readSurveyObservations('opportunisticSurveyObservations')
+        Map response = readSurveyData('opportunisticSurveyObservationsReverseLookup')
+        Map surveyObservations = response?.collections
         Map opportunisticSurveyConfig = [
-                apiEndpoint:'opportunistic-surveys',
-                usesPlotLayout:false,
-                geometryType: 'Point',
-                startDatePath: 'attributes.startdate',
-                endDatePath: 'attributes.updatedAt'
+                apiEndpoint   : 'opportunistic-surveys',
+                usesPlotLayout: false,
+                geometryType  : 'Point',
+                startDatePath : 'start_date_time',
+                endDatePath   : 'end_date_time'
         ]
-        ParatooProtocolConfig config = new ParatooProtocolConfig(opportunisticSurveyConfig)
-        ParatooCollectionId paratooSurveyId = new ParatooCollectionId(
-                survey_metadata: [
-                        survey_details: [
-                                survey_model: 'opportunistic-survey',
-                                time: "2023-10-24T00:59:48.456Z",
-                                uuid: '10a03062-2b0d-40bb-a6d7-e72f06788b94'
+        ActivityForm activityForm = new ActivityForm(
+                name: "aParatooForm 1",
+                type: 'EMSA',
+                category: 'protocol category 1',
+                external: true,
+                sections: [
+                        [
+                                name    : "section 1",
+                                template: [
+                                        dataModel    : [
+                                                [
+                                                        name    : "opportunistic-survey",
+                                                        dataType: "list",
+                                                        columns: [[
+                                                                          name    : "opportunistic-observation",
+                                                                          dataType: "list",
+                                                                          columns : [
+                                                                                  [
+                                                                                          name    : "location",
+                                                                                          dataType: "feature",
+                                                                                          required: true,
+                                                                                          external: true
+                                                                                  ]
+                                                                          ]
+                                                                  ]]
+                                                ]
+                                        ],
+                                        relationships: [
+                                                ecodata  : ["opportunistic-survey": ["opportunistic-observation": [:]]],
+                                                apiOutput: ["opportunistic-observation.opportunistic_survey": ["opportunistic-survey": [:]], "opportunistic-observation": ["opportunistic-observation": [:]]]
+                                        ]
+                                ]
                         ]
                 ]
         )
-        def start_date = config.getStartDate(surveyObservations.data[0])
-        def end_date = config.getEndDate(surveyObservations.data[0])
 
-        expect:
-        start_date == null
-        end_date == "2023-10-24T01:01:56Z"
+        when:
+        ParatooProtocolConfig config = new ParatooProtocolConfig(opportunisticSurveyConfig)
+        config.surveyId = ParatooCollectionId.fromMap([survey_metadata: response.survey_metadata])
+        transformData(surveyObservations, activityForm, config)
+        String start_date = config.getStartDate(surveyObservations)
+        String end_date = config.getEndDate(surveyObservations)
+        Map geoJson = config.getGeoJson(surveyObservations, activityForm)
 
+        then:
+        start_date == "2024-04-03T03:37:54Z"
+        end_date == "2024-04-03T03:39:40Z"
+        geoJson == [
+                type      : "Feature",
+                geometry  : [type: "Point", coordinates: [138.63, -35.0005]],
+                features  : [[type: "Feature", geometry: [type: "Point", coordinates: [138.63, -35.0005]], properties:[name:"Point", externalId:40, id:"aParatooForm 1-1"]]],
+                properties: [
+                        name       : "Convex Hull",
+                        description: "Convex Hull of 1 feature(s)"
+                ]
+        ]
+    }
+
+    def transformData(Map surveyDataAndObservations, ActivityForm form, ParatooProtocolConfig config) {
+        ParatooService.addPlotDataToObservations(surveyDataAndObservations, config)
+        paratooService.rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata, form.sections[0].template.relationships.apiOutput)
+        paratooService.recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name)
     }
 }

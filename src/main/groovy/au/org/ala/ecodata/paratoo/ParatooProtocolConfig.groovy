@@ -52,7 +52,7 @@ class ParatooProtocolConfig {
             return null
         }
 
-        String date = getProperty(surveyData, startDatePath)
+        def date = getProperty(surveyData, startDatePath)
         if (date == null) {
             if (usesPlotLayout) {
                 date = getProperty(surveyData, plotVisitStartDatePath)
@@ -63,12 +63,12 @@ class ParatooProtocolConfig {
 
         }
 
+        date = getFirst(date)
         removeMilliseconds(date)
     }
 
     def getPropertyFromSurvey(Map surveyData, String path) {
-        surveyData = getSurveyDataFromObservation(surveyData)
-        path = path.replaceFirst("^attributes.", '')
+        surveyData = getSurveyData(surveyData)
         getProperty(surveyData, path)
     }
 
@@ -77,7 +77,7 @@ class ParatooProtocolConfig {
             return null
         }
 
-        String date = getProperty(surveyData, endDatePath)
+        def date = getProperty(surveyData, endDatePath)
         if (date == null) {
             if (usesPlotLayout) {
                 date = getProperty(surveyData, plotVisitEndDatePath)
@@ -90,6 +90,7 @@ class ParatooProtocolConfig {
             }
         }
 
+        date = getFirst(date)
         removeMilliseconds(date)
     }
 
@@ -98,16 +99,19 @@ class ParatooProtocolConfig {
             return null
         }
 
-        Map result = getProperty(surveyData, surveyIdPath)
+        def result = getProperty(surveyData, surveyIdPath)
         if (result == null) {
             result = getPropertyFromSurvey(surveyData, surveyIdPath)
         }
 
+        result = getFirst(result)
         result
     }
 
-    private Map extractSiteDataFromPath(Map surveyData) {
+    private Map extractSiteDataFromPath(Map survey) {
+        Map surveyData = getSurveyData(survey)
         def geometryData = getProperty(surveyData, geometryPath)
+        geometryData = getFirst(geometryData)
         extractGeometryFromSiteData(geometryData)
     }
 
@@ -171,56 +175,73 @@ class ParatooProtocolConfig {
     }
 
     def getProperty(Map surveyData, String path) {
-        if (surveyId) {
-            path = surveyId.survey_metadata.survey_details.survey_model+'.'+path
-        }
-
         if (!path) {
             return null
         }
-        new PropertyAccessor(path).get(surveyData)
+
+        def result = new PropertyAccessor(path).get(surveyData)
+        if (result == null) {
+            if (surveyId) {
+                path = surveyId.survey_metadata.survey_details.survey_model+'.'+path
+            }
+
+            result = new PropertyAccessor(path).get(surveyData)
+        }
+
+        result
     }
 
-    Map getGeoJson(Map survey, Map observation = null, ActivityForm form = null) {
-        if (!survey) {
+    Map getGeoJson(Map output, ActivityForm form = null) {
+        if (!output) {
             return null
         }
 
         Map geoJson = null
         if (usesPlotLayout) {
-            geoJson = extractSiteDataFromPlotVisit(survey)
+            geoJson = extractSiteDataFromPlotVisit(output)
             // get list of all features associated with observation
-            if (geoJson && form && observation) {
-                geoJson.features = extractFeatures(observation, form)
-            }
-        }
-        else if (form && observation) {
-            List features = extractFeatures(observation, form)
-            if (features) {
-                Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(features)
-                geoJson = GeometryUtils.geometryToGeoJsonMap(geometry)
-                geoJson.features = features
+            if (geoJson && form && output) {
+                geoJson.features = extractFeatures(output, form)
             }
         }
         else if (geometryPath) {
-            geoJson = extractSiteDataFromPath(survey)
+            geoJson = extractSiteDataFromPath(output)
+        }
+        else if (form && output) {
+            List features = extractFeatures(output, form)
+            if (features) {
+                List featureGeometries = features.collect { it.geometry }
+                Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
+                geoJson = [
+                    type: 'Feature',
+                    geometry: GeometryUtils.geometryToGeoJsonMap(geometry),
+                    properties: [
+                            name: "Convex Hull",
+                            description: "Convex Hull of ${features?.size()} feature(s)"
+                    ],
+                    features: features
+                ]
+            }
         }
 
         geoJson
     }
 
     Map getPlotVisit (Map surveyData) {
-        Map plotVisit = getProperty(surveyData, plotVisitPath)
+        def result = getProperty(surveyData, plotVisitPath)
+        Map plotVisit = getFirst(result)
         copyWithExcludedProperty(plotVisit, ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT)
     }
 
     Map getPlotLayout (Map surveyData) {
-        Map plotLayout = getProperty(surveyData, plotLayoutPath)
+        def result = getProperty(surveyData, plotLayoutPath)
+        Map plotLayout = getFirst(result)
         copyWithExcludedProperty(plotLayout, ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION)
     }
 
     Map getPlotSelection (Map surveyData) {
-        Map plotSelection = getProperty(surveyData, plotSelectionPath)
+        def result = getProperty(surveyData, plotSelectionPath)
+        Map plotSelection = getFirst(result)
         copyWithExcludedProperty(plotSelection)
     }
 
@@ -258,20 +279,35 @@ class ParatooProtocolConfig {
                 tmpSurveyId?.survey_details?.uuid == collectionId.survey_metadata?.survey_details.uuid
     }
 
-    private Map extractSiteDataFromPlotVisit(Map survey) {
+    static def getFirst (def value) {
+        if (value instanceof List) {
+            value = value.first()
+        }
 
-        def plotLayoutId = getProperty(survey, plotLayoutIdPath) // Currently an int, may become uuid?
+        value
+    }
+
+    def getSurveyData (Map survey) {
+        if (surveyId) {
+            def path = surveyId.survey_metadata.survey_details.survey_model
+            getFirst(survey[path])
+        }
+    }
+
+    private Map extractSiteDataFromPlotVisit(Map survey) {
+        Map surveyData = getSurveyData(survey)
+        def plotLayoutId = getProperty(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
 
         if (!plotLayoutId) {
             log.warn("No plot_layout found in survey at path ${plotLayoutIdPath}")
             return null
         }
-        List plotLayoutPoints = getProperty(survey, plotLayoutPointsPath)
-        Map plotSelection = getProperty(survey, plotSelectionPath)
+        List plotLayoutPoints = getProperty(surveyData, plotLayoutPointsPath)
+        Map plotSelection = getProperty(surveyData, plotSelectionPath)
         Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
 
-        String plotLayoutDimensionLabel = getProperty(survey, plotLayoutDimensionLabelPath)
-        String plotLayoutTypeLabel = getProperty(survey, plotLayoutTypeLabelPath)
+        String plotLayoutDimensionLabel = getProperty(surveyData, plotLayoutDimensionLabelPath)
+        String plotLayoutTypeLabel = getProperty(surveyData, plotLayoutTypeLabelPath)
 
         String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + plotLayoutDimensionLabel + ')'
 
@@ -307,20 +343,6 @@ class ParatooProtocolConfig {
         plotGeometry
     }
 
-    Map getSurveyDataFromObservation(Map observation) {
-        String surveyAttribute = apiEndpoint
-        if(surveyAttribute?.endsWith('s')) {
-            surveyAttribute = surveyAttribute.substring(0, surveyAttribute.length() - 1)
-        }
-
-        def survey = observation[surveyAttribute]
-        if (survey instanceof List) {
-            return survey[0]
-        }
-
-        survey
-    }
-
     private static List closePolygonIfRequired(List points) {
         if (points[0][0] != points[-1][0] || points[0][1] != points[-1][1]) {
             points << points[0]
@@ -329,7 +351,7 @@ class ParatooProtocolConfig {
     }
 
     private static boolean exclude(Map point) {
-        point.name?.data?.attributes?.symbol == "C" // The plot layout has a centre point that we don't want
+        point.name?.data?.attributes?.symbol == "C" || point.name?.symbol == "C"// The plot layout has a centre point that we don't want
     }
 
     // Accepts a Map or ParatooPlotSelectionData as this is used by two separate calls.

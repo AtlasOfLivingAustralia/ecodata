@@ -1,21 +1,21 @@
 {
   "survey_metadata": {
-    "id": 4,
-    "org_minted_uuid": "3eef6171-682f-49a4-ab03-6663f94e6564",
-    "createdAt": "2024-03-26T03:07:18.025Z",
-    "updatedAt": "2024-03-26T03:07:18.025Z",
+    "id": 8,
+    "org_minted_uuid": "9beeba20-374a-470a-b4f4-caed34e07572",
+    "createdAt": "2024-03-28T03:17:25.302Z",
+    "updatedAt": "2024-03-28T03:17:25.302Z",
     "survey_details": {
-      "id": 50,
+      "id": 59,
       "survey_model": "floristics-veg-survey-lite",
-      "time": "2024-03-26T03:06:02.904Z",
-      "uuid": "90df7817-1b5e-410c-95d1-09e223a13002",
-      "project_id": "a0f57791-e858-4f33-ae8e-7e3e3fffb447",
-      "protocol_id": "bbd550c0-04c5-4a8c-ae39-cc748e920fd4",
+      "time": "2024-03-28T03:17:01.727Z",
+      "uuid": "263f710d-9af5-456a-9c68-b2b675763220",
+      "project_id": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
+      "protocol_id": "cd2cbbc7-2f17-4b0f-91b4-06f46e9c90f2",
       "protocol_version": "1",
       "submodule_protocol_id": ""
     },
     "provenance": {
-      "id": 50,
+      "id": 59,
       "version_app": "1.0.0-alpha.7-a2ba7a48",
       "version_core": "0.1.0-a2ba7a48",
       "version_core_documentation": "0.1.0-a2ba7a48",
@@ -27,527 +27,23 @@
   },
   "collections": {
     "floristics-veg-survey-lite": {
-      "id": 4,
-      "collect_ptv_submodule": false,
-      "createdAt": "2024-03-26T03:07:16.263Z",
-      "updatedAt": "2024-03-26T03:07:16.263Z",
-      "plot_visit": {
-        "id": 12,
-        "start_date": "2024-03-26T03:03:26.025Z",
-        "end_date": null,
-        "visit_field_name": "Chris test 2024-03-26",
-        "createdAt": "2024-03-26T03:03:57.778Z",
-        "updatedAt": "2024-03-26T03:03:57.778Z",
-        "plot_layout": {
-          "id": 12,
-          "orientation": null,
-          "replicate": 1,
-          "is_the_plot_permanently_marked": false,
-          "createdAt": "2024-03-26T03:03:57.623Z",
-          "updatedAt": "2024-03-26T03:03:57.623Z",
-          "plot_selection": {
-            "id": 16,
-            "plot_label": "CTMSEH4221",
-            "uuid": "cf23aacf-1f02-43fb-8a78-559d3261838b",
-            "comments": "Test again 2024-03-26",
-            "date_time": "2024-03-26T03:01:18.936Z",
-            "createdAt": "2024-03-26T03:02:01.377Z",
-            "updatedAt": "2024-03-26T03:02:01.377Z",
-            "plot_name": {
-              "id": 16,
-              "unique_digits": "4221",
-              "state": {
-                "id": 1,
-                "symbol": "CT",
-                "label": "Australian Capital Territory",
-                "description": "State/Jurisdiction where the study is/was conducted.",
-                "uri": "https://linked.data.gov.au/def/nrm/4253c9af-b390-5b69-aaf3-ce5cda0c36bf",
-                "createdAt": "2024-03-26T02:39:32.171Z",
-                "updatedAt": "2024-03-26T02:39:32.171Z"
-              },
-              "program": {
-                "id": 9,
-                "symbol": "M",
-                "label": "MERIT",
-                "description": "A generic program for MERIT use, as they can have many 'programs' for a given plot",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:18.503Z",
-                "updatedAt": "2024-03-26T02:39:18.503Z"
-              },
-              "bioregion": {
-                "id": 83,
-                "symbol": "SEH",
-                "label": "South Eastern Highlands",
-                "description": "",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:41.803Z",
-                "updatedAt": "2024-03-26T02:39:41.803Z",
-                "states": [
-                  {
-                    "id": 2,
-                    "symbol": "NS",
-                    "label": "New South Wales",
-                    "description": "State/Jurisdiction where the study is/was conducted.",
-                    "uri": "https://linked.data.gov.au/def/nrm/14b8c3fe-3a60-5f3a-bb7a-b9cf5df49b4e",
-                    "createdAt": "2024-03-26T02:39:32.183Z",
-                    "updatedAt": "2024-03-26T02:39:32.183Z"
-                  },
-                  {
-                    "id": 7,
-                    "symbol": "VC",
-                    "label": "Victoria",
-                    "description": "State/Jurisdiction where the study is/was conducted.",
-                    "uri": "https://linked.data.gov.au/def/nrm/5e6382e6-d26c-5889-ba7e-f051d82d6173",
-                    "createdAt": "2024-03-26T02:39:32.246Z",
-                    "updatedAt": "2024-03-26T02:39:32.246Z"
-                  },
-                  {
-                    "id": 1,
-                    "symbol": "CT",
-                    "label": "Australian Capital Territory",
-                    "description": "State/Jurisdiction where the study is/was conducted.",
-                    "uri": "https://linked.data.gov.au/def/nrm/4253c9af-b390-5b69-aaf3-ce5cda0c36bf",
-                    "createdAt": "2024-03-26T02:39:32.171Z",
-                    "updatedAt": "2024-03-26T02:39:32.171Z"
-                  }
-                ]
-              }
-            },
-            "recommended_location": {
-              "id": 34,
-              "lat": -35.2592561,
-              "lng": 149.0651502
-            },
-            "recommended_location_point": {
-              "id": 5,
-              "symbol": "C",
-              "label": "Centre",
-              "description": "",
-              "uri": "",
-              "createdAt": "2024-03-26T02:39:17.341Z",
-              "updatedAt": "2024-03-26T02:39:17.341Z"
-            },
-            "plot_selection_survey": {
-              "id": 7,
-              "startdate": null,
-              "createdAt": "2024-03-26T03:02:00.063Z",
-              "updatedAt": "2024-03-26T03:02:00.063Z",
-              "survey_metadata": {
-                "id": 44,
-                "orgMintedUUID": null,
-                "survey_details": {
-                  "id": 46,
-                  "survey_model": "plot-selection-survey",
-                  "time": "2024-03-26T03:01:57.093Z",
-                  "uuid": "0d47c9c1-5842-4a02-b8f6-e95a92916b9f",
-                  "project_id": "a0f57791-e858-4f33-ae8e-7e3e3fffb447",
-                  "protocol_id": "a9cb9e38-690f-41c9-8151-06108caf539d",
-                  "protocol_version": "1",
-                  "submodule_protocol_id": ""
-                },
-                "provenance": {
-                  "id": 46,
-                  "version_app": "1.0.0-alpha.7-a2ba7a48",
-                  "version_core": null,
-                  "version_core_documentation": "0.1.0-a2ba7a48",
-                  "version_org": null,
-                  "system_app": "Atlas of Living Australia-beta-testing-0.0.0.0-",
-                  "system_core": null,
-                  "system_org": null
-                }
-              }
-            }
-          },
-          "plot_type": {
-            "id": 1,
-            "symbol": "C",
-            "label": "Control",
-            "description": "",
-            "uri": "",
-            "createdAt": "2024-03-26T02:39:18.129Z",
-            "updatedAt": "2024-03-26T02:39:18.129Z"
-          },
-          "permanently_marked": null,
-          "plot_dimensions": {
-            "id": 1,
-            "symbol": "100m",
-            "label": "100 x 100",
-            "description": "100 m by 100 m (1 hectare)",
-            "uri": "",
-            "createdAt": "2024-03-26T02:39:17.254Z",
-            "updatedAt": "2024-03-26T02:39:17.254Z"
-          },
-          "plot_points": [
-            {
-              "id": 236,
-              "lat": -35.2592569,
-              "lng": 149.0651452,
-              "name": {
-                "id": 22,
-                "symbol": "SW",
-                "description": "South West",
-                "label": "South West",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.807Z",
-                "updatedAt": "2024-03-26T02:39:17.807Z"
-              }
-            },
-            {
-              "id": 237,
-              "lat": -35.259167068471584,
-              "lng": 149.0651452,
-              "name": {
-                "id": 12,
-                "symbol": "W1",
-                "description": "West 1",
-                "label": "West 1",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.675Z",
-                "updatedAt": "2024-03-26T02:39:17.675Z"
-              }
-            },
-            {
-              "id": 238,
-              "lat": -35.258987405414764,
-              "lng": 149.0651452,
-              "name": {
-                "id": 13,
-                "symbol": "W2",
-                "description": "West 2",
-                "label": "West 2",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.686Z",
-                "updatedAt": "2024-03-26T02:39:17.686Z"
-              }
-            },
-            {
-              "id": 239,
-              "lat": -35.25880774235794,
-              "lng": 149.0651452,
-              "name": {
-                "id": 14,
-                "symbol": "W3",
-                "description": "West 3",
-                "label": "West 3",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.700Z",
-                "updatedAt": "2024-03-26T02:39:17.700Z"
-              }
-            },
-            {
-              "id": 240,
-              "lat": -35.25862807930111,
-              "lng": 149.0651452,
-              "name": {
-                "id": 15,
-                "symbol": "W4",
-                "description": "West 4",
-                "label": "West 4",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.713Z",
-                "updatedAt": "2024-03-26T02:39:17.713Z"
-              }
-            },
-            {
-              "id": 241,
-              "lat": -35.25844841624429,
-              "lng": 149.0651452,
-              "name": {
-                "id": 16,
-                "symbol": "W5",
-                "description": "West 5",
-                "label": "West 5",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.732Z",
-                "updatedAt": "2024-03-26T02:39:17.732Z"
-              }
-            },
-            {
-              "id": 242,
-              "lat": -35.25835858471588,
-              "lng": 149.0651452,
-              "name": {
-                "id": 24,
-                "symbol": "NW",
-                "description": "North West",
-                "label": "North West",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.833Z",
-                "updatedAt": "2024-03-26T02:39:17.833Z"
-              }
-            },
-            {
-              "id": 243,
-              "lat": -35.25835858471588,
-              "lng": 149.06525521373527,
-              "name": {
-                "id": 17,
-                "symbol": "N1",
-                "description": "North 1",
-                "label": "North 1",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.743Z",
-                "updatedAt": "2024-03-26T02:39:17.743Z"
-              }
-            },
-            {
-              "id": 244,
-              "lat": -35.25835858471588,
-              "lng": 149.06547524120586,
-              "name": {
-                "id": 18,
-                "symbol": "N2",
-                "description": "North 2",
-                "label": "North 2",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.752Z",
-                "updatedAt": "2024-03-26T02:39:17.752Z"
-              }
-            },
-            {
-              "id": 245,
-              "lat": -35.25835858471588,
-              "lng": 149.06569526867642,
-              "name": {
-                "id": 19,
-                "symbol": "N3",
-                "description": "North 3",
-                "label": "North 3",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.764Z",
-                "updatedAt": "2024-03-26T02:39:17.764Z"
-              }
-            },
-            {
-              "id": 246,
-              "lat": -35.25835858471588,
-              "lng": 149.06591529614698,
-              "name": {
-                "id": 20,
-                "symbol": "N4",
-                "description": "North 4",
-                "label": "North 4",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.783Z",
-                "updatedAt": "2024-03-26T02:39:17.783Z"
-              }
-            },
-            {
-              "id": 247,
-              "lat": -35.25835858471588,
-              "lng": 149.06613532361757,
-              "name": {
-                "id": 21,
-                "symbol": "N5",
-                "description": "North 5",
-                "label": "North 5",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.794Z",
-                "updatedAt": "2024-03-26T02:39:17.794Z"
-              }
-            },
-            {
-              "id": 248,
-              "lat": -35.25835858471588,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 25,
-                "symbol": "NE",
-                "description": "North East",
-                "label": "North East",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.844Z",
-                "updatedAt": "2024-03-26T02:39:17.844Z"
-              }
-            },
-            {
-              "id": 249,
-              "lat": -35.25844841624429,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 6,
-                "symbol": "E5",
-                "description": "East 5",
-                "label": "East 5",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.608Z",
-                "updatedAt": "2024-03-26T02:39:17.608Z"
-              }
-            },
-            {
-              "id": 250,
-              "lat": -35.25862807930111,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 5,
-                "symbol": "E4",
-                "description": "East 4",
-                "label": "East 4",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.598Z",
-                "updatedAt": "2024-03-26T02:39:17.598Z"
-              }
-            },
-            {
-              "id": 251,
-              "lat": -35.25880774235794,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 4,
-                "symbol": "E3",
-                "description": "East 3",
-                "label": "East 3",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.585Z",
-                "updatedAt": "2024-03-26T02:39:17.585Z"
-              }
-            },
-            {
-              "id": 252,
-              "lat": -35.258987405414764,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 3,
-                "symbol": "E2",
-                "description": "East 2",
-                "label": "East 2",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.575Z",
-                "updatedAt": "2024-03-26T02:39:17.575Z"
-              }
-            },
-            {
-              "id": 253,
-              "lat": -35.259167068471584,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 2,
-                "symbol": "E1",
-                "description": "East 1",
-                "label": "East 1",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.564Z",
-                "updatedAt": "2024-03-26T02:39:17.564Z"
-              }
-            },
-            {
-              "id": 254,
-              "lat": -35.2592569,
-              "lng": 149.06624533735285,
-              "name": {
-                "id": 23,
-                "symbol": "SE",
-                "description": "South East",
-                "label": "South East",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.821Z",
-                "updatedAt": "2024-03-26T02:39:17.821Z"
-              }
-            },
-            {
-              "id": 255,
-              "lat": -35.2592569,
-              "lng": 149.06613532361757,
-              "name": {
-                "id": 11,
-                "symbol": "S5",
-                "description": "South 5",
-                "label": "South 5",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.664Z",
-                "updatedAt": "2024-03-26T02:39:17.664Z"
-              }
-            },
-            {
-              "id": 256,
-              "lat": -35.2592569,
-              "lng": 149.06591529614698,
-              "name": {
-                "id": 10,
-                "symbol": "S4",
-                "description": "South 4",
-                "label": "South 4",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.654Z",
-                "updatedAt": "2024-03-26T02:39:17.654Z"
-              }
-            },
-            {
-              "id": 257,
-              "lat": -35.2592569,
-              "lng": 149.06569526867642,
-              "name": {
-                "id": 9,
-                "symbol": "S3",
-                "description": "South 3",
-                "label": "South 3",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.643Z",
-                "updatedAt": "2024-03-26T02:39:17.643Z"
-              }
-            },
-            {
-              "id": 258,
-              "lat": -35.2592569,
-              "lng": 149.06547524120586,
-              "name": {
-                "id": 8,
-                "symbol": "S2",
-                "description": "South 2",
-                "label": "South 2",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.629Z",
-                "updatedAt": "2024-03-26T02:39:17.629Z"
-              }
-            },
-            {
-              "id": 259,
-              "lat": -35.2592569,
-              "lng": 149.06525521373527,
-              "name": {
-                "id": 7,
-                "symbol": "S1",
-                "description": "South 1",
-                "label": "South 1",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.619Z",
-                "updatedAt": "2024-03-26T02:39:17.619Z"
-              }
-            },
-            {
-              "id": 260,
-              "lat": -35.25880774235794,
-              "lng": 149.06569526867645,
-              "name": {
-                "id": 1,
-                "symbol": "C",
-                "description": "Centre",
-                "label": "Centre",
-                "uri": "",
-                "createdAt": "2024-03-26T02:39:17.548Z",
-                "updatedAt": "2024-03-26T02:39:17.548Z"
-              }
-            }
-          ],
-          "fauna_plot_point": []
-        }
-      },
-      "ptv_protocol_variant": null,
       "survey_metadata": {
-        "id": 46,
-        "orgMintedUUID": "3eef6171-682f-49a4-ab03-6663f94e6564",
+        "id": 8,
+        "org_minted_uuid": "9beeba20-374a-470a-b4f4-caed34e07572",
+        "createdAt": "2024-03-28T03:17:25.302Z",
+        "updatedAt": "2024-03-28T03:17:25.302Z",
         "survey_details": {
-          "id": 49,
+          "id": 59,
           "survey_model": "floristics-veg-survey-lite",
-          "time": "2024-03-26T03:06:02.904Z",
-          "uuid": "90df7817-1b5e-410c-95d1-09e223a13002",
-          "project_id": "a0f57791-e858-4f33-ae8e-7e3e3fffb447",
-          "protocol_id": "bbd550c0-04c5-4a8c-ae39-cc748e920fd4",
+          "time": "2024-03-28T03:17:01.727Z",
+          "uuid": "263f710d-9af5-456a-9c68-b2b675763220",
+          "project_id": "0d02b422-5bf7-495f-b9f2-fa0a3046937f",
+          "protocol_id": "cd2cbbc7-2f17-4b0f-91b4-06f46e9c90f2",
           "protocol_version": "1",
           "submodule_protocol_id": ""
         },
         "provenance": {
-          "id": 49,
+          "id": 59,
           "version_app": "1.0.0-alpha.7-a2ba7a48",
           "version_core": "0.1.0-a2ba7a48",
           "version_core_documentation": "0.1.0-a2ba7a48",
@@ -556,637 +52,438 @@
           "system_core": "Monitor FDCP API-production",
           "system_org": null
         }
-      }
-    },
-    "floristics-veg-voucher-lite": [
-      {
-        "id": 4,
-        "field_name": "Plantae [Regnum] (scientific: Plantae Haeckel)",
-        "voucher_barcode": "123456",
-        "host_species": null,
-        "unique_id": null,
-        "date_time": "2024-03-26T03:06:02.937Z",
-        "createdAt": "2024-03-26T03:07:16.452Z",
-        "updatedAt": "2024-03-26T03:07:16.452Z",
-        "growth_form_1": {
+      },
+      "start_date_time": "2022-09-21T01:55:44.186Z",
+      "end_date_time": "2022-09-21T01:55:44.186Z",
+      "createdAt": "2023-09-14T06:00:17.099Z",
+      "updatedAt": "2023-09-14T06:00:17.099Z",
+      "plot_visit": {
+        "start_date": "2021-08-26T11:26:54.317Z",
+        "end_date": "2021-08-26T13:26:54.317Z",
+        "visit_field_name": "QLD winter survey",
+        "createdAt": "2023-09-14T06:00:12.120Z",
+        "updatedAt": "2023-09-14T06:00:17.882Z",
+        "plot_layout": {
           "id": 1,
-          "symbol": "V",
-          "label": "Sedge",
-          "description": "Herbaceous, usually perennial erect plant generally with a tufted habit and of the families Cyperaceae (true sedges) or Restionaceae (node sedges).",
-          "uri": "https://linked.data.gov.au/def/nrm/a7b8b3c8-a329-5a62-8741-e1d6efe9528b",
-          "createdAt": "2024-03-26T02:39:35.671Z",
-          "updatedAt": "2024-03-26T02:39:35.671Z"
-        },
-        "growth_form_2": {
-          "id": 1,
-          "symbol": "V",
-          "label": "Sedge",
-          "description": "Herbaceous, usually perennial erect plant generally with a tufted habit and of the families Cyperaceae (true sedges) or Restionaceae (node sedges).",
-          "uri": "https://linked.data.gov.au/def/nrm/a7b8b3c8-a329-5a62-8741-e1d6efe9528b",
-          "createdAt": "2024-03-26T02:39:35.671Z",
-          "updatedAt": "2024-03-26T02:39:35.671Z"
-        },
-        "habit": [
-          {
-            "id": 1,
-            "lut": {
+          "replicate": 1,
+          "is_the_plot_permanently_marked": false,
+          "orientation": 1,
+          "createdAt": "2023-09-14T06:00:11.473Z",
+          "updatedAt": "2023-09-14T06:00:11.473Z",
+          "plot_selection": {
+            "plot_label": "QDASEQ0001",
+            "uuid": "a6f84a0e-2239-4bfa-aac6-6d2c99e252f1",
+            "comments": "some comment",
+            "createdAt": "2023-09-14T05:59:34.851Z",
+            "updatedAt": "2023-09-14T05:59:34.851Z",
+            "plot_name": {
               "id": 1,
-              "symbol": "ASC",
-              "label": "Ascending",
-              "description": "Weakly erect",
-              "uri": "",
-              "createdAt": "2024-03-26T02:39:07.482Z",
-              "updatedAt": "2024-03-26T02:39:07.482Z"
-            }
-          }
-        ],
-        "phenology": [
-          {
-            "id": 1,
-            "lut": {
-              "id": 1,
-              "symbol": "FLO",
-              "label": "Flowers",
-              "description": "",
-              "uri": "",
-              "createdAt": "2024-03-26T02:39:07.681Z",
-              "updatedAt": "2024-03-26T02:39:07.681Z"
-            }
-          }
-        ],
-        "floristics_veg_survey_lite": {
-          "id": 4,
-          "collect_ptv_submodule": false,
-          "createdAt": "2024-03-26T03:07:16.263Z",
-          "updatedAt": "2024-03-26T03:07:16.263Z",
-          "plot_visit": {
-            "id": 12,
-            "start_date": "2024-03-26T03:03:26.025Z",
-            "end_date": null,
-            "visit_field_name": "Chris test 2024-03-26",
-            "createdAt": "2024-03-26T03:03:57.778Z",
-            "updatedAt": "2024-03-26T03:03:57.778Z",
-            "plot_layout": {
-              "id": 12,
-              "orientation": null,
-              "replicate": 1,
-              "is_the_plot_permanently_marked": false,
-              "createdAt": "2024-03-26T03:03:57.623Z",
-              "updatedAt": "2024-03-26T03:03:57.623Z",
-              "plot_selection": {
-                "id": 16,
-                "plot_label": "CTMSEH4221",
-                "uuid": "cf23aacf-1f02-43fb-8a78-559d3261838b",
-                "comments": "Test again 2024-03-26",
-                "date_time": "2024-03-26T03:01:18.936Z",
-                "createdAt": "2024-03-26T03:02:01.377Z",
-                "updatedAt": "2024-03-26T03:02:01.377Z",
-                "plot_name": {
-                  "id": 16,
-                  "unique_digits": "4221",
-                  "state": {
-                    "id": 1,
-                    "symbol": "CT",
-                    "label": "Australian Capital Territory",
-                    "description": "State/Jurisdiction where the study is/was conducted.",
-                    "uri": "https://linked.data.gov.au/def/nrm/4253c9af-b390-5b69-aaf3-ce5cda0c36bf",
-                    "createdAt": "2024-03-26T02:39:32.171Z",
-                    "updatedAt": "2024-03-26T02:39:32.171Z"
-                  },
-                  "program": {
-                    "id": 9,
-                    "symbol": "M",
-                    "label": "MERIT",
-                    "description": "A generic program for MERIT use, as they can have many 'programs' for a given plot",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:18.503Z",
-                    "updatedAt": "2024-03-26T02:39:18.503Z"
-                  },
-                  "bioregion": {
-                    "id": 83,
-                    "symbol": "SEH",
-                    "label": "South Eastern Highlands",
-                    "description": "",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:41.803Z",
-                    "updatedAt": "2024-03-26T02:39:41.803Z",
-                    "states": [
-                      {
-                        "id": 2,
-                        "symbol": "NS",
-                        "label": "New South Wales",
-                        "description": "State/Jurisdiction where the study is/was conducted.",
-                        "uri": "https://linked.data.gov.au/def/nrm/14b8c3fe-3a60-5f3a-bb7a-b9cf5df49b4e",
-                        "createdAt": "2024-03-26T02:39:32.183Z",
-                        "updatedAt": "2024-03-26T02:39:32.183Z"
-                      },
-                      {
-                        "id": 7,
-                        "symbol": "VC",
-                        "label": "Victoria",
-                        "description": "State/Jurisdiction where the study is/was conducted.",
-                        "uri": "https://linked.data.gov.au/def/nrm/5e6382e6-d26c-5889-ba7e-f051d82d6173",
-                        "createdAt": "2024-03-26T02:39:32.246Z",
-                        "updatedAt": "2024-03-26T02:39:32.246Z"
-                      },
-                      {
-                        "id": 1,
-                        "symbol": "CT",
-                        "label": "Australian Capital Territory",
-                        "description": "State/Jurisdiction where the study is/was conducted.",
-                        "uri": "https://linked.data.gov.au/def/nrm/4253c9af-b390-5b69-aaf3-ce5cda0c36bf",
-                        "createdAt": "2024-03-26T02:39:32.171Z",
-                        "updatedAt": "2024-03-26T02:39:32.171Z"
-                      }
-                    ]
-                  }
-                },
-                "recommended_location": {
-                  "id": 34,
-                  "lat": -35.2592561,
-                  "lng": 149.0651502
-                },
-                "recommended_location_point": {
-                  "id": 5,
-                  "symbol": "C",
-                  "label": "Centre",
-                  "description": "",
-                  "uri": "",
-                  "createdAt": "2024-03-26T02:39:17.341Z",
-                  "updatedAt": "2024-03-26T02:39:17.341Z"
-                },
-                "plot_selection_survey": {
-                  "id": 7,
-                  "startdate": null,
-                  "createdAt": "2024-03-26T03:02:00.063Z",
-                  "updatedAt": "2024-03-26T03:02:00.063Z",
-                  "survey_metadata": {
-                    "id": 44,
-                    "orgMintedUUID": null,
-                    "survey_details": {
-                      "id": 46,
-                      "survey_model": "plot-selection-survey",
-                      "time": "2024-03-26T03:01:57.093Z",
-                      "uuid": "0d47c9c1-5842-4a02-b8f6-e95a92916b9f",
-                      "project_id": "a0f57791-e858-4f33-ae8e-7e3e3fffb447",
-                      "protocol_id": "a9cb9e38-690f-41c9-8151-06108caf539d",
-                      "protocol_version": "1",
-                      "submodule_protocol_id": ""
-                    },
-                    "provenance": {
-                      "id": 46,
-                      "version_app": "1.0.0-alpha.7-a2ba7a48",
-                      "version_core": null,
-                      "version_core_documentation": "0.1.0-a2ba7a48",
-                      "version_org": null,
-                      "system_app": "Atlas of Living Australia-beta-testing-0.0.0.0-",
-                      "system_core": null,
-                      "system_org": null
-                    }
-                  }
-                }
+              "unique_digits": "0001",
+              "state": {
+                "symbol": "QD",
+                "label": "Queensland",
+                "description": "",
+                "uri": "https://linked.data.gov.au/def/nrm/d9d48a48-f74e-55b7-a360-82975c6be412",
+                "createdAt": "2023-09-14T05:59:33.978Z",
+                "updatedAt": "2023-09-14T05:59:33.978Z"
               },
-              "plot_type": {
-                "id": 1,
-                "symbol": "C",
-                "label": "Control",
+              "program": {
+                "symbol": "NLP",
+                "label": "National Landcare Program",
                 "description": "",
                 "uri": "",
-                "createdAt": "2024-03-26T02:39:18.129Z",
-                "updatedAt": "2024-03-26T02:39:18.129Z"
+                "createdAt": "2023-09-14T05:59:34.006Z",
+                "updatedAt": "2023-09-14T05:59:34.006Z"
               },
-              "permanently_marked": null,
-              "plot_dimensions": {
-                "id": 1,
-                "symbol": "100m",
-                "label": "100 x 100",
-                "description": "100 m by 100 m (1 hectare)",
+              "bioregion": {
+                "symbol": "SEQ",
+                "label": "South Eastern Queensland",
+                "description": "",
                 "uri": "",
-                "createdAt": "2024-03-26T02:39:17.254Z",
-                "updatedAt": "2024-03-26T02:39:17.254Z"
-              },
-              "plot_points": [
-                {
-                  "id": 236,
-                  "lat": -35.2592569,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 22,
-                    "symbol": "SW",
-                    "description": "South West",
-                    "label": "South West",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.807Z",
-                    "updatedAt": "2024-03-26T02:39:17.807Z"
+                "createdAt": "2023-09-14T05:59:34.695Z",
+                "updatedAt": "2023-09-14T05:59:39.355Z",
+                "states": [
+                  {
+                    "symbol": "NS",
+                    "label": "New South Wales",
+                    "description": "",
+                    "uri": "https://linked.data.gov.au/def/nrm/14b8c3fe-3a60-5f3a-bb7a-b9cf5df49b4e",
+                    "createdAt": "2023-09-14T05:59:33.966Z",
+                    "updatedAt": "2023-09-14T05:59:33.966Z"
+                  },
+                  {
+                    "symbol": "QD",
+                    "label": "Queensland",
+                    "description": "",
+                    "uri": "https://linked.data.gov.au/def/nrm/d9d48a48-f74e-55b7-a360-82975c6be412",
+                    "createdAt": "2023-09-14T05:59:33.978Z",
+                    "updatedAt": "2023-09-14T05:59:33.978Z"
                   }
-                },
-                {
-                  "id": 237,
-                  "lat": -35.259167068471584,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 12,
-                    "symbol": "W1",
-                    "description": "West 1",
-                    "label": "West 1",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.675Z",
-                    "updatedAt": "2024-03-26T02:39:17.675Z"
-                  }
-                },
-                {
-                  "id": 238,
-                  "lat": -35.258987405414764,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 13,
-                    "symbol": "W2",
-                    "description": "West 2",
-                    "label": "West 2",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.686Z",
-                    "updatedAt": "2024-03-26T02:39:17.686Z"
-                  }
-                },
-                {
-                  "id": 239,
-                  "lat": -35.25880774235794,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 14,
-                    "symbol": "W3",
-                    "description": "West 3",
-                    "label": "West 3",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.700Z",
-                    "updatedAt": "2024-03-26T02:39:17.700Z"
-                  }
-                },
-                {
-                  "id": 240,
-                  "lat": -35.25862807930111,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 15,
-                    "symbol": "W4",
-                    "description": "West 4",
-                    "label": "West 4",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.713Z",
-                    "updatedAt": "2024-03-26T02:39:17.713Z"
-                  }
-                },
-                {
-                  "id": 241,
-                  "lat": -35.25844841624429,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 16,
-                    "symbol": "W5",
-                    "description": "West 5",
-                    "label": "West 5",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.732Z",
-                    "updatedAt": "2024-03-26T02:39:17.732Z"
-                  }
-                },
-                {
-                  "id": 242,
-                  "lat": -35.25835858471588,
-                  "lng": 149.0651452,
-                  "name": {
-                    "id": 24,
-                    "symbol": "NW",
-                    "description": "North West",
-                    "label": "North West",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.833Z",
-                    "updatedAt": "2024-03-26T02:39:17.833Z"
-                  }
-                },
-                {
-                  "id": 243,
-                  "lat": -35.25835858471588,
-                  "lng": 149.06525521373527,
-                  "name": {
-                    "id": 17,
-                    "symbol": "N1",
-                    "description": "North 1",
-                    "label": "North 1",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.743Z",
-                    "updatedAt": "2024-03-26T02:39:17.743Z"
-                  }
-                },
-                {
-                  "id": 244,
-                  "lat": -35.25835858471588,
-                  "lng": 149.06547524120586,
-                  "name": {
-                    "id": 18,
-                    "symbol": "N2",
-                    "description": "North 2",
-                    "label": "North 2",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.752Z",
-                    "updatedAt": "2024-03-26T02:39:17.752Z"
-                  }
-                },
-                {
-                  "id": 245,
-                  "lat": -35.25835858471588,
-                  "lng": 149.06569526867642,
-                  "name": {
-                    "id": 19,
-                    "symbol": "N3",
-                    "description": "North 3",
-                    "label": "North 3",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.764Z",
-                    "updatedAt": "2024-03-26T02:39:17.764Z"
-                  }
-                },
-                {
-                  "id": 246,
-                  "lat": -35.25835858471588,
-                  "lng": 149.06591529614698,
-                  "name": {
-                    "id": 20,
-                    "symbol": "N4",
-                    "description": "North 4",
-                    "label": "North 4",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.783Z",
-                    "updatedAt": "2024-03-26T02:39:17.783Z"
-                  }
-                },
-                {
-                  "id": 247,
-                  "lat": -35.25835858471588,
-                  "lng": 149.06613532361757,
-                  "name": {
-                    "id": 21,
-                    "symbol": "N5",
-                    "description": "North 5",
-                    "label": "North 5",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.794Z",
-                    "updatedAt": "2024-03-26T02:39:17.794Z"
-                  }
-                },
-                {
-                  "id": 248,
-                  "lat": -35.25835858471588,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 25,
-                    "symbol": "NE",
-                    "description": "North East",
-                    "label": "North East",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.844Z",
-                    "updatedAt": "2024-03-26T02:39:17.844Z"
-                  }
-                },
-                {
-                  "id": 249,
-                  "lat": -35.25844841624429,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 6,
-                    "symbol": "E5",
-                    "description": "East 5",
-                    "label": "East 5",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.608Z",
-                    "updatedAt": "2024-03-26T02:39:17.608Z"
-                  }
-                },
-                {
-                  "id": 250,
-                  "lat": -35.25862807930111,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 5,
-                    "symbol": "E4",
-                    "description": "East 4",
-                    "label": "East 4",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.598Z",
-                    "updatedAt": "2024-03-26T02:39:17.598Z"
-                  }
-                },
-                {
-                  "id": 251,
-                  "lat": -35.25880774235794,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 4,
-                    "symbol": "E3",
-                    "description": "East 3",
-                    "label": "East 3",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.585Z",
-                    "updatedAt": "2024-03-26T02:39:17.585Z"
-                  }
-                },
-                {
-                  "id": 252,
-                  "lat": -35.258987405414764,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 3,
-                    "symbol": "E2",
-                    "description": "East 2",
-                    "label": "East 2",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.575Z",
-                    "updatedAt": "2024-03-26T02:39:17.575Z"
-                  }
-                },
-                {
-                  "id": 253,
-                  "lat": -35.259167068471584,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 2,
-                    "symbol": "E1",
-                    "description": "East 1",
-                    "label": "East 1",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.564Z",
-                    "updatedAt": "2024-03-26T02:39:17.564Z"
-                  }
-                },
-                {
-                  "id": 254,
-                  "lat": -35.2592569,
-                  "lng": 149.06624533735285,
-                  "name": {
-                    "id": 23,
-                    "symbol": "SE",
-                    "description": "South East",
-                    "label": "South East",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.821Z",
-                    "updatedAt": "2024-03-26T02:39:17.821Z"
-                  }
-                },
-                {
-                  "id": 255,
-                  "lat": -35.2592569,
-                  "lng": 149.06613532361757,
-                  "name": {
-                    "id": 11,
-                    "symbol": "S5",
-                    "description": "South 5",
-                    "label": "South 5",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.664Z",
-                    "updatedAt": "2024-03-26T02:39:17.664Z"
-                  }
-                },
-                {
-                  "id": 256,
-                  "lat": -35.2592569,
-                  "lng": 149.06591529614698,
-                  "name": {
-                    "id": 10,
-                    "symbol": "S4",
-                    "description": "South 4",
-                    "label": "South 4",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.654Z",
-                    "updatedAt": "2024-03-26T02:39:17.654Z"
-                  }
-                },
-                {
-                  "id": 257,
-                  "lat": -35.2592569,
-                  "lng": 149.06569526867642,
-                  "name": {
-                    "id": 9,
-                    "symbol": "S3",
-                    "description": "South 3",
-                    "label": "South 3",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.643Z",
-                    "updatedAt": "2024-03-26T02:39:17.643Z"
-                  }
-                },
-                {
-                  "id": 258,
-                  "lat": -35.2592569,
-                  "lng": 149.06547524120586,
-                  "name": {
-                    "id": 8,
-                    "symbol": "S2",
-                    "description": "South 2",
-                    "label": "South 2",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.629Z",
-                    "updatedAt": "2024-03-26T02:39:17.629Z"
-                  }
-                },
-                {
-                  "id": 259,
-                  "lat": -35.2592569,
-                  "lng": 149.06525521373527,
-                  "name": {
-                    "id": 7,
-                    "symbol": "S1",
-                    "description": "South 1",
-                    "label": "South 1",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.619Z",
-                    "updatedAt": "2024-03-26T02:39:17.619Z"
-                  }
-                },
-                {
-                  "id": 260,
-                  "lat": -35.25880774235794,
-                  "lng": 149.06569526867645,
-                  "name": {
-                    "id": 1,
-                    "symbol": "C",
-                    "description": "Centre",
-                    "label": "Centre",
-                    "uri": "",
-                    "createdAt": "2024-03-26T02:39:17.548Z",
-                    "updatedAt": "2024-03-26T02:39:17.548Z"
-                  }
-                }
-              ],
-              "fauna_plot_point": []
-            }
-          },
-          "ptv_protocol_variant": null,
-          "survey_metadata": {
-            "id": 46,
-            "orgMintedUUID": "3eef6171-682f-49a4-ab03-6663f94e6564",
-            "survey_details": {
-              "id": 49,
-              "survey_model": "floristics-veg-survey-lite",
-              "time": "2024-03-26T03:06:02.904Z",
-              "uuid": "90df7817-1b5e-410c-95d1-09e223a13002",
-              "project_id": "a0f57791-e858-4f33-ae8e-7e3e3fffb447",
-              "protocol_id": "bbd550c0-04c5-4a8c-ae39-cc748e920fd4",
-              "protocol_version": "1",
-              "submodule_protocol_id": ""
+                ]
+              }
             },
-            "provenance": {
-              "id": 49,
-              "version_app": "1.0.0-alpha.7-a2ba7a48",
-              "version_core": "0.1.0-a2ba7a48",
-              "version_core_documentation": "0.1.0-a2ba7a48",
-              "version_org": null,
-              "system_app": "Atlas of Living Australia-beta-testing-0.0.0.0-",
-              "system_core": "Monitor FDCP API-production",
-              "system_org": null
-            }
-          }
-        },
-        "photo": [
-          {
-            "id": 13,
-            "comment": null,
-            "single_photo": {
+            "recommended_location": {
+              "id": 1,
+              "lat": -35.0004723472134,
+              "lng": 138.66067886352542
+            },
+            "recommended_location_point": {
+              "symbol": "C",
+              "description": "Centre",
+              "label": "Centre",
+              "uri": "",
+              "createdAt": "2023-09-14T05:59:34.718Z",
+              "updatedAt": "2023-09-14T05:59:34.718Z"
+            },
+            "plot_selection_survey": null
+          },
+          "plot_type": {
+            "symbol": "C",
+            "label": "Control",
+            "description": "",
+            "uri": "",
+            "createdAt": "2023-09-14T05:59:53.672Z",
+            "updatedAt": "2023-09-14T05:59:53.672Z"
+          },
+          "permanently_marked": null,
+          "plot_dimensions": {
+            "symbol": "100m",
+            "label": "100 x 100",
+            "description": "100 m by 100 m (1 hectare)",
+            "uri": "",
+            "createdAt": "2023-09-14T05:59:53.412Z",
+            "updatedAt": "2023-09-14T05:59:53.412Z"
+          },
+          "plot_points": [
+            {
+              "id": 2,
+              "lat": -27.388252,
+              "lng": 152.880694,
+              "name": {
+                "symbol": "W5",
+                "description": "West 5",
+                "label": "West 5",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.787Z",
+                "updatedAt": "2023-09-14T05:59:34.787Z"
+              }
+            },
+            {
+              "id": 1,
+              "lat": -27.388336,
+              "lng": 152.880651,
+              "name": {
+                "symbol": "W4",
+                "description": "West 4",
+                "label": "West 4",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.783Z",
+                "updatedAt": "2023-09-14T05:59:34.783Z"
+              }
+            },
+            {
+              "id": 3,
+              "lat": -27.388483,
+              "lng": 152.880518,
+              "name": {
+                "symbol": "W3",
+                "description": "West 3",
+                "label": "West 3",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.779Z",
+                "updatedAt": "2023-09-14T05:59:34.779Z"
+              }
+            },
+            {
+              "id": 4,
+              "lat": -27.388611,
+              "lng": 152.880389,
+              "name": {
+                "symbol": "W2",
+                "description": "West 2",
+                "label": "West 2",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.775Z",
+                "updatedAt": "2023-09-14T05:59:34.775Z"
+              }
+            },
+            {
+              "id": 5,
+              "lat": -27.388749,
+              "lng": 152.88028,
+              "name": {
+                "symbol": "W1",
+                "description": "West 1",
+                "label": "West 1",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.771Z",
+                "updatedAt": "2023-09-14T05:59:34.771Z"
+              }
+            },
+            {
+              "id": 6,
+              "lat": -27.388903,
+              "lng": 152.880154,
+              "name": {
+                "symbol": "SW",
+                "description": "South West",
+                "label": "South West",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.815Z",
+                "updatedAt": "2023-09-14T05:59:34.815Z"
+              }
+            },
+            {
+              "id": 7,
+              "lat": -27.389463,
+              "lng": 152.880835,
+              "name": {
+                "symbol": "SE",
+                "description": "South East",
+                "label": "South East",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.823Z",
+                "updatedAt": "2023-09-14T05:59:34.823Z"
+              }
+            },
+            {
+              "id": 8,
+              "lat": -27.389366,
+              "lng": 152.880644,
+              "name": {
+                "symbol": "S5",
+                "description": "South 5",
+                "label": "South 5",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.767Z",
+                "updatedAt": "2023-09-14T05:59:34.767Z"
+              }
+            },
+            {
+              "id": 9,
+              "lat": -27.389248,
+              "lng": 152.880525,
+              "name": {
+                "symbol": "S4",
+                "description": "South 4",
+                "label": "South 4",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.763Z",
+                "updatedAt": "2023-09-14T05:59:34.763Z"
+              }
+            },
+            {
+              "id": 10,
+              "lat": -27.389158,
+              "lng": 152.88035,
+              "name": {
+                "symbol": "S3",
+                "description": "South 3",
+                "label": "South 3",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.760Z",
+                "updatedAt": "2023-09-14T05:59:34.760Z"
+              }
+            },
+            {
+              "id": 11,
+              "lat": -27.389021,
+              "lng": 152.880195,
+              "name": {
+                "symbol": "S2",
+                "description": "South 2",
+                "label": "South 2",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.756Z",
+                "updatedAt": "2023-09-14T05:59:34.756Z"
+              }
+            },
+            {
               "id": 12,
-              "name": "1269ecd3-a2e4-49c2-b46a-547c528c108f.png",
-              "alternativeText": null,
-              "caption": null,
-              "width": 284,
-              "height": 58,
-              "formats": {
-                "thumbnail": {
-                  "ext": ".png",
-                  "url": "https://beta-monitor-binary.s3.ap-southeast-2.amazonaws.com/thumbnail_1269ecd3_a2e4_49c2_b46a_547c528c108f_477fc3ac7b.png",
-                  "hash": "thumbnail_1269ecd3_a2e4_49c2_b46a_547c528c108f_477fc3ac7b",
-                  "mime": "image/png",
-                  "name": "thumbnail_1269ecd3-a2e4-49c2-b46a-547c528c108f.png",
-                  "path": null,
-                  "size": 7.38,
-                  "width": 245,
-                  "height": 50,
-                  "sizeInBytes": 7375
-                }
-              },
-              "hash": "1269ecd3_a2e4_49c2_b46a_547c528c108f_477fc3ac7b",
-              "ext": ".png",
-              "mime": "image/png",
-              "size": 1.33,
-              "url": "https://beta-monitor-binary.s3.ap-southeast-2.amazonaws.com/1269ecd3_a2e4_49c2_b46a_547c528c108f_477fc3ac7b.png",
-              "previewUrl": null,
-              "provider": "aws-s3",
-              "provider_metadata": null,
-              "folderPath": "/1",
-              "createdAt": "2024-03-26T03:07:14.181Z",
-              "updatedAt": "2024-03-26T03:07:14.181Z"
+              "lat": -27.389373,
+              "lng": 152.880195,
+              "name": {
+                "symbol": "S1",
+                "description": "South 1",
+                "label": "South 1",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.751Z",
+                "updatedAt": "2023-09-14T05:59:34.751Z"
+              }
+            },
+            {
+              "id": 13,
+              "lat": -27.388316,
+              "lng": 152.880797,
+              "name": {
+                "symbol": "NW",
+                "description": "North West",
+                "label": "North West",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.827Z",
+                "updatedAt": "2023-09-14T05:59:34.827Z"
+              }
+            },
+            {
+              "id": 14,
+              "lat": -27.388909,
+              "lng": 152.881448,
+              "name": {
+                "symbol": "NE",
+                "description": "North East",
+                "label": "North East",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.831Z",
+                "updatedAt": "2023-09-14T05:59:34.831Z"
+              }
+            },
+            {
+              "id": 15,
+              "lat": -27.388821,
+              "lng": 152.881503,
+              "name": {
+                "symbol": "N5",
+                "description": "North 5",
+                "label": "North 5",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.811Z",
+                "updatedAt": "2023-09-14T05:59:34.811Z"
+              }
+            },
+            {
+              "id": 16,
+              "lat": -27.388766,
+              "lng": 152.881422,
+              "name": {
+                "symbol": "N4",
+                "description": "North 4",
+                "label": "North 4",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.808Z",
+                "updatedAt": "2023-09-14T05:59:34.808Z"
+              }
+            },
+            {
+              "id": 17,
+              "lat": -27.388644,
+              "lng": 152.881263,
+              "name": {
+                "symbol": "N3",
+                "description": "North 3",
+                "label": "North 3",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.803Z",
+                "updatedAt": "2023-09-14T05:59:34.803Z"
+              }
+            },
+            {
+              "id": 18,
+              "lat": -27.388549,
+              "lng": 152.881107,
+              "name": {
+                "symbol": "N2",
+                "description": "North 2",
+                "label": "North 2",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.799Z",
+                "updatedAt": "2023-09-14T05:59:34.799Z"
+              }
+            },
+            {
+              "id": 19,
+              "lat": -27.388445,
+              "lng": 152.880939,
+              "name": {
+                "symbol": "N1",
+                "description": "North 1",
+                "label": "North 1",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.795Z",
+                "updatedAt": "2023-09-14T05:59:34.795Z"
+              }
+            },
+            {
+              "id": 20,
+              "lat": -27.389035,
+              "lng": 152.881314,
+              "name": {
+                "symbol": "E5",
+                "description": "East 5",
+                "label": "East 5",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.744Z",
+                "updatedAt": "2023-09-14T05:59:34.744Z"
+              }
+            },
+            {
+              "id": 21,
+              "lat": -27.389208,
+              "lng": 152.88122,
+              "name": {
+                "symbol": "E4",
+                "description": "East 4",
+                "label": "East 4",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.740Z",
+                "updatedAt": "2023-09-14T05:59:34.740Z"
+              }
+            },
+            {
+              "id": 22,
+              "lat": -27.388974,
+              "lng": 152.880106,
+              "name": {
+                "symbol": "C",
+                "description": "Centre",
+                "label": "Centre",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.718Z",
+                "updatedAt": "2023-09-14T05:59:34.718Z"
+              }
+            },
+            {
+              "id": 23,
+              "lat": -27.389343,
+              "lng": 152.881089,
+              "name": {
+                "symbol": "E3",
+                "description": "East 3",
+                "label": "East 3",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.736Z",
+                "updatedAt": "2023-09-14T05:59:34.736Z"
+              }
+            },
+            {
+              "id": 24,
+              "lat": -27.389472,
+              "lng": 152.880973,
+              "name": {
+                "symbol": "E2",
+                "description": "East 2",
+                "label": "East 2",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.731Z",
+                "updatedAt": "2023-09-14T05:59:34.731Z"
+              }
+            },
+            {
+              "id": 25,
+              "lat": -27.389553,
+              "lng": 152.880916,
+              "name": {
+                "symbol": "E1",
+                "description": "East 1",
+                "label": "East 1",
+                "uri": "",
+                "createdAt": "2023-09-14T05:59:34.726Z",
+                "updatedAt": "2023-09-14T05:59:34.726Z"
+              }
             }
-          }
-        ]
+          ],
+          "fauna_plot_point": []
+        }
       }
-    ],
-    "floristics-veg-virtual-voucher": []
+    }
   }
 }

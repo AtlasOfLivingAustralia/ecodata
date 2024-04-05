@@ -35,14 +35,13 @@ class Record {
     Double generalizedDecimalLatitude
     Double generalizedDecimalLongitude
     Integer coordinateUncertaintyInMeters
-    Integer individualCount
+    Integer individualCount = 1
     Integer numberOfOrganisms
     Date dateCreated
     Date lastUpdated
     String outputId
     String json
     Integer outputItemId
-    String individualsOrGroups = 'Individuals'
     String status = ACTIVE
 
     static transients = ['recordNumber']
@@ -76,7 +75,6 @@ class Record {
         name nullable: true
         vernacularName nullable: true
         scientificName nullable: true
-        individualsOrGroups nullable: true, inList: ['Individuals', 'Groups']
     }
 
     String getRecordNumber(sightingsUrl){
