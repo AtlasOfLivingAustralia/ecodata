@@ -845,12 +845,13 @@ class MetadataService {
     }
 
     Map autoPopulateSpeciesData(Map data){
-        if (!data?.guid && data?.scientificName) {
-            def result = speciesReMatchService.searchBie(data.scientificName, 10)
+        if (!data?.guid && (data?.scientificName ?: data?.commonName)) {
+            def result = speciesReMatchService.searchBie(data.scientificName?: data.commonName, 10)
             // only if there is a single match
             if (result?.autoCompleteList?.size() == 1) {
                 data.guid = result?.autoCompleteList[0]?.guid
                 data.commonName = data.commonName ?: result?.autoCompleteList[0]?.commonName
+                data.scientificName = data.scientificName ?: result?.autoCompleteList[0]?.name
             }
         }
 

@@ -486,7 +486,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String outputSpeciesId = result.remove("outputSpeciesId")
         then:
         outputSpeciesId != null
-        result == [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID"]
+        result == [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
+        1 * metadataService.autoPopulateSpeciesData(_) >> null
+
+        when: // no scientific name
+        result = service.transformSpeciesName("Frogs [Class] (scientific: )")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
         1 * metadataService.autoPopulateSpeciesData(_) >> null
     }
 
