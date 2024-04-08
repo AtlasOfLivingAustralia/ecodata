@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-
+import au.org.ala.ecodata.metadata.PropertyAccessor
 import au.org.ala.ecodata.paratoo.*
 import au.org.ala.ws.tokens.TokenService
 import grails.async.Promise
@@ -458,7 +458,7 @@ class ParatooService {
                     String updatedPath = model.name
                     def rows =[]
                     try {
-                        rows = getProperty(output, updatedPath)?.first()
+                        rows = getProperty(output, updatedPath, true, false)
                     }
                     catch (Exception e) {
                         log.info("Error getting list for ${model.name}: ${e.message}")
@@ -1889,13 +1889,21 @@ class ParatooService {
         modelName?.toLowerCase()?.replaceAll("[^a-zA-Z0-9]+", ' ')?.tokenize(' ')?.collect { it.capitalize() }?.join()
     }
 
-    def getProperty(def surveyData, String path) {
+    def getProperty(def surveyData, String path, boolean useAccessor = false, boolean isDeepCopy = true) {
         if (!path || surveyData == null) {
             return null
         }
 
-        List parts = path.split(/\./)
-        deepCopy(ElasticSearchService.getDataFromPath(surveyData, parts))
+        def result
+        if (useAccessor) {
+            result = new PropertyAccessor(path).get(surveyData)
+        }
+        else {
+            List parts = path.split(/\./)
+            result = ElasticSearchService.getDataFromPath(surveyData, parts)
+        }
+
+        return isDeepCopy ? deepCopy(result) : result
     }
 
     /**
@@ -1911,14 +1919,16 @@ class ParatooService {
             return null
         }
 
-        String regex = "\\(scientific:\\s*(.*?)\\)"
+        String regex = "([^\\[]*)\\[(.*)\\]\\s*\\(scientific:\\s*(.*?)\\)"
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
-        Map result = [name: name, scientificName: name, outputSpeciesId: UUID.randomUUID().toString()]
+        Map result = [name: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
 
         if (matcher.find()) {
-            name = matcher.group(1)
-            result.scientificName = result.name = name
+            result.commonName = matcher.group(1)
+            result.taxonRank = matcher.group(2)
+            result.scientificName = result.name = matcher.group(3)
+            result.name = result.scientificName ?: result.commonName ?: name
         }
 
         metadataService.autoPopulateSpeciesData(result)

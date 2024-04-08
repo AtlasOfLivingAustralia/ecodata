@@ -180,11 +180,8 @@ class ParatooProtocolConfig {
         }
 
         def result = new PropertyAccessor(path).get(surveyData)
-        if (result == null) {
-            if (surveyId) {
-                path = surveyId.survey_metadata.survey_details.survey_model+'.'+path
-            }
-
+        if ((result == null) && (surveyId != null)) {
+            path = surveyId.survey_metadata.survey_details.survey_model+'.'+path
             result = new PropertyAccessor(path).get(surveyData)
         }
 
