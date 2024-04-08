@@ -15,6 +15,7 @@ class Record {
         projectActivityId index: true
         lastUpdated index: true
         dataSetId index: true
+        outputId index: true
         version false
     }
 
