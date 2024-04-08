@@ -44,7 +44,8 @@ class ParatooService {
     static final String PARATOO_FIELD_LABEL = "x-paratoo-rename"
     static final List PARATOO_IGNORE_MODEL_LIST = [
             'created_at', 'createdAt', 'updated_at', 'updatedAt', 'created_by', 'createdBy', 'updated_by', 'updatedBy',
-            'published_at', 'publishedAt', 'x-paratoo-file-type'
+            'published_at', 'publishedAt', 'x-paratoo-file-type', PARATOO_DATAMODEL_PLOT_LAYOUT, PARATOO_DATAMODEL_PLOT_SELECTION,
+            PARATOO_DATAMODEL_PLOT_VISIT
     ]
     static final List PARATOO_IGNORE_X_MODEL_REF_LIST_MINIMUM = [
             'file', 'admin::user'

@@ -281,7 +281,13 @@ class ParatooProtocolConfig {
 
     static def getFirst (def value) {
         if (value instanceof List) {
-            value = value.first()
+            try {
+                value = value.first()
+            }
+            catch (NoSuchElementException e) {
+                log.warn("List is empty", e)
+                value = null
+            }
         }
 
         value
