@@ -6,7 +6,7 @@ class SpeciesConverter implements RecordFieldConverter {
     ]
 
     List<Map> convert(Map data, Map metadata = [:]) {
-        if (data == null) {
+        if ((data == null) || (data[metadata.name] == null) ) {
            return []
         }
 
