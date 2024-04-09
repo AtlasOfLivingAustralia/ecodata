@@ -53,6 +53,7 @@ class ParatooProtocolConfig {
         }
 
         def date = getProperty(surveyData, startDatePath)
+        date = getFirst(date)
         if (date == null) {
             if (usesPlotLayout) {
                 date = getProperty(surveyData, plotVisitStartDatePath)
@@ -61,9 +62,9 @@ class ParatooProtocolConfig {
                 date = getPropertyFromSurvey(surveyData, startDatePath)
             }
 
+            date = getFirst(date)
         }
 
-        date = getFirst(date)
         removeMilliseconds(date)
     }
 
@@ -78,6 +79,7 @@ class ParatooProtocolConfig {
         }
 
         def date = getProperty(surveyData, endDatePath)
+        date = getFirst(date)
         if (date == null) {
             if (usesPlotLayout) {
                 date = getProperty(surveyData, plotVisitEndDatePath)
@@ -88,9 +90,10 @@ class ParatooProtocolConfig {
             else {
                 date = getPropertyFromSurvey(surveyData, endDatePath)
             }
+
+            date = getFirst(date)
         }
 
-        date = getFirst(date)
         removeMilliseconds(date)
     }
 

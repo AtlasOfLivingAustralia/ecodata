@@ -1672,22 +1672,22 @@ class ParatooService {
                 type : "section",
                 title: getLabel(component, name),
                 boxed: true,
-                items: [
+                items: [[
                         type  : "repeat",
                         source: dataModel.name,
-                        items : [
+                        items : [[
                                 type   : "row",
                                 "class": "output-section",
-                                items  : [
+                                items  : [[
                                         type : "col",
                                         items: columns
-                                ]
-                        ]
-                ]
+                                ]]
+                        ]]
+                ]]
         ], component, name)
 
-        if (dataModel.isObject) {
-            viewModel.items.userAddedRows = false
+        if (dataModel.isObject && viewModel.items) {
+            viewModel.items.first().userAddedRows = false
         }
 
         viewModel
