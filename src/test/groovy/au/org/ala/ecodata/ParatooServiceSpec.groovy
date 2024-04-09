@@ -495,7 +495,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         outputSpeciesId != null
-        result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
+        result == [name: "Frogs", scientificName: "Frogs", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
         2 * metadataService.autoPopulateSpeciesData(_) >> null
     }
 

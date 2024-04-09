@@ -1925,10 +1925,12 @@ class ParatooService {
         Map result = [name: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
 
         if (matcher.find()) {
-            result.commonName = matcher.group(1)?.trim()
+            String commonName = matcher.group(1)?.trim()
+            String scientificName = matcher.group(3)?.trim()
+            result.commonName = commonName ?: result.commonName
             result.taxonRank = matcher.group(2)?.trim()
-            result.scientificName = result.name = matcher.group(3)?.trim()
-            result.name = (result.scientificName ?: result.commonName ?: name)?.trim()
+            result.scientificName = scientificName ?: commonName ?: result.scientificName
+            result.name = scientificName ?: commonName ?: result.name
         }
 
         metadataService.autoPopulateSpeciesData(result)
