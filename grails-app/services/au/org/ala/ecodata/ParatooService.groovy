@@ -1932,6 +1932,14 @@ class ParatooService {
         }
 
         metadataService.autoPopulateSpeciesData(result)
+        // try again with common name
+        if ((result.guid == null) && result.commonName) {
+            def speciesObject = [scientificName: result.commonName]
+            metadataService.autoPopulateSpeciesData(speciesObject)
+            result.guid = speciesObject.guid
+            result.scientificName = result.scientificName ?: speciesObject.scientificName
+        }
+
         // record is only created if guid is present
         result.guid = result.guid ?: "A_GUID"
         result

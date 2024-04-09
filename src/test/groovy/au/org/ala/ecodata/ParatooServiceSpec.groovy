@@ -487,7 +487,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         outputSpeciesId != null
         result == [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
-        1 * metadataService.autoPopulateSpeciesData(_) >> null
+        2 * metadataService.autoPopulateSpeciesData(_) >> null
 
         when: // no scientific name
         result = service.transformSpeciesName("Frogs [Class] (scientific: )")
@@ -496,7 +496,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         outputSpeciesId != null
         result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
-        1 * metadataService.autoPopulateSpeciesData(_) >> null
+        2 * metadataService.autoPopulateSpeciesData(_) >> null
     }
 
     void "buildRelationshipTree should build relationship tree correctly"() {

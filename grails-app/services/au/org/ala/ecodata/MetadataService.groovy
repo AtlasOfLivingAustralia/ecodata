@@ -844,14 +844,16 @@ class MetadataService {
         data
     }
 
-    Map autoPopulateSpeciesData(Map data){
-        if (!data?.guid && (data?.scientificName ?: data?.commonName)) {
-            def result = speciesReMatchService.searchBie(data.scientificName?: data.commonName, 10)
-            // only if there is a single match
-            if (result?.autoCompleteList?.size() == 1) {
-                data.guid = result?.autoCompleteList[0]?.guid
-                data.commonName = data.commonName ?: result?.autoCompleteList[0]?.commonName
-                data.scientificName = data.scientificName ?: result?.autoCompleteList[0]?.name
+    Map autoPopulateSpeciesData (Map data, int limit = 10) {
+        String searchName = (data?.scientificName)?.trim()
+        if (!data?.guid && (searchName)) {
+            def result = speciesReMatchService.searchBie(searchName, limit)
+            // find the name that exactly matches the search name
+            def bestMatch = result?.autoCompleteList?.find { it.matchedNames?.findResult { String name -> name.equalsIgnoreCase(searchName) } }
+            if (bestMatch) {
+                data.guid = bestMatch?.guid
+                data.commonName = data.commonName ?: bestMatch?.commonName
+                data.scientificName = data.scientificName ?: bestMatch?.name
             }
         }
 
