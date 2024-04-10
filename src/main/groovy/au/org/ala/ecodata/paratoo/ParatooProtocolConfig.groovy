@@ -118,6 +118,26 @@ class ParatooProtocolConfig {
         extractGeometryFromSiteData(geometryData)
     }
 
+    String getSurveyAttributeName() {
+        String surveyAttribute = apiEndpoint
+        if(surveyAttribute?.endsWith('s')) {
+            surveyAttribute = surveyAttribute.substring(0, surveyAttribute.length() - 1)
+        }
+
+        surveyAttribute
+    }
+
+    Map getSurveyDataFromObservation (Map observation) {
+        String surveyAttribute = getSurveyAttributeName()
+
+        def survey = observation[surveyAttribute]
+        if (survey instanceof List) {
+            return survey[0]
+        }
+
+        survey
+    }
+
     private List extractFeatures (Map observation, ActivityForm form) {
         List features = []
         form.sections.each { FormSection section ->

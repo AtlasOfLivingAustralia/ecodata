@@ -7,6 +7,7 @@ import grails.async.Promise
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
+import javassist.NotFoundException
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -585,13 +586,26 @@ class ParatooService {
 
                 }
 
-                mapProtocolToActivityForm(protocol, form, protocolConfig)
-                form.save()
+                try {
+                    mapProtocolToActivityForm(protocol, form, protocolConfig)
+                    form.save()
 
-                if (form.hasErrors()) {
-                    result.errors << form.errors
-                    log.warn "Error saving form with id: " + id + ", name: " + name
+                    if (form.hasErrors()) {
+                        result.errors << form.errors
+                        log.warn "Error saving form with id: " + id + ", name: " + name
+                    }
                 }
+                catch (NotFoundException e) {
+                    String error = "Error: No protocol definition found in swagger documentation for protocol: " + name
+                    result.errors << error
+                    log.error error
+                }
+                catch (Exception e) {
+                    String error = "Error: Unable to save form for protocol: " + name
+                    result.errors << error
+                    log.error error
+                }
+
             } else {
                 String error = "Error: No valid guid found for protocol: " + name
                 result.errors << error
@@ -1110,15 +1124,19 @@ class ParatooService {
 
         Map template = [dataModel: [], viewModel: [], modelName: capitalizeModelName(protocol.attributes.name), record: true, relationships: [ecodata: [:], apiOutput: [:]]]
         Map properties = deepCopy(findProtocolEndpointDefinition(protocol, documentation))
+        if (properties == null) {
+            throw new NotFoundException("No protocol endpoint found for ${protocol.attributes.endpointPrefix}/bulk")
+        }
+
         resolveReferences(properties, components)
         Map cleanedProperties = cleanSwaggerDefinition(properties)
         cleanedProperties = deepCopy(cleanedProperties)
-        template.relationships.ecodata = buildTreeRelationshipOfModels(cleanedProperties)
-        template.relationships.apiOutput = buildPathToModel(cleanedProperties)
+//        template.relationships.ecodata = buildTreeRelationshipOfModels(cleanedProperties)
+//        template.relationships.apiOutput = buildPathToModel(cleanedProperties)
         println((template.relationships.apiOutput as JSON).toString(true))
         println((template.relationships.ecodata as JSON).toString(true))
         resolveModelReferences(cleanedProperties, components)
-        cleanedProperties = rearrangePropertiesAccordingToModelRelationship(cleanedProperties, template.relationships.apiOutput, template.relationships.ecodata)
+//        cleanedProperties = rearrangePropertiesAccordingToModelRelationship(cleanedProperties, template.relationships.apiOutput, template.relationships.ecodata)
         cleanedProperties = deepCopy(cleanedProperties)
         log.debug((properties as JSON).toString())
 
@@ -1126,7 +1144,7 @@ class ParatooService {
             template.dataModel.addAll(grailsApplication.config.getProperty("paratoo.defaultPlotLayoutDataModels", List))
             template.viewModel.addAll(grailsApplication.config.getProperty("paratoo.defaultPlotLayoutViewModels", List))
         }
-        cleanedProperties.properties.each { String name, def definition ->
+        cleanedProperties.each { String name, def definition ->
             if (definition instanceof Map) {
                 modelVisitStack.push(name)
                 Map result = convertToDataModelAndViewModel(definition, documentation, name, null, modelVisitStack, 0, name, config)
