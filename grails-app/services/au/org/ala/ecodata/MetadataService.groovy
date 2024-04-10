@@ -849,7 +849,14 @@ class MetadataService {
         if (!data?.guid && (searchName)) {
             def result = speciesReMatchService.searchBie(searchName, limit)
             // find the name that exactly matches the search name
-            def bestMatch = result?.autoCompleteList?.find { it.matchedNames?.findResult { String name -> name.equalsIgnoreCase(searchName) } }
+            def bestMatch = result?.autoCompleteList?.find {
+                it.matchedNames?.findResult { String name ->
+                    name.equalsIgnoreCase(searchName)
+                            || name.equalsIgnoreCase(data.name)
+                            || name.equalsIgnoreCase(data.commonName)
+                }
+            }
+
             if (bestMatch) {
                 data.guid = bestMatch?.guid
                 data.commonName = data.commonName ?: bestMatch?.commonName

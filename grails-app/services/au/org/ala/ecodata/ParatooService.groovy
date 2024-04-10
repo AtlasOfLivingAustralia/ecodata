@@ -1919,7 +1919,7 @@ class ParatooService {
             return null
         }
 
-        String regex = "([^\\[]*)\\[(.*)\\]\\s*\\(scientific:\\s*(.*?)\\)"
+        String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
         Map result = [name: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
