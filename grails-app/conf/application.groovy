@@ -1399,7 +1399,6 @@ paratoo.defaultPlotLayoutDataModels =  [
                 [
                         dataType: "geoMap",
                         name: "plot_layout",
-                        dwcAttribute: "verbatimCoordinates",
                         validate: "required",
                         columns: [
                                 [

@@ -46,7 +46,7 @@ class ParatooService {
     static final List PARATOO_IGNORE_MODEL_LIST = [
             'created_at', 'createdAt', 'updated_at', 'updatedAt', 'created_by', 'createdBy', 'updated_by', 'updatedBy',
             'published_at', 'publishedAt', 'x-paratoo-file-type', PARATOO_DATAMODEL_PLOT_LAYOUT, PARATOO_DATAMODEL_PLOT_SELECTION,
-            PARATOO_DATAMODEL_PLOT_VISIT
+            PARATOO_DATAMODEL_PLOT_VISIT, 'plot-visit', 'plot-selection', 'plot-layout'
     ]
     static final List PARATOO_IGNORE_X_MODEL_REF_LIST_MINIMUM = [
             'file', 'admin::user'
@@ -280,6 +280,10 @@ class ParatooService {
 
                 // make sure activity has not been created for this data set
                 if (!dataSet.activityId || forceActivityCreation) {
+                    // plot layout is of type geoMap. Therefore, expects a site id.
+                    if (surveyDataAndObservations.containsKey(PARATOO_DATAMODEL_PLOT_LAYOUT) && dataSet.siteId) {
+                        surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
+                    }
                     String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId, userId)
                     List records = recordService.getAllByActivity(activityId)
                     dataSet.areSpeciesRecorded = records?.size() > 0
@@ -384,7 +388,7 @@ class ParatooService {
      * @param protocolId
      * @return
      */
-    private ParatooProtocolConfig getProtocolConfig(String protocolId) {
+    ParatooProtocolConfig getProtocolConfig(String protocolId) {
         String result = settingService.getSetting(PARATOO_PROTOCOL_DATA_MAPPING_KEY)
         Map protocolDataConfig = JSON.parse(result ?: '{}')
         Map config = protocolDataConfig[protocolId]
@@ -1131,10 +1135,11 @@ class ParatooService {
         resolveReferences(properties, components)
         Map cleanedProperties = cleanSwaggerDefinition(properties)
         cleanedProperties = deepCopy(cleanedProperties)
+//        rearrange models not working for protocols multiple relationship between models. Disabling it for now.
 //        template.relationships.ecodata = buildTreeRelationshipOfModels(cleanedProperties)
 //        template.relationships.apiOutput = buildPathToModel(cleanedProperties)
-        println((template.relationships.apiOutput as JSON).toString(true))
-        println((template.relationships.ecodata as JSON).toString(true))
+//        println((template.relationships.apiOutput as JSON).toString(true))
+//        println((template.relationships.ecodata as JSON).toString(true))
         resolveModelReferences(cleanedProperties, components)
 //        cleanedProperties = rearrangePropertiesAccordingToModelRelationship(cleanedProperties, template.relationships.apiOutput, template.relationships.ecodata)
         cleanedProperties = deepCopy(cleanedProperties)
