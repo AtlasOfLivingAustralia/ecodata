@@ -265,8 +265,6 @@ class ParatooService {
                 ParatooProtocolConfig config = getProtocolConfig(surveyId.protocolId)
                 config.surveyId = surveyId
                 ActivityForm form = ActivityForm.findByExternalId(surveyId.protocolId)
-                // get survey data from reverse lookup response
-                Map surveyData = config.getSurveyData(surveyDataAndObservations)
                 // add plot data to survey observations
                 addPlotDataToObservations(surveyDataAndObservations, config)
                 rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata, form.sections[0].template.relationships.apiOutput)
@@ -535,7 +533,12 @@ class ParatooService {
             if (externalId) {
                 siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
             }
-            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
+            Site site
+            // create new site for every non-plot submission
+            if (config.usesPlotLayout) {
+                site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
+            }
+
             Map result
             if (!site) {
                 result = siteService.create(siteProps)

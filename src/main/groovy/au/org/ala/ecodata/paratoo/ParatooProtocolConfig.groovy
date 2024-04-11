@@ -39,6 +39,7 @@ class ParatooProtocolConfig {
     Map overrides = [dataModel: [:], viewModel: [:]]
 
     ParatooCollectionId surveyId
+    TimeZone clientTimeZone
 
     private static String removeMilliseconds(String isoDateWithMillis) {
         if (!isoDateWithMillis) {
@@ -232,12 +233,15 @@ class ParatooProtocolConfig {
             if (features) {
                 List featureGeometries = features.collect { it.geometry }
                 Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
+                String startDateInString = getStartDate(output)
+                startDateInString = DateUtil.convertUTCDateToStringInTimeZone(startDateInString, clientTimeZone?:TimeZone.default)
+                String name = "${form.name} site - ${startDateInString}"
                 geoJson = [
                     type: 'Feature',
                     geometry: GeometryUtils.geometryToGeoJsonMap(geometry),
                     properties: [
-                            name: "Convex Hull",
-                            description: "Convex Hull of ${features?.size()} feature(s)"
+                            name: name,
+                            description: "${name} (convex hull of all features)",
                     ],
                     features: features
                 ]

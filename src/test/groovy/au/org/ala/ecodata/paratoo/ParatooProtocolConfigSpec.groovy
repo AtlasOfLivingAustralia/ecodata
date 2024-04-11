@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.paratoo
 
 import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.DateUtil
 import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.FormSection
 import au.org.ala.ecodata.ParatooService
@@ -250,9 +251,11 @@ class ParatooProtocolConfigSpec extends Specification {
 
         when:
         ParatooProtocolConfig config = new ParatooProtocolConfig(opportunisticSurveyConfig)
+        config.clientTimeZone = TimeZone.getTimeZone("Australia/Sydney")
         config.surveyId = ParatooCollectionId.fromMap([survey_metadata: response.survey_metadata])
         transformData(surveyObservations, activityForm, config)
         String start_date = config.getStartDate(surveyObservations)
+        String startDateInDefaultTimeZone = DateUtil.convertUTCDateToStringInTimeZone(start_date, config.clientTimeZone)
         String end_date = config.getEndDate(surveyObservations)
         Map geoJson = config.getGeoJson(surveyObservations, activityForm)
 
@@ -264,8 +267,8 @@ class ParatooProtocolConfigSpec extends Specification {
                 geometry  : [type: "Point", coordinates: [138.63, -35.0005]],
                 features  : [[type: "Feature", geometry: [type: "Point", coordinates: [138.63, -35.0005]], properties:[name:"Point", externalId:40, id:"aParatooForm 1-1"]]],
                 properties: [
-                        name       : "Convex Hull",
-                        description: "Convex Hull of 1 feature(s)"
+                        name       : "aParatooForm 1 site - ${startDateInDefaultTimeZone}",
+                        description: "aParatooForm 1 site - ${startDateInDefaultTimeZone} (convex hull of all features)"
                 ]
         ]
     }
