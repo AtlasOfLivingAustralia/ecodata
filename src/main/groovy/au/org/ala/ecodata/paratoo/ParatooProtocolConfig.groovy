@@ -351,7 +351,7 @@ class ParatooProtocolConfig {
         plotGeoJson
     }
 
-    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, String plotLayoutId, String notes  = "") {
+    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
         Map plotGeometory = toGeometry(plotLayoutPoints)
         [
                 type      : 'Feature',

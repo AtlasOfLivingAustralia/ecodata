@@ -1203,28 +1203,28 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     private Map getNormalDefinition() {
         def input = """
 {
-"plot_points": {
-                                          "type": "array",
-                                          "items": {
-                                            "properties": {
-                                              "lat": {
-                                                "type": "number",
-                                                "format": "float"
-                                              },
-                                              "lng": {
-                                                "type": "number",
-                                                "format": "float"
-                                              },
-                                              "name": {
-                                                "type": "string",
-                                                "format": "string"
-                                              }
-                                            },
-                                            "type": "object",
-                                            "x-paratoo-component": "location.plot-location-point"
-                                          },
-                                          "maxItems": 25
-                                        }
+    "plot_points": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "format": "float"
+          },
+          "lng": {
+            "type": "number",
+            "format": "float"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "type": "object",
+        "x-paratoo-component": "location.plot-location-point"
+      },
+      "maxItems": 25
+    }
 }
 """
         Map inputObject = getGroovyObject(input)

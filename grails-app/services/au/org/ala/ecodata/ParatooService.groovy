@@ -902,8 +902,8 @@ class ParatooService {
 
     Map simplifyModelStructure(Map definition) {
         Map simplifiedDefinition = [:]
-        if (definition.type == PARATOO_TYPE_ARRAY) {
-            definition = definition.items
+        if ((definition.type == PARATOO_TYPE_ARRAY) && definition.items) {
+            definition << definition.items
         }
 
         Map properties = getModelStructureFromDefinition(definition)
