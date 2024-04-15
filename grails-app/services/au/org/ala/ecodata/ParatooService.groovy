@@ -46,7 +46,7 @@ class ParatooService {
     static final List PARATOO_IGNORE_MODEL_LIST = [
             'created_at', 'createdAt', 'updated_at', 'updatedAt', 'created_by', 'createdBy', 'updated_by', 'updatedBy',
             'published_at', 'publishedAt', 'x-paratoo-file-type', PARATOO_DATAMODEL_PLOT_LAYOUT, PARATOO_DATAMODEL_PLOT_SELECTION,
-            PARATOO_DATAMODEL_PLOT_VISIT, 'plot-visit', 'plot-selection', 'plot-layout'
+            PARATOO_DATAMODEL_PLOT_VISIT, 'plot-visit', 'plot-selection', 'plot-layout', 'survey_metadata'
     ]
     static final List PARATOO_IGNORE_X_MODEL_REF_LIST_MINIMUM = [
             'file', 'admin::user'
@@ -56,7 +56,9 @@ class ParatooService {
     ] + PARATOO_IGNORE_X_MODEL_REF_LIST_MINIMUM
     static final String PARATOO_WORKFLOW_PLOT_LAYOUT = "plot-layout"
     static final String PARATOO_COMPONENT = "x-paratoo-component"
+    static  final String PARATOO_TYPE_ARRAY = "array"
     static final String PARATOO_LOCATION_COMPONENT = "location.location"
+    static final String PARATOO_LOCATION_COMPONENT_STARTS_WITH = "location."
     static final String PARATOO_DATAMODEL_PLOT_LAYOUT = "plot_layout"
     static final String PARATOO_DATAMODEL_PLOT_SELECTION = "plot_selection"
     static final String PARATOO_DATAMODEL_PLOT_VISIT = "plot_visit"
@@ -209,9 +211,11 @@ class ParatooService {
      * If species are recorded, record of it are automatically generated.
      * @param collection
      * @param project
+     * @param userId - user making the data submission
      * @return
      */
-    Map submitCollection(ParatooCollection collection, ParatooProject project) {
+    Map submitCollection(ParatooCollection collection, ParatooProject project, String userId = null) {
+        userId = userId ?: userService.currentUserDetails?.userId
         Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
         if (!dataSet) {
@@ -220,7 +224,7 @@ class ParatooService {
         dataSet.progress = Activity.STARTED
         dataSet.surveyId.coreSubmitTime = new Date()
         dataSet.surveyId.survey_metadata.provenance.putAll(collection.coreProvenance)
-        String userId = userService.currentUserDetails?.userId
+
         Map authHeader = getAuthHeader()
         Promise promise = task {
             asyncFetchCollection(collection, authHeader, userId, project)
@@ -235,7 +239,7 @@ class ParatooService {
     Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project) {
         Activity.withSession { session ->
             int counter = 0
-            boolean forceActivityCreation = false
+            boolean forceActivityCreation = grailsApplication.config.getProperty('paratoo.forceActivityCreation', Boolean, false)
             Map surveyDataAndObservations = null
             Map response = null
             Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
@@ -278,6 +282,8 @@ class ParatooService {
 
                 // make sure activity has not been created for this data set
                 if (!dataSet.activityId || forceActivityCreation) {
+                    // delete previously created activity if forceActivityCreation is true?
+
                     // plot layout is of type geoMap. Therefore, expects a site id.
                     if (surveyDataAndObservations.containsKey(PARATOO_DATAMODEL_PLOT_LAYOUT) && dataSet.siteId) {
                         surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
@@ -489,19 +495,26 @@ class ParatooService {
                 case "feature":
                     // used by protocols like bird survey where a point represents a sight a bird has been observed in a
                     // bird survey plot
-                    def point = output[model.name]
-                    output[model.name] = [
-                            type      : 'Feature',
-                            geometry  : [
-                                    type       : 'Point',
-                                    coordinates: [point.lng, point.lat]
-                            ],
-                            properties: [
-                                    name      : "Point",
-                                    externalId: point.id,
-                                    id: "${formName}-${featureId}"
-                            ]
-                    ]
+                    def location = output[model.name]
+                    if (location instanceof Map) {
+                        output[model.name] = [
+                                type      : 'Feature',
+                                geometry  : [
+                                        type       : 'Point',
+                                        coordinates: [location.lng, location.lat]
+                                ],
+                                properties: [
+                                        name      : "Point ${formName}-${featureId}",
+                                        externalId: location.id,
+                                        id: "${formName}-${featureId}"
+                                ]
+                        ]
+                    }
+                    else if (location instanceof List) {
+                        String name = "Polygon ${formName}-${featureId}"
+                        output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON (location, name, name)
+                    }
+
                     featureId ++
                     break
                 case "image":
@@ -522,13 +535,13 @@ class ParatooService {
         // Create a site representing the location of the collection
         Map geoJson = config.getGeoJson(observation, form)
         if (geoJson) {
+            Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
             List features = geoJson?.features ?: []
             geoJson.remove('features')
-            Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
+            siteProps.features = features
             siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            siteProps.features = features
             String externalId = geoJson.properties?.externalId
             if (externalId) {
                 siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
@@ -537,6 +550,9 @@ class ParatooService {
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
                 site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
+                if (site?.features) {
+                    siteProps.features?.addAll(site.features)
+                }
             }
 
             Map result
@@ -886,6 +902,10 @@ class ParatooService {
 
     Map simplifyModelStructure(Map definition) {
         Map simplifiedDefinition = [:]
+        if (definition.type == PARATOO_TYPE_ARRAY) {
+            definition = definition.items
+        }
+
         Map properties = getModelStructureFromDefinition(definition)
         List required = getRequiredModels(definition)
         String componentName = definition[PARATOO_COMPONENT]
@@ -1295,6 +1315,22 @@ class ParatooService {
         modelVisitStack = modelVisitStack ?: new ArrayDeque<String>()
         String componentName, modelName = component[PARATOO_MODEL_REF]
 
+        /**
+         * Some time component definition can be like
+         {
+             "type": "array",
+             "items": {
+                 "type": "integer",
+                 "x-paratoo-file-type": ["images"],
+                 "x-model-ref": "file"
+             }
+         }
+         */
+        if (!modelName && (component.properties?.getAt(PARATOO_MODEL_REF) == PARATOO_FILE_MODEL_NAME)) {
+            component = component.properties
+            modelName = component[PARATOO_MODEL_REF]
+        }
+
         if (PARATOO_IGNORE_MODEL_LIST.contains(name))
             return
         else if (component[PARATOO_SPECIES_TYPE]) {
@@ -1392,8 +1428,10 @@ class ParatooService {
         }
     }
 
-    static boolean isLocationObject(Map input) {
-        input[PARATOO_COMPONENT] == PARATOO_LOCATION_COMPONENT
+    boolean isLocationObject(Map input) {
+        ((input[PARATOO_COMPONENT] == PARATOO_LOCATION_COMPONENT) ||
+                input[PARATOO_COMPONENT]?.startsWith(PARATOO_LOCATION_COMPONENT_STARTS_WITH)) &&
+                !grailsApplication.config.getProperty("paratoo.location.excluded", List)?.contains(input[PARATOO_COMPONENT])
     }
 
     static Map addRequiredFlag(Map component, Map dataType, List required) {

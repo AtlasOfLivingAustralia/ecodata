@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
@@ -723,6 +726,60 @@ class AdminController {
         Map errors = offline ? paratooService.syncProtocolsFromSettings() : paratooService.syncProtocolsFromParatoo()
 
         render errors as JSON
+    }
+
+    /**
+     * Re-fetch data from Paratoo. Helpful when data could not be parsed correctly the first time.
+     *
+     * @return
+     */
+    @AlaSecured(["ROLE_ADMIN"])
+    def reSubmitDataSet() {
+        String projectId = params.id
+        String dataSetId = params.dataSetId
+        String userId = params.userId ?: userService.getCurrentUser().userId
+        if (!projectId || !dataSetId || !userId) {
+            render text: [message: "Bad request"] as JSON, status: HttpStatus.SC_BAD_REQUEST
+            return
+        }
+
+        ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
+        List<ParatooProject> projects = paratooService.userProjects(userId)
+        ParatooProject project = projects.find {it.project.projectId == projectId }
+        if (project) {
+            paratooService.submitCollection(collection, project, userId)
+            render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+        }
+        else {
+            render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+        }
+    }
+
+
+    /**
+     * Helper function to check the form generated for a protocol during the sync operation.
+     * Usual step is to update Paratoo config in DB. Use this function to check the form generated.
+     * @return
+     */
+    @AlaSecured(["ROLE_ADMIN"])
+    def checkActivityFormForProtocol() {
+        String protocolId = params.id
+        List protocols = paratooService.getProtocolsFromParatoo()
+        Map protocol = protocols.find { it.attributes.identifier == protocolId }
+        if (!protocol) {
+            render text: [message: "Protocol not found"] as JSON, status: HttpStatus.SC_NOT_FOUND, contentType: 'application/json'
+            return
+        }
+
+        Map documentation = paratooService.getParatooSwaggerDocumentation()
+        ParatooProtocolConfig config = paratooService.getProtocolConfig(protocolId)
+        if (!config) {
+           render text: [message: "Protocol config not found"] as JSON, status: HttpStatus.SC_NOT_FOUND, contentType: 'application/json'
+            return
+        }
+
+        Map template = paratooService.buildTemplateForProtocol(protocol, documentation, config)
+        render text: template as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
     }
 
 }

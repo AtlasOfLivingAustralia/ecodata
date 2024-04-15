@@ -106,6 +106,9 @@ if (!google.geocode.url) {
 if (!temp.file.cleanup.days) {
     temp.file.cleanup.days = 1
 }
+if(!paratoo.location.excluded) {
+    paratoo.location.excluded = ['location.vegetation-association-nvis']
+}
 access.expiry.maxEmails=500
 
 
@@ -1399,17 +1402,7 @@ paratoo.defaultPlotLayoutDataModels =  [
                 [
                         dataType: "geoMap",
                         name: "plot_layout",
-                        validate: "required",
-                        columns: [
-                                [
-                                        dwcAttribute: "verbatimLatitude",
-                                        source: "plot_layoutLatitude"
-                                ],
-                                [
-                                        dwcAttribute: "verbatimLongitude",
-                                        source: "plot_layoutLongitude"
-                                ]
-                        ]
+                        validate: "required"
                 ],
                 [
                         dataType: "list",

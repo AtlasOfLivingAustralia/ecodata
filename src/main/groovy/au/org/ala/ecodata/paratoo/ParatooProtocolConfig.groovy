@@ -341,17 +341,7 @@ class ParatooProtocolConfig {
 
         String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + plotLayoutDimensionLabel + ')'
 
-        Map plotGeometory = toGeometry(plotLayoutPoints)
-        Map plotGeoJson = [
-            type: 'Feature',
-            geometry: plotGeometory,
-            properties: [
-                    name: name,
-                    externalId: plotLayoutId,
-                    description: name,
-                    notes: plotSelectionGeoJson?.properties?.notes
-            ]
-        ]
+        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, plotSelectionGeoJson?.properties?.notes)
 
         //Map faunaPlotGeoJson = toGeometry(plotLayout.fauna_plot_point)
 
@@ -359,6 +349,20 @@ class ParatooProtocolConfig {
         // Or a multi-polygon?
 
         plotGeoJson
+    }
+
+    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, String plotLayoutId, String notes  = "") {
+        Map plotGeometory = toGeometry(plotLayoutPoints)
+        [
+                type      : 'Feature',
+                geometry  : plotGeometory,
+                properties: [
+                        name       : name,
+                        externalId : plotLayoutId,
+                        description: name,
+                        notes      : notes
+                ]
+        ]
     }
 
     static Map toGeometry(List points) {

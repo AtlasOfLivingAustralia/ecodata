@@ -38,6 +38,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         deleteAll()
         setupData()
 
+        grailsApplication.config.paratoo.location.excluded = ['location.vegetation-association-nvis']
+        service.grailsApplication = grailsApplication
         service.webService = webService
         service.siteService = siteService
         service.projectService = projectService
@@ -1172,4 +1174,67 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "preLabel": "Height"
         ]
     }
+
+    def "isLocationObject should identify object with 'location' name in component name" (Map input, boolean expected) {
+        when:
+        boolean result = service.isLocationObject(input)
+
+        then:
+        result == expected
+
+        where:
+        input | expected
+        [(service.PARATOO_COMPONENT): "location.location"] | true
+        [(service.PARATOO_COMPONENT): "location.plot-location-point"] | true
+        [(service.PARATOO_COMPONENT): "location.fauna-plot-points"] | true
+        [(service.PARATOO_COMPONENT): "location.vegetation-association-nvis"] | false
+        [(service.PARATOO_COMPONENT): "location-observation-3"] | false
+    }
+
+    def "cleanSwaggerDefinition should clean and standardise given definitions" () {
+        given:
+        def definition = getNormalDefinition()
+        when:
+        def result = service.cleanSwaggerDefinition(definition.input)
+        then:
+        result == definition.output
+    }
+
+    private Map getNormalDefinition() {
+        def input = """
+{
+"plot_points": {
+                                          "type": "array",
+                                          "items": {
+                                            "properties": {
+                                              "lat": {
+                                                "type": "number",
+                                                "format": "float"
+                                              },
+                                              "lng": {
+                                                "type": "number",
+                                                "format": "float"
+                                              },
+                                              "name": {
+                                                "type": "string",
+                                                "format": "string"
+                                              }
+                                            },
+                                            "type": "object",
+                                            "x-paratoo-component": "location.plot-location-point"
+                                          },
+                                          "maxItems": 25
+                                        }
+}
+"""
+        Map inputObject = getGroovyObject(input)
+        Map output = ["plot_points": [type: "object", properties: ["lat": [type: "number", format: "float"], "lng": [type: "number", format: "float"], "name": [type: "string", format: "string"]], "x-paratoo-component": "location.plot-location-point"]]
+        [input: inputObject, output: output]
+    }
+
+    private getGroovyObject(String input, Class clazz = Map.class){
+        ObjectMapper mapper = new ObjectMapper()
+        mapper.readValue(input, clazz)
+    }
+
 }
