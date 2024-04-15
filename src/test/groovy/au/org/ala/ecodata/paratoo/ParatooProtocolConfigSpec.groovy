@@ -85,7 +85,7 @@ class ParatooProtocolConfigSpec extends Specification {
                         type      : "Feature",
                         geometry  : [type: 'Point', coordinates: [149.0651536, -35.2592398]],
                         properties: [
-                                name      : "Point",
+                                name      : "Point aParatooForm 1-1",
                                 externalId: 44,
                                 id        : "aParatooForm 1-1"
                         ]
@@ -198,7 +198,7 @@ class ParatooProtocolConfigSpec extends Specification {
                         type       : "Point",
                         coordinates: [149.0651491, -35.2592444]
                 ],
-                properties: ["name": "Point", externalId: 37, id: "aParatooForm 2-1"]
+                properties: ["name": "Point aParatooForm 2-1", externalId: 37, id: "aParatooForm 2-1"]
         ]]
     }
 
@@ -265,7 +265,7 @@ class ParatooProtocolConfigSpec extends Specification {
         geoJson == [
                 type      : "Feature",
                 geometry  : [type: "Point", coordinates: [138.63, -35.0005]],
-                features  : [[type: "Feature", geometry: [type: "Point", coordinates: [138.63, -35.0005]], properties:[name:"Point", externalId:40, id:"aParatooForm 1-1"]]],
+                features  : [[type: "Feature", geometry: [type: "Point", coordinates: [138.63, -35.0005]], properties:[name:"Point aParatooForm 1-1", externalId:40, id:"aParatooForm 1-1"]]],
                 properties: [
                         name       : "aParatooForm 1 site - ${startDateInDefaultTimeZone}",
                         description: "aParatooForm 1 site - ${startDateInDefaultTimeZone} (convex hull of all features)"
