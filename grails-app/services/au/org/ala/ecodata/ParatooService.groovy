@@ -18,6 +18,7 @@ import static grails.async.Promises.task
  */
 @Slf4j
 class ParatooService {
+    static final String DATASET_DATABASE_TABLE = 'Database Table'
     static final int PARATOO_MAX_RETRIES = 3
     static final String PARATOO_PROTOCOL_PATH = '/protocols'
     static final String PARATOO_DATA_PATH = '/protocols/reverse-lookup'
@@ -296,6 +297,8 @@ class ParatooService {
 
                 dataSet.startDate = config.getStartDate(surveyDataAndObservations)
                 dataSet.endDate = config.getEndDate(surveyDataAndObservations)
+                dataSet.format = DATASET_DATABASE_TABLE
+                dataSet.sizeUnknown = true
 
                 projectService.update([custom: project.project.custom], project.id, false)
             }
