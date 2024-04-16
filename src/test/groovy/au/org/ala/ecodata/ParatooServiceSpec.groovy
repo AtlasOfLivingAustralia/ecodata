@@ -182,7 +182,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap()]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
-        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null]
+        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
 
         when:
