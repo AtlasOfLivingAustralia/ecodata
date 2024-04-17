@@ -274,27 +274,32 @@ class ParatooProtocolConfigSpec extends Specification {
     }
 
     def "Should create line GeoJSON objects" () {
-        expect:
-        ParatooProtocolConfig.toLineStringGeometry([[lat: 1, lng: 2], [lat: 3, lng: 4]]) == [
+        when:
+        def result = ParatooProtocolConfig.toLineStringGeometry([[lat: 1, lng: 2], [lat: 3, lng: 4]])
+
+        then:
+        result == [
                 type       : 'LineString',
                 coordinates: [[2, 1], [4, 3]]
         ]
 
-        expect:
-        ParatooProtocolConfig.createLineStringFeatureFromGeoJSON([[lat: 1, lng: 2], [lat: 3, lng: 4], [lat: 5, lng: 6]], "test name", 1, "test notes") ==
-            [
-                    "type"      : "Feature",
-                    "geometry"  : [
-                            type       : 'LineString',
-                            coordinates: [[2, 1], [4, 3], [6, 5]]
-                    ],
-                    "properties": [
-                            "name"      : "test name",
-                            "externalId" : 1,
-                            "description": "test name",
-                            "notes"     : "test notes"
-                    ]
-            ]
+        when:
+        result = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON([[lat: 1, lng: 2], [lat: 3, lng: 4], [lat: 5, lng: 6]], "test name", 1, "test notes")
+
+        then:
+        result == [
+                "type"      : "Feature",
+                "geometry"  : [
+                        type       : 'LineString',
+                        coordinates: [[2, 1], [4, 3], [6, 5]]
+                ],
+                "properties": [
+                        "name"      : "test name",
+                        "externalId" : 1,
+                        "description": "test name",
+                        "notes"     : "test notes"
+                ]
+        ]
     }
 
     def transformData(Map surveyDataAndObservations, ActivityForm form, ParatooProtocolConfig config) {
