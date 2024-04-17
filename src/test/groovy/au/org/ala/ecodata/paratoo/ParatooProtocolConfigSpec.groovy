@@ -51,22 +51,23 @@ class ParatooProtocolConfigSpec extends Specification {
                                                         name    : "vegetation-mapping-survey",
                                                         dataType: "list",
                                                         columns : [
+
+                                                        ]
+                                                ],
+                                                [
+                                                        name    : "vegetation-mapping-observation",
+                                                        dataType: "list",
+                                                        columns : [
                                                                 [
-                                                                        name    : "vegetation-mapping-observation",
-                                                                        dataType: "list",
-                                                                        columns : [
-                                                                                [
-                                                                                        dataType: "feature",
-                                                                                        name    : "position"
-                                                                                ]
-                                                                        ]
+                                                                        dataType: "feature",
+                                                                        name    : "position"
                                                                 ]
                                                         ]
                                                 ]
                                         ],
                                         relationships: [
-                                                ecodata  : ["vegetation-mapping-survey": ["vegetation-mapping-observation": [:]]],
-                                                apiOutput: ["vegetation-mapping-observation": ["vegetation-mapping-observation": [:]]]
+                                                ecodata  : [:],
+                                                apiOutput: [:]
                                         ]
                                 ]
                         ]
@@ -133,8 +134,8 @@ class ParatooProtocolConfigSpec extends Specification {
         transformData(observation, activityForm, config)
 
         then:
-        config.getStartDate(observation) == "2021-08-26T11:26:54Z"
-        config.getEndDate(observation) == "2021-08-26T13:26:54Z"
+        config.getStartDate(observation) == "2024-04-08T01:23:28Z"
+        config.getEndDate(observation) == "2024-04-10T01:23:28Z"
         config.getGeoJson(observation) == [type: "Feature", geometry: [type: "Polygon", coordinates: [[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]], properties: [name: "QDASEQ0001 - Control (100 x 100)", externalId: 1, description: "QDASEQ0001 - Control (100 x 100)", notes: "some comment"]]
     }
 
@@ -158,22 +159,23 @@ class ParatooProtocolConfigSpec extends Specification {
                                                 dataType: "list",
                                                 name    : "basal-area-dbh-measure-survey",
                                                 columns : [
+
+                                                ]
+                                        ],
+                                        [
+                                                dataType: "list",
+                                                name    : "basal-area-dbh-measure-observation",
+                                                columns : [
                                                         [
-                                                                dataType: "list",
-                                                                name    : "basal-area-dbh-measure-observation",
-                                                                columns : [
-                                                                        [
-                                                                                dataType: "feature",
-                                                                                name    : "location"
-                                                                        ]
-                                                                ]
+                                                                dataType: "feature",
+                                                                name    : "location"
                                                         ]
                                                 ]
                                         ]
                                 ],
                                 viewModel    : [],
                                 relationships: [
-                                        ecodata  : ["basal-area-dbh-measure-survey":["basal-area-dbh-measure-observation": [:]]],
+                                        ecodata  : [:],
                                         apiOutput: [:]
                                 ]
                         ]
@@ -183,8 +185,8 @@ class ParatooProtocolConfigSpec extends Specification {
         transformData(observation, activityForm, config)
 
         expect:
-        config.getStartDate(observation) == '2023-09-22T00:59:47Z'
-        config.getEndDate(observation) == "2023-09-22T00:59:47Z"
+        config.getStartDate(observation) == "2024-03-28T03:17:01Z"
+        config.getEndDate(observation) == "2024-03-28T03:17:01Z"
         config.getGeoJson(observation) == [
                 type      : "Feature",
                 geometry  : [
@@ -226,23 +228,24 @@ class ParatooProtocolConfigSpec extends Specification {
                                                 [
                                                         name    : "opportunistic-survey",
                                                         dataType: "list",
-                                                        columns: [[
-                                                                          name    : "opportunistic-observation",
-                                                                          dataType: "list",
-                                                                          columns : [
-                                                                                  [
-                                                                                          name    : "location",
-                                                                                          dataType: "feature",
-                                                                                          required: true,
-                                                                                          external: true
-                                                                                  ]
-                                                                          ]
-                                                                  ]]
+                                                        columns: []
+                                                ],
+                                                [
+                                                        name    : "opportunistic-observation",
+                                                        dataType: "list",
+                                                        columns : [
+                                                                [
+                                                                        name    : "location",
+                                                                        dataType: "feature",
+                                                                        required: true,
+                                                                        external: true
+                                                                ]
+                                                        ]
                                                 ]
                                         ],
                                         relationships: [
-                                                ecodata  : ["opportunistic-survey": ["opportunistic-observation": [:]]],
-                                                apiOutput: ["opportunistic-observation.opportunistic_survey": ["opportunistic-survey": [:]], "opportunistic-observation": ["opportunistic-observation": [:]]]
+                                                ecodata  : [:],
+                                                apiOutput: [:]
                                         ]
                                 ]
                         ]

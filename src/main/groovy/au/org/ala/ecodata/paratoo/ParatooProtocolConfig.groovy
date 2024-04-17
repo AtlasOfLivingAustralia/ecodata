@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.paratoo
 
 import au.org.ala.ecodata.*
+import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -24,6 +25,7 @@ class ParatooProtocolConfig {
     String endDatePath = 'end_date_time'
     String surveyIdPath = 'survey_metadata'
     String plotVisitPath = 'plot_visit'
+    String plotProtocolObservationDatePath = "date_time"
     String plotVisitStartDatePath = "${plotVisitPath}.start_date"
     String plotVisitEndDatePath = "${plotVisitPath}.end_date"
     String plotLayoutPath = "${plotVisitPath}.plot_layout"
@@ -53,20 +55,46 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def date = getProperty(surveyData, startDatePath)
-        date = getFirst(date)
-        if (date == null) {
-            if (usesPlotLayout) {
-                date = getProperty(surveyData, plotVisitStartDatePath)
-            }
-            else {
+        def date
+        if (usesPlotLayout) {
+            List dates = getDatesFromObservation(surveyData)
+            date = dates ? DateUtil.format(dates.first()) : null
+            return date
+        }
+        else {
+            date = getProperty(surveyData, startDatePath)
+            if (!date) {
                 date = getPropertyFromSurvey(surveyData, startDatePath)
             }
 
             date = getFirst(date)
+            return removeMilliseconds(date)
+        }
+    }
+
+    /**
+     * Get date from plotProtocolObservationDatePath and sort them.
+     * @param surveyData - reverse lookup output which includes survey and observation data
+     * @return
+     */
+    List getDatesFromObservation(Map surveyData) {
+        Map surveysData = surveyData.findAll { key, value ->
+            ![ getSurveyAttributeName(), ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION,
+              ParatooService.PARATOO_DATAMODEL_PLOT_VISIT, ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT].contains(key)
+        }
+        List result = []
+        ISODateBindingConverter converter = new ISODateBindingConverter()
+        surveysData.each { key, value ->
+            def dates = getProperty(value, plotProtocolObservationDatePath)
+            dates = dates instanceof List ? dates : [dates]
+
+            result.addAll(dates.collect { String date ->
+                date ? converter.convert(date, ISODateBindingConverter.FORMAT) : null
+            })
         }
 
-        removeMilliseconds(date)
+        result = result.findAll { it != null }
+        result.sort()
     }
 
     def getPropertyFromSurvey(Map surveyData, String path) {
@@ -79,23 +107,21 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def date = getProperty(surveyData, endDatePath)
-        date = getFirst(date)
-        if (date == null) {
-            if (usesPlotLayout) {
-                date = getProperty(surveyData, plotVisitEndDatePath)
-                if (!date) {
-                    date = getProperty(surveyData, plotVisitStartDatePath)
-                }
-            }
-            else {
+        def date
+        if (usesPlotLayout) {
+            def dates = getDatesFromObservation(surveyData)
+            date = dates ? DateUtil.format(dates.last()) : null
+            return date
+        }
+        else {
+            date = getProperty(surveyData, endDatePath)
+            if (!date) {
                 date = getPropertyFromSurvey(surveyData, endDatePath)
             }
 
             date = getFirst(date)
+            return removeMilliseconds(date)
         }
-
-        removeMilliseconds(date)
     }
 
     Map getSurveyId(Map surveyData) {
@@ -198,7 +224,7 @@ class ParatooProtocolConfig {
         apiEndpoint
     }
 
-    def getProperty(Map surveyData, String path) {
+    def getProperty(def surveyData, String path) {
         if (!path) {
             return null
         }
