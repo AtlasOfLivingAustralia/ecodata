@@ -274,7 +274,7 @@ class ParatooService {
                 addPlotDataToObservations(surveyDataAndObservations, config)
                 rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata, form.sections[0].template.relationships.apiOutput)
                 // transform data to make it compatible with data model
-                surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name)
+                surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name, config)
                 // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
 
                 if (!dataSet.siteId) {
@@ -463,7 +463,7 @@ class ParatooService {
      * @param path
      * @return
      */
-    def recursivelyTransformData(List dataModel, Map output, String formName = "", int featureId = 1) {
+    def recursivelyTransformData(List dataModel, Map output, String formName = "", int featureId = 1, ParatooProtocolConfig config = null) {
         dataModel?.each { Map model ->
             switch (model.dataType) {
                 case "list":
@@ -482,7 +482,7 @@ class ParatooService {
 
                     rows?.each { row ->
                         if (row != null) {
-                            recursivelyTransformData(model.columns, row, formName, featureId)
+                            recursivelyTransformData(model.columns, row, formName, featureId, config)
                         }
                     }
                     break
@@ -514,8 +514,17 @@ class ParatooService {
                         ]
                     }
                     else if (location instanceof List) {
-                        String name = "Polygon ${formName}-${featureId}"
-                        output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON (location, name, name)
+                        String name
+                        switch (config?.geometryType) {
+                            case "LineString":
+                                name = "LineString ${formName}-${featureId}"
+                                output[model.name] = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON (location, name, null, name)
+                                break
+                            default:
+                                name = "Polygon ${formName}-${featureId}"
+                                output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON (location, name, null, name)
+                                break
+                        }
                     }
 
                     featureId ++

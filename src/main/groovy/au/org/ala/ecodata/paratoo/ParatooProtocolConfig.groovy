@@ -352,10 +352,14 @@ class ParatooProtocolConfig {
     }
 
     static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
-        Map plotGeometory = toGeometry(plotLayoutPoints)
+        Map plotGeometry = toGeometry(plotLayoutPoints)
+        createFeatureObject(plotGeometry, name, plotLayoutId, notes)
+    }
+
+    static Map createFeatureObject(Map plotGeometry, String name, plotLayoutId, String notes = "") {
         [
                 type      : 'Feature',
-                geometry  : plotGeometory,
+                geometry  : plotGeometry,
                 properties: [
                         name       : name,
                         externalId : plotLayoutId,
@@ -372,6 +376,23 @@ class ParatooProtocolConfig {
         Map plotGeometry = coords ? [
                 type       : 'Polygon',
                 coordinates: [closePolygonIfRequired(coords)]
+        ] : null
+
+        plotGeometry
+    }
+
+    static Map createLineStringFeatureFromGeoJSON (List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
+        Map plotGeometry = toLineStringGeometry(plotLayoutPoints)
+        createFeatureObject(plotGeometry, name, plotLayoutId, notes)
+    }
+
+    static Map toLineStringGeometry(List points) {
+        List coords = points?.collect {
+            [it.lng, it.lat]
+        }
+        Map plotGeometry = coords ? [
+                type       : 'LineString',
+                coordinates: coords
         ] : null
 
         plotGeometry

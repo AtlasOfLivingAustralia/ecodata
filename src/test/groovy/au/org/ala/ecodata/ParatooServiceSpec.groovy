@@ -1200,6 +1200,65 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result == definition.output
     }
 
+    def "recursivelyTransformData should transform feature object based on provided protocol config"() {
+        given:
+        def dataModel = [
+                [
+                        "dataType"     : "feature",
+                        "name"         : "line"
+                ]
+        ]
+        def output = [
+                line: [[lat: 1, lng: 2], [lat: 3, lng: 4]]
+        ]
+        String formName = "form name"
+        ParatooProtocolConfig config = new ParatooProtocolConfig(geometryType: "LineString")
+
+        when:
+        def result = service.recursivelyTransformData(dataModel, output, formName, config)
+
+        then:
+        result == [
+                line: [
+                        type: "Feature",
+                        geometry: [
+                                type: "LineString",
+                                coordinates: [[1, 2], [3, 4]]
+                        ],
+                        properties: [
+                                name: "LineString form name-1",
+                                description: "LineString form name-1",
+                                externalId: null,
+                                notes: "LineString form name-1"
+                        ]
+                ]
+        ]
+
+        when:
+        output = [
+                line: [[lat: 1, lng: 2], [lat: 3, lng: 4]]
+        ]
+        config = new ParatooProtocolConfig(geometryType: "Polygon")
+        result = service.recursivelyTransformData(dataModel, output, formName, config)
+
+        then:
+        result == [
+                line: [
+                        type: "Feature",
+                        geometry: [
+                                type: "Polygon",
+                                coordinates: [[1, 2], [3, 4], [1, 2]]
+                        ],
+                        properties: [
+                                name: "Polygon form name-1",
+                                description: "Polygon form name-1",
+                                externalId: null,
+                                notes: "Polygon form name-1"
+                        ]
+                ]
+        ]
+    }
+
     private Map getNormalDefinition() {
         def input = """
 {
