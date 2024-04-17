@@ -274,7 +274,7 @@ class ParatooService {
                 addPlotDataToObservations(surveyDataAndObservations, config)
                 rearrangeSurveyData(surveyDataAndObservations, surveyDataAndObservations, form.sections[0].template.relationships.ecodata, form.sections[0].template.relationships.apiOutput)
                 // transform data to make it compatible with data model
-                surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name, config)
+                surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name, 1, config)
                 // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
 
                 if (!dataSet.siteId) {
