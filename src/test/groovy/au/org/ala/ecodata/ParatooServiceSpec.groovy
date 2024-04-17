@@ -1215,7 +1215,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooProtocolConfig config = new ParatooProtocolConfig(geometryType: "LineString")
 
         when:
-        def result = service.recursivelyTransformData(dataModel, output, formName, config)
+        def result = service.recursivelyTransformData(dataModel, output, formName, 1, config)
 
         then:
         result == [
@@ -1223,7 +1223,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         type: "Feature",
                         geometry: [
                                 type: "LineString",
-                                coordinates: [[1, 2], [3, 4]]
+                                coordinates: [[2, 1], [4, 3]]
                         ],
                         properties: [
                                 name: "LineString form name-1",
@@ -1239,7 +1239,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 line: [[lat: 1, lng: 2], [lat: 3, lng: 4]]
         ]
         config = new ParatooProtocolConfig(geometryType: "Polygon")
-        result = service.recursivelyTransformData(dataModel, output, formName, config)
+        result = service.recursivelyTransformData(dataModel, output, formName, 1, config)
 
         then:
         result == [
@@ -1247,7 +1247,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         type: "Feature",
                         geometry: [
                                 type: "Polygon",
-                                coordinates: [[1, 2], [3, 4], [1, 2]]
+                                coordinates: [[[2, 1], [4, 3], [2, 1]]]
                         ],
                         properties: [
                                 name: "Polygon form name-1",
