@@ -19,4 +19,15 @@ class ParatooSurveyDetails {
             protocol_version: protocol_version
         ]
     }
+
+    static ParatooSurveyDetails fromMap(Map data) {
+        new ParatooSurveyDetails(
+            survey_model: data.survey_model,
+            time: data.time,
+            uuid: data.uuid,
+            project_id: data.project_id,
+            protocol_id: data.protocol_id,
+            protocol_version: data.protocol_version
+        )
+    }
 }

@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.converter.ISODateBindingConverter
+
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -126,5 +128,10 @@ class DateUtil {
             timeZone = timeZone ?: TimeZone.default
         }
         return timeZone
+    }
+
+    static String convertUTCDateToStringInTimeZone (String dateStr, TimeZone clientTimezone = TimeZone.default, String format = "dd/MM/yyyy HH:mm:ss Z z") {
+        Date date = new ISODateBindingConverter().convert(dateStr, ISODateBindingConverter.FORMAT)
+        date.format(format, clientTimezone)
     }
 }

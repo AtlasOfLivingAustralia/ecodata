@@ -1317,7 +1317,7 @@ class ElasticSearchService {
      * @param path
      * @return
      */
-    List getDataFromPath(output, List path){
+    static List getDataFromPath(output, List path){
         def temp = output
         List result = []
         List navigatedPath = []

@@ -37,4 +37,12 @@ class DateUtilSpec extends Specification {
         expect:
         DateUtil.formatWithMilliseconds(DateUtil.parseWithMilliseconds(date)) == date
     }
+
+    def "A date can be parsed and displayed in provided timezone"(){
+        given:
+        String date = "2021-06-30T00:12:33Z"
+
+        expect:
+        DateUtil.convertUTCDateToStringInTimeZone(date, TimeZone.getTimeZone("Australia/Sydney"), "dd/MM/yyyy") == "30/06/2021"
+    }
 }

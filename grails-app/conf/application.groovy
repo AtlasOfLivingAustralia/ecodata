@@ -106,6 +106,9 @@ if (!google.geocode.url) {
 if (!temp.file.cleanup.days) {
     temp.file.cleanup.days = 1
 }
+if(!paratoo.location.excluded) {
+    paratoo.location.excluded = ['location.vegetation-association-nvis']
+}
 access.expiry.maxEmails=500
 
 
@@ -531,6 +534,7 @@ ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/act
 // Used by ParatooService to sync available protocols
 paratoo.core.baseUrl = 'https://dev.core-api.monitor.tern.org.au/api'
 paratoo.excludeInterventionProtocols = true
+paratoo.core.documentationUrl = '/documentation/swagger.json'
 
 auth.baseUrl = 'https://auth-test.ala.org.au'
 userDetails.web.url = "${auth.baseUrl}/userdetails/"
@@ -1391,3 +1395,94 @@ elasticsearch {
     username = 'elastic'
     password = 'password'
 }
+
+// paratoo / monitor
+
+paratoo.defaultPlotLayoutDataModels =  [
+                [
+                        dataType: "geoMap",
+                        name: "plot_layout",
+                        validate: "required"
+                ],
+                [
+                        dataType: "list",
+                        name: "plot_visit",
+                        validate: "required",
+                        columns: [
+                                [
+                                        dataType: "date",
+                                        name: "end_date",
+                                        dwcAttribute: "eventDate"
+                                ],
+                                [
+                                        dataType: "text",
+                                        name: "visit_field_name"
+                                ],
+                                [
+                                        dataType: "date",
+                                        name: "start_date",
+                                        dwcAttribute: "eventDate"
+                                ]
+                        ]
+                ]
+        ]
+
+paratoo.defaultPlotLayoutViewModels = [
+                [
+                        type: "row",
+                        items: [
+                                [
+                                        type: "col",
+                                        items: [
+                                                [
+                                                        type: "section",
+                                                        title: "Plot Visit",
+                                                        preLabel: "Plot Visit",
+                                                        boxed: true,
+                                                        items: [
+                                                                [
+                                                                        type: "repeat",
+                                                                        source: "plot_visit",
+                                                                        userAddedRows: false,
+                                                                        items: [
+                                                                                [
+                                                                                        type: "row",
+                                                                                        class: "output-section",
+                                                                                        items: [
+                                                                                                [
+                                                                                                        type: "col",
+                                                                                                        items: [
+                                                                                                                [
+                                                                                                                        type: "date",
+                                                                                                                        source: "end_date",
+                                                                                                                        preLabel: "End Date"
+                                                                                                                ],
+                                                                                                                [
+                                                                                                                        type: "text",
+                                                                                                                        source: "visit_field_name",
+                                                                                                                        preLabel: "Visit Field Name"
+                                                                                                                ],
+                                                                                                                [
+                                                                                                                        type: "date",
+                                                                                                                        source: "start_date",
+                                                                                                                        preLabel: "Start Date"
+                                                                                                                ]
+                                                                                                        ]
+                                                                                                ]
+                                                                                        ]
+                                                                                ]
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ],
+                                                [
+                                                        type: "geoMap",
+                                                        source: "plot_layout",
+                                                        orientation: "vertical"
+                                                ]
+                                        ]
+                                ]
+                        ]
+                ]
+        ]
+

@@ -204,7 +204,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [:]
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [:], promise: null]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -230,7 +230,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [error:"Error"]
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [error:"Error"], promise: null]
 
         and:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR

@@ -1,8 +1,7 @@
 package au.org.ala.ecodata.paratoo
 
-import grails.databinding.BindingFormat
-import grails.validation.Validateable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import grails.validation.Validateable
 
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooCollection implements Validateable {
