@@ -23,6 +23,7 @@ class DateUtil {
 
     static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
     static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    static DateTimeFormatter DISPLAY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")
     static Date parse(String dateStr) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat)
         return format.parse(dateStr.replace("Z", "+0000"))
@@ -46,6 +47,11 @@ class DateUtil {
     static String formatAsDisplayDate(Date date) {
         ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())
         dateTime.format(DATE_FORMATTER)
+    }
+
+    static String formatAsDisplayDateTime(Date date) {
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())
+        dateTime.format(DISPLAY_DATE_TIME_FORMATTER)
     }
 
     /**

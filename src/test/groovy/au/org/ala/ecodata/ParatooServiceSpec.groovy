@@ -156,7 +156,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             assert dataSet.protocol == collectionId.protocolId
             assert dataSet.grantId == "g1"
             assert dataSet.progress == 'planned'
-            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(collectionId.eventTime)} (Project 1)"
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDateTime(collectionId.eventTime)} (Project 1)"
 
             [status: 'ok']
         }

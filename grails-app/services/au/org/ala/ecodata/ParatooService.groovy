@@ -755,7 +755,7 @@ class ParatooService {
         dataSet.progress = Activity.PLANNED
         String dataSetName = buildName(
                 paratooCollectionId.protocolId,
-                DateUtil.formatAsDisplayDate(paratooCollectionId.eventTime), project)
+                DateUtil.formatAsDisplayDateTime(paratooCollectionId.eventTime), project)
         dataSet.name = dataSetName
 
         dataSet
