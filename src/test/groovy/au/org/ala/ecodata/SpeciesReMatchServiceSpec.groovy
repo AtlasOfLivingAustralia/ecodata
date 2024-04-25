@@ -10,7 +10,7 @@ class SpeciesReMatchServiceSpec extends Specification implements ServiceUnitTest
     void setup() {
         service.cacheService = new CacheService()
         service.webService = Mock(WebService)
-        grailsApplication.config.bie.url = "http://localhost:8080"
+        grailsApplication.config.bie.url = "http://localhost:8080/"
     }
 
     void "test searchBie"() {

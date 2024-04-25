@@ -179,7 +179,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 ]
         )
         ParatooCollectionId paratooCollectionId = buildCollectionId()
-        Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap(), activityId: "123"]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
         Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true]
@@ -195,6 +195,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
         1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
         1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.delete("123", true) >> [status: 'ok']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
             (["guid-2": [

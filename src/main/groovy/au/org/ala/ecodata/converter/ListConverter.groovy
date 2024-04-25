@@ -54,15 +54,17 @@ class ListConverter implements RecordFieldConverter {
             speciesModels?.each { Map dataModel ->
                 RecordFieldConverter converter = RecordConverter.getFieldConverter(dataModel.dataType)
                 List<Map> recordFieldSets = converter.convert(row, dataModel)
-                Map speciesRecord = RecordConverter.overrideFieldValues(baseRecord, recordFieldSets[0])
+                if (recordFieldSets) {
+                    Map speciesRecord = RecordConverter.overrideFieldValues(baseRecord, recordFieldSets[0])
 
-                // We want to create a record in the DB only if species information is present
-                if(speciesRecord.outputSpeciesId) {
-                    speciesRecord.outputItemId = index++
-                    records << speciesRecord
-                } else {
-                    log.warn("Record [${speciesRecord}] does not contain full species information. " +
-                            "This is most likely a bug.")
+                    // We want to create a record in the DB only if species information is present
+                    if (speciesRecord.outputSpeciesId) {
+                        speciesRecord.outputItemId = index++
+                        records << speciesRecord
+                    } else {
+                        log.warn("Record [${speciesRecord}] does not contain full species information. " +
+                                "This is most likely a bug.")
+                    }
                 }
             }
 
