@@ -1201,6 +1201,67 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result == definition.output
     }
 
+    def "recursivelyTransformData should transform species data"() {
+
+        def dataModel = [
+                [
+                        "dataType"     : "species",
+                        "name"         : "lut",
+                        "x-lut-ref"    : "lut1",
+                ]
+        ]
+        def output = [
+                lut: [
+                    "id": 8,
+                    "symbol": "Cat",
+                    "label": "Cat",
+                    "description": "",
+                    "uri": "",
+                    "createdAt": "2024-03-26T02:39:32.116Z",
+                    "updatedAt": "2024-03-26T02:39:32.116Z"
+                ]
+        ]
+        String formName = "form name"
+
+        when:
+        def result = service.recursivelyTransformData(dataModel, output, formName, 1, null)
+        result.lut.remove('outputSpeciesId')
+
+        then:
+        result == [
+                lut: [
+                        commonName: "Cat",
+                        name: "Cat",
+                        taxonRank: null,
+                        scientificName: "Cat",
+                        guid: "A_GUID"
+                ]
+        ]
+
+        when:
+        dataModel = [
+                [
+                        "dataType"     : "species",
+                        "name"         : "lut"
+                ]
+        ]
+        output = [
+                lut: "Cat"
+        ]
+        result = service.recursivelyTransformData(dataModel, output, formName, 1, null)
+        result.lut.remove('outputSpeciesId')
+        then:
+        result == [
+                lut: [
+                        commonName: "Cat",
+                        name: "Cat",
+                        taxonRank: null,
+                        scientificName: "Cat",
+                        guid: "A_GUID"
+                ]
+        ]
+    }
+
     def "recursivelyTransformData should transform feature object based on provided protocol config"() {
         given:
         def dataModel = [

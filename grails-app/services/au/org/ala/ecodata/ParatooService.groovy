@@ -491,7 +491,12 @@ class ParatooService {
                 case "species":
                     String speciesName
                     try {
-                        speciesName = getProperty(output, model.name)?.first()
+                        if(model.containsKey(PARATOO_LUT_REF)) {
+                            speciesName = getProperty(output, model.name)?.label?.first()
+                        } else {
+                            speciesName = getProperty(output, model.name)?.first()
+                        }
+
                         output[model.name] = transformSpeciesName(speciesName)
                     } catch (Exception e) {
                         log.info("Error getting species name for ${model.name}: ${e.message}")
