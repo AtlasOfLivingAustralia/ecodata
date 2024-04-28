@@ -240,7 +240,6 @@ class ParatooService {
     Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project) {
         Activity.withSession { session ->
             int counter = 0
-            boolean forceActivityCreation = grailsApplication.config.getProperty('paratoo.forceActivityCreation', Boolean, false)
             Map surveyDataAndObservations = null
             Map response = null
             Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
@@ -281,19 +280,22 @@ class ParatooService {
                     dataSet.siteId = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
                 }
 
-                // make sure activity has not been created for this data set
-                if (!dataSet.activityId || forceActivityCreation) {
-                    // delete previously created activity if forceActivityCreation is true?
-
-                    // plot layout is of type geoMap. Therefore, expects a site id.
-                    if (surveyDataAndObservations.containsKey(PARATOO_DATAMODEL_PLOT_LAYOUT) && dataSet.siteId) {
-                        surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
-                    }
-                    String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId, userId)
-                    List records = recordService.getAllByActivity(activityId)
-                    dataSet.areSpeciesRecorded = records?.size() > 0
-                    dataSet.activityId = activityId
+                // plot layout is of type geoMap. Therefore, expects a site id.
+                if (surveyDataAndObservations.containsKey(PARATOO_DATAMODEL_PLOT_LAYOUT) && dataSet.siteId) {
+                    surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
                 }
+
+                // Delete previously created activity so that duplicate species records are not created.
+                // Updating existing activity will also create duplicates since it relies on outputSpeciesId to determine
+                // if a record is new and new ones are created by code.
+                if (dataSet.activityId) {
+                    activityService.delete(dataSet.activityId, true)
+                }
+
+                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId, userId)
+                List records = recordService.getAllByActivity(activityId)
+                dataSet.areSpeciesRecorded = records?.size() > 0
+                dataSet.activityId = activityId
 
                 dataSet.startDate = config.getStartDate(surveyDataAndObservations)
                 dataSet.endDate = config.getEndDate(surveyDataAndObservations)
@@ -489,7 +491,12 @@ class ParatooService {
                 case "species":
                     String speciesName
                     try {
-                        speciesName = getProperty(output, model.name)?.first()
+                        if(model.containsKey(PARATOO_LUT_REF)) {
+                            speciesName = getProperty(output, model.name)?.label?.first()
+                        } else {
+                            speciesName = getProperty(output, model.name)?.first()
+                        }
+
                         output[model.name] = transformSpeciesName(speciesName)
                     } catch (Exception e) {
                         log.info("Error getting species name for ${model.name}: ${e.message}")
@@ -755,7 +762,7 @@ class ParatooService {
         dataSet.progress = Activity.PLANNED
         String dataSetName = buildName(
                 paratooCollectionId.protocolId,
-                DateUtil.formatAsDisplayDate(paratooCollectionId.eventTime), project)
+                DateUtil.formatAsDisplayDateTime(paratooCollectionId.eventTime), project)
         dataSet.name = dataSetName
 
         dataSet

@@ -156,7 +156,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             assert dataSet.protocol == collectionId.protocolId
             assert dataSet.grantId == "g1"
             assert dataSet.progress == 'planned'
-            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDate(collectionId.eventTime)} (Project 1)"
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDateTime(collectionId.eventTime)} (Project 1)"
 
             [status: 'ok']
         }
@@ -179,7 +179,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 ]
         )
         ParatooCollectionId paratooCollectionId = buildCollectionId()
-        Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap(), activityId: "123"]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
         Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true]
@@ -195,6 +195,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
         1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
         1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.delete("123", true) >> [status: 'ok']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
             (["guid-2": [
@@ -1198,6 +1199,67 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         def result = service.cleanSwaggerDefinition(definition.input)
         then:
         result == definition.output
+    }
+
+    def "recursivelyTransformData should transform species data"() {
+
+        def dataModel = [
+                [
+                        "dataType"     : "species",
+                        "name"         : "lut",
+                        "x-lut-ref"    : "lut1",
+                ]
+        ]
+        def output = [
+                lut: [
+                    "id": 8,
+                    "symbol": "Cat",
+                    "label": "Cat",
+                    "description": "",
+                    "uri": "",
+                    "createdAt": "2024-03-26T02:39:32.116Z",
+                    "updatedAt": "2024-03-26T02:39:32.116Z"
+                ]
+        ]
+        String formName = "form name"
+
+        when:
+        def result = service.recursivelyTransformData(dataModel, output, formName, 1, null)
+        result.lut.remove('outputSpeciesId')
+
+        then:
+        result == [
+                lut: [
+                        commonName: "Cat",
+                        name: "Cat",
+                        taxonRank: null,
+                        scientificName: "Cat",
+                        guid: "A_GUID"
+                ]
+        ]
+
+        when:
+        dataModel = [
+                [
+                        "dataType"     : "species",
+                        "name"         : "lut"
+                ]
+        ]
+        output = [
+                lut: "Cat"
+        ]
+        result = service.recursivelyTransformData(dataModel, output, formName, 1, null)
+        result.lut.remove('outputSpeciesId')
+        then:
+        result == [
+                lut: [
+                        commonName: "Cat",
+                        name: "Cat",
+                        taxonRank: null,
+                        scientificName: "Cat",
+                        guid: "A_GUID"
+                ]
+        ]
     }
 
     def "recursivelyTransformData should transform feature object based on provided protocol config"() {
