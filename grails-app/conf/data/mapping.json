@@ -60,6 +60,10 @@
         "fundingType": {
           "type" : "keyword"
         },
+        "fundingVerificationDate": {
+          "type": "date",
+          "ignore_malformed": true
+        },
         "status": {
           "type" : "keyword"
         },

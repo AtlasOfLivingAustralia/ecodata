@@ -227,7 +227,7 @@ class WebService {
         }
     }
 
-    Map doPost(String url, Map postBody) {
+    Map doPost(String url, Map postBody, boolean addUserId = true, Map headers = null) {
         HttpURLConnection conn = null
         def charEncoding = 'utf-8'
         try {
@@ -237,11 +237,20 @@ class WebService {
             conn.setRequestProperty("Content-Type", "application/json;charset=${charEncoding}");
             conn.setRequestProperty("Authorization", "${grailsApplication.config.getProperty('api_key')}");
 
-            def user = getUserService().getCurrentUserDetails()
-            if (user && user.userId) {
-                conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)
-                conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding))
+            if (addUserId) {
+                def user = getUserService().getCurrentUserDetails()
+                if (user && user.userId) {
+                    conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)
+                    conn.setRequestProperty("Cookie", "ALA-Auth=" + java.net.URLEncoder.encode(user.userName, charEncoding))
+                }
             }
+
+            if (headers) {
+                headers.each {key, value  ->
+                    conn.setRequestProperty(key, value)
+                }
+            }
+
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
             wr.write((postBody as JSON).toString())
             wr.flush()

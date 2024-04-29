@@ -1,12 +1,7 @@
 package au.org.ala.ecodata
 
 import au.ala.org.ws.security.SkipApiKeyCheck
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.paratoo.ParatooCollectionId
-import au.org.ala.ecodata.paratoo.ParatooPlotSelection
-import au.org.ala.ecodata.paratoo.ParatooPlotSelectionData
-import au.org.ala.ecodata.paratoo.ParatooProject
-import au.org.ala.ecodata.paratoo.ParatooToken
+import au.org.ala.ecodata.paratoo.*
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -33,7 +28,7 @@ import javax.ws.rs.PUT
 import javax.ws.rs.Path
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @Slf4j
-@au.ala.org.ws.security.RequireApiKey(scopes=["profile", "openid"])
+@au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"])
 @OpenAPIDefinition(
         info = @Info(
                 title = "Ecodata APIs",
@@ -55,17 +50,17 @@ import javax.ws.rs.Path
                 type = SecuritySchemeType.OAUTH2,
                 flows = @OAuthFlows(
                         clientCredentials = @OAuthFlow(
-                            authorizationUrl = "https://auth-test.ala.org.au/cas/oidc/authorize",
-                            tokenUrl = "https://auth-test.ala.org.au/cas/oidc/token",
-                            refreshUrl = "https://auth-test.ala.org.au/cas/oidc/refresh",
-                            scopes = [
-                                    @OAuthScope(name="openid"),
-                                    @OAuthScope(name="profile"),
-                                    @OAuthScope(name="ala", description = "CAS scope"),
-                                    @OAuthScope(name="roles", description = "CAS scope"),
-                                    @OAuthScope(name="ala/attrs", description = "Cognito scope"),
-                                    @OAuthScope(name="ala/roles", description = "Cognito scope")
-                            ]
+                                authorizationUrl = "https://auth-test.ala.org.au/cas/oidc/authorize",
+                                tokenUrl = "https://auth-test.ala.org.au/cas/oidc/token",
+                                refreshUrl = "https://auth-test.ala.org.au/cas/oidc/refresh",
+                                scopes = [
+                                        @OAuthScope(name = "openid"),
+                                        @OAuthScope(name = "profile"),
+                                        @OAuthScope(name = "ala", description = "CAS scope"),
+                                        @OAuthScope(name = "roles", description = "CAS scope"),
+                                        @OAuthScope(name = "ala/attrs", description = "Cognito scope"),
+                                        @OAuthScope(name = "ala/roles", description = "Cognito scope")
+                                ]
                         )
                 ),
                 scheme = "bearer"
@@ -250,7 +245,7 @@ class ParatooController {
             error(collectionId.errors)
         } else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.surveyId.projectId, collectionId.surveyId.protocol.id)
+            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.projectId, collectionId.protocolId)
             if (hasProtocol) {
                 Map mintResults = paratooService.mintCollectionId(userId, collectionId)
                 if (mintResults.error) {
@@ -282,24 +277,28 @@ class ParatooController {
 
         if (log.isDebugEnabled()) {
             log.debug("ParatooController::submitCollection")
-            log.debug(request.JSON.toString())
         }
         if (collection.hasErrors()) {
             error(collection.errors)
         } else {
             String userId = userService.currentUserDetails.userId
-            Map dataSet = paratooService.findDataSet(userId, collection.orgMintedIdentifier)
-
-            boolean hasProtocol = paratooService.protocolWriteCheck(userId, dataSet.project.id, collection.protocol.id)
-            if (hasProtocol) {
-                Map result = paratooService.submitCollection(collection, dataSet.project)
-                if (!result.error) {
-                    respond([success: true])
+            Map dataSet = paratooService.findDataSet(userId, collection.orgMintedUUID)
+            if (dataSet?.dataSet?.surveyId) {
+                ParatooCollectionId collectionId = ParatooCollectionId.fromMap(dataSet.dataSet.surveyId)
+                boolean hasProtocol = paratooService.protocolWriteCheck(userId, dataSet.project.id, collectionId.protocolId)
+                if (hasProtocol) {
+                    Map result = paratooService.submitCollection(collection, dataSet.project)
+                    if (!result.updateResult.error) {
+                        respond([success: true])
+                    } else {
+                        error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.updateResult.error)
+                    }
                 } else {
-                    error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.error)
+                    error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
                 }
+
             } else {
-                error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
+                error(HttpStatus.SC_NOT_FOUND, "No data set found with orgMintedUUID=${collection.orgMintedUUID}")
             }
         }
     }
@@ -394,8 +393,8 @@ class ParatooController {
                 plotSelections.addAll(it.plots)
             }
         }
-        plotSelections = plotSelections.unique {it.siteId} ?: []
-        respond plots:plotSelections
+        plotSelections = plotSelections.unique { it.siteId } ?: []
+        respond plots: plotSelections
     }
 
     private def addOrUpdatePlotSelection(ParatooPlotSelection plotSelection) {
@@ -440,7 +439,7 @@ class ParatooController {
             ),
             tags = "Org Interface"
     )
-    def updateProjectSites(@Parameter(name = "id", description = "Project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))String id) {
+    def updateProjectSites(@Parameter(name = "id", description = "Project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")) String id) {
         String userId = userService.currentUserDetails.userId
         List projects = paratooService.userProjects(userId)
         ParatooProject project = projects?.find { it.id == id }
@@ -453,20 +452,19 @@ class ParatooController {
         Map result = paratooService.updateProjectSites(project, data.data, projects)
 
         if (result?.error) {
-            respond([message:result.error], status:HttpStatus.SC_INTERNAL_SERVER_ERROR)
-        }
-        else {
-            respond(buildUpdateProjectSitesResponse(id, data.data), status:HttpStatus.SC_OK)
+            respond([message: result.error], status: HttpStatus.SC_INTERNAL_SERVER_ERROR)
+        } else {
+            respond(buildUpdateProjectSitesResponse(id, data.data), status: HttpStatus.SC_OK)
         }
     }
 
     private static Map buildUpdateProjectSitesResponse(String id, Map data) {
         [
-            "data": [
-                    "id": id,
-                    "attributes": data
-            ],
-            meta: [:]
+                "data": [
+                        "id"        : id,
+                        "attributes": data
+                ],
+                meta  : [:]
         ]
     }
 

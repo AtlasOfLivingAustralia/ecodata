@@ -23,7 +23,7 @@ class GenericFieldConverter implements RecordFieldConverter {
 
         record << getDwcAttributes(data, dwcMappings)
 
-        if (data.dwcAttribute) {
+        if (data?.dwcAttribute) {
             record[data.dwcAttribute] = data.value
         }
 
@@ -34,9 +34,9 @@ class GenericFieldConverter implements RecordFieldConverter {
     private Double getLatitude(Map data) {
         Double latitude = null
 
-        if (data.decimalLatitude) {
+        if (data?.decimalLatitude) {
             latitude = toDouble(data.decimalLatitude)
-        } else if (data.locationLatitude) {
+        } else if (data?.locationLatitude) {
             latitude = toDouble(data.locationLatitude)
         }
 
@@ -46,9 +46,9 @@ class GenericFieldConverter implements RecordFieldConverter {
     private Double getLongitude(Map data) {
         Double longitude = null
 
-        if (data.decimalLongitude) {
+        if (data?.decimalLongitude) {
             longitude = toDouble(data.decimalLongitude)
-        } else if (data.locationLongitude) {
+        } else if (data?.locationLongitude) {
             longitude = toDouble(data.locationLongitude)
         }
 

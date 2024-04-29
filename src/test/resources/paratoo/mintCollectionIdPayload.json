@@ -1,0 +1,21 @@
+{
+  "survey_metadata": {
+    "survey_details": {
+      "survey_model": "coarse-woody-debris-survey",
+      "time": "2024-03-18T20:00:25.365Z",
+      "uuid": "c670ab74-ffbe-4a49-9798-a096c4de918d",
+      "project_id": "p1",
+      "protocol_id": "guid-1",
+      "protocol_version": "1"
+    },
+    "provenance":{
+      "version_app": "0.0.1-xxxxx",
+      "version_core": "0.1.0-1fb53f81",
+      "version_core_documentation": "0.0.1-xxxxx",
+      "version_org": "4.4-SNAPSHOT",
+      "system_app": "monitor",
+      "system_core": "Monitor-dummy-data-production",
+      "system_org": "MERIT"
+    }
+  }
+}

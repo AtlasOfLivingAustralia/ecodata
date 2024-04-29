@@ -151,8 +151,8 @@ class RecordConverter {
     public static Map overrideFieldValues(Map source, Map additional) {
 
         Map result = [:]
-        result << source
-        result << additional
+        result << (source ?: [:])
+        result << (additional ?: [:])
 
         result
     }

@@ -13,7 +13,7 @@ class ParatooPlotSelectionData {
     String plot_label
     ParatooPlotSelectionLocation recommended_location
     String uuid
-    String comment
+    String comments
 }
 
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])

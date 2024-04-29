@@ -17,6 +17,8 @@ class ParatooProject {
 
     String id
     String name
+    // Used when creating voucher labels
+    String grantID
     AccessLevel accessLevel
     Project project
     List<ActivityForm> protocols

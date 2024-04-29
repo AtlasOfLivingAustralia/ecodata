@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.converter.ISODateBindingConverter
+
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -21,6 +23,7 @@ class DateUtil {
 
     static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
     static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    static DateTimeFormatter DISPLAY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")
     static Date parse(String dateStr) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat)
         return format.parse(dateStr.replace("Z", "+0000"))
@@ -44,6 +47,11 @@ class DateUtil {
     static String formatAsDisplayDate(Date date) {
         ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())
         dateTime.format(DATE_FORMATTER)
+    }
+
+    static String formatAsDisplayDateTime(Date date) {
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())
+        dateTime.format(DISPLAY_DATE_TIME_FORMATTER)
     }
 
     /**
@@ -126,5 +134,10 @@ class DateUtil {
             timeZone = timeZone ?: TimeZone.default
         }
         return timeZone
+    }
+
+    static String convertUTCDateToStringInTimeZone (String dateStr, TimeZone clientTimezone = TimeZone.default, String format = "dd/MM/yyyy HH:mm:ss Z z") {
+        Date date = new ISODateBindingConverter().convert(dateStr, ISODateBindingConverter.FORMAT)
+        date.format(format, clientTimezone)
     }
 }
