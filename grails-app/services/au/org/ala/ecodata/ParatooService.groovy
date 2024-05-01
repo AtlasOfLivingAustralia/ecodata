@@ -18,6 +18,7 @@ import static grails.async.Promises.task
  */
 @Slf4j
 class ParatooService {
+    static final Object LOCK = new Object()
     static final String DATASET_DATABASE_TABLE = 'Database Table'
     static final int PARATOO_MAX_RETRIES = 3
     static final String PARATOO_PROTOCOL_PATH = '/protocols'
@@ -182,18 +183,21 @@ class ParatooService {
 
         dataSet.surveyId = paratooCollectionId.toMap() // No codec to save this to mongo
 
-        if (!project.custom) {
-            project.custom = [:]
-        }
-        if (!project.custom.dataSets) {
-            project.custom.dataSets = []
-        }
-
         dataSet.orgMintedIdentifier = paratooCollectionId.encodeAsOrgMintedIdentifier()
 
         log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
-        project.custom.dataSets << dataSet
-        Map result = projectService.update([custom: project.custom], projectId, false)
+        Map result
+        synchronized (LOCK) {
+            Map latestProject = projectService.get(projectId)
+            if (!latestProject.custom) {
+                latestProject.custom = [:]
+            }
+            if (!latestProject.custom.dataSets) {
+                latestProject.custom.dataSets = []
+            }
+            latestProject.custom.dataSets << dataSet
+            result = projectService.update([custom: latestProject.custom], projectId, false)
+        }
 
         if (!result.error) {
             result.orgMintedIdentifier = dataSet.orgMintedIdentifier
@@ -233,7 +237,15 @@ class ParatooService {
         promise.onError { Throwable e ->
             log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
         }
-        def result = projectService.update([custom: project.project.custom], project.id, false)
+
+        def result
+        synchronized (LOCK) {
+            Map latestProject = projectService.get(project.id)
+            Map latestDataSet = latestProject.custom?.dataSets?.find { it.dataSetId == collection.orgMintedUUID }
+            latestDataSet.putAll(dataSet)
+            result = projectService.update([custom: latestProject.custom], project.id, false)
+        }
+
         [updateResult: result, promise: promise]
     }
 
@@ -302,10 +314,12 @@ class ParatooService {
                 dataSet.format = DATASET_DATABASE_TABLE
                 dataSet.sizeUnknown = true
 
-                Map latestProject = projectService.get(project.project.projectId)
-                Map latestDataSet = latestProject.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
-                latestDataSet.putAll(dataSet)
-                projectService.update([custom: latestProject.custom], project.id, false)
+                synchronized (LOCK) {
+                    Map latestProject = projectService.get(project.project.projectId)
+                    Map latestDataSet = latestProject.custom?.dataSets?.find { it.dataSetId == collection.orgMintedUUID }
+                    latestDataSet.putAll(dataSet)
+                    projectService.update([custom: latestProject.custom], project.id, false)
+                }
             }
         }
     }

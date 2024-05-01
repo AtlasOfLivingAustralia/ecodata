@@ -142,11 +142,13 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         setup:
         ParatooCollectionId collectionId = buildCollectionId()
         String projectId = 'p1'
+        Map project = GormMongoUtil.extractDboProperties(Project.findByProjectId(projectId).getProperty("dbo"))
 
         when:
         Map result = service.mintCollectionId('u1', collectionId)
 
         then:
+        1 * projectService.get(projectId) >> project
         1 * projectService.update(_, projectId, false) >> { data, pId, updateCollectory ->
             Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
             assert dataSet.surveyId != null
@@ -192,7 +194,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
-        1 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
+        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
         1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
         1 * activityService.create(_) >> [activityId: '123']
@@ -303,7 +305,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * webService.doPost(*_) >> [resp: surveyData]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         2 * projectService.update(_, projectId, false) >> [status: 'ok']
-        1 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
+        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
         1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
         1 * activityService.create(_) >> [activityId: '123']
         1 * recordService.getAllByActivity('123') >> []
