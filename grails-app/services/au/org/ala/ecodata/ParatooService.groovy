@@ -228,11 +228,17 @@ class ParatooService {
 
         Map authHeader = getAuthHeader()
         Promise promise = task {
+            userService.setCurrentUser(userId)
             asyncFetchCollection(collection, authHeader, userId, project)
         }
         promise.onError { Throwable e ->
             log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
+            userService.clearCurrentUser()
         }
+        promise.onComplete { Map result ->
+            userService.clearCurrentUser()
+        }
+
         def result = projectService.update([custom: project.project.custom], project.id, false)
         [updateResult: result, promise: promise]
     }
