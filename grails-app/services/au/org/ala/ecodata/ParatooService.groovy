@@ -302,7 +302,10 @@ class ParatooService {
                 dataSet.format = DATASET_DATABASE_TABLE
                 dataSet.sizeUnknown = true
 
-                projectService.update([custom: project.project.custom], project.id, false)
+                Map latestProject = projectService.get(project.project.projectId)
+                Map latestDataSet = latestProject.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
+                latestDataSet.putAll(dataSet)
+                projectService.update([custom: latestProject.custom], project.id, false)
             }
         }
     }
