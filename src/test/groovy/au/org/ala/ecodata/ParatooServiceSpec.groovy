@@ -142,7 +142,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         setup:
         ParatooCollectionId collectionId = buildCollectionId()
         String projectId = 'p1'
-        Map project = GormMongoUtil.extractDboProperties(Project.findByProjectId(projectId).getProperty("dbo"))
+        Map project = GormMongoUtil.extractDboProperties(getProject())
 
         when:
         Map result = service.mintCollectionId('u1', collectionId)
@@ -336,10 +336,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    private void setupData() {
-        Hub hub = new Hub(hubId: "merit", urlPath: "merit")
-        hub.save(failOnError: true, flush: true)
-        Project project = new Project(
+    private Map getProject(){
+        [
                 projectId:"p1",
                 name:"Project 1",
                 grantId:"g1",
@@ -352,7 +350,14 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         monitoring:[rows:[[protocols:['protocol category 2', 'protocol category 3']]]]
                 ], dataSets: [[
                                       dataSetId:'c1'
-                              ]]])
+                              ]]]
+        ]
+    }
+
+    private void setupData() {
+        Hub hub = new Hub(hubId: "merit", urlPath: "merit")
+        hub.save(failOnError: true, flush: true)
+        Project project = new Project(getProject())
         project.save(failOnError: true, flush: true)
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId: 'p1', entityType: Project.name)
         userPermission.save(failOnError: true, flush: true)
