@@ -119,6 +119,7 @@ class ReportGroups {
 
     static class DateGroup extends SinglePropertyGroupingStrategy {
 
+        static final String MISSING_DATE_GROUP_NAME = "Date missing"
         static DateTimeFormatter parser = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.default)
         DateTimeFormatter dateFormatter
         List buckets
@@ -156,6 +157,10 @@ class ReportGroups {
 
         def group(data) {
             def value = propertyAccessor.getPropertyValue(data)
+
+            if (!value) {
+                return MISSING_DATE_GROUP_NAME // Use a special group for null / empty dates.
+            }
 
             int result = bucketIndex(value)
 
