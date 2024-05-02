@@ -26,6 +26,11 @@ class ProjectService {
     static final ENHANCED = 'enhanced'
     static final PRIVATE_SITES_REMOVED = 'privatesitesremoved'
 
+    /** A Map containing a per-project lock for synchronizing locks for updates.  The purpose of this
+     * is to support concurrent edits on different project data set summaries which are currently modelled as
+     * an embedded array but can be added and updated by both the UI and the Monitor (Parataoo) application API */
+    static final Map PROJECT_UPDATE_LOCKS = Collections.synchronizedMap([:].withDefault{ new Object() })
+
     GrailsApplication grailsApplication
     MessageSource messageSource
     SessionLocaleResolver localeResolver
@@ -50,6 +55,8 @@ class ProjectService {
   /*  def getCommonService() {
         grailsApplication.mainContext.commonService
     }*/
+
+
 
     def getBrief(listOfIds, version = null) {
         if (listOfIds) {
@@ -469,30 +476,32 @@ class ProjectService {
     }
 
     def update(Map props, String id, Boolean shouldUpdateCollectory = true) {
-        Project project = Project.findByProjectId(id)
-        if (project) {
-            // retrieve any project activities associated with the project
-            List projectActivities = projectActivityService.getAllByProject(id)
-            props = includeProjectFundings(props)
-            props = includeProjectActivities(props, projectActivities)
+        synchronized (PROJECT_UPDATE_LOCKS.get(id)) {
+            Project project = Project.findByProjectId(id)
+            if (project) {
+                // retrieve any project activities associated with the project
+                List projectActivities = projectActivityService.getAllByProject(id)
+                props = includeProjectFundings(props)
+                props = includeProjectActivities(props, projectActivities)
 
-            try {
-                bindEmbeddedProperties(project, props)
-                commonService.updateProperties(project, props)
-                if (shouldUpdateCollectory) {
-                    updateCollectoryLinkForProject(project, props)
+                try {
+                    bindEmbeddedProperties(project, props)
+                    commonService.updateProperties(project, props)
+                    if (shouldUpdateCollectory) {
+                        updateCollectoryLinkForProject(project, props)
+                    }
+                    return [status: 'ok']
+                } catch (Exception e) {
+                    Project.withSession { session -> session.clear() }
+                    def error = "Error updating project ${id} - ${e.message}"
+                    log.error error, e
+                    return [status: 'error', error: error]
                 }
-                return [status: 'ok']
-            } catch (Exception e) {
-                Project.withSession { session -> session.clear() }
-                def error = "Error updating project ${id} - ${e.message}"
-                log.error error, e
+            } else {
+                def error = "Error updating project - no such id ${id}"
+                log.error error
                 return [status: 'error', error: error]
             }
-        } else {
-            def error = "Error updating project - no such id ${id}"
-            log.error error
-            return [status: 'error', error: error]
         }
     }
 
@@ -1052,6 +1061,40 @@ class ProjectService {
         }
 
         records
+    }
+
+    /**
+     * Updates a single data set associated with a project.  Because the datasets are stored as an embedded
+     * array in the Project collection, this method is synchronized on the project to avoid concurrent updates to
+     * different data sets overwriting each other.
+     * Due to the way it's been modelled as an embedded array, the client is allowed to supply a dataSetId
+     * when creating a new data set (e.g. a data set created by a submission from the Monitor app uses the
+     * submissionId as the dataSetId).
+     * @param projectId The project to update
+     * @param dataSet the data set to update.
+     * @return
+     */
+    Map updateDataSet(String projectId, Map dataSet) {
+        synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
+            Project project = Project.findByProjectId(projectId)
+
+            if (!dataSet.dataSetId) {
+                dataSet.dataSetId = Identifiers.getNew(true, '')
+            }
+            Map matchingDataSet = project.custom?.dataSets?.find { it.dataSetId == dataSet.dataSetId }
+            if (matchingDataSet) {
+                matchingDataSet.putAll(dataSet)
+            } else {
+                if (!project.custom) {
+                    project.custom = [:]
+                }
+                if (!project.custom?.dataSets) {
+                    project.custom.dataSets = []
+                }
+                project.custom.dataSets.add(dataSet)
+            }
+            update([custom: project.custom], project.projectId, false)
+        }
     }
 
 }

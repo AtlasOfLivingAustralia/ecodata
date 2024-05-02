@@ -138,19 +138,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    void "The service can create a data set from a submitted collection"() {
+    void "The service should create a data set in the planned state when the mintCollectionId method is called"() {
         setup:
         ParatooCollectionId collectionId = buildCollectionId()
         String projectId = 'p1'
-        Map project = GormMongoUtil.extractDboProperties(getProject())
 
         when:
         Map result = service.mintCollectionId('u1', collectionId)
 
         then:
-        1 * projectService.get(projectId) >> project
-        1 * projectService.update(_, projectId, false) >> { data, pId, updateCollectory ->
-            Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
+        1 * projectService.updateDataSet(projectId, _) >> { pId, dataSet ->
+            pId == projectId
             assert dataSet.surveyId != null
             assert dataSet.surveyId.eventTime != null
             assert dataSet.surveyId.userId == 'org1'
@@ -194,9 +192,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
-        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
-        1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
-        1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
+        1 * projectService.updateDataSet(projectId, expectedDataSetAsync) >> [status: 'ok']
+        1 * projectService.updateDataSet(projectId, expectedDataSetSync) >> [status: 'ok']
         1 * activityService.create({
             it.startDate == "2023-09-01T00:00:00Z" && it.endDate == "2023-09-01T00:00:00Z" &&
             it.plannedStartDate == "2023-09-01T00:00:00Z" && it.plannedEndDate == "2023-09-01T00:00:00Z" &&
@@ -310,8 +307,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         1 * webService.doPost(*_) >> [resp: surveyData]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
-        2 * projectService.update(_, projectId, false) >> [status: 'ok']
-        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
+        2 * projectService.updateDataSet(projectId, _) >> [status: 'ok']
         1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
         1 * activityService.create({
             it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
