@@ -196,6 +196,10 @@ class UrlMappings {
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
+        "/ws/dataSetSummary/$projectId/$dataSetId?"(controller :'dataSetSummary') {
+
+            action = [POST:'update', PUT:'update', DELETE:'delete']
+        }
 
         "/ws/document/download"(controller:"document", action:"download")
 

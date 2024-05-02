@@ -43,4 +43,18 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         0 * projectService.updateDataSet(_, _)
         response.status == HttpStatus.SC_BAD_REQUEST
     }
+
+    void "The delete method delegates to the projectService"() {
+        setup:
+        String projectId = 'p1'
+        String dataSetSummaryId = 'd1'
+
+        when:
+        request.method = 'DELETE'
+        controller.delete(projectId, dataSetSummaryId)
+
+        then:
+        1 * projectService.deleteDataSet(projectId, dataSetSummaryId) >> [status:'ok']
+        response.json == ['status':'ok']
+    }
 }

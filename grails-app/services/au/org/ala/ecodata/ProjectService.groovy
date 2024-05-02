@@ -1077,7 +1077,9 @@ class ProjectService {
     Map updateDataSet(String projectId, Map dataSet) {
         synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
             Project project = Project.findByProjectId(projectId)
-
+            if (!project) {
+                return [status: 'error', error: "No project exists with projectId=${projectId}"]
+            }
             if (!dataSet.dataSetId) {
                 dataSet.dataSetId = Identifiers.getNew(true, '')
             }
@@ -1094,6 +1096,20 @@ class ProjectService {
                 project.custom.dataSets.add(dataSet)
             }
             update([custom: project.custom], project.projectId, false)
+        }
+    }
+
+    Map deleteDataSet(String projectId, String dataSetId) {
+        synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
+            Project project = Project.findByProjectId(projectId)
+
+            boolean foundMatchingDataSet = project?.custom?.dataSets?.removeAll { it.dataSetId == dataSetId }
+            if (!foundMatchingDataSet) {
+                return [status: 'error', error: 'No such data set']
+            }
+            else {
+                update([custom: project.custom], project.projectId, false)
+            }
         }
     }
 

@@ -806,4 +806,26 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         actual3.custom.dataSets == [dataSet, dataSet2]
     }
 
+
+    void "The deleteDataSet method will delete a dataSet from a Project"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet]])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.deleteDataSet(project.projectId, 'd1')
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == []
+
+    }
+
 }
