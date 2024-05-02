@@ -217,6 +217,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             ]] as JSON).toString()
         }
         1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
 
         and:
         result.updateResult == [status: 'ok']
@@ -304,6 +305,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         when:
         Map result = service.submitCollection(collection, project)
         waitAll(result.promise)
+        println ("finished waiting")
 
         then:
         1 * webService.doPost(*_) >> [resp: surveyData]
@@ -330,6 +332,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             ]] as JSON).toString()
         }
         1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
 
         and:
         site.name == "SATFLB0001 - Control (100 x 100)"
