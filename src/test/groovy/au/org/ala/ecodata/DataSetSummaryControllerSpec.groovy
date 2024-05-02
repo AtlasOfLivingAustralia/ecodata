@@ -20,6 +20,7 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         Map dataSetSummary = [dataSetId:'d1', name:'Data set 1']
 
         when:
+        request.method = 'POST'
         request.json = dataSetSummary
         controller.update(projectId)
 
@@ -34,6 +35,7 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         Map dataSetSummary = [dataSetId: 'd1', name: 'Data set 1']
 
         when:
+        request.method = 'POST'
         request.json = dataSetSummary
         controller.update()
 

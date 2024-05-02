@@ -13,15 +13,16 @@ class DataSetSummaryController {
     def update(String projectId) {
         Map dataSet = request.JSON
 
-        if (!projectId && !dataSet.projectId) {
-            respond status: 400, message: "projectId is required"
+        if (!projectId) {
+            projectId = dataSet.projectId
+        }
+        if (!projectId) {
+            render status:  HttpStatus.SC_BAD_REQUEST, text: "projectId is required"
             return
         }
 
-        projectId = projectId || dataSet.projectId
-
         if (dataSet.projectId && dataSet.projectId != projectId) {
-            respond status: HttpStatus.SC_BAD_REQUEST, message: "projectId must match the data set projectId"
+            render status: HttpStatus.SC_BAD_REQUEST, text: "projectId must match the data set projectId"
             return
         }
 
