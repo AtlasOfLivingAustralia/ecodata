@@ -41,7 +41,8 @@
           "system_org": "MERIT"
         }
       },
-      "start_date": "2023-09-22T00:59:47.807Z",
+      "start_date_time": "2023-09-22T00:59:47.807Z",
+      "end_date_time": "2023-09-23T00:59:47.807Z",
       "createdAt": "2023-09-22T01:05:19.981Z",
       "updatedAt": "2023-09-22T01:05:19.981Z",
       "plot_size": {

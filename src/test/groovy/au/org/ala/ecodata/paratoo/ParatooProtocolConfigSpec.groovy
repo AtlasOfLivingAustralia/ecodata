@@ -100,9 +100,7 @@ class ParatooProtocolConfigSpec extends Specification {
         Map observation = apiOutput.collections
         Map floristicsSurveyConfig = [
                 apiEndpoint:'floristics-veg-survey-lites',
-                usesPlotLayout:true,
-                startDatePath: 'plot_visit.start_date',
-                endDatePath: 'plot_visit.end_date'
+                usesPlotLayout:true
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(floristicsSurveyConfig)
         config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: apiOutput.survey_metadata]))
@@ -134,8 +132,8 @@ class ParatooProtocolConfigSpec extends Specification {
         transformData(observation, activityForm, config)
 
         then:
-        config.getStartDate(observation) == "2024-04-08T01:23:28Z"
-        config.getEndDate(observation) == "2024-04-10T01:23:28Z"
+        config.getStartDate(observation) == "2022-09-21T01:55:44Z"
+        config.getEndDate(observation) == "2022-09-21T01:55:44Z"
         config.getGeoJson(observation) == [type: "Feature", geometry: [type: "Polygon", coordinates: [[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]], properties: [name: "QDASEQ0001 - Control (100 x 100)", externalId: 1, description: "QDASEQ0001 - Control (100 x 100)", notes: "some comment"]]
     }
 
@@ -144,9 +142,7 @@ class ParatooProtocolConfigSpec extends Specification {
         Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
         Map basalAreaDbhMeasureSurveyConfig = [
                 apiEndpoint:'basal-area-dbh-measure-surveys',
-                usesPlotLayout:true,
-                startDatePath: 'start_date',
-                endDatePath: 'start_date',
+                usesPlotLayout:true
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(basalAreaDbhMeasureSurveyConfig)
         config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
@@ -185,8 +181,8 @@ class ParatooProtocolConfigSpec extends Specification {
         transformData(observation, activityForm, config)
 
         expect:
-        config.getStartDate(observation) == "2024-03-28T03:17:01Z"
-        config.getEndDate(observation) == "2024-03-28T03:17:01Z"
+        config.getStartDate(observation) == "2023-09-22T00:59:47Z"
+        config.getEndDate(observation) == "2023-09-23T00:59:47Z"
         config.getGeoJson(observation) == [
                 type      : "Feature",
                 geometry  : [
@@ -211,9 +207,7 @@ class ParatooProtocolConfigSpec extends Specification {
         Map opportunisticSurveyConfig = [
                 apiEndpoint   : 'opportunistic-surveys',
                 usesPlotLayout: false,
-                geometryType  : 'Point',
-                startDatePath : 'start_date_time',
-                endDatePath   : 'end_date_time'
+                geometryType  : 'Point'
         ]
         ActivityForm activityForm = new ActivityForm(
                 name: "aParatooForm 1",

@@ -297,6 +297,11 @@ class ParatooService {
                     surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
                 }
 
+                dataSet.startDate = config.getStartDate(surveyDataAndObservations)
+                dataSet.endDate = config.getEndDate(surveyDataAndObservations)
+                dataSet.format = DATASET_DATABASE_TABLE
+                dataSet.sizeUnknown = true
+
                 // Delete previously created activity so that duplicate species records are not created.
                 // Updating existing activity will also create duplicates since it relies on outputSpeciesId to determine
                 // if a record is new and new ones are created by code.
@@ -304,15 +309,10 @@ class ParatooService {
                     activityService.delete(dataSet.activityId, true)
                 }
 
-                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId, userId)
+                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet, userId)
                 List records = recordService.getAllByActivity(activityId)
                 dataSet.areSpeciesRecorded = records?.size() > 0
                 dataSet.activityId = activityId
-
-                dataSet.startDate = config.getStartDate(surveyDataAndObservations)
-                dataSet.endDate = config.getEndDate(surveyDataAndObservations)
-                dataSet.format = DATASET_DATABASE_TABLE
-                dataSet.sizeUnknown = true
 
                 synchronized (LOCK) {
                     Map latestProject = projectService.get(project.project.projectId)
@@ -456,14 +456,19 @@ class ParatooService {
      * @param siteId
      * @return
      */
-    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, String siteId, String userId) {
+    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, Map dataSet, String userId) {
         Map activityProps = [
                 type             : activityForm.name,
                 formVersion      : activityForm.formVersion,
                 description      : "Activity submitted by monitor",
                 projectId        : collection.projectId,
                 publicationStatus: "published",
-                siteId           : siteId,
+                siteId           : dataSet.siteId,
+                startDate        : dataSet.startDate,
+                endDate          : dataSet.endDate,
+                plannedStartDate : dataSet.startDate,
+                plannedEndDate   : dataSet.endDate,
+                externalIds      : [new ExternalId(idType: ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: dataSet.dataSetId)],
                 userId           : userId,
                 outputs          : [[
                                             data: surveyObservations,

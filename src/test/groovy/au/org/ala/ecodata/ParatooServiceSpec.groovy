@@ -197,7 +197,11 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
         1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
-        1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.create({
+            it.startDate == "2023-09-01T00:00:00Z" && it.endDate == "2023-09-01T00:00:00Z" &&
+            it.plannedStartDate == "2023-09-01T00:00:00Z" && it.plannedEndDate == "2023-09-01T00:00:00Z" &&
+            it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
         1 * activityService.delete("123", true) >> [status: 'ok']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
@@ -307,7 +311,11 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         2 * projectService.update(_, projectId, false) >> [status: 'ok']
         2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
         1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
-        1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
             (["guid-3": [
