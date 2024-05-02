@@ -142,11 +142,13 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         setup:
         ParatooCollectionId collectionId = buildCollectionId()
         String projectId = 'p1'
+        Map project = GormMongoUtil.extractDboProperties(getProject())
 
         when:
         Map result = service.mintCollectionId('u1', collectionId)
 
         then:
+        1 * projectService.get(projectId) >> project
         1 * projectService.update(_, projectId, false) >> { data, pId, updateCollectory ->
             Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
             assert dataSet.surveyId != null
@@ -192,9 +194,14 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
         1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
         1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
-        1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.create({
+            it.startDate == "2023-09-01T00:00:00Z" && it.endDate == "2023-09-01T00:00:00Z" &&
+            it.plannedStartDate == "2023-09-01T00:00:00Z" && it.plannedEndDate == "2023-09-01T00:00:00Z" &&
+            it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
         1 * activityService.delete("123", true) >> [status: 'ok']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
@@ -304,8 +311,13 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * webService.doPost(*_) >> [resp: surveyData]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         2 * projectService.update(_, projectId, false) >> [status: 'ok']
+        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
         1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
-        1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
             (["guid-3": [
@@ -335,10 +347,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    private void setupData() {
-        Hub hub = new Hub(hubId: "merit", urlPath: "merit")
-        hub.save(failOnError: true, flush: true)
-        Project project = new Project(
+    private Map getProject(){
+        [
                 projectId:"p1",
                 name:"Project 1",
                 grantId:"g1",
@@ -351,7 +361,14 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         monitoring:[rows:[[protocols:['protocol category 2', 'protocol category 3']]]]
                 ], dataSets: [[
                                       dataSetId:'c1'
-                              ]]])
+                              ]]]
+        ]
+    }
+
+    private void setupData() {
+        Hub hub = new Hub(hubId: "merit", urlPath: "merit")
+        hub.save(failOnError: true, flush: true)
+        Project project = new Project(getProject())
         project.save(failOnError: true, flush: true)
         UserPermission userPermission = new UserPermission(accessLevel: AccessLevel.admin, userId: userId, entityId: 'p1', entityType: Project.name)
         userPermission.save(failOnError: true, flush: true)

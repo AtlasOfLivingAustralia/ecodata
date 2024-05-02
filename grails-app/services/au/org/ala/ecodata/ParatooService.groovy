@@ -18,6 +18,7 @@ import static grails.async.Promises.task
  */
 @Slf4j
 class ParatooService {
+    static final Object LOCK = new Object()
     static final String DATASET_DATABASE_TABLE = 'Database Table'
     static final int PARATOO_MAX_RETRIES = 3
     static final String PARATOO_PROTOCOL_PATH = '/protocols'
@@ -182,18 +183,21 @@ class ParatooService {
 
         dataSet.surveyId = paratooCollectionId.toMap() // No codec to save this to mongo
 
-        if (!project.custom) {
-            project.custom = [:]
-        }
-        if (!project.custom.dataSets) {
-            project.custom.dataSets = []
-        }
-
         dataSet.orgMintedIdentifier = paratooCollectionId.encodeAsOrgMintedIdentifier()
 
         log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
-        project.custom.dataSets << dataSet
-        Map result = projectService.update([custom: project.custom], projectId, false)
+        Map result
+        synchronized (LOCK) {
+            Map latestProject = projectService.get(projectId)
+            if (!latestProject.custom) {
+                latestProject.custom = [:]
+            }
+            if (!latestProject.custom.dataSets) {
+                latestProject.custom.dataSets = []
+            }
+            latestProject.custom.dataSets << dataSet
+            result = projectService.update([custom: latestProject.custom], projectId, false)
+        }
 
         if (!result.error) {
             result.orgMintedIdentifier = dataSet.orgMintedIdentifier
@@ -235,11 +239,19 @@ class ParatooService {
             log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
             userService.clearCurrentUser()
         }
+      
         promise.onComplete { Map result ->
             userService.clearCurrentUser()
         }
 
-        def result = projectService.update([custom: project.project.custom], project.id, false)
+        def result
+        synchronized (LOCK) {
+            Map latestProject = projectService.get(project.id)
+            Map latestDataSet = latestProject.custom?.dataSets?.find { it.dataSetId == collection.orgMintedUUID }
+            latestDataSet.putAll(dataSet)
+            result = projectService.update([custom: latestProject.custom], project.id, false)
+        }
+
         [updateResult: result, promise: promise]
     }
 
@@ -291,6 +303,11 @@ class ParatooService {
                     surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
                 }
 
+                dataSet.startDate = config.getStartDate(surveyDataAndObservations)
+                dataSet.endDate = config.getEndDate(surveyDataAndObservations)
+                dataSet.format = DATASET_DATABASE_TABLE
+                dataSet.sizeUnknown = true
+
                 // Delete previously created activity so that duplicate species records are not created.
                 // Updating existing activity will also create duplicates since it relies on outputSpeciesId to determine
                 // if a record is new and new ones are created by code.
@@ -298,17 +315,17 @@ class ParatooService {
                     activityService.delete(dataSet.activityId, true)
                 }
 
-                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet.siteId, userId)
+                String activityId = createActivityFromSurveyData(form, surveyDataAndObservations, surveyId, dataSet, userId)
                 List records = recordService.getAllByActivity(activityId)
                 dataSet.areSpeciesRecorded = records?.size() > 0
                 dataSet.activityId = activityId
 
-                dataSet.startDate = config.getStartDate(surveyDataAndObservations)
-                dataSet.endDate = config.getEndDate(surveyDataAndObservations)
-                dataSet.format = DATASET_DATABASE_TABLE
-                dataSet.sizeUnknown = true
-
-                projectService.update([custom: project.project.custom], project.id, false)
+                synchronized (LOCK) {
+                    Map latestProject = projectService.get(project.project.projectId)
+                    Map latestDataSet = latestProject.custom?.dataSets?.find { it.dataSetId == collection.orgMintedUUID }
+                    latestDataSet.putAll(dataSet)
+                    projectService.update([custom: latestProject.custom], project.id, false)
+                }
             }
         }
     }
@@ -445,14 +462,19 @@ class ParatooService {
      * @param siteId
      * @return
      */
-    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, String siteId, String userId) {
+    private String createActivityFromSurveyData(ActivityForm activityForm, Map surveyObservations, ParatooCollectionId collection, Map dataSet, String userId) {
         Map activityProps = [
                 type             : activityForm.name,
                 formVersion      : activityForm.formVersion,
                 description      : "Activity submitted by monitor",
                 projectId        : collection.projectId,
                 publicationStatus: "published",
-                siteId           : siteId,
+                siteId           : dataSet.siteId,
+                startDate        : dataSet.startDate,
+                endDate          : dataSet.endDate,
+                plannedStartDate : dataSet.startDate,
+                plannedEndDate   : dataSet.endDate,
+                externalIds      : [new ExternalId(idType: ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: dataSet.dataSetId)],
                 userId           : userId,
                 outputs          : [[
                                             data: surveyObservations,
