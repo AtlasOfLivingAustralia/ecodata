@@ -485,6 +485,11 @@ class ProjectService {
                 props = includeProjectActivities(props, projectActivities)
 
                 try {
+                    // Custom currently holds keys "details" and "dataSets".  Only update the "custom" properties
+                    // that are supplied in the update, leaving the others intact.
+                    if (project.custom && props.custom) {
+                        project.custom.putAll(props.remove('custom'))
+                    }
                     bindEmbeddedProperties(project, props)
                     commonService.updateProperties(project, props)
                     if (shouldUpdateCollectory) {

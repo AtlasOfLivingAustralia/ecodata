@@ -828,4 +828,26 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    void "The update method merges the Project custom property"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet], details:[name:'name']])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.update([custom:[details:[name:'name 2']]], project.projectId, false)
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == project.custom.dataSets
+        actual.custom.details == [name:'name 2']
+
+    }
+
 }
