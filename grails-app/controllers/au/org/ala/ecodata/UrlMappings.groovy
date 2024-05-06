@@ -201,6 +201,8 @@ class UrlMappings {
             action = [POST:'update', PUT:'update', DELETE:'delete']
         }
 
+        "/ws/dataSetSummary/bulkUpdate/$projectId"(controller:'dataSetSummary', action:'bulkUpdate')
+
         "/ws/document/download"(controller:"document", action:"download")
 
         "/ws/$controller/list"() { action = [GET:'list'] }

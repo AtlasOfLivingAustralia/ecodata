@@ -57,4 +57,19 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         1 * projectService.deleteDataSet(projectId, dataSetSummaryId) >> [status:'ok']
         response.json == ['status':'ok']
     }
+
+    void "The bulkUpdate method delegates to the projectService"() {
+        setup:
+        String projectId = 'p1'
+        Map postBody = [dataSets:[[dataSetId:'d1', name:'Data set 1']]]
+
+        when:
+        request.method = 'POST'
+        request.json = postBody
+        controller.bulkUpdate(projectId)
+
+        then:
+        1 * projectService.updateDataSets(projectId, postBody.dataSets) >> [status:'ok']
+        response.json == ['status':'ok']
+    }
 }

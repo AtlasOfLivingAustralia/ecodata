@@ -1080,25 +1080,46 @@ class ProjectService {
      * @return
      */
     Map updateDataSet(String projectId, Map dataSet) {
+       updateDataSets(projectId, [dataSet])
+    }
+
+    /**
+     * Updates multiple data sets associated with a project at the same time.  This method exists to support
+     * the use case of associating multiple data sets with a report and updating their publicationStatus when
+     * the report is submitted/approved.
+     *
+     * Because the datasets are stored as an embedded
+     * array in the Project collection, this method is synchronized on the project to avoid concurrent updates to
+     * different data sets overwriting each other.
+     * Due to the way it's been modelled as an embedded array, the client is allowed to supply a dataSetId
+     * when creating a new data set (e.g. a data set created by a submission from the Monitor app uses the
+     * submissionId as the dataSetId).
+     * @param projectId The project to update
+     * @param dataSet the data sets to update.
+     * @return
+     */
+    Map updateDataSets(String projectId, List dataSets) {
         synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
             Project project = Project.findByProjectId(projectId)
             if (!project) {
                 return [status: 'error', error: "No project exists with projectId=${projectId}"]
             }
-            if (!dataSet.dataSetId) {
-                dataSet.dataSetId = Identifiers.getNew(true, '')
-            }
-            Map matchingDataSet = project.custom?.dataSets?.find { it.dataSetId == dataSet.dataSetId }
-            if (matchingDataSet) {
-                matchingDataSet.putAll(dataSet)
-            } else {
-                if (!project.custom) {
-                    project.custom = [:]
+            for (Map dataSet in dataSets) {
+                if (!dataSet.dataSetId) {
+                    dataSet.dataSetId = Identifiers.getNew(true, '')
                 }
-                if (!project.custom?.dataSets) {
-                    project.custom.dataSets = []
+                Map matchingDataSet = project.custom?.dataSets?.find { it.dataSetId == dataSet.dataSetId }
+                if (matchingDataSet) {
+                    matchingDataSet.putAll(dataSet)
+                } else {
+                    if (!project.custom) {
+                        project.custom = [:]
+                    }
+                    if (!project.custom?.dataSets) {
+                        project.custom.dataSets = []
+                    }
+                    project.custom.dataSets.add(dataSet)
                 }
-                project.custom.dataSets.add(dataSet)
             }
             update([custom: project.custom], project.projectId, false)
         }

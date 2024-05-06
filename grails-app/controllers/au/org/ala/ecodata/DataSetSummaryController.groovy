@@ -5,7 +5,7 @@ import org.apache.http.HttpStatus
 class DataSetSummaryController {
 
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [update:['POST', 'PUT'], delete:'DELETE']
+    static allowedMethods = [update:['POST', 'PUT'], delete:'DELETE', bulkUpdate: 'POST']
 
     ProjectService projectService
 
@@ -25,6 +25,33 @@ class DataSetSummaryController {
         }
 
         respond projectService.updateDataSet(projectId, dataSet)
+    }
+
+    /**
+     * Updates multiple data sets for a project.
+     * This endpoint exists to support the use case of associating multiple data sets with a
+     * report and updating their publicationStatus when the report is submitted/approved.
+     *
+     * This method expects the projectId to be supplied via the URL and the data sets to be supplied in the request
+     * body as a JSON object with key="dataSets" and value=List of data sets.
+     */
+    def bulkUpdate(String projectId) {
+        Map postBody =  request.JSON
+        List dataSets = postBody?.dataSets
+
+        if (!projectId) {
+            render status:  HttpStatus.SC_BAD_REQUEST, text: "projectId is required"
+            return
+        }
+
+        dataSets.each { Map dataSet ->
+            if (dataSet.projectId && dataSet.projectId != projectId) {
+                render status: HttpStatus.SC_BAD_REQUEST, text: "projectId must match the data set projectId"
+                return
+            }
+        }
+
+        respond projectService.updateDataSets(projectId, dataSets)
     }
 
     def delete(String projectId, String dataSetId) {
