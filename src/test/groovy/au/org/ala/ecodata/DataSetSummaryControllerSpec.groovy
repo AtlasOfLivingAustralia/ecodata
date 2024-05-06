@@ -72,4 +72,19 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         1 * projectService.updateDataSets(projectId, postBody.dataSets) >> [status:'ok']
         response.json == ['status':'ok']
     }
+
+    void "If a projectId is present in a dataSet it much match the projectId parameter in bulkUpdate"() {
+        setup:
+        String projectId = 'p1'
+        Map postBody = [dataSets:[[dataSetId:'d1', name:'Data set 1', projectId:'p1'], [dataSetId:'d2', name:'Data set 2', projectId:'p2']]]
+
+        when:
+        request.method = 'POST'
+        request.json = postBody
+        controller.bulkUpdate(projectId)
+
+        then:
+        0 * projectService.updateDataSets(_, _)
+        response.status == HttpStatus.SC_BAD_REQUEST
+    }
 }

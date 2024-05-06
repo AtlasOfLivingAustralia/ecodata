@@ -44,9 +44,9 @@ class DataSetSummaryController {
             return
         }
 
-        dataSets.each { Map dataSet ->
+        for (Map dataSet in dataSets) {
             if (dataSet.projectId && dataSet.projectId != projectId) {
-                render status: HttpStatus.SC_BAD_REQUEST, text: "projectId must match the data set projectId"
+                render status: HttpStatus.SC_BAD_REQUEST, text: "projectId must match the projectId in all supplied data sets"
                 return
             }
         }
