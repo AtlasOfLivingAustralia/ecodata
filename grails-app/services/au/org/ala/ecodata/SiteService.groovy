@@ -840,7 +840,7 @@ class SiteService {
         }
     }
     Map<String, List<String>> lookupGeographicFacetsForSite(Map site, List<String> fidsToLookup = null) {
-
+        log.debug("Looking up geographic facets for site: "+site.siteId)
         Map<String, List<String>> geographicFacets = null
         switch (site.extent.source) {
             case 'pid':

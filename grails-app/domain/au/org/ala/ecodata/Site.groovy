@@ -32,6 +32,7 @@ class Site {
         name index: true
         siteId index: true
         projects index: true
+        status index: true
         version false
     }
 

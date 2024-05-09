@@ -11,6 +11,7 @@ import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.grails.plugin.cache.GrailsCacheManager
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
@@ -38,6 +39,7 @@ class AdminController {
     RecordService recordService
     ProjectActivityService projectActivityService
     ParatooService paratooService
+    GrailsCacheManager grailsCacheManager
 
     @AlaSecured(["ROLE_ADMIN"])
     def index() {}
@@ -250,6 +252,72 @@ class AdminController {
 
             offset += batchSize
         }
+
+        def result = [code:code]
+        render result as JSON
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def updateSiteLocationMetadata() {
+        def code = 'success'
+
+        def total = 0
+        def offset = 0
+        def batchSize = 200
+        def startTime = System.currentTimeMillis(), finishTime, startInterimTime, endInterimTime, batchStartTime, batchEndTime
+        def totalSites = Site.countByStatus('active')
+
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            batchStartTime = startInterimTime = System.currentTimeMillis()
+            def sites = Site.findAllByStatus('active', [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                siteService.toMap(it, 'flat')
+            }
+            count = sites.size()
+            endInterimTime = System.currentTimeMillis()
+            log.debug("Time taken to fetch ${batchSize} records: ${endInterimTime - startInterimTime} ms")
+            startInterimTime = endInterimTime
+            Site.withSession { session -> session.clear() }
+            Site.withNewSession {
+                sites.eachWithIndex { site, index ->
+                    try {
+                        total++
+                        if(total > 0 && (total % batchSize) == 0) {
+                            log.info("${total+1} or ${(total+1)*100/totalSites} % sites updated in db..")
+                        }
+
+                        if (!site.projects || !site.extent) {
+                            log.debug("Ignoring site ${site.siteId} due to no associated projects or no extent")
+                            return
+                        }
+                        def updatedSite = siteService.populateLocationMetadataForSite(site)
+                        endInterimTime = System.currentTimeMillis()
+                        log.debug("Time taken to update metadata ${site.siteId}: ${endInterimTime - startInterimTime} ms")
+                        startInterimTime = endInterimTime
+
+                        if (updatedSite?.extent) {
+                            siteService.update([extent: updatedSite.extent], site.siteId, false)
+                            endInterimTime = System.currentTimeMillis()
+                            log.debug("Time taken to update site ${site.siteId}: ${endInterimTime - startInterimTime} ms")
+                            startInterimTime = endInterimTime
+                        }
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to complete the operation ", e)
+                        code = "error"
+                    }
+                }
+            }
+
+            offset += batchSize
+
+            batchEndTime = System.currentTimeMillis()
+            log.debug("Time taken to process ${batchSize} records: ${batchEndTime - batchStartTime} ms")
+        }
+
+        finishTime = System.currentTimeMillis()
+        log.debug("site update compled in ${finishTime - startTime} ms")
+
         def result = [code:code]
         render result as JSON
     }
@@ -782,4 +850,15 @@ class AdminController {
         render text: template as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
     }
 
+    @AlaSecured(["ROLE_ADMIN"])
+    def clearCache() {
+        def caches = grailsCacheManager.getCacheNames()
+        if (caches.contains(params.cache)) {
+            grailsCacheManager.getCache(params.cache).clear()
+            render text: [message: "Success"] as JSON, status: HttpStatus.SC_OK
+        }
+        else {
+            render text: [message: "Cache name not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+        }
+    }
 }

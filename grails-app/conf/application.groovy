@@ -427,6 +427,8 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
     spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
+spatial.intersectionThreshold = 0.05
+
 homepageIdx {
     elasticsearch   {
         fieldsAndBoosts {
@@ -546,27 +548,10 @@ if (!grails.cache.ehcache) {
             enabled = true
             ehcache {
                 cacheManagerName = appName + '-ehcache'
-                reloadable = true
-                diskStore = '/data/${appName}/ehcache'
+                diskStore = "/data/${appName}/ehcache"
+                ehcacheXmlLocation = 'classpath:ecodata-ehcache.xml'
             }
         }
-    }
-}
-grails.cache.config = {
-
-    provider {
-        name "${appName}-ehcache"
-    }
-    diskStore {
-        path "/data/${appName}/ehcache"
-    }
-    cache {
-        name 'userDetailsCache'
-        timeToLiveSeconds 60 * 60 * 24
-        maxElementsInMemory 2000
-        maxElementsOnDisk 2000
-        overflowToDisk true
-        diskPersistent true
     }
 }
 

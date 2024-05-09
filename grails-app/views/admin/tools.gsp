@@ -132,6 +132,16 @@
                         alert(result);
                     });
                 });
+
+                $("#btnUpdateSiteLocationMetadata").click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'admin', action:'updateSiteLocationMetadata')}").done(function(result) {
+                        alert(result);
+                        document.location.reload();
+                    }).fail(function (result) {
+                        alert(result);
+                    });
+                });
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -253,6 +263,14 @@
                 </td>
                 <td>
                     Generate and store project activity stats in cache. This button triggers the stats compute manually.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnUpdateSiteLocationMetadata" class="btn btn-small btn-info" title="Update location metadata">Update site metadata</button>
+                </td>
+                <td>
+                    Update all site location metadata to filter out boundary intersection items.
                 </td>
             </tr>
             </tbody>
