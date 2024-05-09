@@ -9,7 +9,6 @@
             <none/>
         </expiry>
         <resources>
-            <heap unit="entries">100</heap>
             <disk unit="GB" persistent="true">10</disk>
         </resources>
     </cache>
@@ -19,7 +18,6 @@
         </expiry>
 
         <resources>
-            <heap unit="entries">100</heap>
             <disk unit="MB" persistent="true">500</disk>
         </resources>
     </cache>
@@ -29,7 +27,7 @@
             <tti unit="minutes">15</tti>
         </expiry>
         <resources>
-            <heap unit="entries">2000</heap>
+            <heap unit="entries">100</heap>
         </resources>
     </cache>
     <cache alias="spatialGeoJsonPidObject" uses-template="defaultSetting">
@@ -37,14 +35,24 @@
             <tti unit="minutes">15</tti>
         </expiry>
         <resources>
-            <heap unit="entries">200</heap>
+            <heap unit="entries">100</heap>
         </resources>
     </cache>
-    <cache alias="userDetailsCache">
+    <cache alias="grailsTemplatesCache">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
         <expiry>
-            <ttl unit="seconds">86400</ttl>
+            <ttl unit="hours">24</ttl>
         </expiry>
-        <heap>2000</heap>
+        <heap>10</heap>
+    </cache>
+    <cache alias="grailsBlocksCache">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <heap>10</heap>
     </cache>
     <cache-template name="defaultSetting">
         <key-type>java.io.Serializable</key-type>

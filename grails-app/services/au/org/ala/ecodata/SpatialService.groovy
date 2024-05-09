@@ -195,7 +195,7 @@ class SpatialService {
     Map searchObject(String query, String fids = "") {
         query = URLEncoder.encode(query, 'UTF-8').replaceAll('\\+', '%20')
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/search?q=$query&include=$fids"
-        def resp = webService.getJsonNode(url)
+        def resp = webService.getJson(url)
         if ((resp instanceof  Map) || !resp)
             return
 
