@@ -262,15 +262,33 @@ class AdminController {
         def code = 'success'
         def total = 0
         def offset = 0
-        def batchSize = 200
+        def batchSize = 100
+        def isMERIT = params.getBoolean('isMERIT', true)
         def startTime = System.currentTimeMillis(), finishTime, startInterimTime, endInterimTime, batchStartTime, batchEndTime
-        def totalSites = Site.countByStatus('active')
+        List<String> fids = grailsApplication.config.getProperty('site.check.boundary.layers', List<String>)
+        def totalSites
+        List projectIds = []
+        if (isMERIT) {
+            projectIds = projectService.getAllMERITProjectIds()
+            totalSites = Site.countByStatusAndProjectsInList('active', projectIds)
+        }
+        else {
+            totalSites = Site.countByStatus('active')
+        }
 
         def count = batchSize // For first loop iteration
         while (count == batchSize) {
             batchStartTime = startInterimTime = System.currentTimeMillis()
-            def sites = Site.findAllByStatus('active', [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
-                siteService.toMap(it, 'flat')
+            def sites
+            if (isMERIT) {
+                sites = Site.findAllByProjectsInListAndStatus(projectIds, 'active', [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
+            }
+            else {
+                sites = Site.findAllByStatus('active', [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
             }
             count = sites.size()
             endInterimTime = System.currentTimeMillis()
@@ -289,7 +307,7 @@ class AdminController {
                             log.debug("Ignoring site ${site.siteId} due to no associated projects or no extent")
                             return
                         }
-                        siteService.populateLocationMetadataForSite(site)
+                        siteService.populateLocationMetadataForSite(site, fids)
                         endInterimTime = System.currentTimeMillis()
                         log.debug("Time taken to update metadata ${site.siteId}: ${endInterimTime - startInterimTime} ms")
                         startInterimTime = endInterimTime

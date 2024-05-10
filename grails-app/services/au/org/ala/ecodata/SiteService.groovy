@@ -621,7 +621,7 @@ class SiteService {
         webService.getJson(url)
     }
 
-    def populateLocationMetadataForSite(Map site) {
+    def populateLocationMetadataForSite(Map site, List<String> fids = null) {
 
         def siteGeom = geometryAsGeoJson(site)
         if (siteGeom) {
@@ -643,7 +643,7 @@ class SiteService {
                 log.error("No geometry for site: ${site.siteId}")
             }
 
-            site.extent.geometry += lookupGeographicFacetsForSite(site)
+            site.extent.geometry += lookupGeographicFacetsForSite(site, fids)
         }
     }
 

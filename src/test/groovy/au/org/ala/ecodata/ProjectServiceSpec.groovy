@@ -761,4 +761,19 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    void "getAllMERITProjectIds should only get MERIT projects"() {
+        setup:
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true).save()
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true).save()
+        Project project3 = new Project(projectId: '333', name: "Project 333", isMERIT: false).save()
+
+        when:
+        def results = service.getAllMERITProjectIds()
+
+        then:
+        results.size() == 2
+        results.contains('111')
+        results.contains('222')
+    }
+
 }
