@@ -616,7 +616,7 @@ environments {
     }
     test {
         // Override disk store so the travis build doesn't fail.
-        grails.cache.config = {
+        grails.cache.ehcache = {
             diskStore {
                 path '/tmp'
             }
@@ -645,7 +645,7 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
-        grails.cache.config = {
+        grails.cache.ehcache = {
             diskStore {
                 path '/tmp'
             }

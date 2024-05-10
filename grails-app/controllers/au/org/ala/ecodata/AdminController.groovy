@@ -260,7 +260,6 @@ class AdminController {
     @AlaSecured(["ROLE_ADMIN"])
     def updateSiteLocationMetadata() {
         def code = 'success'
-
         def total = 0
         def offset = 0
         def batchSize = 200
@@ -290,13 +289,13 @@ class AdminController {
                             log.debug("Ignoring site ${site.siteId} due to no associated projects or no extent")
                             return
                         }
-                        def updatedSite = siteService.populateLocationMetadataForSite(site)
+                        siteService.populateLocationMetadataForSite(site)
                         endInterimTime = System.currentTimeMillis()
                         log.debug("Time taken to update metadata ${site.siteId}: ${endInterimTime - startInterimTime} ms")
                         startInterimTime = endInterimTime
 
-                        if (updatedSite?.extent) {
-                            siteService.update([extent: updatedSite.extent], site.siteId, false)
+                        if (site?.extent) {
+                            siteService.update([extent: site.extent], site.siteId, false)
                             endInterimTime = System.currentTimeMillis()
                             log.debug("Time taken to update site ${site.siteId}: ${endInterimTime - startInterimTime} ms")
                             startInterimTime = endInterimTime
