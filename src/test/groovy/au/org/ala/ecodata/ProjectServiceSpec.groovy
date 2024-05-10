@@ -761,4 +761,93 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    void "The updateDataSet method will update (or insert) a data set into a Project"() {
+        setup:
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345")
+        project.save(flush: true, failOnError: true)
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+
+        when:
+        Map resp = service.updateDataSet(project.projectId, dataSet)
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == [dataSet]
+
+        when:
+        Map dataSet2 = [name: 'Test Data Set 2', description: 'Test Description 2', dataSetId:'d2']
+        resp = service.updateDataSet(project.projectId, dataSet2)
+
+        then:
+        resp.status == 'ok'
+        Project actual2 = Project.findByProjectId(project.projectId)
+        actual2.projectId == project.projectId
+        actual2.name == project.name
+        actual2.isMERIT == project.isMERIT
+        actual2.hubId == project.hubId
+        actual2.custom.dataSets == [dataSet, dataSet2]
+
+        when:
+        dataSet.name = dataSet.name + " - Updated"
+        resp = service.updateDataSet(project.projectId, dataSet2)
+
+        then:
+        resp.status == 'ok'
+        Project actual3 = Project.findByProjectId(project.projectId)
+        actual3.projectId == project.projectId
+        actual3.name == project.name
+        actual3.isMERIT == project.isMERIT
+        actual3.hubId == project.hubId
+        actual3.custom.dataSets == [dataSet, dataSet2]
+    }
+
+
+    void "The deleteDataSet method will delete a dataSet from a Project"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet]])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.deleteDataSet(project.projectId, 'd1')
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == []
+
+    }
+
+    void "The update method merges the Project custom property"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet], details:[name:'name']])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.update([custom:[details:[name:'name 2']]], project.projectId, false)
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == project.custom.dataSets
+        actual.custom.details == [name:'name 2']
+
+    }
+
 }
