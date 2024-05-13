@@ -770,13 +770,19 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345")
         project.save(flush: true, failOnError: true)
         Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project actual
+        Project actual2
+        Project actual3
 
         when:
         Map resp = service.updateDataSet(project.projectId, dataSet)
+        Project.withNewSession {
+            actual = Project.findByProjectId(project.projectId)
+        }
 
         then:
         resp.status == 'ok'
-        Project actual = Project.findByProjectId(project.projectId)
+
         actual.projectId == project.projectId
         actual.name == project.name
         actual.isMERIT == project.isMERIT
@@ -786,10 +792,13 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         when:
         Map dataSet2 = [name: 'Test Data Set 2', description: 'Test Description 2', dataSetId:'d2']
         resp = service.updateDataSet(project.projectId, dataSet2)
+        Project.withNewSession {
+            actual2 = Project.findByProjectId(project.projectId)
+        }
 
         then:
         resp.status == 'ok'
-        Project actual2 = Project.findByProjectId(project.projectId)
+
         actual2.projectId == project.projectId
         actual2.name == project.name
         actual2.isMERIT == project.isMERIT
@@ -797,12 +806,15 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         actual2.custom.dataSets == [dataSet, dataSet2]
 
         when:
-        dataSet.name = dataSet.name + " - Updated"
+        dataSet2.name = dataSet2.name + " - Updated"
         resp = service.updateDataSet(project.projectId, dataSet2)
+        Project.withNewSession {
+            actual3 = Project.findByProjectId(project.projectId)
+        }
 
         then:
         resp.status == 'ok'
-        Project actual3 = Project.findByProjectId(project.projectId)
+
         actual3.projectId == project.projectId
         actual3.name == project.name
         actual3.isMERIT == project.isMERIT
@@ -885,8 +897,6 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         for (int i = 0; i < 100; i++) {
             project2.custom.dataSets.find { it.dataSetId == 'd' + i } != null
         }
-
-
 
     }
 
