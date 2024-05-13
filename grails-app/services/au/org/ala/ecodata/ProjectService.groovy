@@ -1100,28 +1100,30 @@ class ProjectService {
      */
     Map updateDataSets(String projectId, List dataSets) {
         synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
-            Project project = Project.findByProjectId(projectId)
-            if (!project) {
-                return [status: 'error', error: "No project exists with projectId=${projectId}"]
-            }
-            for (Map dataSet in dataSets) {
-                if (!dataSet.dataSetId) {
-                    dataSet.dataSetId = Identifiers.getNew(true, '')
+            Project.withNewSession { // Ensure that the queried Project is not cached in the current session which can cause stale data
+                Project project = Project.findByProjectId(projectId)
+                if (!project) {
+                    return [status: 'error', error: "No project exists with projectId=${projectId}"]
                 }
-                Map matchingDataSet = project.custom?.dataSets?.find { it.dataSetId == dataSet.dataSetId }
-                if (matchingDataSet) {
-                    matchingDataSet.putAll(dataSet)
-                } else {
-                    if (!project.custom) {
-                        project.custom = [:]
+                for (Map dataSet in dataSets) {
+                    if (!dataSet.dataSetId) {
+                        dataSet.dataSetId = Identifiers.getNew(true, '')
                     }
-                    if (!project.custom?.dataSets) {
-                        project.custom.dataSets = []
+                    Map matchingDataSet = project.custom?.dataSets?.find { it.dataSetId == dataSet.dataSetId }
+                    if (matchingDataSet) {
+                        matchingDataSet.putAll(dataSet)
+                    } else {
+                        if (!project.custom) {
+                            project.custom = [:]
+                        }
+                        if (!project.custom?.dataSets) {
+                            project.custom.dataSets = []
+                        }
+                        project.custom.dataSets.add(dataSet)
                     }
-                    project.custom.dataSets.add(dataSet)
                 }
+                update([custom: project.custom], project.projectId, false)
             }
-            update([custom: project.custom], project.projectId, false)
         }
     }
 

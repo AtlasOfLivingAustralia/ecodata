@@ -9,6 +9,10 @@ import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Ignore
 
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
 class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
 
     ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
@@ -847,6 +851,42 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         actual.hubId == project.hubId
         actual.custom.dataSets == project.custom.dataSets
         actual.custom.details == [name:'name 2']
+
+    }
+
+    void "The updateDataSet method is safe for concurrent access of different data sets"() {
+        setup:
+        Project project = new Project(projectId: 'p1', name: "Project 1", hubId:"12345")
+        project.save(flush: true, failOnError: true)
+        ExecutorService executor = Executors.newFixedThreadPool(20)
+        Project project2
+
+        when:
+        List callables = []
+        for (int i = 0; i < 100; i++) {
+            Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d' + i]
+            Callable callable = new Callable() {
+                @Override
+                Object call() throws Exception {
+                    service.updateDataSet(project.projectId, dataSet)
+                    println "Updated data set ${dataSet.dataSetId}"
+                    return null
+                }
+            }
+            callables.add(callable)
+        }
+        executor.invokeAll(callables)
+        Project.withNewSession {
+            project2 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        project2.custom.dataSets.size() == 100
+        for (int i = 0; i < 100; i++) {
+            project2.custom.dataSets.find { it.dataSetId == 'd' + i } != null
+        }
+
+
 
     }
 
