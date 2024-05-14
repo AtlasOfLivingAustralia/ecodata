@@ -24,15 +24,15 @@
 
     <cache alias="spatialSearchObjectMap" uses-template="defaultSetting">
         <expiry>
-            <tti unit="minutes">15</tti>
+            <tti unit="minutes">2</tti>
         </expiry>
         <resources>
-            <heap unit="entries">100</heap>
+            <heap unit="entries">200</heap>
         </resources>
     </cache>
     <cache alias="spatialGeoJsonPidObject" uses-template="defaultSetting">
         <expiry>
-            <tti unit="minutes">15</tti>
+            <tti unit="seconds">45</tti>
         </expiry>
         <resources>
             <heap unit="entries">100</heap>
