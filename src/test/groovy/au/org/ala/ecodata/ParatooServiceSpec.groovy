@@ -12,6 +12,9 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 
+import java.time.format.DateTimeTextProvider
+import java.time.temporal.TemporalField
+
 import static grails.async.Promises.waitAll
 /**
  * Tests for the ParatooService.
@@ -32,6 +35,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     static Map DUMMY_POLYGON = [type: 'Polygon', coordinates: [[[1, 2], [2, 2], [2, 1], [1, 1], [1, 2]]]]
     static Map DUMMY_PLOT = ['type':'Point', coordinates: [1,2]]
+
+    // The am/pm in the formatted time is local dependent and this appears to be easiest way to determine the value.
+    String am = DateUtil.formatAsDisplayDateTime("2024-05-14T00:00:00Z")[-2..-1]
+    String pm = am == "AM" ? "PM" : "pm"
 
     def setup() {
 
@@ -156,7 +163,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             assert dataSet.protocol == collectionId.protocolId
             assert dataSet.grantId == "g1"
             assert dataSet.progress == 'planned'
-            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDateTime(collectionId.eventTime)} (Project 1)"
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDateTime(collectionId.eventTime)}"
 
             [status: 'ok']
         }
@@ -182,7 +189,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap(), activityId: "123"]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
-        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true]
+        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true, name: "aParatooForm 1 - 2023-09-01 10:00 ${am}"]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
 
         when:
@@ -1335,6 +1342,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         ]
                 ]
         ]
+    }
+
+    def "The data set name will be updated after the callback to Monitor core and be created from available information"() {
+        expect:
+        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", "2024-05-14T10:00:00Z", "Protocol 1", null) == "Protocol 1 (site) - 2024-05-14 10:00 ${am} to 2024-05-14 8:00 ${pm}"
+        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", null, "Protocol 1", null) == "Protocol 1 (site) - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName(null, "2024-05-14T00:00:00Z", null, "Protocol 1", null) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName(null, null, null, "Protocol 1", new ParatooCollectionId(eventTime:DateUtil.parse("2024-05-14T00:00:00Z"))) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+
+
     }
 
     private Map getNormalDefinition() {

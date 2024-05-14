@@ -196,7 +196,7 @@ class ParatooService {
 
     private static String buildName(String protocolId, String displayDate, Project project) {
         ActivityForm protocolForm = ActivityForm.findByExternalId(protocolId)
-        String dataSetName = protocolForm?.name + " - " + displayDate + " (" + project.name + ")"
+        String dataSetName = protocolForm?.name + " - " + displayDate
         dataSetName
     }
 
@@ -277,8 +277,11 @@ class ParatooService {
                 surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name, 1, config)
                 // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
 
+                String siteName = null
                 if (!dataSet.siteId) {
-                    dataSet.siteId = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                    Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                    dataSet.siteId = site.siteId
+                    siteName = site.name
                 }
 
                 // plot layout is of type geoMap. Therefore, expects a site id.
@@ -290,6 +293,9 @@ class ParatooService {
                 dataSet.endDate = config.getEndDate(surveyDataAndObservations)
                 dataSet.format = DATASET_DATABASE_TABLE
                 dataSet.sizeUnknown = true
+                // Update the data set name as the information supplied during /mint-identifier isn't enough
+                // to ensure uniqueness
+                dataSet.name = buildUpdatedDataSetSummaryName(siteName, dataSet.startDate, dataSet.endDate, form.name, surveyId)
 
                 // Delete previously created activity so that duplicate species records are not created.
                 // Updating existing activity will also create duplicates since it relies on outputSpeciesId to determine
@@ -306,6 +312,23 @@ class ParatooService {
                 projectService.updateDataSet(project.id, dataSet)
             }
         }
+    }
+
+    protected static String buildUpdatedDataSetSummaryName(String siteName, String startDate, String endDate, String protocolName, ParatooCollectionId surveyId) {
+        String name = protocolName
+        if (siteName) {
+            name += " (" + siteName + ")"
+        }
+        if (startDate && endDate && startDate != endDate) {
+            name += " - " + DateUtil.formatAsDisplayDateTime(startDate) + " to " + DateUtil.formatAsDisplayDateTime(endDate)
+        }
+        else if (startDate) {
+            name += " - " +DateUtil.formatAsDisplayDateTime(startDate)
+        }
+        else {
+            name += " - " + DateUtil.formatAsDisplayDateTime(surveyId.eventTime)
+        }
+        name
     }
 
     /**
@@ -555,12 +578,13 @@ class ParatooService {
         output
     }
 
-    private String createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
+    private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
         String siteId = null
         // Create a site representing the location of the collection
+        Map siteProps = null
         Map geoJson = config.getGeoJson(observation, form)
         if (geoJson) {
-            Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
+            siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
             List features = geoJson?.features ?: []
             geoJson.remove('features')
             siteProps.features = features
@@ -592,7 +616,7 @@ class ParatooService {
             }
             siteId = result.siteId
         }
-        siteId
+        [siteId:siteId, name:siteProps?.name]
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {
@@ -772,10 +796,6 @@ class ParatooService {
         dataSet.name = dataSetName
 
         dataSet
-    }
-
-    private static String buildSurveyQueryString(int start, int limit, String createdAt) {
-        "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit&filters[createdAt][\$eq]=$createdAt"
     }
 
     Map retrieveSurveyAndObservations(ParatooCollection collection, Map authHeader = null) {
