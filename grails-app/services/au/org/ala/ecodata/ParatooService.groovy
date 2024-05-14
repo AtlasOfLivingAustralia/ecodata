@@ -196,7 +196,7 @@ class ParatooService {
 
     private static String buildName(String protocolId, String displayDate, Project project) {
         ActivityForm protocolForm = ActivityForm.findByExternalId(protocolId)
-        String dataSetName = protocolForm?.name + " - " + displayDate + " (" + project.name + ")"
+        String dataSetName = protocolForm?.name + " - " + displayDate
         dataSetName
     }
 
