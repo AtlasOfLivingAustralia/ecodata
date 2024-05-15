@@ -535,35 +535,39 @@ class ParatooService {
                     // used by protocols like bird survey where a point represents a sight a bird has been observed in a
                     // bird survey plot
                     def location = output[model.name]
-                    if (location instanceof Map) {
-                        output[model.name] = [
-                                type      : 'Feature',
-                                geometry  : [
-                                        type       : 'Point',
-                                        coordinates: [location.lng, location.lat]
-                                ],
-                                properties: [
-                                        name      : "Point ${formName}-${featureId}",
-                                        externalId: location.id,
-                                        id: "${formName}-${featureId}"
-                                ]
-                        ]
-                    }
-                    else if (location instanceof List) {
-                        String name
-                        switch (config?.geometryType) {
-                            case "LineString":
-                                name = "LineString ${formName}-${featureId}"
-                                output[model.name] = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON (location, name, null, name)
-                                break
-                            default:
-                                name = "Polygon ${formName}-${featureId}"
-                                output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON (location, name, null, name)
-                                break
+                    if (location) {
+                        if (location instanceof Map) {
+                            output[model.name] = [
+                                    type      : 'Feature',
+                                    geometry  : [
+                                            type       : 'Point',
+                                            coordinates: [location.lng, location.lat]
+                                    ],
+                                    properties: [
+                                            name      : "Point ${formName}-${featureId}",
+                                            externalId: location.id,
+                                            id        : "${formName}-${featureId}"
+                                    ]
+                            ]
+                        } else if (location instanceof List) {
+                            String name
+                            switch (config?.geometryType) {
+                                case "LineString":
+                                    name = "LineString ${formName}-${featureId}"
+                                    output[model.name] = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON(location, name, null, name)
+                                    break
+                                default:
+                                    name = "Polygon ${formName}-${featureId}"
+                                    output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON(location, name, null, name)
+                                    break
+                            }
                         }
-                    }
 
-                    featureId ++
+                        featureId ++
+                    }
+                    else {
+                        output[model.name] = null
+                    }
                     break
                 case "image":
                 case "document":

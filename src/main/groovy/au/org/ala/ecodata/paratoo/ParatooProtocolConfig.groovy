@@ -148,7 +148,8 @@ class ParatooProtocolConfig {
         List features = []
         paths.each { String name, node ->
             if (node instanceof Boolean) {
-                features.add(output[name])
+                if (output[name])
+                    features.add(output[name])
                 // todo later: add featureIds and modelId for compliance with feature behaviour of reports
             }
 
@@ -335,6 +336,7 @@ class ParatooProtocolConfig {
     }
 
     static Map createConvexHullGeoJSON (List features, String name, String externalId = "", String notes = "") {
+        features = features.findAll { it.geometry != null }
         List featureGeometries = features.collect { it.geometry }
         Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
         [
