@@ -12,7 +12,8 @@ import org.locationtech.jts.geom.Geometry
 @Slf4j
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProtocolConfig {
-
+    static final String FAUNA_PLOT = 'Fauna plot'
+    static final String CORE_PLOT = 'Core monitoring plot'
     String name
     String apiEndpoint
     boolean usesPlotLayout = true
@@ -26,7 +27,9 @@ class ParatooProtocolConfig {
     String plotVisitPath = 'plot_visit'
     String plotLayoutPath = "${plotVisitPath}.plot_layout"
     String plotLayoutIdPath = "${plotLayoutPath}.id"
+    String plotLayoutUpdatedAtPath = "${plotLayoutPath}.updatedAt"
     String plotLayoutPointsPath = "${plotLayoutPath}.plot_points"
+    String faunaPlotPointPath = "${plotLayoutPath}.fauna_plot_point"
     String plotSelectionPath = "${plotLayoutPath}.plot_selection"
     String plotLayoutDimensionLabelPath = "${plotLayoutPath}.plot_dimensions.label"
     String plotLayoutTypeLabelPath = "${plotLayoutPath}.plot_type.label"
@@ -77,6 +80,16 @@ class ParatooProtocolConfig {
 
         date = getFirst(date)
         return removeMilliseconds(date)
+    }
+
+    Date getPlotLayoutUpdatedAt(Map surveyData) {
+        def date = getProperty(surveyData, plotLayoutUpdatedAtPath)
+        if (!date) {
+            date = getPropertyFromSurvey(surveyData, plotLayoutUpdatedAtPath)
+        }
+
+        date = getFirst(date)
+        date ? DateUtil.parseWithMilliseconds(date) : null
     }
 
     Map getSurveyId(Map surveyData) {
@@ -203,7 +216,11 @@ class ParatooProtocolConfig {
             geoJson = extractSiteDataFromPlotVisit(output)
             // get list of all features associated with observation
             if (geoJson && form && output) {
-                geoJson.features = extractFeatures(output, form)
+                List features = extractFeatures(output, form)
+                if (features) {
+                    features.addAll(geoJson.features?:[])
+                    geoJson = createConvexHullGeoJSON(features, geoJson.properties.name, geoJson.properties.externalId)
+                }
             }
         }
         else if (geometryPath) {
@@ -212,20 +229,10 @@ class ParatooProtocolConfig {
         else if (form && output) {
             List features = extractFeatures(output, form)
             if (features) {
-                List featureGeometries = features.collect { it.geometry }
-                Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
                 String startDateInString = getStartDate(output)
                 startDateInString = DateUtil.convertUTCDateToStringInTimeZone(startDateInString, clientTimeZone?:TimeZone.default)
                 String name = "${form.name} site - ${startDateInString}"
-                geoJson = [
-                    type: 'Feature',
-                    geometry: GeometryUtils.geometryToGeoJsonMap(geometry),
-                    properties: [
-                            name: name,
-                            description: "${name} (convex hull of all features)",
-                    ],
-                    features: features
-                ]
+                geoJson = createConvexHullGeoJSON(features, name)
             }
         }
 
@@ -313,6 +320,8 @@ class ParatooProtocolConfig {
             log.warn("No plot_layout found in survey at path ${plotLayoutIdPath}")
             return null
         }
+        else
+            plotLayoutId = plotLayoutId.toString()
         List plotLayoutPoints = getProperty(surveyData, plotLayoutPointsPath)
         Map plotSelection = getProperty(surveyData, plotSelectionPath)
         Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
@@ -322,14 +331,31 @@ class ParatooProtocolConfig {
 
         String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + plotLayoutDimensionLabel + ')'
 
-        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, plotSelectionGeoJson?.properties?.notes)
+        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
+        List faunaPlotPoints = getProperty(surveyData, faunaPlotPointPath)
+        Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
 
-        //Map faunaPlotGeoJson = toGeometry(plotLayout.fauna_plot_point)
-
-        // TODO maybe turn this into a feature with properties to distinguish the fauna plot?
-        // Or a multi-polygon?
+        if (faunaPlotGeoJson) {
+            List features = [plotGeoJson, faunaPlotGeoJson]
+            plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId)
+        }
 
         plotGeoJson
+    }
+
+    static Map createConvexHullGeoJSON (List features, String name, String externalId = "") {
+        List featureGeometries = features.collect { it.geometry }
+        Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
+        [
+                type: 'Feature',
+                geometry: GeometryUtils.geometryToGeoJsonMap(geometry),
+                properties: [
+                        name: name,
+                        externalId: externalId,
+                        description: "${name} (convex hull of all features)",
+                ],
+                features: features
+        ]
     }
 
     static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {

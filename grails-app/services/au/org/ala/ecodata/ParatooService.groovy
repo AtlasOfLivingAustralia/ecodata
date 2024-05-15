@@ -588,7 +588,10 @@ class ParatooService {
             List features = geoJson?.features ?: []
             geoJson.remove('features')
             siteProps.features = features
-            siteProps.type = Site.TYPE_SURVEY_AREA
+            if (features)
+                siteProps.type = Site.TYPE_COMPOUND
+            else
+                siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
             String externalId = geoJson.properties?.externalId
@@ -598,18 +601,19 @@ class ParatooService {
             Site site
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
-                site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
-                if (site?.features) {
-                    siteProps.features?.addAll(site.features)
-                }
+                List sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId, [sort: "lastUpdated", order: "desc"])
+                if (sites)
+                    site = sites.first()
             }
 
             Map result
-            if (!site) {
+            // If the plot layout has been updated, create a new site
+            if (!site || isUpdatedPlotLayout(site, observation, config)) {
                 result = siteService.create(siteProps)
             } else {
                 result = [siteId: site.siteId]
             }
+
             if (result.error) {
                 // Don't treat this as a fatal error for the purposes of responding to the paratoo request
                 log.error("Error creating a site for survey " + collection.orgMintedUUID + ", project " + project.projectId + ": " + result.error)
@@ -617,6 +621,12 @@ class ParatooService {
             siteId = result.siteId
         }
         [siteId:siteId, name:siteProps?.name]
+    }
+
+    private static boolean isUpdatedPlotLayout (Site site, Map observation, ParatooProtocolConfig config) {
+        Date localSiteUpdated = site.lastUpdated
+        Date plotLayoutUpdated = config.getPlotLayoutUpdatedAt(observation)
+        plotLayoutUpdated?.after(localSiteUpdated) ?: false
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {

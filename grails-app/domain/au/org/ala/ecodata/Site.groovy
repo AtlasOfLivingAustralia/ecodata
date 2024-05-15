@@ -181,4 +181,14 @@ class Site {
             status != Status.DELETED
         }.find()
     }
+
+    static List<Site> findAllByExternalId(ExternalId.IdType idType, String externalId, Map params) {
+        where {
+            externalIds {
+                idType == idType
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.list(params)
+    }
 }
