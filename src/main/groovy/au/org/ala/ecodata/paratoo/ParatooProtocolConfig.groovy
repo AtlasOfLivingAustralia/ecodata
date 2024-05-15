@@ -214,14 +214,6 @@ class ParatooProtocolConfig {
         Map geoJson = null
         if (usesPlotLayout) {
             geoJson = extractSiteDataFromPlotVisit(output)
-            // get list of all features associated with observation
-            if (geoJson && form && output) {
-                List features = extractFeatures(output, form)
-                if (features) {
-                    features.addAll(geoJson.features?:[])
-                    geoJson = createConvexHullGeoJSON(features, geoJson.properties.name, geoJson.properties.externalId, geoJson.properties.notes)
-                }
-            }
         }
         else if (geometryPath) {
             geoJson = extractSiteDataFromPath(output)
