@@ -501,6 +501,9 @@ app {
 if (!ala.baseURL) {
     ala.baseURL = "https://www.ala.org.au"
 }
+bie.ws.url = "https://www.bie.ala.org.au/ws"
+bie.url = "https://www.bie.ala.org.au"
+
 if (!collectory.baseURL) {
     //collectory.baseURL = "https://collectory-dev.ala.org.au/"
     collectory.baseURL = "https://collections-test.ala.org.au/"
