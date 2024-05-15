@@ -332,9 +332,9 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         and:
         site.name == "SATFLB0001 - Control (100 x 100)"
-        site.description == "SATFLB0001 - Control (100 x 100)"
-        site.notes == "some comment"
-        site.type == "surveyArea"
+        site.description == "SATFLB0001 - Control (100 x 100) (convex hull of all features)"
+        site.notes == "Core monitoring plot some comment"
+        site.type == "compound"
         site.publicationStatus == "published"
         site.externalIds[0].externalId == "2"
         site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID

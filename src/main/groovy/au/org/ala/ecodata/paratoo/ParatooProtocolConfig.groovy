@@ -219,7 +219,7 @@ class ParatooProtocolConfig {
                 List features = extractFeatures(output, form)
                 if (features) {
                     features.addAll(geoJson.features?:[])
-                    geoJson = createConvexHullGeoJSON(features, geoJson.properties.name, geoJson.properties.externalId)
+                    geoJson = createConvexHullGeoJSON(features, geoJson.properties.name, geoJson.properties.externalId, geoJson.properties.notes)
                 }
             }
         }
@@ -314,14 +314,13 @@ class ParatooProtocolConfig {
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
         Map surveyData = getSurveyData(survey)
-        def plotLayoutId = getProperty(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
+        String plotLayoutId = getProperty(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
 
         if (!plotLayoutId) {
             log.warn("No plot_layout found in survey at path ${plotLayoutIdPath}")
             return null
         }
-        else
-            plotLayoutId = plotLayoutId.toString()
+
         List plotLayoutPoints = getProperty(surveyData, plotLayoutPointsPath)
         Map plotSelection = getProperty(surveyData, plotSelectionPath)
         Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
@@ -333,17 +332,17 @@ class ParatooProtocolConfig {
 
         Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
         List faunaPlotPoints = getProperty(surveyData, faunaPlotPointPath)
-        Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
 
-        if (faunaPlotGeoJson) {
+        if (faunaPlotPoints) {
+            Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
             List features = [plotGeoJson, faunaPlotGeoJson]
-            plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId)
+            plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId, plotGeoJson.properties.notes)
         }
 
         plotGeoJson
     }
 
-    static Map createConvexHullGeoJSON (List features, String name, String externalId = "") {
+    static Map createConvexHullGeoJSON (List features, String name, String externalId = "", String notes = "") {
         List featureGeometries = features.collect { it.geometry }
         Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
         [
@@ -352,18 +351,19 @@ class ParatooProtocolConfig {
                 properties: [
                         name: name,
                         externalId: externalId,
+                        notes: notes,
                         description: "${name} (convex hull of all features)",
                 ],
                 features: features
         ]
     }
 
-    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
+    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, String plotLayoutId, String notes  = "") {
         Map plotGeometry = toGeometry(plotLayoutPoints)
         createFeatureObject(plotGeometry, name, plotLayoutId, notes)
     }
 
-    static Map createFeatureObject(Map plotGeometry, String name, plotLayoutId, String notes = "") {
+    static Map createFeatureObject(Map plotGeometry, String name, String plotLayoutId, String notes = "") {
         [
                 type      : 'Feature',
                 geometry  : plotGeometry,
@@ -388,7 +388,7 @@ class ParatooProtocolConfig {
         plotGeometry
     }
 
-    static Map createLineStringFeatureFromGeoJSON (List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
+    static Map createLineStringFeatureFromGeoJSON (List plotLayoutPoints, String name, String plotLayoutId, String notes  = "") {
         Map plotGeometry = toLineStringGeometry(plotLayoutPoints)
         createFeatureObject(plotGeometry, name, plotLayoutId, notes)
     }
