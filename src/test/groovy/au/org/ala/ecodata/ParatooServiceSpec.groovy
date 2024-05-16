@@ -348,7 +348,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    void "The service will create a new site if ploy layout has been updated or use existing site" () {
+    void "The service will create use existing site" () {
         setup:
         String projectId = 'p1'
         String orgMintedId = 'd1'
@@ -377,7 +377,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
         Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
-        Map site
 
         when:
         Map result = service.submitCollection(collection, project)
@@ -409,12 +408,48 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         }
         1 * userService.getCurrentUserDetails() >> [userId: userId]
         1 * userService.setCurrentUser(userId)
+    }
 
-        when:
+    void "The service will create a new site if plot layout has been updated" () {
+        setup:
+        String projectId = 'p1'
+        String orgMintedId = 'd1'
+        Date afterSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-15T06:00:11.996Z")
+        Date beforeSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.996Z")
+        Site.withSession { session ->
+            new Site(
+                    name: "SATFLB0001 - Control (100 x 100)",
+                    siteId: "s0",
+                    extent: [geometry: DUMMY_POLYGON],
+                    description: "SATFLB0001 - Control (100 x 100)",
+                    notes: "Core monitoring plot some comment",
+                    type: "compound",
+                    externalIds: [new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_GUID)],
+                    dateCreated: afterSubmissionDate,
+                    lastUpdated: afterSubmissionDate
+            ).save(flush: true)
+            session.flush()
+        }
+        ParatooProtocolId protocol = new ParatooProtocolId(id: "1", version: 1)
+        ParatooCollection collection = new ParatooCollection(
+                orgMintedUUID:orgMintedId,
+                coreProvenance: [
+                        "system_core": "<system-core>",
+                        "version_core": "<core-version>"
+                ]
+        )
+        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload","guid-3")
+        Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
+        Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
         String date = DateUtil.format(new Date())
         date = date.replace("Z", ".999Z")
-        surveyData["collections"]["basal-area-dbh-measure-survey"]["plot_visit"]["plot_layout"]["updatedAt"] = [date]
-        result = service.submitCollection(collection, project)
+        surveyData.collections."basal-area-dbh-measure-survey"."plot_visit"."plot_layout"."updatedAt" = date
+        Map site
+
+        when:
+        def result = service.submitCollection(collection, project)
+        waitAll(result.promise)
 
         then:
         1 * webService.doPost(*_) >> [resp: surveyData]
