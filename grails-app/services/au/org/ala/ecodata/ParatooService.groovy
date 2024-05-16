@@ -279,9 +279,14 @@ class ParatooService {
 
                 String siteName = null
                 if (!dataSet.siteId) {
-                    Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
-                    dataSet.siteId = site.siteId
-                    siteName = site.name
+                    try {
+                        Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                        dataSet.siteId = site.siteId
+                        siteName = site.name
+                    }
+                    catch (Exception ex) {
+                        log.error("Error creating site for ${collection.orgMintedUUID}: ${ex.message}")
+                    }
                 }
 
                 // plot layout is of type geoMap. Therefore, expects a site id.
@@ -584,6 +589,7 @@ class ParatooService {
 
     private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
         String siteId = null
+        Date updatedPlotLayoutDate
         // Create a site representing the location of the collection
         Map siteProps = null
         Map geoJson = config.getGeoJson(observation, form)
@@ -605,6 +611,7 @@ class ParatooService {
             Site site
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
+                updatedPlotLayoutDate = config.getPlotLayoutUpdatedAt(observation)
                 List sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId, [sort: "lastUpdated", order: "desc"])
                 if (sites)
                     site = sites.first()
@@ -612,9 +619,14 @@ class ParatooService {
 
             Map result
             // If the plot layout has been updated, create a new site
-            if (!site || isUpdatedPlotLayout(site, observation, config)) {
+            if (!site) {
                 result = siteService.create(siteProps)
-            } else {
+            }
+            else if(isUpdatedPlotLayout(site.lastUpdated, updatedPlotLayoutDate)){
+                siteProps.name = "${siteProps.name} - ${DateUtil.formatAsDisplayDateTime(updatedPlotLayoutDate)}"
+                result = siteService.create(siteProps)
+            }
+            else {
                 result = [siteId: site.siteId]
             }
 
@@ -627,10 +639,19 @@ class ParatooService {
         [siteId:siteId, name:siteProps?.name]
     }
 
-    private static boolean isUpdatedPlotLayout (Site site, Map observation, ParatooProtocolConfig config) {
-        Date localSiteUpdated = site.lastUpdated
-        Date plotLayoutUpdated = config.getPlotLayoutUpdatedAt(observation)
-        plotLayoutUpdated?.after(localSiteUpdated) ?: false
+    /**
+     * check if the plot layout has been updated after site has been updated. This means user has edited plot layout and
+     * a new site should be created.
+     * @param siteLastUpdated
+     * @param plotLayoutLastUpdated
+     * @return
+     */
+    static boolean isUpdatedPlotLayout (Date siteLastUpdated, Date plotLayoutLastUpdated) {
+        if ((siteLastUpdated != null) && (plotLayoutLastUpdated != null)) {
+            return plotLayoutLastUpdated.after(siteLastUpdated)
+        }
+
+        return false
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {

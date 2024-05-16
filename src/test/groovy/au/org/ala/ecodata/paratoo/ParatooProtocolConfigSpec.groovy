@@ -196,7 +196,7 @@ class ParatooProtocolConfigSpec extends Specification {
                         coordinates:[[[138.6372, -34.9723], [138.6371, -34.9723], [138.6371, -34.9714], [138.6382, -34.9714], [138.6383, -34.9714], [138.6383, -34.9723], [138.6372, -34.9723]]],
                         type:"Polygon"
                 ],
-                properties:[name:"SATFLB0001 - Control (100 x 100)", externalId:"2", notes:"Core monitoring plot some comment", description:"SATFLB0001 - Control (100 x 100) (convex hull of all features)"],
+                properties:[name:"SATFLB0001 - Control (100 x 100)", externalId:"2", notes:"Core monitoring plot some comment", description:"SATFLB0001 - Control (100 x 100)"],
                 features:[
                         [
                                 type:"Feature",
@@ -312,7 +312,7 @@ class ParatooProtocolConfigSpec extends Specification {
                 features  : [[type: "Feature", geometry: [type: "Point", coordinates: [138.63, -35.0005]], properties:[name:"Point aParatooForm 1-1", externalId:40, id:"aParatooForm 1-1"]]],
                 properties: [
                         name       : "aParatooForm 1 site - ${startDateInDefaultTimeZone}",
-                        description: "aParatooForm 1 site - ${startDateInDefaultTimeZone} (convex hull of all features)",
+                        description: "aParatooForm 1 site - ${startDateInDefaultTimeZone}",
                         externalId: "",
                         notes: "",
                 ]
@@ -346,6 +346,83 @@ class ParatooProtocolConfigSpec extends Specification {
                         "notes"     : "test notes"
                 ]
         ]
+    }
+
+    def "getPlotLayoutUpdatedAt should get plot layout's updatedAt property" () {
+        given:
+        def surveyData = readSurveyData('floristicsStandardReverseLookup')
+        Map floristicsSurveyConfig = [
+                apiEndpoint:'floristics-veg-survey-lites',
+                usesPlotLayout:true
+        ]
+        ParatooProtocolConfig config = new ParatooProtocolConfig(floristicsSurveyConfig)
+        config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
+
+        when:
+        def result = config.getPlotLayoutUpdatedAt(surveyData.collections)
+
+        then:
+        result.equals(DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.473Z"))
+    }
+
+    def "createConvexHullGeoJSON should create convex hull based on valid geometries" () {
+
+        given:
+        def features = [
+            [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                ]
+            ],
+            [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                ]
+            ],
+            [
+                type: "Feature",
+                geometry: null
+            ]
+        ]
+
+        when:
+        def result = ParatooProtocolConfig.createConvexHullGeoJSON(features, "test name", "1", "test notes")
+
+        then:
+        result == [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                ],
+                properties: [
+                        name: "test name",
+                        externalId: "1",
+                        description: "test name",
+                        notes: "test notes"
+                ],
+                features:[
+                        [
+                                type: "Feature",
+                                geometry: [
+                                        type: "Polygon",
+                                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                                ]
+                        ],
+                        [
+                                type: "Feature",
+                                geometry: [
+                                        type: "Polygon",
+                                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                                ]
+                        ]
+                ]
+        ]
+
     }
 
     def transformData(Map surveyDataAndObservations, ActivityForm form, ParatooProtocolConfig config) {
