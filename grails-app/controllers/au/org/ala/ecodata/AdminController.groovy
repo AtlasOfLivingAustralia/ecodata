@@ -737,7 +737,7 @@ class AdminController {
     def reSubmitDataSet() {
         String projectId = params.id
         String dataSetId = params.dataSetId
-        String userId = params.userId ?: userService.getCurrentUser().userId
+        String userId = params.userId ?: userService.currentUser()?.userId
         if (!projectId || !dataSetId || !userId) {
             render text: [message: "Bad request"] as JSON, status: HttpStatus.SC_BAD_REQUEST
             return

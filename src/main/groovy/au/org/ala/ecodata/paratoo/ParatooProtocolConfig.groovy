@@ -335,7 +335,7 @@ class ParatooProtocolConfig {
         plotGeoJson
     }
 
-    static Map createConvexHullGeoJSON (List features, String name, String externalId = "", String notes = "") {
+    static Map createConvexHullGeoJSON (List features, String name, String externalId = "", String notes = "", String description = "") {
         features = features.findAll { it.geometry != null }
         List featureGeometries = features.collect { it.geometry }
         Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
@@ -346,7 +346,7 @@ class ParatooProtocolConfig {
                         name: name,
                         externalId: externalId,
                         notes: notes,
-                        description: "${name} (convex hull of all features)",
+                        description: "${description?:name}",
                 ],
                 features: features
         ]

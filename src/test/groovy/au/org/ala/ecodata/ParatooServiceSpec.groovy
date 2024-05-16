@@ -12,9 +12,6 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 
-import java.time.format.DateTimeTextProvider
-import java.time.temporal.TemporalField
-
 import static grails.async.Promises.waitAll
 /**
  * Tests for the ParatooService.
@@ -82,6 +79,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Service.findAll().each { it.delete() }
         UserPermission.findAll().each { it.delete() }
         Program.findAll().each { it.delete() }
+        Site.findAll().each { it.delete() }
     }
 
     def cleanup() {
@@ -339,7 +337,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         and:
         site.name == "SATFLB0001 - Control (100 x 100)"
-        site.description == "SATFLB0001 - Control (100 x 100) (convex hull of all features)"
+        site.description == "SATFLB0001 - Control (100 x 100)"
         site.notes == "Core monitoring plot some comment"
         site.type == "compound"
         site.publicationStatus == "published"
@@ -348,6 +346,121 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         result.updateResult == [status: 'ok']
 
+    }
+
+    void "The service will create a new site if ploy layout has been updated or use existing site" () {
+        setup:
+        String projectId = 'p1'
+        String orgMintedId = 'd1'
+        Date afterSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-15T06:00:11.996Z")
+        Date beforeSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.996Z")
+        new Site(
+                name: "SATFLB0001 - Control (100 x 100)",
+                siteId: "s0",
+                extent: [geometry: DUMMY_POLYGON],
+                description: "SATFLB0001 - Control (100 x 100)",
+                notes: "Core monitoring plot some comment",
+                type: "compound",
+                externalIds: [new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_GUID)],
+                dateCreated: afterSubmissionDate,
+                lastUpdated: afterSubmissionDate
+        ).save(flush: true)
+        ParatooProtocolId protocol = new ParatooProtocolId(id: "1", version: 1)
+        ParatooCollection collection = new ParatooCollection(
+                orgMintedUUID:orgMintedId,
+                coreProvenance: [
+                        "system_core": "<system-core>",
+                        "version_core": "<core-version>"
+                ]
+        )
+        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload","guid-3")
+        Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
+        Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
+        Map site
+
+        when:
+        Map result = service.submitCollection(collection, project)
+        waitAll(result.promise)
+        println ("finished waiting")
+
+        then:
+        1 * webService.doPost(*_) >> [resp: surveyData]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        2 * projectService.updateDataSet(projectId, _) >> [status: 'ok']
+        0 * siteService.create(_)
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
+        1 * recordService.getAllByActivity('123') >> []
+        1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
+            (["guid-3": [
+                    "name"          : "Basal Area - DBH",
+                    "usesPlotLayout": true,
+                    "tags"          : ["survey"],
+                    "apiEndpoint"   : "basal-area-dbh-measure-surveys",
+                    "overrides"     : [
+                            "dataModel": null,
+                            "viewModel": null
+                    ]
+            ]] as JSON).toString()
+        }
+        1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
+
+        when:
+        String date = DateUtil.format(new Date())
+        date = date.replace("Z", ".999Z")
+        surveyData["collections"]["basal-area-dbh-measure-survey"]["plot_visit"]["plot_layout"]["updatedAt"] = [date]
+        result = service.submitCollection(collection, project)
+
+        then:
+        1 * webService.doPost(*_) >> [resp: surveyData]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        2 * projectService.updateDataSet(projectId, _) >> [status: 'ok']
+        1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
+        1 * recordService.getAllByActivity('123') >> []
+        1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
+            (["guid-3": [
+                    "name"          : "Basal Area - DBH",
+                    "usesPlotLayout": true,
+                    "tags"          : ["survey"],
+                    "apiEndpoint"   : "basal-area-dbh-measure-surveys",
+                    "overrides"     : [
+                            "dataModel": null,
+                            "viewModel": null
+                    ]
+            ]] as JSON).toString()
+        }
+        1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
+        result.updateResult == [status: 'ok']
+    }
+
+    void "isUpdatedPlotLayout should check plot layout has been updated after site has been updated" () {
+        given:
+        def date1 = DateUtil.parseWithMilliseconds("2023-09-22T00:59:47.111Z")
+        def date2 = DateUtil.parseWithMilliseconds("2023-09-23T00:59:47.111Z")
+        def date3 = DateUtil.parseWithMilliseconds("2023-09-24T00:59:47.111Z")
+
+        when:
+        def result = service.isUpdatedPlotLayout(date1, date2)
+
+        then:
+        result
+
+        when:
+        result = service.isUpdatedPlotLayout(date3, date2)
+
+        then:
+        !result
     }
 
     private Map getProject(){
