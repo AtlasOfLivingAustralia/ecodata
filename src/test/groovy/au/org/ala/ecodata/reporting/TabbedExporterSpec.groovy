@@ -1,6 +1,8 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
+import au.org.ala.ecodata.metadata.OutputDataGetter
+import au.org.ala.ecodata.metadata.SpeciesUrlGetter
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.web.GrailsWebUnitTest
 import grails.util.Holders
@@ -97,6 +99,49 @@ class TabbedExporterSpec extends Specification implements GrailsWebUnitTest, Dom
 
     }
 
+    def "Species data types will be expanded into two export columns if useSpeciesUrlGetter is true"() {
+        setup:
+        String type = 'form'
+        ActivityForm form = buildMockForm(type, buildFormTemplateWithSpecies())
+
+        when:
+        tabbedExporter.useSpeciesUrlGetter = true
+        List config = tabbedExporter.getActivityExportConfig(type, true)
+
+        then:
+        1 * activityFormService.findVersionedActivityForm(type) >> [form]
+
+        config.size() == 3
+        config[1].header == 'Species label'
+        config[1].property == 'form.species'
+        config[1].getter instanceof OutputDataGetter
+
+        config[2].header == 'Species label'
+        config[2].property == 'form.species'
+        config[2].getter instanceof SpeciesUrlGetter
+
+    }
+
+    def "Species data types will only export the species name if useSpeciesUrlGetter is false"() {
+        setup:
+        String type = 'form'
+        ActivityForm form = buildMockForm(type, buildFormTemplateWithSpecies())
+
+        when:
+        tabbedExporter.useSpeciesUrlGetter = false
+        List config = tabbedExporter.getActivityExportConfig(type, true)
+
+        then:
+        1 * activityFormService.findVersionedActivityForm(type) >> [form]
+
+        config.size() == 2
+        config[1].header == 'Species label'
+        config[1].property == 'form.species'
+        config[1].getter instanceof OutputDataGetter
+    }
+
+
+
     private ActivityForm buildMockForm(String name, Map template) {
         ActivityForm form = new ActivityForm(name:name, formVersion:1)
         FormSection section = new FormSection(name:name, template:template)
@@ -136,6 +181,27 @@ class TabbedExporterSpec extends Specification implements GrailsWebUnitTest, Dom
                                         type:'selectMany',
                                         source:'withPrePopConstraints',
                                         preLabel:'Pre-populated constraints'
+                                ]
+                        ]]
+
+                ]
+        ]
+    }
+
+    private Map buildFormTemplateWithSpecies() {
+        [
+                dataModel:[
+                        [
+                                name:"species",
+                                dataType:"species"
+                        ]
+                ],
+                viewModel:[
+                        [type:'row', items:[
+                                [
+                                        type:'speciesSelect',
+                                        source:'species',
+                                        preLabel:'Species label'
                                 ]
                         ]]
 

@@ -6,6 +6,7 @@ import au.org.ala.ecodata.metadata.OutputDateGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import au.org.ala.ecodata.metadata.OutputNumberGetter
+import au.org.ala.ecodata.metadata.SpeciesUrlGetter
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -26,6 +27,7 @@ class TabbedExporter {
     ReportingService reportingService =  Holders.grailsApplication.mainContext.getBean("reportingService")
     ActivityFormService activityFormService = Holders.grailsApplication.mainContext.getBean("activityFormService")
     OutputModelProcessor processor = new OutputModelProcessor()
+    String biePrefix = Holders.grailsApplication.config.getProperty("bie.url")+'species/'
 
     static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     Map<String, AdditionalSheet> sheets
@@ -35,6 +37,7 @@ class TabbedExporter {
     TimeZone timeZone
     Boolean useDateGetter = false
     Boolean useNumberGetter = false
+    boolean useSpeciesUrlGetter = false
     // These fields map full activity names to shortened names that are compatible with Excel tabs.
     protected Map<String, String> activitySheetNames = [:]
     protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
@@ -231,6 +234,22 @@ class TabbedExporter {
                             property:propertyPath,
                             getter:new OutputNumberGetter(propertyPath, dataNode, documentMap, timeZone)]
                     fieldConfiguration << field
+                }
+                else if ((dataNode.dataType == 'species') && useSpeciesUrlGetter) {
+                    // Return a property for the species name and a property for the species URL
+                    Map nameField = field + [
+                            header:outputMetadata.getLabel(viewNode, dataNode),
+                            property:propertyPath,
+                            getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
+                    fieldConfiguration << nameField
+
+                    Map urlField = field + [
+                            description: "Link to species in the ALA",
+                            header:outputMetadata.getLabel(viewNode, dataNode),
+                            property:propertyPath,
+                            getter:new SpeciesUrlGetter(propertyPath, dataNode, documentMap, timeZone, biePrefix)
+                    ]
+                    fieldConfiguration << urlField
                 }
                 else {
                     field += [

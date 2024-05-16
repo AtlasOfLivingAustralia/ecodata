@@ -2052,7 +2052,7 @@ class ParatooService {
         }
 
         // record is only created if guid is present
-        result.guid = result.guid ?: "A_GUID"
+        result.guid = result.guid ?: Record.UNMATCHED_GUID
         result
     }
 }

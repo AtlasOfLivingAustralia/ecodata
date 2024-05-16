@@ -176,6 +176,7 @@ class ProjectXlsExporter extends ProjectExporter {
         super(exporter)
         this.projectService = projectService
         distinctElectorates = new ArrayList()
+        useSpeciesUrlGetter = true
         setupManagementUnits(managementUnitService)
         setupFundingAbn(organisationService)
         setupProgramData(programService)
@@ -185,6 +186,7 @@ class ProjectXlsExporter extends ProjectExporter {
         super(exporter, tabsToExport, [:], TimeZone.default)
         this.projectService = projectService
         this.formSectionPerTab = formSectionPerTab
+        useSpeciesUrlGetter = true
         addDataDescriptionToDownload(downloadMetadata)
         distinctElectorates = new ArrayList(electorates?:[])
         distinctElectorates.sort()

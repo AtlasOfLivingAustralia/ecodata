@@ -6,6 +6,8 @@ import org.bson.types.ObjectId
 
 class Record {
  //   def grailsApplication
+    /** Represents a species guid that was unable to be matched against the ALA names list */
+    static final String UNMATCHED_GUID = "A_GUID"
 
     static mapping = {
         occurrenceID index: true
