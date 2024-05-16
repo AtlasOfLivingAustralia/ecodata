@@ -85,7 +85,7 @@ class SpeciesReMatchService {
         name = name?.toLowerCase() ?: ""
         cacheService.get('bie-search-auto-' + name, {
             def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
-            def url = "${grailsApplication.config.getProperty('bie.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=${limit}&idxType=TAXON"
+            def url = "${grailsApplication.config.getProperty('bie.ws.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=${limit}&idxType=TAXON"
 
             webService.getJson(url)
         })

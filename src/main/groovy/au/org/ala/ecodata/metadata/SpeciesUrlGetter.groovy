@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.metadata
 
 import pl.touk.excel.export.getters.Getter
+import au.org.ala.ecodata.Record
 
 class SpeciesUrlGetter extends OutputDataGetter implements Getter<String> {
     String biePrefix
@@ -15,8 +16,10 @@ class SpeciesUrlGetter extends OutputDataGetter implements Getter<String> {
         if (!val?.name) {
             return ""
         }
-
-        return val?.guid ? biePrefix+val.guid : "Unmatched name"
+        if (!val?.guid || val.guid == Record.UNMATCHED_GUID) {
+            return "Unmatched name"
+        }
+        return biePrefix+val.guid
     }
 
 

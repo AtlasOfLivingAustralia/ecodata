@@ -27,7 +27,7 @@ class TabbedExporter {
     ReportingService reportingService =  Holders.grailsApplication.mainContext.getBean("reportingService")
     ActivityFormService activityFormService = Holders.grailsApplication.mainContext.getBean("activityFormService")
     OutputModelProcessor processor = new OutputModelProcessor()
-    String biePrefix = Holders.grailsApplication.config.getProperty("bie.url")+'/species/'
+    String biePrefix = Holders.grailsApplication.config.getProperty("bie.url")+'species/'
 
     static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     Map<String, AdditionalSheet> sheets
