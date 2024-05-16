@@ -299,8 +299,8 @@ class ParatooService {
                 dataSet.format = DATASET_DATABASE_TABLE
                 dataSet.sizeUnknown = true
                 // Update the data set name as the information supplied during /mint-identifier isn't enough
-                // to ensure uniqueness
-                dataSet.name = buildUpdatedDataSetSummaryName(siteName, dataSet.startDate, dataSet.endDate, form.name, surveyId)
+                // to ensure uniqueness.
+                dataSet.name = buildUpdatedDataSetSummaryName(siteName, dataSet.startDate, dataSet.endDate, form.name, surveyId, config)
 
                 // Delete previously created activity so that duplicate species records are not created.
                 // Updating existing activity will also create duplicates since it relies on outputSpeciesId to determine
@@ -319,9 +319,10 @@ class ParatooService {
         }
     }
 
-    protected static String buildUpdatedDataSetSummaryName(String siteName, String startDate, String endDate, String protocolName, ParatooCollectionId surveyId) {
+    protected static String buildUpdatedDataSetSummaryName(String siteName, String startDate, String endDate, String protocolName, ParatooCollectionId surveyId, ParatooProtocolConfig config) {
         String name = protocolName
-        if (siteName) {
+        //The site name for non-plot based data sets is not used as it contains the same data (protocol and time) as the name
+        if (siteName && config.usesPlotLayout) {
             name += " (" + siteName + ")"
         }
         if (startDate && endDate && startDate != endDate) {
