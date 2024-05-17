@@ -1494,10 +1494,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     def "The data set name will be updated after the callback to Monitor core and be created from available information"() {
         expect:
-        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", "2024-05-14T10:00:00Z", "Protocol 1", null) == "Protocol 1 (site) - 2024-05-14 10:00 ${am} to 2024-05-14 8:00 ${pm}"
-        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", null, "Protocol 1", null) == "Protocol 1 (site) - 2024-05-14 10:00 ${am}"
-        ParatooService.buildUpdatedDataSetSummaryName(null, "2024-05-14T00:00:00Z", null, "Protocol 1", null) == "Protocol 1 - 2024-05-14 10:00 ${am}"
-        ParatooService.buildUpdatedDataSetSummaryName(null, null, null, "Protocol 1", new ParatooCollectionId(eventTime:DateUtil.parse("2024-05-14T00:00:00Z"))) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", "2024-05-14T10:00:00Z", "Protocol 1", null, new ParatooProtocolConfig()) == "Protocol 1 (site) - 2024-05-14 10:00 ${am} to 2024-05-14 8:00 ${pm}"
+        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", null, "Protocol 1", null, new ParatooProtocolConfig(usesPlotLayout: false)) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName(null, "2024-05-14T00:00:00Z", null, "Protocol 1", null, new ParatooProtocolConfig()) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName(null, null, null, "Protocol 1", new ParatooCollectionId(eventTime:DateUtil.parse("2024-05-14T00:00:00Z")), new ParatooProtocolConfig()) == "Protocol 1 - 2024-05-14 10:00 ${am}"
 
 
     }
