@@ -31,14 +31,14 @@ class FeatureConverter  implements RecordFieldConverter {
     }
 
     static Double getDecimalLatitude (Map data) {
-        switch (data.type) {
+        switch (data?.type) {
             case 'Point':
                 return data.coordinates[1]
         }
     }
 
     static Double getDecimalLongitude (Map data) {
-        switch (data.type) {
+        switch (data?.type) {
             case 'Point':
                 return data.coordinates[0]
         }
