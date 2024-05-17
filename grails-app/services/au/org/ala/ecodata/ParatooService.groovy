@@ -77,6 +77,7 @@ class ParatooService {
     RecordService recordService
     MetadataService metadataService
     UserService userService
+    SpeciesReMatchService speciesReMatchService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -2054,7 +2055,7 @@ class ParatooService {
     /**
      * Transforms a species name to species object used by ecodata.
      * e.g. Acacia glauca [Species] (scientific: Acacia glauca Willd.)
-     * [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID"]
+     * [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", commonName: "Acacia glauca", guid: "A_GUID"]
      * Guid is necessary to generate species occurrence record. Guid is found by searching the species name with BIE. If not found, then a default value is added.
      * @param name
      * @return
@@ -2065,27 +2066,33 @@ class ParatooService {
         }
 
         String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
+        String commonName, scientificName = name
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
-        Map result = [name: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
+        Map result = [scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
 
         if (matcher.find()) {
-            String commonName = matcher.group(1)?.trim()
-            String scientificName = matcher.group(3)?.trim()
-            result.commonName = commonName ?: result.commonName
+            commonName = matcher.group(1)?.trim()
+            scientificName = matcher.group(3)?.trim()
             result.taxonRank = matcher.group(2)?.trim()
-            result.scientificName = scientificName ?: commonName ?: result.scientificName
-            result.name = scientificName ?: commonName ?: result.name
+            result.scientificName = scientificName
+            result.commonName = commonName
         }
 
-        metadataService.autoPopulateSpeciesData(result)
-        // try again with common name
-        if ((result.guid == null) && result.commonName) {
-            def speciesObject = [scientificName: result.commonName]
-            metadataService.autoPopulateSpeciesData(speciesObject)
-            result.guid = speciesObject.guid
-            result.scientificName = result.scientificName ?: speciesObject.scientificName
+        Map resp = speciesReMatchService.searchByName(scientificName)
+        if (resp) {
+            result.putAll(resp)
         }
+        // try again with common name
+        if ((result.guid == null) && commonName) {
+            resp = speciesReMatchService.searchByName(commonName)
+            if (resp) {
+                result.putAll(resp)
+                result.commonName = commonName
+            }
+        }
+
+        result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
 
         // record is only created if guid is present
         result.guid = result.guid ?: Record.UNMATCHED_GUID

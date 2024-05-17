@@ -26,6 +26,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     TokenService tokenService = Mock(TokenService)
     SettingService settingService = Mock(SettingService)
     MetadataService metadataService = Mock(MetadataService)
+    SpeciesReMatchService speciesReMatchService = Mock(SpeciesReMatchService)
     ActivityService activityService = Mock(ActivityService)
     RecordService recordService = Mock(RecordService)
     UserService userService = Mock(UserService)
@@ -55,6 +56,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         service.recordService = recordService
         service.cacheService = new CacheService()
         service.userService = userService
+        service.speciesReMatchService = speciesReMatchService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -654,25 +656,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result == ""
     }
 
-    void "transformSpeciesName should convert paratoo species name to object correctly"() {
-        when:
-        Map result = service.transformSpeciesName("Acacia glauca [Species] (scientific: Acacia glauca Willd.)")
-        String outputSpeciesId = result.remove("outputSpeciesId")
-        then:
-        outputSpeciesId != null
-        result == [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
-        2 * metadataService.autoPopulateSpeciesData(_) >> null
-
-        when: // no scientific name
-        result = service.transformSpeciesName("Frogs [Class] (scientific: )")
-        outputSpeciesId = result.remove("outputSpeciesId")
-
-        then:
-        outputSpeciesId != null
-        result == [name: "Frogs", scientificName: "Frogs", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
-        2 * metadataService.autoPopulateSpeciesData(_) >> null
-    }
-
     void "buildRelationshipTree should build relationship tree correctly"() {
         given:
         def properties = [
@@ -721,6 +704,25 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         relationships["bird-survey"].contains("bird-observation")
         relationships["fauna-survey"].size() == 1
         relationships["fauna-survey"].contains("fauna-observation")
+    }
+
+    void "transformSpeciesName should convert paratoo species name to object correctly"() {
+        when:
+        Map result = service.transformSpeciesName("Acacia glauca [Species] (scientific: Acacia glauca Willd.)")
+        String outputSpeciesId = result.remove("outputSpeciesId")
+        then:
+        outputSpeciesId != null
+        result == [name: "Acacia glauca Willd. (Acacia glauca)", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
+        2 * speciesReMatchService.searchByName(_) >> null
+
+        when: // no scientific name
+        result = service.transformSpeciesName("Frogs [Class] (scientific: )")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
+        2 * speciesReMatchService.searchByName(_) >> null
     }
 
     void "buildTreeFromParentChildRelationships should build tree correctly"() {
@@ -1399,13 +1401,19 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result.lut.remove('outputSpeciesId')
 
         then:
+        1 * speciesReMatchService.searchByName(_) >> [
+                commonName: "Cat",
+                scientificName: "Felis catus",
+                guid: "TAXON_ID",
+                taxonRank: "species"
+        ]
         result == [
                 lut: [
                         commonName: "Cat",
-                        name: "Cat",
-                        taxonRank: null,
-                        scientificName: "Cat",
-                        guid: "A_GUID"
+                        name: "Felis catus (Cat)",
+                        taxonRank: "species",
+                        scientificName: "Felis catus",
+                        guid: "TAXON_ID"
                 ]
         ]
 
@@ -1417,18 +1425,25 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 ]
         ]
         output = [
-                lut: "Cat"
+                lut: "Cats [Species] (scientific: Felis catus)"
         ]
         result = service.recursivelyTransformData(dataModel, output, formName, 1, null)
         result.lut.remove('outputSpeciesId')
         then:
+        1 * speciesReMatchService.searchByName("Felis catus") >> null
+        1 * speciesReMatchService.searchByName("Cats") >> [
+                commonName: "Cat",
+                scientificName: "Felis catus",
+                guid: "TAXON_ID",
+                taxonRank: "species"
+        ]
         result == [
                 lut: [
-                        commonName: "Cat",
-                        name: "Cat",
-                        taxonRank: null,
-                        scientificName: "Cat",
-                        guid: "A_GUID"
+                        commonName: "Cats",
+                        name: "Felis catus (Cats)",
+                        taxonRank: "species",
+                        scientificName: "Felis catus",
+                        guid: "TAXON_ID"
                 ]
         ]
     }
