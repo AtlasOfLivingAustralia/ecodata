@@ -90,4 +90,36 @@ class SpeciesReMatchService {
             webService.getJson(url)
         })
     }
+
+    Map searchByName (String name, boolean addDetails = false) {
+        Map result = searchNameMatchingServer(name)
+        if (result) {
+            Map resp = [
+                    scientificName: result.scientificName,
+                    commonName: result.vernacularName,
+                    guid: result.taxonConceptID,
+                    taxonRank: result.rank
+            ]
+
+            if(addDetails) {
+                resp.put('details', result)
+            }
+
+            return resp
+        }
+    }
+
+    Map searchNameMatchingServer(String name) {
+        name = name?.toLowerCase() ?: ""
+        cacheService.get('name-matching-server-' + name, {
+            def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
+            def url = "${grailsApplication.config.getProperty('namesmatching.url')}api/search?q=${encodedQuery}"
+            def resp = webService.getJson(url)
+            if (!resp.success) {
+                return null
+            }
+
+            resp
+        })
+    }
 }
