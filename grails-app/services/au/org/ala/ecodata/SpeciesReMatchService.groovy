@@ -91,9 +91,14 @@ class SpeciesReMatchService {
         })
     }
 
-    Map searchByName (String name, boolean addDetails = false) {
-        Map result = searchNameMatchingServer(name)
-        if (result) {
+    Map searchByName (String name, boolean addDetails = false, boolean useVernacularSearch = false ) {
+        Map result
+        if (useVernacularSearch)
+            result = searchNameMatchingServer(name)
+        else
+            result = searchByVernacularNameOnNameMatchingServer(name)
+        List strategy = grailsApplication.config.getProperty('namematching.strategy', List)
+        if (strategy.contains(result?.matchType)) {
             Map resp = [
                     scientificName: result.scientificName,
                     commonName: result.vernacularName,
@@ -114,6 +119,20 @@ class SpeciesReMatchService {
         cacheService.get('name-matching-server-' + name, {
             def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
             def url = "${grailsApplication.config.getProperty('namesmatching.url')}api/search?q=${encodedQuery}"
+            def resp = webService.getJson(url)
+            if (!resp.success) {
+                return null
+            }
+
+            resp
+        })
+    }
+
+    Map searchByVernacularNameOnNameMatchingServer (String name) {
+        name = name?.toLowerCase() ?: ""
+        cacheService.get('name-matching-server-vernacular-name' + name, {
+            def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
+            def url = "${grailsApplication.config.getProperty('namesmatching.url')}api/searchByVernacularName?vernacularName=${encodedQuery}"
             def resp = webService.getJson(url)
             if (!resp.success) {
                 return null

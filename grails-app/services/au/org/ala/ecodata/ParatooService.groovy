@@ -2084,7 +2084,7 @@ class ParatooService {
         }
         // try again with common name
         if ((result.guid == null) && commonName) {
-            resp = speciesReMatchService.searchByName(commonName)
+            resp = speciesReMatchService.searchByName(commonName, false, true)
             if (resp) {
                 result.putAll(resp)
                 result.commonName = commonName
