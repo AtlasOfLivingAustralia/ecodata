@@ -97,7 +97,7 @@ class SpeciesReMatchServiceSpec extends Specification implements ServiceUnitTest
                         "noIssue"
                 ]
         ]
-        service.webService.getJson(_) >> resp
+        service.webService.getJson({it.contains("search?q=")}) >> resp
         when:
         def result = service.searchByName("name")
 
@@ -109,7 +109,7 @@ class SpeciesReMatchServiceSpec extends Specification implements ServiceUnitTest
         def result2 = service.searchByName("name")
 
         then:
-        service.webService.getJson(_) >> resp
+        service.webService.getJson({it.contains("search?q=")}) >> resp
         result2 == [
                 scientificName: "Red",
                 commonName: null,
@@ -122,7 +122,7 @@ class SpeciesReMatchServiceSpec extends Specification implements ServiceUnitTest
         def result3 = service.searchByName("name", false, true)
 
         then:
-        service.webService.getJson(_) >> resp
+        service.webService.getJson({it.contains("searchByVernacularName")}) >> resp
         result3 == [
                 scientificName: "Red",
                 commonName: null,

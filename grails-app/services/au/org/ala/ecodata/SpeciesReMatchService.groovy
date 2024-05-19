@@ -93,7 +93,7 @@ class SpeciesReMatchService {
 
     Map searchByName (String name, boolean addDetails = false, boolean useVernacularSearch = false ) {
         Map result
-        if (useVernacularSearch)
+        if (!useVernacularSearch)
             result = searchNameMatchingServer(name)
         else
             result = searchByVernacularNameOnNameMatchingServer(name)
