@@ -101,7 +101,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
-        projects[0].protocols*.name == ["aParatooForm 1", "aParatooForm 2", "aParatooForm 3"]
+        projects[0].protocols*.name == ["Plot Selection", "aParatooForm 1", "aParatooForm 2", "aParatooForm 3"]
 
         and:
         1 * siteService.geometryAsGeoJson({ it.siteId == 's1' }) >> DUMMY_POLYGON
@@ -537,6 +537,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Service service = new Service(name: "S1", serviceId: '1', legacyId: 1, outputs: [new ServiceForm(externalId: "guid-2", formName: "aParatooForm", sectionName: null)])
         service.save(failOnError: true, flush: true)
+
+        ActivityForm plotSelection = new ActivityForm(name:"Plot Selection", type:"EMSA", category:"Plot Selection and Layout", external:true)
+        plotSelection.externalIds = [new ExternalId(externalId: "plot-selection-guid", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
+        plotSelection.save(failOnError:true, flush: true)
 
         ActivityForm activityForm = new ActivityForm(name: "aParatooForm 1", type: 'EMSA', category: 'protocol category 1', external: true,
                 sections: [
@@ -1515,8 +1519,34 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", null, "Protocol 1", null, new ParatooProtocolConfig(usesPlotLayout: false)) == "Protocol 1 - 2024-05-14 10:00 ${am}"
         ParatooService.buildUpdatedDataSetSummaryName(null, "2024-05-14T00:00:00Z", null, "Protocol 1", null, new ParatooProtocolConfig()) == "Protocol 1 - 2024-05-14 10:00 ${am}"
         ParatooService.buildUpdatedDataSetSummaryName(null, null, null, "Protocol 1", new ParatooCollectionId(eventTime:DateUtil.parse("2024-05-14T00:00:00Z")), new ParatooProtocolConfig()) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+    }
 
+    def "Users with either the project participant or editor role can read all protocols and write all expect Plot Selection"(AccessLevel accessLevel, String protocolId, boolean canRead, boolean canWrite) {
+        setup:
+        String userId = 'u2'
+        String projectId = 'p1' // created during setup
 
+        when:
+        UserPermission up = new UserPermission(userId: userId, accessLevel: accessLevel, entityId: projectId, entityType: Project.class.name)
+        up.save(flush:true, failOnError: true)
+        boolean actualCanRead = service.protocolReadCheck(userId, 'p1', protocolId)
+        boolean actualCanWrite = service.protocolWriteCheck(userId, 'p1', protocolId)
+
+        then:
+        actualCanRead == canRead
+        actualCanWrite == canWrite
+
+        where:
+        protocolId | accessLevel                     | canRead | canWrite
+        'plot-selection-guid' | AccessLevel.editor   | false   | false
+        'plot-selection-guid' | AccessLevel.admin    | true    | true
+        'guid-2'   | AccessLevel.admin               | true    | true
+        'guid-2'   | AccessLevel.caseManager         | true    | true
+        'guid-2'   | AccessLevel.editor              | true    | true
+        'guid-2'   | AccessLevel.projectParticipant  | true    | true
+        'guid-2'   | AccessLevel.readOnly            | false   | false
+
+        'guid-10' | AccessLevel.admin                | false   | false // Note guid-10 doesn't exist/isn't attached to the project.
     }
 
     private Map getNormalDefinition() {

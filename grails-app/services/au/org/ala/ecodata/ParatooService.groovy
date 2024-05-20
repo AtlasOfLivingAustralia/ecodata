@@ -125,6 +125,7 @@ class ParatooService {
     private static List findProtocolsByCategories(List categories) {
         List<ActivityForm> forms = ActivityForm.findAllByCategoryInListAndExternalAndStatusNotEqual(categories, true, Status.DELETED)
         forms
+        forms
     }
 
     private List<ParatooProject> findUserProjects(String userId) {
@@ -445,10 +446,13 @@ class ParatooService {
 
     private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
         List projects = userProjects(userId)
+
         ParatooProject project = projects.find { it.id == projectId }
-        boolean protocol = project?.protocols?.find { it.externalIds.find { it.externalId == protocolId } }
-        int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
-        protocol && project.accessLevel.code >= minimumAccess
+        ActivityForm protocol = project?.protocols?.find { it.externalIds.find { it.externalId == protocolId } }
+        int minAccessLevel = AccessLevel.projectParticipant.code
+        // Note we don't need to include a check for ADMIN_ONLY_PROTOCOLS here as those protocol will have already be filtered
+        // out of the list of protocols attached to the project in findProjectProtocols if the user isn't an admin.
+        protocol && project.accessLevel.code >= minAccessLevel
     }
 
     Map findDataSet(String userId, String orgMintedUUID) {
