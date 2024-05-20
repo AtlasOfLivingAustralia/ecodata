@@ -504,6 +504,7 @@ if (!ala.baseURL) {
 bie.ws.url = "https://bie-ws.ala.org.au/"
 bie.url = "https://bie.ala.org.au/"
 namesmatching.url = "https://namematching-ws-test.ala.org.au/"
+namematching.strategy = ["exactMatch", "vernacularMatch"]
 
 if (!collectory.baseURL) {
     //collectory.baseURL = "https://collectory-dev.ala.org.au/"

@@ -713,7 +713,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         outputSpeciesId != null
         result == [name: "Acacia glauca Willd. (Acacia glauca)", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
-        2 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
 
         when: // no scientific name
         result = service.transformSpeciesName("Frogs [Class] (scientific: )")
@@ -722,7 +723,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         outputSpeciesId != null
         result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
-        2 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
     }
 
     void "buildTreeFromParentChildRelationships should build tree correctly"() {
@@ -1431,7 +1433,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result.lut.remove('outputSpeciesId')
         then:
         1 * speciesReMatchService.searchByName("Felis catus") >> null
-        1 * speciesReMatchService.searchByName("Cats") >> [
+        1 * speciesReMatchService.searchByName("Cats", false, true) >> [
                 commonName: "Cat",
                 scientificName: "Felis catus",
                 guid: "TAXON_ID",
