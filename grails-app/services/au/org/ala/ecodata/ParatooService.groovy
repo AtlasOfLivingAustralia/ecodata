@@ -125,7 +125,6 @@ class ParatooService {
     private static List findProtocolsByCategories(List categories) {
         List<ActivityForm> forms = ActivityForm.findAllByCategoryInListAndExternalAndStatusNotEqual(categories, true, Status.DELETED)
         forms
-        forms
     }
 
     private List<ParatooProject> findUserProjects(String userId) {
