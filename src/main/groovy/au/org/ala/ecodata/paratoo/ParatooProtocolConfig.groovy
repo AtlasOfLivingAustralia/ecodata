@@ -17,6 +17,7 @@ class ParatooProtocolConfig {
     String name
     String apiEndpoint
     boolean usesPlotLayout = true
+    boolean createSpeciesRecord = true
     List tags
     String geometryType = 'Polygon'
 

@@ -1549,6 +1549,94 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         'guid-10' | AccessLevel.admin                | false   | false // Note guid-10 doesn't exist/isn't attached to the project.
     }
 
+    def "buildTemplateForProtocol must switch record generation on or off" (createSpeciesRecord, expected) {
+        setup:
+        def documentation = [
+                components: [schemas: [:]],
+                paths: [
+                        "opportunes/bulk": [
+                                post: [
+                                        requestBody:
+                                                [
+                                                        content: [
+                                                                "application/json": [
+                                                                        schema: [
+                                                                                "properties": [
+                                                                                        "data": [
+                                                                                                "properties": [
+                                                                                                        "collections": [
+                                                                                                                "items": [
+                                                                                                                        "properties": [
+                                                                                                                                "surveyId": [
+                                                                                                                                        "properties": [
+                                                                                                                                                "projectId": [
+                                                                                                                                                        "type": "string"
+                                                                                                                                                ],
+                                                                                                                                                "protocol" : [
+                                                                                                                                                        "properties": [
+                                                                                                                                                                "id"     : [
+                                                                                                                                                                        "type": "string"
+                                                                                                                                                                ],
+                                                                                                                                                                "version": [
+                                                                                                                                                                        "type": "integer"
+                                                                                                                                                                ]
+                                                                                                                                                        ]
+                                                                                                                                                ]
+                                                                                                                                        ]
+                                                                                                                                ]
+                                                                                                                        ]
+                                                                                                                ]
+                                                                                                        ]
+                                                                                                ]
+                                                                                        ]
+                                                                                ]
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ]
+                                ]
+                        ]
+                ]
+        ]
+        def config = new ParatooProtocolConfig(
+                "name"          : "Opportune",
+                "usesPlotLayout": false,
+                "tags"          : ["survey"],
+                "apiEndpoint"   : "s1s",
+                "overrides"     : [
+                        "dataModel": null,
+                        "viewModel": null
+                ]
+        )
+
+        if (createSpeciesRecord != "DO NOT ADD" ) {
+            config.createSpeciesRecord = createSpeciesRecord
+        }
+
+        def protocol = [
+                attributes: [
+                        endpointPrefix: "opportunes",
+                        workflow: [
+                                [modelName: 'plot-layout'],
+                                [modelName: 'other-model']
+                        ]
+                ]
+        ]
+
+        when:
+        Map result = service.buildTemplateForProtocol(protocol, documentation, config)
+
+        then:
+        result.record == expected
+
+        where:
+        createSpeciesRecord | expected
+        true | true
+        false | false
+        null | false
+        "DO NOT ADD" | true
+    }
+
     private Map getNormalDefinition() {
         def input = """
 {
