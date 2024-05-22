@@ -1233,8 +1233,9 @@ class ParatooService {
         ArrayDeque<String> modelVisitStack = new ArrayDeque<>()
         documentation = deepCopy(documentation)
         Map components = deepCopy(getComponents(documentation))
+        boolean record = config.createSpeciesRecord
 
-        Map template = [dataModel: [], viewModel: [], modelName: capitalizeModelName(protocol.attributes.name), record: true, relationships: [ecodata: [:], apiOutput: [:]]]
+        Map template = [dataModel: [], viewModel: [], modelName: capitalizeModelName(protocol.attributes.name), record: record, relationships: [ecodata: [:], apiOutput: [:]]]
         Map properties = deepCopy(findProtocolEndpointDefinition(protocol, documentation))
         if (properties == null) {
             throw new NotFoundException("No protocol endpoint found for ${protocol.attributes.endpointPrefix}/bulk")
