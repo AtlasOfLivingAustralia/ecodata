@@ -610,8 +610,17 @@ class ParatooService {
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
             String externalId = geoJson.properties?.externalId
-            if (externalId) {
-                siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
+            if (config.usesPlotLayout) {
+                if (externalId) {
+                    siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
+                }
+                else {
+                    log.error("No externalId found for plot layout for survey ${collection.orgMintedUUID}, project ${project.projectId}")
+                }
+            }
+            else {
+                // non-plot based data sets will have the dataSetId/orgMintedUUID as the external id
+                siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: collection.orgMintedUUID)]
             }
             Site site
             // create new site for every non-plot submission
