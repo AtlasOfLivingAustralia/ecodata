@@ -189,15 +189,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap(), activityId: "123"]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
-        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true, name: "aParatooForm 1 - 2023-09-01 10:00 ${am}"]
+        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: "s1", format: "Database Table", sizeUnknown: true, name: "aParatooForm 1 - 2023-09-01 10:00 ${am}"]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
+        Map site
 
         when:
         Map result = service.submitCollection(collection, project)
         waitAll(result.promise)
 
         then:
-        1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"]]]]
+        1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"], "coarse-woody-debris-survey-observation": [[point: [lat: 1, lng: 2, name: [data: [attributes: [symbol: "ab"]]]]]]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
         1 * projectService.updateDataSet(projectId, expectedDataSetAsync) >> [status: 'ok']
         1 * projectService.updateDataSet(projectId, expectedDataSetSync) >> [status: 'ok']
@@ -206,6 +207,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             it.plannedStartDate == "2023-09-01T00:00:00Z" && it.plannedEndDate == "2023-09-01T00:00:00Z" &&
             it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
         }) >> [activityId: '123']
+        1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
         1 * activityService.delete("123", true) >> [status: 'ok']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
@@ -214,6 +216,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                     "usesPlotLayout": false,
                     "tags"          : ["survey"],
                     "apiEndpoint"   : "coarse-woody-debris-surveys",
+                    "geometryType"  : "Point",
                     "overrides"     : [
                             "dataModel": null,
                             "viewModel": null
@@ -225,6 +228,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         and:
         result.updateResult == [status: 'ok']
+        site.externalIds == [new ExternalId(externalId: "d1", idType: ExternalId.IdType.MONITOR_PLOT_GUID)]
     }
 
     void "The service can create a site from a submitted plot-selection"() {
@@ -552,8 +556,15 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                                                 columns : [
                                                         [
                                                                 dataType: "list",
-                                                                name    : "coarse-woody-debris-survey-observation"
+                                                                name    : "coarse-woody-debris-survey-observation",
+                                                                columns: [
+                                                                        [
+                                                                                dataType: "feature",
+                                                                                name: "point"
+                                                                        ]
+                                                                ]
                                                         ]
+
                                                 ]
                                         ]
                                 ],
