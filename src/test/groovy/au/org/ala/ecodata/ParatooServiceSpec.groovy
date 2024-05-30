@@ -44,6 +44,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         setupData()
 
         grailsApplication.config.paratoo.location.excluded = ['location.vegetation-association-nvis']
+        grailsApplication.config.paratoo.species.specialCase = ["Other"]
         service.grailsApplication = grailsApplication
         service.webService = webService
         service.siteService = siteService
@@ -740,6 +741,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
+
+        when: // Do not create record when value equals special cases. Therefore, removes guid.
+        result = service.transformSpeciesName("Other")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Other", scientificName: null, commonName: "Other", taxonRank: null]
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
+
     }
 
     void "buildTreeFromParentChildRelationships should build tree correctly"() {

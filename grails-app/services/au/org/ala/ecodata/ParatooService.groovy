@@ -479,12 +479,13 @@ class ParatooService {
                 formVersion      : activityForm.formVersion,
                 description      : "Activity submitted by monitor",
                 projectId        : collection.projectId,
-                publicationStatus: "published",
+                publicationStatus: PublicationStatus.PUBLISHED,
                 siteId           : dataSet.siteId,
                 startDate        : dataSet.startDate,
                 endDate          : dataSet.endDate,
                 plannedStartDate : dataSet.startDate,
                 plannedEndDate   : dataSet.endDate,
+                progress         : Activity.FINISHED,
                 externalIds      : [new ExternalId(idType: ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: dataSet.dataSetId)],
                 userId           : userId,
                 outputs          : [[
@@ -2106,9 +2107,15 @@ class ParatooService {
         }
 
         result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
-
-        // record is only created if guid is present
-        result.guid = result.guid ?: Record.UNMATCHED_GUID
+        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
+        // do not create record for special cases
+        if (specialCases.contains(name)) {
+            result.remove("guid")
+        }
+        else {
+            // record is only created if guid is present
+            result.guid = result.guid ?: Record.UNMATCHED_GUID
+        }
         result
     }
 }
