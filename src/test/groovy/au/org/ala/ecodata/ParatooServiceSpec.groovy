@@ -240,7 +240,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "uuid"                : "lmpisy5p9g896lad4ut",
                 "comments"             : "Test"]
 
-        Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
+        Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
 
         String userId = 'u1'
 
@@ -533,7 +533,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Site projectArea = new Site(siteId: 's1', name: 'Site 1', type: Site.TYPE_PROJECT_AREA, extent: [geometry: DUMMY_POLYGON])
         projectArea.save(failOnError: true, flush: true)
-        Site plot = new Site(siteId: 's2', name: "Site 2", type: Site.TYPE_SURVEY_AREA, extent: [geometry: DUMMY_PLOT], projects: ['p1'])
+        Site plot = new Site(siteId: 's2', name: "Site 2", type: Site.TYPE_SURVEY_AREA, extent: [geometry: DUMMY_PLOT], projects: ['p1'], externalIds:[new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID)])
         plot.save(failOnError: true, flush: true)
         siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 
