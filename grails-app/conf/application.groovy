@@ -1490,4 +1490,4 @@ paratoo.defaultPlotLayoutViewModels = [
                         ]
                 ]
         ]
-
+paratoo.species.specialCases = ["Other"]

@@ -2097,9 +2097,15 @@ class ParatooService {
         }
 
         result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
-
-        // record is only created if guid is present
-        result.guid = result.guid ?: Record.UNMATCHED_GUID
+        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
+        // do not create record for special cases
+        if (specialCases.contains(name)) {
+            result.remove("guid")
+        }
+        else {
+            // record is only created if guid is present
+            result.guid = result.guid ?: Record.UNMATCHED_GUID
+        }
         result
     }
 }
