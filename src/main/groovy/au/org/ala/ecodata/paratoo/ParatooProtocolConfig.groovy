@@ -326,11 +326,11 @@ class ParatooProtocolConfig {
 
         String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' ('+CORE_PLOT_SHORT+')'
 
-        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
+        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}", CORE_PLOT_SHORT)
 
         if (faunaPlotPoints) {
             name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + FAUNA_PLOT_SHORT + ')'
-            Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
+            Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}", FAUNA_PLOT_SHORT)
             List features = [plotGeoJson, faunaPlotGeoJson]
 
             name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + CORE_PLOT_SHORT + ' + ' + FAUNA_PLOT_SHORT + ')'
@@ -357,13 +357,13 @@ class ParatooProtocolConfig {
         ]
     }
 
-    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, String plotLayoutId, String notes  = "") {
+    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, String plotLayoutId, String notes  = "", String activityType = null) {
         Map plotGeometry = toGeometry(plotLayoutPoints)
-        createFeatureObject(plotGeometry, name, plotLayoutId, notes)
+        createFeatureObject(plotGeometry, name, plotLayoutId, notes, activityType)
     }
 
-    static Map createFeatureObject(Map plotGeometry, String name, String plotLayoutId, String notes = "") {
-        [
+    static Map createFeatureObject(Map plotGeometry, String name, String plotLayoutId, String notes = "",  String activityType = null) {
+        Map featureObject = [
                 type      : 'Feature',
                 geometry  : plotGeometry,
                 properties: [
@@ -373,6 +373,10 @@ class ParatooProtocolConfig {
                         notes      : notes
                 ]
         ]
+        if (activityType) {
+            featureObject.properties.activityType = activityType
+        }
+        featureObject
     }
 
     static Map toGeometry(List points) {

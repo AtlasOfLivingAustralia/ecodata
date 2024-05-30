@@ -140,7 +140,7 @@ class ParatooProtocolConfigSpec extends Specification {
                         type: "Polygon",
                         coordinates: [[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]
                 ],
-                properties: [name: "QDASEQ0001 - Control (Core)", externalId: "1", description: "QDASEQ0001 - Control (Core)", notes: "Core monitoring plot some comment"]
+                properties: [name: "QDASEQ0001 - Control (Core)", externalId: "1", description: "QDASEQ0001 - Control (Core)", notes: "Core monitoring plot some comment", activityType:'Core']
         ]
     }
 
@@ -204,7 +204,7 @@ class ParatooProtocolConfigSpec extends Specification {
                                         type:"Polygon",
                                         coordinates:[[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]
                                 ],
-                                properties:[name:"SATFLB0001 - Control (Core)", externalId:"2", description:"SATFLB0001 - Control (Core)", notes:"Core monitoring plot some comment"]],
+                                properties:[name:"SATFLB0001 - Control (Core)", externalId:"2", description:"SATFLB0001 - Control (Core)", notes:"Core monitoring plot some comment", activityType:'Core']],
                         [
                                 type:"Feature",
                                 geometry:[
@@ -212,7 +212,7 @@ class ParatooProtocolConfigSpec extends Specification {
                                         coordinates:[[[138.6371026907952, -34.971403261821905], [138.63709732396242, -34.972304399720215], [138.6381916652405, -34.972304399720215], [138.63819166764344, -34.9714076576406], [138.6371026907952, -34.971403261821905]]]
                                 ],
                                 properties:[
-                                        name:"SATFLB0001 - Control (Fauna)", externalId:"2", description:"SATFLB0001 - Control (Fauna)", notes:"Fauna plot some comment"
+                                        name:"SATFLB0001 - Control (Fauna)", externalId:"2", description:"SATFLB0001 - Control (Fauna)", notes:"Fauna plot some comment", activityType:'Fauna'
                                 ]
                         ]
                 ]
@@ -228,7 +228,8 @@ class ParatooProtocolConfigSpec extends Specification {
                                 name:"SATFLB0001 - Control (Core)",
                                 externalId:"2",
                                 description:"SATFLB0001 - Control (Core)",
-                                notes:"Core monitoring plot some comment"
+                                notes:"Core monitoring plot some comment",
+                                activityType: 'Core'
                         ]
                 ],
                 [
@@ -241,7 +242,8 @@ class ParatooProtocolConfigSpec extends Specification {
                                 name:"SATFLB0001 - Control (Fauna)",
                                 externalId:"2",
                                 description:"SATFLB0001 - Control (Fauna)",
-                                notes:"Fauna plot some comment"
+                                notes:"Fauna plot some comment",
+                                activityType: 'Fauna'
                         ]
                 ]
         ]
