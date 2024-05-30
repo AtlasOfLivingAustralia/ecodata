@@ -875,7 +875,7 @@ class ParatooService {
         // The project/s for the site will be specified by a subsequent call to /projects
         siteData.projects = []
 
-        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, siteData.externalId)
+        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, siteData.externalIds[0].externalId)
         Map result
         if (site) {
             result = siteService.update(siteData, site.siteId)
