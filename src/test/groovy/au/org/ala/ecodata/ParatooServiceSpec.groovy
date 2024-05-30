@@ -342,8 +342,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * userService.setCurrentUser(userId)
 
         and:
-        site.name == "SATFLB0001 - Control (100 x 100)"
-        site.description == "SATFLB0001 - Control (100 x 100)"
+        site.name == "SATFLB0001 - Control (Core + Fauna)"
+        site.description == "SATFLB0001 - Control (Core + Fauna)"
         site.notes == "Core monitoring plot some comment"
         site.type == "compound"
         site.publicationStatus == "published"
@@ -361,10 +361,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Date afterSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-15T06:00:11.996Z")
         Date beforeSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.996Z")
         new Site(
-                name: "SATFLB0001 - Control (100 x 100)",
+                name: "SATFLB0001 - Control (Core)",
                 siteId: "s0",
                 extent: [geometry: DUMMY_POLYGON],
-                description: "SATFLB0001 - Control (100 x 100)",
+                description: "SATFLB0001 - Control (Core)",
                 notes: "Core monitoring plot some comment",
                 type: "compound",
                 externalIds: [new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_GUID)],
@@ -424,10 +424,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Date beforeSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.996Z")
         Site.withSession { session ->
             new Site(
-                    name: "SATFLB0001 - Control (100 x 100)",
+                    name: "SATFLB0001 - Control (Core)",
                     siteId: "s0",
                     extent: [geometry: DUMMY_POLYGON],
-                    description: "SATFLB0001 - Control (100 x 100)",
+                    description: "SATFLB0001 - Control (Core)",
                     notes: "Core monitoring plot some comment",
                     type: "compound",
                     externalIds: [new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_GUID)],

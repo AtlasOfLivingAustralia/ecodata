@@ -14,6 +14,8 @@ import org.locationtech.jts.geom.Geometry
 class ParatooProtocolConfig {
     static final String FAUNA_PLOT = 'Fauna plot'
     static final String CORE_PLOT = 'Core monitoring plot'
+    static final String FAUNA_PLOT_SHORT = 'Fauna'
+    static final String CORE_PLOT_SHORT = 'Core'
     String name
     String apiEndpoint
     boolean usesPlotLayout = true
@@ -319,17 +321,19 @@ class ParatooProtocolConfig {
         Map plotSelection = getProperty(surveyData, plotSelectionPath)
         Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
 
-        String plotLayoutDimensionLabel = getProperty(surveyData, plotLayoutDimensionLabelPath)
         String plotLayoutTypeLabel = getProperty(surveyData, plotLayoutTypeLabelPath)
-
-        String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + plotLayoutDimensionLabel + ')'
-
-        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
         List faunaPlotPoints = getProperty(surveyData, faunaPlotPointPath)
 
+        String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' ('+CORE_PLOT_SHORT+')'
+
+        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
+
         if (faunaPlotPoints) {
+            name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + FAUNA_PLOT_SHORT + ')'
             Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}")
             List features = [plotGeoJson, faunaPlotGeoJson]
+
+            name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + CORE_PLOT_SHORT + ' + ' + FAUNA_PLOT_SHORT + ')'
             plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId, plotGeoJson.properties.notes)
         }
 
