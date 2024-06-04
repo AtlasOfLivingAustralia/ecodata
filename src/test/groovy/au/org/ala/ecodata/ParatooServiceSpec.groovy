@@ -26,6 +26,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     TokenService tokenService = Mock(TokenService)
     SettingService settingService = Mock(SettingService)
     MetadataService metadataService = Mock(MetadataService)
+    SpeciesReMatchService speciesReMatchService = Mock(SpeciesReMatchService)
     ActivityService activityService = Mock(ActivityService)
     RecordService recordService = Mock(RecordService)
     UserService userService = Mock(UserService)
@@ -33,12 +34,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     static Map DUMMY_POLYGON = [type: 'Polygon', coordinates: [[[1, 2], [2, 2], [2, 1], [1, 1], [1, 2]]]]
     static Map DUMMY_PLOT = ['type':'Point', coordinates: [1,2]]
 
+    // The am/pm in the formatted time is local dependent and this appears to be easiest way to determine the value.
+    String am = DateUtil.formatAsDisplayDateTime("2024-05-14T00:00:00Z")[-2..-1]
+    String pm = am == "AM" ? "PM" : "pm"
+
     def setup() {
 
         deleteAll()
         setupData()
 
         grailsApplication.config.paratoo.location.excluded = ['location.vegetation-association-nvis']
+        grailsApplication.config.paratoo.species.specialCase = ["Other"]
         service.grailsApplication = grailsApplication
         service.webService = webService
         service.siteService = siteService
@@ -51,6 +57,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         service.recordService = recordService
         service.cacheService = new CacheService()
         service.userService = userService
+        service.speciesReMatchService = speciesReMatchService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -75,6 +82,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Service.findAll().each { it.delete() }
         UserPermission.findAll().each { it.delete() }
         Program.findAll().each { it.delete() }
+        Site.findAll().each { it.delete() }
     }
 
     def cleanup() {
@@ -94,7 +102,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
-        projects[0].protocols*.name == ["aParatooForm 1", "aParatooForm 2", "aParatooForm 3"]
+        projects[0].protocols*.name == ["Plot Selection", "aParatooForm 1", "aParatooForm 2", "aParatooForm 3"]
 
         and:
         1 * siteService.geometryAsGeoJson({ it.siteId == 's1' }) >> DUMMY_POLYGON
@@ -138,19 +146,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    void "The service can create a data set from a submitted collection"() {
+    void "The service should create a data set in the planned state when the mintCollectionId method is called"() {
         setup:
         ParatooCollectionId collectionId = buildCollectionId()
         String projectId = 'p1'
-        Map project = GormMongoUtil.extractDboProperties(getProject())
 
         when:
         Map result = service.mintCollectionId('u1', collectionId)
 
         then:
-        1 * projectService.get(projectId) >> project
-        1 * projectService.update(_, projectId, false) >> { data, pId, updateCollectory ->
-            Map dataSet = data.custom.dataSets[1]  // The stubbed project already has a dataSet, so the new one will be index=1
+        1 * projectService.updateDataSet(projectId, _) >> { pId, dataSet ->
+            pId == projectId
             assert dataSet.surveyId != null
             assert dataSet.surveyId.eventTime != null
             assert dataSet.surveyId.userId == 'org1'
@@ -158,7 +164,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             assert dataSet.protocol == collectionId.protocolId
             assert dataSet.grantId == "g1"
             assert dataSet.progress == 'planned'
-            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDateTime(collectionId.eventTime)} (Project 1)"
+            assert dataSet.name == "aParatooForm 1 - ${DateUtil.formatAsDisplayDateTime(collectionId.eventTime)}"
 
             [status: 'ok']
         }
@@ -184,20 +190,25 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         Map dataSet = [dataSetId:'d1',  grantId:'g1', surveyId:paratooCollectionId.toMap(), activityId: "123"]
         dataSet.surveyId.survey_metadata.orgMintedUUID = orgMintedId
         Map expectedDataSetSync = dataSet + [progress: Activity.STARTED]
-        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: null, format: "Database Table", sizeUnknown: true]
+        Map expectedDataSetAsync = dataSet + [progress: Activity.STARTED, startDate: "2023-09-01T00:00:00Z", endDate: "2023-09-01T00:00:00Z", areSpeciesRecorded: false, activityId: '123', siteId: "s1", format: "Database Table", sizeUnknown: true, name: "aParatooForm 1 - 2023-09-01 10:00 ${am}"]
         ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
+        Map site
 
         when:
         Map result = service.submitCollection(collection, project)
         waitAll(result.promise)
 
         then:
-        1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"]]]]
+        1 * webService.doPost(*_) >> [resp: [collections: ["coarse-woody-debris-survey": [uuid: "1", createdAt: "2023-09-01T00:00:00.123Z", start_date_time: "2023-09-01T00:00:00.123Z", end_date_time: "2023-09-01T00:00:00.123Z"], "coarse-woody-debris-survey-observation": [[point: [lat: 1, lng: 2, name: [data: [attributes: [symbol: "ab"]]]]]]]]]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
-        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
-        1 * projectService.update([custom: [dataSets: [expectedDataSetAsync]]], 'p1', false) >> [status: 'ok']
-        1 * projectService.update([custom: [dataSets: [expectedDataSetSync]]], 'p1', false) >> [status: 'ok']
-        1 * activityService.create(_) >> [activityId: '123']
+        1 * projectService.updateDataSet(projectId, expectedDataSetAsync) >> [status: 'ok']
+        1 * projectService.updateDataSet(projectId, expectedDataSetSync) >> [status: 'ok']
+        1 * activityService.create({
+            it.startDate == "2023-09-01T00:00:00Z" && it.endDate == "2023-09-01T00:00:00Z" &&
+            it.plannedStartDate == "2023-09-01T00:00:00Z" && it.plannedEndDate == "2023-09-01T00:00:00Z" &&
+            it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
+        1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
         1 * activityService.delete("123", true) >> [status: 'ok']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
@@ -206,6 +217,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                     "usesPlotLayout": false,
                     "tags"          : ["survey"],
                     "apiEndpoint"   : "coarse-woody-debris-surveys",
+                    "geometryType"  : "Point",
                     "overrides"     : [
                             "dataModel": null,
                             "viewModel": null
@@ -213,9 +225,11 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             ]] as JSON).toString()
         }
         1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
 
         and:
         result.updateResult == [status: 'ok']
+        site.externalIds == [new ExternalId(externalId: "d1", idType: ExternalId.IdType.MONITOR_PLOT_GUID)]
     }
 
     void "The service can create a site from a submitted plot-selection"() {
@@ -226,7 +240,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "uuid"                : "lmpisy5p9g896lad4ut",
                 "comments"             : "Test"]
 
-        Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
+        Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
 
         String userId = 'u1'
 
@@ -300,14 +314,18 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         when:
         Map result = service.submitCollection(collection, project)
         waitAll(result.promise)
+        println ("finished waiting")
 
         then:
         1 * webService.doPost(*_) >> [resp: surveyData]
         1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
-        2 * projectService.update(_, projectId, false) >> [status: 'ok']
-        2 * projectService.get(projectId) >> [projectId: projectId, custom: [dataSets: [dataSet]]]
+        2 * projectService.updateDataSet(projectId, _) >> [status: 'ok']
         1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
-        1 * activityService.create(_) >> [activityId: '123']
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
         1 * recordService.getAllByActivity('123') >> []
         1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
             (["guid-3": [
@@ -322,18 +340,169 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
             ]] as JSON).toString()
         }
         1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
 
         and:
-        site.name == "SATFLB0001 - Control (100 x 100)"
-        site.description == "SATFLB0001 - Control (100 x 100)"
-        site.notes == "some comment"
-        site.type == "surveyArea"
+        site.name == "SATFLB0001 - Control (Core + Fauna)"
+        site.description == "SATFLB0001 - Control (Core + Fauna)"
+        site.notes == "Core monitoring plot some comment"
+        site.type == "compound"
         site.publicationStatus == "published"
         site.externalIds[0].externalId == "2"
         site.externalIds[0].idType == ExternalId.IdType.MONITOR_PLOT_GUID
 
         result.updateResult == [status: 'ok']
 
+    }
+
+    void "The service will create use existing site" () {
+        setup:
+        String projectId = 'p1'
+        String orgMintedId = 'd1'
+        Date afterSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-15T06:00:11.996Z")
+        Date beforeSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.996Z")
+        new Site(
+                name: "SATFLB0001 - Control (Core)",
+                siteId: "s0",
+                extent: [geometry: DUMMY_POLYGON],
+                description: "SATFLB0001 - Control (Core)",
+                notes: "Core monitoring plot some comment",
+                type: "compound",
+                externalIds: [new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_GUID)],
+                dateCreated: afterSubmissionDate,
+                lastUpdated: afterSubmissionDate
+        ).save(flush: true)
+        ParatooProtocolId protocol = new ParatooProtocolId(id: "1", version: 1)
+        ParatooCollection collection = new ParatooCollection(
+                orgMintedUUID:orgMintedId,
+                coreProvenance: [
+                        "system_core": "<system-core>",
+                        "version_core": "<core-version>"
+                ]
+        )
+        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload","guid-3")
+        Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
+        Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
+
+        when:
+        Map result = service.submitCollection(collection, project)
+        waitAll(result.promise)
+        println ("finished waiting")
+
+        then:
+        1 * webService.doPost(*_) >> [resp: surveyData]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        2 * projectService.updateDataSet(projectId, _) >> [status: 'ok']
+        0 * siteService.create(_)
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
+        1 * recordService.getAllByActivity('123') >> []
+        1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
+            (["guid-3": [
+                    "name"          : "Basal Area - DBH",
+                    "usesPlotLayout": true,
+                    "tags"          : ["survey"],
+                    "apiEndpoint"   : "basal-area-dbh-measure-surveys",
+                    "overrides"     : [
+                            "dataModel": null,
+                            "viewModel": null
+                    ]
+            ]] as JSON).toString()
+        }
+        1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
+    }
+
+    void "The service will create a new site if plot layout has been updated" () {
+        setup:
+        String projectId = 'p1'
+        String orgMintedId = 'd1'
+        Date afterSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-15T06:00:11.996Z")
+        Date beforeSubmissionDate = DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.996Z")
+        Site.withSession { session ->
+            new Site(
+                    name: "SATFLB0001 - Control (Core)",
+                    siteId: "s0",
+                    extent: [geometry: DUMMY_POLYGON],
+                    description: "SATFLB0001 - Control (Core)",
+                    notes: "Core monitoring plot some comment",
+                    type: "compound",
+                    externalIds: [new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_GUID)],
+                    dateCreated: afterSubmissionDate,
+                    lastUpdated: afterSubmissionDate
+            ).save(flush: true)
+            session.flush()
+        }
+        ParatooProtocolId protocol = new ParatooProtocolId(id: "1", version: 1)
+        ParatooCollection collection = new ParatooCollection(
+                orgMintedUUID:orgMintedId,
+                coreProvenance: [
+                        "system_core": "<system-core>",
+                        "version_core": "<core-version>"
+                ]
+        )
+        ParatooCollectionId paratooCollectionId = buildCollectionId("mintCollectionIdBasalAreaPayload","guid-3")
+        Map dataSet =  [dataSetId:'d1', grantId:'g1', surveyId:paratooCollectionId.toMap()]
+        ParatooProject project = new ParatooProject(id: projectId, project: new Project(projectId: projectId, custom: [dataSets: [dataSet]]))
+        Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
+        String date = DateUtil.format(new Date())
+        date = date.replace("Z", ".999Z")
+        surveyData.collections."basal-area-dbh-measure-survey"."plot_visit"."plot_layout"."updatedAt" = date
+        Map site
+
+        when:
+        def result = service.submitCollection(collection, project)
+        waitAll(result.promise)
+
+        then:
+        1 * webService.doPost(*_) >> [resp: surveyData]
+        1 * tokenService.getAuthToken(true) >> Mock(AccessToken)
+        2 * projectService.updateDataSet(projectId, _) >> [status: 'ok']
+        1 * siteService.create(_) >> { site = it[0]; [siteId: 's1'] }
+        1 * activityService.create({
+            it.startDate == "2023-09-22T00:59:47Z" && it.endDate == "2023-09-23T00:59:47Z" &&
+                    it.plannedStartDate == "2023-09-22T00:59:47Z" && it.plannedEndDate == "2023-09-23T00:59:47Z" &&
+                    it.externalIds[0].externalId == "d1" && it.externalIds[0].idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID
+        }) >> [activityId: '123']
+        1 * recordService.getAllByActivity('123') >> []
+        1 * settingService.getSetting('paratoo.surveyData.mapping') >> {
+            (["guid-3": [
+                    "name"          : "Basal Area - DBH",
+                    "usesPlotLayout": true,
+                    "tags"          : ["survey"],
+                    "apiEndpoint"   : "basal-area-dbh-measure-surveys",
+                    "overrides"     : [
+                            "dataModel": null,
+                            "viewModel": null
+                    ]
+            ]] as JSON).toString()
+        }
+        1 * userService.getCurrentUserDetails() >> [userId: userId]
+        1 * userService.setCurrentUser(userId)
+        result.updateResult == [status: 'ok']
+    }
+
+    void "isUpdatedPlotLayout should check plot layout has been updated after site has been updated" () {
+        given:
+        def date1 = DateUtil.parseWithMilliseconds("2023-09-22T00:59:47.111Z")
+        def date2 = DateUtil.parseWithMilliseconds("2023-09-23T00:59:47.111Z")
+        def date3 = DateUtil.parseWithMilliseconds("2023-09-24T00:59:47.111Z")
+
+        when:
+        def result = service.isUpdatedPlotLayout(date1, date2)
+
+        then:
+        result
+
+        when:
+        result = service.isUpdatedPlotLayout(date3, date2)
+
+        then:
+        !result
     }
 
     private Map getProject(){
@@ -364,7 +533,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Site projectArea = new Site(siteId: 's1', name: 'Site 1', type: Site.TYPE_PROJECT_AREA, extent: [geometry: DUMMY_POLYGON])
         projectArea.save(failOnError: true, flush: true)
-        Site plot = new Site(siteId: 's2', name: "Site 2", type: Site.TYPE_SURVEY_AREA, extent: [geometry: DUMMY_PLOT], projects: ['p1'])
+        Site plot = new Site(siteId: 's2', name: "Site 2", type: Site.TYPE_SURVEY_AREA, extent: [geometry: DUMMY_PLOT], projects: ['p1'], externalIds:[new ExternalId(externalId: "2", idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID)])
         plot.save(failOnError: true, flush: true)
         siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 
@@ -373,6 +542,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Service service = new Service(name: "S1", serviceId: '1', legacyId: 1, outputs: [new ServiceForm(externalId: "guid-2", formName: "aParatooForm", sectionName: null)])
         service.save(failOnError: true, flush: true)
+
+        ActivityForm plotSelection = new ActivityForm(name:"Plot Selection", type:"EMSA", category:"Plot Selection and Layout", external:true)
+        plotSelection.externalIds = [new ExternalId(externalId: "plot-selection-guid", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
+        plotSelection.save(failOnError:true, flush: true)
 
         ActivityForm activityForm = new ActivityForm(name: "aParatooForm 1", type: 'EMSA', category: 'protocol category 1', external: true,
                 sections: [
@@ -384,8 +557,15 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                                                 columns : [
                                                         [
                                                                 dataType: "list",
-                                                                name    : "coarse-woody-debris-survey-observation"
+                                                                name    : "coarse-woody-debris-survey-observation",
+                                                                columns: [
+                                                                        [
+                                                                                dataType: "feature",
+                                                                                name: "point"
+                                                                        ]
+                                                                ]
                                                         ]
+
                                                 ]
                                         ]
                                 ],
@@ -492,25 +672,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result == ""
     }
 
-    void "transformSpeciesName should convert paratoo species name to object correctly"() {
-        when:
-        Map result = service.transformSpeciesName("Acacia glauca [Species] (scientific: Acacia glauca Willd.)")
-        String outputSpeciesId = result.remove("outputSpeciesId")
-        then:
-        outputSpeciesId != null
-        result == [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
-        2 * metadataService.autoPopulateSpeciesData(_) >> null
-
-        when: // no scientific name
-        result = service.transformSpeciesName("Frogs [Class] (scientific: )")
-        outputSpeciesId = result.remove("outputSpeciesId")
-
-        then:
-        outputSpeciesId != null
-        result == [name: "Frogs", scientificName: "Frogs", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
-        2 * metadataService.autoPopulateSpeciesData(_) >> null
-    }
-
     void "buildRelationshipTree should build relationship tree correctly"() {
         given:
         def properties = [
@@ -559,6 +720,38 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         relationships["bird-survey"].contains("bird-observation")
         relationships["fauna-survey"].size() == 1
         relationships["fauna-survey"].contains("fauna-observation")
+    }
+
+    void "transformSpeciesName should convert paratoo species name to object correctly"() {
+        when:
+        Map result = service.transformSpeciesName("Acacia glauca [Species] (scientific: Acacia glauca Willd.)")
+        String outputSpeciesId = result.remove("outputSpeciesId")
+        then:
+        outputSpeciesId != null
+        result == [name: "Acacia glauca Willd. (Acacia glauca)", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
+
+        when: // no scientific name
+        result = service.transformSpeciesName("Frogs [Class] (scientific: )")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
+
+        when: // Do not create record when value equals special cases. Therefore, removes guid.
+        result = service.transformSpeciesName("Other")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Other", scientificName: null, commonName: "Other", taxonRank: null]
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
+
     }
 
     void "buildTreeFromParentChildRelationships should build tree correctly"() {
@@ -1237,13 +1430,19 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result.lut.remove('outputSpeciesId')
 
         then:
+        1 * speciesReMatchService.searchByName(_) >> [
+                commonName: "Cat",
+                scientificName: "Felis catus",
+                guid: "TAXON_ID",
+                taxonRank: "species"
+        ]
         result == [
                 lut: [
                         commonName: "Cat",
-                        name: "Cat",
-                        taxonRank: null,
-                        scientificName: "Cat",
-                        guid: "A_GUID"
+                        name: "Felis catus (Cat)",
+                        taxonRank: "species",
+                        scientificName: "Felis catus",
+                        guid: "TAXON_ID"
                 ]
         ]
 
@@ -1255,18 +1454,25 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 ]
         ]
         output = [
-                lut: "Cat"
+                lut: "Cats [Species] (scientific: Felis catus)"
         ]
         result = service.recursivelyTransformData(dataModel, output, formName, 1, null)
         result.lut.remove('outputSpeciesId')
         then:
+        1 * speciesReMatchService.searchByName("Felis catus") >> null
+        1 * speciesReMatchService.searchByName("Cats", false, true) >> [
+                commonName: "Cat",
+                scientificName: "Felis catus",
+                guid: "TAXON_ID",
+                taxonRank: "species"
+        ]
         result == [
                 lut: [
-                        commonName: "Cat",
-                        name: "Cat",
-                        taxonRank: null,
-                        scientificName: "Cat",
-                        guid: "A_GUID"
+                        commonName: "Cats",
+                        name: "Felis catus (Cats)",
+                        taxonRank: "species",
+                        scientificName: "Felis catus",
+                        guid: "TAXON_ID"
                 ]
         ]
     }
@@ -1328,6 +1534,130 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         ]
                 ]
         ]
+    }
+
+    def "The data set name will be updated after the callback to Monitor core and be created from available information"() {
+        expect:
+        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", "2024-05-14T10:00:00Z", "Protocol 1", null, new ParatooProtocolConfig()) == "Protocol 1 (site) - 2024-05-14 10:00 ${am} to 2024-05-14 8:00 ${pm}"
+        ParatooService.buildUpdatedDataSetSummaryName("site", "2024-05-14T00:00:00Z", null, "Protocol 1", null, new ParatooProtocolConfig(usesPlotLayout: false)) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName(null, "2024-05-14T00:00:00Z", null, "Protocol 1", null, new ParatooProtocolConfig()) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+        ParatooService.buildUpdatedDataSetSummaryName(null, null, null, "Protocol 1", new ParatooCollectionId(eventTime:DateUtil.parse("2024-05-14T00:00:00Z")), new ParatooProtocolConfig()) == "Protocol 1 - 2024-05-14 10:00 ${am}"
+    }
+
+    def "Users with either the project participant or editor role can read all protocols and write all expect Plot Selection"(AccessLevel accessLevel, String protocolId, boolean canRead, boolean canWrite) {
+        setup:
+        String userId = 'u2'
+        String projectId = 'p1' // created during setup
+
+        when:
+        UserPermission up = new UserPermission(userId: userId, accessLevel: accessLevel, entityId: projectId, entityType: Project.class.name)
+        up.save(flush:true, failOnError: true)
+        boolean actualCanRead = service.protocolReadCheck(userId, 'p1', protocolId)
+        boolean actualCanWrite = service.protocolWriteCheck(userId, 'p1', protocolId)
+
+        then:
+        actualCanRead == canRead
+        actualCanWrite == canWrite
+
+        where:
+        protocolId | accessLevel                     | canRead | canWrite
+        'plot-selection-guid' | AccessLevel.editor   | false   | false
+        'plot-selection-guid' | AccessLevel.admin    | true    | true
+        'guid-2'   | AccessLevel.admin               | true    | true
+        'guid-2'   | AccessLevel.caseManager         | true    | true
+        'guid-2'   | AccessLevel.editor              | true    | true
+        'guid-2'   | AccessLevel.projectParticipant  | true    | true
+        'guid-2'   | AccessLevel.readOnly            | false   | false
+
+        'guid-10' | AccessLevel.admin                | false   | false // Note guid-10 doesn't exist/isn't attached to the project.
+    }
+
+    def "buildTemplateForProtocol must switch record generation on or off" (createSpeciesRecord, expected) {
+        setup:
+        def documentation = [
+                components: [schemas: [:]],
+                paths: [
+                        "opportunes/bulk": [
+                                post: [
+                                        requestBody:
+                                                [
+                                                        content: [
+                                                                "application/json": [
+                                                                        schema: [
+                                                                                "properties": [
+                                                                                        "data": [
+                                                                                                "properties": [
+                                                                                                        "collections": [
+                                                                                                                "items": [
+                                                                                                                        "properties": [
+                                                                                                                                "surveyId": [
+                                                                                                                                        "properties": [
+                                                                                                                                                "projectId": [
+                                                                                                                                                        "type": "string"
+                                                                                                                                                ],
+                                                                                                                                                "protocol" : [
+                                                                                                                                                        "properties": [
+                                                                                                                                                                "id"     : [
+                                                                                                                                                                        "type": "string"
+                                                                                                                                                                ],
+                                                                                                                                                                "version": [
+                                                                                                                                                                        "type": "integer"
+                                                                                                                                                                ]
+                                                                                                                                                        ]
+                                                                                                                                                ]
+                                                                                                                                        ]
+                                                                                                                                ]
+                                                                                                                        ]
+                                                                                                                ]
+                                                                                                        ]
+                                                                                                ]
+                                                                                        ]
+                                                                                ]
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ]
+                                ]
+                        ]
+                ]
+        ]
+        def config = new ParatooProtocolConfig(
+                "name"          : "Opportune",
+                "usesPlotLayout": false,
+                "tags"          : ["survey"],
+                "apiEndpoint"   : "s1s",
+                "overrides"     : [
+                        "dataModel": null,
+                        "viewModel": null
+                ]
+        )
+
+        if (createSpeciesRecord != "DO NOT ADD" ) {
+            config.createSpeciesRecord = createSpeciesRecord
+        }
+
+        def protocol = [
+                attributes: [
+                        endpointPrefix: "opportunes",
+                        workflow: [
+                                [modelName: 'plot-layout'],
+                                [modelName: 'other-model']
+                        ]
+                ]
+        ]
+
+        when:
+        Map result = service.buildTemplateForProtocol(protocol, documentation, config)
+
+        then:
+        result.record == expected
+
+        where:
+        createSpeciesRecord | expected
+        true | true
+        false | false
+        null | false
+        "DO NOT ADD" | true
     }
 
     private Map getNormalDefinition() {

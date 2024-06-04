@@ -1,7 +1,6 @@
 package au.org.ala.ecodata.paratoo
 
 import au.org.ala.ecodata.*
-import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.PropertyAccessor
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -13,10 +12,14 @@ import org.locationtech.jts.geom.Geometry
 @Slf4j
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProtocolConfig {
-
+    static final String FAUNA_PLOT = 'Fauna plot'
+    static final String CORE_PLOT = 'Core monitoring plot'
+    static final String FAUNA_PLOT_SHORT = 'Fauna'
+    static final String CORE_PLOT_SHORT = 'Core'
     String name
     String apiEndpoint
     boolean usesPlotLayout = true
+    boolean createSpeciesRecord = true
     List tags
     String geometryType = 'Polygon'
 
@@ -25,12 +28,11 @@ class ParatooProtocolConfig {
     String endDatePath = 'end_date_time'
     String surveyIdPath = 'survey_metadata'
     String plotVisitPath = 'plot_visit'
-    String plotProtocolObservationDatePath = "date_time"
-    String plotVisitStartDatePath = "${plotVisitPath}.start_date"
-    String plotVisitEndDatePath = "${plotVisitPath}.end_date"
     String plotLayoutPath = "${plotVisitPath}.plot_layout"
     String plotLayoutIdPath = "${plotLayoutPath}.id"
+    String plotLayoutUpdatedAtPath = "${plotLayoutPath}.updatedAt"
     String plotLayoutPointsPath = "${plotLayoutPath}.plot_points"
+    String faunaPlotPointPath = "${plotLayoutPath}.fauna_plot_point"
     String plotSelectionPath = "${plotLayoutPath}.plot_selection"
     String plotLayoutDimensionLabelPath = "${plotLayoutPath}.plot_dimensions.label"
     String plotLayoutTypeLabelPath = "${plotLayoutPath}.plot_type.label"
@@ -55,46 +57,13 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def date
-        if (usesPlotLayout) {
-            List dates = getDatesFromObservation(surveyData)
-            date = dates ? DateUtil.format(dates.first()) : null
-            return date
-        }
-        else {
-            date = getProperty(surveyData, startDatePath)
-            if (!date) {
-                date = getPropertyFromSurvey(surveyData, startDatePath)
-            }
-
-            date = getFirst(date)
-            return removeMilliseconds(date)
-        }
-    }
-
-    /**
-     * Get date from plotProtocolObservationDatePath and sort them.
-     * @param surveyData - reverse lookup output which includes survey and observation data
-     * @return
-     */
-    List getDatesFromObservation(Map surveyData) {
-        Map surveysData = surveyData.findAll { key, value ->
-            ![ getSurveyAttributeName(), ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION,
-              ParatooService.PARATOO_DATAMODEL_PLOT_VISIT, ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT].contains(key)
-        }
-        List result = []
-        ISODateBindingConverter converter = new ISODateBindingConverter()
-        surveysData.each { key, value ->
-            def dates = getProperty(value, plotProtocolObservationDatePath)
-            dates = dates instanceof List ? dates : [dates]
-
-            result.addAll(dates.collect { String date ->
-                date ? converter.convert(date, ISODateBindingConverter.FORMAT) : null
-            })
+        def date = getProperty(surveyData, startDatePath)
+        if (!date) {
+            date = getPropertyFromSurvey(surveyData, startDatePath)
         }
 
-        result = result.findAll { it != null }
-        result.sort()
+        date = getFirst(date)
+        return removeMilliseconds(date)
     }
 
     def getPropertyFromSurvey(Map surveyData, String path) {
@@ -107,21 +76,23 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def date
-        if (usesPlotLayout) {
-            def dates = getDatesFromObservation(surveyData)
-            date = dates ? DateUtil.format(dates.last()) : null
-            return date
+        def date = getProperty(surveyData, endDatePath)
+        if (!date) {
+            date = getPropertyFromSurvey(surveyData, endDatePath)
         }
-        else {
-            date = getProperty(surveyData, endDatePath)
-            if (!date) {
-                date = getPropertyFromSurvey(surveyData, endDatePath)
-            }
 
-            date = getFirst(date)
-            return removeMilliseconds(date)
+        date = getFirst(date)
+        return removeMilliseconds(date)
+    }
+
+    Date getPlotLayoutUpdatedAt(Map surveyData) {
+        def date = getProperty(surveyData, plotLayoutUpdatedAtPath)
+        if (!date) {
+            date = getPropertyFromSurvey(surveyData, plotLayoutUpdatedAtPath)
         }
+
+        date = getFirst(date)
+        date ? DateUtil.parseWithMilliseconds(date) : null
     }
 
     Map getSurveyId(Map surveyData) {
@@ -180,7 +151,8 @@ class ParatooProtocolConfig {
         List features = []
         paths.each { String name, node ->
             if (node instanceof Boolean) {
-                features.add(output[name])
+                if (output[name])
+                    features.add(output[name])
                 // todo later: add featureIds and modelId for compliance with feature behaviour of reports
             }
 
@@ -246,10 +218,6 @@ class ParatooProtocolConfig {
         Map geoJson = null
         if (usesPlotLayout) {
             geoJson = extractSiteDataFromPlotVisit(output)
-            // get list of all features associated with observation
-            if (geoJson && form && output) {
-                geoJson.features = extractFeatures(output, form)
-            }
         }
         else if (geometryPath) {
             geoJson = extractSiteDataFromPath(output)
@@ -257,20 +225,10 @@ class ParatooProtocolConfig {
         else if (form && output) {
             List features = extractFeatures(output, form)
             if (features) {
-                List featureGeometries = features.collect { it.geometry }
-                Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
                 String startDateInString = getStartDate(output)
                 startDateInString = DateUtil.convertUTCDateToStringInTimeZone(startDateInString, clientTimeZone?:TimeZone.default)
                 String name = "${form.name} site - ${startDateInString}"
-                geoJson = [
-                    type: 'Feature',
-                    geometry: GeometryUtils.geometryToGeoJsonMap(geometry),
-                    properties: [
-                            name: name,
-                            description: "${name} (convex hull of all features)",
-                    ],
-                    features: features
-                ]
+                geoJson = createConvexHullGeoJSON(features, name)
             }
         }
 
@@ -352,38 +310,60 @@ class ParatooProtocolConfig {
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
         Map surveyData = getSurveyData(survey)
-        def plotLayoutId = getProperty(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
+        String plotLayoutId = getProperty(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
 
         if (!plotLayoutId) {
             log.warn("No plot_layout found in survey at path ${plotLayoutIdPath}")
             return null
         }
+
         List plotLayoutPoints = getProperty(surveyData, plotLayoutPointsPath)
         Map plotSelection = getProperty(surveyData, plotSelectionPath)
         Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
 
-        String plotLayoutDimensionLabel = getProperty(surveyData, plotLayoutDimensionLabelPath)
         String plotLayoutTypeLabel = getProperty(surveyData, plotLayoutTypeLabelPath)
+        List faunaPlotPoints = getProperty(surveyData, faunaPlotPointPath)
 
-        String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + plotLayoutDimensionLabel + ')'
+        String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' ('+CORE_PLOT_SHORT+')'
 
-        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, plotSelectionGeoJson?.properties?.notes)
+        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}", CORE_PLOT_SHORT)
 
-        //Map faunaPlotGeoJson = toGeometry(plotLayout.fauna_plot_point)
+        if (faunaPlotPoints) {
+            name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + FAUNA_PLOT_SHORT + ')'
+            Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}", FAUNA_PLOT_SHORT)
+            List features = [plotGeoJson, faunaPlotGeoJson]
 
-        // TODO maybe turn this into a feature with properties to distinguish the fauna plot?
-        // Or a multi-polygon?
+            name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + CORE_PLOT_SHORT + ' + ' + FAUNA_PLOT_SHORT + ')'
+            plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId, plotGeoJson.properties.notes)
+        }
 
         plotGeoJson
     }
 
-    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
-        Map plotGeometry = toGeometry(plotLayoutPoints)
-        createFeatureObject(plotGeometry, name, plotLayoutId, notes)
+    static Map createConvexHullGeoJSON (List features, String name, String externalId = "", String notes = "", String description = "") {
+        features = features.findAll { it.geometry != null }
+        List featureGeometries = features.collect { it.geometry }
+        Geometry geometry = GeometryUtils.getFeatureCollectionConvexHull(featureGeometries)
+        [
+                type: 'Feature',
+                geometry: GeometryUtils.geometryToGeoJsonMap(geometry),
+                properties: [
+                        name: name,
+                        externalId: externalId,
+                        notes: notes,
+                        description: "${description?:name}",
+                ],
+                features: features
+        ]
     }
 
-    static Map createFeatureObject(Map plotGeometry, String name, plotLayoutId, String notes = "") {
-        [
+    static Map createFeatureFromGeoJSON(List plotLayoutPoints, String name, String plotLayoutId, String notes  = "", String activityType = null) {
+        Map plotGeometry = toGeometry(plotLayoutPoints)
+        createFeatureObject(plotGeometry, name, plotLayoutId, notes, activityType)
+    }
+
+    static Map createFeatureObject(Map plotGeometry, String name, String plotLayoutId, String notes = "",  String activityType = null) {
+        Map featureObject = [
                 type      : 'Feature',
                 geometry  : plotGeometry,
                 properties: [
@@ -393,6 +373,10 @@ class ParatooProtocolConfig {
                         notes      : notes
                 ]
         ]
+        if (activityType) {
+            featureObject.properties.activityType = activityType
+        }
+        featureObject
     }
 
     static Map toGeometry(List points) {
@@ -407,7 +391,7 @@ class ParatooProtocolConfig {
         plotGeometry
     }
 
-    static Map createLineStringFeatureFromGeoJSON (List plotLayoutPoints, String name, def plotLayoutId, String notes  = "") {
+    static Map createLineStringFeatureFromGeoJSON (List plotLayoutPoints, String name, String plotLayoutId, String notes  = "") {
         Map plotGeometry = toLineStringGeometry(plotLayoutPoints)
         createFeatureObject(plotGeometry, name, plotLayoutId, notes)
     }

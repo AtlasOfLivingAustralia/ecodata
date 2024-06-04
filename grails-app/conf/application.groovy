@@ -501,6 +501,11 @@ app {
 if (!ala.baseURL) {
     ala.baseURL = "https://www.ala.org.au"
 }
+bie.ws.url = "https://bie-ws.ala.org.au/"
+bie.url = "https://bie.ala.org.au/"
+namesmatching.url = "https://namematching-ws-test.ala.org.au/"
+namematching.strategy = ["exactMatch", "vernacularMatch"]
+
 if (!collectory.baseURL) {
     //collectory.baseURL = "https://collectory-dev.ala.org.au/"
     collectory.baseURL = "https://collections-test.ala.org.au/"
@@ -1485,4 +1490,4 @@ paratoo.defaultPlotLayoutViewModels = [
                         ]
                 ]
         ]
-
+paratoo.species.specialCases = ["Other", "N/A"]

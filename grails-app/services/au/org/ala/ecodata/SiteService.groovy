@@ -623,7 +623,19 @@ class SiteService {
 
     def populateLocationMetadataForSite(Map site) {
 
-        def siteGeom = geometryAsGeoJson(site)
+        Map siteGeom
+        if (site.type == Site.TYPE_COMPOUND) {
+            siteGeom = [
+                    type:'GeometryCollection',
+                    geometries: [
+                            site.features.collect{it.geometry}
+                    ]
+            ]
+        }
+        else {
+            siteGeom = geometryAsGeoJson(site)
+        }
+
         if (siteGeom) {
             GeometryJSON gjson = new GeometryJSON()
             Geometry geom = gjson.read((siteGeom as JSON).toString())

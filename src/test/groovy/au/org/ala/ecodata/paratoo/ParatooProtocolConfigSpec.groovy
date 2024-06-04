@@ -100,9 +100,7 @@ class ParatooProtocolConfigSpec extends Specification {
         Map observation = apiOutput.collections
         Map floristicsSurveyConfig = [
                 apiEndpoint:'floristics-veg-survey-lites',
-                usesPlotLayout:true,
-                startDatePath: 'plot_visit.start_date',
-                endDatePath: 'plot_visit.end_date'
+                usesPlotLayout:true
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(floristicsSurveyConfig)
         config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: apiOutput.survey_metadata]))
@@ -134,9 +132,16 @@ class ParatooProtocolConfigSpec extends Specification {
         transformData(observation, activityForm, config)
 
         then:
-        config.getStartDate(observation) == "2024-04-08T01:23:28Z"
-        config.getEndDate(observation) == "2024-04-10T01:23:28Z"
-        config.getGeoJson(observation) == [type: "Feature", geometry: [type: "Polygon", coordinates: [[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]], properties: [name: "QDASEQ0001 - Control (100 x 100)", externalId: 1, description: "QDASEQ0001 - Control (100 x 100)", notes: "some comment"]]
+        config.getStartDate(observation) == "2022-09-21T01:55:44Z"
+        config.getEndDate(observation) == "2022-09-21T01:55:44Z"
+        config.getGeoJson(observation) == [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[152.880694, -27.388252], [152.880651, -27.388336], [152.880518, -27.388483], [152.880389, -27.388611], [152.88028, -27.388749], [152.880154, -27.388903], [152.880835, -27.389463], [152.880644, -27.389366], [152.880525, -27.389248], [152.88035, -27.389158], [152.880195, -27.389021], [152.880195, -27.389373], [152.880797, -27.388316], [152.881448, -27.388909], [152.881503, -27.388821], [152.881422, -27.388766], [152.881263, -27.388644], [152.881107, -27.388549], [152.880939, -27.388445], [152.881314, -27.389035], [152.88122, -27.389208], [152.881089, -27.389343], [152.880973, -27.389472], [152.880916, -27.389553], [152.880694, -27.388252]]]
+                ],
+                properties: [name: "QDASEQ0001 - Control (Core)", externalId: "1", description: "QDASEQ0001 - Control (Core)", notes: "Core monitoring plot some comment", activityType:'Core']
+        ]
     }
 
     def "The basal-area-dbh-measure-survey can be used with this config"() {
@@ -144,9 +149,7 @@ class ParatooProtocolConfigSpec extends Specification {
         Map surveyData = readSurveyData('basalAreaDbhReverseLookup')
         Map basalAreaDbhMeasureSurveyConfig = [
                 apiEndpoint:'basal-area-dbh-measure-surveys',
-                usesPlotLayout:true,
-                startDatePath: 'start_date',
-                endDatePath: 'start_date',
+                usesPlotLayout:true
         ]
         ParatooProtocolConfig config = new ParatooProtocolConfig(basalAreaDbhMeasureSurveyConfig)
         config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
@@ -185,23 +188,65 @@ class ParatooProtocolConfigSpec extends Specification {
         transformData(observation, activityForm, config)
 
         expect:
-        config.getStartDate(observation) == "2024-03-28T03:17:01Z"
-        config.getEndDate(observation) == "2024-03-28T03:17:01Z"
+        config.getStartDate(observation) == "2023-09-22T00:59:47Z"
+        config.getEndDate(observation) == "2023-09-23T00:59:47Z"
         config.getGeoJson(observation) == [
-                type      : "Feature",
-                geometry  : [
-                        type       : "Polygon",
-                        coordinates: [[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]],
-                properties: ["name": "SATFLB0001 - Control (100 x 100)", externalId: 2, description: "SATFLB0001 - Control (100 x 100)", notes: "some comment"]
-        ]
-        config.getGeoJson(observation, activityForm).features == [[
-                type      : "Feature",
-                geometry  : [
-                        type       : "Point",
-                        coordinates: [149.0651491, -35.2592444]
+                type:"Feature",
+                geometry:[
+                        coordinates:[[[138.6372, -34.9723], [138.6371, -34.9723], [138.6371, -34.9714], [138.6382, -34.9714], [138.6383, -34.9714], [138.6383, -34.9723], [138.6372, -34.9723]]],
+                        type:"Polygon"
                 ],
-                properties: ["name": "Point aParatooForm 2-1", externalId: 37, id: "aParatooForm 2-1"]
-        ]]
+                properties:[name:"SATFLB0001 - Control (Core + Fauna)", externalId:"2", notes:"Core monitoring plot some comment", description:"SATFLB0001 - Control (Core + Fauna)"],
+                features:[
+                        [
+                                type:"Feature",
+                                geometry:[
+                                        type:"Polygon",
+                                        coordinates:[[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]
+                                ],
+                                properties:[name:"SATFLB0001 - Control (Core)", externalId:"2", description:"SATFLB0001 - Control (Core)", notes:"Core monitoring plot some comment", activityType:'Core']],
+                        [
+                                type:"Feature",
+                                geometry:[
+                                        type:"Polygon",
+                                        coordinates:[[[138.6371026907952, -34.971403261821905], [138.63709732396242, -34.972304399720215], [138.6381916652405, -34.972304399720215], [138.63819166764344, -34.9714076576406], [138.6371026907952, -34.971403261821905]]]
+                                ],
+                                properties:[
+                                        name:"SATFLB0001 - Control (Fauna)", externalId:"2", description:"SATFLB0001 - Control (Fauna)", notes:"Fauna plot some comment", activityType:'Fauna'
+                                ]
+                        ]
+                ]
+        ]
+        config.getGeoJson(observation, activityForm).features == [
+                [
+                        type:"Feature",
+                        geometry:[
+                                type:"Polygon",
+                                coordinates:[[[138.63720760798054, -34.97222197296049], [138.63720760798054, -34.97204230990367], [138.63720760798054, -34.971862646846844], [138.63720760798054, -34.97168298379002], [138.63720760798054, -34.9715033207332], [138.63720760798054, -34.971413489204785], [138.63731723494544, -34.971413489204785], [138.6375364888752, -34.971413489204785], [138.63775574280498, -34.971413489204785], [138.63797499673475, -34.971413489204785], [138.63819425066453, -34.971413489204785], [138.63830387762943, -34.971413489204785], [138.63830387762943, -34.9715033207332], [138.63830387762943, -34.97168298379002], [138.63830387762943, -34.971862646846844], [138.63830387762943, -34.97204230990367], [138.63830387762943, -34.97222197296049], [138.63830387762943, -34.9723118044889], [138.63819425066453, -34.9723118044889], [138.63797499673475, -34.9723118044889], [138.63775574280498, -34.9723118044889], [138.6375364888752, -34.9723118044889], [138.63731723494544, -34.9723118044889], [138.63720760798054, -34.9723118044889], [138.63720760798054, -34.97222197296049]]]
+                        ],
+                        properties:[
+                                name:"SATFLB0001 - Control (Core)",
+                                externalId:"2",
+                                description:"SATFLB0001 - Control (Core)",
+                                notes:"Core monitoring plot some comment",
+                                activityType: 'Core'
+                        ]
+                ],
+                [
+                        type:"Feature",
+                        geometry:[
+                                type:"Polygon",
+                                coordinates:[[[138.6371026907952, -34.971403261821905], [138.63709732396242, -34.972304399720215], [138.6381916652405, -34.972304399720215], [138.63819166764344, -34.9714076576406], [138.6371026907952, -34.971403261821905]]]
+                        ],
+                        properties:[
+                                name:"SATFLB0001 - Control (Fauna)",
+                                externalId:"2",
+                                description:"SATFLB0001 - Control (Fauna)",
+                                notes:"Fauna plot some comment",
+                                activityType: 'Fauna'
+                        ]
+                ]
+        ]
     }
 
     def "The observations from opportunistic-survey can be filtered"() {
@@ -211,9 +256,7 @@ class ParatooProtocolConfigSpec extends Specification {
         Map opportunisticSurveyConfig = [
                 apiEndpoint   : 'opportunistic-surveys',
                 usesPlotLayout: false,
-                geometryType  : 'Point',
-                startDatePath : 'start_date_time',
-                endDatePath   : 'end_date_time'
+                geometryType  : 'Point'
         ]
         ActivityForm activityForm = new ActivityForm(
                 name: "aParatooForm 1",
@@ -271,7 +314,9 @@ class ParatooProtocolConfigSpec extends Specification {
                 features  : [[type: "Feature", geometry: [type: "Point", coordinates: [138.63, -35.0005]], properties:[name:"Point aParatooForm 1-1", externalId:40, id:"aParatooForm 1-1"]]],
                 properties: [
                         name       : "aParatooForm 1 site - ${startDateInDefaultTimeZone}",
-                        description: "aParatooForm 1 site - ${startDateInDefaultTimeZone} (convex hull of all features)"
+                        description: "aParatooForm 1 site - ${startDateInDefaultTimeZone}",
+                        externalId: "",
+                        notes: "",
                 ]
         ]
     }
@@ -287,7 +332,7 @@ class ParatooProtocolConfigSpec extends Specification {
         ]
 
         when:
-        result = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON([[lat: 1, lng: 2], [lat: 3, lng: 4], [lat: 5, lng: 6]], "test name", 1, "test notes")
+        result = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON([[lat: 1, lng: 2], [lat: 3, lng: 4], [lat: 5, lng: 6]], "test name", "1", "test notes")
 
         then:
         result == [
@@ -298,11 +343,88 @@ class ParatooProtocolConfigSpec extends Specification {
                 ],
                 "properties": [
                         "name"      : "test name",
-                        "externalId" : 1,
+                        "externalId" : "1",
                         "description": "test name",
                         "notes"     : "test notes"
                 ]
         ]
+    }
+
+    def "getPlotLayoutUpdatedAt should get plot layout's updatedAt property" () {
+        given:
+        def surveyData = readSurveyData('floristicsStandardReverseLookup')
+        Map floristicsSurveyConfig = [
+                apiEndpoint:'floristics-veg-survey-lites',
+                usesPlotLayout:true
+        ]
+        ParatooProtocolConfig config = new ParatooProtocolConfig(floristicsSurveyConfig)
+        config.setSurveyId(ParatooCollectionId.fromMap([survey_metadata: surveyData.survey_metadata]))
+
+        when:
+        def result = config.getPlotLayoutUpdatedAt(surveyData.collections)
+
+        then:
+        result.equals(DateUtil.parseWithMilliseconds("2023-09-14T06:00:11.473Z"))
+    }
+
+    def "createConvexHullGeoJSON should create convex hull based on valid geometries" () {
+
+        given:
+        def features = [
+            [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                ]
+            ],
+            [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                ]
+            ],
+            [
+                type: "Feature",
+                geometry: null
+            ]
+        ]
+
+        when:
+        def result = ParatooProtocolConfig.createConvexHullGeoJSON(features, "test name", "1", "test notes")
+
+        then:
+        result == [
+                type: "Feature",
+                geometry: [
+                        type: "Polygon",
+                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                ],
+                properties: [
+                        name: "test name",
+                        externalId: "1",
+                        description: "test name",
+                        notes: "test notes"
+                ],
+                features:[
+                        [
+                                type: "Feature",
+                                geometry: [
+                                        type: "Polygon",
+                                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                                ]
+                        ],
+                        [
+                                type: "Feature",
+                                geometry: [
+                                        type: "Polygon",
+                                        coordinates: [[[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]]
+                                ]
+                        ]
+                ]
+        ]
+
     }
 
     def transformData(Map surveyDataAndObservations, ActivityForm form, ParatooProtocolConfig config) {
