@@ -11,11 +11,11 @@
     </encoder>
   </appender>
 
-  <logger name="au.org.ala.ecodata" level="INFO">
-    <appender-ref ref="STDOUT" />
-  </logger>
+  <logger name="au.org.ala.ecodata" level="DEBUG" />
 
-  <root level="error">
+  <logger name="org.ehcache" level="DEBUG" />
+
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

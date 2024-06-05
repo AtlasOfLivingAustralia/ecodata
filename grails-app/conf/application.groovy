@@ -427,6 +427,8 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
     spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
+spatial.intersectionThreshold = 0.05
+
 homepageIdx {
     elasticsearch   {
         fieldsAndBoosts {
@@ -495,6 +497,13 @@ app {
     }
 }
 
+site.check.boundary.layers = [
+        'cl927',
+        'cl10946',
+        'cl10921',
+        'cl2112'
+]
+
 /******************************************************************************\
  *  EXTERNAL SERVERS
  \******************************************************************************/
@@ -551,27 +560,10 @@ if (!grails.cache.ehcache) {
             enabled = true
             ehcache {
                 cacheManagerName = appName + '-ehcache'
-                reloadable = true
-                diskStore = '/data/${appName}/ehcache'
+                diskStore = "/data/${appName}/ehcache"
+                ehcacheXmlLocation = 'classpath:ecodata-ehcache.xml'
             }
         }
-    }
-}
-grails.cache.config = {
-
-    provider {
-        name "${appName}-ehcache"
-    }
-    diskStore {
-        path "/data/${appName}/ehcache"
-    }
-    cache {
-        name 'userDetailsCache'
-        timeToLiveSeconds 60 * 60 * 24
-        maxElementsInMemory 2000
-        maxElementsOnDisk 2000
-        overflowToDisk true
-        diskPersistent true
     }
 }
 
@@ -636,7 +628,7 @@ environments {
     }
     test {
         // Override disk store so the travis build doesn't fail.
-        grails.cache.config = {
+        grails.cache.ehcache = {
             diskStore {
                 path '/tmp'
             }
@@ -665,7 +657,7 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
-        grails.cache.config = {
+        grails.cache.ehcache = {
             diskStore {
                 path '/tmp'
             }

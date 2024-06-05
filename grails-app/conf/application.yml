@@ -72,6 +72,7 @@ server:
     servlet:
         session:
             timeout: 30m
+    shutdown: "graceful"
 management:
     endpoints:
         enabled-by-default: false
@@ -202,6 +203,8 @@ quartz:
 
 environments:
     development:
+        server:
+            shutdown: "graceful"
         grails.config.locations:
             - ~/data/ecodata/config/ecodata-config.properties
     test:

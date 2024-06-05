@@ -1,18 +1,17 @@
 package au.org.ala.ecodata
 
-import org.locationtech.jts.geom.Geometry
-import grails.gorm.transactions.Transactional
-
+import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
-import grails.core.GrailsApplication
+import org.locationtech.jts.geom.Geometry
+import static ParatooService.deepCopy
 /**
  * The SpatialService is responsible for:
  * 1. The interface to the spatial portal.
  * 2. Working with the facet configuration to convert the data returned from the spatial portal into
  *    the format used by ecodata.
  */
-@Transactional
 class SpatialService {
 
     final String GEOJSON_INTERSECT_URL_PREFIX = "/ws/intersect/geojson/"
@@ -64,6 +63,8 @@ class SpatialService {
                 result[fid] = response.resp
             }
         }
+
+        filterOutObjectsInBoundary(result, geoJson)
         convertResponsesToGeographicFacets(result)
 
     }
@@ -96,7 +97,132 @@ class SpatialService {
                 }
             }
         }
+
+        fillMissingDetailsOfObjects(result)
+        Map pidGeoJson = getGeoJsonForPidToMap(pid)
+        filterOutObjectsInBoundary(result, pidGeoJson)
         convertResponsesToGeographicFacets(result)
+    }
+
+    /**
+     * Spatial portal intersection returns values at the boundary. This function filters the boundary intersection by
+     * comparing if the area of intersection is less than a predefined amount 5% (this is configurable).
+     * NOTE: GeoJSON objects must be valid for filtering out to work.
+     * @param response - per layer/fid intersection values - [ "cl34" : [[pid: 123, name: "ACT", fid: "cl34", id: "ACT" ...], ...]
+     * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
+     */
+    void filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
+        Geometry mainGeometry = GeometryUtils.geoJsonMapToGeometry(mainObjectGeoJson)
+        if (!mainGeometry.isValid()) {
+            log.info("Main geometry invalid. Cannot check intersection is near boundary.")
+            return
+        }
+
+        response?.each { String fid, List<Map> matchingObjects ->
+            List pidToFilter = []
+            matchingObjects.each { Map obj ->
+                String boundaryPid = obj.pid
+                if (boundaryPid) {
+                    // Get geoJSON of the object stored in spatial portal
+                    def boundaryGeoJson = getGeoJsonForPidToMap(boundaryPid)
+                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
+                    if (boundaryGeometry.isValid()) {
+                        // check if intersection should be ignored
+                        if (!isValidGeometryIntersection(mainGeometry, boundaryGeometry))
+                            pidToFilter.add(boundaryPid)
+                    }
+                    else {
+                        log.info ("Cannot check object $boundaryPid($fid) is near main geomerty")
+                    }
+                }
+            }
+
+            matchingObjects.removeAll {
+                def result = pidToFilter.contains(it.pid)
+                result ? log.debug("Filtered out ${it.pid} object") : null
+                result
+            }
+        }
+    }
+
+    /**
+     * Calculates area of intersection and check the overlap to be more than 5% (configurable) of site area.
+     * @param mainGeometry
+     * @param boundaryGeometry
+     * @return true - if intersection area is greater than intersection threshold
+     * false - if intersection area is less than or equal to intersection threshold
+     */
+    boolean isValidGeometryIntersection (Geometry mainGeometry, Geometry boundaryGeometry) {
+        Double intersectionThreshold = grailsApplication.config.getProperty("spatial.intersectionThreshold", Double)
+        try {
+            if (mainGeometry.contains(boundaryGeometry) || boundaryGeometry.contains(mainGeometry))
+                return true
+            else {
+                Geometry intersection = boundaryGeometry.intersection(mainGeometry)
+                double intersectArea = intersection.getArea()
+                double mainGeometryArea = mainGeometry.getArea()
+                return intersectArea/mainGeometryArea > intersectionThreshold
+            }
+        }
+        catch (Exception ex) {
+            log.error("Error checking intersection between geometries", ex)
+            return true
+        }
+    }
+
+    /**
+     * Search spatial portal to get details of a intersecting object. Useful when intersection is done using lookup table.
+     * @param response
+     */
+    void fillMissingDetailsOfObjects(Map response) {
+        response?.each { String fid, List<Map> matchingObjects ->
+            matchingObjects.each { Map obj ->
+                String pid = obj.pid
+                if (!pid) {
+                    def spatialObj = searchObjectToMap(obj.name, fid) ?: [:]
+                    obj << spatialObj
+                }
+            }
+        }
+    }
+
+    @Cacheable(value = "spatialSearchObjectMap")
+    Map searchObjectToMap(String query, String fids = "") {
+        searchObject(query, fids)
+    }
+
+    @Cacheable(value = "spatialSearchObject", key = { query.toUpperCase() + fids.toUpperCase() })
+    Map searchObject(String query, String fids = "") {
+        query = URLEncoder.encode(query, 'UTF-8').replaceAll('\\+', '%20')
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/search?q=$query&include=$fids"
+        def resp = webService.getJson(url)
+        if ((resp instanceof  Map) || !resp)
+            return
+
+        def result = resp?.find { it.name?.toUpperCase() == query?.toUpperCase() }
+        deepCopy(result)
+    }
+
+    @Cacheable(value = "spatialGeoJsonPidObject")
+    Map getGeoJsonForPidToMap(String pid) {
+        getGeoJsonForPid(pid)
+    }
+
+    /**
+     * Get GeoJSON of a spatial object.
+     * @param pid
+     * @return
+     */
+    @Cacheable(value="spatialGeoJsonPid", key= {pid})
+    Map getGeoJsonForPid (String pid) {
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/geojson/$pid"
+        Map resp = webService.getJson(url)
+
+        if (resp.error) {
+            return null
+        }
+
+        deepCopy(resp)
     }
 
     /**
@@ -124,8 +250,5 @@ class SpatialService {
         }
         result
     }
-
-
-
 
 }

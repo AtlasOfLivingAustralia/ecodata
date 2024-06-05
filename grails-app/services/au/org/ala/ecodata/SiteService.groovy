@@ -621,7 +621,7 @@ class SiteService {
         webService.getJson(url)
     }
 
-    def populateLocationMetadataForSite(Map site) {
+    def populateLocationMetadataForSite(Map site, List<String> fids = null) {
 
         Map siteGeom
         if (site.type == Site.TYPE_COMPOUND) {
@@ -655,7 +655,7 @@ class SiteService {
                 log.error("No geometry for site: ${site.siteId}")
             }
 
-            site.extent.geometry += lookupGeographicFacetsForSite(site)
+            site.extent.geometry += lookupGeographicFacetsForSite(site, fids)
         }
     }
 
@@ -852,7 +852,7 @@ class SiteService {
         }
     }
     Map<String, List<String>> lookupGeographicFacetsForSite(Map site, List<String> fidsToLookup = null) {
-
+        log.debug("Looking up geographic facets for site: "+site.siteId)
         Map<String, List<String>> geographicFacets = null
         switch (site.extent.source) {
             case 'pid':

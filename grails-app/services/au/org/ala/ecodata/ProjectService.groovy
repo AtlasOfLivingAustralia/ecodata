@@ -651,6 +651,15 @@ class ProjectService {
         }
     }
 
+    List<String> getAllMERITProjectIds() {
+        Project.withCriteria {
+            eq("isMERIT", true)
+            projections {
+                property("projectId")
+            }
+        }
+    }
+
     /**
      * Performs a case-insensitive search by project name
      * @param name The project name to search for

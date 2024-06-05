@@ -1,0 +1,61 @@
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'>
+
+    <persistence directory="/data/ecodata/ehcache"/>
+
+    <cache alias="spatialGeoJsonPid" uses-template="defaultSetting">
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <disk unit="GB" persistent="true">10</disk>
+        </resources>
+    </cache>
+    <cache alias="spatialSearchObject" uses-template="defaultSetting">
+        <expiry>
+            <none/>
+        </expiry>
+
+        <resources>
+            <disk unit="MB" persistent="true">500</disk>
+        </resources>
+    </cache>
+
+    <cache alias="spatialSearchObjectMap" uses-template="defaultSetting">
+        <expiry>
+            <tti unit="minutes">2</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">200</heap>
+        </resources>
+    </cache>
+    <cache alias="spatialGeoJsonPidObject" uses-template="defaultSetting">
+        <expiry>
+            <tti unit="seconds">45</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">100</heap>
+        </resources>
+    </cache>
+    <cache alias="grailsTemplatesCache">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <heap>10</heap>
+    </cache>
+    <cache alias="grailsBlocksCache">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <heap>10</heap>
+    </cache>
+    <cache-template name="defaultSetting">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.util.HashMap</value-type>
+    </cache-template>
+</config>
