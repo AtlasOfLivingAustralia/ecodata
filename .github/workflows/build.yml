@@ -8,6 +8,7 @@ on:
       - master
       - feature/**
       - hotfix/**
+      - release/**
 
 env:
   TZ: Australia/Canberra

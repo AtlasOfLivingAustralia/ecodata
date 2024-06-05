@@ -9,6 +9,10 @@ import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Ignore
 
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
 class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
 
     ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
@@ -758,6 +762,141 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         then:
         response != null
         response == false
+
+    }
+
+    void "The updateDataSet method will update (or insert) a data set into a Project"() {
+        setup:
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345")
+        project.save(flush: true, failOnError: true)
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project actual
+        Project actual2
+        Project actual3
+
+        when:
+        Map resp = service.updateDataSet(project.projectId, dataSet)
+        Project.withNewSession {
+            actual = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == 'ok'
+
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == [dataSet]
+
+        when:
+        Map dataSet2 = [name: 'Test Data Set 2', description: 'Test Description 2', dataSetId:'d2']
+        resp = service.updateDataSet(project.projectId, dataSet2)
+        Project.withNewSession {
+            actual2 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == 'ok'
+
+        actual2.projectId == project.projectId
+        actual2.name == project.name
+        actual2.isMERIT == project.isMERIT
+        actual2.hubId == project.hubId
+        actual2.custom.dataSets == [dataSet, dataSet2]
+
+        when:
+        dataSet2.name = dataSet2.name + " - Updated"
+        resp = service.updateDataSet(project.projectId, dataSet2)
+        Project.withNewSession {
+            actual3 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == 'ok'
+
+        actual3.projectId == project.projectId
+        actual3.name == project.name
+        actual3.isMERIT == project.isMERIT
+        actual3.hubId == project.hubId
+        actual3.custom.dataSets == [dataSet, dataSet2]
+    }
+
+
+    void "The deleteDataSet method will delete a dataSet from a Project"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet]])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.deleteDataSet(project.projectId, 'd1')
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == []
+
+    }
+
+    void "The update method merges the Project custom property"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet], details:[name:'name']])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.update([custom:[details:[name:'name 2']]], project.projectId, false)
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == project.custom.dataSets
+        actual.custom.details == [name:'name 2']
+
+    }
+
+    void "The updateDataSet method is safe for concurrent access of different data sets"() {
+        setup:
+        Project project = new Project(projectId: 'p1', name: "Project 1", hubId:"12345")
+        project.save(flush: true, failOnError: true)
+        ExecutorService executor = Executors.newFixedThreadPool(20)
+        Project project2
+
+        when:
+        List callables = []
+        for (int i = 0; i < 100; i++) {
+            Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d' + i]
+            Callable callable = new Callable() {
+                @Override
+                Object call() throws Exception {
+                    service.updateDataSet(project.projectId, dataSet)
+                    println "Updated data set ${dataSet.dataSetId}"
+                    return null
+                }
+            }
+            callables.add(callable)
+        }
+        executor.invokeAll(callables)
+        Project.withNewSession {
+            project2 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        project2.custom.dataSets.size() == 100
+        for (int i = 0; i < 100; i++) {
+            project2.custom.dataSets.find { it.dataSetId == 'd' + i } != null
+        }
 
     }
 

@@ -84,7 +84,7 @@ class PropertyAccessor {
             results.each { item ->
                 tmpResults.addAll(unrollSingle(item))
             }
-            if (tmpResults.size > 0) {
+            if (tmpResults.size() > 0) {
                 results = tmpResults
             }
         }

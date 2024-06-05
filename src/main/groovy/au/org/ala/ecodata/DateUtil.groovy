@@ -54,6 +54,11 @@ class DateUtil {
         dateTime.format(DISPLAY_DATE_TIME_FORMATTER)
     }
 
+    static String formatAsDisplayDateTime(String isoDateString) {
+        Date date = parse(isoDateString)
+        formatAsDisplayDateTime(date)
+    }
+
     /**
      * Returns a formatted string representing the financial year a report or activity falls into, based on
      * the end date.  This method won't necessarily work for start dates as it will subtract a day from the value

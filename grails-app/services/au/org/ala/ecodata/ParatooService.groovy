@@ -18,7 +18,7 @@ import static grails.async.Promises.task
  */
 @Slf4j
 class ParatooService {
-    static final Object LOCK = new Object()
+
     static final String DATASET_DATABASE_TABLE = 'Database Table'
     static final int PARATOO_MAX_RETRIES = 3
     static final String PARATOO_PROTOCOL_PATH = '/protocols'
@@ -77,6 +77,7 @@ class ParatooService {
     RecordService recordService
     MetadataService metadataService
     UserService userService
+    SpeciesReMatchService speciesReMatchService
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -186,18 +187,7 @@ class ParatooService {
         dataSet.orgMintedIdentifier = paratooCollectionId.encodeAsOrgMintedIdentifier()
 
         log.info "Minting identifier for Monitor collection: ${paratooCollectionId}: ${dataSet.orgMintedIdentifier}"
-        Map result
-        synchronized (LOCK) {
-            Map latestProject = projectService.get(projectId)
-            if (!latestProject.custom) {
-                latestProject.custom = [:]
-            }
-            if (!latestProject.custom.dataSets) {
-                latestProject.custom.dataSets = []
-            }
-            latestProject.custom.dataSets << dataSet
-            result = projectService.update([custom: latestProject.custom], projectId, false)
-        }
+        Map result = projectService.updateDataSet(projectId, dataSet)
 
         if (!result.error) {
             result.orgMintedIdentifier = dataSet.orgMintedIdentifier
@@ -207,7 +197,7 @@ class ParatooService {
 
     private static String buildName(String protocolId, String displayDate, Project project) {
         ActivityForm protocolForm = ActivityForm.findByExternalId(protocolId)
-        String dataSetName = protocolForm?.name + " - " + displayDate + " (" + project.name + ")"
+        String dataSetName = protocolForm?.name + " - " + displayDate
         dataSetName
     }
 
@@ -239,18 +229,12 @@ class ParatooService {
             log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
             userService.clearCurrentUser()
         }
-      
+
         promise.onComplete { Map result ->
             userService.clearCurrentUser()
         }
 
-        def result
-        synchronized (LOCK) {
-            Map latestProject = projectService.get(project.id)
-            Map latestDataSet = latestProject.custom?.dataSets?.find { it.dataSetId == collection.orgMintedUUID }
-            latestDataSet.putAll(dataSet)
-            result = projectService.update([custom: latestProject.custom], project.id, false)
-        }
+        def result = projectService.updateDataSet(project.id, dataSet)
 
         [updateResult: result, promise: promise]
     }
@@ -294,8 +278,16 @@ class ParatooService {
                 surveyDataAndObservations = recursivelyTransformData(form.sections[0].template.dataModel, surveyDataAndObservations, form.name, 1, config)
                 // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
 
+                String siteName = null
                 if (!dataSet.siteId) {
-                    dataSet.siteId = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                    try {
+                        Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                        dataSet.siteId = site.siteId
+                        siteName = site.name
+                    }
+                    catch (Exception ex) {
+                        log.error("Error creating site for ${collection.orgMintedUUID}: ${ex.message}")
+                    }
                 }
 
                 // plot layout is of type geoMap. Therefore, expects a site id.
@@ -307,6 +299,9 @@ class ParatooService {
                 dataSet.endDate = config.getEndDate(surveyDataAndObservations)
                 dataSet.format = DATASET_DATABASE_TABLE
                 dataSet.sizeUnknown = true
+                // Update the data set name as the information supplied during /mint-identifier isn't enough
+                // to ensure uniqueness.
+                dataSet.name = buildUpdatedDataSetSummaryName(siteName, dataSet.startDate, dataSet.endDate, form.name, surveyId, config)
 
                 // Delete previously created activity so that duplicate species records are not created.
                 // Updating existing activity will also create duplicates since it relies on outputSpeciesId to determine
@@ -320,14 +315,27 @@ class ParatooService {
                 dataSet.areSpeciesRecorded = records?.size() > 0
                 dataSet.activityId = activityId
 
-                synchronized (LOCK) {
-                    Map latestProject = projectService.get(project.project.projectId)
-                    Map latestDataSet = latestProject.custom?.dataSets?.find { it.dataSetId == collection.orgMintedUUID }
-                    latestDataSet.putAll(dataSet)
-                    projectService.update([custom: latestProject.custom], project.id, false)
-                }
+                projectService.updateDataSet(project.id, dataSet)
             }
         }
+    }
+
+    protected static String buildUpdatedDataSetSummaryName(String siteName, String startDate, String endDate, String protocolName, ParatooCollectionId surveyId, ParatooProtocolConfig config) {
+        String name = protocolName
+        //The site name for non-plot based data sets is not used as it contains the same data (protocol and time) as the name
+        if (siteName && config.usesPlotLayout) {
+            name += " (" + siteName + ")"
+        }
+        if (startDate && endDate && startDate != endDate) {
+            name += " - " + DateUtil.formatAsDisplayDateTime(startDate) + " to " + DateUtil.formatAsDisplayDateTime(endDate)
+        }
+        else if (startDate) {
+            name += " - " +DateUtil.formatAsDisplayDateTime(startDate)
+        }
+        else {
+            name += " - " + DateUtil.formatAsDisplayDateTime(surveyId.eventTime)
+        }
+        name
     }
 
     /**
@@ -437,10 +445,13 @@ class ParatooService {
 
     private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
         List projects = userProjects(userId)
+
         ParatooProject project = projects.find { it.id == projectId }
-        boolean protocol = project?.protocols?.find { it.externalIds.find { it.externalId == protocolId } }
-        int minimumAccess = read ? AccessLevel.projectParticipant.code : AccessLevel.editor.code
-        protocol && project.accessLevel.code >= minimumAccess
+        ActivityForm protocol = project?.protocols?.find { it.externalIds.find { it.externalId == protocolId } }
+        int minAccessLevel = AccessLevel.projectParticipant.code
+        // Note we don't need to include a check for ADMIN_ONLY_PROTOCOLS here as those protocol will have already be filtered
+        // out of the list of protocols attached to the project in findProjectProtocols if the user isn't an admin.
+        protocol && project.accessLevel.code >= minAccessLevel
     }
 
     Map findDataSet(String userId, String orgMintedUUID) {
@@ -468,12 +479,13 @@ class ParatooService {
                 formVersion      : activityForm.formVersion,
                 description      : "Activity submitted by monitor",
                 projectId        : collection.projectId,
-                publicationStatus: "published",
+                publicationStatus: PublicationStatus.PUBLISHED,
                 siteId           : dataSet.siteId,
                 startDate        : dataSet.startDate,
                 endDate          : dataSet.endDate,
                 plannedStartDate : dataSet.startDate,
                 plannedEndDate   : dataSet.endDate,
+                progress         : Activity.FINISHED,
                 externalIds      : [new ExternalId(idType: ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: dataSet.dataSetId)],
                 userId           : userId,
                 outputs          : [[
@@ -534,35 +546,39 @@ class ParatooService {
                     // used by protocols like bird survey where a point represents a sight a bird has been observed in a
                     // bird survey plot
                     def location = output[model.name]
-                    if (location instanceof Map) {
-                        output[model.name] = [
-                                type      : 'Feature',
-                                geometry  : [
-                                        type       : 'Point',
-                                        coordinates: [location.lng, location.lat]
-                                ],
-                                properties: [
-                                        name      : "Point ${formName}-${featureId}",
-                                        externalId: location.id,
-                                        id: "${formName}-${featureId}"
-                                ]
-                        ]
-                    }
-                    else if (location instanceof List) {
-                        String name
-                        switch (config?.geometryType) {
-                            case "LineString":
-                                name = "LineString ${formName}-${featureId}"
-                                output[model.name] = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON (location, name, null, name)
-                                break
-                            default:
-                                name = "Polygon ${formName}-${featureId}"
-                                output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON (location, name, null, name)
-                                break
+                    if (location) {
+                        if (location instanceof Map) {
+                            output[model.name] = [
+                                    type      : 'Feature',
+                                    geometry  : [
+                                            type       : 'Point',
+                                            coordinates: [location.lng, location.lat]
+                                    ],
+                                    properties: [
+                                            name      : "Point ${formName}-${featureId}",
+                                            externalId: location.id,
+                                            id        : "${formName}-${featureId}"
+                                    ]
+                            ]
+                        } else if (location instanceof List) {
+                            String name
+                            switch (config?.geometryType) {
+                                case "LineString":
+                                    name = "LineString ${formName}-${featureId}"
+                                    output[model.name] = ParatooProtocolConfig.createLineStringFeatureFromGeoJSON(location, name, null, name)
+                                    break
+                                default:
+                                    name = "Polygon ${formName}-${featureId}"
+                                    output[model.name] = ParatooProtocolConfig.createFeatureFromGeoJSON(location, name, null, name)
+                                    break
+                            }
                         }
-                    }
 
-                    featureId ++
+                        featureId ++
+                    }
+                    else {
+                        output[model.name] = null
+                    }
                     break
                 case "image":
                 case "document":
@@ -577,44 +593,80 @@ class ParatooService {
         output
     }
 
-    private String createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
+    private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
         String siteId = null
+        Date updatedPlotLayoutDate
         // Create a site representing the location of the collection
+        Map siteProps = null
         Map geoJson = config.getGeoJson(observation, form)
         if (geoJson) {
-            Map siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
+            siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
             List features = geoJson?.features ?: []
             geoJson.remove('features')
             siteProps.features = features
-            siteProps.type = Site.TYPE_SURVEY_AREA
+            if (features)
+                siteProps.type = Site.TYPE_COMPOUND
+            else
+                siteProps.type = Site.TYPE_SURVEY_AREA
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
             String externalId = geoJson.properties?.externalId
-            if (externalId) {
-                siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
+            if (config.usesPlotLayout) {
+                if (externalId) {
+                    siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
+                }
+                else {
+                    log.error("No externalId found for plot layout for survey ${collection.orgMintedUUID}, project ${project.projectId}")
+                }
+            }
+            else {
+                // non-plot based data sets will have the dataSetId/orgMintedUUID as the external id
+                siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: collection.orgMintedUUID)]
             }
             Site site
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
-                site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId)
-                if (site?.features) {
-                    siteProps.features?.addAll(site.features)
-                }
+                updatedPlotLayoutDate = config.getPlotLayoutUpdatedAt(observation)
+                List sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId, [sort: "lastUpdated", order: "desc"])
+                if (sites)
+                    site = sites.first()
             }
 
             Map result
+            // If the plot layout has been updated, create a new site
             if (!site) {
                 result = siteService.create(siteProps)
-            } else {
+            }
+            else if(isUpdatedPlotLayout(site.lastUpdated, updatedPlotLayoutDate)){
+                siteProps.name = "${siteProps.name} - ${DateUtil.formatAsDisplayDateTime(updatedPlotLayoutDate)}"
+                result = siteService.create(siteProps)
+            }
+            else {
                 result = [siteId: site.siteId]
             }
+
             if (result.error) {
                 // Don't treat this as a fatal error for the purposes of responding to the paratoo request
                 log.error("Error creating a site for survey " + collection.orgMintedUUID + ", project " + project.projectId + ": " + result.error)
             }
             siteId = result.siteId
         }
-        siteId
+        [siteId:siteId, name:siteProps?.name]
+    }
+
+    /**
+     * check if the plot layout has been updated after site has been updated. This means user has edited plot layout and
+     * a new site should be created.
+     * @param siteLastUpdated
+     * @param plotLayoutLastUpdated
+     * @return
+     */
+    static boolean isUpdatedPlotLayout (Date siteLastUpdated, Date plotLayoutLastUpdated) {
+        if ((siteLastUpdated != null) && (plotLayoutLastUpdated != null)) {
+            return plotLayoutLastUpdated.after(siteLastUpdated)
+        }
+
+        return false
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {
@@ -763,7 +815,7 @@ class ParatooService {
         // Monitor has users selecting a point as an approximate survey location then
         // laying out the plot using GPS when at the site.  We only want to return the approximate planning
         // sites from this call
-        List<Site> plotSelections = sites.findAll{it.type == Site.TYPE_SURVEY_AREA && it.extent?.geometry?.type == 'Point'}
+        List<Site> plotSelections = sites.findAll{it.externalIds?.find{externalId -> externalId.idType == ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID}}
 
         Map attributes = [
                 id:project.projectId,
@@ -796,10 +848,6 @@ class ParatooService {
         dataSet
     }
 
-    private static String buildSurveyQueryString(int start, int limit, String createdAt) {
-        "?populate=deep&sort=updatedAt&pagination[start]=$start&pagination[limit]=$limit&filters[createdAt][\$eq]=$createdAt"
-    }
-
     Map retrieveSurveyAndObservations(ParatooCollection collection, Map authHeader = null) {
         String apiEndpoint = PARATOO_DATA_PATH
         Map payload = [
@@ -828,7 +876,7 @@ class ParatooService {
         // The project/s for the site will be specified by a subsequent call to /projects
         siteData.projects = []
 
-        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteData.externalId)
+        Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, siteData.externalIds[0].externalId)
         Map result
         if (site) {
             result = siteService.update(siteData, site.siteId)
@@ -845,7 +893,7 @@ class ParatooService {
         site.projects = []
         // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
-        site.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: geoJson.properties.externalId)]
+        site.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, externalId: geoJson.properties.externalId)]
         site.publicationStatus = PublicationStatus.PUBLISHED
         // Mark the plot as read only as it is managed by the Monitor app
 
@@ -872,7 +920,7 @@ class ParatooService {
 
         siteExternalIds.each { String siteExternalId ->
 
-            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, siteExternalId)
+            Site site = Site.findByExternalId(ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, siteExternalId)
             if (site) {
                 site.projects = site.projects ?: []
                 if (!site.projects.contains(project.id)) {
@@ -1195,8 +1243,9 @@ class ParatooService {
         ArrayDeque<String> modelVisitStack = new ArrayDeque<>()
         documentation = deepCopy(documentation)
         Map components = deepCopy(getComponents(documentation))
+        boolean record = config.createSpeciesRecord
 
-        Map template = [dataModel: [], viewModel: [], modelName: capitalizeModelName(protocol.attributes.name), record: true, relationships: [ecodata: [:], apiOutput: [:]]]
+        Map template = [dataModel: [], viewModel: [], modelName: capitalizeModelName(protocol.attributes.name), record: record, relationships: [ecodata: [:], apiOutput: [:]]]
         Map properties = deepCopy(findProtocolEndpointDefinition(protocol, documentation))
         if (properties == null) {
             throw new NotFoundException("No protocol endpoint found for ${protocol.attributes.endpointPrefix}/bulk")
@@ -2020,7 +2069,7 @@ class ParatooService {
     /**
      * Transforms a species name to species object used by ecodata.
      * e.g. Acacia glauca [Species] (scientific: Acacia glauca Willd.)
-     * [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", guid: "A_GUID"]
+     * [name: "Acacia glauca Willd.", scientificName: "Acacia glauca Willd.", commonName: "Acacia glauca", guid: "A_GUID"]
      * Guid is necessary to generate species occurrence record. Guid is found by searching the species name with BIE. If not found, then a default value is added.
      * @param name
      * @return
@@ -2031,30 +2080,42 @@ class ParatooService {
         }
 
         String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
+        String commonName, scientificName = name
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
-        Map result = [name: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
+        Map result = [scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
 
         if (matcher.find()) {
-            String commonName = matcher.group(1)?.trim()
-            String scientificName = matcher.group(3)?.trim()
-            result.commonName = commonName ?: result.commonName
+            commonName = matcher.group(1)?.trim()
+            scientificName = matcher.group(3)?.trim()
             result.taxonRank = matcher.group(2)?.trim()
-            result.scientificName = scientificName ?: commonName ?: result.scientificName
-            result.name = scientificName ?: commonName ?: result.name
+            result.scientificName = scientificName
+            result.commonName = commonName
         }
 
-        metadataService.autoPopulateSpeciesData(result)
+        Map resp = speciesReMatchService.searchByName(scientificName)
+        if (resp) {
+            result.putAll(resp)
+        }
         // try again with common name
-        if ((result.guid == null) && result.commonName) {
-            def speciesObject = [scientificName: result.commonName]
-            metadataService.autoPopulateSpeciesData(speciesObject)
-            result.guid = speciesObject.guid
-            result.scientificName = result.scientificName ?: speciesObject.scientificName
+        if ((result.guid == null) && commonName) {
+            resp = speciesReMatchService.searchByName(commonName, false, true)
+            if (resp) {
+                result.putAll(resp)
+                result.commonName = commonName
+            }
         }
 
-        // record is only created if guid is present
-        result.guid = result.guid ?: "A_GUID"
+        result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
+        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
+        // do not create record for special cases
+        if (specialCases.contains(name)) {
+            result.remove("guid")
+        }
+        else {
+            // record is only created if guid is present
+            result.guid = result.guid ?: Record.UNMATCHED_GUID
+        }
         result
     }
 }

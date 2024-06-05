@@ -85,9 +85,60 @@ class SpeciesReMatchService {
         name = name?.toLowerCase() ?: ""
         cacheService.get('bie-search-auto-' + name, {
             def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
-            def url = "${grailsApplication.config.getProperty('bie.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=${limit}&idxType=TAXON"
+            def url = "${grailsApplication.config.getProperty('bie.ws.url')}ws/search/auto.jsonp?q=${encodedQuery}&limit=${limit}&idxType=TAXON"
 
             webService.getJson(url)
+        })
+    }
+
+    Map searchByName (String name, boolean addDetails = false, boolean useVernacularSearch = false ) {
+        Map result
+        if (!useVernacularSearch)
+            result = searchNameMatchingServer(name)
+        else
+            result = searchByVernacularNameOnNameMatchingServer(name)
+        List strategy = grailsApplication.config.getProperty('namematching.strategy', List)
+        if (strategy.contains(result?.matchType)) {
+            Map resp = [
+                    scientificName: result.scientificName,
+                    commonName: result.vernacularName,
+                    guid: result.taxonConceptID,
+                    taxonRank: result.rank
+            ]
+
+            if(addDetails) {
+                resp.put('details', result)
+            }
+
+            return resp
+        }
+    }
+
+    Map searchNameMatchingServer(String name) {
+        name = name?.toLowerCase() ?: ""
+        cacheService.get('name-matching-server-' + name, {
+            def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
+            def url = "${grailsApplication.config.getProperty('namesmatching.url')}api/search?q=${encodedQuery}"
+            def resp = webService.getJson(url)
+            if (!resp.success) {
+                return null
+            }
+
+            resp
+        })
+    }
+
+    Map searchByVernacularNameOnNameMatchingServer (String name) {
+        name = name?.toLowerCase() ?: ""
+        cacheService.get('name-matching-server-vernacular-name' + name, {
+            def encodedQuery = URLEncoder.encode(name ?: '', "UTF-8")
+            def url = "${grailsApplication.config.getProperty('namesmatching.url')}api/searchByVernacularName?vernacularName=${encodedQuery}"
+            def resp = webService.getJson(url)
+            if (!resp.success) {
+                return null
+            }
+
+            resp
         })
     }
 }

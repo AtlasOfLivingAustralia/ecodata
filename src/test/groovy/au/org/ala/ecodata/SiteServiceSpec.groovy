@@ -4,13 +4,12 @@ import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import org.grails.web.converters.marshaller.json.CollectionMarshaller
 
 /*import grails.test.mixin.TestMixin
 import grails.test.mixin.mongodb.MongoDbTestMixin*/
-import org.grails.web.converters.marshaller.json.CollectionMarshaller
-import org.grails.web.converters.marshaller.json.MapMarshaller
-import spock.lang.Specification
 
+import org.grails.web.converters.marshaller.json.MapMarshaller
 /**
  * Specification / tests for the SiteService
  */
@@ -288,6 +287,61 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
 
     }
 
+    def "Sites can be listed by externalId and sorted"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', siteId:"s1", externalIds:[new ExternalId(externalId:'e1', idType:ExternalId.IdType.MONITOR_PLOT_GUID)]])
+            session.flush()
+            result = service.create([name:'Site 2', siteId:"s2", externalIds:[new ExternalId(externalId:'e1', idType:ExternalId.IdType.MONITOR_PLOT_GUID)]])
+            session.flush()
+        }
+        then:
+        def sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1', ['sort': "lastUpdated", 'order': "desc"])
+        sites.size() == 2
+        sites[0].name == 'Site 2'
+        sites[0].externalIds.size() == 1
+        sites.externalIds.externalId == [['e1'], ['e1']]
+        sites.externalIds.idType == [[ExternalId.IdType.MONITOR_PLOT_GUID], [ExternalId.IdType.MONITOR_PLOT_GUID]]
+    }
+
+    def "The site area is calculated from the FeatureCollection for a compound site"() {
+        setup:
+        def coordinates = [[148.260498046875, -37.26530995561874], [148.260498046875, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.260498046875, -37.26530995561874]]
+        def extent = buildExtent('drawn', 'Polygon', coordinates)
+        Map site = [type: Site.TYPE_COMPOUND, extent: extent, features: [
+                [
+                        type    : "Feature",
+                        geometry: [
+                                type       : "Polygon",
+                                coordinates: coordinates
+                        ]
+                ],
+                [
+                        type    : "Feature",
+                        geometry: [
+                                type       : "Polygon",
+                                coordinates: coordinates
+                        ]
+                ]
+        ]]
+
+        when:
+        service.populateLocationMetadataForSite(site)
+
+        then:
+        1 * spatialServiceMock.intersectGeometry(_, _) >> [:]
+        site.extent.geometry.aream2 == 4938.9846950349165d
+
+        when:
+        site.type = Site.TYPE_WORKS_AREA
+        service.populateLocationMetadataForSite(site)
+
+        then:
+        1 * spatialServiceMock.intersectGeometry(_, _) >> [:]
+        site.extent.geometry.aream2 == 2469.492347517461
+
+    }
 
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]
