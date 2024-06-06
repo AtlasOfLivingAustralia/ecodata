@@ -266,11 +266,13 @@ class PermissionService {
             Map rec=[:]
             rec.userId = it.userId
             rec.role = it.accessLevel?.toString()
+            rec.displayName = ""  // work around, when the following call to authService fails
             out.put(it.userId,rec)
 
         }
 
         def userList = authService.getUserDetailsById(userIds)
+log.info("--> getMembersForProjectPerPage: userList for UserIds: "+userIds+":"+ userList )
         if (userList) {
             def users = userList['users']
 
