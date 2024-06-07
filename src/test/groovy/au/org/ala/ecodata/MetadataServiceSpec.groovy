@@ -270,7 +270,8 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         def file = new File("src/test/resources/bulk_import_example.xlsx").newInputStream()
 
         when:
-        def content = service.excelWorkbookToMap(file, 'form1', true, null)
+        def resp = service.excelWorkbookToMap(file, 'form1', true, null)
+        def content = resp.success
 
         then:
         content.size() == 2
