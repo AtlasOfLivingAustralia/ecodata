@@ -12,7 +12,6 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import grails.web.mime.MimeType
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
