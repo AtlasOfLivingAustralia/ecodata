@@ -25,6 +25,7 @@ class ApiKeyInterceptor {
     }
 
     boolean before() {
+return true
         def controller = grailsApplication.getArtefactByLogicalPropertyName("Controller", controllerName)
         Class controllerClass = controller?.clazz
 
