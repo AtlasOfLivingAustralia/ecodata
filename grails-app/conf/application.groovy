@@ -631,7 +631,11 @@ environments {
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
-
+        grails.cache.ehcache = {
+            diskStore {
+                path "~/data/${appName}/ehcache"
+            }
+        }
 
     }
     test {
