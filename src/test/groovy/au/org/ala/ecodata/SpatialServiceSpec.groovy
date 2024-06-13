@@ -58,7 +58,7 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         then:
         response["cl22"].size() == 1
         response["cl22"][0].name == "ACT"
-        1 * webService.getJson("/ws/shapes/geojson/123") >> [type: "Polygon", coordinates: [[[5, 0], [5, 5], [0, 5], [0, 0], [5, 0]]]]
-        1 * webService.getJson("/ws/shapes/geojson/456") >> [type: "Polygon", coordinates: [[[11.5, 9.5], [11.5, 11.5], [9.5, 11.5], [9.5, 9.5], [11.5, 9.5]]]]
+        1 * webService.get("/ws/shapes/geojson/123") >> ([type: "Polygon", coordinates: [[[5, 0], [5, 5], [0, 5], [0, 0], [5, 0]]]] as JSON).toString()
+        1 * webService.get("/ws/shapes/geojson/456") >> ([type: "Polygon", coordinates: [[[11.5, 9.5], [11.5, 11.5], [9.5, 11.5], [9.5, 9.5], [11.5, 9.5]]]] as JSON).toString()
     }
 }
