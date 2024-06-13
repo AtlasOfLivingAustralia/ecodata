@@ -152,8 +152,8 @@ class SpatialService {
 //
 //                    start = end
 //                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
-                    def proxy = grailsApplication.mainContext.spatialService
-                    Geometry boundaryGeometry = proxy.getGeoJsonForPidToGeometry(boundaryPid)
+                    //def proxy = grailsApplication.mainContext.spatialService
+                    Geometry boundaryGeometry = getGeoJsonForPidToGeometry(boundaryPid)
                     long end = System.currentTimeMillis()
                     log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end-start}ms")
 
