@@ -83,10 +83,10 @@ class SpatialService {
         log.info("Time taken to filter out objects in boundary: ${end-start}ms")
 
         start = end
-        convertResponsesToGeographicFacets(result)
+        Map geographicFacets = convertResponsesToGeographicFacets(result)
         end = System.currentTimeMillis()
         log.info("Time taken to convert responses to geographic facets: ${end-start}ms")
-
+        geographicFacets
     }
 
     /**
@@ -143,6 +143,7 @@ class SpatialService {
             matchingObjects.each { Map obj ->
                 String boundaryPid = obj.pid
                 if (boundaryPid) {
+                    log.debug("Intersecting ${obj.fieldname}(${fid}) - ${obj.name} ")
                     // Get geoJSON of the object stored in spatial portal
                     long start = System.currentTimeMillis()
 //                    def boundaryGeoJson = getGeoJsonForPidToMap(boundaryPid)
@@ -151,15 +152,19 @@ class SpatialService {
 //
 //                    start = end
 //                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
-                    Geometry boundaryGeometry = getGeoJsonForPidToGeometry(boundaryPid)
+                    def proxy = grailsApplication.mainContext.spatialService
+                    Geometry boundaryGeometry = proxy.getGeoJsonForPidToGeometry(boundaryPid)
                     long end = System.currentTimeMillis()
                     log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end-start}ms")
 
                     if (boundaryGeometry.isValid()) {
                         // check if intersection should be ignored
                         start = end
-                        if (!isValidGeometryIntersection(mainGeometry, boundaryGeometry))
+                        if (!isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
                             pidToFilter.add(boundaryPid)
+                            log.debug("Filtered out ${obj.fieldname}(${fid}) - ${obj.name}")
+                        }
+
                         end = System.currentTimeMillis()
                         log.debug("Time taken to check intersection for pid $boundaryPid: ${end-start}ms")
                     }

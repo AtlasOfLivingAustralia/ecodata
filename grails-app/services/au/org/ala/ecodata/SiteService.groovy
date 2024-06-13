@@ -864,7 +864,7 @@ class SiteService {
                 geographicFacets = spatialService.intersectGeometry(geom, fidsToLookup)
                 break
         }
-        geographicFacets
+        geographicFacets ?: [:]
 
     }
 
