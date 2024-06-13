@@ -8,6 +8,7 @@ import org.geotools.geojson.geom.GeometryJSON
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.io.WKTReader
 
 import static ParatooService.deepCopy
 /**
@@ -244,12 +245,12 @@ class SpatialService {
     Geometry getGeoJsonForPidToGeometry(String pid) {
         log.debug("Cache miss for getGeoJsonForPidToMap($pid)")
         log.debug("Cache miss for getGeoJsonForPid($pid)")
-        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/geojson/$pid"
-        String jsonText = webService.get(url)
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/wkt/$pid"
+        String wkt = webService.get(url)
 
         Geometry geometry = null
         try {
-            geometry = new GeometryJSON().read(jsonText)
+            geometry = new WKTReader().read(wkt)
             log.info("*************************************Successfully created geometry for pid $pid")
         }
         catch (Exception e) {
