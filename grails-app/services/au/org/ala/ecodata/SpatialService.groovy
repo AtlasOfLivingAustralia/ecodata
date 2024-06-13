@@ -4,7 +4,11 @@ import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
+import org.geotools.geojson.geom.GeometryJSON
+import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.GeometryFactory
+
 import static ParatooService.deepCopy
 /**
  * The SpatialService is responsible for:
@@ -140,13 +144,14 @@ class SpatialService {
                 if (boundaryPid) {
                     // Get geoJSON of the object stored in spatial portal
                     long start = System.currentTimeMillis()
-                    def boundaryGeoJson = getGeoJsonForPidToMap(boundaryPid)
+//                    def boundaryGeoJson = getGeoJsonForPidToMap(boundaryPid)
+//                    long end = System.currentTimeMillis()
+//                    log.debug("Time taken to get geojson for pid $boundaryPid: ${end-start}ms")
+//
+//                    start = end
+//                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
+                    Geometry boundaryGeometry = getGeoJsonForPidToGeometry(boundaryPid)
                     long end = System.currentTimeMillis()
-                    log.debug("Time taken to get geojson for pid $boundaryPid: ${end-start}ms")
-
-                    start = end
-                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
-                    end = System.currentTimeMillis()
                     log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end-start}ms")
 
                     if (boundaryGeometry.isValid()) {
@@ -233,6 +238,25 @@ class SpatialService {
     Map getGeoJsonForPidToMap(String pid) {
         log.debug("Cache miss for getGeoJsonForPidToMap($pid)")
         getGeoJsonForPid(pid)
+    }
+
+    @Cacheable(value = "spatialGeoJsonPidObjectGeometry", key={pid})
+    Geometry getGeoJsonForPidToGeometry(String pid) {
+        log.debug("Cache miss for getGeoJsonForPidToMap($pid)")
+        log.debug("Cache miss for getGeoJsonForPid($pid)")
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/geojson/$pid"
+        String jsonText = webService.get(url)
+
+        Geometry geometry = null
+        try {
+            geometry = new GeometryJSON().read(jsonText)
+            log.info("*************************************Successfully created geometry for pid $pid")
+        }
+        catch (Exception e) {
+            log.error("Error reading geometry for pid $pid")
+            geometry = new GeometryFactory().createPoint(new Coordinate(0, 0))
+        }
+        geometry
     }
 
     /**
