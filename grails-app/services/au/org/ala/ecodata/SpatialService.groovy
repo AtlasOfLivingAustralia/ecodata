@@ -4,7 +4,6 @@ import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
-import org.geotools.geojson.geom.GeometryJSON
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.GeometryFactory
@@ -47,8 +46,8 @@ class SpatialService {
     Map<String,List<String>> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
         int length = geoJson?.toString().size()
         int threshold = grailsApplication.config.getProperty('spatial.geoJsonEnvelopeConversionThreshold', Integer)
+        Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
         if(length > threshold){
-            Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
             geoJson = GeometryUtils.geometryToGeoJsonMap (geo.getEnvelope())
         }
 
@@ -60,10 +59,9 @@ class SpatialService {
         long start = System.currentTimeMillis()
         // We are using a WKT string instead of geojson as the spatial portal validates geojson - using
         // WKT allows us to get away with self intersecting polygons that users occasionally draw.
-        String wkt = GeometryUtils.geoJsonMapToGeometry(geoJson).toText()
+        String wkt = geo.toText()
         long end = System.currentTimeMillis()
         log.info("Time taken to convert geojson to wkt: ${end-start}ms")
-
 
 
         Map result = [:]
@@ -78,7 +76,7 @@ class SpatialService {
         }
 
         start = end
-        filterOutObjectsInBoundary(result, geoJson)
+        filterOutObjectsInBoundary(result, geo)
         end = System.currentTimeMillis()
         log.info("Time taken to filter out objects in boundary: ${end-start}ms")
 
@@ -124,6 +122,11 @@ class SpatialService {
         convertResponsesToGeographicFacets(result)
     }
 
+    private void filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
+        Geometry mainGeometry = GeometryUtils.geoJsonMapToGeometry(mainObjectGeoJson)
+        filterOutObjectsInBoundary(response, mainGeometry)
+    }
+
     /**
      * Spatial portal intersection returns values at the boundary. This function filters the boundary intersection by
      * comparing if the area of intersection is less than a predefined amount 5% (this is configurable).
@@ -131,8 +134,8 @@ class SpatialService {
      * @param response - per layer/fid intersection values - [ "cl34" : [[pid: 123, name: "ACT", fid: "cl34", id: "ACT" ...], ...]
      * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
      */
-    void filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
-        Geometry mainGeometry = GeometryUtils.geoJsonMapToGeometry(mainObjectGeoJson)
+    private void filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
+
         if (!mainGeometry.isValid()) {
             log.info("Main geometry invalid. Cannot check intersection is near boundary.")
             return
@@ -146,14 +149,8 @@ class SpatialService {
                     log.debug("Intersecting ${obj.fieldname}(${fid}) - ${obj.name} ")
                     // Get geoJSON of the object stored in spatial portal
                     long start = System.currentTimeMillis()
-//                    def boundaryGeoJson = getGeoJsonForPidToMap(boundaryPid)
-//                    long end = System.currentTimeMillis()
-//                    log.debug("Time taken to get geojson for pid $boundaryPid: ${end-start}ms")
-//
-//                    start = end
-//                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
-                    //def proxy = grailsApplication.mainContext.spatialService
-                    Geometry boundaryGeometry = getGeoJsonForPidToGeometry(boundaryPid)
+
+                    Geometry boundaryGeometry = getGeometryForPid(boundaryPid)
                     long end = System.currentTimeMillis()
                     log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end-start}ms")
 
@@ -246,20 +243,20 @@ class SpatialService {
         getGeoJsonForPid(pid)
     }
 
-    @Cacheable(value = "spatialGeoJsonPidObjectGeometry", key={pid})
-    Geometry getGeoJsonForPidToGeometry(String pid) {
-        log.debug("Cache miss for getGeoJsonForPidToMap($pid)")
-        log.debug("Cache miss for getGeoJsonForPid($pid)")
+    @Cacheable(value = "spatialPidObjectGeometry", key={pid})
+    Geometry getGeometryForPid(String pid) {
+        log.debug("Cache miss for getGeometryForPid($pid)")
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/wkt/$pid"
         String wkt = webService.get(url)
 
         Geometry geometry = null
         try {
             geometry = new WKTReader().read(wkt)
-            log.info("*************************************Successfully created geometry for pid $pid")
         }
         catch (Exception e) {
             log.error("Error reading geometry for pid $pid")
+            // Ehcache throws an error if a null value is returned, so we create a dummy geometry
+            // that won't intersect with anything.
             geometry = new GeometryFactory().createPoint(new Coordinate(0, 0))
         }
         geometry

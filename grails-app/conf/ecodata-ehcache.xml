@@ -38,13 +38,13 @@
             <heap unit="entries">100</heap>
         </resources>
     </cache>
-    <cache alias="spatialGeoJsonPidObjectGeometry">
+    <cache alias="spatialPidObjectGeometry">
 
         <key-type>java.io.Serializable</key-type>
         <value-type>java.io.Serializable</value-type>
 
         <expiry>
-            <tti unit="days">45</tti>
+            <tti unit="days">365</tti>
         </expiry>
         <resources>
             <heap unit="entries">100</heap>
@@ -69,6 +69,17 @@
         </expiry>
         <heap>10</heap>
     </cache>
+
+    <cache alias="userDetailsCache">
+
+        <expiry>
+            <ttl unit="days">1</ttl>
+        </expiry>
+        <resources>
+            <heap unit="entries">2000</heap>
+        </resources>
+    </cache>
+
     <cache-template name="defaultSetting">
         <key-type>java.io.Serializable</key-type>
         <value-type>java.util.HashMap</value-type>
