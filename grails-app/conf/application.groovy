@@ -566,6 +566,7 @@ if (!grails.cache.ehcache) {
         }
     }
 }
+ehcache.directory='/data/ecodata/ehcache'
 
 
 security {
@@ -623,20 +624,11 @@ environments {
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
-        grails.cache.ehcache = {
-            diskStore {
-                path "~/data/${appName}/ehcache"
-            }
-        }
+        ehcache.directory="./ehcache"
 
     }
     test {
-        // Override disk store so the travis build doesn't fail.
-        grails.cache.ehcache = {
-            diskStore {
-                path '/tmp'
-            }
-        }
+        ehcache.directory="./ehcache"
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
@@ -661,11 +653,7 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
-        grails.cache.ehcache = {
-            diskStore {
-                path '/tmp'
-            }
-        }
+        ehcache.directory="./ehcache"
         security.cas.bypass = true
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false

@@ -2,7 +2,7 @@
         xmlns='http://www.ehcache.org/v3'
         xmlns:jsr107='http://www.ehcache.org/v3/jsr107'>
 
-    <persistence directory="/data/ecodata/ehcache"/>
+    <persistence directory="${ehcache.directory}"/>
 
     <cache alias="spatialGeoJsonPid" uses-template="defaultSetting">
         <expiry>
@@ -38,6 +38,21 @@
             <heap unit="entries">100</heap>
         </resources>
     </cache>
+    <cache alias="spatialPidObjectGeometry">
+
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+
+        <expiry>
+            <tti unit="days">365</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">100</heap>
+
+            <disk unit="MB" persistent="true">500</disk>
+        </resources>
+    </cache>
+
     <cache alias="grailsTemplatesCache">
         <key-type>java.io.Serializable</key-type>
         <value-type>java.io.Serializable</value-type>
@@ -54,6 +69,17 @@
         </expiry>
         <heap>10</heap>
     </cache>
+
+    <cache alias="userDetailsCache">
+
+        <expiry>
+            <ttl unit="days">1</ttl>
+        </expiry>
+        <resources>
+            <heap unit="entries">2000</heap>
+        </resources>
+    </cache>
+
     <cache-template name="defaultSetting">
         <key-type>java.io.Serializable</key-type>
         <value-type>java.util.HashMap</value-type>
