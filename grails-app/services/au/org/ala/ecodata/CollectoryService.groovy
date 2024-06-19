@@ -144,8 +144,9 @@ class CollectoryService {
         String dataProviderName = project.isMERIT ? "merit" : "biocollect"
 
         Map properties = defaultConnectionParameters.clone()
-        properties.url = "sftp://upload.ala.org.au:" + dataProviderName + '/' + dataResourceId
-
+        //properties.url = "sftp://upload.ala.org.au:" + dataProviderName + '/' + dataResourceId
+        String url = grailsApplication.config.getProperty('ecodata.forCollectory.exportURL') ?: grailsApplication.config.getProperty('grails.serverURL')+"/ws/record/csvProject?id="
+        properties.url = url + project.projectId
         return (properties as JSON).toString()
     }
 
