@@ -15,10 +15,12 @@ class OrganisationService {
     public static final String PROJECTS = 'projects'
 
     static transactional = 'mongo'
+    static final FLAT = 'flat'
 
     def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource, emailService, grailsApplication
     ReportingService reportingService
     ActivityService activityService
+    ReportService reportService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -215,6 +217,67 @@ class OrganisationService {
         }, [Filters.eq("hubId", hubId)])
 
         organisationDetails
+    }
+
+
+    /**
+     * Returns the reportable metrics for a organisation as determined by the organisation output targets and activities
+     * that have been undertaken.
+     * @param id identifies the organisation.
+     * @return a Map containing the aggregated results.
+     *
+     */
+    def organisationMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null, boolean includeTargets = true) {
+        def org = Organisation.findByOrganisationId(id)
+        if (org) {
+            def organisation = toMap(org, OrganisationService.FLAT)
+
+            List toAggregate
+            if (scoreIds && targetsOnly) {
+                toAggregate = Score.findAllByScoreIdInListAndIsOutputTarget(scoreIds, true)
+            } else if (scoreIds) {
+                toAggregate = Score.findAllByScoreIdInList(scoreIds)
+            } else {
+                toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
+            }
+
+            List outputSummary = reportService.organisationSummary(id, toAggregate, approvedOnly, aggregationConfig) ?: []
+
+            // Add project output target information where it exists.
+            if (includeTargets) {
+                organisation.outputTargets?.each { target ->
+                    // Outcome targets are text only and not mapped to a score.
+                    if (target.outcomeTarget != null) {
+                        return
+                    }
+                    def result = outputSummary.find { it.scoreId == target.scoreId }
+                    if (result) {
+                        if (!result.target || result.target == "0") {
+                            // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
+                            result.target = target.target
+                        }
+
+                    } else {
+                        // If there are no Outputs recorded containing the score, the results won't be returned, so add
+                        // one in containing the target.
+                        def score = toAggregate.find { it.scoreId == target.scoreId }
+                        if (score) {
+                            outputSummary << [scoreId: score.scoreId, label: score.label, target: target.target, isOutputTarget: score.isOutputTarget, description: score.description, outputType: score.outputType, category: score.category]
+                        } else {
+                            // This can happen if the meta-model is changed after targets have already been defined for a project.
+                            // Once the project output targets are re-edited and saved, the old targets will be deleted.
+                            log.warn "Can't find a score for existing output target: $target.outputLabel $target.scoreLabel, projectId: $project.projectId"
+                        }
+                    }
+                }
+            }
+
+            return outputSummary
+        } else {
+            def error = "Error retrieving metrics for project - no such id ${id}"
+            log.error error
+            return [status: 'error', error: error]
+        }
     }
 
 }

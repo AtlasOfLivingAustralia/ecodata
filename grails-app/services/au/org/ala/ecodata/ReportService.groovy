@@ -526,4 +526,21 @@ class ReportService {
         }
         return message
     }
+
+    /**
+     * Returns aggregated scores for a specified project.
+     * @param organisationId the organisation of interest.
+     * @param aggregationSpec defines the scores to be aggregated and if any grouping needs to occur.
+     * [{score:{name: , units:, aggregationType}, groupBy: {entity: <one of 'activity', 'output', 'organisation', 'site>, property: String <the entity property to group by>}, ...]
+     *
+     * @return the results of the aggregation.  The results will be a List of Maps, the structure of each Map is
+     * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
+     *
+     */
+    List organisationSummary(String organisationId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
+
+        List activities = activityService.findAllForOrganisationId(organisationId, 'FLAT')
+        aggregate(activities, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
+    }
+
 }
