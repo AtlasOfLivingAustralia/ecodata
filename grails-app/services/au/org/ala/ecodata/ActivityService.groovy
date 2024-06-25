@@ -645,4 +645,15 @@ class ActivityService {
         }
     }
 
+    List findAllForOrganisationId(id, levelOfDetail = [], includeDeleted = false) {
+        List activities
+        if (includeDeleted) {
+            activities = Activity.findAllByOrganisationId(id).collect {toMap(it, levelOfDetail)}
+        }
+        else {
+            activities = Activity.findAllByOrganisationIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
+        activities
+    }
+
 }
