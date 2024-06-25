@@ -114,4 +114,36 @@ class OrganisationController {
         values
     }
 
+    def organisationMetrics(String id) {
+
+        def organisation = Organisation.findByOrganisationId(id)
+
+        boolean approvedOnly = true
+
+        List scoreIds
+        Map aggregationConfig = null
+
+        Map paramData = request.JSON
+        if (!paramData) {
+            approvedOnly = params.getBoolean('approvedOnly')
+            scoreIds = params.getList('scoreIds')
+        }
+        else {
+
+            if (paramData.approvedOnly != null) {
+                approvedOnly = paramData.approvedOnly
+            }
+
+            scoreIds = paramData.scoreIds
+            aggregationConfig = paramData.aggregationConfig
+        }
+
+        if (organisation) {
+            render organisationService.organisationMetrics(id, approvedOnly, scoreIds, aggregationConfig) as JSON
+
+        } else {
+            render (status: 404, text: 'No such id')
+        }
+    }
+
 }
