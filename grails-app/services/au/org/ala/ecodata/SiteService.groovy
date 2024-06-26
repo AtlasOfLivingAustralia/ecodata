@@ -554,6 +554,10 @@ class SiteService {
                 break
             case 'pid':
                 result = geometryForPid(geometry.pid)
+                // Spatial portal now returns results as Features.
+                if (result?.type == 'Feature') {
+                    result = result.geometry
+                }
                 break
         }
         result
