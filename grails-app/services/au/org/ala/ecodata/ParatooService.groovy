@@ -810,6 +810,18 @@ class ParatooService {
         Map projectAreaGeoJson = null
         if (projectArea) {
             projectAreaGeoJson = siteService.geometryAsGeoJson(projectArea)
+            if (projectAreaGeoJson?.type == 'Feature') {
+                projectAreaGeoJson = projectAreaGeoJson.geometry
+            }
+            else if (projectAreaGeoJson?.type == 'MultiPolygon') {
+                projectAreaGeoJson = [
+                        type:'Polygon',
+                        coordinates:projectAreaGeoJson.coordinates[0]
+                ]
+            }
+            else {
+                log.warn("Invalid geometry type for project area: ${projectAreaGeoJson?.type} specified for Monitor project ${project.projectId}")
+            }
         }
 
         // Monitor has users selecting a point as an approximate survey location then

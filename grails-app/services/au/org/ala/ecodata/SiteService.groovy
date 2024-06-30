@@ -495,7 +495,7 @@ class SiteService {
 
         if (!geometry) {
             log.error("Invalid site: ${site.siteId} missing geometry")
-            return
+            return null
         }
         def result = null
         switch (geometry.type) {
@@ -637,7 +637,7 @@ class SiteService {
             ]
         }
         else {
-            siteGeom = geometryAsGeoJson(site)
+            siteGeom = geometryson(site)
         }
 
         if (siteGeom) {
