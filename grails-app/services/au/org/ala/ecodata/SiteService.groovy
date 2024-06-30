@@ -637,7 +637,7 @@ class SiteService {
             ]
         }
         else {
-            siteGeom = geometryson(site)
+            siteGeom = geometryAsGeoJson(site)
         }
 
         if (siteGeom) {
