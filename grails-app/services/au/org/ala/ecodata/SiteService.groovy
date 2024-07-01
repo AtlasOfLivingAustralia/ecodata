@@ -495,7 +495,7 @@ class SiteService {
 
         if (!geometry) {
             log.error("Invalid site: ${site.siteId} missing geometry")
-            return
+            return null
         }
         def result = null
         switch (geometry.type) {
@@ -554,6 +554,10 @@ class SiteService {
                 break
             case 'pid':
                 result = geometryForPid(geometry.pid)
+                // Spatial portal now returns results as Features.
+                if (result?.type == 'Feature') {
+                    result = result.geometry
+                }
                 break
         }
         result

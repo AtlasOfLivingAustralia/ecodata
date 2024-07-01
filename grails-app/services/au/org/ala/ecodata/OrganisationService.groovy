@@ -15,10 +15,12 @@ class OrganisationService {
     public static final String PROJECTS = 'projects'
 
     static transactional = 'mongo'
+    static final FLAT = 'flat'
 
     def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource, emailService, grailsApplication
     ReportingService reportingService
     ActivityService activityService
+    ReportService reportService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -215,6 +217,27 @@ class OrganisationService {
         }, [Filters.eq("hubId", hubId)])
 
         organisationDetails
+    }
+
+    /**
+     * Returns the reportable metrics for a organisation as determined by the organisation output targets and activities
+     * that have been undertaken.
+     * @param id identifies the organisation.
+     * @return a Map containing the aggregated results.
+     *
+     */
+    def organisationMetrics(String id, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null) {
+        def org = Organisation.findByOrganisationId(id)
+        if (org) {
+            List toAggregate = Score.findAllByScoreIdInList(scoreIds)
+            List outputSummary = reportService.organisationSummary(id, toAggregate, approvedOnly, aggregationConfig) ?: []
+
+            return outputSummary
+        } else {
+            def error = "Error retrieving metrics for project - no such id ${id}"
+            log.error error
+            return [status: 'error', error: error]
+        }
     }
 
 }
