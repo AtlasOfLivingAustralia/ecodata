@@ -819,7 +819,7 @@ class ParatooService {
                         coordinates:projectAreaGeoJson.coordinates[0]
                 ]
             }
-            else {
+            else if (projectAreaGeoJson?.type != 'Polygon') {
                 log.warn("Invalid geometry type for project area: ${projectAreaGeoJson?.type} specified for Monitor project ${project.projectId}")
             }
         }
