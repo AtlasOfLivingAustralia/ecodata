@@ -454,11 +454,11 @@ app {
         geographic {
             contextual {
                 state = 'cl927'
-                nrm = 'cl10946'
+                nrm = 'cl11160'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl10921'
+                elect = 'cl11163'
                 cmz = 'cl2112'
             }
             grouped {
