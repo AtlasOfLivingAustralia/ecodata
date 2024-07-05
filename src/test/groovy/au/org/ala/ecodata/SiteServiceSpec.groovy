@@ -330,7 +330,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         service.populateLocationMetadataForSite(site)
 
         then:
-        2 * spatialServiceMock.intersectGeometry(_, _) >> ["electorate":["Bean"], "state":["ACT"]]
+        1 * spatialServiceMock.intersectGeometry({it.type == 'GeometryCollection'}, _) >> ["electorate":["Bean"], "state":["ACT"]]
         site.extent.geometry.aream2 == 4938.9846950349165d
         site.extent.geometry.electorate == ["Bean"]
         site.extent.geometry.state == ["ACT"]
