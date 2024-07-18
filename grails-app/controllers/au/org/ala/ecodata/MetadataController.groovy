@@ -2,12 +2,12 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
-import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
 
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class MetadataController {
 
     def metadataService, activityService, commonService, projectService, webService
@@ -28,8 +28,7 @@ class MetadataController {
         render metadataService.programsModel()
     }
 
-    @RequireApiKey
-    @AlaSecured(["ROLE_ADMIN"])
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))

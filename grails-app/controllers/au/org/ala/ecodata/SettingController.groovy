@@ -1,12 +1,11 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class SettingController {
 
     def settingService
 
-    @RequireApiKey
     def ajaxSetSettingText() {
         def jsonMap = request.JSON
         if (!jsonMap.containsKey("settingText") || !jsonMap.containsKey("key") ) {

@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class ProjectActivityController {
 
     /* Testing merge to grails 3 */
@@ -66,7 +66,7 @@ class ProjectActivityController {
      *
      * @return json map of
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def delete(String id) {
         ProjectActivity pActivity = ProjectActivity.findByProjectActivityId(id)
         if (pActivity) {
@@ -92,7 +92,7 @@ class ProjectActivityController {
      * @param id - identifies the resource
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -141,7 +141,6 @@ class ProjectActivityController {
      *
      * @return a list of the project activity that match the supplied criteria
      */
-    @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
 

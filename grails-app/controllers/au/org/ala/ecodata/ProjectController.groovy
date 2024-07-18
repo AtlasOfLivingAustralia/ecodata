@@ -5,7 +5,7 @@ import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
-
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
@@ -117,7 +117,7 @@ class ProjectController {
         }
     }
 
-
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def delete(String id) {
         Project project = Project.findByProjectId(id)
         if (project) {
@@ -135,7 +135,6 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
     def resurrect(String id) {
         def p = Project.findByProjectId(id)
         if (p) {
@@ -154,6 +153,7 @@ class ProjectController {
      * deleteOrphans - if true, a site with no associated projects or activities will be deleted.
      *
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def deleteSites(String id){
         Map payload = request.JSON
         Map status = siteService.deleteSitesFromProject(id, payload.siteIds, payload.deleteOrphans?:false)
@@ -169,7 +169,7 @@ class ProjectController {
      * @param id
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def updateSites(String id){
         log.debug("Updating the sites for projectID : " + id)
         def props = request.JSON
@@ -200,7 +200,7 @@ class ProjectController {
      * @param id - identifies the resource
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -224,7 +224,6 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
     def downloadProjectData() {
 
         def p = Project.findByProjectId(params.id)
@@ -310,7 +309,6 @@ class ProjectController {
      *
      * @return a list of the projects that match the supplied criteria
      */
-    @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
 
@@ -319,7 +317,6 @@ class ProjectController {
         asJson projects:projectList
     }
 
-    @RequireApiKey
     def findByAssociation(String entity, String id) {
         List projects = projectService.findAllByAssociation(entity+"Id", id, params.view ?: ProjectService.BRIEF) ?: []
 
@@ -366,7 +363,6 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
     def fetchDataSetRecords (String projectId, String dataSetId) {
         if (projectId && dataSetId) {
             List records = projectService.fetchDataSetRecords(projectId, dataSetId)

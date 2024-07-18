@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.HubLoginTime
-
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class UserController {
 
     static responseFormats = ['json', 'xml']
@@ -18,6 +18,7 @@ class UserController {
      * @param userId The userId of the user that logged in.  If not supplied the current user will be used.
      * @param loginTime The time the user logged in.  If not supplied, the current time will be used by the service.
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def recordUserLogin(HubLoginTime hubLoginTime) {
         if (hubLoginTime.hasErrors()) {
             respond hubLoginTime.errors

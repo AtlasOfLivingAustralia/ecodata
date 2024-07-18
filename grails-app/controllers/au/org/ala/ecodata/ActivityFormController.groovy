@@ -1,13 +1,13 @@
 package au.org.ala.ecodata
 
+import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.web.AlaSecured
-import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
-
 /**
  * Responds to requests related to activity forms in ecodata.
  */
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class ActivityFormController {
 
     static responseFormats = ['json', 'xml']
@@ -51,6 +51,7 @@ class ActivityFormController {
      * @return
      */
     @AlaSecured(["ROLE_ADMIN"])
+    @SkipApiKeyCheck
     def update() {
 
         // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
@@ -66,6 +67,7 @@ class ActivityFormController {
     }
 
     @AlaSecured(["ROLE_ADMIN"])
+    @SkipApiKeyCheck
     def create() {
         // We are using JsonSlurper instead of request.JSON to avoid JSONObject.Null causing the string
         // "null" to be saved in templates (it will happen in any embedded Maps).
@@ -85,6 +87,7 @@ class ActivityFormController {
      * @return the new form.
      */
     @AlaSecured(["ROLE_ADMIN"])
+    @SkipApiKeyCheck
     def newDraftForm(String name) {
         respond activityFormService.newDraft(name)
     }
@@ -95,6 +98,7 @@ class ActivityFormController {
      * @return the new form.
      */
     @AlaSecured(["ROLE_ADMIN"])
+    @SkipApiKeyCheck
     def publish(String name, Integer formVersion) {
         respond activityFormService.publish(name, formVersion)
     }
@@ -105,11 +109,13 @@ class ActivityFormController {
      * @return the new form.
      */
     @AlaSecured(["ROLE_ADMIN"])
+    @SkipApiKeyCheck
     def unpublish(String name, Integer formVersion) {
         respond activityFormService.unpublish(name, formVersion)
     }
 
     @AlaSecured(["ROLE_ADMIN"])
+    @SkipApiKeyCheck
     def findUsesOfForm(String name, Integer formVersion) {
         int count = Activity.countByTypeAndFormVersionAndStatusNotEqual(name, formVersion, Status.DELETED)
         Map result = [count:count]

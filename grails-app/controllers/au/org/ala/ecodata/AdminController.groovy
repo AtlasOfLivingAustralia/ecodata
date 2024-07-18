@@ -47,7 +47,7 @@ class AdminController {
     @AlaSecured(["ROLE_ADMIN"])
     def tools() {}
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
     def syncCollectoryOrgs() {
         def errors = collectoryService.syncOrganisations(organisationService)
         if (errors)
@@ -136,7 +136,7 @@ class AdminController {
         }
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
     def getBare(String entity, String id) {
         def map = [:]
         switch (entity) {
@@ -157,14 +157,14 @@ class AdminController {
     /**
      * Re-index all docs with ElasticSearch
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def reIndexAll() {
         def resp = elasticSearchService.indexAll()
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def clearMetadataCache() {
         // clear any cached external config
         cacheService.clear()
@@ -525,6 +525,7 @@ class AdminController {
      * a test function to index a project.
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
     def indexProjectDoc() {
         if(params.projectId){
             def projects = Project.findAllByProjectId(params.projectId)

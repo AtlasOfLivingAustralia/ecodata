@@ -12,6 +12,7 @@ import static org.apache.http.HttpStatus.*
  *
  * @see au.org.ala.ecodata.UserPermission
  */
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class PermissionsController {
 
     static responseFormats = ['json', 'xml']
@@ -31,6 +32,7 @@ class PermissionsController {
      * @deprecated for generic {@link #addUserAsRoleToProject()}
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addEditorToProject() {
         String adminId = params.adminId
         String userId = params.userId
@@ -58,6 +60,7 @@ class PermissionsController {
      * @deprecated for generic {@link #addUserAsRoleToProject()}
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addUserAsAdminToProject() {
         String userId = params.userId
         String projectId = params.projectId
@@ -79,6 +82,7 @@ class PermissionsController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addAdminToOrganisation() {
         String userId = params.userId
         String organisationId = params.projectId
@@ -106,6 +110,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addUserAsRoleToProject() {
         String userId = params.userId
         String projectId = params.projectId
@@ -142,6 +147,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addUserAsRoleToOrganisation() {
         String userId = params.userId
         String organisationId = params.organisationId
@@ -178,6 +184,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeUserWithRoleFromProject() {
         String userId = params.userId
         String projectId = params.projectId
@@ -215,6 +222,7 @@ class PermissionsController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addUserWithRoleToProgram(String userId, String programId, String role) {
         Program program = Program.findByProgramId(programId)
         Closure addToProgram = { String userId2, String role2, String programId2 ->
@@ -223,6 +231,7 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeUserWithRoleFromProgram(String userId, String programId, String role) {
         Program program = Program.findByProgramId(programId)
         Closure removeFromProgram = { String userId2, String role2, String programId2 ->
@@ -231,6 +240,7 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeUserWithRoleFromManagementUnit(String userId, String managementUnitId, String role) {
         ManagementUnit mu = ManagementUnit.findByManagementUnitId(managementUnitId)
         Closure removeFromManagementUnit = { String userId2, String role2, String managementUnitId2 ->
@@ -239,6 +249,7 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addUserWithRoleToManagementUnit(String userId, String managementUnitId, String role) {
         ManagementUnit mu = ManagementUnit.findByManagementUnitId(managementUnitId)
         Closure addToManagementUnit = { String userId2, String role2, String managementUnitId2 ->
@@ -247,7 +258,7 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
-
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addUserWithRoleToHub() {
         Map params = request.JSON
         Hub hub = Hub.findByHubId(params.entityId)
@@ -259,6 +270,7 @@ class PermissionsController {
         render status:result.status, text:result.text
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeUserWithRoleFromHub() {
         Map params = request.JSON
         Hub hub = Hub.findByHubId(params.entityId)
@@ -342,6 +354,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeUserWithRoleFromOrganisation() {
         String userId = params.userId
         String organisationId = params.organisationId
@@ -377,6 +390,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addStarProjectForUser() {
         String projectId = params.projectId
         String userId = params.userId
@@ -405,6 +419,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeStarProjectForUser() {
         String projectId = params.projectId
         String userId = params.userId
@@ -435,6 +450,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addStarSiteForUser() {
         String siteId = params.siteId
         String userId = params.userId
@@ -464,6 +480,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeStarSiteForUser() {
         String userId = params.userId
         String siteId = params.siteId
@@ -565,7 +582,6 @@ class PermissionsController {
      * Get project members, support pagination.
      * @return project members one page at a time
      */
-    @RequireApiKey
     def getMembersForProjectPerPage() {
         String projectId = params.projectId
         Integer start = params.getInt('offset')?:0
@@ -588,7 +604,6 @@ class PermissionsController {
      * Get Merit members, support pagination
      * @return Hub members one page at a time
      */
-    @RequireApiKey
     def getMembersForHubPerPage() {
         String hubId = params.hubId
         String userId = params.userId
@@ -1091,6 +1106,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def clearAllPermissionsForUserId() {
         String userId = params.id // REST style URL (no params)
         List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
@@ -1118,6 +1134,7 @@ class PermissionsController {
      *
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def clearAllPermissionsForAllUsers() {
         List<UserPermission> permissions = UserPermission.list()
         if (permissions.size() > 0) {
@@ -1189,6 +1206,7 @@ class PermissionsController {
      * Admin function to delete all UserPermissions entries for the specific userId for entities
      * owned by a specific hub.  Currently only used by MERIT.
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def deleteUserPermission(String id, String hubId) {
 
         // This assigns a temporary default for the hubId parameter to retain
@@ -1254,6 +1272,7 @@ class PermissionsController {
      * Add user role to management unit
      *
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def addStarManagementUnitForUser() {
         String managementUnitId = params.managementUnitId
         String userId = params.userId
@@ -1281,6 +1300,7 @@ class PermissionsController {
      * Delete user role from management unit
      *
      */
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def removeStarManagementUnitForUser() {
         String managementUnitId = params.managementUnitId
         String userId = params.userId

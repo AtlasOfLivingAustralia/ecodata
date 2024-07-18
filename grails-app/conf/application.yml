@@ -18,6 +18,8 @@ grails:
         transactionManagement:
             proxies: false
 app:
+    clientId:
+        attribute: "audience"
     http:
         header:
             hostName: "X-ALA-hostname"
