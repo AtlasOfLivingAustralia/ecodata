@@ -89,7 +89,8 @@ class OrganisationXlsExporter extends TabbedExporter {
     private void exportReport(Map activity, boolean isSummary = false){
         Map activityCommonData = convertActivityData(activity)
         if (isSummary) {
-            exportActivity(commonActivityHeadersSummary, commonActivityPropertiesSummary, activityCommonData, activity, false, isSummary)
+            Map commonData = commonActivityData(activityCommonData, activity)
+            exportActivityOrOutput(commonActivityHeaders, commonActivityProperties, activity.type, [], commonData, [[:]])
         } else {
             exportActivity(commonActivityHeaders, commonActivityProperties, activityCommonData, activity, false)
         }
