@@ -94,7 +94,7 @@ class SpatialService {
             }
         }
         else {
-            Map filtered = filterOutObjectsInBoundary(result, geometryCollection.getGeometryN(i))
+            Map filtered = filterOutObjectsInBoundary(result, geo)
             geographicFacets = convertResponsesToGeographicFacets(filtered)
         }
         end = System.currentTimeMillis()
