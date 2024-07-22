@@ -108,9 +108,22 @@ class ApiKeyInterceptor {
 
             // Allow migration to the AlaSecured annotation.
             if (!controllerClass?.isAnnotationPresent(AlaSecured) && !method?.isAnnotationPresent(AlaSecured)) {
-                List whiteList = buildClientIdWhiteList()
+                // ip check
+                List whiteListIP = buildWhiteList()
+                List clientIp = getClientIP(request)
+                boolean ipOk = checkClientIp(clientIp, whiteListIP)
+
+                // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
+                if (!ipOk) {
+                    log.warn("Non-authorised IP address - ${clientIp}" )
+                    result.status = 403
+                    result.error = "not authorised"
+                }
+
+                // claims check
+                List whiteListClientId = buildClientIdWhiteList()
                 String clientId = getClientId() ?: ""
-                boolean isClientIdOk = checkClientIdInWhiteList(clientId, whiteList)
+                boolean isClientIdOk = checkClientIdInWhiteList(clientId, whiteListClientId)
 
                 // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
                 if (!isClientIdOk) {
