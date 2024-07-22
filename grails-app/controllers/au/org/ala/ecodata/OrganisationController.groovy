@@ -6,6 +6,7 @@ import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
 /**
  * Exposes web services to perform CRUD operations on an organisation.
  */
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class OrganisationController {
     static responseFormats = ['json', 'xml']
     OrganisationService organisationService
@@ -51,7 +52,7 @@ class OrganisationController {
         }
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def update(String id) {
         def props = request.JSON
         def result, message

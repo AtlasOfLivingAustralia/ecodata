@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat
 import static au.org.ala.ecodata.ElasticIndex.*
 
 @Slf4j
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class SearchController {
 
     static responseFormats = ['json', 'xml']
@@ -69,7 +70,6 @@ class SearchController {
     * Searches the given query in project activity context.
     * Requires API key to prevent unauthorized access to embargoed records.
     */
-    @RequireApiKey
     def elasticProjectActivity(){
         def res
         if (params?.version) {
@@ -396,7 +396,6 @@ class SearchController {
         render results as JSON
     }
 
-    @RequireApiKey
     def activityReport() {
         Map params = request.JSON
         def approvedOnly = params.approvedActivitiesOnly
@@ -404,7 +403,6 @@ class SearchController {
         render results as JSON
     }
 
-    @RequireApiKey
     def genericReport() {
         Map params = request.JSON
         String index = params.index ?: ElasticIndex.DEFAULT_INDEX
@@ -448,7 +446,6 @@ class SearchController {
         }
     }
 
-    @RequireApiKey
     def downloadAllData() {
         if (params.containsKey("isMerit") && !params.isMerit.toBoolean()) {
             params.max = 10000
@@ -606,7 +603,6 @@ class SearchController {
     }
 
 
-    @RequireApiKey
     def downloadSummaryData() {
 
         def defaultCategory = "Not categorized"
@@ -635,7 +631,6 @@ class SearchController {
         }
     }
 
-    @RequireApiKey
     def downloadUserList(UserSummaryReportCommand userSummaryReportCommand) {
 
         if (userSummaryReportCommand.hasErrors()) {
@@ -661,7 +656,6 @@ class SearchController {
         render "OK"
     }
 
-    @RequireApiKey
     def downloadShapefile() {
 
         if (!params.max) {

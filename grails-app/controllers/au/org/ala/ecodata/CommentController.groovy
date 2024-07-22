@@ -6,7 +6,7 @@ import grails.converters.JSON
 import groovy.json.JsonSlurper
 
 import static org.apache.http.HttpStatus.*;
-
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class CommentController {
     CommentService commentService
 
@@ -55,7 +55,6 @@ class CommentController {
     }
 
 
-    @RequireApiKey
     def create() {
         def jsonSlurper = new JsonSlurper()
         Object json = jsonSlurper.parse(request.getReader())
@@ -82,7 +81,7 @@ class CommentController {
 
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def update() {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
@@ -115,7 +114,7 @@ class CommentController {
         }
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def delete() {
         if (!params.id) {
             response.sendError(SC_BAD_REQUEST, "Missing id");
@@ -153,7 +152,6 @@ class CommentController {
         }
     }
 
-    @RequireApiKey
     def canUserEditOrDeleteComment(){
         if(!params.userId || !params.entityId || !params.entityType){
             response.sendError(SC_BAD_REQUEST, "Missing userId, entityId or entityType")

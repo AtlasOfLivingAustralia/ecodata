@@ -4,14 +4,13 @@ import grails.converters.JSON
 import groovy.json.JsonSlurper
 
 import static org.apache.http.HttpStatus.*
-
+@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
 class BulkImportController {
 
     BulkImportService bulkImportService
 
     static allowedMethods = ['create': 'POST', 'get': 'GET', 'list': 'GET', 'update': ['PUT', 'POST']]
 
-    @RequireApiKey
     def list() {
         String sort = params.sort ?: "lastUpdated"
         String order = params.order ?: "desc"
@@ -35,7 +34,6 @@ class BulkImportController {
     }
 
 
-    @RequireApiKey
     def create() {
         def json = new JsonSlurper().parse( request.inputStream)
         if (!json.userId) {
@@ -51,7 +49,7 @@ class BulkImportController {
 
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
     def update() {
         def json = new JsonSlurper().parse( request.inputStream)
         if (!params.id) {
@@ -68,7 +66,6 @@ class BulkImportController {
         }
     }
 
-    @RequireApiKey
     def get() {
         if (!params.id) {
             render text: [status: "error", error: "Missing id"] as JSON, status: SC_BAD_REQUEST, contentType: "application/json"
