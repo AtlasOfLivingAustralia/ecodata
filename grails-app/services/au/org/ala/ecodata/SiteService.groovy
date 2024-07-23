@@ -864,20 +864,18 @@ class SiteService {
                 geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String, fid, fidsToLookup)
                 break
             default:
+                Map geom
                 if (site.type == Site.TYPE_COMPOUND) {
-                    geographicFacets = [:].withDefault{[]}
-                    site.features.each { Map feature ->
-                        Map featureIntersection = spatialService.intersectGeometry(feature.geometry, fidsToLookup)
-                        featureIntersection.each{k, v ->
-                            geographicFacets[k] += v
-                            geographicFacets[k] = geographicFacets[k].unique()
-                        }
-                    }
+                    geom = [
+                            'type':'GeometryCollection',
+                            'geometries': site.features.collect{it.geometry} ?: []
+
+                    ]
                 }
                 else {
-                    Map geom = geometryAsGeoJson(site)
-                    geographicFacets = spatialService.intersectGeometry(geom, fidsToLookup)
+                    geom = geometryAsGeoJson(site)
                 }
+                geographicFacets = spatialService.intersectGeometry(geom, fidsToLookup)
                 break
         }
         geographicFacets ?: [:]

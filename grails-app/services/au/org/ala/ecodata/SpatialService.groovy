@@ -6,6 +6,7 @@ import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.GeometryCollection
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.io.WKTReader
 
@@ -76,12 +77,26 @@ class SpatialService {
         }
 
         start = end
-        filterOutObjectsInBoundary(result, geo)
-        end = System.currentTimeMillis()
-        log.info("Time taken to filter out objects in boundary: ${end-start}ms")
 
-        start = end
-        Map geographicFacets = convertResponsesToGeographicFacets(result)
+        Map geographicFacets
+        if (geo.geometryType == 'GeometryCollection') {
+            geographicFacets = [:].withDefault{[]}
+            GeometryCollection geometryCollection = (GeometryCollection)geo
+            for (int i=0; i<geometryCollection.numGeometries; i++) {
+
+                Map filtered = filterOutObjectsInBoundary(result, geometryCollection.getGeometryN(i))
+                start = end
+                Map geographicFacetsForGeometry = convertResponsesToGeographicFacets(filtered)
+                geographicFacetsForGeometry.each { k, v ->
+                    geographicFacets[k] += v
+                    geographicFacets[k] = geographicFacets[k].unique()
+                }
+            }
+        }
+        else {
+            Map filtered = filterOutObjectsInBoundary(result, geo)
+            geographicFacets = convertResponsesToGeographicFacets(filtered)
+        }
         end = System.currentTimeMillis()
         log.info("Time taken to convert responses to geographic facets: ${end-start}ms")
         geographicFacets
@@ -118,11 +133,11 @@ class SpatialService {
 
         fillMissingDetailsOfObjects(result)
         Map pidGeoJson = getGeoJsonForPidToMap(pid)
-        filterOutObjectsInBoundary(result, pidGeoJson)
+        result = filterOutObjectsInBoundary(result, pidGeoJson)
         convertResponsesToGeographicFacets(result)
     }
 
-    private void filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
+    private Map filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
         Geometry mainGeometry = GeometryUtils.geoJsonMapToGeometry(mainObjectGeoJson)
         filterOutObjectsInBoundary(response, mainGeometry)
     }
@@ -134,15 +149,16 @@ class SpatialService {
      * @param response - per layer/fid intersection values - [ "cl34" : [[pid: 123, name: "ACT", fid: "cl34", id: "ACT" ...], ...]
      * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
      */
-    private void filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
+    private Map filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
 
         if (!mainGeometry.isValid()) {
             log.info("Main geometry invalid. Cannot check intersection is near boundary.")
-            return
+            return response
         }
-
+        Map filteredResponse = [:]
         response?.each { String fid, List<Map> matchingObjects ->
-            List pidToFilter = []
+            filteredResponse[fid] = []
+            //List pidToFilter = []
             matchingObjects.each { Map obj ->
                 String boundaryPid = obj.pid
                 if (boundaryPid) {
@@ -157,8 +173,10 @@ class SpatialService {
                     if (boundaryGeometry.isValid()) {
                         // check if intersection should be ignored
                         start = end
-                        if (!isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
-                            pidToFilter.add(boundaryPid)
+                        if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
+                            filteredResponse[fid].add(obj)
+                        }
+                        else {
                             log.debug("Filtered out ${obj.fieldname}(${fid}) - ${obj.name}")
                         }
 
@@ -170,13 +188,8 @@ class SpatialService {
                     }
                 }
             }
-
-            matchingObjects.removeAll {
-                def result = pidToFilter.contains(it.pid)
-                result ? log.debug("Filtered out ${it.pid} object") : null
-                result
-            }
         }
+        filteredResponse
     }
 
     /**

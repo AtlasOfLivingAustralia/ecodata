@@ -47,17 +47,17 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         !boundaryIntersection
     }
 
-    def "filterOutObjectsInBoundary should remove intesection below threshold" () {
+    def "filterOutObjectsInBoundary should remove intersection below threshold" () {
         setup:
         def response = ["cl22": [[name: "ACT", pid: "123", fid:"cl22"], [name: "NSW", pid: "456", fid:"cl22"]]]
         def mainObject = [type: "Polygon", coordinates: [[[10, 0], [10, 10], [0, 10], [0, 0], [10, 0]]]]
 
         when:
-        service.filterOutObjectsInBoundary(response, mainObject)
+        Map filteredResponse = service.filterOutObjectsInBoundary(response, mainObject)
 
         then:
-        response["cl22"].size() == 1
-        response["cl22"][0].name == "ACT"
+        filteredResponse["cl22"].size() == 1
+        filteredResponse["cl22"][0].name == "ACT"
         1 * webService.get("/ws/shapes/wkt/123") >> GeometryUtils.geoJsonMapToGeometry([type: "Polygon", coordinates: [[[5, 0], [5, 5], [0, 5], [0, 0], [5, 0]]]])
         1 * webService.get("/ws/shapes/wkt/456") >> GeometryUtils.geoJsonMapToGeometry([type: "Polygon", coordinates: [[[11.5, 9.5], [11.5, 11.5], [9.5, 11.5], [9.5, 9.5], [11.5, 9.5]]]])
     }
