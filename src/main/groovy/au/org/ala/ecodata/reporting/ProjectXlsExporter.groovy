@@ -87,6 +87,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectPartnershipProperties = commonProjectProperties + ['data1', 'data2', 'data3']
     List<String> projectImplementationHeaders = commonProjectHeaders + ['Project implementation / delivery mechanism']
     List<String> projectImplementationProperties = commonProjectProperties + ['implementation']
+    List<String> projectDeliveryAssumptionsHeaders = commonProjectHeaders + ['Project delivery assumptions']
+
     List<String> keyEvaluationQuestionHeaders = commonProjectHeaders + ['Project Key evaluation question (KEQ)', 'How will KEQ be monitored?']
     List<String> keyEvaluationQuestionProperties = commonProjectProperties + ['data1', 'data2']
     List<String> prioritiesHeaders = commonProjectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment']
@@ -474,6 +476,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportMonitoring(project)
         exportProjectPartnerships(project)
         exportProjectImplementation(project)
+        exportProjectDeliveryAssumptions(project)
         exportKeyEvaluationQuestion(project)
         exportPriorities(project)
         exportWHSAndCaseStudy(project)
@@ -596,6 +599,23 @@ class ProjectXlsExporter extends ProjectExporter {
         }
 
     }
+
+    private void exportProjectDeliveryAssumptions(Map project) {
+        String sheetName = "RDP_Project_Delivery_Assumptions"
+        if (shouldExport("RDP_Project_Delivery_Assumptions")) {
+            AdditionalSheet sheet = getSheet("RDP Project Delivery Assumptions", projectImplementationProperties, projectDeliveryAssumptionsHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            if (project?.custom?.details?.implementation) {
+                Map data = [implementation:project?.custom?.details?.implementation?.description]
+                data.putAll(project)
+
+                sheet.add(data, projectImplementationProperties, row+1)
+            }
+        }
+
+    }
+
 
     private void exportKeyEvaluationQuestion(Map project) {
         exportList("MERI_Key Evaluation Question", project, project?.custom?.details?.keq?.rows,
