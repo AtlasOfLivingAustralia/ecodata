@@ -91,8 +91,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> keyEvaluationQuestionHeaders = commonProjectHeaders + ['Project Key evaluation question (KEQ)', 'How will KEQ be monitored?']
     List<String> keyEvaluationQuestionProperties = commonProjectProperties + ['data1', 'data2']
-    List<String> prioritiesHeaders = commonProjectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment']
-    List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3']
+    List<String> prioritiesHeaders = commonProjectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment', 'Link to document']
+    List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3', 'documentUrl']
     List<String> whsAndCaseStudyHeaders = commonProjectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
     List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
     List<String> projectAssetHeaders = commonProjectHeaders + ["Asset", "Category"]
