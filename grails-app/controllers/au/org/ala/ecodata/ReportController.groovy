@@ -4,7 +4,7 @@ import grails.converters.JSON
 import org.apache.http.HttpStatus
 
 import java.text.ParseException
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ReportController {
 
     static responseFormats = ['json', 'xml']
@@ -15,7 +15,7 @@ class ReportController {
         respond reportingService.get(id, false)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         if (!id) {
             respond reportingService.create(request.JSON)
@@ -25,7 +25,7 @@ class ReportController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         respond reportingService.delete(id, params.getBoolean('destroy', false))
     }
@@ -50,36 +50,36 @@ class ReportController {
      * @param id the reportId of the report to clear.
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def reset(String id) {
         respond reportingService.reset(id)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def submit(String id) {
         Map params = request.JSON
         respond reportingService.submit(id, params.comment)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def approve(String id) {
         Map params = request.JSON
         respond reportingService.approve(id, params.comment)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def returnForRework(String id) {
         Map params = request.JSON
         respond reportingService.returnForRework(id, params.comment, params.categories)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def cancel(String id) {
         Map params = request.JSON
         respond reportingService.cancel(id, params.comment, params.categories)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def adjust(String id) {
         Map params = request.JSON
         respond reportingService.adjust(id, params.comment, params.adjustmentActivityType)

@@ -1,30 +1,10 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AlaSecured
-import au.org.ala.ws.security.authenticator.AlaOidcAuthenticator
-import au.org.ala.ws.security.client.AlaOidcClient
-import com.nimbusds.jose.proc.JWSKeySelector
-import com.nimbusds.jose.proc.JWSVerificationKeySelector
-import com.nimbusds.jose.proc.SecurityContext
-import com.nimbusds.jwt.JWT
-import com.nimbusds.jwt.JWTClaimsSet
-import com.nimbusds.jwt.JWTParser
-import com.nimbusds.jwt.proc.ConfigurableJWTProcessor
-import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
-import com.nimbusds.jwt.proc.DefaultJWTProcessor
-import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
 import grails.web.http.HttpHeaders
-import org.pac4j.core.config.Config
-import org.pac4j.core.context.WebContext
-import org.pac4j.core.profile.UserProfile
-import org.pac4j.core.util.FindBest
-import org.pac4j.jee.context.JEEContextFactory
-import org.pac4j.oidc.credentials.OidcCredentials
-import org.springframework.beans.factory.annotation.Autowired
 
 import javax.servlet.http.HttpServletRequest
-import java.text.ParseException
 
 class ApiKeyInterceptor {
 
@@ -34,10 +14,6 @@ class ApiKeyInterceptor {
     PermissionService permissionService
     CommonService commonService
     ActivityService activityService
-    @Autowired(required = false)
-    AlaOidcClient alaOidcClient
-    @Autowired(required = false)
-    Config config
 
     int order = -100 // This can go before the ala-ws-security interceptor to do the IP check
 
@@ -119,18 +95,6 @@ class ApiKeyInterceptor {
                     result.status = 403
                     result.error = "not authorised"
                 }
-
-                // claims check
-                List whiteListClientId = buildClientIdWhiteList()
-                String clientId = getClientId() ?: ""
-                boolean isClientIdOk = checkClientIdInWhiteList(clientId, whiteListClientId)
-
-                // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
-                if (!isClientIdOk) {
-                    log.warn("Non-authorised client id - ${clientId}" )
-                    result.status = 403
-                    result.error = "not authorised"
-                }
             }
         }
 
@@ -155,28 +119,9 @@ class ApiKeyInterceptor {
         clientIps.size() > 0 && whiteList.containsAll(clientIps) || (whiteList.size() == 1 && whiteList[0] == LOCALHOST_IP)
     }
 
-    /**
-     * Client ID passes if it is in the whitelist. Fails if whitelist is empty.
-     * @param clientId
-     * @param whiteList
-     * @return
-     */
-    boolean checkClientIdInWhiteList(String clientId, List whiteList) {
-        whiteList.size() > 0 && clientId?.size() > 0 && whiteList.contains(clientId)
-    }
-
     private List buildWhiteList() {
         def whiteList = [LOCALHOST_IP] // allow calls from localhost to make testing easier
         def config = grailsApplication.config.getProperty('app.api.whiteList')
-        if (config) {
-            whiteList.addAll(config.split(',').collect({it.trim()}))
-        }
-        whiteList
-    }
-
-    private List buildClientIdWhiteList() {
-        def whiteList = [] // allow calls from localhost to make testing easier
-        def config = grailsApplication.config.getProperty('app.clientId.whiteList')
         if (config) {
             whiteList.addAll(config.split(',').collect({it.trim()}))
         }
@@ -196,46 +141,6 @@ class ApiKeyInterceptor {
         }
         allIps.add(request.getRemoteHost())
         return allIps
-    }
-
-    private String getClientId() {
-        final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
-        def optCredentials = alaOidcClient.getCredentials(context, config.sessionStore)
-        if (optCredentials.isPresent()) {
-            OidcCredentials credentials = optCredentials.get()
-            return parseClientId(credentials.getAccessToken())
-        }
-    }
-
-    private String parseClientId(AccessToken accessToken) {
-        if (accessToken) {
-            String clientIdClaim = grailsApplication.config.getProperty("app.clientId.attribute")
-            final JWT jwt
-            try {
-                jwt = JWTParser.parse(accessToken.getValue())
-            } catch (ParseException e) {
-                log.error("Cannot decrypt / verify JWT")
-                return null
-            }
-
-            ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<SecurityContext>()
-            AlaOidcAuthenticator authenticator = alaOidcClient.getAuthenticator()
-            // Configure the JWT processor with a key selector to feed matching public
-            // RSA keys sourced from the JWK set URL
-            JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<SecurityContext>(authenticator.getExpectedJWSAlgs(), authenticator.getKeySource())
-            jwtProcessor.setJWSKeySelector(keySelector)
-
-            // Set the required JWT claims for access tokens issued by the server
-            jwtProcessor.setJWTClaimsSetVerifier(new DefaultJWTClaimsVerifier(new JWTClaimsSet.Builder().issuer(authenticator.issuer.getValue()).build(), Set.copyOf(authenticator.requiredClaims)))
-
-            try {
-                JWTClaimsSet claimsSet = jwtProcessor.process(jwt, null)
-                return (String) claimsSet.getClaim(clientIdClaim)
-            }
-            catch (Exception e) {
-                log.error("Cannot decrypt / verify JWT")
-            }
-        }
     }
 
 }

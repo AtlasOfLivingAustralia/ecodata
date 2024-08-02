@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SettingController {
 
     def settingService

@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectActivityController {
 
     /* Testing merge to grails 3 */
@@ -66,7 +66,7 @@ class ProjectActivityController {
      *
      * @return json map of
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         ProjectActivity pActivity = ProjectActivity.findByProjectActivityId(id)
         if (pActivity) {
@@ -92,7 +92,7 @@ class ProjectActivityController {
      * @param id - identifies the resource
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"

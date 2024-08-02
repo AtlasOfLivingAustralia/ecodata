@@ -11,7 +11,7 @@ import static javax.servlet.http.HttpServletResponse.*
 /**
  * Controller for record CRUD operations with support for handling images.
  */
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class RecordController {
 
   //  def grailsApplication
@@ -283,7 +283,7 @@ class RecordController {
     /**
      * Delete by occurrence ID
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete() {
         Record record = Record.findByOccurrenceID(params.id)
         if (record) {
@@ -304,7 +304,7 @@ class RecordController {
      * 2. Multipart request with base64 encoded image, and a "record" part encoded in JSON.
      * 3. JSON body post with image supplied via a URL.
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def create() {
 
         log.info("Create request received: " + request.getContentType())
@@ -393,7 +393,7 @@ class RecordController {
     /**
      * Update the supplied record.
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update() {
         def json = request.JSON
         Record record = Record.findByOccurrenceID(params.id)

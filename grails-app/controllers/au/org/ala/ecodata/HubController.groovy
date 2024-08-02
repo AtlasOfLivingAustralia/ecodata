@@ -4,7 +4,7 @@ import grails.converters.JSON
 
 import static au.org.ala.ecodata.Status.*
 
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class HubController  {
 
     static responseFormats = ['json', 'xml']
@@ -57,7 +57,7 @@ class HubController  {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         Map props = request.JSON
         Map result, message
@@ -77,7 +77,7 @@ class HubController  {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         hubService.delete(id)
     }
