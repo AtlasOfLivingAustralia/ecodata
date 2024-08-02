@@ -3,7 +3,7 @@ import au.org.ala.ecodata.reporting.ShapefileBuilder
 import com.mongodb.MongoExecutionTimeoutException
 import grails.converters.JSON
 import org.apache.http.HttpStatus
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SiteController {
 
     def siteService, commonService, projectService, webService, projectActivityService
@@ -83,7 +83,7 @@ class SiteController {
         siteService.toGeoJson(site)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         def s = Site.findBySiteId(id)
         if (s) {
@@ -105,7 +105,7 @@ class SiteController {
      * @param id - identifies the resource
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -127,7 +127,7 @@ class SiteController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def createOrUpdatePoi(String id) {
         def props = request.JSON
 
@@ -150,7 +150,7 @@ class SiteController {
      * @param id the site id
      * @param poiId the POI to delete.
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deletePoi(String id) {
         if (!id) {
             render status:400, text:'Site ID is mandatory'
@@ -256,7 +256,7 @@ class SiteController {
         render siteService.lookupGeographicFacetsForSite(site) as JSON
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def updateGeographicFacetsForSite(String id) {
         Map site = siteService.get(id)
         if (site && site.extent && site.extent.geometry) {
@@ -284,7 +284,7 @@ class SiteController {
      * @param projectId
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def addProject(String id){
         String projectId = params.projectId
         if(id && projectId){

@@ -20,6 +20,8 @@ grails:
 app:
     clientId:
         attribute: "audience"
+    readScope: ["ecodata/read_test"]
+    writeScope: ["ecodata/write_test"]
     http:
         header:
             hostName: "X-ALA-hostname"

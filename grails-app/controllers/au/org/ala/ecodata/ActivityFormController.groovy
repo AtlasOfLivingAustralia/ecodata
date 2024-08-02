@@ -7,7 +7,7 @@ import org.apache.http.HttpStatus
 /**
  * Responds to requests related to activity forms in ecodata.
  */
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ActivityFormController {
 
     static responseFormats = ['json', 'xml']

@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DocumentController {
 
     DocumentService documentService
@@ -129,7 +129,7 @@ class DocumentController {
         asJson searchResults
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         Document document = Document.findByDocumentId(id)
         if (document) {
@@ -158,7 +158,7 @@ class DocumentController {
      * an update.
      * @param id The ID of an existing document to update.  If not present, a new Document will be created.
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = null
         def stream = null

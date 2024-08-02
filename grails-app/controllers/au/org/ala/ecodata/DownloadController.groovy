@@ -1,5 +1,5 @@
 package au.org.ala.ecodata
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DownloadController {
     def get(String id) {
         if (!id) {
