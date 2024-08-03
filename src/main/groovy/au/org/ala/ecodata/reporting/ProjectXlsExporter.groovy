@@ -114,8 +114,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> eventHeaders = commonProjectHeaders + ['Funding', 'Name', 'Description', 'Scheduled Date', 'Media', 'Grant Announcement Date', 'Type']
     List<String> eventProperties = commonProjectProperties + ['funding', 'name', 'description', 'scheduledDate', 'media', 'grantAnnouncementDate', 'Type']
-    List<String> baselineHeaders = commonProjectHeaders + ['Baseline Method', 'Baseline', 'Code', 'Evidence', 'Monitoring Data Status', 'Outcome statement/s', 'Baseline Protocol', 'Related Target Measures']
-    List<String> baselineProperties = commonProjectProperties + ['method', 'baseline', 'code', 'evidence', 'monitoringDataStatus', 'relatedOutcomes', 'protocols', 'relatedTargetMeasures']
+    List<String> baselineHeaders = commonProjectHeaders + ['Outcome statement/s','Baseline Method', 'Baseline', 'Code', 'Evidence', 'Monitoring Data Status', 'Baseline Protocol', 'Related Target Measures']
+    List<String> baselineProperties = commonProjectProperties + ['relatedOutcomes', 'method', 'baseline', 'code', 'evidence', 'monitoringDataStatus', 'protocols', 'relatedTargetMeasures']
 
     //Different data model   RLP outcomes show data on rows not cols
     List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority', 'Related Program Outcome']
