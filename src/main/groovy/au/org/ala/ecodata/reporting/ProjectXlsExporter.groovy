@@ -676,17 +676,29 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportBaseline(Map project) {
         String sheetName = "MERI_Baseline"
-        if (shouldExport(sheetName)) {
-            AdditionalSheet sheet = getSheet(sheetName, baselineProperties, baselineHeaders)
-            int row = sheet.getSheet().lastRowNum
-            List data = project?.custom?.details?.baseline?.rows?.collect { Map baseline ->
-                Map baseLineItem = [:]
-                baseline.each{k, v -> baseLineItem.put(k,v)}
-                baseLineItem.putAll(project)
-                baseLineItem
+
+        AdditionalSheet sheet = getSheet(sheetName, baselineProperties, baselineHeaders)
+        int row = sheet.getSheet().lastRowNum
+        List data = []
+
+        if (project?.custom?.details?.baseline?.rows){
+            def items = project?.custom?.details?.baseline?.rows
+            items.each{ Map item ->
+                Map baseline = [:]
+                baseline["relatedOutcomes"] = item.relatedOutcomes
+                baseline["method"] = item.method
+                baseline["baseline"] = item.baseline
+                baseline["code"] = item.code
+                baseline["evidence"] = item.evidence
+                baseline["monitoringDataStatus"] = item.monitoringDataStatus
+                baseline["protocols"] = item.protocols
+                baseline["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
+                baseline.putAll(project)
+                data.add(project + baseline)
             }
-            sheet.add(data?:[], baselineProperties, row+1)
         }
+
+        sheet.add(data?:[], baselineProperties, row+1)
     }
 
     private void exportEvents(Map project) {
@@ -1029,5 +1041,13 @@ class ProjectXlsExporter extends ProjectExporter {
         }
 
         sheet.add(data?:[], rdpSTProperties, row+1)
+    }
+
+    private static String findScoreLabels(List scoreIds) {
+        List labels = []
+        for (String scoreId : scoreIds) {
+            labels.add(au.org.ala.ecodata.Score.findByScoreId(scoreId).label)
+        }
+        return labels
     }
 }
