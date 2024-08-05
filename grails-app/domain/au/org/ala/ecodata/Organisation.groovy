@@ -22,6 +22,16 @@ class Organisation {
     String description
     String announcements
     String abn
+    String abnStatus // N/A, Active, Cancelled
+    String entityName
+    String entityType // From ABN register
+    String businessName
+    String tradingName
+    String state
+    Integer postcode
+    List<ExternalId> externalIds // For financial system vendor codes/reference
+    List<String> indigenousOrganisationRegistration
+    List<AssociatedOrg> associatedOrgs // e.g. parent organisation such as for NSW LLS group
 
     String status = 'active'
 
@@ -42,6 +52,15 @@ class Organisation {
         announcements nullable: true
         description nullable: true
         collectoryInstitutionId nullable: true
+        abnStatus nullable: true
+        entityName nullable: true
+        entityType nullable: true
+        businessName nullable: true
+        tradingName nullable: true
+        state nullable: true
+        postcode nullable: true
+        indigenousOrganisationRegistration nullable: true
+        associatedOrgs nullable: true
         abn nullable: true
         hubId nullable: true, validator: { String hubId, Organisation organisation, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(organisation, 'organisationId', 'hubId', errors)

@@ -285,7 +285,9 @@ class ProjectService {
                 if (it.organisationId) {
                     Organisation org = Organisation.findByOrganisationId(it.organisationId)
                     if (org) {
-                        it.name = org.name
+                        if (!it.name) { // Is this going to cause BioCollect an issue?
+                            it.name = org.name
+                        }
                         it.url = org.url
                         it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
                     }
