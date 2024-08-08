@@ -4,7 +4,7 @@ import grails.converters.JSON
 import groovy.json.JsonSlurper
 
 import static org.apache.http.HttpStatus.*
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class BulkImportController {
 
     BulkImportService bulkImportService
@@ -34,6 +34,7 @@ class BulkImportController {
     }
 
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def create() {
         def json = new JsonSlurper().parse( request.inputStream)
         if (!json.userId) {
@@ -49,7 +50,7 @@ class BulkImportController {
 
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update() {
         def json = new JsonSlurper().parse( request.inputStream)
         if (!params.id) {

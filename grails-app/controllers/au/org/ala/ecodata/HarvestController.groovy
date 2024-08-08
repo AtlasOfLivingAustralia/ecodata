@@ -5,7 +5,7 @@ import org.apache.http.HttpStatus
 
 import java.text.SimpleDateFormat;
 
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class HarvestController {
 
     RecordService recordService

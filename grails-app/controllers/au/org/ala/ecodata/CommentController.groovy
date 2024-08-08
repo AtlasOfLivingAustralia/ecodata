@@ -6,7 +6,7 @@ import grails.converters.JSON
 import groovy.json.JsonSlurper
 
 import static org.apache.http.HttpStatus.*;
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class CommentController {
     CommentService commentService
 
@@ -81,7 +81,7 @@ class CommentController {
 
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update() {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
@@ -114,7 +114,7 @@ class CommentController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete() {
         if (!params.id) {
             response.sendError(SC_BAD_REQUEST, "Missing id");

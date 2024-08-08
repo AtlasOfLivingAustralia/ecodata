@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class OutputController {
 
     def outputService, commonService
@@ -43,7 +43,7 @@ class OutputController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         Output output = Output.findByOutputId(id)
         if (output) {
@@ -62,7 +62,7 @@ class OutputController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -125,7 +125,7 @@ class OutputController {
      *
      * @return a list of the outputs that match the supplied criteria
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def search() {
         def searchCriteria = request.JSON
 

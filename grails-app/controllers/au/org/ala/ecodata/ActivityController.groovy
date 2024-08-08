@@ -4,7 +4,7 @@ import grails.converters.JSON
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ActivityController {
 
     ActivityService activityService
@@ -48,7 +48,7 @@ class ActivityController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
         if (activityService.delete(id, destroy).status == 'ok') {
@@ -59,7 +59,7 @@ class ActivityController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def bulkDelete() {
         boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
         Map payload = request.JSON
@@ -78,7 +78,7 @@ class ActivityController {
      *
      * @param id project activity id
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deleteByProjectActivity(String id) {
         boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
         Map result = activityService.deleteByProjectActivity(id, destroy)
@@ -93,8 +93,7 @@ class ActivityController {
         }
     }
 
-
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         //log.debug props
@@ -129,7 +128,7 @@ class ActivityController {
      * All activities identified by the supplied ids will have the supplied properties updated.
      *
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def bulkUpdate() {
         def ids = params.list("id")
         def props = request.JSON

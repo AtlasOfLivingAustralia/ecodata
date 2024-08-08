@@ -39,6 +39,7 @@ class MetadataService {
     ExcelImportService excelImportService
     ActivityFormService activityFormService
     SpeciesReMatchService speciesReMatchService
+    HubService hubService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -471,13 +472,28 @@ class MetadataService {
 
     /** Returns a list of spatial portal layer/field ids that ecodata will intersect every site against to support facetted geographic searches */
     List<String> getSpatialLayerIdsToIntersect() {
-        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
-        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
-        def fieldIds = contextualLayers.collect { k, v -> v }
-        groupedFacets.each { k, v ->
+        def config = getGeographicConfig()
+        def fieldIds = config.contextualLayers.collect { k, v -> v }
+        config.groupedFacets.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
         }
         fieldIds
+    }
+
+    /**
+     * Get layers for intersection from hub if it exists. Otherwise, get from configuration.
+     * @return
+     */
+    Map getGeographicConfig () {
+        Map config
+        Hub hub = hubService.getCurrentHub()
+        if (hub?.geographicConfig) {
+            config = hub.geographicConfig
+        } else {
+            config = grailsApplication.config.getProperty('app.facets.geographic', Map)
+        }
+
+        config
     }
 
     /**

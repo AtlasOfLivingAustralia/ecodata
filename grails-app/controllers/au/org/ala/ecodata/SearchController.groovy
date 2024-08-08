@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 import static au.org.ala.ecodata.ElasticIndex.*
 
 @Slf4j
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SearchController {
 
     static responseFormats = ['json', 'xml']

@@ -5,7 +5,7 @@ import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
@@ -117,7 +117,7 @@ class ProjectController {
         }
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         Project project = Project.findByProjectId(id)
         if (project) {
@@ -153,7 +153,7 @@ class ProjectController {
      * deleteOrphans - if true, a site with no associated projects or activities will be deleted.
      *
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deleteSites(String id){
         Map payload = request.JSON
         Map status = siteService.deleteSitesFromProject(id, payload.siteIds, payload.deleteOrphans?:false)
@@ -169,7 +169,7 @@ class ProjectController {
      * @param id
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def updateSites(String id){
         log.debug("Updating the sites for projectID : " + id)
         def props = request.JSON
@@ -200,7 +200,7 @@ class ProjectController {
      * @param id - identifies the resource
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"

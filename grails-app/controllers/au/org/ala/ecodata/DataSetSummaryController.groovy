@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import org.apache.http.HttpStatus
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DataSetSummaryController {
 
     static responseFormats = ['json', 'xml']
@@ -10,7 +10,7 @@ class DataSetSummaryController {
     ProjectService projectService
 
     /** Updates a single dataset for a project */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String projectId) {
         Map dataSet = request.JSON
         projectId = projectId ?: dataSet.projectId
@@ -36,7 +36,7 @@ class DataSetSummaryController {
      * This method expects the projectId to be supplied via the URL and the data sets to be supplied in the request
      * body as a JSON object with key="dataSets" and value=List of data sets.
      */
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def bulkUpdate(String projectId) {
         Map postBody =  request.JSON
         List dataSets = postBody?.dataSets
@@ -56,7 +56,7 @@ class DataSetSummaryController {
         respond projectService.updateDataSets(projectId, dataSets)
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String projectId, String dataSetId) {
         if (!projectId || !dataSetId) {
             render status: HttpStatus.SC_BAD_REQUEST, text: "projectId and dataSetId are required"

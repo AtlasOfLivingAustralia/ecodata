@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class GeoServerController {
     MapService mapService
     static allowedMethods = [createStyle: 'POST', wms: 'GET']
@@ -12,7 +12,7 @@ class GeoServerController {
         return null
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def createStyle () {
         def body = request.getJSON()
         def terms = body?.terms ?: []

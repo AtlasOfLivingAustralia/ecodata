@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
 
-@au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/read"])
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
 
     def metadataService, activityService, commonService, projectService, webService
@@ -28,7 +28,7 @@ class MetadataController {
         render metadataService.programsModel()
     }
 
-    @au.ala.org.ws.security.RequireApiKey(scopes=["ecodata/write"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))
