@@ -156,6 +156,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
 
+    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retainedX']
+    List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
+
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
 
@@ -460,7 +463,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets",
                 'MERI_Pest Control Methods', 'MERI_Native Species Threat',
                 "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets",
-                "RDP_Outcomes", "RDP_Project_Details", "RDP_Key_Threats", "RDP_Services_and_Targets"
+                "RDP_Outcomes", "RDP_Project_Details", "RDP_Key_Threats", "RDP_Services_and_Targets", "RDP_Monitoring"
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
@@ -495,6 +498,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRDPProjectDetails(project)
         exportRDPOutcomes(project)
         exportRDPServicesTargets(project)
+        exportRdpMonitoring(project)
 
     }
 
@@ -699,6 +703,31 @@ class ProjectXlsExporter extends ProjectExporter {
         }
 
         sheet.add(data?:[], baselineProperties, row+1)
+    }
+
+    private void exportRdpMonitoring(Map project) {
+        String sheetName = "RDP_Monitoring"
+
+        AdditionalSheet sheet = getSheet(sheetName, rdpMonitoringIndicatorsProperties, rdpMonitoringIndicatorsHeaders)
+        int row = sheet.getSheet().lastRowNum
+        List data = []
+
+        if (project?.custom?.details?.monitoring?.rows){
+            def items = project?.custom?.details?.monitoring?.rows
+            items.each{ Map item ->
+                Map monitoringIndicator = [:]
+                monitoringIndicator["relatedBaseline"] = item.relatedBaseline
+                monitoringIndicator["data1"] = item.data1
+                monitoringIndicator["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
+                monitoringIndicator["protocols"] = item.protocols
+                monitoringIndicator["evidence"] = item.evidence
+
+                monitoringIndicator.putAll(project)
+                data.add(project + monitoringIndicator)
+            }
+        }
+
+        sheet.add(data?:[], rdpMonitoringIndicatorsProperties, row+1)
     }
 
     private void exportEvents(Map project) {
