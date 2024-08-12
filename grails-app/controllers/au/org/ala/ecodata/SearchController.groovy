@@ -513,7 +513,7 @@ class SearchController {
         params.facets = ELECTORATES
         SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
         List<String> electorates = result.aggregations?.find{it.name == ELECTORATES}?.buckets?.collect{it.key}
-        electorates.removeAll(Arrays.asList(null,""))
+        electorates?.removeAll(Arrays.asList(null,""))
         List tabsToExport = params.getList('tabs')
         boolean formSectionPerTab = params.getBoolean("formSectionPerTab", false)
         Map dataDescriptionLookup = null
