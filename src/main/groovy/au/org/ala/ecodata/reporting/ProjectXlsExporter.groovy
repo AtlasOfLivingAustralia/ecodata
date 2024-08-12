@@ -606,7 +606,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportProjectDeliveryAssumptions(Map project) {
         String sheetName = "RDP_Project_Delivery_Assumptions"
-        if (shouldExport("RDP_Project_Delivery_Assumptions")) {
+        if (shouldExport(sheetName)) {
             AdditionalSheet sheet = getSheet("RDP Project Delivery Assumptions", projectImplementationProperties, projectDeliveryAssumptionsHeaders)
             int row = sheet.getSheet().lastRowNum
 
