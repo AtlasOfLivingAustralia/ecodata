@@ -680,54 +680,106 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportBaseline(Map project) {
         String sheetName = "MERI_Baseline"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, baselineProperties, baselineHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
 
-        AdditionalSheet sheet = getSheet(sheetName, baselineProperties, baselineHeaders)
-        int row = sheet.getSheet().lastRowNum
-        List data = []
-
-        if (project?.custom?.details?.baseline?.rows){
-            def items = project?.custom?.details?.baseline?.rows
-            items.each{ Map item ->
-                Map baseline = [:]
-                baseline["relatedOutcomes"] = item.relatedOutcomes
-                baseline["method"] = item.method
-                baseline["baseline"] = item.baseline
-                baseline["code"] = item.code
-                baseline["evidence"] = item.evidence
-                baseline["monitoringDataStatus"] = item.monitoringDataStatus
-                baseline["protocols"] = item.protocols
-                baseline["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
-                baseline.putAll(project)
-                data.add(project + baseline)
+            if (project?.custom?.details?.baseline?.rows){
+                def items = project?.custom?.details?.baseline?.rows
+                items.each{ Map item ->
+                    Map baseline = [:]
+                    baseline["relatedOutcomes"] = item.relatedOutcomes
+                    baseline["method"] = item.method
+                    baseline["baseline"] = item.baseline
+                    baseline["code"] = item.code
+                    baseline["evidence"] = item.evidence
+                    baseline["monitoringDataStatus"] = item.monitoringDataStatus
+                    baseline["protocols"] = item.protocols
+                    baseline["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
+                    baseline.putAll(project)
+                    data.add(project + baseline)
+                }
             }
+
+            sheet.add(data?:[], baselineProperties, row+1)
         }
 
-        sheet.add(data?:[], baselineProperties, row+1)
     }
 
     private void exportRdpMonitoring(Map project) {
         String sheetName = "RDP_Monitoring"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, rdpMonitoringIndicatorsProperties, rdpMonitoringIndicatorsHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
 
-        AdditionalSheet sheet = getSheet(sheetName, rdpMonitoringIndicatorsProperties, rdpMonitoringIndicatorsHeaders)
-        int row = sheet.getSheet().lastRowNum
-        List data = []
+            if (project?.custom?.details?.monitoring?.rows){
+                def items = project?.custom?.details?.monitoring?.rows
+                items.each{ Map item ->
+                    Map monitoringIndicator = [:]
+                    monitoringIndicator["relatedBaseline"] = item.relatedBaseline
+                    monitoringIndicator["data1"] = item.data1
+                    monitoringIndicator["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
+                    monitoringIndicator["protocols"] = item.protocols
+                    monitoringIndicator["evidence"] = item.evidence
 
-        if (project?.custom?.details?.monitoring?.rows){
-            def items = project?.custom?.details?.monitoring?.rows
-            items.each{ Map item ->
-                Map monitoringIndicator = [:]
-                monitoringIndicator["relatedBaseline"] = item.relatedBaseline
-                monitoringIndicator["data1"] = item.data1
-                monitoringIndicator["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
-                monitoringIndicator["protocols"] = item.protocols
-                monitoringIndicator["evidence"] = item.evidence
-
-                monitoringIndicator.putAll(project)
-                data.add(project + monitoringIndicator)
+                    monitoringIndicator.putAll(project)
+                    data.add(project + monitoringIndicator)
+                }
             }
+
+            sheet.add(data?:[], rdpMonitoringIndicatorsProperties, row+1)
         }
 
-        sheet.add(data?:[], rdpMonitoringIndicatorsProperties, row+1)
+    }
+
+    private void exportRLPKeyThreats(Map project) {
+        String sheetName = "RLP_Key_Threats"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, rlpKeyThreatProperties, rlpKeyThreatHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threats?.rows
+                items.each{ Map item ->
+                    Map threat = [:]
+                    threat["keyThreat"] = item.threat
+                    threat["keyTreatIntervention"] = item.intervention
+                    threat.putAll(project)
+                    data.add(project + threat)
+                }
+            }
+
+            sheet.add(data?:[], rlpKeyThreatProperties, row+1)
+        }
+    }
+
+    private void exportRDPKeyThreats(Map project) {
+        String sheetName = "RDP_Key_Threats"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, rdpKeyThreatProperties, rdpKeyThreatHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threats?.rows
+                items.each{ Map item ->
+                    Map threat = [:]
+                    threat["relatedOutcomes"] = item.relatedOutcomes
+                    threat["threatCode"] = item.threatCode
+                    threat["keyThreat"] = item.threat
+                    threat["relatedTargetMeasures"] = item.relatedTargetMeasures
+                    threat["keyTreatIntervention"] = item.intervention
+                    threat["evidence"] = item.evidence
+                    threat.putAll(project)
+                    data.add(project + threat)
+                }
+            }
+
+            sheet.add(data?:[], rdpKeyThreatProperties, row+1)
+        }
     }
 
     private void exportEvents(Map project) {
@@ -768,18 +820,6 @@ class ProjectXlsExporter extends ProjectExporter {
 
         if (shouldExport("RDP_Outcomes")) {
             getOutcomeSheet(project,"RDP Outcomes")
-        }
-    }
-
-    private  void exportRLPKeyThreats(Map project){
-        if (shouldExport("RLP_Key_Threats")) {
-            getKeyThreatsSheet(project, "RLP Key Threats", rlpKeyThreatHeaders, rlpKeyThreatProperties)
-        }
-    }
-
-    private  void exportRDPKeyThreats(Map project){
-        if (shouldExport("RDP_Key_Threats")) {
-            getKeyThreatsSheet(project, "RDP Key Threats", rdpKeyThreatHeaders, rdpKeyThreatProperties)
         }
     }
 
@@ -1022,30 +1062,6 @@ class ProjectXlsExporter extends ProjectExporter {
         data.add(item)
 
         sheet.add(data?:[], projectDetailsProperties, row+1)
-    }
-
-    private AdditionalSheet getKeyThreatsSheet(Map project, String sheetName, List keyThreatHeaders, List keyThreatProperties) {
-        AdditionalSheet sheet = getSheet(sheetName, keyThreatHeaders, keyThreatProperties)
-        int row = sheet.getSheet().lastRowNum
-
-        List data = []
-
-        if (project?.custom?.details?.threats?.rows){
-            def items = project?.custom?.details?.threats?.rows
-            items.each{ Map item ->
-                Map threat = [:]
-                threat["relatedOutcomes"] = item.relatedOutcomes
-                threat["threatCode"] = item.threatCode
-                threat["keyThreat"] = item.threat
-                threat["relatedTargetMeasures"] = item.relatedTargetMeasures
-                threat["keyTreatIntervention"] = item.intervention
-                threat["evidence"] = item.evidence
-                threat.putAll(project)
-                data.add(project + threat)
-            }
-        }
-
-        sheet.add(data?:[], keyThreatProperties, row+1)
     }
 
     private AdditionalSheet getServicesTargetsSheet(Map project, String sheetName, List stHeaders, List stProperties) {
