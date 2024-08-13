@@ -144,7 +144,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> pestControlMethodsHeaders =commonProjectHeaders + ['Are there any current control methods for this pest?', 'Has it been successful?', 'Type of method', 'Details']
     List<String> pestControlMethodsProperties =commonProjectProperties + ['currentControlMethod', 'hasBeenSuccessful', 'methodType', 'details']
 
-    List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Target Measure/s to address threats', 'Key threats and/or threatening processes', 'Interventions to address threats', 'Evidence to be retained']
+    List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Description', 'Project service / Target measure/s to address threats', 'Methodology', 'Evidence to be retained']
     List<String> rdpKeyThreatProperties =commonProjectProperties + ['relatedOutcomes', 'threatCode', 'keyThreat','relatedTargetMeasures', 'keyTreatIntervention', 'evidence']
 
     List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
@@ -696,7 +696,7 @@ class ProjectXlsExporter extends ProjectExporter {
                     baseline["evidence"] = item.evidence
                     baseline["monitoringDataStatus"] = item.monitoringDataStatus
                     baseline["protocols"] = item.protocols
-                    baseline["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
+                    baseline["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures as List)
                     baseline.putAll(project)
                     data.add(project + baseline)
                 }
@@ -770,7 +770,7 @@ class ProjectXlsExporter extends ProjectExporter {
                     threat["relatedOutcomes"] = item.relatedOutcomes
                     threat["threatCode"] = item.threatCode
                     threat["keyThreat"] = item.threat
-                    threat["relatedTargetMeasures"] = item.relatedTargetMeasures
+                    threat["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures as List)
                     threat["keyTreatIntervention"] = item.intervention
                     threat["evidence"] = item.evidence
                     threat.putAll(project)
@@ -1091,7 +1091,7 @@ class ProjectXlsExporter extends ProjectExporter {
     private static String findScoreLabels(List scoreIds) {
         List labels = []
         for (String scoreId : scoreIds) {
-            labels.add(au.org.ala.ecodata.Score.findByScoreId(scoreId).label)
+            labels.add(au.org.ala.ecodata.Score.findByScoreId(scoreId)?.label)
         }
         return labels
     }
