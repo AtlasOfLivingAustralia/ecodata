@@ -1197,6 +1197,7 @@ class MetadataService {
                     score.target = target?.target
                     score.periodTargets = target?.periodTargets
                     score.targetDate = target?.targetDate
+                    score.relatedOutcomes = target?.outcomeTargets?.relatedOutcomes?.flatten()
                 }else
                     score.delete = true //prepare for delete
             }

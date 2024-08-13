@@ -147,8 +147,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Description', 'Project service / Target measure/s to address threats', 'Methodology', 'Evidence to be retained']
     List<String> rdpKeyThreatProperties =commonProjectProperties + ['relatedOutcomes', 'threatCode', 'keyThreat','relatedTargetMeasures', 'keyTreatIntervention', 'evidence']
 
-    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
-    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
     List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
     List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
@@ -1066,7 +1066,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private AdditionalSheet getServicesTargetsSheet(Map project, String sheetName, List stHeaders, List stProperties) {
         List<Map> results = metadataService.getProjectServicesWithTargets(project)
-        AdditionalSheet sheet = getSheet(sheetName, stHeaders, stProperties)
+        AdditionalSheet sheet = getSheet(sheetName, stProperties, stHeaders)
         int row = sheet.getSheet().lastRowNum
 
         List data = []
@@ -1076,6 +1076,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 Map st = [:]
                 st['service'] = serviceName
                 st['targetMeasure'] = it.label
+                st['relatedOutcomes'] = it.relatedOutcomes
                 st['total'] = it.target
                 st['targetDate'] = it.targetDate
                 it.periodTargets.each { pt ->
