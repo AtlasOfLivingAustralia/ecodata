@@ -39,15 +39,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
             ],
             "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
         ]
-        Holders.grailsApplication = grailsApplication
-
-        defineBeans {
-            userService(UserService)
-            reportingService(ReportingService)
-            activityFormService(ActivityFormService)
-        }
-        Holders.grailsApplication.mainContext.registerBean('metadataService', MetadataService, { metadataService })
-        metadataService.getGeographicConfig() >> [
+        metadataService.getGeographicConfig(*_) >> [
                 contextual: [
                         state : 'cl927',
                         elect : 'cl11163'
@@ -56,7 +48,15 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         ]
         metadataService.getGeographicFacetConfig("cl927") >> [grouped: false, name: "state"]
         metadataService.getGeographicFacetConfig("cl11163") >> [grouped: false, name: "elect"]
-        projectService.orderLayerIntersectionsByAreaOfProjectSites(_) >> [:]
+        Holders.grailsApplication = grailsApplication
+
+        defineBeans {
+            userService(UserService)
+            reportingService(ReportingService)
+            activityFormService(ActivityFormService)
+        }
+        Holders.grailsApplication.mainContext.registerBean('metadataService', MetadataService, { metadataService })
+        projectService.orderLayerIntersectionsByAreaOfProjectSites(_) >> ["cl927": ["ACT"], "cl11163": ["bean", "fenner", "canberra"]]
         outputFile = File.createTempFile('test', '.xlsx')
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
