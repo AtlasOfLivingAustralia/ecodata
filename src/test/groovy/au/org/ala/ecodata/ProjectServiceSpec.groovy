@@ -940,12 +940,12 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         setup:
         ManagementUnit mu = new ManagementUnit(managementUnitId: 'mu1', name: "Management Unit 1", managementUnitSiteId: 's4').save()
         Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true, managementUnitId: 'mu1')
-        project1.save()
-        Site site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]).save()
-        Site site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
-        Site site3 = new Site(siteId: 's3', name: "Site 3", externalIds: [[idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: '1']], projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.0, "canberra": 0.1, "fenner": 0.6]]]]).save()
-        Site site4 = new Site(siteId: 's4', name: "Site 4", type: "worksArea", extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
-        Site site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
+        project1.save(flush: true)
+        Site site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]).save(flush: true)
+        Site site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save(flush: true)
+        Site site3 = new Site(siteId: 's3', name: "Site 3", externalIds: [[idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: '1']], projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.0, "canberra": 0.1, "fenner": 0.6]]]]).save(flush: true)
+        Site site4 = new Site(siteId: 's4', name: "Site 4", type: "worksArea", extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save(flush: true)
+        Site site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save(flush: true)
         project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
         Map projectMap
         projectMap = service.toMap(project1, ProjectService.ALL)
