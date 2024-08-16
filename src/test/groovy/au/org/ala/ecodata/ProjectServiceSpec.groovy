@@ -4,6 +4,7 @@ import au.org.ala.ecodata.converter.ISODateBindingConverter
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
@@ -13,11 +14,11 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
+class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService>, DomainUnitTest<Project> {
 
     ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
     WebService webServiceStub = Stub(WebService)
-    SiteService siteService = Mock(SiteService)
+    SiteService siteService = new SiteService()
     DocumentService documentService = Mock(DocumentService)
     ActivityService activityService = Mock(ActivityService)
     ReportingService reportingService = Mock(ReportingService)
@@ -75,7 +76,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project.findAll().each { it.delete(flush:true) }
         AuditMessage.findAll().each { it.delete(flush:true) }
         UserPermission.findAll().each { it.delete(flush:true) }
-
+        Site.findAll().each { it.delete(flush:true) }
     }
 
     def "test create and update project"() {
@@ -913,6 +914,86 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         results.size() == 2
         results.contains('111')
         results.contains('222')
+    }
+
+    void "orderLayerIntersectionsByAreaOfProjectSites should sum proportions order intersections by descending order"() {
+        setup:
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true).save()
+        Site site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]).save()
+        Site site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
+        project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
+        Map projectMap
+        projectMap = service.toMap(project1, 'all')
+
+        when:
+        Map result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
+
+        then:
+        result.size() == 1
+        result."cl11163"[0] == "bean"
+        result."cl11163"[1] == "fenner"
+        result."cl11163"[2] == "canberra"
+    }
+
+
+    void "getRepresentativeSitesOfProject should get EMSA site or Reporting sites only" () {
+        setup:
+        ManagementUnit mu = new ManagementUnit(managementUnitId: 'mu1', name: "Management Unit 1", managementUnitSiteId: 's4').save()
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true, managementUnitId: 'mu1')
+        project1.save()
+        Site site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]).save()
+        Site site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
+        Site site3 = new Site(siteId: 's3', name: "Site 3", externalIds: [[idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: '1']], projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.0, "canberra": 0.1, "fenner": 0.6]]]]).save()
+        Site site4 = new Site(siteId: 's4', name: "Site 4", type: "worksArea", extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
+        Site site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["cl11163": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]).save()
+        project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
+        Map projectMap
+        projectMap = service.toMap(project1, ProjectService.ALL)
+
+        when: // returns reporting and EMSA sites Only
+        List result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 3
+        result.siteId[0] == 's1'
+        result.siteId[1] == 's2'
+        result.siteId[2] == 's3'
+
+        when: // returns planning/project extent sites
+        site1.type = Site.TYPE_PROJECT_AREA
+        site1.save()
+        site2.type = Site.TYPE_WORKS_AREA
+        site2.save()
+        site3.delete()
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 3
+        result.siteId[0] == 's1'
+        result.siteId[1] =='s2'
+        result.siteId[2] == 's5'
+
+        when: // returns Management Unit boundaries
+        site1.projects = site2.projects = site5.projects = []
+        site1.save()
+        site2.save()
+        site5.save()
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 1
+        result.siteId[0] == 's4'
+
+        when:// returns empty
+        project1.managementUnitId = null
+        project1.save()
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.isEmpty()
     }
 
 }

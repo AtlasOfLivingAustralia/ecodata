@@ -126,9 +126,12 @@ class HubService {
     /**
      * get current hub based on hubId query parameter
      */
-    Hub getCurrentHub () {
-        GrailsWebRequest request = GrailsWebRequest.lookup()
-        String hubId = request?.request?.getParameter('hubId')
+    Hub getCurrentHub (String hubId = null) {
+        if (!hubId) {
+            GrailsWebRequest request = GrailsWebRequest.lookup()
+            hubId = request?.request?.getParameter('hubId')
+        }
+
         if (hubId) {
             return get(hubId)
         }

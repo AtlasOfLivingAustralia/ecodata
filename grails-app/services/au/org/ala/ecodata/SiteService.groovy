@@ -25,6 +25,9 @@ class SiteService {
     static final FLAT = 'flat'
     static final PRIVATE = 'private'
     static final INDEXING = 'indexing'
+    static final PLANNING_SITE = 'Planning site'
+    static final EMSA_SITE = 'EMSA site'
+    static final REPORTING_SITE = 'Reporting site'
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -270,6 +273,7 @@ class SiteService {
     }
 
     private updateSite(Site site, Map props, boolean forceRefresh = false) {
+        List fids = metadataService.getSpatialLayerIdsToIntersectForProjects(site.projects)
         props.remove('id')
         props.remove('siteId')
         // Used by BioCollect to improve the performance of site creation
@@ -290,13 +294,13 @@ class SiteService {
                     Site.withNewSession { Session session ->
                         Site createdSite = Site.findBySiteId(siteId)
                         addSpatialPortalPID(clonedProps, userId)
-                        populateLocationMetadataForSite(clonedProps)
+                        populateLocationMetadataForSite(clonedProps, fids)
                         commonService.updateProperties(createdSite, clonedProps)
                     }
                 }
             }
             else {
-                populateLocationMetadataForSite(props)
+                populateLocationMetadataForSite(props, fids)
             }
         }
 
@@ -966,4 +970,37 @@ class SiteService {
         step.length
     }
 
+    String getSitePurposeLabel (String purpose) {
+        switch (purpose) {
+            case Site.EMSA_SITE_CODE:
+                return EMSA_SITE
+            case Site.REPORTING_SITE_CODE:
+                return REPORTING_SITE
+            case Site.PLANNING_SITE_CODE:
+            default:
+                return PLANNING_SITE
+        }
+    }
+
+    String getPurpose (Map site) {
+        String code = Site.PLANNING_SITE_CODE
+
+        if (site.externalIds) {
+            List idTypes = site.externalIds.idType
+            if (!ExternalId.getMonitorIdTypes()*.name().intersect(idTypes).isEmpty())
+                code = Site.EMSA_SITE_CODE
+        } else if (site.type == Site.TYPE_COMPOUND) {
+            code = Site.REPORTING_SITE_CODE
+        }
+
+        code
+    }
+
+    List filterSitesByPurposeIsReportingOrEMSA (List<Map> sites) {
+        sites?.findAll { getPurpose(it) == Site.EMSA_SITE_CODE || getPurpose(it) == Site.REPORTING_SITE_CODE }
+    }
+
+    List filterSitesByPurposeIsPlanning (List<Map> sites) {
+        sites?.findAll { getPurpose(it) == Site.PLANNING_SITE_CODE }
+    }
 }

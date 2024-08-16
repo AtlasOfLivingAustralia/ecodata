@@ -441,7 +441,7 @@ class ElasticSearchService {
 
     def buildFacetMapping() {
         def facetList = []
-        Map facetConfig = grailsApplication.config.getProperty('app.facets.geographic', Map)
+        Map facetConfig = metadataService.getGeographicConfig()
         // These groupings of facets determine the way the layers are used with a site, but can be treated the
         // same for the purposes of indexing the results.
         ['contextual', 'grouped', 'special'].each {

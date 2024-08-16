@@ -17,6 +17,7 @@ class ExternalId implements Comparable {
 
     static constraints = {
     }
+    static List idTypesByMonitor
 
     IdType idType
     String externalId
@@ -25,5 +26,20 @@ class ExternalId implements Comparable {
     int compareTo(Object otherId) {
         ExternalId other = (ExternalId)otherId
         return (idType.ordinal()+externalId).compareTo(other?.idType?.ordinal()+other?.externalId)
+    }
+
+    static List getMonitorIdTypes() {
+        if (!idTypesByMonitor){
+            List monitorIdTypes = []
+            IdType.values().each {
+                if (it.name().startsWith('MONITOR_')) {
+                    monitorIdTypes << it
+                }
+            }
+
+            idTypesByMonitor = monitorIdTypes
+        }
+
+        idTypesByMonitor
     }
 }

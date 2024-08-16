@@ -40,6 +40,7 @@ class MetadataService {
     ActivityFormService activityFormService
     SpeciesReMatchService speciesReMatchService
     HubService hubService
+    ProjectService projectService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -306,7 +307,7 @@ class MetadataService {
     def getNvisClassesForPoint(Double lat, Double lon) {
         def retMap = [:]
 
-        Map nvisLayers = grailsApplication.config.getProperty('app.facets.geographic.special', Map)
+        Map nvisLayers = getGeographicConfig().special
 
         nvisLayers.each { name, path ->
             def classesJsonFile = new File(path + '.json')
@@ -402,8 +403,8 @@ class MetadataService {
     def performLayerIntersect(lat,lng) {
 
 
-        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
-        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
+        Map contextualLayers = getGeographicConfig().contextual
+        Map groupedFacets = getGeographicConfig().grouped
 
         // Extract all of the layer field ids from the facet configuration so we can make a single web service call to the spatial portal.
         def fieldIds = contextualLayers.collect { k, v -> v }
@@ -471,22 +472,34 @@ class MetadataService {
     }
 
     /** Returns a list of spatial portal layer/field ids that ecodata will intersect every site against to support facetted geographic searches */
-    List<String> getSpatialLayerIdsToIntersect() {
-        def config = getGeographicConfig()
-        def fieldIds = config.contextualLayers.collect { k, v -> v }
-        config.groupedFacets.each { k, v ->
+    List<String> getSpatialLayerIdsToIntersect(String hubId = null) {
+        def config = getGeographicConfig(hubId)
+        def fieldIds = config.contextual.collect { k, v -> v }
+        config.grouped.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
         }
         fieldIds
     }
 
     /**
+     * If all projects belong to a hub, uses geographic configuration of that hub.
+     * Otherwise, check if hubId query parameter is present.
+     * If not, use default configuration present in application.groovy.
+     * @param projectIds
+     * @return
+     */
+    List<String> getSpatialLayerIdsToIntersectForProjects(List projectIds = []) {
+        List hubIds = projectService.findHubIdOfProjects(projectIds)
+        hubIds.size() == 1 ? getSpatialLayerIdsToIntersect(hubIds[0]) : getSpatialLayerIdsToIntersect()
+    }
+
+    /**
      * Get layers for intersection from hub if it exists. Otherwise, get from configuration.
      * @return
      */
-    Map getGeographicConfig () {
+    Map getGeographicConfig (String hubId = null) {
         Map config
-        Hub hub = hubService.getCurrentHub()
+        Hub hub = hubService?.getCurrentHub(hubId)
         if (hub?.geographicConfig) {
             config = hub.geographicConfig
         } else {
@@ -502,7 +515,7 @@ class MetadataService {
      * @param fid the field id.
      */
     Map getGeographicFacetConfig(String fid) {
-        Map config = grailsApplication.config.getProperty('app.facets.geographic', Map)
+        Map config = getGeographicConfig()
         Map facetConfig = null
         config.contextual.each { String groupName, String groupFid ->
             if (fid == groupFid) {
@@ -612,8 +625,8 @@ class MetadataService {
             log.error("Missing result for ${lat}, ${lng}")
         }
 
-        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
-        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
+        Map contextualLayers = getGeographicConfig().contextual
+        Map groupedFacets = getGeographicConfig().grouped
         def facetTerms = [:]
 
         contextualLayers.each { name, fid ->
