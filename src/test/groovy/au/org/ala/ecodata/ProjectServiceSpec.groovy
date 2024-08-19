@@ -943,13 +943,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             Site site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]]).save(flush: true, failOnError: true)
             project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
             session.flush()
-            projectMap = service.toMap(project1, ProjectService.ALL)
         }
 
         when:
-        Project.withSession {
-            result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
-        }
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
 
         then:
         result.size() == 1
@@ -976,13 +974,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]]).save(flush: true, failOnError: true)
             project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
             session.flush()
-            projectMap = service.toMap(project1, ProjectService.ALL)
         }
 
         when: // returns reporting and EMSA sites Only
-        Project.withSession {
-            result = service.getRepresentativeSitesOfProject(projectMap)
-        }
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
 
         then:
         result.size() == 3
@@ -997,11 +993,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             site2.type = Site.TYPE_WORKS_AREA
             site2.save(flush: true)
             site3.delete(flush: true)
-            project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
             session.flush()
-            projectMap = service.toMap(project1, ProjectService.ALL)
-            result = service.getRepresentativeSitesOfProject(projectMap)
         }
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
 
         then:
         result.size() == 3
@@ -1015,11 +1010,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
             site1.save(flush: true)
             site2.save(flush: true)
             site5.save(flush: true)
-            project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
             session.flush()
-            projectMap = service.toMap(project1, ProjectService.ALL)
-            result = service.getRepresentativeSitesOfProject(projectMap)
         }
+
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
 
         then:
         result.size() == 1
@@ -1029,11 +1024,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project.withSession { session ->
             project1.managementUnitId = null
             project1.save(flush: true)
-            project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
             session.flush()
-            projectMap = service.toMap(project1, ProjectService.ALL)
-            result = service.getRepresentativeSitesOfProject(projectMap)
         }
+
+        projectMap = service.toMap(project1, ProjectService.ALL)
+        result = service.getRepresentativeSitesOfProject(projectMap)
 
         then:
         result.isEmpty()
