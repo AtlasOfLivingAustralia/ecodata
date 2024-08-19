@@ -1158,13 +1158,14 @@ class ProjectService {
     Map orderLayerIntersectionsByAreaOfProjectSites (Map project) {
         Map<String,Map<String,Double>> sumOfIntersectionsByLayer = [:].withDefault { [:].withDefault { 0 } }
         Map orderedIntersectionsByArea = [:]
-        // get sites of projects;
+        Map config = metadataService.getGeographicConfig(project.hubId)
+        List layers = config.checkForBoundaryIntersectionInLayers
         List projectSites = getRepresentativeSitesOfProject(project)
         projectSites?.each { Map site ->
-            site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.each { String layerId, Map value ->
-                Set<String> keySet = value.keySet()
-                keySet.each { String layerValue ->
-                    sumOfIntersectionsByLayer[layerId][layerValue] += value[layerValue]
+            layers.each { String layer ->
+                Map facet = metadataService.getGeographicFacetConfig(layer, project.hubId)
+                site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.get(facet.name)?.get(SiteService.INTERSECTION_CURRENT)?.each { String layerValue, value ->
+                    sumOfIntersectionsByLayer[layer][layerValue] += value
                 }
             }
         }

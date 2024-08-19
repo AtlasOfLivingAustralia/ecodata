@@ -28,6 +28,7 @@ class SiteService {
     static final PLANNING_SITE = 'Planning site'
     static final EMSA_SITE = 'EMSA site'
     static final REPORTING_SITE = 'Reporting site'
+    static final INTERSECTION_CURRENT = 'CURRENT'
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -663,8 +664,35 @@ class SiteService {
                 log.error("No geometry for site: ${site.siteId}")
             }
 
-            site.extent.geometry += lookupGeographicFacetsForSite(site, fids)
+            def geoFacets = lookupGeographicFacetsForSite(site, fids)
+            def intersectionsAreaByFacets = geoFacets.remove(SpatialService.INTERSECTION_AREA)
+            site.extent.geometry += geoFacets
+            mergeIntersectionsArea(site, intersectionsAreaByFacets)
         }
+    }
+
+    /**
+     * The data is stored in the format -
+     * [ intersectionAreaByFacets: [ CURRENT: [act: 0.1, nsw: 0.6], cl22: [act: 0.1, nsw: 0.6]] ]
+     * @param site
+     * @param intersectionsAreaByFacets
+     * @return
+     */
+    def mergeIntersectionsArea(Map site, Map intersectionsAreaByFacets) {
+        Map geometry = site.extent.geometry
+        List hubs = projectService.findHubIdOfProjects(site.projects)
+        String hubId = hubs?.size() == 1 ? hubs[0] : null
+        Map existingIntersectionsArea = geometry[SpatialService.INTERSECTION_AREA] = geometry[SpatialService.INTERSECTION_AREA] ?: [:]
+        intersectionsAreaByFacets?.each { String layer, Map nameAndValue ->
+            if (nameAndValue) {
+                Map facet = metadataService.getGeographicFacetConfig(layer, hubId)
+                existingIntersectionsArea[facet.name] = existingIntersectionsArea[facet.name]?: [:]
+                existingIntersectionsArea[facet.name][INTERSECTION_CURRENT] = nameAndValue
+                existingIntersectionsArea[facet.name][layer] = nameAndValue
+            }
+        }
+
+        site
     }
 
     /**

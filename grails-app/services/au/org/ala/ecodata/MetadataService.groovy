@@ -514,8 +514,8 @@ class MetadataService {
      * uses the supplied field id.
      * @param fid the field id.
      */
-    Map getGeographicFacetConfig(String fid) {
-        Map config = getGeographicConfig()
+    Map getGeographicFacetConfig(String fid, String hubId = null) {
+        Map config = getGeographicConfig(hubId)
         Map facetConfig = null
         config.contextual.each { String groupName, String groupFid ->
             if (fid == groupFid) {
