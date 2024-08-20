@@ -29,6 +29,7 @@ class SiteService {
     static final EMSA_SITE = 'EMSA site'
     static final REPORTING_SITE = 'Reporting site'
     static final INTERSECTION_CURRENT = 'CURRENT'
+    static List idTypesByMonitor
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -36,6 +37,24 @@ class SiteService {
     SpatialService spatialService
     ElasticSearchService elasticSearchService
 
+    /**
+     * Get list of monitor external ids.
+     * @return
+     */
+    static List getMonitorIdTypes() {
+        if (!idTypesByMonitor) {
+            List monitorIdTypes = []
+            ExternalId.IdType.values().toList().each {
+                if (it.name().startsWith('MONITOR_')) {
+                    monitorIdTypes << it
+                }
+            }
+
+            idTypesByMonitor = monitorIdTypes
+        }
+
+        idTypesByMonitor
+    }
 
     /**
      * Returns all sites in the system in a list.
@@ -1015,7 +1034,7 @@ class SiteService {
 
         if (site.externalIds) {
             List idTypes = site.externalIds.idType
-            if (!ExternalId.getMonitorIdTypes()*.name().intersect(idTypes).isEmpty())
+            if (!getMonitorIdTypes().intersect(idTypes).isEmpty())
                 code = Site.EMSA_SITE_CODE
         } else if (site.type == Site.TYPE_COMPOUND) {
             code = Site.REPORTING_SITE_CODE
