@@ -15,6 +15,8 @@
 
 package au.org.ala.ecodata
 
+
+import com.mongodb.client.model.Filters
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
@@ -68,7 +70,6 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 import static org.elasticsearch.index.query.QueryBuilders.*
-
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -779,6 +780,104 @@ class ElasticSearchService {
             indexDocType(id, Project.class.name)
         }
 
+    }
+
+    def indexDependenciesOfProjects(List projectIds) {
+        log.info("Started indexing of projects: ${projectIds}")
+        projectIds?.each { projectId ->
+            log.debug("Started indexing assets of project: ${projectId}")
+            indexDependenciesOfProject(projectId)
+            log.debug("Indexed assets of project: ${projectId}")
+        }
+
+        log.info("Completed indexing of projects: ${projectIds}")
+    }
+
+    def indexDependenciesOfProject (String projectId) {
+        int batchSize = 50
+        log.debug "Indexing project"
+        Project.withNewSession { session ->
+            Project project = Project.findByProjectIdAndStatusNotEqual(projectId, DELETED)
+            try {
+                Map projectMap = prepareProjectForHomePageIndex(project)
+                indexDoc(projectMap, HOMEPAGE_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index project:  " + project?.projectId, e)
+            }
+
+            log.debug "Indexing sites"
+            int count = 0
+            siteService.doWithAllSites({ siteMap ->
+                siteMap["className"] = Site.class.name
+                try {
+                    siteMap = prepareSiteForIndexing(siteMap, false)
+                    if (siteMap) {
+                        indexDoc(siteMap, DEFAULT_INDEX)
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Unable index site: " + siteMap?.siteId, e)
+                }
+                count++
+                if (count % 1000 == 0) {
+                    session.clear()
+                    log.info("Processed " + count + " sites")
+                }
+            }, [Filters.eq('projectId', projectId)], batchSize)
+
+            if (project.organisationId) {
+                log.debug "Indexing organisations of project"
+                organisationService.doWithAllOrganisations ({ Map org ->
+                    try {
+                        prepareOrganisationForIndexing(org)
+                        indexDoc(org, DEFAULT_INDEX)
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index organisation: " + org?.organisationId, e)
+                    }
+                }, [Filters.eq('organisationId', project.organisationId)], batchSize)
+            }
+
+            log.debug "Indexing activities"
+            count = 0
+            activityService.doWithAllActivities({ Map activity ->
+                try {
+                    activity = prepareActivityForIndexing(activity)
+                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                }
+                catch (Exception e) {
+                    log.error("Unable to index activity: " + activity?.activityId, e)
+                }
+
+                count++
+                if (count % 1000 == 0) {
+                    session.clear()
+                    log.info("Processed " + count + " activities")
+                }
+            }, [Filters.eq('projectId', projectId)], batchSize)
+
+            log.debug "Indexing documents"
+            count = 0
+            Document.findAllByProjectIdAndStatusNotEqual(projectId, DELETED, [batchSize: batchSize]).each { Document document ->
+                try {
+                    Map doc = documentService.toMap(document)
+                    doc = prepareDocumentForIndexing(doc)
+                    if (doc) {
+                        indexDoc(doc, DEFAULT_INDEX)
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Unable to index document: " + doc?.documentId, e)
+                }
+
+                count++
+                if (count % 100 == 0) {
+                    session.clear()
+                    log.info("Processed " + count + " documents")
+                }
+            }
+        }
     }
 
     /**
