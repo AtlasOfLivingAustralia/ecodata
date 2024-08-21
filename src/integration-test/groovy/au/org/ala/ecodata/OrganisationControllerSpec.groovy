@@ -119,14 +119,14 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
 
     }
 
-    void "projects can be associated with an organisation by the serviceProviderOrganisationId property"() {
+    void "projects can be associated with an organisation by the associatedOrgs property"() {
         setup:
 
         // Create some data for the database.
         def organisation = TestDataHelper.buildOrganisation([name: 'org 1'])
         def projects = []
         (1..2).each {
-            projects << TestDataHelper.buildProject([orgIdSvcProvider: organisation.organisationId, name:'svc project '+it])
+            projects << TestDataHelper.buildProject([associatedOrgs: [[organisationId:organisation.organisationId, name:'org project '+it]]])
         }
         projects << TestDataHelper.buildProject([organisationId: organisation.organisationId, name:'org project'])
         (1..3).each {
