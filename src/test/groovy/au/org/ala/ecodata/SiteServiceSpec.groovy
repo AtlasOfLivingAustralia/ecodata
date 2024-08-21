@@ -20,6 +20,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
     def webServiceMock = Mock(WebService)
     def metadataServiceMock = Mock(MetadataService)
     def spatialServiceMock = Mock(SpatialService)
+    def projectService = Mock(ProjectService)
     CommonService commonService = new CommonService()
     void setup() {
         //defineBeans {
@@ -35,6 +36,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         service.grailsApplication = grailsApplication
         service.metadataService = metadataServiceMock
         service.spatialService = spatialServiceMock
+        service.projectService = projectService
      //   grailsApplication.mainContext.registerSingleton('commonService', CommonService)
      //   grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
     }
@@ -192,6 +194,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
     def "New sites without a centroid should have one assigned"() {
         when:
         def result
+        projectService.findHubIdOfProjects(_) >> []
         Site.withSession { session ->
             result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', pid: 'cl123']]])
             session.flush()
@@ -307,6 +310,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
 
     def "The site area is calculated from the FeatureCollection for a compound site"() {
         setup:
+        projectService.findHubIdOfProjects(_) >> []
         def coordinates = [[148.260498046875, -37.26530995561874], [148.260498046875, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.260498046875, -37.26530995561874]]
         def extent = buildExtent('drawn', 'Polygon', coordinates)
         Map site = [type: Site.TYPE_COMPOUND, extent: extent, features: [

@@ -334,7 +334,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         def result = service.getGeographicConfig()
 
         then:
-        1 * hubService.getCurrentHub() >> new Hub(geographicConfig: [contextual: ['state':'cl900', 'cmz':'cl200'], grouped: [other:['australian_coral_ecoregions':'cl97'], gerSubRegion:['gerBorderRanges':'cl102']]])
+        1 * hubService.getCurrentHub(_) >> new Hub(geographicConfig: [contextual: ['state':'cl900', 'cmz':'cl200'], grouped: [other:['australian_coral_ecoregions':'cl97'], gerSubRegion:['gerBorderRanges':'cl102']]])
         result.contextual == ['state':'cl900', 'cmz':'cl200']
         result.grouped == [other:['australian_coral_ecoregions':'cl97'], gerSubRegion:['gerBorderRanges':'cl102']]
 
@@ -342,7 +342,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         result = service.getGeographicConfig()
 
         then:
-        1 * hubService.getCurrentHub() >> null
+        1 * hubService.getCurrentHub(_) >> null
         result.size() == 3
         result.contextual == ['state':'cl927', 'cmz':'cl2112']
         result.grouped == [other: ['australian_coral_ecoregions':'cl917'], gerSubRegion: ['gerBorderRanges':'cl1062']]
