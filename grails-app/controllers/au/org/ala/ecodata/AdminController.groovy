@@ -528,6 +528,17 @@ class AdminController {
         render reports as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def indexProjectDependencies() {
+        if(params.projectId){
+            List projects = params.projectId.split(',')?.toList()
+            elasticSearchService.indexDependenciesOfProjects( projects )
+            render text: [message: 'indexing completed'] as JSON, contentType: 'application/json'
+        } else {
+            render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
+        }
+    }
+
     /**
      * a test function to index a project.
      * @return
@@ -543,7 +554,7 @@ class AdminController {
                         Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
                         elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
                     } catch (Exception e) {
-                        log.error("Unable to index projewt: " + project?.projectId, e)
+                        log.error("Unable to index project: " + project?.projectId, e)
                         e.printStackTrace();
                     }
                 }

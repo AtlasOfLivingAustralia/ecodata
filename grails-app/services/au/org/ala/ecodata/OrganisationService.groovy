@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
 import org.bson.conversions.Bson
@@ -179,14 +180,14 @@ class OrganisationService {
      * @param action the action to be performed on each Organisation.
      * @param filters list of filters
      */
-    void doWithAllOrganisations(Closure action, List<Filters> filters = []) {
+    void doWithAllOrganisations(Closure action, List<Bson> filters = [], int batchSize = 100) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
-        def collection = Organisation.getCollection()
+        MongoCollection collection = Organisation.getCollection()
         //DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
         Bson query = Filters.ne("status", DELETED)
         filters.add(query)
         query = Filters.and(filters)
-        def results = collection.find(query).batchSize(100)
+        def results = collection.find(query).batchSize(batchSize)
 
         results.each { dbObject ->
             action.call(dbObject)

@@ -22,6 +22,7 @@ class SpatialService {
     static final String INTERSECTION_AREA = "intersectionAreaByFacets"
     final String GEOJSON_INTERSECT_URL_PREFIX = "/ws/intersect/geojson/"
     final String WKT_INTERSECT_URL_PREFIX = "/ws/intersect/wkt/"
+    final String WKT_SHAPE_URL_PREFIX = "/ws/shapes/wkt/"
 
     final String PID_INTERSECT_URL_PREFIX = "/ws/intersect/object/"
     final String LOOKUP_TABLE_PATH = "/data/pidIntersectCache.json"
