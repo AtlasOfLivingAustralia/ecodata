@@ -70,15 +70,14 @@
         "organisationId": {
           "type" : "keyword"
         },
-        "orgIdSvcProvider": {
-          "type" : "keyword",
-          "copy_to": ["organisationId"]
-        },
         "organisationName": {
           "type" : "text",
           "copy_to": ["organisationFacet", "organisationSort"]
         },
         "organisationFacet": {
+          "type": "keyword"
+        },
+        "linkedOrganisationFacet": {
           "type": "keyword"
         },
         "organisationSort": {
@@ -91,10 +90,6 @@
         },
         "dateCreatedSort" : {
           "type" : "keyword", "normalizer" : "case_insensitive_sort"
-        },
-        "serviceProviderName": {
-          "type" : "text",
-          "copy_to": ["organisationName","organisationFacet", "organisationSort"]
         },
         "associatedOrgs": {
           "properties" : {
@@ -109,6 +104,10 @@
             "organisationId": {
                 "type": "keyword",
                 "copy_to": ["organisationId"]
+            },
+            "organisationName": {
+              "type": "keyword",
+              "copy_to": ["organisationName"]
             }
           }
         },

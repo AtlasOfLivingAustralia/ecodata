@@ -690,15 +690,36 @@ class ProjectService {
     List<Map> search(Map searchCriteria, levelOfDetail = []) {
 
         def criteria = Project.createCriteria()
+
         def projects = criteria.list {
             ne("status", DELETED)
             searchCriteria.each { prop, value ->
+                // Special case for organisationId - also included embedded associatedOrg relationships.
+                if (prop == 'organisationId') {
+                    or {
+                        if (value instanceof List) {
+                            inList(prop, value)
+                        } else {
+                            eq(prop, value)
+                        }
 
-                if (value instanceof List) {
-                    inList(prop, value)
-                } else {
-                    eq(prop, value)
+                        associatedOrgs {
+                            if (value instanceof List) {
+                                inList(prop, value)
+                            } else {
+                                eq(prop, value)
+                            }
+                        }
+                    }
                 }
+                else {
+                    if (value instanceof List) {
+                        inList(prop, value)
+                    } else {
+                        eq(prop, value)
+                    }
+                }
+
             }
 
         }

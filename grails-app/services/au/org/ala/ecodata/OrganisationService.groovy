@@ -159,7 +159,6 @@ class OrganisationService {
         if ('projects' in levelOfDetail) {
             mapOfProperties.projects = []
             mapOfProperties.projects += projectService.search([organisationId: org.organisationId], ['flat'])
-            mapOfProperties.projects += projectService.search([orgIdSvcProvider: org.organisationId], ['flat'])
         }
         if ('documents' in levelOfDetail) {
             mapOfProperties.documents = documentService.findAllByOwner('organisationId', org.organisationId)

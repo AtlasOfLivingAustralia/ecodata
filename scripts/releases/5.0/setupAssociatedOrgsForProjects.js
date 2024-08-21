@@ -42,6 +42,17 @@ while (projects.hasNext()) {
     }
     let associatedOrg = {name:project.organisationName, organisationId:project.organisationId, description:description};
 
+    if (project.organisationId) {
+        let organisation = db.organisation.findOne({organisationId:project.organisationId});
+        if (!organisation) {
+            print("OrganisationId "+project.organisationId+" not found for project "+project.projectId+" name:"+project.name);
+        }
+        else {
+            associatedOrg.organisationName = organisation.name;
+        }
+    }
+
+
     if (!associatedOrg.name) {
         print("No organisation for project "+project.projectId+" name:"+project.name+" organisationId: "+project.organisationId);
 
@@ -57,6 +68,16 @@ while (projects.hasNext()) {
 
     if (project.orgIdSvcProvider) {
         let associatedOrg = {name:project.serviceProviderName, organisationId:project.orgIdSvcProvider, description:'Service provider'};
+
+        let organisation = db.organisation.findOne({organisationId:project.orgIdSvcProvider});
+        if (!organisation) {
+            print("OrganisationId "+project.orgIdSvcProvider+" not found for project "+project.projectId+" name:"+project.name);
+        }
+        else {
+            associatedOrg.organisationName = organisation.name;
+        }
+
+
         project.associatedOrgs.push(associatedOrg);
         // For now leave these fields as is to not cause issues when switching branches
         // and to allow this script to be run repeatedly
