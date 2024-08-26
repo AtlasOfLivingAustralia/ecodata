@@ -15,18 +15,18 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
     SettingService settingService = Mock(SettingService)
     ActivityFormService activityFormService = Mock(ActivityFormService)
     MessageSource messageSource = Mock(MessageSource)
+    HubService hubService = Mock(HubService)
 
     def setup() {
         service.grailsApplication = grailsApplication
         grailsApplication.config.google = [geocode: [url: 'url'], api: [key:'abc']]
         grailsApplication.config.spatial= [intersectUrl: 'url']
-        grailsApplication.config.app.facets.geographic.contextual = ['state':'cl927', 'cmz':'cl2112']
-        grailsApplication.config.app.facets.geographic.grouped = [other:['australian_coral_ecoregions':'cl917'], gerSubRegion:['gerBorderRanges':'cl1062']]
-        grailsApplication.config.app.facets.geographic.special = [:]
+        grailsApplication.config.app = [facets: [ geographic: [contextual: ['state':'cl927', 'cmz':'cl2112'], grouped: [other:['australian_coral_ecoregions':'cl917'], gerSubRegion:['gerBorderRanges':'cl1062']], special: [:]]]]
         service.settingService = settingService
         service.webService = webService
         service.activityFormService = activityFormService
         service.messageSource = messageSource
+        service.hubService = hubService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
@@ -327,5 +327,25 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         content[1][0].data.get("g")[1].i.commonName == "com name 5"
         content[1][0].data.get("g")[1].i.guid == "gi5"
         content[1][0].data.get("g")[1].i.outputSpeciesId != null
+    }
+
+    void "getGeographicConfig should get geographic configuration either from hub or system default"(){
+        when:
+        def result = service.getGeographicConfig()
+
+        then:
+        1 * hubService.getCurrentHub(_) >> new Hub(geographicConfig: [contextual: ['state':'cl900', 'cmz':'cl200'], grouped: [other:['australian_coral_ecoregions':'cl97'], gerSubRegion:['gerBorderRanges':'cl102']]])
+        result.contextual == ['state':'cl900', 'cmz':'cl200']
+        result.grouped == [other:['australian_coral_ecoregions':'cl97'], gerSubRegion:['gerBorderRanges':'cl102']]
+
+        when:
+        result = service.getGeographicConfig()
+
+        then:
+        1 * hubService.getCurrentHub(_) >> null
+        result.size() == 3
+        result.contextual == ['state':'cl927', 'cmz':'cl2112']
+        result.grouped == [other: ['australian_coral_ecoregions':'cl917'], gerSubRegion: ['gerBorderRanges':'cl1062']]
+        result.special == [:]
     }
 }

@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.validation.ValidationException
 import groovy.util.logging.Slf4j
+import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.context.MessageSource
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -120,6 +121,20 @@ class HubService {
                     accessManagementOptions.expireUsersAfterPeriodInactive != null
 
         }.list()
+    }
+
+    /**
+     * get current hub based on hubId query parameter
+     */
+    Hub getCurrentHub (String hubId = null) {
+        if (!hubId) {
+            GrailsWebRequest request = GrailsWebRequest.lookup()
+            hubId = request?.request?.getParameter('hubId')
+        }
+
+        if (hubId) {
+            return get(hubId)
+        }
     }
 
 }

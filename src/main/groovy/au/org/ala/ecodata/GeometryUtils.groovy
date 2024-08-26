@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -25,6 +26,14 @@ class GeometryUtils {
     static Log log = LogFactory.getLog(GeometryUtils.class)
     static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326", true)
     static GeometryFactory geometryFactory = new GeometryFactory()
+
+    static Map wktToGeoJson(String wkt, int decimals = 20) {
+        WKTReader wktReader = new WKTReader()
+        Geometry geom = wktReader.read(wkt)
+        String geoJSON = new GeometryJSON(decimals).toString(geom)
+        ObjectMapper mapper = new ObjectMapper()
+        return mapper.readValue(geoJSON, Map)
+    }
 
     static String wktToMultiPolygonWkt(String wkt) {
         Geometry geom = new WKTReader().read(wkt)

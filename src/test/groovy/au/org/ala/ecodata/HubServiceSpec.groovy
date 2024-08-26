@@ -3,8 +3,9 @@ package au.org.ala.ecodata
 import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
+import grails.testing.web.GrailsWebUnitTest
 
-class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, DomainUnitTest<Hub> {
+class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, DomainUnitTest<Hub>, GrailsWebUnitTest {
 
 
     PermissionService permissionService = Mock(PermissionService)
@@ -58,4 +59,15 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         service.findHubsEligibleForAccessExpiry().size() == 1
     }
 
+    void "getCurrentHub must return the hub with the hubId query parameter"() {
+        setup:
+        request.addParameters(["hubId": "id"])
+
+        when:
+        Hub result = service.getCurrentHub()
+
+        then:
+        result.hubId == 'id'
+        result.urlPath == 'test'
+    }
 }

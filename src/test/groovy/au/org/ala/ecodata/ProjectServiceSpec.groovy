@@ -4,6 +4,7 @@ import au.org.ala.ecodata.converter.ISODateBindingConverter
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
@@ -13,11 +14,11 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
+class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService>, DomainUnitTest<Project> {
 
     ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
     WebService webServiceStub = Stub(WebService)
-    SiteService siteService = Mock(SiteService)
+    SiteService siteService = new SiteService()
     DocumentService documentService = Mock(DocumentService)
     ActivityService activityService = Mock(ActivityService)
     ReportingService reportingService = Mock(ReportingService)
@@ -43,6 +44,13 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         }
 
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider], collectoryIntegrationEnabled: true]
+        grailsApplication.config.app.facets.geographic = [
+                contextual: [
+                        state : 'cl927',
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
+        ]
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
         grailsApplication.mainContext.collectoryService.grailsApplication = grailsApplication
         grailsApplication.mainContext.collectoryService.webService = webServiceStub
@@ -69,13 +77,15 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project.collection.remove(new BasicDBObject())
         ManagementUnit.collection.remove(new BasicDBObject())
         AuditMessage.collection.remove(new BasicDBObject())
+        Site.collection.remove(new BasicDBObject())
     }
 
     def cleanup() {
         Project.findAll().each { it.delete(flush:true) }
         AuditMessage.findAll().each { it.delete(flush:true) }
         UserPermission.findAll().each { it.delete(flush:true) }
-
+        ManagementUnit.findAll().each { it.delete(flush:true) }
+        Site.findAll().each { it.delete(flush:true) }
     }
 
     def "test create and update project"() {
@@ -913,6 +923,145 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         results.size() == 2
         results.contains('111')
         results.contains('222')
+    }
+
+    void "orderLayerIntersectionsByAreaOfProjectSites should sum proportions order intersections by descending order"() {
+        setup:
+        Map projectMap
+        Map result
+        Project project1
+        Site site1, site2
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
+        metadataService.getGeographicConfig(_) >> [
+                contextual: [
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl11163" ]
+        ]
+        metadataService.getGeographicFacetConfig("cl11163", "12345") >> [name: "elect", grouped: true]
+        project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true)
+        site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]])
+        site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        Project.withTransaction {
+            project1.save(flush: true, failOnError: true)
+            site1.save(flush: true, failOnError: true)
+            site2.save(flush: true, failOnError: true)
+        }
+            project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
+
+        when:
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
+
+        then:
+        result.size() == 1
+        result["cl11163"][0] == "bean"
+        result["cl11163"][1] == "fenner"
+        result["cl11163"][2] == "canberra"
+    }
+
+
+    void "getRepresentativeSitesOfProject should get EMSA site or Reporting sites only" () {
+        setup:
+        Map projectMap
+        Site site1, site2, site3, site4, site5
+        Project project1
+        ManagementUnit mu
+        List result
+        project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true, managementUnitId: 'mu1')
+        mu = new ManagementUnit(managementUnitId: 'mu1', name: "Management Unit 1", managementUnitSiteId: 's4')
+        site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]])
+        site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        site3 = new Site(siteId: 's3', name: "Site 3", externalIds: [[idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: '1']], status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.0, "canberra": 0.1, "fenner": 0.6]]]]])
+        site4 = new Site(siteId: 's4', name: "Site 4", type: "worksArea", status: 'active', extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        Project.withTransaction {
+            project1.save(flush: true, failOnError: true)
+            mu.save(flush: true, failOnError: true)
+            site1.save(flush: true, failOnError: true)
+            site2.save(flush: true, failOnError: true)
+            site3.save(flush: true, failOnError: true)
+            site4.save(flush: true, failOnError: true)
+            site5.save(flush: true, failOnError: true)
+        }
+        ManagementUnit.metaClass.getDbo = {
+            delegate.properties
+        }
+        Project.metaClass.getDbo = {
+            delegate.properties
+        }
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
+
+        when: // returns reporting and EMSA sites Only
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 3
+        result.siteId[0] == 's1'
+        result.siteId[1] == 's2'
+        result.siteId[2] == 's3'
+
+        when: // returns planning/project extent sites
+        site1.type = Site.TYPE_PROJECT_AREA
+        site2.type = Site.TYPE_WORKS_AREA
+        Project.withTransaction {
+            site1.save(flush: true)
+            site2.save(flush: true)
+            site3.delete(flush: true)
+
+        }
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 3
+        result.siteId[0] == 's1'
+        result.siteId[1] =='s2'
+        result.siteId[2] == 's5'
+
+        when: // returns Management Unit boundaries
+        site1.projects = site2.projects = site5.projects = []
+        Project.withTransaction {
+            site1.save(flush: true)
+            site2.save(flush: true)
+            site5.save(flush: true)
+        }
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 1
+        result.siteId[0] == 's4'
+
+        when:// returns empty
+        Project.withTransaction {
+            project1.managementUnitId = null
+            project1.save(flush: true)
+        }
+
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.isEmpty()
     }
 
 }
