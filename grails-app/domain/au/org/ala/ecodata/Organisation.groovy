@@ -25,14 +25,13 @@ class Organisation {
     String abnStatus // N/A, Active, Cancelled
     String entityName
     String entityType // From ABN register
-    String businessName
-    String tradingName
+    List<String> businessNames
     String state
     Integer postcode
     List<ExternalId> externalIds // For financial system vendor codes/reference
     List<String> indigenousOrganisationRegistration
     List<AssociatedOrg> associatedOrgs // e.g. parent organisation such as for NSW LLS group
-
+    List<String> contractNames // When contracts are written for projects with this organisation with a name that doesn't match the organisation name
     String status = 'active'
 
     String collectoryInstitutionId // Reference to the Collectory
@@ -55,8 +54,8 @@ class Organisation {
         abnStatus nullable: true
         entityName nullable: true
         entityType nullable: true
-        businessName nullable: true
-        tradingName nullable: true
+        businessNames nullable: true
+        contractNames nullable: true
         state nullable: true
         postcode nullable: true
         indigenousOrganisationRegistration nullable: true
