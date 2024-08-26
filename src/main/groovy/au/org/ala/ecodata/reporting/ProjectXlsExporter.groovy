@@ -154,8 +154,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
     List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
-    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
-    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
+    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
+    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
 
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
@@ -1143,6 +1143,7 @@ class ProjectXlsExporter extends ProjectExporter {
         results.each { item ->
             def serviceName = item.name
             item.scores.each {
+//                Service", "Target measure", "Project Outcome/s", "Total to be delivered"
                 Map st = [:]
                 st['service'] = serviceName
                 st['targetMeasure'] = it.label
