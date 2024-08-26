@@ -437,7 +437,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     @Override
     def text(Object node, ExcelValidationContext context) {
-        if (node.constraints) {
+        if (node.constraints && node.constraints instanceof org.grails.web.json.JSONObject == false) {
             List constraints = []
 
             if (node.constraints instanceof Map && node.constraints.type == 'computed') {
