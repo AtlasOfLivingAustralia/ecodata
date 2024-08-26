@@ -1143,7 +1143,6 @@ class ProjectXlsExporter extends ProjectExporter {
         results.each { item ->
             def serviceName = item.name
             item.scores.each {
-//                Service", "Target measure", "Project Outcome/s", "Total to be delivered"
                 Map st = [:]
                 st['service'] = serviceName
                 st['targetMeasure'] = it.label
