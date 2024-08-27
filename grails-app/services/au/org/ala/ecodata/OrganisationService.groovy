@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
+import grails.web.databinding.DataBinder
 import org.bson.conversions.Bson
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -10,10 +11,12 @@ import static au.org.ala.ecodata.Status.DELETED
 /**
  * Works with Organisations, mostly CRUD operations at this point.
  */
-class OrganisationService {
+class OrganisationService implements DataBinder {
 
     /** Use to include related projects in the toMap method */
     public static final String PROJECTS = 'projects'
+
+    private static final List EXCLUDE_FROM_BINDING = ['organisationId', 'collectoryInstitutionId', 'status', 'id']
 
     static transactional = 'mongo'
     static final FLAT = 'flat'
@@ -40,7 +43,7 @@ class OrganisationService {
     }
 
     def list(levelOfDetail = []) {
-        return Organisation.findAllByStatusNotEqual('deleted').collect{toMap(it, levelOfDetail)}
+        return Organisation.findAllByStatusNotEqual(DELETED).collect{toMap(it, levelOfDetail)}
     }
 
     def create(Map props, boolean createInCollectory = true) {
@@ -51,12 +54,8 @@ class OrganisationService {
             organisation.collectoryInstitutionId = createCollectoryInstitution(props)
         }
         try {
-            // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
+            bindData(organisation, props, [exclude:EXCLUDE_FROM_BINDING])
             organisation.save(failOnError: true, flush:true)
-            props.remove('id')
-            props.remove('organisationId')
-            props.remove('collectoryInstitutionId')
-            commonService.updateProperties(organisation, props)
 
             // Assign the creating user as an admin.
             permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails()?.userId, AccessLevel.admin, organisation.organisationId)
@@ -97,17 +96,25 @@ class OrganisationService {
         if (organisation) {
 
             try {
-                String oldName = organisation.name
-                commonService.updateProperties(organisation, props)
                 // if no collectory institution exists for this organisation, create one
+                // We shouldn't be doing this unless the org is attached to a project that exports data
+                // to the ALA.
                 if (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '') {
-                    props.collectoryInstitutionId = createCollectoryInstitution(props)
+                    organisation.collectoryInstitutionId = createCollectoryInstitution(props)
                 }
+œ
+                String oldName = organisation.name
+                bindData(organisation, props, [exclude:EXCLUDE_FROM_BINDING])
 
-                getCommonService().updateProperties(organisation, props)
                 if (props.name && (oldName != props.name)) {
                     projectService.updateOrganisationName(organisation.organisationId, props.name)
                 }
+                props.contractNames?.each {
+                    if (!it in organisation.contractNames) {
+
+                    }
+                }
+                organisation.save(failOnError:true)
                 return [status:'ok']
             } catch (Exception e) {
                 Organisation.withSession { session -> session.clear() }
@@ -136,7 +143,7 @@ class OrganisationService {
                 if (destroy) {
                     organisation.delete()
                 } else {
-                    organisation.status = 'deleted'
+                    organisation.status = DELETED
                     organisation.save(flush: true, failOnError: true)
                 }
                 return [status: 'ok']

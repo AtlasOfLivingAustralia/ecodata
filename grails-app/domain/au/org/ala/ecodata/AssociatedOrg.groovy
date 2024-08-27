@@ -13,8 +13,6 @@ class AssociatedOrg {
     /** Reference to the Organisation entity if ecodata has a record of the Organisation */
     String organisationId
 
-    /** The name of the organisation as referenced via the organisationId */
-    String organisationName
     /**
      * The name of the organisation in the context of the relationship.  e.g. it could be a name used
      * in a contract with a project that is different from the current business name of the organisation
@@ -50,7 +48,6 @@ class AssociatedOrg {
         description nullable: true
         fromDate nullable: true
         toDate nullable: true
-        organisationName nullable: true
     }
 
 }
