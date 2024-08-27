@@ -55,17 +55,16 @@ class OrganisationServiceIntegrationSpec extends IntegrationTestHelper {
         Organisation.withTransaction {
             savedOrganisation = organisationService.get(organisationId)
         }
-        //organisationController.response.reset()
-      //  organisationController.get(organisationId)
-
-       // def savedOrganisation = extractJson(organisationController.response.text)
 
         then: "ensure the properties are the same as the original"
         savedOrganisation.organisationId == organisationId
         savedOrganisation.name == org.name
         savedOrganisation.description == org.description
-        savedOrganisation.dynamicProperty == org.dynamicProperty
         savedOrganisation.collectoryInstitutionId == institutionId
+
+        and: "The OrganisationService no longer supports dynamic properties"
+        savedOrganisation.dynamicProperty == null
+
 
         and: "the user who created the organisation is an admin of the new organisation"
         def orgPermissions = UserPermission.findAllByEntityIdAndEntityType(savedOrganisation.organisationId, Organisation.class.name)
