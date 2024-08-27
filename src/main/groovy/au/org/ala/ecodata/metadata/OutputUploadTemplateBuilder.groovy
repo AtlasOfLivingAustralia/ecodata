@@ -437,33 +437,33 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     @Override
     def text(Object node, ExcelValidationContext context) {
-        if (node.constraints && node.constraints instanceof org.grails.web.json.JSONObject == false) {
+        if (node.constraints) {
             List constraints = []
-
-            if (node.constraints instanceof Map && node.constraints.type == 'computed') {
-                constraints = node.constraints.options?.collect{it.value}?.flatten()?.unique()
-            }
-            else {
-                constraints = node.constraints
-            }
-            constraints.eachWithIndex { value, i ->
-                Row row = context.validationSheet.getRow(i)
-                if (!row) {
-                    row = context.validationSheet.createRow(i)
+            if (node.constraints instanceof Map == false || node.constraints instanceof Map && node.constraints.type != 'pre-populated') {
+                if (node.constraints instanceof Map && node.constraints.type == 'computed') {
+                    constraints = node.constraints.options?.collect{it.value}?.flatten()?.unique()
                 }
-                Cell cell = row.createCell(context.currentColumn)
-                cell.setCellValue(value)
+                else {
+                    constraints = node.constraints
+                }
+                constraints.eachWithIndex { value, i ->
+                    Row row = context.validationSheet.getRow(i)
+                    if (!row) {
+                        row = context.validationSheet.createRow(i)
+                    }
+                    Cell cell = row.createCell(context.currentColumn)
+                    cell.setCellValue(value)
+                }
+                def colString = CellReference.convertNumToColString(context.currentColumn)
+                def rangeFormula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${constraints.size()}"
+
+                DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
+                DataValidationConstraint dvConstraint =
+                        dvHelper.createFormulaListConstraint(rangeFormula)
+
+
+                addValidation(node, context, dvConstraint)
             }
-            def colString = CellReference.convertNumToColString(context.currentColumn)
-            def rangeFormula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${constraints.size()}"
-
-            DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
-            DataValidationConstraint dvConstraint =
-                    dvHelper.createFormulaListConstraint(rangeFormula)
-
-
-            addValidation(node, context, dvConstraint)
-
         }
     }
 
