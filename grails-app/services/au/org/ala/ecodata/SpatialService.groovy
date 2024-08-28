@@ -165,7 +165,7 @@ class SpatialService {
         List checkForBoundaryIntersectionInLayers = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
         if (!mainGeometry.isValid()) {
             log.info("Main geometry invalid. Cannot check intersection is near boundary.")
-            return response
+            return [response, [:]]
         }
         Map filteredResponse = [:]
         Map intersectionAreaByFacets = [:].withDefault { [:] }
@@ -240,11 +240,16 @@ class SpatialService {
         double intersectArea = intersection.getArea()
         double mainGeometryArea = mainGeometry.getArea()
         double proportion = 0.0
+        double area = 0.0d
         if (mainGeometryArea != 0.0d) {
             proportion = intersectArea/mainGeometryArea
         }
 
-        [proportion, GeometryUtils.area(intersection)]
+        if (intersectArea != 0.0d) {
+            area = GeometryUtils.area(intersection)
+        }
+
+        [proportion, area]
     }
 
     /**
