@@ -45,6 +45,10 @@ class RecordService {
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
+    static final String COMMON_NAME = 'COMMONNAME'
+    static final String SCIENTIFIC_NAME = 'SCIENTIFICNAME'
+    static final String COMMON_NAME_SCIENTIFIC_NAME = 'COMMONNAME(SCIENTIFICNAME)'
+    static final String SCIENTIFIC_NAME_COMMON_NAME = 'SCIENTIFICNAME(COMMONNAME)'
 
     def getProjectActivityService() {
         grailsApplication.mainContext.projectActivityService
@@ -1118,5 +1122,38 @@ class RecordService {
         if (props != before) {
             commonService.updateProperties(output, props)
         }
+    }
+
+    /** format species by specific type **/
+    String formatTaxonName (Map data, String displayType) {
+        String name = ''
+        switch (displayType){
+            case COMMON_NAME_SCIENTIFIC_NAME:
+                if (data.commonName && data.scientificName) {
+                    name = "${data.commonName} (${data.scientificName})"
+                } else if (data.commonName) {
+                    name = data.commonName
+                } else if (data.scientificName) {
+                    name = data.scientificName
+                }
+                break
+            case SCIENTIFIC_NAME_COMMON_NAME:
+                if (data.scientificName && data.commonName) {
+                    name = "${data.scientificName} (${data.commonName})"
+                } else if (data.scientificName) {
+                    name = data.scientificName
+                } else if (data.commonName) {
+                    name = data.commonName
+                }
+                break
+            case COMMON_NAME:
+                name = data.commonName ?: data.scientificName ?: ""
+                break
+            case SCIENTIFIC_NAME:
+                name = data.scientificName ?: ""
+                break
+        }
+
+        name
     }
 }
