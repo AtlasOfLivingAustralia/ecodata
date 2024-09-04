@@ -1150,4 +1150,81 @@ class ProjectService {
         }
     }
 
+    /**
+     * Returns a list of all projects that have been updated since the specified date.
+     * @param date the date to compare against
+     * @return a list of projects
+     */
+    Map orderLayerIntersectionsByAreaOfProjectSites (Map project) {
+        Map<String,Map<String,Double>> sumOfIntersectionsByLayer = [:].withDefault { [:].withDefault { 0 } }
+        Map orderedIntersectionsByArea = [:]
+        Map config = metadataService.getGeographicConfig(project.hubId)
+        List layers = config.checkForBoundaryIntersectionInLayers
+        List projectSites = getRepresentativeSitesOfProject(project)
+        projectSites?.each { Map site ->
+            layers.each { String layer ->
+                Map facet = metadataService.getGeographicFacetConfig(layer, project.hubId)
+                site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.get(facet.name)?.get(SiteService.INTERSECTION_CURRENT)?.each { String layerValue, value ->
+                    sumOfIntersectionsByLayer[layer][layerValue] += value
+                }
+            }
+        }
+
+        sumOfIntersectionsByLayer.each { String layerId, Map value ->
+            orderedIntersectionsByArea[layerId] = value.sort { entry ->
+                -entry.value
+            }.keySet().toList()
+        }
+
+        orderedIntersectionsByArea
+    }
+
+    /**
+     * Get representative sites of a project.
+     * 1. Check EMSA/Reporting sites
+     * 2. If there are no EMSA/Reporting sites, return planning/project extent sites
+     * 3. If there are no EMSA/Reporting/Planning/extent sites, return Management Unit boundaries.
+     * 4. Where none exist, return none
+     * @param project
+     * @return
+     */
+    List getRepresentativeSitesOfProject(Map project) {
+        if (project) {
+            List sites = project.sites
+            List projectSites = siteService.filterSitesByPurposeIsReportingOrEMSA(sites) ?: []
+            if (projectSites.isEmpty()) {
+                projectSites =  siteService.filterSitesByPurposeIsPlanning(sites) ?: []
+                if (projectSites.isEmpty() && project.managementUnitId) {
+                    ManagementUnit mu = ManagementUnit.findByManagementUnitId(project.managementUnitId)
+                    String managementUnitSiteId = mu?.managementUnitSiteId
+                    if (managementUnitSiteId) {
+                        Site muSite = Site.findBySiteId(managementUnitSiteId)
+                        if (muSite) {
+                            projectSites = [siteService.toMap(muSite, [SiteService.FLAT])]
+                        }
+                    }
+                }
+            }
+
+            return projectSites
+        }
+
+
+        []
+    }
+
+    /**
+     * Returns a distinct list of hubIds for the supplied projects.
+     * @param projects
+     * @return
+     */
+    List findHubIdOfProjects(List projects) {
+        Project.createCriteria().listDistinct {
+            inList('projectId', projects)
+            projections {
+                property('hubId')
+            }
+        }
+    }
+
 }

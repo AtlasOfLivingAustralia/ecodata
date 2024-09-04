@@ -80,4 +80,30 @@ class GeometryUtilsSpec extends Specification {
         features[3].properties.type == 1
 
     }
+
+    def "wktToGeoJson should correctly convert WKT to GeoJSON"() {
+        given: "A WKT string representing a point"
+        String wkt = "POINT (30 10)"
+
+        when:
+        Map result = GeometryUtils.wktToGeoJson(wkt)
+
+        then:
+        result != null
+        result.type == "Point"
+        result.coordinates == [30.0, 10.0]
+    }
+
+    def "wktToGeoJson should handle precision with the specified number of decimals"() {
+        given: "A WKT string representing a geometry with decimals"
+        String wkt = "POINT (30.1234567890123456789 10.1234567890123456789)"
+
+        when:
+        Map result = GeometryUtils.wktToGeoJson(wkt, 5)
+
+        then: "The result has the coordinates rounded to the specified number of decimals"
+        result != null
+        result.type == "Point"
+        result.coordinates == [30.12346, 10.12346]
+    }
 }

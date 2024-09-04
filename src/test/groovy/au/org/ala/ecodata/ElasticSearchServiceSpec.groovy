@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.testing.gorm.DataTest
-import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.elasticsearch.action.admin.indices.flush.FlushRequest
 import org.elasticsearch.action.search.SearchRequest
@@ -12,9 +11,7 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-
 import spock.lang.Specification
-
 /**
  * Tests the ElasticSearchService
  */
@@ -70,6 +67,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         service.organisationService = Mock(OrganisationService)
         service.documentService = Mock(DocumentService)
         service.projectService = projectService
+        service.metadataService.grailsApplication = grailsApplication
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
         service.initialize()
         service.indexAll() // This will delete then recreate the index as there is no data in the database

@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class LocationController {
 
     static defaultAction = "list"
@@ -31,6 +31,7 @@ class LocationController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def create(){
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
@@ -55,6 +56,7 @@ class LocationController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deleteById(){
         Location l = Location.get(params.id)
         if (l){
@@ -68,6 +70,7 @@ class LocationController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deleteAllForUser(){
         log.debug("Delete all for user...")
         Location.findAllWhere([userId:params.userId], [:]).each {

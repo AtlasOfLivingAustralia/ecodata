@@ -33,6 +33,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     static Map DUMMY_POLYGON = [type: 'Polygon', coordinates: [[[1, 2], [2, 2], [2, 1], [1, 1], [1, 2]]]]
     static Map DUMMY_PLOT = ['type':'Point', coordinates: [1,2]]
+    static Map DUMMY_MULTI_POLYGON = [type: 'MultiPolygon', coordinates: [[[[1, 2], [2, 2], [2, 1], [1, 1], [1, 2]]]]]
 
     // The am/pm in the formatted time is local dependent and this appears to be easiest way to determine the value.
     String am = DateUtil.formatAsDisplayDateTime("2024-05-14T00:00:00Z")[-2..-1]
@@ -145,6 +146,27 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects[0].accessLevel == AccessLevel.admin
 
     }
+
+    void "userProjects can convert a Feature or MultiPolygon typed project extent to a Polygon to support the use of known shape selection in MERIT (e.g. a NRM region)"() {
+
+        when:
+        List<ParatooProject> projects = service.userProjects(userId)
+
+        then:
+        1 * siteService.geometryAsGeoJson(_) >> DUMMY_MULTI_POLYGON
+
+        and:
+        projects.size() == 1
+        projects[0].id == "p1"
+        projects[0].name == "Project 1"
+        projects[0].accessLevel == AccessLevel.admin
+        projects[0].projectArea == DUMMY_POLYGON
+        projects[0].plots.size() == 1
+        projects[0].plots[0].siteId == 's2'
+        projects[0].protocols*.name == ["Plot Selection", "aParatooForm 1", "aParatooForm 2", "aParatooForm 3"]
+
+    }
+
 
     void "The service should create a data set in the planned state when the mintCollectionId method is called"() {
         setup:

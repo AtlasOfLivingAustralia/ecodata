@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
-
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DocumentController {
 
     DocumentService documentService
@@ -118,7 +118,6 @@ class DocumentController {
      *
      * @return a JSON object with attributes: "count": the total number of documents that matched the criteria, "documents": the list of documents that match the supplied criteria
      */
-    @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
         def max = searchCriteria.remove('max') as Integer
@@ -130,7 +129,7 @@ class DocumentController {
         asJson searchResults
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         Document document = Document.findByDocumentId(id)
         if (document) {
@@ -159,7 +158,7 @@ class DocumentController {
      * an update.
      * @param id The ID of an existing document to update.  If not present, a new Document will be created.
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = null
         def stream = null
@@ -212,7 +211,6 @@ class DocumentController {
      * Serves up a file named by the supplied filename HTTP parameter.  It is mostly as a convenience for development
      * as the files will be served by Apache in prod.
      */
-    @RequireApiKey
     def download(String path, String filename) {
 
         if (!filename || !documentService.validateDocumentFilePath(path, filename)) {
@@ -284,7 +282,6 @@ class DocumentController {
      * embargoed images will not be shown.
      * @return
      */
-    @RequireApiKey
     def listImages(){
         Map searchCriteria = request.JSON
 

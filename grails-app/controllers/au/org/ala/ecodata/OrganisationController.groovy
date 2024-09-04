@@ -6,6 +6,7 @@ import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
 /**
  * Exposes web services to perform CRUD operations on an organisation.
  */
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class OrganisationController {
     static responseFormats = ['json', 'xml']
     OrganisationService organisationService
@@ -51,7 +52,7 @@ class OrganisationController {
         }
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         def result, message
@@ -112,6 +113,38 @@ class OrganisationController {
         values.fq = "className:au.org.ala.ecodata.Organisation"
 
         values
+    }
+
+    def organisationMetrics(String id) {
+
+        def organisation = Organisation.findByOrganisationId(id)
+
+        boolean approvedOnly = true
+
+        List scoreIds
+        Map aggregationConfig = null
+
+        Map paramData = request.JSON
+        if (!paramData) {
+            approvedOnly = params.getBoolean('approvedOnly')
+            scoreIds = params.getList('scoreIds')
+        }
+        else {
+
+            if (paramData.approvedOnly != null) {
+                approvedOnly = paramData.approvedOnly
+            }
+
+            scoreIds = paramData.scoreIds
+            aggregationConfig = paramData.aggregationConfig
+        }
+
+        if (organisation) {
+            render organisationService.organisationMetrics(id, approvedOnly, scoreIds, aggregationConfig) as JSON
+
+        } else {
+            render (status: 404, text: 'No such id')
+        }
     }
 
 }

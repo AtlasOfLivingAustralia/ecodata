@@ -428,6 +428,7 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
 }
 
 spatial.intersectionThreshold = 0.05
+spatial.intersectionAreaThresholdInHectare = 10_000
 
 homepageIdx {
     elasticsearch   {
@@ -454,11 +455,11 @@ app {
         geographic {
             contextual {
                 state = 'cl927'
-                nrm = 'cl10946'
+                nrm = 'cl11160'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl10921'
+                elect = 'cl11163'
                 cmz = 'cl2112'
             }
             grouped {
@@ -493,17 +494,11 @@ app {
                 mvg = '/data/nvis_grids/mvg'
                 mvs = '/data/nvis_grids/mvs'
             }
+            checkForBoundaryIntersectionInLayers = [ "cl927", "cl11163" ]
         }
+        displayNames = [elect: "Electorate(s)", state: "State(s)"]
     }
 }
-
-site.check.boundary.layers = [
-        'cl927',
-        'cl10946',
-        'cl10921',
-        'cl2112'
-]
-
 /******************************************************************************\
  *  EXTERNAL SERVERS
  \******************************************************************************/
@@ -566,6 +561,7 @@ if (!grails.cache.ehcache) {
         }
     }
 }
+ehcache.directory='/data/ecodata/ehcache'
 
 
 security {
@@ -623,16 +619,11 @@ environments {
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
-
+        ehcache.directory="./ehcache"
 
     }
     test {
-        // Override disk store so the travis build doesn't fail.
-        grails.cache.ehcache = {
-            diskStore {
-                path '/tmp'
-            }
-        }
+        ehcache.directory="./ehcache"
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
@@ -657,11 +648,7 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
-        grails.cache.ehcache = {
-            diskStore {
-                path '/tmp'
-            }
-        }
+        ehcache.directory="./ehcache"
         security.cas.bypass = true
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false

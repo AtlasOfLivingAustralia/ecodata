@@ -1,5 +1,5 @@
 package au.org.ala.ecodata
-
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class LockController {
 
     LockService lockService
@@ -9,10 +9,12 @@ class LockController {
         render Lock.get(id)
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def lock(String id) {
         render lockService.lock(id)
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def unlock(String id) {
         Map body = request.getJSON()
         render lockService.unlock(id, body.force)

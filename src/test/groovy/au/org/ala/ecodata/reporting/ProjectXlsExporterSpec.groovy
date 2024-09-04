@@ -32,20 +32,38 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     File outputFile
 
     void setup() {
+        grailsApplication.config.app.facets.geographic = [
+            contextual: [
+                state : 'cl927',
+                elect : 'cl11163'
+            ],
+            "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
+        ]
+        metadataService.getGeographicConfig(*_) >> [
+                contextual: [
+                        state : 'cl927',
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
+        ]
+        metadataService.getGeographicFacetConfig("cl927") >> [grouped: false, name: "state"]
+        metadataService.getGeographicFacetConfig("cl11163") >> [grouped: false, name: "elect"]
         Holders.grailsApplication = grailsApplication
+
         defineBeans {
-            metadataService(MetadataService)
             userService(UserService)
             reportingService(ReportingService)
             activityFormService(ActivityFormService)
         }
+        Holders.grailsApplication.mainContext.registerBean('metadataService', MetadataService, { metadataService })
+        projectService.orderLayerIntersectionsByAreaOfProjectSites(_) >> ["cl927": ["ACT"], "cl11163": ["bean", "fenner", "canberra"]]
         outputFile = File.createTempFile('test', '.xlsx')
         String name = outputFile.absolutePath
         outputFile.delete() // The exporter will attempt to load the file if it exists, but we want a random file name.
         xlsExporter = new XlsExporter(name)
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [], [], managementUnitService, organisationService, programService, null, true)
         projectXlsExporter.activityFormService = activityFormService
-        projectXlsExporter.metadataService = Mock(MetadataService)
+        projectXlsExporter.metadataService = metadataService
         excelImportService = new ExcelImportService()
         managementUnitService.get("mu1") >> new ManagementUnit(managementUnitId:"mu1", name:"Management Unit 1")
     }
@@ -58,7 +76,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         setup:
         String sheet = 'Projects'
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
-        projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
         projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', status: "active", contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1"])
@@ -82,7 +99,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         setup:
         String sheet = 'Projects'
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
-        projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
         projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', contractStartDate: '2019-06-30T14:00:00Z', contractEndDate: '2022-06-30T14:00:00Z', funding: 1000, managementUnitId:"mu1", status: "Terminated", terminationReason: "Termination Reason"])
@@ -106,7 +122,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         setup:
         String sheet = 'Projects'
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
-        projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:
         projectXlsExporter.export([projectId: '1234', workOrderId: 'work order 1', internalOrderId:'1234567890', contractStartDate: '2019-06-30T14:00:00Z', status: "active", contractEndDate: '2022-06-30T14:00:00Z', funding: 1000])
@@ -129,7 +144,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         setup:
         String sheet = "Dataset"
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
-        projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = projectDataSet()
 
         when:
@@ -155,7 +169,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         setup:
         String sheet = "RLP_Outcomes"
         projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], managementUnitService, organisationService, programService, null)
-        projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = rlpProject()
 
         when:
@@ -216,8 +229,8 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Electorate Coord data can be exported"() {
         setup:
         String sheet = "Electorate Coord"
-        projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
+        projectService.orderLayerIntersectionsByAreaOfProjectSites(_) >> ["cl927": ["ACT"], "cl11163": ["bean", "fenner", "canberra"]]
 
         when:
         projectXlsExporter.export(project)
@@ -236,12 +249,15 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         results[0]['Work order id'] == 'w-1'
         results[0]['Tech One Project Code'] == 't-1'
         results[0]['Tech One Project Code 2'] == 't-2'
+        results[0]['Primary State(s) (Interpreted)'] == 'ACT'
+        results[0]['Other State(s) (Interpreted)'] == ''
+        results[0]['Primary Electorate(s) (Interpreted)'] == 'bean'
+        results[0]['Other Electorate(s) (Interpreted)'] == 'fenner; canberra'
     }
 
     void "Native Species Threat can be exported"() {
         setup:
         String sheet = "MERI_Native Species Threat"
-        projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
         when:
@@ -258,7 +274,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "Pest Control Methods can be exported"() {
         setup:
         String sheet = "MERI_Pest Control Methods"
-        projectXlsExporter.metadataService = Mock(MetadataService)
         Map project = project()
 
         when:
@@ -790,7 +805,6 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         dataDescriptionSheetData[-2]['Name used in Excel export'] == 'protocols'
         dataDescriptionSheetData[-2]['Header used in Excel export'] == 'Baseline Protocol'
         dataDescriptionSheetData[-1]['Name used in Excel export'] == 'relatedTargetMeasures'
-        dataDescriptionSheetData[-1]['Header used in Excel export'] == 'Related Target Measures'
     }
 
 

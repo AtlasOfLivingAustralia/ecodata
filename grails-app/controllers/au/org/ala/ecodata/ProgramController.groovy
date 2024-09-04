@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-@RequireApiKey
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProgramController {
 
     static responseFormats = ['json', 'xml']
@@ -31,6 +31,7 @@ class ProgramController {
         respond programService.findByName(name)
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         if (!id) {
             respond programService.create(request.JSON)
@@ -40,6 +41,7 @@ class ProgramController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         respond programService.delete(id, params.getBoolean('destroy', false))
     }

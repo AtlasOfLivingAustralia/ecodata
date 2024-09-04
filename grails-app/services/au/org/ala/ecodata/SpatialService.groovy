@@ -4,7 +4,12 @@ import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
+import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.GeometryCollection
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.io.WKTReader
+
 import static ParatooService.deepCopy
 /**
  * The SpatialService is responsible for:
@@ -14,8 +19,10 @@ import static ParatooService.deepCopy
  */
 class SpatialService {
 
+    static final String INTERSECTION_AREA = "intersectionAreaByFacets"
     final String GEOJSON_INTERSECT_URL_PREFIX = "/ws/intersect/geojson/"
     final String WKT_INTERSECT_URL_PREFIX = "/ws/intersect/wkt/"
+    final String WKT_SHAPE_URL_PREFIX = "/ws/shapes/wkt/"
 
     final String PID_INTERSECT_URL_PREFIX = "/ws/intersect/object/"
     final String LOOKUP_TABLE_PATH = "/data/pidIntersectCache.json"
@@ -39,11 +46,11 @@ class SpatialService {
      * @return Map with key = fieldId, value = List<String>, the names of the field objects that intersect with the
      * supplied geometry
      */
-    Map<String,List<String>> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
+    Map<String,?> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
         int length = geoJson?.toString().size()
         int threshold = grailsApplication.config.getProperty('spatial.geoJsonEnvelopeConversionThreshold', Integer)
+        Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
         if(length > threshold){
-            Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
             geoJson = GeometryUtils.geometryToGeoJsonMap (geo.getEnvelope())
         }
 
@@ -52,21 +59,58 @@ class SpatialService {
             fieldIds = metadataService.getSpatialLayerIdsToIntersect()
         }
 
+        long start = System.currentTimeMillis()
         // We are using a WKT string instead of geojson as the spatial portal validates geojson - using
         // WKT allows us to get away with self intersecting polygons that users occasionally draw.
-        String wkt = GeometryUtils.geoJsonMapToGeometry(geoJson).toText()
+        String wkt = geo.toText()
+        long end = System.currentTimeMillis()
+        log.info("Time taken to convert geojson to wkt: ${end-start}ms")
+
 
         Map result = [:]
         fieldIds.each { fid ->
+            start = end
             Map response = webService.doPost(url+fid, wkt)
             if (response.resp && !response.error) {
                 result[fid] = response.resp
             }
+            end = System.currentTimeMillis()
+            log.info("Time taken to intersect with layer $fid: ${end-start}ms")
         }
 
-        filterOutObjectsInBoundary(result, geoJson)
-        convertResponsesToGeographicFacets(result)
+        start = end
 
+        Map geographicFacets
+        Map intersectionAreaForFacets = [:].withDefault{ [:].withDefault{0.0d} }
+        if (geo.geometryType == 'GeometryCollection') {
+            geographicFacets = [:].withDefault{[]}
+            GeometryCollection geometryCollection = (GeometryCollection)geo
+            for (int i=0; i<geometryCollection.numGeometries; i++) {
+
+                def (filtered, intersectionArea) = filterOutObjectsInBoundary(result, geometryCollection.getGeometryN(i))
+                start = end
+                Map geographicFacetsForGeometry = convertResponsesToGeographicFacets(filtered)
+                geographicFacetsForGeometry.each { k, v ->
+                    geographicFacets[k] += v
+                    geographicFacets[k] = geographicFacets[k].unique()
+                }
+                intersectionArea.each { k, v ->
+                    v.each { fieldName, area ->
+                        intersectionAreaForFacets[k][fieldName] =  intersectionAreaForFacets[k][fieldName] + area
+                    }
+                }
+            }
+            
+            geographicFacets[INTERSECTION_AREA] = intersectionAreaForFacets
+        }
+        else {
+            def (filtered, intersectionArea) = filterOutObjectsInBoundary(result, geo)
+            geographicFacets = convertResponsesToGeographicFacets(filtered)
+            geographicFacets[INTERSECTION_AREA] = intersectionArea
+        }
+        end = System.currentTimeMillis()
+        log.info("Time taken to convert responses to geographic facets: ${end-start}ms")
+        geographicFacets
     }
 
     /**
@@ -77,7 +121,7 @@ class SpatialService {
      * @return Map with key = fieldId, value = List<String>, the names of the field objects that intersect with the
      * supplied geometry
      */
-    Map<String,List<String>> intersectPid(String pid, String pidFid = null, List<String> fieldIds = null) {
+    Map<String,?> intersectPid(String pid, String pidFid = null, List<String> fieldIds = null) {
 
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+PID_INTERSECT_URL_PREFIX
         if (!fieldIds) {
@@ -100,8 +144,15 @@ class SpatialService {
 
         fillMissingDetailsOfObjects(result)
         Map pidGeoJson = getGeoJsonForPidToMap(pid)
-        filterOutObjectsInBoundary(result, pidGeoJson)
-        convertResponsesToGeographicFacets(result)
+        def (geographicFacetsWithFID, intersectionProportion) = filterOutObjectsInBoundary(result, pidGeoJson)
+        Map geographicFacets = convertResponsesToGeographicFacets(geographicFacetsWithFID)
+        geographicFacets[INTERSECTION_AREA] = intersectionProportion
+        geographicFacets
+    }
+
+    private List filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
+        Geometry mainGeometry = GeometryUtils.geoJsonMapToGeometry(mainObjectGeoJson)
+        filterOutObjectsInBoundary(response, mainGeometry)
     }
 
     /**
@@ -111,63 +162,95 @@ class SpatialService {
      * @param response - per layer/fid intersection values - [ "cl34" : [[pid: 123, name: "ACT", fid: "cl34", id: "ACT" ...], ...]
      * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
      */
-    void filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
-        Geometry mainGeometry = GeometryUtils.geoJsonMapToGeometry(mainObjectGeoJson)
+    private List filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
+        List checkForBoundaryIntersectionInLayers = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
         if (!mainGeometry.isValid()) {
             log.info("Main geometry invalid. Cannot check intersection is near boundary.")
-            return
+            return [response, [:]]
         }
-
+        Map filteredResponse = [:]
+        Map intersectionAreaByFacets = [:].withDefault { [:] }
         response?.each { String fid, List<Map> matchingObjects ->
-            List pidToFilter = []
-            matchingObjects.each { Map obj ->
-                String boundaryPid = obj.pid
-                if (boundaryPid) {
-                    // Get geoJSON of the object stored in spatial portal
-                    def boundaryGeoJson = getGeoJsonForPidToMap(boundaryPid)
-                    Geometry boundaryGeometry = GeometryUtils.geoJsonMapToGeometry(boundaryGeoJson)
-                    if (boundaryGeometry.isValid()) {
-                        // check if intersection should be ignored
-                        if (!isValidGeometryIntersection(mainGeometry, boundaryGeometry))
-                            pidToFilter.add(boundaryPid)
-                    }
-                    else {
-                        log.info ("Cannot check object $boundaryPid($fid) is near main geomerty")
+            filteredResponse[fid] = []
+            // check for boundary intersection object for selected layers defined in config.
+            if (checkForBoundaryIntersectionInLayers.contains(fid)) {
+                matchingObjects.each { Map obj ->
+                    String boundaryPid = obj.pid
+                    if (boundaryPid) {
+                        log.debug("Intersecting ${obj.fieldname}(${fid}) - ${obj.name} ")
+                        // Get geoJSON of the object stored in spatial portal
+                        long start = System.currentTimeMillis()
+
+                        Geometry boundaryGeometry = getGeometryForPid(boundaryPid)
+                        long end = System.currentTimeMillis()
+                        log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end - start}ms")
+
+                        if (boundaryGeometry.isValid()) {
+                            // check if intersection should be ignored
+                            start = end
+                            if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
+                                filteredResponse[fid].add(obj)
+                                def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
+                                intersectionAreaByFacets[fid][obj.name] = area
+                            } else {
+                                log.debug("Filtered out ${obj.fieldname}(${fid}) - ${obj.name}")
+                            }
+
+                            end = System.currentTimeMillis()
+                            log.debug("Time taken to check intersection for pid $boundaryPid: ${end - start}ms")
+                        } else {
+                            log.debug("Cannot check object $boundaryPid($fid) is near main geomerty")
+                        }
                     }
                 }
-            }
-
-            matchingObjects.removeAll {
-                def result = pidToFilter.contains(it.pid)
-                result ? log.debug("Filtered out ${it.pid} object") : null
-                result
+            } else {
+                filteredResponse[fid].addAll(matchingObjects)
             }
         }
+
+        [filteredResponse, intersectionAreaByFacets]
     }
 
     /**
      * Calculates area of intersection and check the overlap to be more than 5% (configurable) of site area.
      * @param mainGeometry
      * @param boundaryGeometry
-     * @return true - if intersection area is greater than intersection threshold
-     * false - if intersection area is less than or equal to intersection threshold
+     * @return true - if intersection area is greater than or equal to intersection threshold or intersection area is greater than or equal to 10,000 hectare
+     * false - if intersection area is less than intersection threshold and intersection area is less than 10,000 hectare
      */
     boolean isValidGeometryIntersection (Geometry mainGeometry, Geometry boundaryGeometry) {
         Double intersectionThreshold = grailsApplication.config.getProperty("spatial.intersectionThreshold", Double)
+        Integer threshold = grailsApplication.config.getProperty('spatial.intersectionAreaThresholdInHectare', Integer)
         try {
             if (mainGeometry.contains(boundaryGeometry) || boundaryGeometry.contains(mainGeometry))
                 return true
             else {
-                Geometry intersection = boundaryGeometry.intersection(mainGeometry)
-                double intersectArea = intersection.getArea()
-                double mainGeometryArea = mainGeometry.getArea()
-                return intersectArea/mainGeometryArea > intersectionThreshold
+                def (intersectionProportion, area) = getIntersectionProportionAndArea (mainGeometry, boundaryGeometry)
+                return ( intersectionProportion >= intersectionThreshold ) // intersection is greater than 5% of site area
+                        || ( area / 10_000 >= threshold ) // or, intersection area is greater than threshold hectare defined in config. NOTE: area returned by GeometryUtils.area is in m2.
             }
         }
         catch (Exception ex) {
             log.error("Error checking intersection between geometries", ex)
             return true
         }
+    }
+
+    List getIntersectionProportionAndArea (Geometry mainGeometry, Geometry boundaryGeometry) {
+        Geometry intersection = boundaryGeometry.intersection(mainGeometry)
+        double intersectArea = intersection.getArea()
+        double mainGeometryArea = mainGeometry.getArea()
+        double proportion = 0.0
+        double area = 0.0d
+        if (mainGeometryArea != 0.0d) {
+            proportion = intersectArea/mainGeometryArea
+        }
+
+        if (intersectArea != 0.0d) {
+            area = GeometryUtils.area(intersection)
+        }
+
+        [proportion, area]
     }
 
     /**
@@ -205,7 +288,27 @@ class SpatialService {
 
     @Cacheable(value = "spatialGeoJsonPidObject")
     Map getGeoJsonForPidToMap(String pid) {
+        log.debug("Cache miss for getGeoJsonForPidToMap($pid)")
         getGeoJsonForPid(pid)
+    }
+
+    @Cacheable(value = "spatialPidObjectGeometry", key={pid})
+    Geometry getGeometryForPid(String pid) {
+        log.debug("Cache miss for getGeometryForPid($pid)")
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/wkt/$pid"
+        String wkt = webService.get(url)
+
+        Geometry geometry = null
+        try {
+            geometry = new WKTReader().read(wkt)
+        }
+        catch (Exception e) {
+            log.error("Error reading geometry for pid $pid")
+            // Ehcache throws an error if a null value is returned, so we create a dummy geometry
+            // that won't intersect with anything.
+            geometry = new GeometryFactory().createPoint(new Coordinate(0, 0))
+        }
+        geometry
     }
 
     /**
@@ -215,6 +318,7 @@ class SpatialService {
      */
     @Cacheable(value="spatialGeoJsonPid", key= {pid})
     Map getGeoJsonForPid (String pid) {
+        log.debug("Cache miss for getGeoJsonForPid($pid)")
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/geojson/$pid"
         Map resp = webService.getJson(url)
 

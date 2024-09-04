@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-@RequireApiKey
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
@@ -45,6 +45,7 @@ class ManagementUnitController {
         respond managementUnitService.findByName(name)
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         if (!id) {
             ManagementUnit mu = new ManagementUnit()
@@ -63,6 +64,7 @@ class ManagementUnitController {
         }
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         respond managementUnitService.delete(id, params.getBoolean('destroy', false))
     }

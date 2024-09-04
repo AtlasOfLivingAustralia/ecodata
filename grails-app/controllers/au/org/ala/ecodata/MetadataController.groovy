@@ -2,12 +2,12 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
-import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
 
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
     static responseFormats = ['json']
 
@@ -29,8 +29,7 @@ class MetadataController {
         render metadataService.programsModel()
     }
 
-    @RequireApiKey
-    @AlaSecured(["ROLE_ADMIN"])
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))
@@ -313,7 +312,7 @@ class MetadataController {
     }
 
     def getGeographicFacetConfig() {
-        render grailsApplication.config.getProperty('app.facets.geographic', Map) as JSON
+        render metadataService.getGeographicConfig() as JSON
     }
 
     /**

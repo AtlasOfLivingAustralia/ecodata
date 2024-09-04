@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
 import grails.validation.ValidationException
 import org.bson.conversions.Bson
@@ -15,10 +16,12 @@ class OrganisationService {
     public static final String PROJECTS = 'projects'
 
     static transactional = 'mongo'
+    static final FLAT = 'flat'
 
     def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource, emailService, grailsApplication
     ReportingService reportingService
     ActivityService activityService
+    ReportService reportService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -177,14 +180,14 @@ class OrganisationService {
      * @param action the action to be performed on each Organisation.
      * @param filters list of filters
      */
-    void doWithAllOrganisations(Closure action, List<Filters> filters = []) {
+    void doWithAllOrganisations(Closure action, List<Bson> filters = [], int batchSize = 100) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
-        def collection = Organisation.getCollection()
+        MongoCollection collection = Organisation.getCollection()
         //DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
         Bson query = Filters.ne("status", DELETED)
         filters.add(query)
         query = Filters.and(filters)
-        def results = collection.find(query).batchSize(100)
+        def results = collection.find(query).batchSize(batchSize)
 
         results.each { dbObject ->
             action.call(dbObject)
@@ -215,6 +218,27 @@ class OrganisationService {
         }, [Filters.eq("hubId", hubId)])
 
         organisationDetails
+    }
+
+    /**
+     * Returns the reportable metrics for a organisation as determined by the organisation output targets and activities
+     * that have been undertaken.
+     * @param id identifies the organisation.
+     * @return a Map containing the aggregated results.
+     *
+     */
+    def organisationMetrics(String id, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null) {
+        def org = Organisation.findByOrganisationId(id)
+        if (org) {
+            List toAggregate = Score.findAllByScoreIdInList(scoreIds)
+            List outputSummary = reportService.organisationSummary(id, toAggregate, approvedOnly, aggregationConfig) ?: []
+
+            return outputSummary
+        } else {
+            def error = "Error retrieving metrics for project - no such id ${id}"
+            log.error error
+            return [status: 'error', error: error]
+        }
     }
 
 }

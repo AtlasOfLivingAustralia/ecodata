@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.Filters
 import grails.converters.JSON
+import org.bson.conversions.Bson
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.engine.event.EventType
@@ -25,6 +26,11 @@ class SiteService {
     static final FLAT = 'flat'
     static final PRIVATE = 'private'
     static final INDEXING = 'indexing'
+    static final PLANNING_SITE = 'Planning site'
+    static final EMSA_SITE = 'EMSA site'
+    static final REPORTING_SITE = 'Reporting site'
+    static final INTERSECTION_CURRENT = 'CURRENT'
+    static List idTypesByMonitor
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -32,6 +38,24 @@ class SiteService {
     SpatialService spatialService
     ElasticSearchService elasticSearchService
 
+    /**
+     * Get list of monitor external ids.
+     * @return
+     */
+    static List getMonitorIdTypes() {
+        if (!idTypesByMonitor) {
+            List monitorIdTypes = []
+            ExternalId.IdType.values().toList().each {
+                if (it.name().startsWith('MONITOR_')) {
+                    monitorIdTypes << it
+                }
+            }
+
+            idTypesByMonitor = monitorIdTypes
+        }
+
+        idTypesByMonitor
+    }
 
     /**
      * Returns all sites in the system in a list.
@@ -270,6 +294,7 @@ class SiteService {
     }
 
     private updateSite(Site site, Map props, boolean forceRefresh = false) {
+        List fids = metadataService.getSpatialLayerIdsToIntersectForProjects(site.projects)
         props.remove('id')
         props.remove('siteId')
         // Used by BioCollect to improve the performance of site creation
@@ -290,13 +315,13 @@ class SiteService {
                     Site.withNewSession { Session session ->
                         Site createdSite = Site.findBySiteId(siteId)
                         addSpatialPortalPID(clonedProps, userId)
-                        populateLocationMetadataForSite(clonedProps)
+                        populateLocationMetadataForSite(clonedProps, fids)
                         commonService.updateProperties(createdSite, clonedProps)
                     }
                 }
             }
             else {
-                populateLocationMetadataForSite(props)
+                populateLocationMetadataForSite(props, fids)
             }
         }
 
@@ -495,7 +520,7 @@ class SiteService {
 
         if (!geometry) {
             log.error("Invalid site: ${site.siteId} missing geometry")
-            return
+            return null
         }
         def result = null
         switch (geometry.type) {
@@ -554,6 +579,10 @@ class SiteService {
                 break
             case 'pid':
                 result = geometryForPid(geometry.pid)
+                // Spatial portal now returns results as Features.
+                if (result?.type == 'Feature') {
+                    result = result.geometry
+                }
                 break
         }
         result
@@ -617,8 +646,16 @@ class SiteService {
     }
 
     def geometryForPid(pid) {
-        def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/shape/geojson/${pid}"
-        webService.getJson(url)
+        // getting wkt since spatial portal geojson api is not returning all precision points of lat and lng.
+        def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}${spatialService.WKT_SHAPE_URL_PREFIX}${pid}"
+        def wkt = webService.get(url, false)
+        if (wkt instanceof String) {
+            return GeometryUtils.wktToGeoJson(wkt)
+        }
+        else {
+            log.error("No geometry for pid: ${pid}")
+            return null
+        }
     }
 
     def populateLocationMetadataForSite(Map site, List<String> fids = null) {
@@ -655,8 +692,35 @@ class SiteService {
                 log.error("No geometry for site: ${site.siteId}")
             }
 
-            site.extent.geometry += lookupGeographicFacetsForSite(site, fids)
+            def geoFacets = lookupGeographicFacetsForSite(site, fids)
+            def intersectionsAreaByFacets = geoFacets.remove(SpatialService.INTERSECTION_AREA)
+            site.extent.geometry += geoFacets
+            mergeIntersectionsArea(site, intersectionsAreaByFacets)
         }
+    }
+
+    /**
+     * The data is stored in the format -
+     * [ intersectionAreaByFacets: [ CURRENT: [act: 0.1, nsw: 0.6], cl22: [act: 0.1, nsw: 0.6]] ]
+     * @param site
+     * @param intersectionsAreaByFacets
+     * @return
+     */
+    def mergeIntersectionsArea(Map site, Map intersectionsAreaByFacets) {
+        Map geometry = site.extent.geometry
+        List hubs = projectService.findHubIdOfProjects(site.projects)
+        String hubId = hubs?.size() == 1 ? hubs[0] : null
+        Map existingIntersectionsArea = geometry[SpatialService.INTERSECTION_AREA] = geometry[SpatialService.INTERSECTION_AREA] ?: [:]
+        intersectionsAreaByFacets?.each { String layer, Map nameAndValue ->
+            if (nameAndValue) {
+                Map facet = metadataService.getGeographicFacetConfig(layer, hubId)
+                existingIntersectionsArea[facet.name] = existingIntersectionsArea[facet.name]?: [:]
+                existingIntersectionsArea[facet.name][INTERSECTION_CURRENT] = nameAndValue
+                existingIntersectionsArea[facet.name][layer] = nameAndValue
+            }
+        }
+
+        site
     }
 
     /**
@@ -763,10 +827,13 @@ class SiteService {
      * at once.
      * @param action the action to be performed on each Activity.
      */
-    void doWithAllSites(Closure action, Integer max = null) {
+    void doWithAllSites(Closure action, List<Bson> filters = [], int batchSize = 100) {
 
         MongoCollection collection = Site.getCollection()
-        def results = collection.find(Filters.ne('status', DELETED)).batchSize(100)
+        Bson query = Filters.ne("status", DELETED)
+        filters.add(query)
+        query = Filters.and(filters)
+        def results = collection.find(query).batchSize(batchSize)
 
         results.each { dbObject ->
             action.call(dbObject)
@@ -860,11 +927,21 @@ class SiteService {
                 geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String, fid, fidsToLookup)
                 break
             default:
-                Map geom = geometryAsGeoJson(site)
+                Map geom
+                if (site.type == Site.TYPE_COMPOUND) {
+                    geom = [
+                            'type':'GeometryCollection',
+                            'geometries': site.features.collect{it.geometry} ?: []
+
+                    ]
+                }
+                else {
+                    geom = geometryAsGeoJson(site)
+                }
                 geographicFacets = spatialService.intersectGeometry(geom, fidsToLookup)
                 break
         }
-        geographicFacets
+        geographicFacets ?: [:]
 
     }
 
@@ -952,4 +1029,37 @@ class SiteService {
         step.length
     }
 
+    String getSitePurposeLabel (String purpose) {
+        switch (purpose) {
+            case Site.EMSA_SITE_CODE:
+                return EMSA_SITE
+            case Site.REPORTING_SITE_CODE:
+                return REPORTING_SITE
+            case Site.PLANNING_SITE_CODE:
+            default:
+                return PLANNING_SITE
+        }
+    }
+
+    String getPurpose (Map site) {
+        String code = Site.PLANNING_SITE_CODE
+
+        if (site.externalIds) {
+            List idTypes = site.externalIds.idType
+            if (!getMonitorIdTypes().intersect(idTypes).isEmpty())
+                code = Site.EMSA_SITE_CODE
+        } else if (site.type == Site.TYPE_COMPOUND) {
+            code = Site.REPORTING_SITE_CODE
+        }
+
+        code
+    }
+
+    List filterSitesByPurposeIsReportingOrEMSA (List<Map> sites) {
+        sites?.findAll { getPurpose(it) == Site.EMSA_SITE_CODE || getPurpose(it) == Site.REPORTING_SITE_CODE }
+    }
+
+    List filterSitesByPurposeIsPlanning (List<Map> sites) {
+        sites?.findAll { getPurpose(it) == Site.PLANNING_SITE_CODE }
+    }
 }

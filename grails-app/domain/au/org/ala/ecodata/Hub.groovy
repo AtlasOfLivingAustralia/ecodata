@@ -67,6 +67,9 @@ class Hub {
     /** Fathom analytics site id for hub specific analytics. If not specified, BioCollect will use the default site id. */
     String fathomSiteId
 
+    /** hub specific spatial layers to intersect. This overrides app.facets.geographic configuration. It has the same format i.e. contextual and grouped keys. */
+    Map geographicConfig
+
     AccessManagementOptions accessManagementOptions
 
     static mapping = {
@@ -93,6 +96,7 @@ class Hub {
         downloadUrlPrefix nullable: true
         accessManagementOptions nullable: true
         fathomSiteId nullable: true
+        geographicConfig nullable: true
     }
 
     static embedded = ['mapLayersConfig', 'accessManagementOptions']

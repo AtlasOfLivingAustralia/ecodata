@@ -37,6 +37,8 @@ class Score {
     /** Can be used to categorize scores */
     List<String> tags
 
+    List<RelatedScore> relatedScores
+
 
     /** Embedded document describing how the score should be calculated */
     Map configuration
@@ -58,6 +60,8 @@ class Score {
         scoreId index: true
         version false
     }
+
+    static embedded = ['relatedScores']
 
     def beforeValidate() {
         if (scoreId == null) {
