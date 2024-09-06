@@ -736,48 +736,71 @@ class MetadataService {
         excelImportService.mapSheet(workbook, config)
     }
 
-    List excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
+    Map excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
         List result = []
+        List errors = []
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
         ActivityForm form = activityFormService.findActivityForm(activityFormName, formVersion)
         form?.sections?.each { FormSection section ->
-            String sectionName = section.name
-            List model = annotatedOutputDataModel(sectionName)
-            String sheetName = XlsExporter.sheetName(sectionName)
-            Sheet sheet = workbook.getSheet(sheetName)
-            def columnMap = excelImportService.getDataHeaders(sheet)
-            def config = [
-                    sheet:sheetName,
-                    startRow:2,
-                    columnMap:columnMap
-            ]
-            List data = excelImportService.mapSheet(workbook, config)
-            List normalisedData = []
-            if(normalise) {
-                data.collect { Map row ->
-                    def normalisedRow = [:]
-                    row.each { cell ->
-                        excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
-                        excelImportService.removeEmptyObjects(normalisedRow)
+            try {
+                String sectionName = section.name
+                List model = annotatedOutputDataModel(sectionName)
+                String sheetName = XlsExporter.sheetName(sectionName)
+                Sheet sheet = workbook.getSheet(sheetName)
+                def columnMap = excelImportService.getDataHeaders(sheet)
+                def config = [
+                        sheet:sheetName,
+                        startRow:2,
+                        columnMap:columnMap
+                ]
+                List data = excelImportService.mapSheet(workbook, config)
+                List normalisedData = []
+                if(normalise) {
+                    data.collect { Map row ->
+                        def normalisedRow = [:]
+                        try {
+                            row.each { cell ->
+                                excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                                excelImportService.removeEmptyObjects(normalisedRow)
+                            }
+
+                            addOutputSpeciesIdToSpeciesData(normalisedRow, model)
+                            normalisedData << normalisedRow
+                        }
+                        catch (Exception ex) {
+                            errors << [message:  messageSource.getMessage('bulkimport.conversionToObjectError', [row.serial].toArray(), '', Locale.default), error: ex.message]
+                        }
                     }
-
-                    addOutputSpeciesIdToSpeciesData(normalisedRow, model)
-                    normalisedData << normalisedRow
                 }
-            }
 
-            List rollUpData = []
-            Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
-            groupedBySerial.each {  key, List rows ->
-                rollUpData << rollUpDataIntoSingleElement(rows, model)
-            }
 
-            result.addAll(rollUpData.collect {
-                [[outputName: activityFormName, data: it]]
-            })
+                List rollUpData = []
+                Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
+                groupedBySerial.each {  key, List rows ->
+                    try {
+                        rollUpData << rollUpDataIntoSingleElement(rows, model)
+                    }
+                    catch (Exception ex) {
+                        errors << [message:  messageSource.getMessage('bulkimport.errorGroupBySerialNumber', [key].toArray(), '', Locale.default), error: ex.message]
+                    }
+                }
+
+                result.addAll(rollUpData.collect {
+                    [[outputName: activityFormName, data: it]]
+                })
+            }
+            catch (Exception ex) {
+                errors << [message:  messageSource.getMessage('bulkimport.conversionToFormSectionError', [section.name].toArray(), '', Locale.default), error: ex.message]
+            }
         }
 
-        result
+        if (errors) {
+            String errorMessage = errors.collect { it.message + " - " + it.error }.join("<br/>")
+            return [error: errorMessage]
+        }
+        else {
+            return [success: result]
+        }
     }
 
     boolean isRowValidNextMemberOfArray(Map row, List models) {
