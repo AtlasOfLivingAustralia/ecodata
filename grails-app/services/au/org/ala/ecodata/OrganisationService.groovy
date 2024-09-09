@@ -104,15 +104,14 @@ class OrganisationService implements DataBinder {
                 }
 œ
                 String oldName = organisation.name
+                List contractNameChanges = props.remove('contractNameChanges')
                 bindData(organisation, props, [exclude:EXCLUDE_FROM_BINDING])
 
                 if (props.name && (oldName != props.name)) {
-                    projectService.updateOrganisationName(organisation.organisationId, props.name)
+                    projectService.updateOrganisationName(organisation.organisationId, oldName, props.name)
                 }
-                props.contractNames?.each {
-                    if (!it in organisation.contractNames) {
-
-                    }
+                contractNameChanges?.each { Map change ->
+                    projectService.updateOrganisationName(organisation.organisationId, change.oldName, change.newName)
                 }
                 organisation.save(failOnError:true)
                 return [status:'ok']

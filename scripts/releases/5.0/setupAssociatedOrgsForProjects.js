@@ -22,7 +22,8 @@ while (projects.hasNext()) {
                     description = 'Recipient';
                     break;
                 case 'Grant':
-                    description = 'Grantee';
+                    description = 'Recipient';
+                    break;
                 case 'Procurement':
                     description = 'Service provider';
 

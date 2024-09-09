@@ -1064,4 +1064,39 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result.isEmpty()
     }
 
+    def "The updateOrganisationName method updates the organisationName for a Project as well as the name attribute of any associatedOrgs"() {
+        setup:
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true, managementUnitId: 'mu1')
+        project1.associatedOrgs = [
+                new AssociatedOrg([organisationId:'o1', name:"Test name", logo:"test logo", url:"test url"]),
+                new AssociatedOrg([organisationId: 'o2', name:'Test name 2'])
+        ]
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true, managementUnitId: 'mu1', organisationId:"o1", organisationName:"Test name")
+
+        project1.save(flush: true, failOnError: true)
+        project2.save(flash:true, failOnError: true)
+
+        when:
+        service.updateOrganisationName('o1', "not a name", "Updated name")
+        Project project1Reloaded = Project.findByProjectId('111')
+        Project project2Reloaded = Project.findByProjectId('222')
+
+        then:
+        project1Reloaded.associatedOrgs[0].name == "Test name"
+        project1Reloaded.associatedOrgs[1].name == "Test name 2"
+        project2Reloaded.organisationName == "Test name"
+
+        when:
+        service.updateOrganisationName('o1', "Test name", "Updated name")
+        project1Reloaded = Project.findByProjectId('111')
+        project2Reloaded = Project.findByProjectId('222')
+
+        then:
+        project1Reloaded.associatedOrgs[0].name == "Updated name"
+        project1Reloaded.associatedOrgs[1].name == "Test name 2"
+        project2Reloaded.organisationName == "Updated name"
+
+
+    }
+
 }

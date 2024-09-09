@@ -743,10 +743,28 @@ class ProjectService {
      * @param orgId identifies the organsation that has changed name
      * @param orgName the new organisation name
      */
-    void updateOrganisationName(orgId, orgName) {
-        Project.findAllByOrganisationIdAndStatusNotEqual(orgId, DELETED).each { project ->
-            project.organisationName = orgName
-            project.save()
+    void updateOrganisationName(String orgId, String oldName, String newName) {
+        Project.findAllByOrganisationIdAndOrganisationNameAndStatusNotEqual(orgId, oldName, DELETED).each { project ->
+            project.organisationName = newName
+            project.save(flush:true)
+        }
+
+        List projects = Project.where {
+            status != DELETED
+            associatedOrgs {
+                organisationId == orgId
+                name == oldName
+            }
+        }.list()
+
+
+        projects?.each { Project project ->
+            project.associatedOrgs.each { org ->
+                if (org.organisationId == orgId && org.name == oldName) {
+                    org.name = newName
+                }
+            }
+            project.save(flush:true)
         }
     }
 
