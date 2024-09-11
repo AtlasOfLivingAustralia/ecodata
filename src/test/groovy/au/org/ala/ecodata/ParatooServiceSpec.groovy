@@ -559,7 +559,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         plot.save(failOnError: true, flush: true)
         siteService.sitesForProjectWithTypes('p1', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> [projectArea, plot]
 
-        Program program = new Program(programId: "prog1", name: "A program", config: [(ParatooService.PROGRAM_CONFIG_PARATOO_ITEM): true])
+        Program program = new Program(programId: "prog1", name: "A program", config: [(ParatooProject.PROGRAM_CONFIG_PARATOO_ITEM): true])
         program.save(failOnError: true, flush: true)
 
         Service service = new Service(name: "S1", serviceId: '1', legacyId: 1, outputs: [new ServiceForm(externalId: "guid-2", formName: "aParatooForm", sectionName: null)])
