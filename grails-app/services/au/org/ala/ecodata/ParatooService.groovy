@@ -100,6 +100,23 @@ class ParatooService {
         projects.findAll { it.protocols }
     }
 
+    List<String> userCollections (String userId) {
+        Set<String> collectionIds = new HashSet<String>()
+        List<Activity> activities = Activity.createCriteria().list {
+            eq('userId', userId)
+            ne('status', Status.DELETED)
+            eq('externalIds.idType', ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID)
+        }
+
+        activities?.each { Activity activity ->
+            ExternalId externalId = activity.externalIds?.find { it.idType == ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID }
+            if (externalId?.externalId)
+                collectionIds.add(externalId.externalId)
+        }
+
+        collectionIds.toList()
+    }
+
     private List findProjectProtocols(ParatooProject project) {
         log.debug "Finding protocols for ${project.id} ${project.name}"
         List<ActivityForm> protocols = []
