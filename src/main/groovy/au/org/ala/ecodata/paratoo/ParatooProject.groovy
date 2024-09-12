@@ -43,7 +43,7 @@ class ParatooProject {
     List<String> getDefaultModules() {
         Map config = getConfig()
         List modules = DEFAULT_MODULES
-        if (config.hasProperty(PARATOO_DEFAULT_MODULES)) {
+        if (config.containsKey(PARATOO_DEFAULT_MODULES)) {
             modules = getConfig()?.get(PARATOO_DEFAULT_MODULES)
         }
         modules
