@@ -26,13 +26,11 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
     static final String PARATOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PARATOO_PROTOCOL_DATA_MAPPING_KEY = 'paratoo.surveyData.mapping'
-    static final String PROGRAM_CONFIG_PARATOO_ITEM = 'supportsParatoo'
     static final String PARATOO_APP_NAME = "Monitor"
     static final String MONITOR_AUTH_HEADER = "Authorization"
-    static final List DEFAULT_MODULES =
-            ['Plot Selection and Layout', 'Plot Description', 'Opportune']
     static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
     static final String INTERVENTION_PROTOCOL_TAG = 'intervention'
+    static final String DEVELOPMENT_PROTOCOL_TAG = 'development'
     static final String PARATOO_UNIT_FIELD_NAME = "x-paratoo-unit"
     static final String PARATOO_HINT = "x-paratoo-hint"
     static final String PARATOO_MODEL_REF = "x-model-ref"
@@ -108,16 +106,15 @@ class ParatooService {
 
         List monitoringProtocolCategories = project.getMonitoringProtocolCategories()
         if (monitoringProtocolCategories) {
-            List categoriesWithDefaults = monitoringProtocolCategories + DEFAULT_MODULES
+            List categoriesWithDefaults = monitoringProtocolCategories + project.getDefaultModules()
             protocols += findProtocolsByCategories(categoriesWithDefaults.unique())
             if (!project.isParaooAdmin()) {
                 protocols = protocols.findAll { !(it.name in ADMIN_ONLY_PROTOCOLS) }
             }
-            // Temporarily exclude intervention protocols until they are ready
-            if (grailsApplication.config.getProperty('paratoo.excludeInterventionProtocols', Boolean.class, true)) {
-                protocols = protocols.findAll { !(INTERVENTION_PROTOCOL_TAG in it.tags) }
-            }
 
+            // Exclude protocols tagged as excluded
+            List excludedTags = grailsApplication.config.getProperty('paratoo.excludedTags', List.class, [INTERVENTION_PROTOCOL_TAG, DEVELOPMENT_PROTOCOL_TAG])
+            protocols = protocols.findAll { !(it.tags?.any{ String tag -> tag in excludedTags}) }
         }
         protocols
     }
@@ -149,24 +146,13 @@ class ParatooService {
 
         List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevels.keySet()), Status.ACTIVE)
 
-        // Filter projects that aren't in a program configured to support paratoo or don't have permission
-        projects = projects.findAll { Project project ->
-            if (!project.programId) {
-                return false
-            }
-
-            Program program = Program.findByProgramId(project.programId)
-            Map config = program.getInheritedConfig()
-            // The Monitor/Paratoo app is "write only" (i.e. there is no view mode for the data), so we don't support
-            // the read only role
-            config?.get(PROGRAM_CONFIG_PARATOO_ITEM) && projectAccessLevels[project.projectId] && projectAccessLevels[project.projectId] != AccessLevel.readOnly
-        }
-
         List paratooProjects = projects.collect { Project project ->
             List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
             AccessLevel accessLevel = projectAccessLevels[project.projectId]
             mapProject(project, accessLevel, sites)
         }
+
+        paratooProjects = paratooProjects.findAll { it.isParatooEnabled()}
         paratooProjects
 
     }
@@ -829,6 +815,7 @@ class ParatooService {
         // sites from this call
         List<Site> plotSelections = sites.findAll{it.externalIds?.find{externalId -> externalId.idType == ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID}}
 
+        Program program = Program.findByProgramId(project.programId)
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
@@ -837,7 +824,8 @@ class ParatooService {
                 project:project,
                 projectArea: projectAreaGeoJson,
                 projectAreaSite: projectArea,
-                plots          : plotSelections]
+                plots : plotSelections,
+                program: program]
         new ParatooProject(attributes)
 
     }
