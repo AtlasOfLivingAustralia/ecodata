@@ -127,7 +127,7 @@ class ParatooController {
             summary = "Gets the list of all org minted uuids submitted by an authenticated user.",
             description = "Gets the list of all org minted uuids submitted by an authenticated user.",
             responses = [
-                    @ApiResponse(responseCode = "200", description = "Returns the list of all org minted uuids submitted by the user.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Map.class)))),
+                    @ApiResponse(responseCode = "200", description = "Returns the list of all org minted uuids submitted by the user.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
                     @ApiResponse(responseCode = "404", description = "Not found")
             ],
