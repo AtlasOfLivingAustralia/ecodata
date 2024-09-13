@@ -9,9 +9,11 @@ import spock.lang.Specification
 
 class ManagementUnitControllerSpec extends Specification implements ControllerUnitTest<ManagementUnitController>, DataTest {
     ManagementUnitService managementUnitService = Mock(ManagementUnitService)
+    ElasticSearchService elasticSearchService = Mock(ElasticSearchService)
 
     def setup() {
         controller.managementUnitService = managementUnitService
+        controller.elasticSearchService = elasticSearchService
         mockDomain ManagementUnit
         mockDomain GeographicInfo
     }
@@ -167,10 +169,37 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
         }
     }
 
+    def "Updating a MU will cause projects to be reindexed"() {
+        setup:
+        Map props = [
+                name:'Test',
+                description:'Test description',
+                url:'https://www.mu.org',
+                startDate:'2019-01-01T00:00:00Z',
+                endDate:'2023-06-30T14:00:00Z',
+                priorities:[[category:"Threatened species", priority:"Hibiscus brennanii"]],
+                outcomes:[[outcome:"outcome 1", priorities: [category:"Threatened species"]]],
+                managementUnitSiteId:'site1',
+                config:[config1:'1', config2:'2']
+        ]
+
+        when:
+        request.method = 'POST'
+        request.json = [name:'Test 2']
+        controller.update('1')
+
+        then:
+        1 * managementUnitService.get(_) >> {new ManagementUnit(props)}
+        1 * managementUnitService.save(_) >> {new ManagementUnit(props+[name:'Test 2'])}
+        1 * elasticSearchService.reindexProjectsWithCriteriaAsync([managementUnitId:'1'])
+    }
+
+
     def "to test GeographicInfo saving and conversion of it from map to an object"() {
 
         setup:
         Map props = [
+                managementUnitId: '1',
                 name:'Test',
                 description:'Test description',
                 url:'https://www.mu.org',

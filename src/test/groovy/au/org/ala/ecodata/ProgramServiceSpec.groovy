@@ -9,11 +9,14 @@ import spock.lang.Specification
 class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramService> {
 
     CommonService commonService = new CommonService()
+    ElasticSearchService elasticSearchService = Mock(ElasticSearchService)
 
     def setup() {
         commonService.grailsApplication = grailsApplication
         commonService.messageSource = Mock(MessageSource)
         service.commonService = commonService
+        service.elasticSearchService = elasticSearchService
+
 
         Program.findAll().each { it.delete(flush:true) }
     }
@@ -56,6 +59,7 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
         program.externalIds.size() == 1
         program.externalIds[0].idType == ExternalId.IdType.GRANT_AWARD
         program.externalIds[0].externalId == "e1"
+        1 * elasticSearchService.reindexProjectsWithCriteriaAsync([programId:'1'])
     }
 
     void "update existing Parent with new parent program"(){

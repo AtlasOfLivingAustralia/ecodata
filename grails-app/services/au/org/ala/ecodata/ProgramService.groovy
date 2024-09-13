@@ -1,12 +1,14 @@
 package au.org.ala.ecodata
 
+
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.DELETED
 
 class ProgramService {
     
-    def commonService
+    CommonService commonService
+    ElasticSearchService elasticSearchService
 
     Program get(String programId, includeDeleted = false) {
         if (includeDeleted) {
@@ -39,9 +41,15 @@ class ProgramService {
 
     Program update(String id, Map properties) {
         Program program = get(id)
+        String originalName = program.name
         updateParent(program, properties)
         program.properties = properties
         program.save(flush:true)
+
+        // Update the project search index if the program name has changed.
+        if (originalName != properties.name) {
+             elasticSearchService.reindexProjectsWithCriteriaAsync([programId:id])
+        }
         return program
     }
 

@@ -17,10 +17,13 @@ package au.org.ala.ecodata
 
 
 import com.mongodb.client.model.Filters
+import grails.async.Promise
+import grails.async.Promises
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -60,6 +63,7 @@ import org.elasticsearch.search.sort.SortOrder
 import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -881,6 +885,95 @@ class ElasticSearchService {
         }
     }
 
+    Promise reindexProjectsWithCriteriaAsync(Map searchCriteriaParams) {
+        Promises.task {
+            indexProjectsWithCriteria(searchCriteriaParams)
+        }
+    }
+
+    /**
+     * This method will re-index (in the current live search index) a set of Projects identified by
+     * the supplied criteria.  It should not be used for large re-indexing tasks.
+     * @param searchCriteriaParams
+     * @return the number projects indexed.
+     */
+    int indexProjectsWithCriteria(Map searchCriteriaParams) {
+        BulkProcessor.Listener listener = new LoggingBulkIndexingListener()
+
+        BulkProcessor bulkProcessor = BulkProcessor.builder(
+                { request, bulkListener ->
+                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-project-indexing"
+        ).build()
+
+        int count = 0
+        Closure query = { Map batchOptions ->
+            BuildableCriteria searchCriteria = Project.createCriteria()
+            searchCriteria.list(batchOptions) {
+                ne("status", DELETED)
+                searchCriteriaParams.each { prop, value ->
+
+                    if (value instanceof List) {
+                        inList(prop, value)
+                    } else {
+                        eq(prop, value)
+                    }
+                }
+            }
+        }
+
+        Project.withNewSession {
+            def batchParams = [offset: 0, max: 50, sort: 'projectId']
+            List projects = query(batchParams)
+
+            while (projects) {
+                projects.each { project ->
+                    try {
+                        Map projectMap = prepareProjectForHomePageIndex(project)
+                        indexDoc(projectMap,HOMEPAGE_INDEX, bulkProcessor)
+                        count++
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index project:  " + project?.projectId, e)
+                    }
+                }
+
+                batchParams.offset = batchParams.offset + batchParams.max
+                projects = query(batchParams)
+                log.info("Processed " + batchParams.offset + " projects")
+            }
+        }
+
+        bulkProcessor.close()
+        count
+    }
+
+    @Slf4j
+    static class LoggingBulkIndexingListener implements BulkProcessor.Listener {
+        int bulkIndexCount = 0
+        int lastReportedIndexCount = 0
+        int progressLogThreshold = 1000
+        @Override
+        void beforeBulk(long executionId, BulkRequest request) {}
+
+        @Override
+        void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+            bulkIndexCount += request.numberOfActions()
+            if (bulkIndexCount - lastReportedIndexCount > progressLogThreshold) {
+                log.info("Bulk indexed "+bulkIndexCount+" documents")
+                lastReportedIndexCount = bulkIndexCount
+            }
+
+            if (response.hasFailures()) {
+                log.warn(response.buildFailureMessage())
+            }
+        }
+
+        @Override
+        void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+            log.error("Error executing bulk indexing", failure)
+        }
+    }
+
     /**
      * Index all documents. Index is cleared first.
      */
@@ -893,30 +986,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
 
-        int bulkIndexCount = 0
-        int lastReportedIndexCount = 0
-        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
-            @Override
-            void beforeBulk(long executionId, BulkRequest request) {}
-
-            @Override
-            void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-                bulkIndexCount += request.numberOfActions()
-                if (bulkIndexCount - lastReportedIndexCount > 1000) {
-                    log.info("Bulk indexed "+bulkIndexCount+" documents")
-                    lastReportedIndexCount = bulkIndexCount
-                }
-
-                if (response.hasFailures()) {
-                    log.warn(response.buildFailureMessage())
-                }
-            }
-
-            @Override
-            void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                log.error("Error executing bulk indexing", failure)
-            }
-        }
+        BulkProcessor.Listener listener = new LoggingBulkIndexingListener()
 
         BulkProcessor bulkProcessor = BulkProcessor.builder(
                 { request, bulkListener ->
