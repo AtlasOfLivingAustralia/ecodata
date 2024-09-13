@@ -84,6 +84,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         UserPermission.findAll().each { it.delete() }
         Program.findAll().each { it.delete() }
         Site.findAll().each { it.delete() }
+        Activity.findAll().each { it.delete() }
     }
 
     def cleanup() {
@@ -666,6 +667,41 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         activityForm.externalIds = [new ExternalId(externalId: "guid-4", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError: true, flush: true)
 
+        def activity = new Activity(
+                activityId: UUID.randomUUID().toString(),
+                type             : activityForm.name,
+                formVersion      : activityForm.formVersion,
+                description      : "Activity submitted by monitor",
+                projectId        : "p1",
+                publicationStatus: PublicationStatus.PUBLISHED,
+                siteId           : "s2",
+                startDate        : new Date(),
+                endDate          : new Date(),
+                plannedStartDate : new Date(),
+                plannedEndDate   : new Date(),
+                progress         : Activity.FINISHED,
+                userId           : 'user1'
+        )
+        activity.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: 'abc')]
+        activity.save(failOnError: true, flush: true)
+
+        activity = new Activity (
+                activityId: UUID.randomUUID().toString(),
+                type             : activityForm.name,
+                formVersion      : activityForm.formVersion,
+                description      : "Activity submitted by monitor",
+                projectId        : "p2",
+                publicationStatus: PublicationStatus.PUBLISHED,
+                siteId           : "s1",
+                startDate        : new Date(),
+                endDate          : new Date(),
+                plannedStartDate : new Date(),
+                plannedEndDate   : new Date(),
+                progress         : Activity.FINISHED,
+                userId           : 'user1'
+        )
+        activity.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_MINTED_COLLECTION_ID, externalId: 'def')]
+        activity.save(failOnError: true, flush: true)
     }
 
     void "capitalizeModelName should convert hyphenated name to capitalised name"() {
@@ -1680,6 +1716,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         false | false
         null | false
         "DO NOT ADD" | true
+    }
+
+    void "userCollection should return orgMintedId/dataSetId" (userId, expectedResult) {
+        expect:
+        service.userCollections(userId) == expectedResult
+
+        where:
+        userId | expectedResult
+        "user1" | ['abc', 'def']
+        "user2" | []
     }
 
     private Map getNormalDefinition() {
