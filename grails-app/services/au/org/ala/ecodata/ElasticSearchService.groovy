@@ -17,10 +17,13 @@ package au.org.ala.ecodata
 
 
 import com.mongodb.client.model.Filters
+import grails.async.Promise
+import grails.async.Promises
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -60,6 +63,7 @@ import org.elasticsearch.search.sort.SortOrder
 import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -180,16 +184,17 @@ class ElasticSearchService {
      * @return IndexResponse
      */
     def indexDoc(doc, String index, BulkProcessor bulkProcessor = null) {
+        String docId = getEntityId(doc)
         if (!canIndex(doc)) {
+            deleteIfRequired(docId, index)
             return
         }
-        String docId = getEntityId(doc)
+
         // The purpose of the as JSON call below is to convert Date objects into the format we use
         // throughout the app - otherwise the elasticsearch XContentBuilder will transform them into
         // ISO dates with milliseconds which causes BioCollect problems as it uses the _source field of the
         // search result directly.
         Map docMap = doc
-
 
         index = index ?: DEFAULT_INDEX
 
@@ -258,13 +263,23 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId, String index = DEFAULT_INDEX) {
         def isDeleted = false
+        if (doc.status?.toLowerCase() == DELETED) {
+            isDeleted = deleteIfRequired(docId, index)
+        }
+
+        return isDeleted
+    }
+
+    /** Deletes the document with the supplied id from elasticsearch if it is indexed */
+    boolean deleteIfRequired(String docId, String index) {
+        def isDeleted = false
         GetResponse resp
 
         try {
             GetRequest request = new GetRequest(index, docId)
             resp = client.get(request, RequestOptions.DEFAULT)
 
-            if (resp.exists && doc.status?.toLowerCase() == DELETED) {
+            if (resp.exists) {
                 try {
                     deleteDocById(docId, index)
                     isDeleted = true
@@ -549,15 +564,9 @@ class ElasticSearchService {
 
         switch (docType) {
             case Project.class.name:
-                def doc = Project.findByProjectId(docId)
-                def projectMap = projectService.toMap(doc, "flat")
-                projectMap["className"] = docType
-                indexHomePage(doc, docType)
-                if(projectMap.siteId){
-                    indexDocType(projectMap.siteId, Site.class.name)
-                }
-
-                break;
+                Project project = Project.findByProjectId(docId)
+                indexHomePage(project, docType)
+                break
             case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, SiteService.FLAT)
@@ -568,11 +577,10 @@ class ElasticSearchService {
                 }
 
                 doc?.projects?.each { projectId ->
-                    def proj = Project.findByProjectId(projectId)
-                    Map projectMap = prepareProjectForHomePageIndex(proj)
-                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                    Project proj = Project.findByProjectId(projectId)
+                    indexHomePage(proj, Project.class.name)
                 }
-                break;
+                break
 
             case Record.class.name:
                 Record record = Record.findByOccurrenceID(docId)
@@ -605,7 +613,7 @@ class ElasticSearchService {
                 // update linked project -- index for homepage
                 def pDoc = Project.findByProjectId(doc.projectId)
                 if (pDoc) {
-                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                    indexHomePage(pDoc, Project.class.name)
                 }
 
                 if(activity.siteId){
@@ -631,8 +639,6 @@ class ElasticSearchService {
                 String projectId = UserPermission.findByIdAndEntityType(docId, Project.class.name)?.getEntityId()
                 if (projectId) {
                     Project doc = Project.findByProjectId(projectId)
-                    Map projectMap = projectService.toMap(doc, "flat")
-                    projectMap["className"] = Project.class.name
                     indexHomePage(doc, Project.class.name)
                 }
                 break
@@ -700,11 +706,10 @@ class ElasticSearchService {
         try {
             def docId = getEntityId(doc)
 
-            // Delete index if it exists and doc.status == 'deleted'
-            checkForDelete(doc, docId, HOMEPAGE_INDEX)
-
             // Prevent deleted document from been indexed regardless of whether it has a previous index entry
             if(doc.status?.toLowerCase() == DELETED) {
+                // Delete index if it exists and doc.status == 'deleted'
+                checkForDelete(doc, docId, HOMEPAGE_INDEX)
                 return null;
             }
 
@@ -880,6 +885,95 @@ class ElasticSearchService {
         }
     }
 
+    Promise reindexProjectsWithCriteriaAsync(Map searchCriteriaParams) {
+        Promises.task {
+            indexProjectsWithCriteria(searchCriteriaParams)
+        }
+    }
+
+    /**
+     * This method will re-index (in the current live search index) a set of Projects identified by
+     * the supplied criteria.  It should not be used for large re-indexing tasks.
+     * @param searchCriteriaParams
+     * @return the number projects indexed.
+     */
+    int indexProjectsWithCriteria(Map searchCriteriaParams) {
+        BulkProcessor.Listener listener = new LoggingBulkIndexingListener()
+
+        BulkProcessor bulkProcessor = BulkProcessor.builder(
+                { request, bulkListener ->
+                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-project-indexing"
+        ).build()
+
+        int count = 0
+        Closure query = { Map batchOptions ->
+            BuildableCriteria searchCriteria = Project.createCriteria()
+            searchCriteria.list(batchOptions) {
+                ne("status", DELETED)
+                searchCriteriaParams.each { prop, value ->
+
+                    if (value instanceof List) {
+                        inList(prop, value)
+                    } else {
+                        eq(prop, value)
+                    }
+                }
+            }
+        }
+
+        Project.withNewSession {
+            def batchParams = [offset: 0, max: 50, sort: 'projectId']
+            List projects = query(batchParams)
+
+            while (projects) {
+                projects.each { project ->
+                    try {
+                        Map projectMap = prepareProjectForHomePageIndex(project)
+                        indexDoc(projectMap,HOMEPAGE_INDEX, bulkProcessor)
+                        count++
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index project:  " + project?.projectId, e)
+                    }
+                }
+
+                batchParams.offset = batchParams.offset + batchParams.max
+                projects = query(batchParams)
+                log.info("Processed " + batchParams.offset + " projects")
+            }
+        }
+
+        bulkProcessor.close()
+        count
+    }
+
+    @Slf4j
+    static class LoggingBulkIndexingListener implements BulkProcessor.Listener {
+        int bulkIndexCount = 0
+        int lastReportedIndexCount = 0
+        int progressLogThreshold = 1000
+        @Override
+        void beforeBulk(long executionId, BulkRequest request) {}
+
+        @Override
+        void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+            bulkIndexCount += request.numberOfActions()
+            if (bulkIndexCount - lastReportedIndexCount > progressLogThreshold) {
+                log.info("Bulk indexed "+bulkIndexCount+" documents")
+                lastReportedIndexCount = bulkIndexCount
+            }
+
+            if (response.hasFailures()) {
+                log.warn(response.buildFailureMessage())
+            }
+        }
+
+        @Override
+        void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+            log.error("Error executing bulk indexing", failure)
+        }
+    }
+
     /**
      * Index all documents. Index is cleared first.
      */
@@ -892,30 +986,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
 
-        int bulkIndexCount = 0
-        int lastReportedIndexCount = 0
-        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
-            @Override
-            void beforeBulk(long executionId, BulkRequest request) {}
-
-            @Override
-            void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-                bulkIndexCount += request.numberOfActions()
-                if (bulkIndexCount - lastReportedIndexCount > 1000) {
-                    log.info("Bulk indexed "+bulkIndexCount+" documents")
-                    lastReportedIndexCount = bulkIndexCount
-                }
-
-                if (response.hasFailures()) {
-                    log.warn(response.buildFailureMessage())
-                }
-            }
-
-            @Override
-            void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                log.error("Error executing bulk indexing", failure)
-            }
-        }
+        BulkProcessor.Listener listener = new LoggingBulkIndexingListener()
 
         BulkProcessor bulkProcessor = BulkProcessor.builder(
                 { request, bulkListener ->
@@ -1054,7 +1125,7 @@ class ElasticSearchService {
      */
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
-        projectMap["className"] = new Project().getClass().name
+        projectMap["className"] = Project.class.name
         // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
@@ -1125,7 +1196,10 @@ class ElasticSearchService {
         if(projectMap.managementUnitId)
             projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
 
-        // Populate program facets from the project program, if available
+        // Populate program facets from the project program, if available, do visibility check
+        if (project.config?.visibility) {
+            projectMap.visibility = project.config.visibility
+        }
         if (project.programId) {
             Program program = programService.get(project.programId)
             if (program) {
@@ -1137,7 +1211,7 @@ class ElasticSearchService {
                 }
                 // This allows all projects associated with a particular program to be excluded from indexing.
                 // This is required to allow MERIT projects to be loaded before they have been announced.
-                if (program.inheritedConfig?.visibility) {
+                if (!projectMap.visibility && program.inheritedConfig?.visibility) {
                     projectMap.visibility = program.inheritedConfig.visibility
                 }
             }

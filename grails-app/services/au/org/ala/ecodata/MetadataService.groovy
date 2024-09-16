@@ -41,6 +41,7 @@ class MetadataService {
     SpeciesReMatchService speciesReMatchService
     HubService hubService
     ProjectService projectService
+    RecordService recordService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -896,17 +897,13 @@ class MetadataService {
         data
     }
 
-    Map autoPopulateSpeciesData (Map data, int limit = 10) {
+    Map autoPopulateSpeciesData (Map data) {
         String searchName = (data?.scientificName)?.trim()
         if (!data?.guid && (searchName)) {
-            def result = speciesReMatchService.searchBie(searchName, limit)
-            // find the name that exactly matches the search name
-            def bestMatch = result?.autoCompleteList?.find {
-                it.matchedNames?.findResult { String name ->
-                    name.equalsIgnoreCase(searchName)
-                            || name.equalsIgnoreCase(data.name)
-                            || name.equalsIgnoreCase(data.commonName)
-                }
+            Map bestMatch = speciesReMatchService.searchByName(searchName)
+            if(!bestMatch && data.commonName) {
+                String commonName = data.commonName
+                bestMatch = speciesReMatchService.searchByName(commonName, false, true)
             }
 
             if (bestMatch) {
@@ -917,7 +914,7 @@ class MetadataService {
         }
 
         if(!data?.name) {
-            data.name = data?.commonName ? data?.scientificName + '(' + data?.commonName + ')' : data?.scientificName
+            data.name = recordService.formatTaxonName(data, RecordService.SCIENTIFIC_NAME_COMMON_NAME)
         }
 
         data

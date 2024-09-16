@@ -161,6 +161,15 @@ class AdminController {
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
     }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def reindexProjects() {
+        Map params = request.JSON
+        int count = elasticSearchService.indexProjectsWithCriteria(params)
+        Map resp = [indexedCount:count]
+        render resp as JSON
+    }
+
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def clearMetadataCache() {
         // clear any cached external config
