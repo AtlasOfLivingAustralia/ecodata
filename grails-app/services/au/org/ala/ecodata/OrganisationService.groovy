@@ -46,7 +46,7 @@ class OrganisationService implements DataBinder {
         return Organisation.findAllByStatusNotEqual(DELETED).collect{toMap(it, levelOfDetail)}
     }
 
-    def create(Map props, boolean createInCollectory = true) {
+    def create(Map props, boolean createInCollectory = false) {
 
         def organisation = new Organisation(organisationId: Identifiers.getNew(true, ''), name:props.name)
 
@@ -90,7 +90,7 @@ class OrganisationService implements DataBinder {
         return institutionId
     }
 
-    def update(String id, props) {
+    def update(String id, props, boolean createInCollectory = false) {
 
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
@@ -99,7 +99,7 @@ class OrganisationService implements DataBinder {
                 // if no collectory institution exists for this organisation, create one
                 // We shouldn't be doing this unless the org is attached to a project that exports data
                 // to the ALA.
-                if (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '') {
+                if (createInCollectory && (!organisation.collectoryInstitutionId ||  organisation.collectoryInstitutionId == 'null' || organisation.collectoryInstitutionId == '')) {
                     organisation.collectoryInstitutionId = createCollectoryInstitution(props)
                 }
 œ
