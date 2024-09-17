@@ -69,9 +69,26 @@ class SpatialService {
         Map result = [:]
         fieldIds.each { fid ->
             start = end
-            Map response = webService.doPost(url+fid, wkt)
-            if (response.resp && !response.error) {
-                result[fid] = response.resp
+            Map response
+            if (geo.geometryType == 'GeometryCollection') {
+                Map<String, Map> geometryCollectionIntersections = [:]
+                GeometryCollection geometryCollection = (GeometryCollection)geo
+                for (int i=0; i<geometryCollection.numGeometries; i++) {
+                    Geometry geometryN = geometryCollection.getGeometryN(i)
+                    String wktGeometryN = geometryN.toText()
+                    response = webService.doPost(url+fid, wktGeometryN)
+                    if (response.resp && !response.error) {
+                        response.resp?.each {geometryCollectionIntersections[it.pid] = it }
+                    }
+                }
+
+                result[fid] = geometryCollectionIntersections.values()?.toList()
+            }
+            else {
+                response = webService.doPost(url+fid, wkt)
+                if (response.resp && !response.error) {
+                    result[fid] = response.resp
+                }
             }
             end = System.currentTimeMillis()
             log.info("Time taken to intersect with layer $fid: ${end-start}ms")
