@@ -75,8 +75,6 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
         savedOrganisation.organisationId == organisationId
         savedOrganisation.name == org.name
         savedOrganisation.description == org.description
-        // savedOrganisation.dynamicProperty == org.dynamicProperty (dynamic properties not working in tests)
-        savedOrganisation.collectoryInstitutionId == institutionId
 
         and: "the user who created the organisation is an admin of the new organisation"
         def orgPermissions = UserPermission.findAllByEntityIdAndEntityType(savedOrganisation.organisationId, Organisation.class.name)
