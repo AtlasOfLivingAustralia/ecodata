@@ -41,7 +41,7 @@ class OrganisationServiceIntegrationSpec extends IntegrationTestHelper {
       //  setupPost(organisationController.request, org)
 
         when: "creating an organisation"
-        def result = organisationService.create(org)
+        def result = organisationService.create(org, true)
 
         then: "ensure we get a response including an organisationId"
        // def resp = extractJson(organisationController.response.text)
