@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.Filters
 import grails.converters.JSON
+import org.bson.conversions.Bson
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.engine.event.EventType
@@ -645,8 +646,16 @@ class SiteService {
     }
 
     def geometryForPid(pid) {
-        def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/shape/geojson/${pid}"
-        webService.getJson(url)
+        // getting wkt since spatial portal geojson api is not returning all precision points of lat and lng.
+        def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}${spatialService.WKT_SHAPE_URL_PREFIX}${pid}"
+        def wkt = webService.get(url, false)
+        if (wkt instanceof String) {
+            return GeometryUtils.wktToGeoJson(wkt)
+        }
+        else {
+            log.error("No geometry for pid: ${pid}")
+            return null
+        }
     }
 
     def populateLocationMetadataForSite(Map site, List<String> fids = null) {
@@ -818,10 +827,13 @@ class SiteService {
      * at once.
      * @param action the action to be performed on each Activity.
      */
-    void doWithAllSites(Closure action, Integer max = null) {
+    void doWithAllSites(Closure action, List<Bson> filters = [], int batchSize = 100) {
 
         MongoCollection collection = Site.getCollection()
-        def results = collection.find(Filters.ne('status', DELETED)).batchSize(100)
+        Bson query = Filters.ne("status", DELETED)
+        filters.add(query)
+        query = Filters.and(filters)
+        def results = collection.find(query).batchSize(batchSize)
 
         results.each { dbObject ->
             action.call(dbObject)

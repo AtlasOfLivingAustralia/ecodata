@@ -125,7 +125,7 @@ class SpeciesReMatchService {
             }
 
             resp
-        })
+        }) as Map
     }
 
     Map searchByVernacularNameOnNameMatchingServer (String name) {
@@ -139,6 +139,6 @@ class SpeciesReMatchService {
             }
 
             resp
-        })
+        }) as Map
     }
 }

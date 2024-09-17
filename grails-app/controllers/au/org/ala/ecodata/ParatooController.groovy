@@ -119,6 +119,24 @@ class ParatooController {
         respond projects: paratooService.userProjects(userService.currentUserDetails.userId)
     }
 
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/get-all-collections")
+    @Operation(
+            method = "GET",
+            summary = "Gets the list of all org minted uuids submitted by an authenticated user.",
+            description = "Gets the list of all org minted uuids submitted by an authenticated user.",
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns the list of all org minted uuids submitted by the user.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface"
+    )
+    def userCollections() {
+        respond collections: paratooService.userCollections(userService.currentUserDetails.userId)
+    }
+
     @SkipApiKeyCheck
     @POST
     @Path("/validate-token")

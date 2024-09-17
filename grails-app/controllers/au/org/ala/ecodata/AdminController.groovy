@@ -161,6 +161,15 @@ class AdminController {
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
     }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def reindexProjects() {
+        Map params = request.JSON
+        int count = elasticSearchService.indexProjectsWithCriteria(params)
+        Map resp = [indexedCount:count]
+        render resp as JSON
+    }
+
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def clearMetadataCache() {
         // clear any cached external config
@@ -528,6 +537,17 @@ class AdminController {
         render reports as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def indexProjectDependencies() {
+        if(params.projectId){
+            List projects = params.projectId.split(',')?.toList()
+            elasticSearchService.indexDependenciesOfProjects( projects )
+            render text: [message: 'indexing completed'] as JSON, contentType: 'application/json'
+        } else {
+            render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
+        }
+    }
+
     /**
      * a test function to index a project.
      * @return
@@ -543,7 +563,7 @@ class AdminController {
                         Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
                         elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
                     } catch (Exception e) {
-                        log.error("Unable to index projewt: " + project?.projectId, e)
+                        log.error("Unable to index project: " + project?.projectId, e)
                         e.printStackTrace();
                     }
                 }

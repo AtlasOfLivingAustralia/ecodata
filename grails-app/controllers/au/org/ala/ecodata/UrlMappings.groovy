@@ -237,6 +237,12 @@ class UrlMappings {
             action = 'hasWriteAccess'
         }
 
+        "/ws/paratoo/get-all-collections" {
+            controller = 'paratoo'
+            action = [GET:'userCollections', OPTIONS:'options']
+        }
+
+
         "/ws/paratoo/validate-token" {
             controller = 'paratoo'
             action = [POST:'validateToken', OPTIONS:'options']
