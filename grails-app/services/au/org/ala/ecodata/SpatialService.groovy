@@ -53,7 +53,7 @@ class SpatialService {
         int threshold = grailsApplication.config.getProperty('spatial.geoJsonEnvelopeConversionThreshold', Integer)
         Geometry geo
         // Ignore threshold check for GeometryCollection collection
-        if (geo.geometryType != 'GeometryCollection') {
+        if (geoJson.type != 'GeometryCollection') {
             int length = geoJson?.toString().size()
             if (length > threshold) {
                 geoJson = GeometryUtils.geometryToGeoJsonMap(geo.getEnvelope())
