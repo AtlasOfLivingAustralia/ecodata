@@ -272,6 +272,7 @@ class AdminController {
         dateFormat.setTimeZone(timeZoneUTC)
         def isMERIT = params.getBoolean('isMERIT', true)
         Date startDate = params.getDate("startDate", ["yyyy", "yyyy-MM-dd"]) ?: dateFormat.parse(defaultStartDate)
+        List siteIds = params.get("siteId")?.split(",")
         def code = 'success'
         def total = 0
         def offset = 0
@@ -281,7 +282,10 @@ class AdminController {
         log.debug("Number of fids to intersect: ${defaultFids.size()}; they are - ${defaultFids}")
         def totalSites
         List projectIds = []
-        if (isMERIT) {
+        if (siteIds) {
+            totalSites = siteIds.size()
+        }
+        else if (isMERIT) {
             projectIds = projectService.getAllMERITProjectIds()
             totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThan('active', projectIds, startDate)
         }
@@ -293,7 +297,12 @@ class AdminController {
         while (count == batchSize) {
             batchStartTime = startInterimTime = System.currentTimeMillis()
             def sites
-            if (isMERIT) {
+            if (siteIds) {
+                sites = Site.findAllBySiteIdInList(siteIds, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
+            }
+            else if (isMERIT) {
                 sites = Site.findAllByProjectsInListAndStatusAndDateCreatedGreaterThan(projectIds, 'active', startDate, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
                     siteService.toMap(it, 'flat')
                 }

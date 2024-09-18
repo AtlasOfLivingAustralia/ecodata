@@ -47,11 +47,25 @@ class SpatialService {
      * supplied geometry
      */
     Map<String,?> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
-        int length = geoJson?.toString().size()
+        // We are using a WKT string instead of geojson as the spatial portal validates geojson - using
+        // WKT allows us to get away with self intersecting polygons that users occasionally draw.
+        String wkt
         int threshold = grailsApplication.config.getProperty('spatial.geoJsonEnvelopeConversionThreshold', Integer)
-        Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
-        if(length > threshold){
-            geoJson = GeometryUtils.geometryToGeoJsonMap (geo.getEnvelope())
+        Geometry geo
+        // Ignore threshold check for GeometryCollection collection
+        if (geo.geometryType != 'GeometryCollection') {
+            int length = geoJson?.toString().size()
+            if (length > threshold) {
+                geoJson = GeometryUtils.geometryToGeoJsonMap(geo.getEnvelope())
+            }
+
+            geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
+            wkt = geo.toText()
+        } else {
+            geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
+            GeometryCollection geometryCollection = (GeometryCollection)geo
+            Geometry convexHullGeometry = geometryCollection.union().convexHull()
+            wkt = convexHullGeometry.toText()
         }
 
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+WKT_INTERSECT_URL_PREFIX
@@ -60,9 +74,6 @@ class SpatialService {
         }
 
         long start = System.currentTimeMillis()
-        // We are using a WKT string instead of geojson as the spatial portal validates geojson - using
-        // WKT allows us to get away with self intersecting polygons that users occasionally draw.
-        String wkt = geo.toText()
         long end = System.currentTimeMillis()
         log.info("Time taken to convert geojson to wkt: ${end-start}ms")
 
@@ -70,26 +81,9 @@ class SpatialService {
         Map result = [:]
         fieldIds.each { fid ->
             start = end
-            Map response
-            if (geo.geometryType == 'GeometryCollection') {
-                Map<String, Map> geometryCollectionIntersections = [:]
-                GeometryCollection geometryCollection = (GeometryCollection)geo
-                for (int i=0; i<geometryCollection.numGeometries; i++) {
-                    Geometry geometryN = geometryCollection.getGeometryN(i)
-                    String wktGeometryN = geometryN.toText()
-                    response = webService.doPost(url+fid, wktGeometryN)
-                    if (response.resp && !response.error) {
-                        response.resp?.each {geometryCollectionIntersections[it.pid] = it }
-                    }
-                }
-
-                result[fid] = geometryCollectionIntersections.values()?.toList()
-            }
-            else {
-                response = webService.doPost(url+fid, wkt)
-                if (response.resp && !response.error) {
-                    result[fid] = response.resp
-                }
+            Map response = webService.doPost(url+fid, wkt)
+            if (response.resp && !response.error) {
+                result[fid] = response.resp
             }
             end = System.currentTimeMillis()
             log.info("Time taken to intersect with layer $fid: ${end-start}ms")
@@ -103,7 +97,6 @@ class SpatialService {
             geographicFacets = [:].withDefault{[]}
             GeometryCollection geometryCollection = (GeometryCollection)geo
             for (int i=0; i<geometryCollection.numGeometries; i++) {
-
                 def (filtered, intersectionArea) = filterOutObjectsInBoundary(result, geometryCollection.getGeometryN(i))
                 start = end
                 Map geographicFacetsForGeometry = convertResponsesToGeographicFacets(filtered)
@@ -152,7 +145,7 @@ class SpatialService {
                 result[fid] = lookupTable[pidFid][pid][fid].collect{[name:it]}
             }
             else {
-                Object response = webService.getJson(url+fid+"/"+pid)
+                def response = getPidFidIntersection(url, fid, pid)
                 if (response instanceof List) {
                     result[fid] = response
                 }
@@ -165,6 +158,11 @@ class SpatialService {
         Map geographicFacets = convertResponsesToGeographicFacets(geographicFacetsWithFID)
         geographicFacets[INTERSECTION_AREA] = intersectionProportion
         geographicFacets
+    }
+
+    @Cacheable(value = "spatialPidFidIntersection")
+    def getPidFidIntersection(String url, String fid, String pid) {
+        webService.getJson(url + fid + "/" + pid)
     }
 
     private List filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
