@@ -504,9 +504,8 @@ class ProjectXlsExporter extends ProjectExporter {
                     if (dataSets.protocol == "other") {
                         dataSets["protocol"] = "other"
                     } else {
-                        ActivityForm protocolForm = ActivityForm.findByExternalId(dataSets.protocol)
-                        String dataSetName = protocolForm?.name
-                        dataSets["protocol"] = dataSetName
+                        ActivityForm protocolForm = ActivityForm.findByExternalId(dataSets.protocol as String)
+                        dataSets["protocol"] = protocolForm?.name
                     }
 
                 }
