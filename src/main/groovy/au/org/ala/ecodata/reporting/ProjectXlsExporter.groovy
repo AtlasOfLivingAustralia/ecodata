@@ -160,7 +160,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
 
-    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retainedX']
+    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retained']
     List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
 
     OutputModelProcessor processor = new OutputModelProcessor()
