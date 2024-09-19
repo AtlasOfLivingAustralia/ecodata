@@ -4,7 +4,7 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
-import org.codehaus.jackson.map.ObjectMapper
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -746,6 +746,7 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
+    @Scheduled(cron = "0 0 * * 0")
     Map importProjectsFromSciStarter() {
         int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0, page = 1
         JsonSlurper slurper = new JsonSlurper()

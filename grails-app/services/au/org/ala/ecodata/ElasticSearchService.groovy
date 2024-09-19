@@ -1093,7 +1093,7 @@ class ElasticSearchService {
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
             // all sites associated with project.
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
-            projectMap.projectArea = siteService.get(project.projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
+            projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
         }
         projectMap.sites?.each { site ->
