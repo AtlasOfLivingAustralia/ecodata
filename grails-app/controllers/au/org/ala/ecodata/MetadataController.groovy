@@ -9,6 +9,7 @@ import static au.org.ala.ecodata.Status.DELETED
 
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
+    static responseFormats = ['json']
 
     def metadataService, activityService, commonService, projectService, webService
 
@@ -234,17 +235,22 @@ class MetadataController {
         if (file && outputName) {
 
             def data = metadataService.excelWorkbookToMap(file.inputStream, outputName, true)
+            def status = 200
 
             def result
-            if (!data) {
-                response.status = 400
+            if (data.error) {
+                status = 500
+                data.status = 500
+                result = data
+            }
+            else if (!data.success) {
+                status = 400
                 result = [status:400, error:'No data was found that matched the output description identified by the type parameter, please check the template you used to upload the data. ']
             }
             else {
-                result = [status: 200, data:data]
+                result = [status: 200, data:data.success]
             }
-            render result as JSON
-
+            respond(result, status: status)
         }
         else {
             response.status = 400
@@ -306,7 +312,7 @@ class MetadataController {
     }
 
     def getGeographicFacetConfig() {
-        render grailsApplication.config.getProperty('app.facets.geographic', Map) as JSON
+        render metadataService.getGeographicConfig() as JSON
     }
 
     /**

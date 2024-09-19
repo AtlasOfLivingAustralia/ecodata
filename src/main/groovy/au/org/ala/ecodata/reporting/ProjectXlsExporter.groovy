@@ -11,6 +11,7 @@ import au.org.ala.ecodata.OrganisationService
 import au.org.ala.ecodata.Program
 import au.org.ala.ecodata.ProgramService
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
@@ -34,11 +35,14 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"]
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated']
+    List<String> configurableIntersectionHeaders = getIntersectionHeaders()
+    List<String> configurableIntersectionProperties = getIntersectionProperties()
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', 'Termination Reason', 'Last Modified']
-    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
+
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
@@ -151,13 +155,13 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
     List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
-    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
-    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
+    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
+    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
 
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
 
-    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retainedX']
+    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retained']
     List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
 
     OutputModelProcessor processor = new OutputModelProcessor()
@@ -233,6 +237,52 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
+    private static List getIntersectionProperties() {
+        List props = []
+        def metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
+        Map config = metadataService.getGeographicConfig()
+        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+        intersectionLayers.each { layer ->
+            Map facetName = metadataService.getGeographicFacetConfig(layer)
+            if (facetName.name) {
+                props.add(getPropertyNameForFacet(facetName.name))
+                props.add(getPropertyNameForFacet(facetName.name, "other"))
+            }
+            else
+                log.error ("No facet config found for layer $layer.")
+        }
+
+        props
+    }
+
+    private static List getIntersectionHeaders() {
+        List headers = []
+        def metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
+        Map config = metadataService.getGeographicConfig()
+        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+        intersectionLayers.each { layer ->
+            Map facetName = metadataService.getGeographicFacetConfig(layer)
+            if (facetName.name) {
+                headers.add(getHeaderNameForFacet(facetName.name))
+                headers.add(getHeaderNameForFacet(facetName.name, "Other"))
+            }
+            else
+                log.error ("No facet config found for layer $layer.")
+        }
+
+        headers
+    }
+
+    private static String getHeaderNameForFacet (String facetName, String prefix = "Primary") {
+        Map names = Holders.config.getProperty("app.facets.displayNames", Map)
+        String name = names[facetName]
+        return "$prefix $name (Interpreted)"
+    }
+
+    private static String getPropertyNameForFacet (String facetName, String prefix = "primary") {
+        return "interpreted_$prefix$facetName"
+    }
+
     void export(Map project) {
 
         addCommonProjectData(project)
@@ -263,6 +313,7 @@ class ProjectXlsExporter extends ProjectExporter {
      * @param project the project being exported.
      */
     private addCommonProjectData(Map project) {
+        addPrimaryAndOtherIntersections(project)
         commonProjectPropertiesRaw.each {
             project[PROJECT_DATA_PREFIX+it] = project.remove(it)
         }
@@ -270,6 +321,25 @@ class ProjectXlsExporter extends ProjectExporter {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
         filterExternalIds(project, PROJECT_DATA_PREFIX)
+
+    }
+
+    private void addPrimaryAndOtherIntersections (Map project) {
+        Map intersections = projectService.orderLayerIntersectionsByAreaOfProjectSites(project)
+        Map config = metadataService.getGeographicConfig()
+        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+        intersectionLayers?.each { layer ->
+            Map facetName = metadataService.getGeographicFacetConfig(layer)
+            if (facetName.name) {
+                List intersectionValues = intersections[layer]
+                if (intersectionValues) {
+                    project[getPropertyNameForFacet(facetName.name)] = intersectionValues.pop()
+                    project[getPropertyNameForFacet(facetName.name,"other")] = intersectionValues.join("; ")
+                }
+            }
+            else
+                log.error ("No facet config found for layer $layer.")
+        }
     }
 
     private addProjectGeo(Map project) {

@@ -428,6 +428,7 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
 }
 
 spatial.intersectionThreshold = 0.05
+spatial.intersectionAreaThresholdInHectare = 10_000
 
 homepageIdx {
     elasticsearch   {
@@ -493,17 +494,11 @@ app {
                 mvg = '/data/nvis_grids/mvg'
                 mvs = '/data/nvis_grids/mvs'
             }
+            checkForBoundaryIntersectionInLayers = [ "cl927", "cl11163" ]
         }
+        displayNames = [elect: "Electorate(s)", state: "State(s)"]
     }
 }
-
-site.check.boundary.layers = [
-        'cl927',
-        'cl10946',
-        'cl10921',
-        'cl2112'
-]
-
 /******************************************************************************\
  *  EXTERNAL SERVERS
  \******************************************************************************/

@@ -120,7 +120,10 @@ class Project {
 
     List<OutputTarget> outputTargets
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
+    /** Container to allow program config overrides for an individual Project */
+    Map config
+
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
@@ -234,6 +237,7 @@ class Project {
         isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
+        config nullable: true
         managementUnitId nullable: true
         mapDisplays nullable: true
         terminationReason nullable: true

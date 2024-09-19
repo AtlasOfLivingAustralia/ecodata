@@ -58,8 +58,14 @@ class ManagementUnitController {
                 respond null
             }
             else {
+                String originalName = mu.name
                 bindData(mu, request.JSON, [include:ManagementUnit.bindingProperties])
-                respond managementUnitService.save(mu)
+                ManagementUnit savedMu = managementUnitService.save(mu)
+                // Update the project search index if the program name has changed.
+                if (originalName != savedMu.name) {
+                    elasticSearchService.reindexProjectsWithCriteriaAsync(managementUnitId:id)
+                }
+                respond savedMu
             }
         }
     }

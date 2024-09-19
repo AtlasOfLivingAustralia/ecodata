@@ -161,6 +161,15 @@ class AdminController {
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
     }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def reindexProjects() {
+        Map params = request.JSON
+        int count = elasticSearchService.indexProjectsWithCriteria(params)
+        Map resp = [indexedCount:count]
+        render resp as JSON
+    }
+
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def clearMetadataCache() {
         // clear any cached external config
@@ -229,9 +238,10 @@ class AdminController {
                             log.info("Ignoring site ${site.siteId} due to no associated projects")
                             return
                         }
+                        List fids = metadataService.getSpatialLayerIdsToIntersectForProjects(site.projects)
                         def centroid = site.extent?.geometry?.centre
                         if (!centroid) {
-                            def updatedSite = siteService.populateLocationMetadataForSite(site)
+                            def updatedSite = siteService.populateLocationMetadataForSite(site, fids)
                             siteService.update([extent: updatedSite.extent], site.siteId, false)
                             total++
                             if(total > 0 && (total % 200) == 0) {
@@ -256,18 +266,28 @@ class AdminController {
 
     @AlaSecured(["ROLE_ADMIN"])
     def updateSiteLocationMetadata() {
+        def dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+        def defaultStartDate = "2018-01-01"
+        def timeZoneUTC = TimeZone.getTimeZone("UTC")
+        dateFormat.setTimeZone(timeZoneUTC)
+        def isMERIT = params.getBoolean('isMERIT', true)
+        Date startDate = params.getDate("startDate", ["yyyy", "yyyy-MM-dd"]) ?: dateFormat.parse(defaultStartDate)
+        List siteIds = params.get("siteId")?.split(",")
         def code = 'success'
         def total = 0
         def offset = 0
         def batchSize = 100
-        def isMERIT = params.getBoolean('isMERIT', true)
         def startTime = System.currentTimeMillis(), finishTime, startInterimTime, endInterimTime, batchStartTime, batchEndTime
-        List<String> fids = grailsApplication.config.getProperty('site.check.boundary.layers', List<String>)
+        List<String> defaultFids = metadataService.getSpatialLayerIdsToIntersect()
+        log.debug("Number of fids to intersect: ${defaultFids.size()}; they are - ${defaultFids}")
         def totalSites
         List projectIds = []
-        if (isMERIT) {
+        if (siteIds) {
+            totalSites = siteIds.size()
+        }
+        else if (isMERIT) {
             projectIds = projectService.getAllMERITProjectIds()
-            totalSites = Site.countByStatusAndProjectsInList('active', projectIds)
+            totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThan('active', projectIds, startDate)
         }
         else {
             totalSites = Site.countByStatus('active')
@@ -277,8 +297,13 @@ class AdminController {
         while (count == batchSize) {
             batchStartTime = startInterimTime = System.currentTimeMillis()
             def sites
-            if (isMERIT) {
-                sites = Site.findAllByProjectsInListAndStatus(projectIds, 'active', [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+            if (siteIds) {
+                sites = Site.findAllBySiteIdInList(siteIds, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
+            }
+            else if (isMERIT) {
+                sites = Site.findAllByProjectsInListAndStatusAndDateCreatedGreaterThan(projectIds, 'active', startDate, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
                     siteService.toMap(it, 'flat')
                 }
             }
@@ -304,6 +329,9 @@ class AdminController {
                             log.debug("Ignoring site ${site.siteId} due to no associated projects or no extent")
                             return
                         }
+                        def projectsOfSite = site.projects
+                        List hubIds = projectService.findHubIdOfProjects(projectsOfSite)
+                        def fids = hubIds.size() == 1 ? metadataService.getSpatialLayerIdsToIntersect(hubIds[0]) : defaultFids
                         siteService.populateLocationMetadataForSite(site, fids)
                         endInterimTime = System.currentTimeMillis()
                         log.debug("Time taken to update metadata ${site.siteId}: ${endInterimTime - startInterimTime} ms")
@@ -518,6 +546,17 @@ class AdminController {
         render reports as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def indexProjectDependencies() {
+        if(params.projectId){
+            List projects = params.projectId.split(',')?.toList()
+            elasticSearchService.indexDependenciesOfProjects( projects )
+            render text: [message: 'indexing completed'] as JSON, contentType: 'application/json'
+        } else {
+            render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
+        }
+    }
+
     /**
      * a test function to index a project.
      * @return
@@ -533,7 +572,7 @@ class AdminController {
                         Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
                         elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
                     } catch (Exception e) {
-                        log.error("Unable to index projewt: " + project?.projectId, e)
+                        log.error("Unable to index project: " + project?.projectId, e)
                         e.printStackTrace();
                     }
                 }

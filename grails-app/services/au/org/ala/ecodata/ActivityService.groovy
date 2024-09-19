@@ -2,7 +2,9 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
-import com.mongodb.BasicDBObject
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.Filters
+import org.bson.conversions.Bson
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import javax.persistence.PessimisticLockException
@@ -83,11 +85,13 @@ class ActivityService {
      * @param action the action to be performed on each Activity.
      * @return
      */
-    def doWithAllActivities(Closure action) {
+    def doWithAllActivities(Closure action, List<Bson> filters = [], int batchSize = 100) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
-        def collection = Activity.getCollection()
-        BasicDBObject query = new BasicDBObject('status', ACTIVE)
-        def results = collection.find(query).batchSize(100)
+        MongoCollection collection = Activity.getCollection()
+        Bson query = Filters.eq("status", ACTIVE)
+        filters.add(query)
+        query = Filters.and(filters)
+        def results = collection.find(query).batchSize(batchSize)
 
         results.each { dbObject ->
             action.call(dbObject)

@@ -1,12 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.graphql.mappers.ActivityGraphQLMapper
-import grails.util.Holders
-import graphql.schema.DataFetcher
-import graphql.schema.DataFetchingEnvironment
 import org.bson.types.ObjectId
-import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
-
 /**
  * Currently this holds both activities and assessments.
  */
@@ -44,6 +39,7 @@ class Activity {
     }
 
     static hasMany = [externalIds:ExternalId]
+    static embedded = ['externalIds']
 
     ObjectId id
     String activityId
