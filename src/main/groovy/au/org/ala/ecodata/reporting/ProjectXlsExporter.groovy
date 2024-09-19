@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.ActivityForm
 import au.org.ala.ecodata.DataDescription
 import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.ManagementUnit
@@ -499,8 +500,17 @@ class ProjectXlsExporter extends ProjectExporter {
                 Map dataSets = [:]
                 dataValue.each{k, v -> dataSets.put(k,v)}
 
-                // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
+                if (dataSets?.protocol){
+                    if (dataSets.protocol == "other") {
+                        dataSets["protocol"] = "other"
+                    } else {
+                        ActivityForm protocolForm = ActivityForm.findByExternalId(dataSets.protocol as String)
+                        dataSets["protocol"] = protocolForm?.name
+                    }
 
+                }
+
+                // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
                 if (dataSets?.investmentPriorities){
                     dataSets["investmentPriorities"] = dataValue?.investmentPriorities?.join(", ")
                 }
