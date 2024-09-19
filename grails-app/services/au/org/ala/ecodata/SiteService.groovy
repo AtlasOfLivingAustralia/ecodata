@@ -256,8 +256,8 @@ class SiteService {
     }
 
     def getSimpleProjectArea(projectSiteId) {
-        def threshold = grailsApplication.config.getProperty('biocollect.projectArea.simplificationThreshold')
-        def tolerance = grailsApplication.config.getProperty('biocollect.projectArea.simplificationTolerance')
+        def threshold = grailsApplication.config.getProperty('biocollect.projectArea.simplificationThreshold', 10000)
+        def tolerance = grailsApplication.config.getProperty('biocollect.projectArea.simplificationTolerance', 0.1)
         log.info("Threshhold ${threshold} Tolerance ${tolerance}")
 
         def site = get(projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
@@ -268,9 +268,9 @@ class SiteService {
             if (projectArea?.coordinates != null) {
                 def coordsSize = projectArea.coordinates.flatten().size()
                 if (coordsSize > threshold) {
-                    GeometryUtils.simplify(projectArea, tolerance)
+                    site.geoIndex = GeometryUtils.simplify(projectArea, tolerance)
                 } else {
-                    projectArea
+                    site.geoIndex = projectArea
                 }
             }
         }

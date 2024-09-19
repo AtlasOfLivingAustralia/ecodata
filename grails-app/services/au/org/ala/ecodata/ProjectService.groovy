@@ -746,7 +746,6 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    @Scheduled(cron = "0 0 * * 0")
     Map importProjectsFromSciStarter() {
         int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0, page = 1
         JsonSlurper slurper = new JsonSlurper()
