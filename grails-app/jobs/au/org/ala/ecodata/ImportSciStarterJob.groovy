@@ -10,7 +10,7 @@ class ImportSciStarterJob {
     static triggers = {
         Boolean enabled = grailsApplication.config.getProperty("sciStarter.importEnabled", Boolean, true)
         if (enabled) {
-            cron name: "every sunday", cronExpression: "0 0 * * 0"
+            cron name: "every sunday", cronExpression: "0 0 0 ? * 1/7 *"
         }
     }
 
