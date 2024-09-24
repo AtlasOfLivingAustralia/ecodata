@@ -86,8 +86,9 @@ class SciStarterConverter {
                             [
                                     'easy': 'Easy',
                                     'medium': 'Medium',
-                                    'difficult': 'Hard'
-                            ][props.difficulty.label.toLowerCase()]
+                                    'difficult': 'Hard',
+                                    'unknown': null
+                            ][props.difficulty ? props.difficulty.label.toLowerCase() : 'unknown']
                         }
                 ],
                 'begin'  : [
