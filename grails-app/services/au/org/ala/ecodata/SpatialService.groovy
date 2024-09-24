@@ -146,9 +146,7 @@ class SpatialService {
             }
             else {
                 def response = getPidFidIntersection(url, fid, pid)
-                if (response instanceof List) {
-                    result[fid] = response
-                }
+                result[fid] = response
             }
         }
 
@@ -161,8 +159,18 @@ class SpatialService {
     }
 
     @Cacheable(value = "spatialPidFidIntersection")
-    def getPidFidIntersection(String url, String fid, String pid) {
-        webService.getJson(url + fid + "/" + pid)
+    List getPidFidIntersection(String url, String fid, String pid) {
+        def intersections = webService.getJson(url + fid + "/" + pid)
+        if (intersections instanceof List) {
+            List intersectionsList = intersections.collect { obj ->
+                new HashMap(obj)
+            }
+            return intersectionsList
+        }
+        else {
+            log.info("No intersection for pid $pid and fid $fid")
+            return []
+        }
     }
 
     private List filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
@@ -180,8 +188,12 @@ class SpatialService {
     private List filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
         List checkForBoundaryIntersectionInLayers = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
         if (!mainGeometry.isValid()) {
-            log.info("Main geometry invalid. Cannot check intersection is near boundary.")
-            return [response, [:]]
+            // fix invalid geometry
+            mainGeometry = mainGeometry.buffer(0)
+            if (!mainGeometry.isValid()) {
+                log.info("Main geometry invalid. Cannot check intersection is near boundary.")
+                return [response, [:]]
+            }
         }
         Map filteredResponse = [:]
         Map intersectionAreaByFacets = [:].withDefault { [:] }
@@ -200,22 +212,27 @@ class SpatialService {
                         long end = System.currentTimeMillis()
                         log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end - start}ms")
 
-                        if (boundaryGeometry.isValid()) {
-                            // check if intersection should be ignored
-                            start = end
-                            if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
-                                filteredResponse[fid].add(obj)
-                                def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
-                                intersectionAreaByFacets[fid][obj.name] = area
-                            } else {
-                                log.debug("Filtered out ${obj.fieldname}(${fid}) - ${obj.name}")
+                        if (!boundaryGeometry.isValid()) {
+                            // fix invalid geometry
+                            boundaryGeometry = boundaryGeometry.buffer(0)
+                            if (!boundaryGeometry.isValid()) {
+                                log.debug("Cannot check object $boundaryPid($fid) is near main geomerty")
+                                return
                             }
-
-                            end = System.currentTimeMillis()
-                            log.debug("Time taken to check intersection for pid $boundaryPid: ${end - start}ms")
-                        } else {
-                            log.debug("Cannot check object $boundaryPid($fid) is near main geomerty")
                         }
+
+                        // check if intersection should be ignored
+                        start = end
+                        if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
+                            filteredResponse[fid].add(obj)
+                            def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
+                            intersectionAreaByFacets[fid][obj.name] = area
+                        } else {
+                            log.debug("Filtered out ${obj.fieldname}(${fid}) - ${obj.name}")
+                        }
+
+                        end = System.currentTimeMillis()
+                        log.debug("Time taken to check intersection for pid $boundaryPid: ${end - start}ms")
                     }
                 }
             } else {
@@ -334,14 +351,15 @@ class SpatialService {
     @Cacheable(value="spatialGeoJsonPid", key= {pid})
     Map getGeoJsonForPid (String pid) {
         log.debug("Cache miss for getGeoJsonForPid($pid)")
-        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/geojson/$pid"
-        Map resp = webService.getJson(url)
+        // spatial returning invalid polygons when using geojson endpoint
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/wkt/$pid"
+        def resp = webService.get(url)
 
-        if (resp.error) {
+        if (resp instanceof Map) {
             return null
         }
 
-        deepCopy(resp)
+        GeometryUtils.wktToGeoJson(resp)
     }
 
     /**
