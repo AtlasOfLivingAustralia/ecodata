@@ -762,32 +762,35 @@ class ProjectService {
                 if (data.entities.size() == 0) break
 
                 data.entities.eachWithIndex { project, index ->
-                    Project existingProject = Project.findByExternalIdAndIsSciStarter(project.legacy_id.toString(), true)
+                    try {
+                        Project existingProject = Project.findByExternalIdAndIsSciStarter(project.legacy_id.toString(), true)
 
-                    if (project.origin == 'atlasoflivingaustralia') {
-                        // ignore projects SciStarter imported from BioCollect
-                        log.warn("Ignoring ALA project ${project.name} - ${project.id}")
-                        ignoredProjects++
-                    } else {
-                        // map properties from SciStarter to Biocollect
-                        Map transformedProject = SciStarterConverter.convert(project)
-                        if (!existingProject) {
-                            // create project & document & site & organisation
-                            createSciStarterProject(transformedProject, project)
-                            log.info("Creating ${project.name} in ecodata")
-
-                            createdProjects++
+                        if (project.origin == 'atlasoflivingaustralia') {
+                            // ignore projects SciStarter imported from BioCollect
+                            log.info("Ignoring ALA project ${project.name} - ${project.id}")
+                            ignoredProjects++
                         } else {
-                            // update a project just in case something has changed.
-                            updateSciStarterProject(transformedProject, existingProject)
+                            // map properties from SciStarter to Biocollect
+                            Map transformedProject = SciStarterConverter.convert(project)
+                            if (!existingProject) {
+                                // create project & document & site & organisation
+                                createSciStarterProject(transformedProject, project)
+                                log.info("Creating ${project.name} in ecodata")
 
-                            log.info("Updating ${existingProject.name} ${existingProject.projectId}.")
-                            updatedProjects++
+                                createdProjects++
+                            } else {
+                                // update a project just in case something has changed.
+                                updateSciStarterProject(transformedProject, existingProject)
+
+                                log.info("Updating ${existingProject.name} ${existingProject.projectId}.")
+                                updatedProjects++
+                            }
                         }
+                    }  catch (Exception e) {
+                        log.error("Error processing project - ${project.name}. Ignoring it. ${e.message}", e);
                     }
                 }
-
-                page++;
+                page++
             }
 
             log.info("Number of created projects ${createdProjects}. Number of ignored projects ${ignoredProjects}. Number of projects updated ${updatedProjects}.")

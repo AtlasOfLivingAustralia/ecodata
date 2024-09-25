@@ -257,7 +257,7 @@ class SiteService {
 
     def getSimpleProjectArea(projectSiteId) {
         def threshold = grailsApplication.config.getProperty('biocollect.projectArea.simplificationThreshold', 10000)
-        def tolerance = grailsApplication.config.getProperty('biocollect.projectArea.simplificationTolerance', 0.1)
+        def tolerance = grailsApplication.config.getProperty('biocollect.projectArea.simplificationTolerance', 0.0001)
         log.info("Threshhold ${threshold} Tolerance ${tolerance}")
 
         def site = get(projectSiteId, [SiteService.FLAT, SiteService.INDEXING])

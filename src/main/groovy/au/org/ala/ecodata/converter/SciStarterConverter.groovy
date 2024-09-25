@@ -132,7 +132,7 @@ class SciStarterConverter {
                         }
                 ],
                 "origin"      : "origin",
-                "country"     : [ // TODO: check topic mapping parity
+                "country"     : [
                         name       : "countries",
                         'transform': { props, target ->
                             List countries = Holders.grailsApplication.config.getProperty('countries', List)
@@ -162,7 +162,9 @@ class SciStarterConverter {
                                     UN_region.toLowerCase() == region.toLowerCase()
                                 }
 
-                                if (matchedRegion) matchedRegions.push(matchedRegion)
+                                if (matchedRegion) {
+                                    matchedRegions.push(matchedRegion)
+                                }
                             }
 
                             if (matchedRegions.size()) {

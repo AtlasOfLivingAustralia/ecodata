@@ -1043,7 +1043,7 @@ projectActivity.notifyOnChange=true
 biocollect.baseURL="https://biocollect.ala.org.au"
 biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
 biocollect.projectArea.simplificationThreshold=10000
-biocollect.projectArea.simplificationTolerance=0.1
+biocollect.projectArea.simplificationTolerance=0.0001
 
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM
