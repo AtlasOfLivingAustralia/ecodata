@@ -68,11 +68,12 @@ class SpatialService {
         } else {
             geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
             GeometryCollection geometryCollection = (GeometryCollection)geo
+            Geometry correctGeometry = geometryCollection
             if(!geometryCollection.isValid()) {
-                geometryCollection = geometryCollection.buffer(0)
+                correctGeometry = geometryCollection.buffer(0)
             }
 
-            Geometry convexHullGeometry = geometryCollection.union().convexHull()
+            Geometry convexHullGeometry = correctGeometry.union().convexHull()
             wkt = convexHullGeometry.toText()
         }
 
