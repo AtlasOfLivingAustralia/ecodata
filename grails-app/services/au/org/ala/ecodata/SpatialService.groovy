@@ -56,14 +56,22 @@ class SpatialService {
         if (geoJson.type != 'GeometryCollection') {
             int length = geoJson?.toString().size()
             if (length > threshold) {
+                geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
                 geoJson = GeometryUtils.geometryToGeoJsonMap(geo.getEnvelope())
             }
 
             geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
+            if (!geo.isValid()) {
+                geo = geo.buffer(0)
+            }
             wkt = geo.toText()
         } else {
             geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
             GeometryCollection geometryCollection = (GeometryCollection)geo
+            if(!geometryCollection.isValid()) {
+                geometryCollection = geometryCollection.buffer(0)
+            }
+
             Geometry convexHullGeometry = geometryCollection.union().convexHull()
             wkt = convexHullGeometry.toText()
         }
@@ -308,13 +316,13 @@ class SpatialService {
 
     @Cacheable(value = "spatialSearchObject", key = { query.toUpperCase() + fids.toUpperCase() })
     Map searchObject(String query, String fids = "") {
-        query = URLEncoder.encode(query, 'UTF-8').replaceAll('\\+', '%20')
-        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/search?q=$query&include=$fids"
+        String urlquery = URLEncoder.encode(query, 'UTF-8').replaceAll('\\+', '%20')
+        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/search?q=$urlquery&include=$fids"
         def resp = webService.getJson(url)
         if ((resp instanceof  Map) || !resp)
-            return
+            return [:]
 
-        def result = resp?.find { it.name?.toUpperCase() == query?.toUpperCase() }
+        def result = resp?.find { it.name?.toUpperCase() == query?.toUpperCase() } ?: [:]
         deepCopy(result)
     }
 
