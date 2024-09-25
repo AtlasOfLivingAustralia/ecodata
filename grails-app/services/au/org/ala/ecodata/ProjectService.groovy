@@ -4,7 +4,7 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
-import org.codehaus.jackson.map.ObjectMapper
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -768,6 +768,17 @@ class ProjectService {
         }
     }
 
+    Map getSciStarterProjectsPage(JsonSlurper slurper, int page = 1) {
+        String baseUrl = grailsApplication.config.getProperty("scistarter.baseUrl")
+        String finderUrl = grailsApplication.config.getProperty("scistarter.finderUrl")
+        String apiKey = grailsApplication.config.getProperty("scistarter.apiKey")
+        String url = "${baseUrl}${finderUrl}?format=json&key=${apiKey}&page=${page}"
+
+        String data = webService.get(url, false)
+
+        return slurper.parseText(data)
+    }
+
     /**
      * Import SciStarter projects to Biocollect. Import script does the following.
      * 1. gets the list of projects and contacts SciStarter for more details on a project
@@ -776,50 +787,51 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    Integer importProjectsFromSciStarter() {
-        int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0
+    Map importProjectsFromSciStarter() {
+        int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0, page = 1
+        JsonSlurper slurper = new JsonSlurper()
+
         log.info("Starting SciStarter import")
         try {
-            JsonSlurper jsonSlurper = new JsonSlurper()
-            String sciStarterProjectUrl
-            // list all SciStarter projects
-            List projects = getSciStarterProjectsFromFinder()
-            projects?.eachWithIndex { pProperties, index ->
-                Map transformedProject
-                Map project = pProperties
-                if (project && project.title && project.id) {
-                    Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
-                    // get more details about the project
+
+            while(true) {
+                // list SciStarter projects for the current page
+                Map data = getSciStarterProjectsPage(slurper, page)
+                log.info("-- PAGE ${page}/${Math.round(data.total / 10)} SCISTARTER --")
+
+                // Break the loop if there are no more projects left to import
+                if (data.entities.size() == 0) break
+
+                data.entities.eachWithIndex { project, index ->
                     try {
-                        sciStarterProjectUrl = "${grailsApplication.config.getProperty('scistarter.baseUrl')}${grailsApplication.config.getProperty('scistarter.projectUrl')}/${project.id}?key=${grailsApplication.config.getProperty('scistarter.apiKey')}"
-                        String text = webService.get(sciStarterProjectUrl, false);
-                        if (text instanceof String) {
-                            Map projectDetails = jsonSlurper.parseText(text)
-                            if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
-                                // ignore projects SciStarter imported from Biocollect
-                                log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
-                                ignoredProjects++
+                        Project existingProject = Project.findByExternalIdAndIsSciStarter(project.legacy_id.toString(), true)
+
+                        if (project.origin == 'atlasoflivingaustralia') {
+                            // ignore projects SciStarter imported from BioCollect
+                            log.info("Ignoring ALA project ${project.name} - ${project.id}")
+                            ignoredProjects++
+                        } else {
+                            // map properties from SciStarter to Biocollect
+                            Map transformedProject = SciStarterConverter.convert(project)
+                            if (!existingProject) {
+                                // create project & document & site & organisation
+                                createSciStarterProject(transformedProject, project)
+                                log.info("Creating ${project.name} in ecodata")
+
+                                createdProjects++
                             } else {
-                                projectDetails << project
-                                // map properties from SciStarter to Biocollect
-                                transformedProject = SciStarterConverter.convert(projectDetails)
-                                if (!importedSciStarterProject) {
-                                    // create project & document & site & organisation
-                                    createSciStarterProject(transformedProject, projectDetails)
-                                    createdProjects++
-                                } else {
-                                    // update a project just in case something has changed.
-                                    updateSciStarterProject(transformedProject, importedSciStarterProject)
-                                    log.info("Updating ${importedSciStarterProject.name} ${importedSciStarterProject.projectId}.")
-                                    updatedProjects++
-                                }
+                                // update a project just in case something has changed.
+                                updateSciStarterProject(transformedProject, existingProject)
+
+                                log.info("Updating ${existingProject.name} ${existingProject.projectId}.")
+                                updatedProjects++
                             }
                         }
-                    } catch (Exception e) {
-                        log.error("Error processing project - ${sciStarterProjectUrl}. Ignoring it. ${e.message}", e);
-                        ignoredProjects++
+                    }  catch (Exception e) {
+                        log.error("Error processing project - ${project.name}. Ignoring it. ${e.message}", e);
                     }
                 }
+                page++
             }
 
             log.info("Number of created projects ${createdProjects}. Number of ignored projects ${ignoredProjects}. Number of projects updated ${updatedProjects}.")
@@ -830,23 +842,7 @@ class ProjectService {
         }
 
         log.info("Completed SciStarter import")
-        createdProjects
-    }
-
-    /**
-     * Get the entire project list from SciStarter
-     * @return
-     * @throws SocketTimeoutException
-     * @throws Exception
-     */
-    List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception {
-        String scistarterFinderUrl = "${grailsApplication.config.getProperty('scistarter.baseUrl')}${grailsApplication.config.getProperty('scistarter.finderUrl')}?format=json&q="
-        String responseText = webService.get(scistarterFinderUrl, false)
-        if (responseText instanceof String) {
-            ObjectMapper mapper = new ObjectMapper()
-            Map response = mapper.readValue(responseText, Map.class)
-            return response.results
-        }
+        [created: createdProjects, updated: updatedProjects, ignored: ignoredProjects]
     }
 
     /**
@@ -927,16 +923,14 @@ class ProjectService {
     Map createSciStarterSites(Map project) {
         Map result = [siteIds: null]
         List sites = []
-        if (project.regions?.size()) {
+        if (project.regions) {
             // convert region to site
-            project.regions.each { region ->
-                Map site = SciStarterConverter.siteMapping(region)
-                // only add valid geojson objects
-                if (site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())) {
-                    Map createdSite = siteService.create(site)
-                    if (createdSite.siteId) {
-                        sites.push(createdSite.siteId)
-                    }
+            Map site = SciStarterConverter.siteMapping(project)
+            // only add valid geojson objects
+            if (site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())) {
+                Map createdSite = siteService.create(site)
+                if (createdSite.siteId) {
+                    sites.push(createdSite.siteId)
                 }
             }
 
