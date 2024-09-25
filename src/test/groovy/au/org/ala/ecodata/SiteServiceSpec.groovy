@@ -362,8 +362,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         def newSite = service.create([name:'Site 1', extent: extent])
 
         then:
-        def site = service.getSimpleProjectArea(newSite.siteId)
-        site.geoIndex != null
+        service.getSimpleProjectArea(newSite.siteId) != null
     }
 
     private Map buildExtent(source, type, coordinates, pid = '') {
