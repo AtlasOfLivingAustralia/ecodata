@@ -374,8 +374,8 @@ class ProjectController {
     }
 
     def importProjectsFromSciStarter(){
-        Integer count = projectService.importProjectsFromSciStarter()?:0
-        render(text: [count: count] as JSON, contentType: 'application/json');
+        Map counts = projectService.importProjectsFromSciStarter()
+        render(counts as JSON, contentType: 'application/json');
     }
 
     /**
