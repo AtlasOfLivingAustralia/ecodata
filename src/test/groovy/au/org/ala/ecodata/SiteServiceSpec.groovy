@@ -350,6 +350,22 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
 
     }
 
+    def "Site service returns simplified geometry for siteId"() {
+        when:
+        def coordinates = [[148.260498046875, -37.26530995561874], [148.260498046875, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.260498046875, -37.26530995561874]]
+        def extent = [
+                geometry: [
+                        type       : "Polygon",
+                        coordinates: coordinates
+                ]
+        ]
+        def newSite = service.create([name:'Site 1', extent: extent])
+
+        then:
+        def site = service.getSimpleProjectArea(newSite.siteId)
+        site.geoIndex != null
+    }
+
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]
     }
