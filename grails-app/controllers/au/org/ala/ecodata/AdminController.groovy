@@ -272,7 +272,8 @@ class AdminController {
         dateFormat.setTimeZone(timeZoneUTC)
         def isMERIT = params.getBoolean('isMERIT', true)
         Date startDate = params.getDate("startDate", ["yyyy", "yyyy-MM-dd"]) ?: dateFormat.parse(defaultStartDate)
-        List siteIds = params.get("siteId")?.split(",")
+        List siteIds = params.get("siteId")?.split(",") ?: []
+        List projectIds = params.get("projectId")?.split(",") ?: []
         def code = 'success'
         def total = 0
         def offset = 0
@@ -281,8 +282,14 @@ class AdminController {
         List<String> defaultFids = metadataService.getSpatialLayerIdsToIntersect()
         log.debug("Number of fids to intersect: ${defaultFids.size()}; they are - ${defaultFids}")
         def totalSites
-        List projectIds = []
-        if (siteIds) {
+        if (projectIds) {
+            projectIds.each {
+                siteIds.addAll(siteService.findAllSiteIdsForProject(it))
+            }
+
+            totalSites = siteIds.size()
+        }
+        else if (siteIds) {
             totalSites = siteIds.size()
         }
         else if (isMERIT) {
