@@ -708,7 +708,7 @@ class SiteService {
      */
     def mergeIntersectionsArea(Map site, Map intersectionsAreaByFacets) {
         Map geometry = site.extent.geometry
-        List hubs = projectService.findHubIdOfProjects(site.projects)
+        List hubs = projectService.findHubIdFromProjectsOrCurrentHub(site.projects)
         String hubId = hubs?.size() == 1 ? hubs[0] : null
         Map existingIntersectionsArea = geometry[SpatialService.INTERSECTION_AREA] = geometry[SpatialService.INTERSECTION_AREA] ?: [:]
         intersectionsAreaByFacets?.each { String layer, Map nameAndValue ->
@@ -1061,5 +1061,19 @@ class SiteService {
 
     List filterSitesByPurposeIsPlanning (List<Map> sites) {
         sites?.findAll { getPurpose(it) == Site.PLANNING_SITE_CODE }
+    }
+
+    /**
+     * Check if the intersection area is calculated for all provided layers
+     * @param site
+     * @param fids
+     * @return
+     */
+    Boolean areIntersectionCalculatedForAllLayers(def site){
+        List fids = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
+        fids?.every { fid ->
+            String group = metadataService.getGeographicFacetConfig(fid, null)?.name
+            site.extent?.geometry?[SpatialService.INTERSECTION_AREA]?[group]?[fid] != null
+        }
     }
 }

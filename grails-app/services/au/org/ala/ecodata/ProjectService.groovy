@@ -51,6 +51,7 @@ class ProjectService {
     ActivityFormService activityFormService
     RecordService recordService
     LockService lockService
+    HubService hubService
 
   /*  def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -1224,6 +1225,21 @@ class ProjectService {
             projections {
                 property('hubId')
             }
+        }
+    }
+
+    /**
+     * Find hubs from project or use hubId query parameter
+     * @param projects
+     * @return
+     */
+    def findHubIdFromProjectsOrCurrentHub (List projects) {
+        if (projects) {
+            return findHubIdOfProjects(projects)
+        }
+        else {
+            def currentHub = hubService.getCurrentHub()
+            return currentHub ? [currentHub.hubId] : []
         }
     }
 
