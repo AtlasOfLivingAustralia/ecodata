@@ -360,7 +360,7 @@ class AdminController {
                         }
                     }
                     catch (Exception e) {
-                        log.error("Unable to complete the operation ", e)
+                        log.error("Unable to complete the operation for siteId - ${site.siteId} ", e)
                         code = "error"
                     }
                 }
