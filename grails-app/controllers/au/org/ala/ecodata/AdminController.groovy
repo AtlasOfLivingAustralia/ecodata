@@ -333,8 +333,8 @@ class AdminController {
                             log.info("${total+1} or ${(total+1)*100/totalSites} % sites updated in db..")
                         }
 
-                        if (!site.extent) {
-                            log.debug("Ignoring site ${site.siteId} due to no extent")
+                        if (!site.extent?.geometry) {
+                            log.debug("Ignoring site ${site.siteId} due to no extent/geometry")
                             return
                         }
                         // management unit site does not have any projects
