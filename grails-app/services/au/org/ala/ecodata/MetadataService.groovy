@@ -490,7 +490,7 @@ class MetadataService {
      * @return
      */
     List<String> getSpatialLayerIdsToIntersectForProjects(List projectIds = []) {
-        List hubIds = projectService.findHubIdOfProjects(projectIds)
+        List hubIds = projectService.findHubIdFromProjectsOrCurrentHub(projectIds)
         hubIds.size() == 1 ? getSpatialLayerIdsToIntersect(hubIds[0]) : getSpatialLayerIdsToIntersect()
     }
 
