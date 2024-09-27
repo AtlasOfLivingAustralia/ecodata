@@ -339,6 +339,19 @@ class ProjectXlsExporter extends ProjectExporter {
             else
                 log.error ("No facet config found for layer $layer.")
         }
+
+        if (project.geographicInfo) {
+            // load from manually assigned electorates/states
+            if (!project.containsKey(getPropertyNameForFacet("elect"))) {
+                project[getPropertyNameForFacet("elect")] = project.geographicInfo.primaryElectorate
+                project[getPropertyNameForFacet("elect","other")] = project.geographicInfo.otherElectorates?.join("; ")
+            }
+
+            if (!project.containsKey(getPropertyNameForFacet("state"))) {
+                project[getPropertyNameForFacet("state")] = project.geographicInfo.primaryState
+                project[getPropertyNameForFacet("state","other")] = project.geographicInfo.otherStates?.join("; ")
+            }
+        }
     }
 
     private addProjectGeo(Map project) {
