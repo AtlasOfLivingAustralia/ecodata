@@ -431,9 +431,11 @@ class ProjectControllerSpec extends Specification implements ControllerUnitTest<
         controller.importProjectsFromSciStarter()
 
         then:
-        1  * projectService.importProjectsFromSciStarter() >> 1
+        1  * projectService.importProjectsFromSciStarter() >> [created: 1, updated: 2, skipped: 3]
         response.status == HttpStatus.SC_OK
-        response.getJson().count == 1
+        response.getJson().created == 1
+        response.getJson().updated == 2
+        response.getJson().skipped == 3
     }
 
     void "Download project Metrics - without params"() {

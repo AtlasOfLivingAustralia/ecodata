@@ -14,7 +14,7 @@ class SciStarterConverterSpec extends Specification implements GrailsUnitTest {
                 countries:[], uNRegions: [], biocollect: [ scienceType: [] ]])
 
 
-        Map props = [difficulty: [1,2, 3, 'ma', 'medium', 'Easy']]
+        Map props = [difficulty: [value: 2, label: 'Medium']]
 
         when:
         def result = SciStarterConverter.convert(props, [:])
@@ -23,7 +23,7 @@ class SciStarterConverterSpec extends Specification implements GrailsUnitTest {
         result.difficulty == "Medium"
 
         when:
-        result = SciStarterConverter.convert([difficulty: 'Easy'])
+        result = SciStarterConverter.convert([difficulty: [value: 1, label: 'Easy']])
 
         then:
         result.difficulty == "Easy"

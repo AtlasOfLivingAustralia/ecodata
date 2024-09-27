@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.ActivityForm
 import au.org.ala.ecodata.DataDescription
 import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.ManagementUnit
@@ -160,7 +161,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
 
-    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retainedX']
+    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retained']
     List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
 
     OutputModelProcessor processor = new OutputModelProcessor()
@@ -512,8 +513,17 @@ class ProjectXlsExporter extends ProjectExporter {
                 Map dataSets = [:]
                 dataValue.each{k, v -> dataSets.put(k,v)}
 
-                // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
+                if (dataSets?.protocol){
+                    if (dataSets.protocol == "other") {
+                        dataSets["protocol"] = "other"
+                    } else {
+                        ActivityForm protocolForm = ActivityForm.findByExternalId(dataSets.protocol as String)
+                        dataSets["protocol"] = protocolForm?.name
+                    }
 
+                }
+
+                // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
                 if (dataSets?.investmentPriorities){
                     dataSets["investmentPriorities"] = dataValue?.investmentPriorities?.join(", ")
                 }
