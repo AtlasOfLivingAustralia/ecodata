@@ -18,6 +18,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.referencing.operation.MathTransform
 
 import java.awt.geom.Point2D
+import java.nio.charset.StandardCharsets
+
 /**
  * Helper class for working with site geometry.
  */
@@ -29,11 +31,13 @@ class GeometryUtils {
 
     static Map wktToGeoJson(String wkt, int decimals = 20) {
         WKTReader wktReader = new WKTReader()
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
         def reader = new StringReader(wkt)
         Geometry geom = wktReader.read(reader)
-        String geoJSON = new GeometryJSON(decimals).toString(geom)
+        new GeometryJSON(decimals).write(geom, writer)
         ObjectMapper mapper = new ObjectMapper()
-        return mapper.readValue(geoJSON, Map)
+        return mapper.readValue(outputStream.toByteArray(), Map)
     }
 
     static String wktToMultiPolygonWkt(String wkt) {
