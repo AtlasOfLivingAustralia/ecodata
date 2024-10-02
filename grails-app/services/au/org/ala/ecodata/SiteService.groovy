@@ -275,7 +275,7 @@ class SiteService {
                 }
             }
         } catch (Exception e) {
-            log.info("Unable to get simplified project area geometry (site ${site.siteId}")
+            log.info("Unable to get simplified project area geometry (site ${site.siteId})", e)
         }
 
         // remove extent to not avoid total fields limit in ES
