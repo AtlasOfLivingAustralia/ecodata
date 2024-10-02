@@ -29,7 +29,8 @@ class GeometryUtils {
 
     static Map wktToGeoJson(String wkt, int decimals = 20) {
         WKTReader wktReader = new WKTReader()
-        Geometry geom = wktReader.read(wkt)
+        def reader = new StringReader(wkt)
+        Geometry geom = wktReader.read(reader)
         String geoJSON = new GeometryJSON(decimals).toString(geom)
         ObjectMapper mapper = new ObjectMapper()
         return mapper.readValue(geoJSON, Map)
