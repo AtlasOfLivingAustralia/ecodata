@@ -278,6 +278,8 @@ class SiteService {
             log.info("Unable to get simplified project area geometry (site ${site.siteId}")
         }
 
+        // remove extent to not avoid total fields limit in ES
+        site?.remove('extent')
         site
     }
 
