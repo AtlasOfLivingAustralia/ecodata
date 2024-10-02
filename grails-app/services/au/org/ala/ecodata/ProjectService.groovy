@@ -881,7 +881,7 @@ class ProjectService {
      * @return
      */
     Map createSciStarterSites(Map project) {
-        Map result = [siteIds: []]
+        Map result = [siteIds: null]
         List sites = []
         if (project.regions) {
             // convert region to site
@@ -895,6 +895,12 @@ class ProjectService {
             }
 
             result.siteIds = sites
+        } else {
+            // if no region, then create world extent.
+            String siteId = getWorldExtent()
+            if (siteId) {
+                result.siteIds = [siteId]
+            }
         }
 
         result
@@ -969,6 +975,18 @@ class ProjectService {
             ]
             return organisationService.create(orgProp, false)
         }
+    }
+
+    /**
+     * World extent is used as project area of all SciStarter Projects without project area. This function
+     * creates a new world extent every time it is called.
+     * @return - siteId - 'abcd-sds'
+     */
+    String getWorldExtent() {
+        // use JSON.parse since JSONSlurper converts numbers to BigDecimal which throws error on serialization.
+        Object world = JSON.parse(getClass().getResourceAsStream("/data/worldExtent.json")?.getText())
+        Map site = siteService.create(world)
+        return site.siteId
     }
 
     /**
