@@ -814,13 +814,13 @@ class ProjectService {
         Map organisation
 
         // create project extent
-//        Map sites = createSciStarterSites(rawProp)
-//        String projectSiteId
-//        if (sites?.siteIds?.size()) {
-//            projectSiteId = sites.siteIds[0]
-//        }
-//
-//        transformedProp.projectSiteId = projectSiteId
+        Map sites = createSciStarterSites(rawProp)
+        String projectSiteId
+        if (sites?.siteIds?.size()) {
+            projectSiteId = sites.siteIds[0]
+        }
+
+        transformedProp.projectSiteId = projectSiteId
 
         // create organisation
         if (transformedProp.organisationName) {
@@ -842,9 +842,9 @@ class ProjectService {
 
         // use the projectId to associate site with  project
         if (projectId) {
-//            sites?.siteIds?.each { siteId ->
-//                siteService.addProject(siteId, projectId)
-//            }
+            sites?.siteIds?.each { siteId ->
+                siteService.addProject(siteId, projectId)
+            }
             // create project logo.
             createSciStarterLogo(imageUrl, attribution, projectId)
 
