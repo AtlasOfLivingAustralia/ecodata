@@ -270,9 +270,11 @@ class AdminController {
         def defaultStartDate = "2018-01-01"
         def timeZoneUTC = TimeZone.getTimeZone("UTC")
         dateFormat.setTimeZone(timeZoneUTC)
-        def isMERIT = params.getBoolean('isMERIT', true)
+        Boolean isForceFetch = params.getBoolean('force', true)
+        Boolean isMERIT = params.getBoolean('isMERIT', true)
         Date startDate = params.getDate("startDate", ["yyyy", "yyyy-MM-dd"]) ?: dateFormat.parse(defaultStartDate)
-        List siteIds = params.get("siteId")?.split(",")
+        List siteIds = params.get("siteId")?.split(",") ?: []
+        List projectIds = params.get("projectId")?.split(",") ?: []
         def code = 'success'
         def total = 0
         def offset = 0
@@ -281,8 +283,14 @@ class AdminController {
         List<String> defaultFids = metadataService.getSpatialLayerIdsToIntersect()
         log.debug("Number of fids to intersect: ${defaultFids.size()}; they are - ${defaultFids}")
         def totalSites
-        List projectIds = []
-        if (siteIds) {
+        if (projectIds) {
+            projectIds.each {
+                siteIds.addAll(siteService.findAllSiteIdsForProject(it))
+            }
+
+            totalSites = siteIds.size()
+        }
+        else if (siteIds) {
             totalSites = siteIds.size()
         }
         else if (isMERIT) {
@@ -325,13 +333,20 @@ class AdminController {
                             log.info("${total+1} or ${(total+1)*100/totalSites} % sites updated in db..")
                         }
 
-                        if (!site.projects || !site.extent) {
-                            log.debug("Ignoring site ${site.siteId} due to no associated projects or no extent")
+                        if (!site.extent) {
+                            log.debug("Ignoring site ${site.siteId} due to no extent")
                             return
                         }
-                        def projectsOfSite = site.projects
-                        List hubIds = projectService.findHubIdOfProjects(projectsOfSite)
+                        // management unit site does not have any projects
+                        def projectsOfSite = site.projects ?: []
+                        List hubIds = projectService.findHubIdFromProjectsOrCurrentHub(projectsOfSite)
                         def fids = hubIds.size() == 1 ? metadataService.getSpatialLayerIdsToIntersect(hubIds[0]) : defaultFids
+
+                        if (!isForceFetch && siteService.areIntersectionCalculatedForAllLayers(site)) {
+                            log.debug("Skipping site ${site.siteId} as all layers are already calculated and force fetch is not enabled - $isForceFetch")
+                            return // Skip if all layers are already calculated
+                        }
+
                         siteService.populateLocationMetadataForSite(site, fids)
                         endInterimTime = System.currentTimeMillis()
                         log.debug("Time taken to update metadata ${site.siteId}: ${endInterimTime - startInterimTime} ms")
@@ -345,7 +360,7 @@ class AdminController {
                         }
                     }
                     catch (Exception e) {
-                        log.error("Unable to complete the operation ", e)
+                        log.error("Unable to complete the operation for siteId - ${site.siteId} ", e)
                         code = "error"
                     }
                 }

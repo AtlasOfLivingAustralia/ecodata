@@ -4,10 +4,7 @@ import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
-import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.Geometry
-import org.locationtech.jts.geom.GeometryCollection
-import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.*
 import org.locationtech.jts.io.WKTReader
 
 import static ParatooService.deepCopy
@@ -68,12 +65,22 @@ class SpatialService {
         } else {
             geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
             GeometryCollection geometryCollection = (GeometryCollection)geo
+            Geometry correctGeometry = geometryCollection
             if(!geometryCollection.isValid()) {
-                geometryCollection = geometryCollection.buffer(0)
+                correctGeometry = geometryCollection.buffer(0)
             }
 
-            Geometry convexHullGeometry = geometryCollection.union().convexHull()
-            wkt = convexHullGeometry.toText()
+            Geometry convexHullGeometry
+            try {
+                convexHullGeometry = correctGeometry.union().convexHull()
+            }
+            catch (TopologyException e) {
+                log.error("Error creating convex hull for geometry collection")
+                convexHullGeometry = correctGeometry.buffer(0).union().convexHull()
+            }
+            finally {
+                wkt = convexHullGeometry?.toText()
+            }
         }
 
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+WKT_INTERSECT_URL_PREFIX

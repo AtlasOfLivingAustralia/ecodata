@@ -20,7 +20,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
-version "5.0-SNAPSHOT"
+version "5.1-SNAPSHOT"
 group "au.org.ala"
 description "Ecodata"
 

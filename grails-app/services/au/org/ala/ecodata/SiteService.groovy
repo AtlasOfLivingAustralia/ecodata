@@ -258,23 +258,28 @@ class SiteService {
     def getSimpleProjectArea(projectSiteId) {
         def threshold = grailsApplication.config.getProperty('biocollect.projectArea.simplificationThreshold', Integer, 10000)
         def tolerance = grailsApplication.config.getProperty('biocollect.projectArea.simplificationTolerance', Double, 0.0001)
-        log.info("Threshhold ${threshold} Tolerance ${tolerance}")
 
         def site = get(projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
 
-        if (site != null) {
-            def projectArea = geometryAsGeoJson(site)
+        try {
+            if (site != null) {
+                def projectArea = geometryAsGeoJson(site)
 
-            if (projectArea?.coordinates != null) {
-                def coordsSize = projectArea.coordinates.flatten().size()
-                if (coordsSize > threshold) {
-                    site.geoIndex = GeometryUtils.simplify(projectArea, tolerance)
-                } else {
-                    site.geoIndex = projectArea
+                if (projectArea?.coordinates != null) {
+                    def coordsSize = projectArea.coordinates.flatten().size()
+                    if (coordsSize > threshold) {
+                        site.geoIndex = GeometryUtils.simplify(projectArea, tolerance)
+                    } else {
+                        site.geoIndex = projectArea
+                    }
                 }
             }
+        } catch (Exception e) {
+            log.info("Unable to get simplified project area geometry (site ${site.siteId})", e)
         }
 
+        // remove extent to not avoid total fields limit in ES
+        site?.remove('extent')
         site
     }
 
@@ -731,7 +736,7 @@ class SiteService {
      */
     def mergeIntersectionsArea(Map site, Map intersectionsAreaByFacets) {
         Map geometry = site.extent.geometry
-        List hubs = projectService.findHubIdOfProjects(site.projects)
+        List hubs = projectService.findHubIdFromProjectsOrCurrentHub(site.projects)
         String hubId = hubs?.size() == 1 ? hubs[0] : null
         Map existingIntersectionsArea = geometry[SpatialService.INTERSECTION_AREA] = geometry[SpatialService.INTERSECTION_AREA] ?: [:]
         intersectionsAreaByFacets?.each { String layer, Map nameAndValue ->
@@ -1084,5 +1089,19 @@ class SiteService {
 
     List filterSitesByPurposeIsPlanning (List<Map> sites) {
         sites?.findAll { getPurpose(it) == Site.PLANNING_SITE_CODE }
+    }
+
+    /**
+     * Check if the intersection area is calculated for all provided layers
+     * @param site
+     * @param fids
+     * @return
+     */
+    Boolean areIntersectionCalculatedForAllLayers(def site){
+        List fids = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
+        fids?.every { fid ->
+            String group = metadataService.getGeographicFacetConfig(fid, null)?.name
+            site.extent?.geometry?[SpatialService.INTERSECTION_AREA]?[group]?[fid] != null
+        }
     }
 }
