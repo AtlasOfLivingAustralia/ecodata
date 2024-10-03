@@ -9,38 +9,7 @@ while (projects.hasNext()) {
 
     // generally orgs are called service providers in the context of procurements and grantees in the
     // context of grants
-    let description = null;
-
-    let program = db.program.findOne({programId:project.programId});
-    if (!program) {
-        print("No program found for project "+project.projectId+" name:"+project.name);
-    }
-    else {
-        if (program.fundingType) {
-            switch (program.fundingType) {
-                case 'SPP':
-                    description = 'Recipient';
-                    break;
-                case 'Grant':
-                    description = 'Recipient';
-                    break;
-                case 'Procurement':
-                    description = 'Service provider';
-
-            }
-        } else if (program.config && program.config.organisationRelationship) {
-            description = program.config.organisationRelationship;
-        }
-    }
-
-    if (!description) {
-        if (project.plannedStartDate.getTime() > ISODate('2018-07-01T00:00:00+10:00').getDate()) {
-            description = 'Service provider'
-        }
-        else {
-            description = 'Recipient'
-        }
-    }
+    let description = 'Recipient';
     let associatedOrg = {name:project.organisationName, organisationId:project.organisationId, description:description};
 
     if (project.organisationId) {
