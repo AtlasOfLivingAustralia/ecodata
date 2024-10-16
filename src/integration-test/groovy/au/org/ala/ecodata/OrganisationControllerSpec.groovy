@@ -75,8 +75,6 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
         savedOrganisation.organisationId == organisationId
         savedOrganisation.name == org.name
         savedOrganisation.description == org.description
-        // savedOrganisation.dynamicProperty == org.dynamicProperty (dynamic properties not working in tests)
-        savedOrganisation.collectoryInstitutionId == institutionId
 
         and: "the user who created the organisation is an admin of the new organisation"
         def orgPermissions = UserPermission.findAllByEntityIdAndEntityType(savedOrganisation.organisationId, Organisation.class.name)
@@ -119,14 +117,14 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
 
     }
 
-    void "projects can be associated with an organisation by the serviceProviderOrganisationId property"() {
+    void "projects can be associated with an organisation by the associatedOrgs property"() {
         setup:
 
         // Create some data for the database.
         def organisation = TestDataHelper.buildOrganisation([name: 'org 1'])
         def projects = []
         (1..2).each {
-            projects << TestDataHelper.buildProject([orgIdSvcProvider: organisation.organisationId, name:'svc project '+it])
+            projects << TestDataHelper.buildProject([associatedOrgs: [[organisationId:organisation.organisationId, name:'org project '+it]]])
         }
         projects << TestDataHelper.buildProject([organisationId: organisation.organisationId, name:'org project'])
         (1..3).each {

@@ -286,7 +286,9 @@ class ProjectService {
                 if (it.organisationId) {
                     Organisation org = Organisation.findByOrganisationId(it.organisationId)
                     if (org) {
-                        it.name = org.name
+                        if (!it.name) { // Is this going to cause BioCollect an issue?
+                            it.name = org.name
+                        }
                         it.url = org.url
                         it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
                     }
@@ -689,15 +691,36 @@ class ProjectService {
     List<Map> search(Map searchCriteria, levelOfDetail = []) {
 
         def criteria = Project.createCriteria()
+
         def projects = criteria.list {
             ne("status", DELETED)
             searchCriteria.each { prop, value ->
+                // Special case for organisationId - also included embedded associatedOrg relationships.
+                if (prop == 'organisationId') {
+                    or {
+                        if (value instanceof List) {
+                            inList(prop, value)
+                        } else {
+                            eq(prop, value)
+                        }
 
-                if (value instanceof List) {
-                    inList(prop, value)
-                } else {
-                    eq(prop, value)
+                        associatedOrgs {
+                            if (value instanceof List) {
+                                inList(prop, value)
+                            } else {
+                                eq(prop, value)
+                            }
+                        }
+                    }
                 }
+                else {
+                    if (value instanceof List) {
+                        inList(prop, value)
+                    } else {
+                        eq(prop, value)
+                    }
+                }
+
             }
 
         }
@@ -721,10 +744,28 @@ class ProjectService {
      * @param orgId identifies the organsation that has changed name
      * @param orgName the new organisation name
      */
-    void updateOrganisationName(orgId, orgName) {
-        Project.findAllByOrganisationIdAndStatusNotEqual(orgId, DELETED).each { project ->
-            project.organisationName = orgName
-            project.save()
+    void updateOrganisationName(String orgId, String oldName, String newName) {
+        Project.findAllByOrganisationIdAndOrganisationNameAndStatusNotEqual(orgId, oldName, DELETED).each { project ->
+            project.organisationName = newName
+            project.save(flush:true)
+        }
+
+        List projects = Project.where {
+            status != DELETED
+            associatedOrgs {
+                organisationId == orgId
+                name == oldName
+            }
+        }.list()
+
+
+        projects?.each { Project project ->
+            project.associatedOrgs.each { org ->
+                if (org.organisationId == orgId && org.name == oldName) {
+                    org.name = newName
+                }
+            }
+            project.save(flush:true)
         }
     }
 

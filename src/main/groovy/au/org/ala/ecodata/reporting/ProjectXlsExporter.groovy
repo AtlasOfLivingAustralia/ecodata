@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.ActivityForm
+import au.org.ala.ecodata.AssociatedOrg
 import au.org.ala.ecodata.DataDescription
 import au.org.ala.ecodata.ExternalId
 import au.org.ala.ecodata.ManagementUnit
@@ -38,11 +39,11 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> configurableIntersectionHeaders = getIntersectionHeaders()
     List<String> configurableIntersectionProperties = getIntersectionProperties()
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Recipient (Contract name)', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
-    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Recipient (Contract name)', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
@@ -55,8 +56,13 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
-    List<String> projectHeaders = projectHeadersWithTerminationReason + projectStateHeaders
-    List<String> projectProperties = projectPropertiesWithTerminationReason + projectStateProperties
+    List<String> associatedOrgProjectHeaders = (1..3).collect{['Contract name '+it, 'Organisation ID '+it, 'Organisation relationship from date '+it, 'Organisation relationship to date '+it, 'Organisation relationship '+it]}.flatten()
+    List<String> associatedOrgProperties = ['name', 'organisationId', 'fromDate', 'toDate', 'description']
+
+    List<String> associatedOrgProjectProperties = (1..3).collect{['associatedOrg_name'+it, 'associatedOrg_organisationId'+it, 'associatedOrg_fromDate'+it, 'associatedOrg_toDate'+it, 'associatedOrg_description'+it]}.flatten()
+
+    List<String> projectHeaders = projectHeadersWithTerminationReason + associatedOrgProjectHeaders + projectStateHeaders
+    List<String> projectProperties = projectPropertiesWithTerminationReason + associatedOrgProjectProperties + projectStateProperties
 
 
     List<String> siteStateHeaders = (1..5).collect{'State '+it}
@@ -163,6 +169,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retained']
     List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
+
 
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
@@ -320,6 +327,14 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.managementUnitId) {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
+
+        Date now = new Date()
+        List orgs = project.associatedOrgs?.findAll{(!it.fromDate || it.fromDate <= now) && (!it.toDate || it.toDate >= now)}
+        if (orgs) {
+            project.organisationName = orgs[0].name
+            project.organisationId = orgs[0].organisationId
+        }
+
         filterExternalIds(project, PROJECT_DATA_PREFIX)
 
     }
@@ -497,6 +512,13 @@ class ProjectXlsExporter extends ProjectExporter {
 
             distinctElectorates.each { electorate ->
                 project[electorate] = projectElectorates.contains(electorate) ? 'Y' : 'N'
+            }
+
+            project.associatedOrgs?.eachWithIndex { org, i ->
+                Map orgProps = associatedOrgProperties.collectEntries{
+                    [('associatedOrg_'+it+(i+1)):org[it]]
+                }
+                project.putAll(orgProps)
             }
 
             projectSheet.add([project], properties, row + 1)
