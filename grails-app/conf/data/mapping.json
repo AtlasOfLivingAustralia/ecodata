@@ -77,9 +77,6 @@
         "organisationFacet": {
           "type": "keyword"
         },
-        "linkedOrganisationFacet": {
-          "type": "keyword"
-        },
         "organisationSort": {
           "type": "keyword",
           "normalizer" : "case_insensitive_sort"
@@ -104,10 +101,6 @@
             "organisationId": {
                 "type": "keyword",
                 "copy_to": ["organisationId"]
-            },
-            "organisationName": {
-              "type": "keyword",
-              "copy_to": ["organisationName"]
             }
           }
         },

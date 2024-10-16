@@ -73,6 +73,7 @@ class Organisation {
         url nullable: true
         config nullable: true
         sourceSystem nullable: true
+        externalIds nullable: true
         hubId nullable: true, validator: { String hubId, Organisation organisation, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(organisation, 'organisationId', 'hubId', errors)
         }
