@@ -42,6 +42,9 @@ class UrlMappings {
 
         "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
 
+        "/ws/shapefile" (controller: "spatial"){ action = [POST:"uploadShapeFile"] }
+        "/ws/shapefile/geojson/$shapeFileId/$featureId"(controller: "spatial"){ action = [GET:"getShapeFileFeatureGeoJson"] }
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'
