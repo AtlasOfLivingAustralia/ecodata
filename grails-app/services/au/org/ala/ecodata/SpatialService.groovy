@@ -4,6 +4,7 @@ import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
+import org.apache.commons.lang.WordUtils
 import org.locationtech.jts.geom.*
 import org.locationtech.jts.io.WKTReader
 
@@ -26,9 +27,11 @@ class SpatialService {
 
     WebService webService
     MetadataService metadataService
+    CacheService cacheService
     GrailsApplication grailsApplication
 
     Map lookupTable
+    Map<String, Map> synonymLookupTable = [:]
 
     public SpatialService() {
         JsonSlurper js = new JsonSlurper()
@@ -214,10 +217,12 @@ class SpatialService {
         Map intersectionAreaByFacets = [:].withDefault { [:] }
         response?.each { String fid, List<Map> matchingObjects ->
             filteredResponse[fid] = []
+            Map facetConfig = metadataService.getGeographicFacetConfig(fid)
             // check for boundary intersection object for selected layers defined in config.
             if (checkForBoundaryIntersectionInLayers.contains(fid)) {
                 matchingObjects.each { Map obj ->
                     String boundaryPid = obj.pid
+                    String objName = obj.name = standardiseSpatialLayerObjectName(obj.name, facetConfig.name)
                     if (boundaryPid) {
                         log.debug("Intersecting ${obj.fieldname}(${fid}) - ${obj.name} ")
                         // Get geoJSON of the object stored in spatial portal
@@ -241,9 +246,9 @@ class SpatialService {
                         if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
                             filteredResponse[fid].add(obj)
                             def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
-                            intersectionAreaByFacets[fid][obj.name] = area
+                            intersectionAreaByFacets[fid][objName] = area
                         } else {
-                            log.debug("Filtered out ${obj.fieldname}(${fid}) - ${obj.name}")
+                            log.debug("Filtered out ${obj.fieldname}(${fid}) - ${objName}")
                         }
 
                         end = System.currentTimeMillis()
@@ -378,6 +383,74 @@ class SpatialService {
     }
 
     /**
+     * Fetch spatial layer objects and standardise object names.
+     * @param layerId
+     * @return
+     */
+    List features (String layerId) {
+        cacheService.get("features-${layerId}", {
+            def resp = webService.getJson("${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/objects/${layerId}")
+            Map facetName = null
+            try {
+                facetName = metadataService.getGeographicFacetConfig(layerId)
+                if(resp instanceof List) {
+                    return resp.collect { obj ->
+                        obj.name = standardiseSpatialLayerObjectName(obj.name, facetName.name)
+                        obj
+                    }
+                }
+            }
+            catch (IllegalArgumentException e) {
+                log.error("Error getting facet config for layer $layerId")
+            }
+
+            return []
+        }, 365) as List
+    }
+
+    /**
+     * Get mapping for a facet from config
+     * @param facetName
+     * @return
+     */
+    Map getDisplayNamesForFacet(String facetName) {
+        Map lookupTable = grailsApplication.config.getProperty('app.facets.displayNames', Map)
+        if (facetName) {
+            return lookupTable[facetName]?.mappings ?: [:]
+        }
+    }
+
+    /**
+     * Spatial portal returns the object name in a variety of formats. This function formats the object name to a more
+     * consistent way. For example, depending on layer used New South Wales is sometimes called "New South Wales (including Coastal Waters)".
+     * @param name - name of the object
+     * @param synonymTable - expected data format -  ["New South Wales": ["New South Wales (including Coastal Waters)", "NSW"], "Australian Capital Territory": ["ACT"]]
+     * @return
+     */
+    String standardiseSpatialLayerObjectName(String name, Map synonymTable, String facetName) {
+        if (name) {
+            name = name.trim().toLowerCase()
+            // initialise a Map that stores the inverse of mappings. ["act": "Australian Capital Territory", "nsw": "New South Wales"]
+            if (synonymLookupTable[facetName] == null) {
+                synonymLookupTable[facetName] = synonymTable?.collectEntries { k, List v -> v.collectEntries { v1 -> [(v1.toLowerCase()): k] } }
+            }
+
+            synonymLookupTable[facetName]?.get(name) ?: WordUtils.capitalize(name)
+        }
+    }
+
+    /**
+     * Provide a facet name such as "state", "elect" etc. to get standardised object name.
+     * @param name - object name such as "New South Wales (including Coastal Waters)"
+     * @param facetName - facet name such as "state", "elect"
+     * @return
+     */
+    String standardiseSpatialLayerObjectName(String name, String facetName) {
+        Map lookupTable = getDisplayNamesForFacet(facetName)
+        standardiseSpatialLayerObjectName(name, lookupTable, facetName)
+    }
+
+    /**
      * Converts the response from the spatial portal into geographic facets, taking into account the facet
      * configuration (whether the facet is made up of a single layer or a group of layers).
      * @param intersectResponse the response from the spatial portal from one of the intersect calls.
@@ -393,11 +466,11 @@ class SpatialService {
                 // Grouped facets combine multiple layers into a single facet.  If the site intersects with
                 // any object in the layer, then that layer is added as a matching value to the facet.
                 if (matchingObjects) {
-                    result[facetConfig.name].add(matchingObjects[0].fieldname)
+                    result[facetConfig.name].add(standardiseSpatialLayerObjectName(matchingObjects[0].fieldname as String, facetConfig.name as String))
                 }
             }
             else {
-                result[facetConfig.name] = matchingObjects.collect{it.name}
+                result[facetConfig.name] = matchingObjects.collect{standardiseSpatialLayerObjectName(it.name as String, facetConfig.name as String)}
             }
         }
         result

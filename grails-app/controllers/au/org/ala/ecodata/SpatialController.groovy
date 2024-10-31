@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile
 import javax.servlet.http.HttpServletResponse
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SpatialController {
-
+    SpatialService spatialService
     static responseFormats = ['json', 'xml']
     static allowedMethods = [uploadShapeFile: "POST", getShapeFileFeatureGeoJson: "GET"]
 
@@ -61,6 +61,19 @@ class SpatialController {
         }
 
         respond retMap
+    }
+
+    def features() {
+        def retVariable
+        if (!params.layerId) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            retVariable = ["error": "layerId must be supplied"]
+        }
+        else {
+            retVariable = spatialService.features(params.layerId)
+        }
+
+        respond retVariable
     }
 
     private Map<String, String> processShapeFileFeatureRequest(String shapeFileId, String featureIndex) {

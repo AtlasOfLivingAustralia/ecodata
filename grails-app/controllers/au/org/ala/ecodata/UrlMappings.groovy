@@ -198,6 +198,7 @@ class UrlMappings {
         "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
+        "/ws/project/findStateAndElectorateForProject"(controller: "project", action: "findStateAndElectorateForProject")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
         "/ws/dataSetSummary/$projectId/$dataSetId?"(controller :'dataSetSummary') {
 

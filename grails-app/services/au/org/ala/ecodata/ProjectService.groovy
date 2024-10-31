@@ -4,7 +4,6 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -1247,6 +1246,55 @@ class ProjectService {
 
 
         []
+    }
+
+    /**
+     * Find primary/other state(s)/electorate(s) for a project.
+     * 1. If isDefault is true, use manually assigned state(s)/electorate(s) i.e project.geographicInfo.
+     * 2. If isDefault is false or missing, use the state(s)/electorate(s) from sites using site precedence.
+     * 3. If isDefault is false and there are no sites, use manual state(s)/electorate(s) in project.geographicInfo.
+     */
+    Map findStateAndElectorateForProject(Map project) {
+        Map result = [:]
+        if(project == null) {
+            return result
+        }
+
+        Map geographicInfo = project?.geographicInfo
+        // isDefault is false or missing
+        if (geographicInfo == null || (geographicInfo.isDefault == false)) {
+            Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
+            Map config = metadataService.getGeographicConfig()
+            List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+            intersectionLayers?.each { layer ->
+                Map facetName = metadataService.getGeographicFacetConfig(layer)
+                if (facetName.name) {
+                    List intersectionValues = intersections[layer]
+                    if (intersectionValues) {
+                        result["primary${facetName.name}"] = intersectionValues.pop()
+                        result["other${facetName.name}"] = intersectionValues.join("; ")
+                    }
+                }
+                else
+                    log.error ("No facet config found for layer $layer.")
+            }
+        }
+
+        //isDefault is true or false and no sites.
+        if (geographicInfo) {
+            // load from manually assigned electorates/states
+            if (!result.containsKey("primaryelect")) {
+                result["primaryelect"] = geographicInfo.primaryElectorate
+                result["otherelect"] = geographicInfo.otherElectorates?.join("; ")
+            }
+
+            if (!result.containsKey("primarystate")) {
+                result["primarystate"] = geographicInfo.primaryState
+                result["otherstate"] = geographicInfo.otherStates?.join("; ")
+            }
+        }
+
+        result
     }
 
     /**

@@ -324,6 +324,15 @@ class ProjectController {
         render result as JSON
     }
 
+    def findStateAndElectorateForProject() {
+        if (!params.projectId) {
+            render status:400, text: "projectId is a required parameter"
+        } else {
+            Map project = projectService.get(params.projectId)
+            asJson projectService.findStateAndElectorateForProject(project)
+        }
+    }
+
     def findByName() {
         if (!params.projectName) {
             render status:400, text: "projectName is a required parameter"
