@@ -1,22 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.AssociatedOrg
-import au.org.ala.ecodata.DataDescription
-import au.org.ala.ecodata.ExternalId
-import au.org.ala.ecodata.ManagementUnit
-import au.org.ala.ecodata.ManagementUnitService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Organisation
-import au.org.ala.ecodata.OrganisationService
-import au.org.ala.ecodata.Program
-import au.org.ala.ecodata.ProgramService
+import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
  */
@@ -282,12 +271,12 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private static String getHeaderNameForFacet (String facetName, String prefix = "Primary") {
         Map names = Holders.config.getProperty("app.facets.displayNames", Map)
-        String name = names[facetName]
+        String name = names[facetName]['headerName']
         return "$prefix $name (Interpreted)"
     }
 
     private static String getPropertyNameForFacet (String facetName, String prefix = "primary") {
-        return "interpreted_$prefix$facetName"
+        return "$prefix$facetName"
     }
 
     void export(Map project) {
@@ -340,34 +329,8 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void addPrimaryAndOtherIntersections (Map project) {
-        Map intersections = projectService.orderLayerIntersectionsByAreaOfProjectSites(project)
-        Map config = metadataService.getGeographicConfig()
-        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
-        intersectionLayers?.each { layer ->
-            Map facetName = metadataService.getGeographicFacetConfig(layer)
-            if (facetName.name) {
-                List intersectionValues = intersections[layer]
-                if (intersectionValues) {
-                    project[getPropertyNameForFacet(facetName.name)] = intersectionValues.pop()
-                    project[getPropertyNameForFacet(facetName.name,"other")] = intersectionValues.join("; ")
-                }
-            }
-            else
-                log.error ("No facet config found for layer $layer.")
-        }
-
-        if (project.geographicInfo) {
-            // load from manually assigned electorates/states
-            if (!project.containsKey(getPropertyNameForFacet("elect"))) {
-                project[getPropertyNameForFacet("elect")] = project.geographicInfo.primaryElectorate
-                project[getPropertyNameForFacet("elect","other")] = project.geographicInfo.otherElectorates?.join("; ")
-            }
-
-            if (!project.containsKey(getPropertyNameForFacet("state"))) {
-                project[getPropertyNameForFacet("state")] = project.geographicInfo.primaryState
-                project[getPropertyNameForFacet("state","other")] = project.geographicInfo.otherStates?.join("; ")
-            }
-        }
+        Map result = projectService.findStateAndElectorateForProject(project) ?: [:]
+        project << result
     }
 
     private addProjectGeo(Map project) {

@@ -496,7 +496,24 @@ app {
             }
             checkForBoundaryIntersectionInLayers = [ "cl927", "cl11163" ]
         }
-        displayNames = [elect: "Electorate(s)", state: "State(s)"]
+        displayNames = [
+                elect: [
+                    headerName: "Electorate(s)"
+                ],
+                state: [
+                        headerName: "State(s)",
+                        mappings: [
+                                "Northern Territory": ["Northern Territory (including Coastal Waters)", "NT"],
+                                "Tasmania": ["Tasmania (including Coastal Waters)", "TAS"],
+                                "New South Wales": ["New South Wales (including Coastal Waters)", "NSW"],
+                                "Victoria": ["Victoria (including Coastal Waters)", "VIC"],
+                                "Queensland": ["Queensland (including Coastal Waters)", "QLD"],
+                                "South Australia": ["South Australia (including Coastal Waters)", "SA"],
+                                "Australian Capital Territory": ["ACT"],
+                                "Western Australia": ["Western Australia (including Coastal Waters)", "WA"],
+                        ]
+                ]
+        ]
     }
 }
 /******************************************************************************\

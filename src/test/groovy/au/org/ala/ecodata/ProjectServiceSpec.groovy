@@ -1099,4 +1099,79 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    def "findStateAndElectorateForProject should return primary and other states/electorates based on site intersections"() {
+        given:
+        Map project = [hubId: 'hub1', geographicInfo: [isDefault: false], sites: [
+            [siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["state1": 0.9, "state2": 0.3, "state3": 0.25]], "elect": ["CURRENT": ["electorate2": 0.9, "electorate1": 0.3]]]]]],
+            [siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["state1": 0.9, "state2": 0.3, "state3": 0.25]], "elect": ["CURRENT": ["electorate2": 0.9, "electorate1": 0.3]]]]]]]
+        ]
+        Map geographicConfig = [
+                contextual: [state: 'layer1', elect: 'layer2'],
+                checkForBoundaryIntersectionInLayers: ["layer1", "layer2"]
+        ]
+
+        metadataService.getGeographicConfig() >> geographicConfig
+        metadataService.getGeographicConfig(*_) >> geographicConfig
+        metadataService.getGeographicFacetConfig("layer1") >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer1", _) >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2") >> [name: "elect", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2", _) >> [name: "elect", grouped: false]
+
+        when:
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.primarystate == "state1"
+        result.otherstate == "state2; state3"
+        result.primaryelect == "electorate2"
+        result.otherelect == "electorate1"
+    }
+
+    def "findStateAndElectorateForProject should return default geographic info if isDefault is false and project sites are empty"() {
+        given:
+        Map project = [geographicInfo: [isDefault: false, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
+        Map geographicConfig = [
+                contextual: [state: 'layer1', elect: 'layer2'],
+                checkForBoundaryIntersectionInLayers: ["layer1", "layer2"]
+        ]
+
+        metadataService.getGeographicConfig(*_) >> geographicConfig
+        metadataService.getGeographicFacetConfig("layer1") >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2") >> [name: "elect", grouped: false]
+        service.getRepresentativeSitesOfProject(project) >> []
+
+
+        when:
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.primarystate == "ACT"
+        result.otherstate == "NSW; VIC"
+        result.primaryelect == "Bean"
+        result.otherelect == "Canberra; Fenner"
+    }
+
+
+    def "findStateAndElectorateForProject should return default geographic info if isDefault is true"() {
+        given:
+        Map project = [geographicInfo: [isDefault: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
+
+        when:
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.primarystate == "ACT"
+        result.otherstate == "NSW; VIC"
+        result.primaryelect == "Bean"
+        result.otherelect == "Canberra; Fenner"
+    }
+
+    def "findStateAndElectorateForProject should return empty map if project is null"() {
+        when:
+        Map project = null
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.isEmpty()
+    }
 }
