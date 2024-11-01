@@ -2,14 +2,14 @@ load('../../utils/audit.js');
 const intersection = "intersectionAreaByFacets"
 let lookupTable = {
     "state": {
-        "Northern Territory": ["Northern Territory (including Coastal Waters)"],
-        "Tasmania": ["Tasmania (including Coastal Waters)"],
-        "New South Wales": ["New South Wales (including Coastal Waters)"],
-        "Victoria": ["Victoria (including Coastal Waters)"],
-        "Queensland": ["Queensland (including Coastal Waters)"],
-        "South Australia": ["South Australia (including Coastal Waters)"],
-        "Australian Capital Territory": [],
-        "Western Australia": ["Western Australia (including Coastal Waters)"],
+        "Northern Territory": ["Northern Territory (including Coastal Waters)", "NT"],
+        "Tasmania": ["Tasmania (including Coastal Waters)", "TAS"],
+        "New South Wales": ["New South Wales (including Coastal Waters)", "NSW"],
+        "Victoria": ["Victoria (including Coastal Waters)", "VIC"],
+        "Queensland": ["Queensland (including Coastal Waters)", "QLD"],
+        "South Australia": ["South Australia (including Coastal Waters)", "SA"],
+        "Australian Capital Territory": ["ACT"],
+        "Western Australia": ["Western Australia (including Coastal Waters)", "WA"]
     }
 }
 
@@ -40,6 +40,8 @@ function standardiseSpatialLayerObjectName(name, property) {
 
         return name.replace(/\b\w/g, char => char.toUpperCase());
     }
+
+    return null;
 }
 
 /**
@@ -127,7 +129,23 @@ function standardiseIntersectionAreaByFacets(geometry, updated) {
     return updated;
 }
 
-db.site.find({}).forEach(site => {
+function standardiseGeographicInfo(geographicInfo) {
+    if (geographicInfo) {
+        geographicInfo.primaryState = standardiseSpatialLayerObjectName(geographicInfo.primaryState, "state");
+        if (geographicInfo.otherStates) {
+            geographicInfo.otherStates = geographicInfo.otherStates.map(state => standardiseSpatialLayerObjectName(state, "state"));
+        }
+
+        geographicInfo.primaryElectorate = standardiseSpatialLayerObjectName(geographicInfo.primaryElectorate, "elect");
+        if (geographicInfo.otherElectorates) {
+            geographicInfo.otherElectorates = geographicInfo.otherElectorates.map(elect => standardiseSpatialLayerObjectName(elect, "elect"));
+        }
+    }
+
+    return geographicInfo;
+}
+
+db.site.find({"site.extent.geometry": {$exists: true}}).forEach(site => {
     let updated = false;
     let geometry = site.extent && site.extent.geometry;
     if (geometry) {
@@ -141,3 +159,18 @@ db.site.find({}).forEach(site => {
         }
     }
 });
+
+print("Completed sites");
+
+db.project.find({
+    "geographicInfo": {$exists: true}
+}).forEach(project => {
+   print(`Updating project ${project.projectId}`);
+   if(project.geographicInfo) {
+       project.geographicInfo = standardiseGeographicInfo(project.geographicInfo);
+       db.project.updateOne({projectId: project.projectId}, {$set: {"geographicInfo": project.geographicInfo}});
+       audit(project, project.projectId, 'au.org.ala.ecodata.Project', 'system');
+   }
+});
+
+print("Completed projects");

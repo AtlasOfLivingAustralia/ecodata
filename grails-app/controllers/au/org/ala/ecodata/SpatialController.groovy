@@ -70,7 +70,8 @@ class SpatialController {
             retVariable = ["error": "layerId must be supplied"]
         }
         else {
-            retVariable = spatialService.features(params.layerId)
+            List<String> intersectWith = params.intersectWith?.split(",") ?: []
+            retVariable = spatialService.features(params.layerId, intersectWith)
         }
 
         respond retVariable

@@ -510,7 +510,7 @@ app {
                                 "Queensland": ["Queensland (including Coastal Waters)", "QLD"],
                                 "South Australia": ["South Australia (including Coastal Waters)", "SA"],
                                 "Australian Capital Territory": ["ACT"],
-                                "Western Australia": ["Western Australia (including Coastal Waters)", "WA"],
+                                "Western Australia": ["Western Australia (including Coastal Waters)", "WA"]
                         ]
                 ]
         ]
