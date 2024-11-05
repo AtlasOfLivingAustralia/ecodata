@@ -145,7 +145,7 @@ function standardiseGeographicInfo(geographicInfo) {
     return geographicInfo;
 }
 
-db.site.find({"site.extent.geometry": {$exists: true}}).forEach(site => {
+db.site.find({"extent.geometry": {$exists: true}}).forEach(site => {
     let updated = false;
     let geometry = site.extent && site.extent.geometry;
     if (geometry) {
