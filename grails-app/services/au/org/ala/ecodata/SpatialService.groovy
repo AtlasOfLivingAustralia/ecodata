@@ -387,17 +387,31 @@ class SpatialService {
      * @param layerId
      * @return
      */
-    List features (String layerId) {
-        cacheService.get("features-${layerId}", {
+    List features (String layerId, List<String> intersectWith = []) {
+        cacheService.get("features-${layerId}-intersect-with-${intersectWith.join('')}", {
             def resp = webService.getJson("${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/objects/${layerId}")
             Map facetName = null
             try {
                 facetName = metadataService.getGeographicFacetConfig(layerId)
                 if(resp instanceof List) {
-                    return resp.collect { obj ->
+                    resp.sort { it.name }
+                    List objects = resp.collect { obj ->
                         obj.name = standardiseSpatialLayerObjectName(obj.name, facetName.name)
+
+                        intersectWith.each { String fid ->
+                            def intersectedObjects = webService.getJson("${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/intersect/object/${fid}/${obj.pid}")
+                            if (intersectedObjects instanceof List) {
+                                Map facetConfig = metadataService.getGeographicFacetConfig(fid)
+                                intersectedObjects.sort { it.name }
+                                obj[(facetConfig.name)] = obj[fid] = intersectedObjects.collect { standardiseSpatialLayerObjectName(it.name, facetConfig.name) }
+                            }
+                        }
+
                         obj
                     }
+
+
+                    return objects
                 }
             }
             catch (IllegalArgumentException e) {

@@ -20,6 +20,9 @@ class GeographicInfo {
     /** Some projects don't have specific geographic areas and are flagged as being run nationwide */
     boolean nationwide = false
 
+    /** A flag to indicate that the project is running statewide i.e. all electorates in a state */
+    boolean statewide = false
+
     /** A flag to override calculated values for states and electorates with manually entered values */
     boolean isDefault = false
 
