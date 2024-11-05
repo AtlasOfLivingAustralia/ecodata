@@ -95,6 +95,14 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         1 * webService.get("/ws/shapes/wkt/123") >> getShape2()
         1 * webService.get("/ws/shapes/wkt/456") >> getBoundaryShape()
     }
+
+    def "titleCase should capitalize the first letter of each word"() {
+        expect:
+        service.titleCase("new south wales") == "New South Wales"
+        service.titleCase("australian capital territory") == "Australian Capital Territory"
+        service.titleCase("act") == "Act"
+        service.titleCase("nSw") == "Nsw"
+    }
     
     private Geometry getBoundaryShape() {
         return GeometryUtils.geoJsonMapToGeometry(mapper.readValue('{' +

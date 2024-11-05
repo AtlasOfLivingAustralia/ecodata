@@ -4,9 +4,11 @@ import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
-import org.apache.commons.lang.WordUtils
 import org.locationtech.jts.geom.*
 import org.locationtech.jts.io.WKTReader
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 import static ParatooService.deepCopy
 /**
@@ -449,8 +451,22 @@ class SpatialService {
                 synonymLookupTable[facetName] = synonymTable?.collectEntries { k, List v -> v.collectEntries { v1 -> [(v1.toLowerCase()): k] } }
             }
 
-            synonymLookupTable[facetName]?.get(name) ?: WordUtils.capitalize(name)
+            synonymLookupTable[facetName]?.get(name) ?: titleCase(name)
         }
+    }
+
+    String titleCase(String name) {
+        Pattern pattern = Pattern.compile("\\b\\w")
+        Matcher matcher = pattern.matcher(name.toLowerCase())
+        StringBuffer capitalizedName = new StringBuffer()
+
+        // Capitalize each matched letter and append it to the result
+        while (matcher.find()) {
+            matcher.appendReplacement(capitalizedName, matcher.group().toUpperCase())
+        }
+        matcher.appendTail(capitalizedName)
+
+        return capitalizedName.toString()
     }
 
     /**
