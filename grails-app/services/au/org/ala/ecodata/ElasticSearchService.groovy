@@ -1166,6 +1166,17 @@ class ElasticSearchService {
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
+
+            List projectActivities = projectActivityService.search([projectId: projectMap.projectId])
+            boolean publicAccess = true
+            projectActivities.each {projectActivity ->
+                if (projectActivity.publicAccess == false) {
+                    publicAccess = false
+                }
+            }
+            projectMap.publicParticipation = publicAccess
+            projectMap.numberOfRecords = projectActivities.size()
+
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
