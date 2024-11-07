@@ -247,11 +247,15 @@ class GeometryUtils {
         new GeometryJSON().read(json)
     }
 
-    static Map geometryToGeoJsonMap(Geometry input) {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream()
-        new GeometryJSON().write(input, new OutputStreamWriter(byteOut, 'UTF-8'))
+    static Map geometryToGeoJsonMap(Geometry input, int decimals = 4) {
+        String geoJson = geometryToGeoJsonString(input, decimals)
+        JSON.parse(geoJson)
+    }
 
-        JSON.parse(byteOut.toString('UTF-8'))
+    static String geometryToGeoJsonString(Geometry input, int decimals = 4) {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream()
+        new GeometryJSON(decimals).write(input, new OutputStreamWriter(byteOut, 'UTF-8'))
+        byteOut.toString('UTF-8')
     }
 
     /**
@@ -261,11 +265,13 @@ class GeometryUtils {
      * @return
      */
     static Map simplify(Map geoJson, double tolerance) {
-
         Geometry input = geoJsonMapToGeometry(geoJson)
-
-        Geometry result = TopologyPreservingSimplifier.simplify(input, tolerance)
+        Geometry result = simplifyGeometry(input, tolerance)
         geometryToGeoJsonMap(result)
+    }
+
+    static Geometry simplifyGeometry(Geometry input, double tolerance) {
+        TopologyPreservingSimplifier.simplify(input, tolerance)
     }
 
 
