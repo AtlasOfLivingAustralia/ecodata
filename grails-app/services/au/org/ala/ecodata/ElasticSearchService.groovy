@@ -1167,7 +1167,7 @@ class ElasticSearchService {
             projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
 
-            List projectActivities = projectActivityService.search([projectId: projectMap.projectId])
+            List projectActivities = projectActivityService.search([projectId: projectMap?.projectId])
             boolean publicAccess = true
             projectActivities.each {projectActivity ->
                 if (projectActivity.publicAccess == false) {
@@ -1175,7 +1175,7 @@ class ElasticSearchService {
                 }
             }
             projectMap.publicParticipation = publicAccess
-            projectMap.numberOfRecords = projectActivities.size()
+            projectMap.numberOfRecords = projectActivities?.size()
 
         }
         projectMap.sites?.each { site ->
