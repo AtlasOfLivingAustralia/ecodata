@@ -432,6 +432,9 @@ class ProjectXlsExporter extends ProjectExporter {
                     orgProps['abn'] = organisation?.abn
                     orgProps['organisationName'] = organisation?.name
                 }
+                else {
+                    orgProps['organisationName'] = ''
+                }
 
                 associatedOrgs << orgProps
 
