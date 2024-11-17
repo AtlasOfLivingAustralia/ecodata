@@ -28,10 +28,10 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> configurableIntersectionHeaders = getIntersectionHeaders()
     List<String> configurableIntersectionProperties = getIntersectionProperties()
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Recipient (Contract name)', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Contracted recipient name', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
     List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Recipient (Contract name)', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Contracted recipient name', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
     List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
@@ -45,13 +45,13 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
-    List<String> associatedOrgProjectHeaders = (1..3).collect{['Contract name '+it, 'Organisation ID '+it, 'Organisation relationship from date '+it, 'Organisation relationship to date '+it, 'Organisation relationship '+it]}.flatten()
+    List<String> associatedOrgProjectHeaders = (1..3).collect{['Contracted recipient name '+it, 'Organisation ID '+it, 'Organisation relationship from date '+it, 'Organisation relationship to date '+it, 'Organisation relationship '+it]}.flatten()
     List<String> associatedOrgProperties = ['name', 'organisationId', 'fromDate', 'toDate', 'description']
 
     List<String> associatedOrgProjectProperties = (1..3).collect{['associatedOrg_name'+it, 'associatedOrg_organisationId'+it, 'associatedOrg_fromDate'+it, 'associatedOrg_toDate'+it, 'associatedOrg_description'+it]}.flatten()
 
-    List organisationDetailsHeaders = ['Project ID', 'Grant ID', 'External ID', 'Program', 'Sub-program', 'Management Unit', 'Project Name', 'Contract name', 'Organisation ID', 'Organisation relationship from date', 'Organisation relationship to date', 'Organisation relationship', 'ABN', 'Organisation name']
-    List organisationDetailsProperties = ['projectId', 'project_grantId', 'project_externalId', 'project_associatedProgram', 'project_associatedSubProgram', 'project_managementUnitName', 'project_name', 'name', 'organisationId', 'fromDate', 'toDate', 'description', 'abn', 'organisationName']
+    List organisationDetailsHeaders = ['Project ID', 'Grant ID', 'External ID', 'Program', 'Sub-program', 'Management Unit', 'Project Name', 'Project start date', 'Project end date', 'Contracted recipient name', 'Organisation ID', 'Organisation relationship from date', 'Organisation relationship to date', 'Organisation relationship', 'ABN', 'MERIT organisation name']
+    List organisationDetailsProperties = ['projectId', 'project_grantId', 'project_externalId', 'project_associatedProgram', 'project_associatedSubProgram', 'project_managementUnitName', 'project_name', 'project_plannedStartDate', 'project_plannedEndDate', 'name', 'organisationId', 'fromDate', 'toDate', 'description', 'abn', 'organisationName']
 
     List<String> projectHeaders = projectHeadersWithTerminationReason + associatedOrgProjectHeaders + projectStateHeaders
     List<String> projectProperties = projectPropertiesWithTerminationReason + associatedOrgProjectProperties + projectStateProperties
