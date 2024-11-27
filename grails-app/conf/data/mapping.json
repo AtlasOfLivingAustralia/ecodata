@@ -96,6 +96,13 @@
           "type" : "text",
           "copy_to": ["organisationName","organisationFacet", "organisationSort"]
         },
+        "lastUpdated": {
+          "type" : "date",
+          "copy_to" : "lastUpdatedSort"
+        },
+        "lastUpdatedSort" : {
+          "type" : "keyword", "normalizer" : "case_insensitive_sort"
+        },
         "associatedOrgs": {
           "properties" : {
             "name" : {

@@ -654,7 +654,7 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.serverURL = "http://localhost:8080"
-        app.uploads.url = "${grails.serverURL}/document/download?filename="
+        app.uploads.url = "/document/download/"
 
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = true
