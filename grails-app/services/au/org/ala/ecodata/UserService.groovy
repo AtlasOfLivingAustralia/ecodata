@@ -226,9 +226,6 @@ class UserService {
         // userId is set from either the request param userId or failing that it tries to get it from
         // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
         userId = getUserFromJWT() ?: authService.getUserId() ?: request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
-        if (!userId) {
-            userId = request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
-        }
 
         if (userId) {
             userDetails = setCurrentUser(userId)
