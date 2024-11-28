@@ -70,10 +70,6 @@
         "organisationId": {
           "type" : "keyword"
         },
-        "orgIdSvcProvider": {
-          "type" : "keyword",
-          "copy_to": ["organisationId"]
-        },
         "organisationName": {
           "type" : "text",
           "copy_to": ["organisationFacet", "organisationSort"]
