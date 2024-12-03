@@ -700,6 +700,7 @@ environments {
         audit.thread.schedule.interval = 500l;
 
         paratoo.core.baseUrl = "http://localhost:${wiremock.port}/monitor"
+        spatial.baseUrl = "http://localhost:${wiremock.port}"
     }
     production {
         grails.logging.jul.usebridge = false
