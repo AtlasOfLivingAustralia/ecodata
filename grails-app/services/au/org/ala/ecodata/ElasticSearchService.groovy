@@ -1174,6 +1174,7 @@ class ElasticSearchService {
                         name: it.name,
                         startDate: it.startDate,
                         endDate: it.endDate,
+                        published: it.published
                 ]
             })
         }
