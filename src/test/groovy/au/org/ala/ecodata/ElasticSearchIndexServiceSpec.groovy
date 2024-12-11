@@ -5,7 +5,6 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
-import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexRequestBuilder
@@ -23,6 +22,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
     PermissionService permissionService = Stub(PermissionService)
     ProgramService programService = Stub(ProgramService)
     ProjectService projectService = Mock(ProjectService)
+    ProjectActivityService projectActivityService = Mock(ProjectActivityService)
     RestHighLevelClient client = GroovyMock(RestHighLevelClient) // Need a groovy mock here due to final methods
     SiteService siteService = Mock(SiteService)
     ActivityService activityService = Mock(ActivityService)
@@ -37,6 +37,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         service.projectService = projectService
         service.siteService = siteService
         service.activityService = activityService
+        service.projectActivityService = projectActivityService
         service.documentService = documentService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
