@@ -111,7 +111,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name, ProjectActivity.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -640,6 +640,14 @@ class ElasticSearchService {
                 if (projectId) {
                     Project doc = Project.findByProjectId(projectId)
                     indexHomePage(doc, Project.class.name)
+                }
+                break
+            case ProjectActivity.class.name:
+                // make sure updates to project activity updates project object.
+                // helps BioCollect mobile app show correct surveys.
+                ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(docId)
+                if (projectActivity?.projectId) {
+                    indexDocType(projectActivity.projectId, Project.class.name)
                 }
                 break
         }
