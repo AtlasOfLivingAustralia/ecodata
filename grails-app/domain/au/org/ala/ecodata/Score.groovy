@@ -13,6 +13,9 @@ class Score {
     /** The label for this score when displayed */
     String label
 
+    /** Unique human name for this score to be used as a more descriptive alternative to the scoreId in forms/configuration.  Must be unique if present */
+    String name
+
     /** A more detailed description of the score and how it should be interpreted */
     String description
 
@@ -53,6 +56,7 @@ class Score {
         tags: nullable:true
         label unique: true
         scoreId unique: true
+        name nullable: true, unique: true
     }
 
     static mapping = {
@@ -88,7 +92,8 @@ class Score {
                 entity:entity,
                 externalId:externalId,
                 entityTypes:entityTypes,
-                tags:tags
+                tags:tags,
+                name:name
         ]
         if (includeConfig) {
             scoreMap.configuration = configuration
