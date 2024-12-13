@@ -41,7 +41,7 @@ class ApiKeyInterceptor {
             PreAuthorise pa = method.getAnnotation(PreAuthorise) ?: controllerClass.getAnnotation(PreAuthorise)
 
             if (pa.basicAuth()) {
-                au.org.ala.web.UserDetails user = userService.getUserFromJWT()
+                def user = userService.setUser()
                 request.userId = user?.userId
                 if(permissionService.isUserAlaAdmin(request.userId)) {
                     /* Don't enforce check for ALA admin.*/

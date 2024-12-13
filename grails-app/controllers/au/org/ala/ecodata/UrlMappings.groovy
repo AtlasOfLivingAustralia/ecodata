@@ -42,6 +42,9 @@ class UrlMappings {
 
         "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
 
+        "/ws/shapefile" (controller: "spatial"){ action = [POST:"uploadShapeFile"] }
+        "/ws/shapefile/geojson/$shapeFileId/$featureId"(controller: "spatial"){ action = [GET:"getShapeFileFeatureGeoJson"] }
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'
@@ -195,6 +198,7 @@ class UrlMappings {
         "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
+        "/ws/project/findStateAndElectorateForProject"(controller: "project", action: "findStateAndElectorateForProject")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
         "/ws/dataSetSummary/$projectId/$dataSetId?"(controller :'dataSetSummary') {
 

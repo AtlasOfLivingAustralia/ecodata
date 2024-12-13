@@ -111,7 +111,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name, ProjectActivity.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -642,6 +642,14 @@ class ElasticSearchService {
                     indexHomePage(doc, Project.class.name)
                 }
                 break
+            case ProjectActivity.class.name:
+                // make sure updates to project activity updates project object.
+                // helps BioCollect mobile app show correct surveys.
+                ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(docId)
+                if (projectActivity?.projectId) {
+                    indexDocType(projectActivity.projectId, Project.class.name)
+                }
+                break
         }
     }
 
@@ -1129,7 +1137,7 @@ class ElasticSearchService {
         // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
-        if(projectMap.isMERIT){
+        if (projectMap.isMERIT) {
 
             // Allow ESP sites to be hidden, even on the project explorer.  Needs to be tided up a bit as MERIT sites were
             // already marked as private to avoid discovery via BioCollect
@@ -1166,6 +1174,17 @@ class ElasticSearchService {
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
+            projectMap.projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
+                [
+                        id: it.id,
+                        projectId: it.projectId,
+                        projectActivityId: it.projectActivityId,
+                        name: it.name,
+                        startDate: it.startDate,
+                        endDate: it.endDate,
+                        published: it.published
+                ]
+            })
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -1656,6 +1675,17 @@ class ElasticSearchService {
                     }
                     else {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                    }
+                }
+                break
+
+            case 'projectactivityrecords':
+                if (projectActivityId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ')'
+                    }
+                    else {
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break

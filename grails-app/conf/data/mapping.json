@@ -70,10 +70,6 @@
         "organisationId": {
           "type" : "keyword"
         },
-        "orgIdSvcProvider": {
-          "type" : "keyword",
-          "copy_to": ["organisationId"]
-        },
         "organisationName": {
           "type" : "text",
           "copy_to": ["organisationFacet", "organisationSort"]
@@ -95,6 +91,13 @@
         "serviceProviderName": {
           "type" : "text",
           "copy_to": ["organisationName","organisationFacet", "organisationSort"]
+        },
+        "lastUpdated": {
+          "type" : "date",
+          "copy_to" : "lastUpdatedSort"
+        },
+        "lastUpdatedSort" : {
+          "type" : "keyword", "normalizer" : "case_insensitive_sort"
         },
         "associatedOrgs": {
           "properties" : {

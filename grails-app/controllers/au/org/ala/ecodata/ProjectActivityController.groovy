@@ -52,7 +52,8 @@ class ProjectActivityController {
             }
 
             if (!result) {
-                result = [status: 404, text: 'Invalid id'];
+                render status: 404, text: [message:  'Invalid id', status: 404] as JSON
+                return
             }
         }
 

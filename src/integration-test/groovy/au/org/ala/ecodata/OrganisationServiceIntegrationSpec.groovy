@@ -41,7 +41,7 @@ class OrganisationServiceIntegrationSpec extends IntegrationTestHelper {
       //  setupPost(organisationController.request, org)
 
         when: "creating an organisation"
-        def result = organisationService.create(org)
+        def result = organisationService.create(org, true)
 
         then: "ensure we get a response including an organisationId"
        // def resp = extractJson(organisationController.response.text)
@@ -55,17 +55,16 @@ class OrganisationServiceIntegrationSpec extends IntegrationTestHelper {
         Organisation.withTransaction {
             savedOrganisation = organisationService.get(organisationId)
         }
-        //organisationController.response.reset()
-      //  organisationController.get(organisationId)
-
-       // def savedOrganisation = extractJson(organisationController.response.text)
 
         then: "ensure the properties are the same as the original"
         savedOrganisation.organisationId == organisationId
         savedOrganisation.name == org.name
         savedOrganisation.description == org.description
-        savedOrganisation.dynamicProperty == org.dynamicProperty
         savedOrganisation.collectoryInstitutionId == institutionId
+
+        and: "The OrganisationService no longer supports dynamic properties"
+        savedOrganisation.dynamicProperty == null
+
 
         and: "the user who created the organisation is an admin of the new organisation"
         def orgPermissions = UserPermission.findAllByEntityIdAndEntityType(savedOrganisation.organisationId, Organisation.class.name)
@@ -112,7 +111,7 @@ class OrganisationServiceIntegrationSpec extends IntegrationTestHelper {
 
     }
 
-       void "projects can be associated with an organisation by the serviceProviderOrganisationId property"() {
+       void "projects can be associated with an organisation by the associatedOrgs property"() {
            setup:
 
            def organisation
@@ -122,7 +121,7 @@ class OrganisationServiceIntegrationSpec extends IntegrationTestHelper {
                organisation = TestDataHelper.buildOrganisation([name: 'Test Organisation2'])
                def projects = []
                (1..2).each {
-                   projects << TestDataHelper.buildProject([orgIdSvcProvider: organisation.organisationId])
+                   projects << TestDataHelper.buildProject([associatedOrgs: [[organisationId:organisation.organisationId, name:'org project '+it]]])
                }
                projects << TestDataHelper.buildProject([organisationId: organisation.organisationId])
                (1..3).each {

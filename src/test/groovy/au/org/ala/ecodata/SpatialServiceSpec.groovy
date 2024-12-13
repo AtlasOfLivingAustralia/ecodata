@@ -88,12 +88,20 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
 
         then:
         filteredResponse["cl22"].size() == 1
-        filteredResponse["cl22"][0].name == "ACT"
+        filteredResponse["cl22"][0].name == "Australian Capital Territory"
         intersectionProportion.size() == 1
-        intersectionProportion["cl22"]["ACT"] != null
-        intersectionProportion["cl22"]["NSW"] == null
+        intersectionProportion["cl22"]["Australian Capital Territory"] != null
+        intersectionProportion["cl22"]["New South Wales"] == null
         1 * webService.get("/ws/shapes/wkt/123") >> getShape2()
         1 * webService.get("/ws/shapes/wkt/456") >> getBoundaryShape()
+    }
+
+    def "titleCase should capitalize the first letter of each word"() {
+        expect:
+        service.titleCase("new south wales") == "New South Wales"
+        service.titleCase("australian capital territory") == "Australian Capital Territory"
+        service.titleCase("act") == "Act"
+        service.titleCase("nSw") == "Nsw"
     }
     
     private Geometry getBoundaryShape() {

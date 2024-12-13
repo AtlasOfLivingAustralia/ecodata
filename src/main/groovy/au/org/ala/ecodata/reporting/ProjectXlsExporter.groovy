@@ -1,21 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.DataDescription
-import au.org.ala.ecodata.ExternalId
-import au.org.ala.ecodata.ManagementUnit
-import au.org.ala.ecodata.ManagementUnitService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Organisation
-import au.org.ala.ecodata.OrganisationService
-import au.org.ala.ecodata.Program
-import au.org.ala.ecodata.ProgramService
+import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
  */
@@ -38,11 +28,11 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> configurableIntersectionHeaders = getIntersectionHeaders()
     List<String> configurableIntersectionProperties = getIntersectionProperties()
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Contracted recipient name', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
-    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Contracted recipient name', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
@@ -55,8 +45,16 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
-    List<String> projectHeaders = projectHeadersWithTerminationReason + projectStateHeaders
-    List<String> projectProperties = projectPropertiesWithTerminationReason + projectStateProperties
+    List<String> associatedOrgProjectHeaders = (1..3).collect{['Contracted recipient name '+it, 'Organisation ID '+it, 'Organisation relationship from date '+it, 'Organisation relationship to date '+it, 'Organisation relationship '+it]}.flatten()
+    List<String> associatedOrgProperties = ['name', 'organisationId', 'fromDate', 'toDate', 'description']
+
+    List<String> associatedOrgProjectProperties = (1..3).collect{['associatedOrg_name'+it, 'associatedOrg_organisationId'+it, 'associatedOrg_fromDate'+it, 'associatedOrg_toDate'+it, 'associatedOrg_description'+it]}.flatten()
+
+    List organisationDetailsHeaders = ['Project ID', 'Grant ID', 'External ID', 'Program', 'Sub-program', 'Management Unit', 'Project Name', 'Project start date', 'Project end date', 'Contracted recipient name', 'Organisation ID', 'Organisation relationship from date', 'Organisation relationship to date', 'Organisation relationship', 'ABN', 'MERIT organisation name']
+    List organisationDetailsProperties = ['projectId', 'project_grantId', 'project_externalId', 'project_associatedProgram', 'project_associatedSubProgram', 'project_managementUnitName', 'project_name', 'project_plannedStartDate', 'project_plannedEndDate', 'name', 'organisationId', 'fromDate', 'toDate', 'description', 'abn', 'organisationName']
+
+    List<String> projectHeaders = projectHeadersWithTerminationReason + associatedOrgProjectHeaders + projectStateHeaders
+    List<String> projectProperties = projectPropertiesWithTerminationReason + associatedOrgProjectProperties + projectStateProperties
 
 
     List<String> siteStateHeaders = (1..5).collect{'State '+it}
@@ -132,8 +130,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpProjectDetailsHeaders=commonProjectHeaders + ["Does this project directly support a priority place?","Supported priority places", "Are First Nations people (Indigenous) involved in the project?", "What is the nature of the involvement?","Project delivery assumptions","Project review, evaluation and improvement methodology"]
     List<String> rdpProjectDetailsProperties =commonProjectProperties + ["supportsPriorityPlace", "supportedPriorityPlaces", "indigenousInvolved", "indigenousInvolvementType", "projectMethodology", "projectREI"]
 
-    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Which project service and outcome/s does this data set support?","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?","Other Dataset Type","Which project baseline does this data set relate to or describe?","What EMSA protocol was used when collecting the data?", "What types of measurements or observations does the dataset include?","Other Measurement Type","Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Has your data been included in the Threatened Species Index?","Date of upload", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?","What is the size of the dataset (KB)?","Unknown size", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing"]
-    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority","projectOutcomes", "term", "type", "otherDataSetType","baselines", "protocol", "measurementTypes","otherMeasurementType", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "threatenedSpeciesIndex","threatenedSpeciesIndexUploadDate", "collectorType", "qa", "published", "storageType", "publicationUrl", "format","sizeInKB","sizeUnknown", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing"]
+    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Which project service and outcome/s does this data set support?","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?","Other Dataset Type","Which project baseline does this data set relate to or describe?","What EMSA protocol was used when collecting the data?", "What types of measurements or observations does the dataset include?","Other Measurement Type","Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Has your data been included in the Threatened Species Index?","Date of upload", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?","What is the size of the dataset (KB)?","Unknown size", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing", "Technical data from Monitor"]
+    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority","projectOutcomes", "term", "type", "otherDataSetType","baselines", "protocol", "measurementTypes","otherMeasurementType", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "threatenedSpeciesIndex","threatenedSpeciesIndexUploadDate", "collectorType", "qa", "published", "storageType", "publicationUrl", "format","sizeInKB","sizeUnknown", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing", "orgMintedIdentifier"]
 
     List<String> electorateInternalOrderNoHeader = (2..3).collect{'Internal order number '+it}
     List<String> electorateInternalOrderNoProperties = (1..2).collect{PROJECT_DATA_PREFIX+'internalOrderId'+it}
@@ -164,8 +162,10 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retained']
     List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
 
+
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
+    OrganisationService organisationService
 
     /** Enables us to pre-create headers for each electorate that will appear in the result set */
     List<String> distinctElectorates
@@ -185,6 +185,7 @@ class ProjectXlsExporter extends ProjectExporter {
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService) {
         super(exporter)
         this.projectService = projectService
+        this.organisationService = organisationService
         distinctElectorates = new ArrayList()
         useSpeciesUrlGetter = true
         setupManagementUnits(managementUnitService)
@@ -195,6 +196,7 @@ class ProjectXlsExporter extends ProjectExporter {
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService, Map<String, DataDescription> downloadMetadata, boolean formSectionPerTab = false) {
         super(exporter, tabsToExport, [:], TimeZone.default)
         this.projectService = projectService
+        this.organisationService = organisationService
         this.formSectionPerTab = formSectionPerTab
         useSpeciesUrlGetter = true
         addDataDescriptionToDownload(downloadMetadata)
@@ -275,12 +277,12 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private static String getHeaderNameForFacet (String facetName, String prefix = "Primary") {
         Map names = Holders.config.getProperty("app.facets.displayNames", Map)
-        String name = names[facetName]
+        String name = names[facetName]['headerName']
         return "$prefix $name (Interpreted)"
     }
 
     private static String getPropertyNameForFacet (String facetName, String prefix = "primary") {
-        return "interpreted_$prefix$facetName"
+        return "$prefix$facetName"
     }
 
     void export(Map project) {
@@ -289,6 +291,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
         addProjectGeo(project)
         exportProject(project)
+        exportProjectOrganisationData(project)
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
@@ -320,39 +323,21 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.managementUnitId) {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
+
+        Date now = new Date()
+        List orgs = project.associatedOrgs?.findAll{(!it.fromDate || it.fromDate <= now) && (!it.toDate || it.toDate >= now)}
+        if (orgs) {
+            project.organisationName = orgs[0].name
+            project.organisationId = orgs[0].organisationId
+        }
+
         filterExternalIds(project, PROJECT_DATA_PREFIX)
 
     }
 
     private void addPrimaryAndOtherIntersections (Map project) {
-        Map intersections = projectService.orderLayerIntersectionsByAreaOfProjectSites(project)
-        Map config = metadataService.getGeographicConfig()
-        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
-        intersectionLayers?.each { layer ->
-            Map facetName = metadataService.getGeographicFacetConfig(layer)
-            if (facetName.name) {
-                List intersectionValues = intersections[layer]
-                if (intersectionValues) {
-                    project[getPropertyNameForFacet(facetName.name)] = intersectionValues.pop()
-                    project[getPropertyNameForFacet(facetName.name,"other")] = intersectionValues.join("; ")
-                }
-            }
-            else
-                log.error ("No facet config found for layer $layer.")
-        }
-
-        if (project.geographicInfo) {
-            // load from manually assigned electorates/states
-            if (!project.containsKey(getPropertyNameForFacet("elect"))) {
-                project[getPropertyNameForFacet("elect")] = project.geographicInfo.primaryElectorate
-                project[getPropertyNameForFacet("elect","other")] = project.geographicInfo.otherElectorates?.join("; ")
-            }
-
-            if (!project.containsKey(getPropertyNameForFacet("state"))) {
-                project[getPropertyNameForFacet("state")] = project.geographicInfo.primaryState
-                project[getPropertyNameForFacet("state","other")] = project.geographicInfo.otherStates?.join("; ")
-            }
-        }
+        Map result = projectService.findStateAndElectorateForProject(project) ?: [:]
+        project << result
     }
 
     private addProjectGeo(Map project) {
@@ -377,6 +362,8 @@ class ProjectXlsExporter extends ProjectExporter {
             }
         }
     }
+
+
 
      void exportActivities(Map project) {
          tabsToExport.each { tab ->
@@ -429,6 +416,31 @@ class ProjectXlsExporter extends ProjectExporter {
             int outputRow = outputSheet.sheet.lastRowNum
 
             outputSheet.add(outputData, outputGetters, outputRow + 1)
+        }
+    }
+
+    void exportProjectOrganisationData(Map project) {
+        String sheetName = 'Organisation Details'
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sitesSheet = getSheet(sheetName, organisationDetailsProperties, organisationDetailsHeaders)
+            List associatedOrgs = []
+
+            project.associatedOrgs?.each { org ->
+                Map orgProps = org+project
+                if (org.organisationId) {
+                    Map organisation = organisationService.get(org.organisationId)
+                    orgProps['abn'] = organisation?.abn
+                    orgProps['organisationName'] = organisation?.name
+                }
+                else {
+                    orgProps['organisationName'] = ''
+                }
+
+                associatedOrgs << orgProps
+
+            }
+            int row = sitesSheet.getSheet().lastRowNum
+            sitesSheet.add(associatedOrgs, organisationDetailsProperties, row + 1)
         }
     }
 
@@ -497,6 +509,13 @@ class ProjectXlsExporter extends ProjectExporter {
 
             distinctElectorates.each { electorate ->
                 project[electorate] = projectElectorates.contains(electorate) ? 'Y' : 'N'
+            }
+
+            project.associatedOrgs?.eachWithIndex { org, i ->
+                Map orgProps = associatedOrgProperties.collectEntries{
+                    [('associatedOrg_'+it+(i+1)):org[it]]
+                }
+                project.putAll(orgProps)
             }
 
             projectSheet.add([project], properties, row + 1)
