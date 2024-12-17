@@ -44,6 +44,8 @@ class Score {
 
     Integer decimalPlaces
 
+    String units
+
 
     /** Embedded document describing how the score should be calculated */
     Map configuration
@@ -60,6 +62,7 @@ class Score {
         scoreId unique: true
         name nullable: true, unique: true
         decimalPlaces nullable: true
+        units nullable: true
     }
 
     static mapping = {
@@ -97,6 +100,7 @@ class Score {
                 entityTypes:entityTypes,
                 tags:tags,
                 name:name,
+                units:units,
                 decimalPlaces:decimalPlaces?:2
         ]
         if (includeConfig) {
