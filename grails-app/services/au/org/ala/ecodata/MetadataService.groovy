@@ -936,14 +936,14 @@ class MetadataService {
 
         properties.scoreId = Identifiers.getNew(true, '')
         Score score = new Score(scoreId:properties.scoreId)
-        commonService.updateProperties(score, properties)
+        score.properties = properties
         score.save(flush:true)
         return score
     }
 
     Score updateScore(String id, Map properties) {
         Score score = Score.findByScoreId(id)
-        commonService.updateProperties(score, properties)
+        score.properties = properties
         score.save(flush:true)
         return score
     }
