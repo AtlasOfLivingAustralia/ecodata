@@ -96,7 +96,7 @@ class ShapefileBuilder {
             createShapefile()
         }
         try {
-            if (Site.TYPE_COMPOUND == site.type) {
+            if (site.features) {
                 site.features.each { Map feature ->
                     if (feature.geometry) {
                         Map siteProps = new HashMap(site)
