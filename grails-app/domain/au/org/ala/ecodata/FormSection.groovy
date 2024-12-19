@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.graphql.mappers.FormSectionGraphQLMapper
 import au.org.ala.ecodata.graphql.models.SectionTemplate
+import au.org.ala.ecodata.metadata.OutputMetadata
 
 class FormSection {
 
@@ -41,6 +42,11 @@ class FormSection {
             outputData.sectionTemplate = template.findAll{ it.key != "viewModel"}
         }
         return outputData
+    }
+
+    List annotatedTemplate() {
+        OutputMetadata metadata = new OutputMetadata(template)
+        return metadata.annotateDataModel()
     }
 
 }
