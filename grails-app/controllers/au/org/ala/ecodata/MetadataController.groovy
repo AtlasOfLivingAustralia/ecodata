@@ -108,7 +108,7 @@ class MetadataController {
         }
         else {
             // Legacy support
-            model = metadataService.getOutputDataModel(outputName)
+            model = metadataService.getOutputDataModelByName(outputName)
             if (expandList && expandList == 'true') {
                 annotatedModel = metadataService.annotatedOutputDataModel(outputName, true)
             } else {
