@@ -800,13 +800,28 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
 
+        when: // user inputs scientific name to field
+        result = service.transformSpeciesName("Centipeda cunninghamii")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Centipeda cunninghamii (Common Sneezeweed)", scientificName: "Centipeda cunninghamii", guid: "https://id.biodiversity.org.au/node/apni/2916674", commonName: "Common Sneezeweed", taxonRank: "species"]
+        1 * speciesReMatchService.searchByName(_) >> [
+                scientificName: "Centipeda cunninghamii",
+                commonName: "Common Sneezeweed",
+                guid: "https://id.biodiversity.org.au/node/apni/2916674",
+                taxonRank: "species"
+        ]
+        0 * speciesReMatchService.searchByName(_, false, true)
+
         when: // Do not create record when value equals special cases. Therefore, removes guid.
         result = service.transformSpeciesName("Other")
         outputSpeciesId = result.remove("outputSpeciesId")
 
         then:
         outputSpeciesId != null
-        result == [name: "Other", scientificName: null, commonName: "Other", taxonRank: null]
+        result == [name: "Other", scientificName: "Other", commonName: "Other", taxonRank: null]
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
 
