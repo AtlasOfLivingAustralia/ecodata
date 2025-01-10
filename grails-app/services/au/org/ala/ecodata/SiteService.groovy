@@ -207,7 +207,7 @@ class SiteService {
         ]
         Map geojson
 
-        if (site.type == Site.TYPE_COMPOUND) {
+        if (site.features) {
             geojson = [
                     type:'FeatureCollection',
                     properties: properties,
