@@ -14,6 +14,7 @@ import org.elasticsearch.search.aggregations.Aggregations
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import spock.lang.Specification
+import grails.util.Holders
 
 class SearchControllerSpec extends Specification implements ControllerUnitTest<SearchController> {
 
@@ -61,6 +62,18 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
 
     def "The MERIT project exporter accepts parameters"(boolean formSectionPerTab) {
         setup:
+        grailsApplication.config.app.facets.geographic = [
+                contextual: [
+                        state : 'cl927',
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
+        ]
+        metadataService.getGeographicConfig() >> [checkForBoundaryIntersectionInLayers: [ "cl927", "cl11163" ]]
+        metadataService.getGeographicFacetConfig("cl927") >> [grouped: false, name: "state"]
+        metadataService.getGeographicFacetConfig("cl11163") >> [grouped: false, name: "elect"]
+        grailsApplication.mainContext.registerBean('metadataService', MetadataService, { metadataService })
+        Holders.grailsApplication = grailsApplication
         XlsExporter exporter = Mock(XlsExporter)
         params.formSectionPerTab = formSectionPerTab
         params.tabs = ['tab1', 'tab2']
@@ -76,6 +89,8 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         projectExporter instanceof ProjectXlsExporter
         ((ProjectXlsExporter)projectExporter).formSectionPerTab == formSectionPerTab
         projectExporter.tabsToExport == params.tabs
+        ((ProjectXlsExporter)projectExporter).configurableIntersectionHeaders == ["Primary State(s) (Interpreted)",	"Other State(s) (Interpreted)",	"Primary Electorate(s) (Interpreted)",	"Other Electorate(s) (Interpreted)"]
+        ((ProjectXlsExporter)projectExporter).configurableIntersectionProperties == ["primarystate", "otherstate", "primaryelect", "otherelect"]
 
         where:
         formSectionPerTab | _

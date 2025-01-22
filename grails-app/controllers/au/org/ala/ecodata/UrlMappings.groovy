@@ -14,8 +14,8 @@ class UrlMappings {
         "/ws/record/images"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/images/"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/getRecordForOutputSpeciesId/"(controller: "record", action: "getRecordForOutputSpeciesId")
-        "/ws/record/listHarvestDataResource" (controller: "record", action: "listHarvestDataResource")
-        "/ws/record/listRecordsForDataResourceId" (controller: "record", action: "listRecordsForDataResourceId") //dataResourceId
+        "/ws/record/listHarvestDataResource" (controller: "harvest", action: "listHarvestDataResource")
+        "/ws/record/listRecordsForDataResourceId" (controller: "harvest", action: "listRecordsForDataResourceId") //dataResourceId
 
         "/ws/record/$id"(controller: "record"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
 
@@ -41,6 +41,9 @@ class UrlMappings {
         "/ws/site/getPoiImages"( controller: 'site', action: 'getPoiImages')
 
         "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
+
+        "/ws/shapefile" (controller: "spatial"){ action = [POST:"uploadShapeFile"] }
+        "/ws/shapefile/geojson/$shapeFileId/$featureId"(controller: "spatial"){ action = [GET:"getShapeFileFeatureGeoJson"] }
 
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
@@ -183,6 +186,7 @@ class UrlMappings {
 
 
         "/ws/report/runReport"(controller:"report", action:"runReport")
+        "/ws/report/generateReportsInPeriod"(controller:"report", action:"generateReportsInPeriod")
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
@@ -194,7 +198,15 @@ class UrlMappings {
         "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/project/$projectId/archive"(controller: "record", action: "getDarwinCoreArchiveForProject")
+        "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
+        "/ws/project/findStateAndElectorateForProject"(controller: "project", action: "findStateAndElectorateForProject")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
+        "/ws/dataSetSummary/$projectId/$dataSetId?"(controller :'dataSetSummary') {
+
+            action = [POST:'update', PUT:'update', DELETE:'delete']
+        }
+
+        "/ws/dataSetSummary/bulkUpdate/$projectId"(controller:'dataSetSummary', action:'bulkUpdate')
 
         "/ws/document/download"(controller:"document", action:"download")
 
@@ -212,7 +224,7 @@ class UrlMappings {
         }
 
         "/ws/graphql" {
-            controller = 'graphql'
+            controller = 'graphqlWs'
         }
 
         "/ws/paratoo/user-projects" {
@@ -229,6 +241,12 @@ class UrlMappings {
             controller = 'paratoo'
             action = 'hasWriteAccess'
         }
+
+        "/ws/paratoo/get-all-collections" {
+            controller = 'paratoo'
+            action = [GET:'userCollections', OPTIONS:'options']
+        }
+
 
         "/ws/paratoo/validate-token" {
             controller = 'paratoo'
@@ -252,7 +270,17 @@ class UrlMappings {
 
         "/ws/paratoo/plot-selections" {
             controller = 'paratoo'
-            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection']
+            action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection', GET:'getPlotSelections']
+        }
+
+        "/ws/paratoo/user-role" {
+            controller = 'paratoo'
+            action = [GET: 'userRoles', OPTIONS: 'options']
+        }
+
+        "/ws/paratoo/projects/$id" {
+            controller = 'paratoo'
+            action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }
 
         "/"(redirect:[controller:"documentation"])

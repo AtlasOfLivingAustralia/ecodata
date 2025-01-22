@@ -12,25 +12,30 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
         Map expectedResult = [
                 projects: [[
-                    id:"p1", name:"Project 1", protocols: [
+                    id:"p1", name:"Project 1", grantID:"g1", protocols: [
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: "module-1"],
                         [id:2, identifier: "guid-2", name: "Protocol 2", version: 1, module: "module-2"],
                         [id:3, identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3"]],
                     project_area:null,
                     plot_selections:[
-                       [uuid:'s1', plot_name:"Site 1"]
-                    ]
+                       [uuid:'s1', name:"Site 1"]
+                    ],
+                    role:"project_admin"
                    ],[
-                    id:"p2", name:"Project 2", protocols:[], plot_selections:[], project_area:[type:"Polygon", coordinates: DUMMY_POLYGON]
+                    id:"p2", name:"Project 2", grantID:"g2", protocols:[], plot_selections:[],
+                    project_area:[type:"Polygon", coordinates: DUMMY_POLYGON[0].collect{[lat:it[1], lng:it[0]]}],
+                    role:"authenticated"
                   ],[
-                     id:"p3", name:"Project 3", protocols:[
+                     id:"p3", name:"Project 3", grantID:"g3", protocols:[
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
-                     ], project_area:null, plot_selections:[]
+                     ], project_area:null, plot_selections:[], role:'authenticated'
                   ]
                 ]]
 
         when: "The results of /paratoo/user-projects is rendered"
         List projects = buildProjectsForRendering(projectSpec)
+        projects[1].accessLevel = AccessLevel.editor
+        projects[2].accessLevel = AccessLevel.projectParticipant
         def result = render(view: "/paratoo/userProjects", model:[projects:projects])
 
         then:"The json is correct"
@@ -65,7 +70,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
             Site tmp = buildSite(numberOfPlots+2)
             projectArea = [type:tmp.extent.geometry.type, coordinates:tmp.extent.geometry.coordinates]
         }
-        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", protocols: protocols, projectArea: projectArea, plots:plots)
+        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", grantID:"g$projectIndex", protocols: protocols, projectArea: projectArea, plots:plots, accessLevel: AccessLevel.admin)
     }
 
     private ActivityForm buildActivityForm(int i) {
@@ -73,6 +78,6 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     }
 
     private Site buildSite(i) {
-        new Site(siteId:"s$i", externalId:"s$i", name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
+        new Site(siteId:"s$i", externalIds:[[idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"s$i"]], name:"Site $i", extent:[geometry:[type:'Polygon', coordinates:DUMMY_POLYGON]])
     }
 }

@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
@@ -8,6 +11,7 @@ import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.grails.plugin.cache.GrailsCacheManager
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
@@ -35,14 +39,14 @@ class AdminController {
     RecordService recordService
     ProjectActivityService projectActivityService
     ParatooService paratooService
+    GrailsCacheManager grailsCacheManager
 
     @AlaSecured(["ROLE_ADMIN"])
     def index() {}
 
     @AlaSecured(["ROLE_ADMIN"])
     def tools() {}
-
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
     def syncCollectoryOrgs() {
         def errors = collectoryService.syncOrganisations(organisationService)
         if (errors)
@@ -130,8 +134,7 @@ class AdminController {
             stream?.close()
         }
     }
-
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
     def getBare(String entity, String id) {
         def map = [:]
         switch (entity) {
@@ -152,14 +155,22 @@ class AdminController {
     /**
      * Re-index all docs with ElasticSearch
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def reIndexAll() {
         def resp = elasticSearchService.indexAll()
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def reindexProjects() {
+        Map params = request.JSON
+        int count = elasticSearchService.indexProjectsWithCriteria(params)
+        Map resp = [indexedCount:count]
+        render resp as JSON
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def clearMetadataCache() {
         // clear any cached external config
         cacheService.clear()
@@ -227,9 +238,10 @@ class AdminController {
                             log.info("Ignoring site ${site.siteId} due to no associated projects")
                             return
                         }
+                        List fids = metadataService.getSpatialLayerIdsToIntersectForProjects(site.projects)
                         def centroid = site.extent?.geometry?.centre
                         if (!centroid) {
-                            def updatedSite = siteService.populateLocationMetadataForSite(site)
+                            def updatedSite = siteService.populateLocationMetadataForSite(site, fids)
                             siteService.update([extent: updatedSite.extent], site.siteId, false)
                             total++
                             if(total > 0 && (total % 200) == 0) {
@@ -247,6 +259,122 @@ class AdminController {
 
             offset += batchSize
         }
+
+        def result = [code:code]
+        render result as JSON
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def updateSiteLocationMetadata() {
+        def dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+        def defaultStartDate = "2018-01-01"
+        def timeZoneUTC = TimeZone.getTimeZone("UTC")
+        dateFormat.setTimeZone(timeZoneUTC)
+        Boolean isForceFetch = params.getBoolean('force', true)
+        Boolean isMERIT = params.getBoolean('isMERIT', true)
+        Date startDate = params.getDate("startDate", ["yyyy", "yyyy-MM-dd"]) ?: dateFormat.parse(defaultStartDate)
+        List siteIds = params.get("siteId")?.split(",") ?: []
+        List projectIds = params.get("projectId")?.split(",") ?: []
+        def code = 'success'
+        def total = 0
+        def offset = 0
+        def batchSize = 100
+        def startTime = System.currentTimeMillis(), finishTime, startInterimTime, endInterimTime, batchStartTime, batchEndTime
+        List<String> defaultFids = metadataService.getSpatialLayerIdsToIntersect()
+        log.debug("Number of fids to intersect: ${defaultFids.size()}; they are - ${defaultFids}")
+        def totalSites
+        if (projectIds) {
+            projectIds.each {
+                siteIds.addAll(siteService.findAllSiteIdsForProject(it))
+            }
+
+            totalSites = siteIds.size()
+        }
+        else if (siteIds) {
+            totalSites = siteIds.size()
+        }
+        else if (isMERIT) {
+            projectIds = projectService.getAllMERITProjectIds()
+            totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThan('active', projectIds, startDate)
+        }
+        else {
+            totalSites = Site.countByStatus('active')
+        }
+
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            batchStartTime = startInterimTime = System.currentTimeMillis()
+            def sites
+            if (siteIds) {
+                sites = Site.findAllBySiteIdInList(siteIds, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
+            }
+            else if (isMERIT) {
+                sites = Site.findAllByProjectsInListAndStatusAndDateCreatedGreaterThan(projectIds, 'active', startDate, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
+            }
+            else {
+                sites = Site.findAllByStatus('active', [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                    siteService.toMap(it, 'flat')
+                }
+            }
+            count = sites.size()
+            endInterimTime = System.currentTimeMillis()
+            log.debug("Time taken to fetch ${batchSize} records: ${endInterimTime - startInterimTime} ms")
+            startInterimTime = endInterimTime
+            Site.withSession { session -> session.clear() }
+            Site.withNewSession {
+                sites.eachWithIndex { site, index ->
+                    try {
+                        total++
+                        if(total > 0 && (total % batchSize) == 0) {
+                            log.info("${total+1} or ${(total+1)*100/totalSites} % sites updated in db..")
+                        }
+
+                        if (!site.extent) {
+                            log.debug("Ignoring site ${site.siteId} due to no extent")
+                            return
+                        }
+                        // management unit site does not have any projects
+                        def projectsOfSite = site.projects ?: []
+                        List hubIds = projectService.findHubIdFromProjectsOrCurrentHub(projectsOfSite)
+                        def fids = hubIds.size() == 1 ? metadataService.getSpatialLayerIdsToIntersect(hubIds[0]) : defaultFids
+
+                        if (!isForceFetch && siteService.areIntersectionCalculatedForAllLayers(site)) {
+                            log.debug("Skipping site ${site.siteId} as all layers are already calculated and force fetch is not enabled - $isForceFetch")
+                            return // Skip if all layers are already calculated
+                        }
+
+                        siteService.populateLocationMetadataForSite(site, fids)
+                        endInterimTime = System.currentTimeMillis()
+                        log.debug("Time taken to update metadata ${site.siteId}: ${endInterimTime - startInterimTime} ms")
+                        startInterimTime = endInterimTime
+
+                        if (site?.extent) {
+                            siteService.update([extent: site.extent], site.siteId, false)
+                            endInterimTime = System.currentTimeMillis()
+                            log.debug("Time taken to update site ${site.siteId}: ${endInterimTime - startInterimTime} ms")
+                            startInterimTime = endInterimTime
+                        }
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to complete the operation for siteId - ${site.siteId} ", e)
+                        code = "error"
+                    }
+                }
+            }
+
+            offset += batchSize
+
+            batchEndTime = System.currentTimeMillis()
+            log.debug("Time taken to process ${batchSize} records: ${batchEndTime - batchStartTime} ms")
+        }
+
+        finishTime = System.currentTimeMillis()
+        log.debug("site update compled in ${finishTime - startTime} ms")
+
         def result = [code:code]
         render result as JSON
     }
@@ -433,10 +561,22 @@ class AdminController {
         render reports as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def indexProjectDependencies() {
+        if(params.projectId){
+            List projects = params.projectId.split(',')?.toList()
+            elasticSearchService.indexDependenciesOfProjects( projects )
+            render text: [message: 'indexing completed'] as JSON, contentType: 'application/json'
+        } else {
+            render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
+        }
+    }
+
     /**
      * a test function to index a project.
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
     def indexProjectDoc() {
         if(params.projectId){
             def projects = Project.findAllByProjectId(params.projectId)
@@ -447,7 +587,7 @@ class AdminController {
                         Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
                         elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
                     } catch (Exception e) {
-                        log.error("Unable to index projewt: " + project?.projectId, e)
+                        log.error("Unable to index project: " + project?.projectId, e)
                         e.printStackTrace();
                     }
                 }
@@ -725,4 +865,69 @@ class AdminController {
         render errors as JSON
     }
 
+    /**
+     * Re-fetch data from Paratoo. Helpful when data could not be parsed correctly the first time.
+     *
+     * @return
+     */
+    @AlaSecured(["ROLE_ADMIN"])
+    def reSubmitDataSet() {
+        String projectId = params.id
+        String dataSetId = params.dataSetId
+        String userId = params.userId ?: userService.currentUser()?.userId
+        if (!projectId || !dataSetId || !userId) {
+            render text: [message: "Bad request"] as JSON, status: HttpStatus.SC_BAD_REQUEST
+            return
+        }
+
+        ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
+        List<ParatooProject> projects = paratooService.userProjects(userId)
+        ParatooProject project = projects.find {it.project.projectId == projectId }
+        if (project) {
+            paratooService.submitCollection(collection, project, userId)
+            render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+        }
+        else {
+            render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+        }
+    }
+
+
+    /**
+     * Helper function to check the form generated for a protocol during the sync operation.
+     * Usual step is to update Paratoo config in DB. Use this function to check the form generated.
+     * @return
+     */
+    @AlaSecured(["ROLE_ADMIN"])
+    def checkActivityFormForProtocol() {
+        String protocolId = params.id
+        List protocols = paratooService.getProtocolsFromParatoo()
+        Map protocol = protocols.find { it.attributes.identifier == protocolId }
+        if (!protocol) {
+            render text: [message: "Protocol not found"] as JSON, status: HttpStatus.SC_NOT_FOUND, contentType: 'application/json'
+            return
+        }
+
+        Map documentation = paratooService.getParatooSwaggerDocumentation()
+        ParatooProtocolConfig config = paratooService.getProtocolConfig(protocolId)
+        if (!config) {
+           render text: [message: "Protocol config not found"] as JSON, status: HttpStatus.SC_NOT_FOUND, contentType: 'application/json'
+            return
+        }
+
+        Map template = paratooService.buildTemplateForProtocol(protocol, documentation, config)
+        render text: template as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+    }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def clearCache() {
+        def caches = grailsCacheManager.getCacheNames()
+        if (caches.contains(params.cache)) {
+            grailsCacheManager.getCache(params.cache).clear()
+            render text: [message: "Success"] as JSON, status: HttpStatus.SC_OK
+        }
+        else {
+            render text: [message: "Cache name not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+        }
+    }
 }

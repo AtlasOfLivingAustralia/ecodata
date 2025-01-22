@@ -4,7 +4,6 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
-import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -26,6 +25,11 @@ class ProjectService {
     static final ENHANCED = 'enhanced'
     static final PRIVATE_SITES_REMOVED = 'privatesitesremoved'
 
+    /** A Map containing a per-project lock for synchronizing locks for updates.  The purpose of this
+     * is to support concurrent edits on different project data set summaries which are currently modelled as
+     * an embedded array but can be added and updated by both the UI and the Monitor (Parataoo) application API */
+    static final Map PROJECT_UPDATE_LOCKS = Collections.synchronizedMap([:].withDefault{ new Object() })
+
     GrailsApplication grailsApplication
     MessageSource messageSource
     SessionLocaleResolver localeResolver
@@ -44,10 +48,15 @@ class ProjectService {
     OrganisationService organisationService
     UserService userService
     ActivityFormService activityFormService
+    RecordService recordService
+    LockService lockService
+    HubService hubService
 
   /*  def getCommonService() {
         grailsApplication.mainContext.commonService
     }*/
+
+
 
     def getBrief(listOfIds, version = null) {
         if (listOfIds) {
@@ -237,6 +246,10 @@ class ProjectService {
 
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
+                Lock lock = lockService.get(project.projectId)
+                if (lock) {
+                    mapOfProperties.lock = lock
+                }
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
@@ -284,7 +297,9 @@ class ProjectService {
                 if (it.organisationId) {
                     Organisation org = Organisation.findByOrganisationId(it.organisationId)
                     if (org) {
-                        it.name = org.name
+                        if (!it.name) { // Is this going to cause BioCollect an issue?
+                            it.name = org.name
+                        }
                         it.url = org.url
                         it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
                     }
@@ -475,30 +490,37 @@ class ProjectService {
     }
 
     def update(Map props, String id, Boolean shouldUpdateCollectory = true) {
-        Project project = Project.findByProjectId(id)
-        if (project) {
-            // retrieve any project activities associated with the project
-            List projectActivities = projectActivityService.getAllByProject(id)
-            props = includeProjectFundings(props)
-            props = includeProjectActivities(props, projectActivities)
+        synchronized (PROJECT_UPDATE_LOCKS.get(id)) {
+            Project project = Project.findByProjectId(id)
+            if (project) {
+                // retrieve any project activities associated with the project
+                List projectActivities = projectActivityService.getAllByProject(id)
+                props = includeProjectFundings(props)
+                props = includeProjectActivities(props, projectActivities)
 
-            try {
-                bindEmbeddedProperties(project, props)
-                commonService.updateProperties(project, props)
-                if (shouldUpdateCollectory) {
-                    updateCollectoryLinkForProject(project, props)
+                try {
+                    // Custom currently holds keys "details" and "dataSets".  Only update the "custom" properties
+                    // that are supplied in the update, leaving the others intact.
+                    if (project.custom && props.custom) {
+                        project.custom.putAll(props.remove('custom'))
+                    }
+                    bindEmbeddedProperties(project, props)
+                    commonService.updateProperties(project, props)
+                    if (shouldUpdateCollectory) {
+                        updateCollectoryLinkForProject(project, props)
+                    }
+                    return [status: 'ok']
+                } catch (Exception e) {
+                    Project.withSession { session -> session.clear() }
+                    def error = "Error updating project ${id} - ${e.message}"
+                    log.error error, e
+                    return [status: 'error', error: error]
                 }
-                return [status: 'ok']
-            } catch (Exception e) {
-                Project.withSession { session -> session.clear() }
-                def error = "Error updating project ${id} - ${e.message}"
-                log.error error, e
+            } else {
+                def error = "Error updating project - no such id ${id}"
+                log.error error
                 return [status: 'error', error: error]
             }
-        } else {
-            def error = "Error updating project - no such id ${id}"
-            log.error error
-            return [status: 'error', error: error]
         }
     }
 
@@ -643,6 +665,15 @@ class ProjectService {
         }
     }
 
+    List<String> getAllMERITProjectIds() {
+        Project.withCriteria {
+            eq("isMERIT", true)
+            projections {
+                property("projectId")
+            }
+        }
+    }
+
     /**
      * Performs a case-insensitive search by project name
      * @param name The project name to search for
@@ -671,15 +702,36 @@ class ProjectService {
     List<Map> search(Map searchCriteria, levelOfDetail = []) {
 
         def criteria = Project.createCriteria()
+
         def projects = criteria.list {
             ne("status", DELETED)
             searchCriteria.each { prop, value ->
+                // Special case for organisationId - also included embedded associatedOrg relationships.
+                if (prop == 'organisationId') {
+                    or {
+                        if (value instanceof List) {
+                            inList(prop, value)
+                        } else {
+                            eq(prop, value)
+                        }
 
-                if (value instanceof List) {
-                    inList(prop, value)
-                } else {
-                    eq(prop, value)
+                        associatedOrgs {
+                            if (value instanceof List) {
+                                inList(prop, value)
+                            } else {
+                                eq(prop, value)
+                            }
+                        }
+                    }
                 }
+                else {
+                    if (value instanceof List) {
+                        inList(prop, value)
+                    } else {
+                        eq(prop, value)
+                    }
+                }
+
             }
 
         }
@@ -703,11 +755,40 @@ class ProjectService {
      * @param orgId identifies the organsation that has changed name
      * @param orgName the new organisation name
      */
-    void updateOrganisationName(orgId, orgName) {
-        Project.findAllByOrganisationIdAndStatusNotEqual(orgId, DELETED).each { project ->
-            project.organisationName = orgName
-            project.save()
+    void updateOrganisationName(String orgId, String oldName, String newName) {
+        Project.findAllByOrganisationIdAndOrganisationNameAndStatusNotEqual(orgId, oldName, DELETED).each { project ->
+            project.organisationName = newName
+            project.save(flush:true)
         }
+
+        List projects = Project.where {
+            status != DELETED
+            associatedOrgs {
+                organisationId == orgId
+                name == oldName
+            }
+        }.list()
+
+
+        projects?.each { Project project ->
+            project.associatedOrgs.each { org ->
+                if (org.organisationId == orgId && org.name == oldName) {
+                    org.name = newName
+                }
+            }
+            project.save(flush:true)
+        }
+    }
+
+    Map getSciStarterProjectsPage(JsonSlurper slurper, int page = 1) {
+        String baseUrl = grailsApplication.config.getProperty("scistarter.baseUrl")
+        String finderUrl = grailsApplication.config.getProperty("scistarter.finderUrl")
+        String apiKey = grailsApplication.config.getProperty("scistarter.apiKey")
+        String url = "${baseUrl}${finderUrl}?format=json&key=${apiKey}&page=${page}"
+
+        String data = webService.get(url, false)
+
+        return slurper.parseText(data)
     }
 
     /**
@@ -718,50 +799,51 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    Integer importProjectsFromSciStarter() {
-        int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0
+    Map importProjectsFromSciStarter() {
+        int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0, page = 1
+        JsonSlurper slurper = new JsonSlurper()
+
         log.info("Starting SciStarter import")
         try {
-            JsonSlurper jsonSlurper = new JsonSlurper()
-            String sciStarterProjectUrl
-            // list all SciStarter projects
-            List projects = getSciStarterProjectsFromFinder()
-            projects?.eachWithIndex { pProperties, index ->
-                Map transformedProject
-                Map project = pProperties
-                if (project && project.title && project.id) {
-                    Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
-                    // get more details about the project
+
+            while(true) {
+                // list SciStarter projects for the current page
+                Map data = getSciStarterProjectsPage(slurper, page)
+                log.info("-- PAGE ${page}/${Math.round(data.total / 10)} SCISTARTER --")
+
+                // Break the loop if there are no more projects left to import
+                if (data.entities.size() == 0) break
+
+                data.entities.eachWithIndex { project, index ->
                     try {
-                        sciStarterProjectUrl = "${grailsApplication.config.getProperty('scistarter.baseUrl')}${grailsApplication.config.getProperty('scistarter.projectUrl')}/${project.id}?key=${grailsApplication.config.getProperty('scistarter.apiKey')}"
-                        String text = webService.get(sciStarterProjectUrl, false);
-                        if (text instanceof String) {
-                            Map projectDetails = jsonSlurper.parseText(text)
-                            if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
-                                // ignore projects SciStarter imported from Biocollect
-                                log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
-                                ignoredProjects++
+                        Project existingProject = Project.findByExternalIdAndIsSciStarter(project.legacy_id.toString(), true)
+
+                        if (project.origin == 'atlasoflivingaustralia') {
+                            // ignore projects SciStarter imported from BioCollect
+                            log.info("Ignoring ALA project ${project.name} - ${project.id}")
+                            ignoredProjects++
+                        } else {
+                            // map properties from SciStarter to Biocollect
+                            Map transformedProject = SciStarterConverter.convert(project)
+                            if (!existingProject) {
+                                // create project & document & site & organisation
+                                createSciStarterProject(transformedProject, project)
+                                log.info("Creating ${project.name} in ecodata")
+
+                                createdProjects++
                             } else {
-                                projectDetails << project
-                                // map properties from SciStarter to Biocollect
-                                transformedProject = SciStarterConverter.convert(projectDetails)
-                                if (!importedSciStarterProject) {
-                                    // create project & document & site & organisation
-                                    createSciStarterProject(transformedProject, projectDetails)
-                                    createdProjects++
-                                } else {
-                                    // update a project just in case something has changed.
-                                    updateSciStarterProject(transformedProject, importedSciStarterProject)
-                                    log.info("Updating ${importedSciStarterProject.name} ${importedSciStarterProject.projectId}.")
-                                    updatedProjects++
-                                }
+                                // update a project just in case something has changed.
+                                updateSciStarterProject(transformedProject, existingProject)
+
+                                log.info("Updating ${existingProject.name} ${existingProject.projectId}.")
+                                updatedProjects++
                             }
                         }
-                    } catch (Exception e) {
-                        log.error("Error processing project - ${sciStarterProjectUrl}. Ignoring it. ${e.message}", e);
-                        ignoredProjects++
+                    }  catch (Exception e) {
+                        log.error("Error processing project - ${project.name}. Ignoring it. ${e.message}", e);
                     }
                 }
+                page++
             }
 
             log.info("Number of created projects ${createdProjects}. Number of ignored projects ${ignoredProjects}. Number of projects updated ${updatedProjects}.")
@@ -772,23 +854,7 @@ class ProjectService {
         }
 
         log.info("Completed SciStarter import")
-        createdProjects
-    }
-
-    /**
-     * Get the entire project list from SciStarter
-     * @return
-     * @throws SocketTimeoutException
-     * @throws Exception
-     */
-    List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception {
-        String scistarterFinderUrl = "${grailsApplication.config.getProperty('scistarter.baseUrl')}${grailsApplication.config.getProperty('scistarter.finderUrl')}?format=json&q="
-        String responseText = webService.get(scistarterFinderUrl, false)
-        if (responseText instanceof String) {
-            ObjectMapper mapper = new ObjectMapper()
-            Map response = mapper.readValue(responseText, Map.class)
-            return response.results
-        }
+        [created: createdProjects, updated: updatedProjects, ignored: ignoredProjects]
     }
 
     /**
@@ -869,16 +935,14 @@ class ProjectService {
     Map createSciStarterSites(Map project) {
         Map result = [siteIds: null]
         List sites = []
-        if (project.regions?.size()) {
+        if (project.regions) {
             // convert region to site
-            project.regions.each { region ->
-                Map site = SciStarterConverter.siteMapping(region)
-                // only add valid geojson objects
-                if (site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())) {
-                    Map createdSite = siteService.create(site)
-                    if (createdSite.siteId) {
-                        sites.push(createdSite.siteId)
-                    }
+            Map site = SciStarterConverter.siteMapping(project)
+            // only add valid geojson objects
+            if (site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())) {
+                Map createdSite = siteService.create(site)
+                if (createdSite.siteId) {
+                    sites.push(createdSite.siteId)
                 }
             }
 
@@ -1044,6 +1108,234 @@ class ProjectService {
             count += Project.countByProjectIdAndHubId(it?.entityId, hubId)
         }
         count > 0
+    }
+
+    List fetchDataSetRecords (String projectId, String dataSetId) {
+        int batchSize = 10, count = 10, offset = 0
+        List records = []
+        while (batchSize == count) {
+            def response = Record.findAllByProjectIdAndDataSetId(projectId, dataSetId, [max: batchSize, offset: offset])
+            count = records.size()
+            response = response.collect { recordService.toMap(it) }
+            records.addAll(response)
+            offset += count
+        }
+
+        records
+    }
+
+    /**
+     * Updates a single data set associated with a project.  Because the datasets are stored as an embedded
+     * array in the Project collection, this method is synchronized on the project to avoid concurrent updates to
+     * different data sets overwriting each other.
+     * Due to the way it's been modelled as an embedded array, the client is allowed to supply a dataSetId
+     * when creating a new data set (e.g. a data set created by a submission from the Monitor app uses the
+     * submissionId as the dataSetId).
+     * @param projectId The project to update
+     * @param dataSet the data set to update.
+     * @return
+     */
+    Map updateDataSet(String projectId, Map dataSet) {
+       updateDataSets(projectId, [dataSet])
+    }
+
+    /**
+     * Updates multiple data sets associated with a project at the same time.  This method exists to support
+     * the use case of associating multiple data sets with a report and updating their publicationStatus when
+     * the report is submitted/approved.
+     *
+     * Because the datasets are stored as an embedded
+     * array in the Project collection, this method is synchronized on the project to avoid concurrent updates to
+     * different data sets overwriting each other.
+     * Due to the way it's been modelled as an embedded array, the client is allowed to supply a dataSetId
+     * when creating a new data set (e.g. a data set created by a submission from the Monitor app uses the
+     * submissionId as the dataSetId).
+     * @param projectId The project to update
+     * @param dataSet the data sets to update.
+     * @return
+     */
+    Map updateDataSets(String projectId, List dataSets) {
+        synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
+            Project.withNewSession { // Ensure that the queried Project is not cached in the current session which can cause stale data
+                Project project = Project.findByProjectId(projectId)
+                if (!project) {
+                    return [status: 'error', error: "No project exists with projectId=${projectId}"]
+                }
+                for (Map dataSet in dataSets) {
+                    if (!dataSet.dataSetId) {
+                        dataSet.dataSetId = Identifiers.getNew(true, '')
+                    }
+                    Map matchingDataSet = project.custom?.dataSets?.find { it.dataSetId == dataSet.dataSetId }
+                    if (matchingDataSet) {
+                        matchingDataSet.putAll(dataSet)
+                    } else {
+                        if (!project.custom) {
+                            project.custom = [:]
+                        }
+                        if (!project.custom?.dataSets) {
+                            project.custom.dataSets = []
+                        }
+                        project.custom.dataSets.add(dataSet)
+                    }
+                }
+                update([custom: project.custom], project.projectId, false)
+            }
+        }
+    }
+
+    Map deleteDataSet(String projectId, String dataSetId) {
+        synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
+            Project project = Project.findByProjectId(projectId)
+
+            boolean foundMatchingDataSet = project?.custom?.dataSets?.removeAll { it.dataSetId == dataSetId }
+            if (!foundMatchingDataSet) {
+                return [status: 'error', error: 'No such data set']
+            }
+            else {
+                update([custom: project.custom], project.projectId, false)
+            }
+        }
+    }
+
+    /**
+     * Returns a list of all projects that have been updated since the specified date.
+     * @param date the date to compare against
+     * @return a list of projects
+     */
+    Map orderLayerIntersectionsByAreaOfProjectSites (Map project) {
+        Map<String,Map<String,Double>> sumOfIntersectionsByLayer = [:].withDefault { [:].withDefault { 0 } }
+        Map orderedIntersectionsByArea = [:]
+        Map config = metadataService.getGeographicConfig(project.hubId)
+        List layers = config.checkForBoundaryIntersectionInLayers
+        List projectSites = getRepresentativeSitesOfProject(project)
+        projectSites?.each { Map site ->
+            layers.each { String layer ->
+                Map facet = metadataService.getGeographicFacetConfig(layer, project.hubId)
+                site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.get(facet.name)?.get(SiteService.INTERSECTION_CURRENT)?.each { String layerValue, value ->
+                    sumOfIntersectionsByLayer[layer][layerValue] += value
+                }
+            }
+        }
+
+        sumOfIntersectionsByLayer.each { String layerId, Map value ->
+            orderedIntersectionsByArea[layerId] = value.sort { entry ->
+                -entry.value
+            }.keySet().toList()
+        }
+
+        orderedIntersectionsByArea
+    }
+
+    /**
+     * Get representative sites of a project.
+     * 1. Check EMSA/Reporting sites
+     * 2. If there are no EMSA/Reporting sites, return planning/project extent sites
+     * 3. If there are no EMSA/Reporting/Planning/extent sites, return Management Unit boundaries.
+     * 4. Where none exist, return none
+     * @param project
+     * @return
+     */
+    List getRepresentativeSitesOfProject(Map project) {
+        if (project) {
+            List sites = project.sites
+            List projectSites = siteService.filterSitesByPurposeIsReportingOrEMSA(sites) ?: []
+            if (projectSites.isEmpty()) {
+                projectSites =  siteService.filterSitesByPurposeIsPlanning(sites) ?: []
+                if (projectSites.isEmpty() && project.managementUnitId) {
+                    ManagementUnit mu = ManagementUnit.findByManagementUnitId(project.managementUnitId)
+                    String managementUnitSiteId = mu?.managementUnitSiteId
+                    if (managementUnitSiteId) {
+                        Site muSite = Site.findBySiteId(managementUnitSiteId)
+                        if (muSite) {
+                            projectSites = [siteService.toMap(muSite, [SiteService.FLAT])]
+                        }
+                    }
+                }
+            }
+
+            return projectSites
+        }
+
+
+        []
+    }
+
+    /**
+     * Find primary/other state(s)/electorate(s) for a project.
+     * 1. If isDefault is true, use manually assigned state(s)/electorate(s) i.e project.geographicInfo.
+     * 2. If isDefault is false or missing, use the state(s)/electorate(s) from sites using site precedence.
+     * 3. If isDefault is false and there are no sites, use manual state(s)/electorate(s) in project.geographicInfo.
+     */
+    Map findStateAndElectorateForProject(Map project) {
+        Map result = [:]
+        if(project == null) {
+            return result
+        }
+
+        Map geographicInfo = project?.geographicInfo
+        // isDefault is false or missing
+        if (geographicInfo == null || (geographicInfo.isDefault == false)) {
+            Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
+            Map config = metadataService.getGeographicConfig()
+            List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+            intersectionLayers?.each { layer ->
+                Map facetName = metadataService.getGeographicFacetConfig(layer)
+                if (facetName.name) {
+                    List intersectionValues = intersections[layer]
+                    if (intersectionValues) {
+                        result["primary${facetName.name}"] = intersectionValues.pop()
+                        result["other${facetName.name}"] = intersectionValues.join("; ")
+                    }
+                }
+                else
+                    log.error ("No facet config found for layer $layer.")
+            }
+        }
+
+        //isDefault is true or false and no sites.
+        if (geographicInfo) {
+            // load from manually assigned electorates/states
+            if (!result.containsKey("primaryelect")) {
+                result["primaryelect"] = geographicInfo.primaryElectorate
+                result["otherelect"] = geographicInfo.otherElectorates?.join("; ")
+            }
+
+            if (!result.containsKey("primarystate")) {
+                result["primarystate"] = geographicInfo.primaryState
+                result["otherstate"] = geographicInfo.otherStates?.join("; ")
+            }
+        }
+
+        result
+    }
+
+    /**
+     * Returns a distinct list of hubIds for the supplied projects.
+     * @param projects
+     * @return
+     */
+    List findHubIdOfProjects(List projects) {
+        Project.createCriteria().listDistinct {
+            inList('projectId', projects)
+            projections {
+                property('hubId')
+            }
+        }
+    }
+
+    /**
+     * Find hubs from project or use hubId query parameter
+     * @param projects
+     * @return
+     */
+    def findHubIdFromProjectsOrCurrentHub (List projects) {
+        if (projects) {
+            return findHubIdOfProjects(projects)
+        }
+        else {
+            def currentHub = hubService.getCurrentHub()
+            return currentHub ? [currentHub.hubId] : []
+        }
     }
 
 }

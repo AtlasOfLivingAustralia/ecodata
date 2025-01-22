@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectActivityController {
 
     /* Testing merge to grails 3 */
@@ -52,7 +52,8 @@ class ProjectActivityController {
             }
 
             if (!result) {
-                result = [status: 404, text: 'Invalid id'];
+                render status: 404, text: [message:  'Invalid id', status: 404] as JSON
+                return
             }
         }
 
@@ -66,7 +67,7 @@ class ProjectActivityController {
      *
      * @return json map of
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         ProjectActivity pActivity = ProjectActivity.findByProjectActivityId(id)
         if (pActivity) {
@@ -92,7 +93,7 @@ class ProjectActivityController {
      * @param id - identifies the resource
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -117,7 +118,9 @@ class ProjectActivityController {
      * List projectActivities for the given projectId
      *
      * @param id project identifier.
+     * Deprecated since these APIs are not used by mobile apps.
      */
+    @Deprecated
     @PreAuthorise (idType="projectId")
     def list(String id){
         response.setContentType('application/json; charset="UTF-8"')
@@ -139,7 +142,6 @@ class ProjectActivityController {
      *
      * @return a list of the project activity that match the supplied criteria
      */
-    @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
 

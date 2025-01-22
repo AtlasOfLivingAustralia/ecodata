@@ -1,12 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.graphql.mappers.ActivityGraphQLMapper
-import grails.util.Holders
-import graphql.schema.DataFetcher
-import graphql.schema.DataFetchingEnvironment
 import org.bson.types.ObjectId
-import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
-
 /**
  * Currently this holds both activities and assessments.
  */
@@ -39,7 +34,12 @@ class Activity {
         projectActivityId index: true
         bulkImportId index: true
         version false
+        externalIds index:true
+        organisationId index:true
     }
+
+    static hasMany = [externalIds:ExternalId]
+    static embedded = ['externalIds']
 
     ObjectId id
     String activityId
@@ -54,6 +54,8 @@ class Activity {
     String bulkImportId
     Date startDate
     Date endDate
+    List<ExternalId> externalIds
+    String organisationId
 
     /** The type of activity performed.  This field must match the name of an ActivityForm */
     String type
@@ -127,6 +129,17 @@ class Activity {
         formVersion nullable: true
         verificationStatus nullable: true, inList: ['not applicable', 'not approved', 'not verified', 'under review' , 'approved']
         bulkImportId nullable: true
+        externalIds nullable: true
+        organisationId nullable: true
+    }
+
+    static Activity findByExternalId(String externalId) {
+        where {
+            externalIds {
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
     }
 
 }

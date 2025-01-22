@@ -69,7 +69,7 @@ class EmailService implements GrailsConfigurationAware {
                 if (!recipients) {
                     // The email won't be sent unless we have a to address - use the submitting user since
                     // the purpose of this is testing.
-                    recipients = [userService.getCurrentUserDetails().userName]
+                    recipients = [userService.getCurrentUserDetails().email ?: userService.getCurrentUserDetails().userName]
                 }
 
                 ccList = ccList.findAll {it ==~ emailFilter}

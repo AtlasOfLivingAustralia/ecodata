@@ -1,0 +1,1 @@
+db.site.createIndex({status: 1});

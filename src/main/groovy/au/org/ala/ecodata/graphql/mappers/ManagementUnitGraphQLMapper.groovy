@@ -22,19 +22,15 @@ class ManagementUnitGraphQLMapper {
 
             exclude("outcomes", "priorities", "config")
 
-            add("outcomes", "outcomes") {
+            add("muPriorities", "outcomes") {
                 type {
-                    field("outcome", String)
                     field("priorities", "priorities"){
                         field("category", String)
                         collection(true)
                     }
-                    field("category", String)
-                    field("shortDescription", String)
-                    collection true
                 }
                 dataFetcher { ManagementUnit mu ->
-                    mu.outcomes
+                    mu.priorities
                 }
             }
 

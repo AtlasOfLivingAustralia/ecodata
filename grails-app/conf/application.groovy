@@ -110,6 +110,9 @@ if (!google.geocode.url) {
 if (!temp.file.cleanup.days) {
     temp.file.cleanup.days = 1
 }
+if(!paratoo.location.excluded) {
+    paratoo.location.excluded = ['location.vegetation-association-nvis']
+}
 access.expiry.maxEmails=500
 
 
@@ -428,6 +431,9 @@ if (!spatial.geoJsonEnvelopeConversionThreshold) {
     spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
+spatial.intersectionThreshold = 0.05
+spatial.intersectionAreaThresholdInHectare = 10_000
+
 homepageIdx {
     elasticsearch {
         fieldsAndBoosts {
@@ -453,11 +459,11 @@ app {
         geographic {
             contextual {
                 state = 'cl927'
-                nrm = 'cl10946'
+                nrm = 'cl11160'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl10921'
+                elect = 'cl11163'
                 cmz = 'cl2112'
             }
             grouped {
@@ -492,16 +498,39 @@ app {
                 mvg = '/data/nvis_grids/mvg'
                 mvs = '/data/nvis_grids/mvs'
             }
+            checkForBoundaryIntersectionInLayers = [ "cl927", "cl11163" ]
         }
+        displayNames = [
+                elect: [
+                    headerName: "Electorate(s)"
+                ],
+                state: [
+                        headerName: "State(s)",
+                        mappings: [
+                                "Northern Territory": ["Northern Territory (including Coastal Waters)", "NT"],
+                                "Tasmania": ["Tasmania (including Coastal Waters)", "TAS"],
+                                "New South Wales": ["New South Wales (including Coastal Waters)", "NSW"],
+                                "Victoria": ["Victoria (including Coastal Waters)", "VIC"],
+                                "Queensland": ["Queensland (including Coastal Waters)", "QLD"],
+                                "South Australia": ["South Australia (including Coastal Waters)", "SA"],
+                                "Australian Capital Territory": ["ACT"],
+                                "Western Australia": ["Western Australia (including Coastal Waters)", "WA"]
+                        ]
+                ]
+        ]
     }
 }
-
 /******************************************************************************\
  *  EXTERNAL SERVERS
  \******************************************************************************/
 if (!ala.baseURL) {
     ala.baseURL = "https://www.ala.org.au"
 }
+bie.ws.url = "https://bie-ws.ala.org.au/"
+bie.url = "https://bie.ala.org.au/"
+namesmatching.url = "https://namematching-ws-test.ala.org.au/"
+namematching.strategy = ["exactMatch", "vernacularMatch"]
+
 if (!collectory.baseURL) {
     //collectory.baseURL = "https://collectory-dev.ala.org.au/"
     collectory.baseURL = "https://collections-test.ala.org.au/"
@@ -530,21 +559,16 @@ if (!security.cas.adminRole) {
 if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if (!userDetails.url) {
-    userDetails.url = "https://auth-test.ala.org.au/userdetails/"
-}
-
-if (!authGetKeyUrl) {
-    authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
-}
-
-if (!authCheckKeyUrl) {
-    authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
-}
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
-paratoo.core.baseUrl = 'https://merit-test.core-api.paratoo.tern.org.au/api'
+paratoo.core.baseUrl = 'https://dev.core-api.monitor.tern.org.au/api'
+paratoo.excludeInterventionProtocols = true
+paratoo.core.documentationUrl = '/documentation/swagger.json'
+
+auth.baseUrl = 'https://auth-test.ala.org.au'
+userDetails.web.url = "${auth.baseUrl}/userdetails/"
+userDetails.api.url = "${auth.baseUrl}/userdetails/userDetails/"
 
 if (!grails.cache.ehcache) {
     grails {
@@ -552,29 +576,13 @@ if (!grails.cache.ehcache) {
             enabled = true
             ehcache {
                 cacheManagerName = appName + '-ehcache'
-                reloadable = true
-                diskStore = '/data/${appName}/ehcache'
+                diskStore = "/data/${appName}/ehcache"
+                ehcacheXmlLocation = 'classpath:ecodata-ehcache.xml'
             }
         }
     }
 }
-grails.cache.config = {
-
-    provider {
-        name "${appName}-ehcache"
-    }
-    diskStore {
-        path "/data/${appName}/ehcache"
-    }
-    cache {
-        name 'userDetailsCache'
-        timeToLiveSeconds 60 * 60 * 24
-        maxElementsInMemory 2000
-        maxElementsOnDisk 2000
-        overflowToDisk true
-        diskPersistent true
-    }
-}
+ehcache.directory='/data/ecodata/ehcache'
 
 
 security {
@@ -603,7 +611,7 @@ security {
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
         urlPatterns = ["/ws/graphql/*"]
-        requiredScopes = ["openid", 'profile', "ala", "roles"]
+        requiredScopes = []
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
     }
@@ -632,14 +640,10 @@ environments {
         app.uploads.url = "/document/download/"
         grails.mail.host="localhost"
         grails.mail.port=1025
+        ehcache.directory="./ehcache"
     }
     test {
-        // Override disk store so the travis build doesn't fail.
-        grails.cache.config = {
-            diskStore {
-                path '/tmp'
-            }
-        }
+        ehcache.directory="./ehcache"
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
@@ -657,8 +661,6 @@ environments {
         app.file.archive.path = "./target/archive"
         String casBaseUrl = "http://locahost:8018"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
-        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
-        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
 
         wiremock.port = 8018
         security.cas.bypass = true
@@ -666,17 +668,13 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
     }
     meritfunctionaltest {
-        grails.cache.config = {
-            diskStore {
-                path '/tmp'
-            }
-        }
+        ehcache.directory="./ehcache"
         security.cas.bypass = true
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.serverURL = "http://localhost:8080"
-        app.uploads.url = "${grails.serverURL}/document/download?filename="
+        app.uploads.url = "/document/download/"
 
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = true
@@ -693,10 +691,9 @@ environments {
         security.cas.loginUrl="${security.cas.casServerUrlPrefix}/login"
         security.cas.casLoginUrl="${security.cas.casServerUrlPrefix}/login"
 
-        userDetails.url = "${casBaseUrl}/userdetails/"
+        userDetails.web.url = "${casBaseUrl}/userdetails/"
+        userDetails.api.url = "${casBaseUrl}/userdetails/"
         userDetails.admin.url = "${casBaseUrl}/userdetails/ws/admin"
-        authGetKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/generateKey"
-        authCheckKeyUrl = "${casBaseUrl}/mobileauth/mobileKey/checkKey"
         security.apikey.serviceUrl = "${casBaseUrl}/apikey/ws/check?apikey="
 
         grails.mail.host = 'localhost'
@@ -706,6 +703,7 @@ environments {
         audit.thread.schedule.interval = 500l;
 
         paratoo.core.baseUrl = "http://localhost:${wiremock.port}/monitor"
+        spatial.baseUrl = "http://localhost:${wiremock.port}"
     }
     production {
         grails.logging.jul.usebridge = false
@@ -1062,9 +1060,11 @@ facets.project = [
 ]
 
 license.default = "https://creativecommons.org/licenses/by-nc/3.0/au/"
-projectActivity.notifyOnChange = true
-biocollect.baseURL = "https://biocollect.ala.org.au"
-biocollect.projectActivityDataURL = "${biocollect.baseURL}/bioActivity/projectRecords"
+projectActivity.notifyOnChange=true
+biocollect.baseURL="https://biocollect.ala.org.au"
+biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
+biocollect.projectArea.simplificationThreshold=10000
+biocollect.projectArea.simplificationTolerance=0.0001
 
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM
@@ -1888,3 +1888,94 @@ if (!darwinCore.namespaces) {
             rightsHolder                 : "http://purl.org/dc/terms/rightsHolder"
     ]
 }
+
+// paratoo / monitor
+
+paratoo.defaultPlotLayoutDataModels =  [
+                [
+                        dataType: "geoMap",
+                        name: "plot_layout",
+                        validate: "required"
+                ],
+                [
+                        dataType: "list",
+                        name: "plot_visit",
+                        validate: "required",
+                        columns: [
+                                [
+                                        dataType: "date",
+                                        name: "end_date",
+                                        dwcAttribute: "eventDate"
+                                ],
+                                [
+                                        dataType: "text",
+                                        name: "visit_field_name"
+                                ],
+                                [
+                                        dataType: "date",
+                                        name: "start_date",
+                                        dwcAttribute: "eventDate"
+                                ]
+                        ]
+                ]
+        ]
+
+paratoo.defaultPlotLayoutViewModels = [
+                [
+                        type: "row",
+                        items: [
+                                [
+                                        type: "col",
+                                        items: [
+                                                [
+                                                        type: "section",
+                                                        title: "Plot Visit",
+                                                        preLabel: "Plot Visit",
+                                                        boxed: true,
+                                                        items: [
+                                                                [
+                                                                        type: "repeat",
+                                                                        source: "plot_visit",
+                                                                        userAddedRows: false,
+                                                                        items: [
+                                                                                [
+                                                                                        type: "row",
+                                                                                        class: "output-section",
+                                                                                        items: [
+                                                                                                [
+                                                                                                        type: "col",
+                                                                                                        items: [
+                                                                                                                [
+                                                                                                                        type: "date",
+                                                                                                                        source: "end_date",
+                                                                                                                        preLabel: "End Date"
+                                                                                                                ],
+                                                                                                                [
+                                                                                                                        type: "text",
+                                                                                                                        source: "visit_field_name",
+                                                                                                                        preLabel: "Visit Field Name"
+                                                                                                                ],
+                                                                                                                [
+                                                                                                                        type: "date",
+                                                                                                                        source: "start_date",
+                                                                                                                        preLabel: "Start Date"
+                                                                                                                ]
+                                                                                                        ]
+                                                                                                ]
+                                                                                        ]
+                                                                                ]
+                                                                        ]
+                                                                ]
+                                                        ]
+                                                ],
+                                                [
+                                                        type: "geoMap",
+                                                        source: "plot_layout",
+                                                        orientation: "vertical"
+                                                ]
+                                        ]
+                                ]
+                        ]
+                ]
+        ]
+paratoo.species.specialCases = ["Other", "N/A"]

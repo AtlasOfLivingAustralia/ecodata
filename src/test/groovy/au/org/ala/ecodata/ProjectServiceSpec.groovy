@@ -4,20 +4,26 @@ import au.org.ala.ecodata.converter.ISODateBindingConverter
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Ignore
 
-class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
+class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService>, DomainUnitTest<Project> {
 
     ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
     WebService webServiceStub = Stub(WebService)
-    SiteService siteService = Mock(SiteService)
+    SiteService siteService = new SiteService()
     DocumentService documentService = Mock(DocumentService)
     ActivityService activityService = Mock(ActivityService)
     ReportingService reportingService = Mock(ReportingService)
     MetadataService metadataService = Mock(MetadataService)
+    LockService lockService = Mock(LockService)
 
     String collectoryBaseUrl = ''
     String meritDataProvider = 'drMerit'
@@ -38,6 +44,13 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         }
 
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider], collectoryIntegrationEnabled: true]
+        grailsApplication.config.app.facets.geographic = [
+                contextual: [
+                        state : 'cl927',
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
+        ]
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
         grailsApplication.mainContext.collectoryService.grailsApplication = grailsApplication
         grailsApplication.mainContext.collectoryService.webService = webServiceStub
@@ -50,7 +63,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         service.documentService = documentService
         service.grailsApplication = grailsApplication
         service.metadataService = metadataService
-
+        service.lockService = lockService
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource", _) >> [:]
         webServiceStub.extractIdFromLocationHeader(_) >> dataResourceId
         webServiceStub.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, _) >> [:]
@@ -64,13 +77,15 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project.collection.remove(new BasicDBObject())
         ManagementUnit.collection.remove(new BasicDBObject())
         AuditMessage.collection.remove(new BasicDBObject())
+        Site.collection.remove(new BasicDBObject())
     }
 
     def cleanup() {
         Project.findAll().each { it.delete(flush:true) }
         AuditMessage.findAll().each { it.delete(flush:true) }
         UserPermission.findAll().each { it.delete(flush:true) }
-
+        ManagementUnit.findAll().each { it.delete(flush:true) }
+        Site.findAll().each { it.delete(flush:true) }
     }
 
     def "test create and update project"() {
@@ -760,4 +775,403 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     }
 
+    void "The updateDataSet method will update (or insert) a data set into a Project"() {
+        setup:
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345")
+        project.save(flush: true, failOnError: true)
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project actual
+        Project actual2
+        Project actual3
+
+        when:
+        Map resp = service.updateDataSet(project.projectId, dataSet)
+        Project.withNewSession {
+            actual = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == 'ok'
+
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == [dataSet]
+
+        when:
+        Map dataSet2 = [name: 'Test Data Set 2', description: 'Test Description 2', dataSetId:'d2']
+        resp = service.updateDataSet(project.projectId, dataSet2)
+        Project.withNewSession {
+            actual2 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == 'ok'
+
+        actual2.projectId == project.projectId
+        actual2.name == project.name
+        actual2.isMERIT == project.isMERIT
+        actual2.hubId == project.hubId
+        actual2.custom.dataSets == [dataSet, dataSet2]
+
+        when:
+        dataSet2.name = dataSet2.name + " - Updated"
+        resp = service.updateDataSet(project.projectId, dataSet2)
+        Project.withNewSession {
+            actual3 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == 'ok'
+
+        actual3.projectId == project.projectId
+        actual3.name == project.name
+        actual3.isMERIT == project.isMERIT
+        actual3.hubId == project.hubId
+        actual3.custom.dataSets == [dataSet, dataSet2]
+    }
+
+
+    void "The deleteDataSet method will delete a dataSet from a Project"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet]])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.deleteDataSet(project.projectId, 'd1')
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == []
+
+    }
+
+    void "The update method merges the Project custom property"() {
+        setup:
+        Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d1']
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, hubId:"12345", custom:[dataSets:[dataSet], details:[name:'name']])
+        project.save(flush: true, failOnError: true)
+
+
+        when:
+        Map resp = service.update([custom:[details:[name:'name 2']]], project.projectId, false)
+
+        then:
+        resp.status == 'ok'
+        Project actual = Project.findByProjectId(project.projectId)
+        actual.projectId == project.projectId
+        actual.name == project.name
+        actual.isMERIT == project.isMERIT
+        actual.hubId == project.hubId
+        actual.custom.dataSets == project.custom.dataSets
+        actual.custom.details == [name:'name 2']
+
+    }
+
+    void "The updateDataSet method is safe for concurrent access of different data sets"() {
+        setup:
+        Project project = new Project(projectId: 'p1', name: "Project 1", hubId:"12345")
+        project.save(flush: true, failOnError: true)
+        ExecutorService executor = Executors.newFixedThreadPool(20)
+        Project project2
+
+        when:
+        List callables = []
+        for (int i = 0; i < 100; i++) {
+            Map dataSet = [name: 'Test Data Set', description: 'Test Description', dataSetId:'d' + i]
+            Callable callable = new Callable() {
+                @Override
+                Object call() throws Exception {
+                    service.updateDataSet(project.projectId, dataSet)
+                    println "Updated data set ${dataSet.dataSetId}"
+                    return null
+                }
+            }
+            callables.add(callable)
+        }
+        executor.invokeAll(callables)
+        Project.withNewSession {
+            project2 = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        project2.custom.dataSets.size() == 100
+        for (int i = 0; i < 100; i++) {
+            project2.custom.dataSets.find { it.dataSetId == 'd' + i } != null
+        }
+
+    }
+
+    void "getAllMERITProjectIds should only get MERIT projects"() {
+        setup:
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true).save()
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true).save()
+        Project project3 = new Project(projectId: '333', name: "Project 333", isMERIT: false).save()
+
+        when:
+        def results = service.getAllMERITProjectIds()
+
+        then:
+        results.size() == 2
+        results.contains('111')
+        results.contains('222')
+    }
+
+    void "orderLayerIntersectionsByAreaOfProjectSites should sum proportions order intersections by descending order"() {
+        setup:
+        Map projectMap
+        Map result
+        Project project1
+        Site site1, site2
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
+        metadataService.getGeographicConfig(_) >> [
+                contextual: [
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl11163" ]
+        ]
+        metadataService.getGeographicFacetConfig("cl11163", "12345") >> [name: "elect", grouped: true]
+        project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true)
+        site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]])
+        site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        Project.withTransaction {
+            project1.save(flush: true, failOnError: true)
+            site1.save(flush: true, failOnError: true)
+            site2.save(flush: true, failOnError: true)
+        }
+            project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
+
+        when:
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
+
+        then:
+        result.size() == 1
+        result["cl11163"][0] == "bean"
+        result["cl11163"][1] == "fenner"
+        result["cl11163"][2] == "canberra"
+    }
+
+
+    void "getRepresentativeSitesOfProject should get EMSA site or Reporting sites only" () {
+        setup:
+        Map projectMap
+        Site site1, site2, site3, site4, site5
+        Project project1
+        ManagementUnit mu
+        List result
+        project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true, managementUnitId: 'mu1')
+        mu = new ManagementUnit(managementUnitId: 'mu1', name: "Management Unit 1", managementUnitSiteId: 's4')
+        site1 = new Site(siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.1, "canberra": 0.2, "fenner": 0.25]]]]])
+        site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        site3 = new Site(siteId: 's3', name: "Site 3", externalIds: [[idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: '1']], status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.0, "canberra": 0.1, "fenner": 0.6]]]]])
+        site4 = new Site(siteId: 's4', name: "Site 4", type: "worksArea", status: 'active', extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        Project.withTransaction {
+            project1.save(flush: true, failOnError: true)
+            mu.save(flush: true, failOnError: true)
+            site1.save(flush: true, failOnError: true)
+            site2.save(flush: true, failOnError: true)
+            site3.save(flush: true, failOnError: true)
+            site4.save(flush: true, failOnError: true)
+            site5.save(flush: true, failOnError: true)
+        }
+        ManagementUnit.metaClass.getDbo = {
+            delegate.properties
+        }
+        Project.metaClass.getDbo = {
+            delegate.properties
+        }
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
+
+        when: // returns reporting and EMSA sites Only
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 3
+        result.siteId[0] == 's1'
+        result.siteId[1] == 's2'
+        result.siteId[2] == 's3'
+
+        when: // returns planning/project extent sites
+        site1.type = Site.TYPE_PROJECT_AREA
+        site2.type = Site.TYPE_WORKS_AREA
+        Project.withTransaction {
+            site1.save(flush: true)
+            site2.save(flush: true)
+            site3.delete(flush: true)
+
+        }
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 3
+        result.siteId[0] == 's1'
+        result.siteId[1] =='s2'
+        result.siteId[2] == 's5'
+
+        when: // returns Management Unit boundaries
+        site1.projects = site2.projects = site5.projects = []
+        Project.withTransaction {
+            site1.save(flush: true)
+            site2.save(flush: true)
+            site5.save(flush: true)
+        }
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.size() == 1
+        result.siteId[0] == 's4'
+
+        when:// returns empty
+        Project.withTransaction {
+            project1.managementUnitId = null
+            project1.save(flush: true)
+        }
+
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.getRepresentativeSitesOfProject(projectMap)
+
+        then:
+        result.isEmpty()
+    }
+
+    def "The updateOrganisationName method updates the organisationName for a Project as well as the name attribute of any associatedOrgs"() {
+        setup:
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true, managementUnitId: 'mu1')
+        project1.associatedOrgs = [
+                new AssociatedOrg([organisationId:'o1', name:"Test name", logo:"test logo", url:"test url"]),
+                new AssociatedOrg([organisationId: 'o2', name:'Test name 2'])
+        ]
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true, managementUnitId: 'mu1', organisationId:"o1", organisationName:"Test name")
+
+        project1.save(flush: true, failOnError: true)
+        project2.save(flash:true, failOnError: true)
+
+        when:
+        service.updateOrganisationName('o1', "not a name", "Updated name")
+        Project project1Reloaded = Project.findByProjectId('111')
+        Project project2Reloaded = Project.findByProjectId('222')
+
+        then:
+        project1Reloaded.associatedOrgs[0].name == "Test name"
+        project1Reloaded.associatedOrgs[1].name == "Test name 2"
+        project2Reloaded.organisationName == "Test name"
+
+        when:
+        service.updateOrganisationName('o1', "Test name", "Updated name")
+        project1Reloaded = Project.findByProjectId('111')
+        project2Reloaded = Project.findByProjectId('222')
+
+        then:
+        project1Reloaded.associatedOrgs[0].name == "Updated name"
+        project1Reloaded.associatedOrgs[1].name == "Test name 2"
+        project2Reloaded.organisationName == "Updated name"
+
+
+    }
+
+    def "findStateAndElectorateForProject should return primary and other states/electorates based on site intersections"() {
+        given:
+        Map project = [hubId: 'hub1', geographicInfo: [isDefault: false], sites: [
+            [siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["state1": 0.9, "state2": 0.3, "state3": 0.25]], "elect": ["CURRENT": ["electorate2": 0.9, "electorate1": 0.3]]]]]],
+            [siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["state1": 0.9, "state2": 0.3, "state3": 0.25]], "elect": ["CURRENT": ["electorate2": 0.9, "electorate1": 0.3]]]]]]]
+        ]
+        Map geographicConfig = [
+                contextual: [state: 'layer1', elect: 'layer2'],
+                checkForBoundaryIntersectionInLayers: ["layer1", "layer2"]
+        ]
+
+        metadataService.getGeographicConfig() >> geographicConfig
+        metadataService.getGeographicConfig(*_) >> geographicConfig
+        metadataService.getGeographicFacetConfig("layer1") >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer1", _) >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2") >> [name: "elect", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2", _) >> [name: "elect", grouped: false]
+
+        when:
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.primarystate == "state1"
+        result.otherstate == "state2; state3"
+        result.primaryelect == "electorate2"
+        result.otherelect == "electorate1"
+    }
+
+    def "findStateAndElectorateForProject should return default geographic info if isDefault is false and project sites are empty"() {
+        given:
+        Map project = [geographicInfo: [isDefault: false, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
+        Map geographicConfig = [
+                contextual: [state: 'layer1', elect: 'layer2'],
+                checkForBoundaryIntersectionInLayers: ["layer1", "layer2"]
+        ]
+
+        metadataService.getGeographicConfig(*_) >> geographicConfig
+        metadataService.getGeographicFacetConfig("layer1") >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2") >> [name: "elect", grouped: false]
+        service.getRepresentativeSitesOfProject(project) >> []
+
+
+        when:
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.primarystate == "ACT"
+        result.otherstate == "NSW; VIC"
+        result.primaryelect == "Bean"
+        result.otherelect == "Canberra; Fenner"
+    }
+
+
+    def "findStateAndElectorateForProject should return default geographic info if isDefault is true"() {
+        given:
+        Map project = [geographicInfo: [isDefault: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
+
+        when:
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.primarystate == "ACT"
+        result.otherstate == "NSW; VIC"
+        result.primaryelect == "Bean"
+        result.otherelect == "Canberra; Fenner"
+    }
+
+    def "findStateAndElectorateForProject should return empty map if project is null"() {
+        when:
+        Map project = null
+        Map result = service.findStateAndElectorateForProject(project)
+
+        then:
+        result.isEmpty()
+    }
 }

@@ -35,6 +35,10 @@
     </div>
 
     <div>
+        <label class="form-label">Number of decimal places:</label>  <input class="form-control" type="number" data-bind="value:decimalPlaces"/>
+    </div>
+
+    <div>
         <label class="form-label" for="tags">Tags:</label>
         <select id="tags" multiple="multiple" class="form-control" data-bind="options:tagOptions, selectedOptions:tags">
         </select>

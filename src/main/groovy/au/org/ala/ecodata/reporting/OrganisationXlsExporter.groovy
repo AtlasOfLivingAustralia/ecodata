@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.reporting
 
-
+import au.org.ala.ecodata.DateUtil
+import au.org.ala.ecodata.Report
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.XlsxExporter
@@ -12,6 +13,8 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
 class OrganisationXlsExporter extends TabbedExporter {
 
     static Log log = LogFactory.getLog(OrganisationXlsExporter.class)
+    // Avoids name clashes for fields that appear in organisation and activities
+    private static final String  REPORT_PREFIX = 'report_'
 
     List<String> commonOrganisationHeaders = ['Organisation ID', 'Name']
     List<String> commonOrganisationProperties = ['organisationId', 'name']
@@ -28,9 +31,48 @@ class OrganisationXlsExporter extends TabbedExporter {
     List<String> reportDataHeaders = commonOrganisationHeaders + ['Report', 'Stage from', 'Stage to', 'Data Entry Progress', 'Report Status']
     List<String> reportDataProperties = commonOrganisationProperties + ['reportName', 'fromDate', 'toDate', 'progress', 'publicationStatus']
 
+    List<String> reportPropertiesMinimumSet = ['reportId', 'reportName', 'reportDescription', 'fromDate', 'toDate', 'financialYear']
+    List<String> activityHeaders = ['Activity Type','Activity Description','Activity Progress', 'Activity Last Updated' ]
+    List<String> activityProperties =  ['type','description','progress', 'lastUpdated']
+    List<String> commonActivityHeadersSummary =  ["Organisation ID",'Organisation Name','Organisation ABN', 'Report ID', 'Report name', 'Report Description', 'From Date', 'To Date', 'Financial Year', 'Current Report Status', 'Date of status change', 'Changed by']
+    List<String> commonActivityHeaders =  commonActivityHeadersSummary + activityHeaders
+    List<String> commonActivityPropertiesSummary = ["organisationId",'organisationName','organisationAbn', REPORT_PREFIX+'reportId', REPORT_PREFIX+'reportName', REPORT_PREFIX+'reportDescription', REPORT_PREFIX+'fromDate', REPORT_PREFIX+'toDate', REPORT_PREFIX+'financialYear', REPORT_PREFIX+'reportStatus', REPORT_PREFIX+'dateChanged', REPORT_PREFIX+'changedBy']
+    List<String> commonActivityProperties = commonActivityPropertiesSummary +
+            activityProperties.collect {
+                ACTIVITY_DATA_PREFIX+it
+            }
+
     public OrganisationXlsExporter(XlsxExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap) {
         super(exporter, tabsToExport, documentMap)
 
+    }
+
+    void export(List<Map> orgs, boolean isSummary = false) {
+        if(orgs.size() > 0) {
+            orgs.each { Map org ->
+                org.activities.each { Map activity ->
+                    Report report = org.reports.find {it.activityId == activity.activityId}
+                    if (report){
+                        activity['organisationId'] = org.organisationId
+                        activity['organisationName'] = org.name
+                        activity['organisationAbn'] = org.abn
+
+                        Map reportData = getReportSummaryInfo(report)
+                        reportPropertiesMinimumSet.each { String prop ->
+                            reportData[REPORT_PREFIX + prop] = reportData[prop]
+                        }
+                        reportData.putAll(extractCurrentReportStatus(report).collectEntries { k, v -> [REPORT_PREFIX + k, v] })
+                        activity.putAll(reportData)
+
+                    }
+                    exportReport(activity, isSummary)
+
+                }
+            }
+        }else{
+            //Create a standard empty sheet to avoid malformed xslx
+            createEmptySheet("Organisations")
+        }
     }
 
     public void export(Map organisation) {
@@ -38,6 +80,35 @@ class OrganisationXlsExporter extends TabbedExporter {
         exportReports(organisation)
         exportReportSummary(organisation)
         exportPerformanceAssessmentReport(organisation)
+    }
+
+    protected Map getReportSummaryInfo(Report report) {
+        [stage:report?.name, reportName:report?.name, reportDescription:report?.description, reportId:report?.reportId, reportType:report?.generatedBy, fromDate:report?.fromDate, toDate:report?.toDate, financialYear: report ? DateUtil.getFinancialYearBasedOnEndDate(report.toDate) : ""]
+    }
+
+    private void exportReport(Map activity, boolean isSummary = false){
+        Map activityCommonData = convertActivityData(activity)
+        if (isSummary) {
+            Map commonData = commonActivityData(activityCommonData, activity)
+            exportActivityOrOutput(commonActivityHeaders, commonActivityProperties, activity.type, [], commonData, [[:]])
+        } else {
+            exportActivity(commonActivityHeaders, commonActivityProperties, activityCommonData, activity, false)
+        }
+    }
+
+    /**
+     * Add activity prefix to each property to avoid name conflicts
+     * Combine Organisation info as well
+     * @param activity
+     * @return
+     */
+    private Map convertActivityData(Map activity) {
+        activity.collectEntries{k,v ->
+            if (!k.startsWith('organisation') && !k.startsWith('report'))
+                [ACTIVITY_DATA_PREFIX+k, v]
+            else
+                [k, v]
+        }
     }
 
     private void exportOrganisation(Map organisation) {

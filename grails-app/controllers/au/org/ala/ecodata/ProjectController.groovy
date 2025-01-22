@@ -1,15 +1,11 @@
 package au.org.ala.ecodata
+
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
-
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
@@ -35,35 +31,6 @@ class ProjectController {
         render "${Project.count()} sites"
     }
 
-    @Operation(
-            method = "GET",
-            tags = "project",
-            operationId = "projectList",
-            summary = "Get Project list",
-            description = "Get Project list",
-            parameters = [
-                    @Parameter(name = "brief",
-                            in = QUERY,
-                            required = false,
-                            description = "project name"),
-                    @Parameter(name = "includeDeleted",
-                            in = QUERY,
-                            required = false,
-                            description = "include Deleted projects",
-                            schema = @Schema(type = "boolean")),
-                    @Parameter(name = "citizenScienceOnly",
-                            in = QUERY,
-                            required = false,
-                            description = "citizen Science projects Only",
-                            schema = @Schema(type = "boolean"))
-            ],
-            responses = [
-                    @ApiResponse(
-                            description = "Project list",
-                            responseCode = "200"
-                    )
-            ]
-    )
     def list() {
         println 'brief = ' + params.brief
         def list = projectService.list(params.brief, params.includeDeleted, params.citizenScienceOnly)
@@ -150,7 +117,7 @@ class ProjectController {
         }
     }
 
-
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         Project project = Project.findByProjectId(id)
         if (project) {
@@ -168,7 +135,6 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
     def resurrect(String id) {
         def p = Project.findByProjectId(id)
         if (p) {
@@ -187,6 +153,7 @@ class ProjectController {
      * deleteOrphans - if true, a site with no associated projects or activities will be deleted.
      *
      */
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deleteSites(String id){
         Map payload = request.JSON
         Map status = siteService.deleteSitesFromProject(id, payload.siteIds, payload.deleteOrphans?:false)
@@ -202,7 +169,7 @@ class ProjectController {
      * @param id
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def updateSites(String id){
         log.debug("Updating the sites for projectID : " + id)
         def props = request.JSON
@@ -233,7 +200,7 @@ class ProjectController {
      * @param id - identifies the resource
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -257,7 +224,6 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
     def downloadProjectData() {
 
         def p = Project.findByProjectId(params.id)
@@ -343,7 +309,6 @@ class ProjectController {
      *
      * @return a list of the projects that match the supplied criteria
      */
-    @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
 
@@ -352,7 +317,6 @@ class ProjectController {
         asJson projects:projectList
     }
 
-    @RequireApiKey
     def findByAssociation(String entity, String id) {
         List projects = projectService.findAllByAssociation(entity+"Id", id, params.view ?: ProjectService.BRIEF) ?: []
 
@@ -360,25 +324,15 @@ class ProjectController {
         render result as JSON
     }
 
-    @Operation(
-            method = "GET",
-            tags = "project",
-            operationId = "findProjectByName",
-            summary = "Find Project By Name",
-            description = "Find Project By Name",
-            parameters = [
-                    @Parameter(name = "projectName",
-                    in = QUERY,
-                    required = true,
-                    description = "project name")
-            ],
-            responses = [
-                    @ApiResponse(
-                            description = "Project Details",
-                            responseCode = "200"
-                    )
-            ]
-    )
+    def findStateAndElectorateForProject() {
+        if (!params.projectId) {
+            render status:400, text: "projectId is a required parameter"
+        } else {
+            Map project = projectService.get(params.projectId)
+            asJson projectService.findStateAndElectorateForProject(project)
+        }
+    }
+
     def findByName() {
         if (!params.projectName) {
             render status:400, text: "projectName is a required parameter"
@@ -387,6 +341,10 @@ class ProjectController {
         }
     }
 
+    /**
+     * Deprecated since these APIs are not used by mobile apps.
+     */
+    @Deprecated
     @PreAuthorise
     def eSearch() {
         String error = ""
@@ -414,9 +372,19 @@ class ProjectController {
         }
     }
 
+    def fetchDataSetRecords (String projectId, String dataSetId) {
+        if (projectId && dataSetId) {
+            List records = projectService.fetchDataSetRecords(projectId, dataSetId)
+            render text: records as JSON, contentType: 'application/json'
+        }
+        else {
+            render status: 400, text: "projectId and dataSetId are required parameters"
+        }
+    }
+
     def importProjectsFromSciStarter(){
-        Integer count = projectService.importProjectsFromSciStarter()?:0
-        render(text: [count: count] as JSON, contentType: 'application/json');
+        Map counts = projectService.importProjectsFromSciStarter()
+        render(counts as JSON, contentType: 'application/json');
     }
 
     /**

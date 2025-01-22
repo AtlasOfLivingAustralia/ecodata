@@ -286,8 +286,8 @@ paths:
                     time:
                       type: string
                       format: date-time
-                    randNum:
-                      type: integer
+                    uuid:
+                      type: string
             example:
               projectId: 10
               protocol:
@@ -296,7 +296,7 @@ paths:
               surveyId:
                 surveyType: bird-survey
                 time: '2021-10-13T01:16:47.225Z'
-                randNum: 79539331
+                uuid: 'f4465a57-bfa5-4987-89c1-65aa376bf173'
       summary: For creating an identifier which is based off the userId, project ID,
         protocol ID, protocol version, event time, and survey ID
   "/collection":

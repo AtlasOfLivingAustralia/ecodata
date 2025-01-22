@@ -6,6 +6,8 @@ import org.bson.types.ObjectId
 
 class Record {
  //   def grailsApplication
+    /** Represents a species guid that was unable to be matched against the ALA names list */
+    static final String UNMATCHED_GUID = "A_GUID"
 
     static mapping = {
         occurrenceID index: true
@@ -14,23 +16,29 @@ class Record {
         activityId index: true
         projectActivityId index: true
         lastUpdated index: true
+        dataSetId index: true
+        outputId index: true
         version false
     }
 
     ObjectId id
     String projectId //ID of the project within ecodata
     String projectActivityId
+    String dataSetId
     String activityId
     String occurrenceID
     String outputSpeciesId  // reference to output species outputSpeciesId.
     String userId
     String eventDate //should be a date in "yyyy-MM-dd" or "2014-11-24T04:55:48+11:00" format
+    String scientificName
+    String name
+    String vernacularName
     Double decimalLatitude
     Double decimalLongitude
     Double generalizedDecimalLatitude
     Double generalizedDecimalLongitude
     Integer coordinateUncertaintyInMeters
-    Integer individualCount
+    Integer individualCount = 1
     Integer numberOfOrganisms
     Date dateCreated
     Date lastUpdated
@@ -66,6 +74,10 @@ class Record {
         outputItemId nullable: true
         status nullable: true
         outputSpeciesId nullable: true
+        dataSetId nullable: true
+        name nullable: true
+        vernacularName nullable: true
+        scientificName nullable: true
     }
 
     String getRecordNumber(sightingsUrl){

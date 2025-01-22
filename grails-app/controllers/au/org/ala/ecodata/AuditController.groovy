@@ -4,6 +4,7 @@ import grails.converters.JSON
 
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST
 
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class AuditController {
 
     def userService

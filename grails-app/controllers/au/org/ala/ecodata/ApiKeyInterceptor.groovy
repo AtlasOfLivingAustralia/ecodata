@@ -21,7 +21,7 @@ class ApiKeyInterceptor {
 
     public ApiKeyInterceptor() {
         // These controllers use JWT authorization instead
-        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo')
+        matchAll().excludes(controller: 'graphql').excludes(controller: 'paratoo').excludes(controller: 'harvest').excludes(controller:'graphqlWs').excludes(controller:'openapi')
     }
 
     boolean before() {
@@ -29,7 +29,7 @@ class ApiKeyInterceptor {
         Class controllerClass = controller?.clazz
 
         // The "excludes" configuration in the constructor isn't working
-        if (controllerClass == ParatooController.class) {
+        if ( [ParatooController.class, HarvestController.class].contains( controllerClass ) ) {
             return true
         }
 
@@ -41,7 +41,8 @@ class ApiKeyInterceptor {
             PreAuthorise pa = method.getAnnotation(PreAuthorise) ?: controllerClass.getAnnotation(PreAuthorise)
 
             if (pa.basicAuth()) {
-                request.userId = userService.authorize(request.getHeader('userName'), request.getHeader('authKey'))
+                def user = userService.setUser()
+                request.userId = user?.userId
                 if(permissionService.isUserAlaAdmin(request.userId)) {
                     /* Don't enforce check for ALA admin.*/
                 }
@@ -83,25 +84,16 @@ class ApiKeyInterceptor {
 
             // Allow migration to the AlaSecured annotation.
             if (!controllerClass?.isAnnotationPresent(AlaSecured) && !method?.isAnnotationPresent(AlaSecured)) {
-                List whiteList = buildWhiteList()
+                // ip check
+                List whiteListIP = buildWhiteList()
                 List clientIp = getClientIP(request)
-                boolean ipOk = checkClientIp(clientIp, whiteList)
+                boolean ipOk = checkClientIp(clientIp, whiteListIP)
 
                 // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
                 if (!ipOk) {
                     log.warn("Non-authorised IP address - ${clientIp}" )
                     result.status = 403
                     result.error = "not authorised"
-                }
-
-                // Support RequireApiKey on top of ip restriction.
-                if(controllerClass?.isAnnotationPresent(RequireApiKey) || method?.isAnnotationPresent(RequireApiKey)){
-                    def keyOk = commonService.checkApiKey(request.getHeader('Authorization')).valid
-                    if(!keyOk) {
-                        log.warn("No valid api key for ${controllerName}/${actionName}")
-                        result.status = 403
-                        result.error = "not authorised"
-                    }
                 }
             }
         }

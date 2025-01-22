@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.converter
 
 import grails.util.Holders
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang.StringUtils
 
@@ -41,11 +42,11 @@ class SciStarterConverter {
 
     public static convert(Map sciStarter, Map override = [:]) {
         Map mapping = [
-                'id'          : 'externalId',
-                'title'       : [
+                'legacy_id'          : 'externalId',
+                'name'       : [
                         'name'     : 'name',
                         'transform': { props, target ->
-                            props.title?.trim()
+                            props.name?.trim()
                         }],
                 'tags'        : [
                         'name'     : 'keywords',
@@ -64,88 +65,62 @@ class SciStarterConverter {
                 'goal'        : 'aim',
                 'task'        : 'task',
                 'description' : 'description',
-                'url'         : 'urlWeb',
-                'image'       : [
-                        'name'     : 'image',
+                'url'         : [
+                        'name': 'urlWeb',
                         'transform': { props, target ->
-                            String imageUrl = props.image?.toLowerCase()
-                            if (Holders.grailsApplication.config.getProperty('scistarter.forceHttpsUrls') == 'true') {
-                                try {
-                                    URL oldUrl = new URL(props.image)
-                                    URL newUrl = new URL("https", oldUrl.getHost(), oldUrl.getPort(), oldUrl.getFile())
-                                    newUrl.toString()
-                                } catch (MalformedURLException e) {
-                                    "${Holders.grailsApplication.config.getProperty('scistarter.baseUrl')}/${props.image}"
-                                }
-                            } else if (!imageUrl?.equals(null) && (imageUrl?.contains('http://') || imageUrl?.contains('https://'))) {
-                                props.image
-                            } else if (!props.image?.equals(null)) {
-                                "${Holders.grailsApplication.config.getProperty('scistarter.baseUrl')}/${props.image}"
-                            } else {
-                                return null
+                            try {
+                                String url = props.url.replace("www.", "").replaceAll("\n","")
+
+                                new URL(url)
+                                url
+                            } catch (error) {
+                                log.info("${props.url} is not a valid URL, returning null...")
+                                null
                             }
-                        }],
+                        }
+                ],
+                'image'       : 'image',
                 'difficulty'  : [
                         'name'     : 'difficulty',
                         'transform': { props, target ->
-                            def difficulty
-                            if (props?.difficulty instanceof List) {
-                                difficulty = props.difficulty.findAll {
-                                    (it instanceof String) && it.capitalize() in ['Easy', 'Medium', 'Hard']
-                                }?.getAt(0)?.capitalize()
-                            }
-
-                            if (props?.difficulty instanceof String) {
-                                difficulty = props.difficulty.capitalize()
-                            }
-
-                            difficulty
+                            [
+                                    'easy': 'Easy',
+                                    'medium': 'Medium',
+                                    'difficult': 'Hard',
+                                    'unknown': null
+                            ][props.difficulty ? props.difficulty.label.toLowerCase() : 'unknown']
                         }
                 ],
-                'begin_date'  : [
+                'begin'  : [
                         'name'     : 'plannedStartDate',
                         'transform': { props, target ->
-                            SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
-                            if (props.begin_date) {
-                                sdf.parse(props.begin_date)
-                            } else {
-                                new Date()
-                            }
+                            props.begin ? new Date(props.begin.longValue()) : new Date()
                         }],
-                'end_date'    : [
+                'end'    : [
                         'name'     : 'plannedEndDate',
                         'transform': { props, target ->
-                            SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
-                            if (props.end_date) {
-                                sdf.parse(props.end_date)
-                            }
+                            props.end ? new Date(props.end.longValue()) : new Date()
                         }],
-                'date'        : [
+                'created'        : [
                         'name'     : 'dateCreated',
                         'transform': { props, target ->
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                            if (props.date) {
-                                sdf.parse(props.date)
-                            }
+                            props.created ? new Date(props.created.longValue()) : new Date()
                         }],
                 'updated'     : [
                         'name'     : 'lastUpdated',
                         'transform': { props, target ->
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                            if (props.updated) {
-                                sdf.parse(props.updated)
-                            }
+                            props.updated ? new Date(props.updated.longValue()) : new Date()
                         }],
                 'state'       : 'state',
                 'image_credit': 'attribution',
                 'presenter'   : 'organisationName',
-                'topics'      : [
+                'topics'      : [ // TODO: check topic mapping parity
                         'name'     : 'scienceType',
                         'transform': { props, target ->
                             List approvedScienceType = Holders.grailsApplication.config.getProperty('biocollect.scienceType', List)
                             List scienceTypes = []
-                            props?.topics?.each { String type ->
-                                String lowerType = type?.toLowerCase()
+                            props?.topics?.each { topic ->
+                                String lowerType = topic.label.toLowerCase()
                                 approvedScienceType?.each { String scienceType ->
                                     if (scienceType.toLowerCase() == lowerType) {
                                         scienceTypes.push(scienceType)
@@ -177,7 +152,7 @@ class SciStarterConverter {
                             }
                         }
                 ],
-                "UN_regions"  : [
+                "united_nations_region"  : [
                         name       : "uNRegions",
                         'transform': { props, target ->
                             List uNRegions = Holders.grailsApplication.config.getProperty('uNRegions', List)
@@ -199,7 +174,7 @@ class SciStarterConverter {
                             }
                         }
                 ]
-        ];
+        ]
 
         // default values
         Map target = [
@@ -266,7 +241,10 @@ class SciStarterConverter {
         target
     }
 
-    static Map siteMapping(Map props) {
+    static Map siteMapping(Map project) {
+        JsonSlurper slurper = new JsonSlurper();
+        Map geometry = slurper.parseText(project.regions)
+
         Map site = [
                 "projects"    : [
                 ],
@@ -292,11 +270,11 @@ class SciStarterConverter {
                 "type"        : "projectArea"
         ]
 
-        switch (props.geometry.type) {
+        switch (geometry.type) {
             case 'MultiPolygon':
-                site.name = props.name;
+                site.name = project.regions_description;
                 // possible data loss here. converting multipolygon to polygon since biocollect/merit does not support it.
-                site.geoIndex.coordinates = site.extent.geometry.coordinates = props.geometry.coordinates[0]
+                site.geoIndex.coordinates = site.extent.geometry.coordinates = geometry.coordinates[0]
                 site.geoIndex.type = site.extent.geometry.type = "Polygon"
                 break
         }

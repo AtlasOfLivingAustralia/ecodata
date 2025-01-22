@@ -3,7 +3,7 @@ import au.org.ala.ecodata.reporting.ShapefileBuilder
 import com.mongodb.MongoExecutionTimeoutException
 import grails.converters.JSON
 import org.apache.http.HttpStatus
-
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SiteController {
 
     def siteService, commonService, projectService, webService, projectActivityService
@@ -83,7 +83,7 @@ class SiteController {
         siteService.toGeoJson(site)
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete(String id) {
         def s = Site.findBySiteId(id)
         if (s) {
@@ -105,7 +105,7 @@ class SiteController {
      * @param id - identifies the resource
      * @return
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         def props = request.JSON
         log.debug "${props}"
@@ -127,7 +127,7 @@ class SiteController {
         }
     }
 
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def createOrUpdatePoi(String id) {
         def props = request.JSON
 
@@ -150,7 +150,7 @@ class SiteController {
      * @param id the site id
      * @param poiId the POI to delete.
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def deletePoi(String id) {
         if (!id) {
             render status:400, text:'Site ID is mandatory'
@@ -176,7 +176,6 @@ class SiteController {
      * @required id - comma separated siteIds eg - 142,651,778
      * @return
      */
-    @RequireApiKey
     def getImages(){
         String id = params.id
         String role = params.role
@@ -215,7 +214,6 @@ class SiteController {
      * @required siteId, poiId
      * @return
      */
-    @RequireApiKey
     def getPoiImages(){
         String siteId = params.siteId
         String poiId = params.poiId
@@ -258,6 +256,7 @@ class SiteController {
         render siteService.lookupGeographicFacetsForSite(site) as JSON
     }
 
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def updateGeographicFacetsForSite(String id) {
         Map site = siteService.get(id)
         if (site && site.extent && site.extent.geometry) {
@@ -285,6 +284,7 @@ class SiteController {
      * @param projectId
      * @return
      */
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def addProject(String id){
         String projectId = params.projectId
         if(id && projectId){
@@ -301,7 +301,6 @@ class SiteController {
      * (Note that it does not return a FeatureCollection as some sites may themselves be a FeatureCollection)
      *
      */
-    @RequireApiKey
     def projectSites(String id) {
         List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(siteService.toMap(it))})
         Map result = [projectId:id, sites: features]

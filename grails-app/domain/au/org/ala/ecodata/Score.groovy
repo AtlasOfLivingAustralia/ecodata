@@ -13,6 +13,9 @@ class Score {
     /** The label for this score when displayed */
     String label
 
+    /** Unique human name for this score to be used as a more descriptive alternative to the scoreId in forms/configuration.  Must be unique if present */
+    String name
+
     /** A more detailed description of the score and how it should be interpreted */
     String description
 
@@ -37,6 +40,12 @@ class Score {
     /** Can be used to categorize scores */
     List<String> tags
 
+    List<RelatedScore> relatedScores
+
+    Integer decimalPlaces
+
+    String units
+
 
     /** Embedded document describing how the score should be calculated */
     Map configuration
@@ -51,6 +60,9 @@ class Score {
         tags: nullable:true
         label unique: true
         scoreId unique: true
+        name nullable: true, unique: true
+        decimalPlaces nullable: true
+        units nullable: true
     }
 
     static mapping = {
@@ -58,6 +70,8 @@ class Score {
         scoreId index: true
         version false
     }
+
+    static embedded = ['relatedScores']
 
     def beforeValidate() {
         if (scoreId == null) {
@@ -78,13 +92,16 @@ class Score {
                 category:category,
                 outputType:outputType,
                 isOutputTarget:isOutputTarget,
-                    label:label,
+                label:label,
                 description:description,
                 displayType:displayType,
                 entity:entity,
                 externalId:externalId,
                 entityTypes:entityTypes,
-                tags:tags
+                tags:tags,
+                name:name,
+                units:units,
+                decimalPlaces:decimalPlaces?:2
         ]
         if (includeConfig) {
             scoreMap.configuration = configuration

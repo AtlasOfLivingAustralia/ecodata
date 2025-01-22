@@ -22,6 +22,9 @@ import static au.org.ala.ecodata.Status.DELETED
 
 class MetadataService {
 
+    static final String BUILD_VERSION_PROPERTY = "git.build.version"
+    private static final String GIT_PROPERTIES_FILE = "git.properties"
+
     // The spatial portal returns n/a when the point does not intersect a layer.
     private static final String SPATIAL_PORTAL_NO_MATCH_VALUE = 'n/a'
 
@@ -36,6 +39,9 @@ class MetadataService {
     ExcelImportService excelImportService
     ActivityFormService activityFormService
     SpeciesReMatchService speciesReMatchService
+    HubService hubService
+    ProjectService projectService
+    RecordService recordService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -302,7 +308,7 @@ class MetadataService {
     def getNvisClassesForPoint(Double lat, Double lon) {
         def retMap = [:]
 
-        Map nvisLayers = grailsApplication.config.getProperty('app.facets.geographic.special', Map)
+        Map nvisLayers = getGeographicConfig().special
 
         nvisLayers.each { name, path ->
             def classesJsonFile = new File(path + '.json')
@@ -398,8 +404,8 @@ class MetadataService {
     def performLayerIntersect(lat,lng) {
 
 
-        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
-        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
+        Map contextualLayers = getGeographicConfig().contextual
+        Map groupedFacets = getGeographicConfig().grouped
 
         // Extract all of the layer field ids from the facet configuration so we can make a single web service call to the spatial portal.
         def fieldIds = contextualLayers.collect { k, v -> v }
@@ -467,14 +473,41 @@ class MetadataService {
     }
 
     /** Returns a list of spatial portal layer/field ids that ecodata will intersect every site against to support facetted geographic searches */
-    List<String> getSpatialLayerIdsToIntersect() {
-        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
-        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
-        def fieldIds = contextualLayers.collect { k, v -> v }
-        groupedFacets.each { k, v ->
+    List<String> getSpatialLayerIdsToIntersect(String hubId = null) {
+        def config = getGeographicConfig(hubId)
+        def fieldIds = config.contextual.collect { k, v -> v }
+        config.grouped.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
         }
         fieldIds
+    }
+
+    /**
+     * If all projects belong to a hub, uses geographic configuration of that hub.
+     * Otherwise, check if hubId query parameter is present.
+     * If not, use default configuration present in application.groovy.
+     * @param projectIds
+     * @return
+     */
+    List<String> getSpatialLayerIdsToIntersectForProjects(List projectIds = []) {
+        List hubIds = projectService.findHubIdFromProjectsOrCurrentHub(projectIds)
+        hubIds.size() == 1 ? getSpatialLayerIdsToIntersect(hubIds[0]) : getSpatialLayerIdsToIntersect()
+    }
+
+    /**
+     * Get layers for intersection from hub if it exists. Otherwise, get from configuration.
+     * @return
+     */
+    Map getGeographicConfig (String hubId = null) {
+        Map config
+        Hub hub = hubService?.getCurrentHub(hubId)
+        if (hub?.geographicConfig) {
+            config = hub.geographicConfig
+        } else {
+            config = grailsApplication.config.getProperty('app.facets.geographic', Map)
+        }
+
+        config
     }
 
     /**
@@ -482,8 +515,8 @@ class MetadataService {
      * uses the supplied field id.
      * @param fid the field id.
      */
-    Map getGeographicFacetConfig(String fid) {
-        Map config = grailsApplication.config.getProperty('app.facets.geographic', Map)
+    Map getGeographicFacetConfig(String fid, String hubId = null) {
+        Map config = getGeographicConfig(hubId)
         Map facetConfig = null
         config.contextual.each { String groupName, String groupFid ->
             if (fid == groupFid) {
@@ -593,8 +626,8 @@ class MetadataService {
             log.error("Missing result for ${lat}, ${lng}")
         }
 
-        Map contextualLayers = grailsApplication.config.getProperty('app.facets.geographic.contextual', Map)
-        Map groupedFacets = grailsApplication.config.getProperty('app.facets.geographic.grouped', Map)
+        Map contextualLayers = getGeographicConfig().contextual
+        Map groupedFacets = getGeographicConfig().grouped
         def facetTerms = [:]
 
         contextualLayers.each { name, fid ->
@@ -704,48 +737,71 @@ class MetadataService {
         excelImportService.mapSheet(workbook, config)
     }
 
-    List excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
+    Map excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
         List result = []
+        List errors = []
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
         ActivityForm form = activityFormService.findActivityForm(activityFormName, formVersion)
         form?.sections?.each { FormSection section ->
-            String sectionName = section.name
-            List model = annotatedOutputDataModel(sectionName)
-            String sheetName = XlsExporter.sheetName(sectionName)
-            Sheet sheet = workbook.getSheet(sheetName)
-            def columnMap = excelImportService.getDataHeaders(sheet)
-            def config = [
-                    sheet:sheetName,
-                    startRow:2,
-                    columnMap:columnMap
-            ]
-            List data = excelImportService.mapSheet(workbook, config)
-            List normalisedData = []
-            if(normalise) {
-                data.collect { Map row ->
-                    def normalisedRow = [:]
-                    row.each { cell ->
-                        excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
-                        excelImportService.removeEmptyObjects(normalisedRow)
+            try {
+                String sectionName = section.name
+                List model = annotatedOutputDataModel(sectionName)
+                String sheetName = XlsExporter.sheetName(sectionName)
+                Sheet sheet = workbook.getSheet(sheetName)
+                def columnMap = excelImportService.getDataHeaders(sheet)
+                def config = [
+                        sheet:sheetName,
+                        startRow:2,
+                        columnMap:columnMap
+                ]
+                List data = excelImportService.mapSheet(workbook, config)
+                List normalisedData = []
+                if(normalise) {
+                    data.collect { Map row ->
+                        def normalisedRow = [:]
+                        try {
+                            row.each { cell ->
+                                excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                                excelImportService.removeEmptyObjects(normalisedRow)
+                            }
+
+                            addOutputSpeciesIdToSpeciesData(normalisedRow, model)
+                            normalisedData << normalisedRow
+                        }
+                        catch (Exception ex) {
+                            errors << [message:  messageSource.getMessage('bulkimport.conversionToObjectError', [row.serial].toArray(), '', Locale.default), error: ex.message]
+                        }
                     }
-
-                    addOutputSpeciesIdToSpeciesData(normalisedRow, model)
-                    normalisedData << normalisedRow
                 }
-            }
 
-            List rollUpData = []
-            Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
-            groupedBySerial.each {  key, List rows ->
-                rollUpData << rollUpDataIntoSingleElement(rows, model)
-            }
 
-            result.addAll(rollUpData.collect {
-                [[outputName: activityFormName, data: it]]
-            })
+                List rollUpData = []
+                Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
+                groupedBySerial.each {  key, List rows ->
+                    try {
+                        rollUpData << rollUpDataIntoSingleElement(rows, model)
+                    }
+                    catch (Exception ex) {
+                        errors << [message:  messageSource.getMessage('bulkimport.errorGroupBySerialNumber', [key].toArray(), '', Locale.default), error: ex.message]
+                    }
+                }
+
+                result.addAll(rollUpData.collect {
+                    [[outputName: activityFormName, data: it]]
+                })
+            }
+            catch (Exception ex) {
+                errors << [message:  messageSource.getMessage('bulkimport.conversionToFormSectionError', [section.name].toArray(), '', Locale.default), error: ex.message]
+            }
         }
 
-        result
+        if (errors) {
+            String errorMessage = errors.collect { it.message + " - " + it.error }.join("<br/>")
+            return [error: errorMessage]
+        }
+        else {
+            return [success: result]
+        }
     }
 
     boolean isRowValidNextMemberOfArray(Map row, List models) {
@@ -841,18 +897,24 @@ class MetadataService {
         data
     }
 
-    Map autoPopulateSpeciesData(Map data){
-        if (!data?.guid && data?.scientificName) {
-            def result = speciesReMatchService.searchBie(data.scientificName, 10)
-            // only if there is a single match
-            if (result?.autoCompleteList?.size() == 1) {
-                data.guid = result?.autoCompleteList[0]?.guid
-                data.commonName = data.commonName ?: result?.autoCompleteList[0]?.commonName
+    Map autoPopulateSpeciesData (Map data) {
+        String searchName = (data?.scientificName)?.trim()
+        if (!data?.guid && (searchName)) {
+            Map bestMatch = speciesReMatchService.searchByName(searchName)
+            if(!bestMatch && data.commonName) {
+                String commonName = data.commonName
+                bestMatch = speciesReMatchService.searchByName(commonName, false, true)
+            }
+
+            if (bestMatch) {
+                data.guid = bestMatch?.guid
+                data.commonName = data.commonName ?: bestMatch?.commonName
+                data.scientificName = data.scientificName ?: bestMatch?.name
             }
         }
 
         if(!data?.name) {
-            data.name = data?.commonName ? data?.scientificName + '(' + data?.commonName + ')' : data?.scientificName
+            data.name = recordService.formatTaxonName(data, RecordService.SCIENTIFIC_NAME_COMMON_NAME)
         }
 
         data
@@ -874,14 +936,14 @@ class MetadataService {
 
         properties.scoreId = Identifiers.getNew(true, '')
         Score score = new Score(scoreId:properties.scoreId)
-        commonService.updateProperties(score, properties)
+        score.properties = properties
         score.save(flush:true)
         return score
     }
 
     Score updateScore(String id, Map properties) {
         Score score = Score.findByScoreId(id)
-        commonService.updateProperties(score, properties)
+        score.properties = properties
         score.save(flush:true)
         return score
     }
@@ -1168,6 +1230,7 @@ class MetadataService {
                     score.target = target?.target
                     score.periodTargets = target?.periodTargets
                     score.targetDate = target?.targetDate
+                    score.relatedOutcomes = target?.outcomeTargets?.relatedOutcomes?.flatten()
                 }else
                     score.delete = true //prepare for delete
             }
@@ -1182,7 +1245,11 @@ class MetadataService {
 
     /** Returns a value from the gradle git plugin generated git.properties */
     String getGitProperty(String propertyName) {
-        getFromPropertyFile("git.properties", propertyName)
+        getFromPropertyFile(GIT_PROPERTIES_FILE, propertyName)
+    }
+
+    String getVersion() {
+        getGitProperty(BUILD_VERSION_PROPERTY)
     }
 
     /** Returns a value from the gradle/spring boot generated build-info.properties */

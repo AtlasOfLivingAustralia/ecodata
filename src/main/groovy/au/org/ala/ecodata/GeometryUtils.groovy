@@ -1,21 +1,24 @@
 package au.org.ala.ecodata
 
-import org.locationtech.jts.geom.*
-import org.locationtech.jts.io.WKTReader
-import org.locationtech.jts.io.WKTWriter
-import org.locationtech.jts.simplify.TopologyPreservingSimplifier
-import org.locationtech.jts.util.GeometricShapeFactory
+import com.fasterxml.jackson.databind.ObjectMapper
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.geotools.geojson.geom.GeometryJSON
 import org.geotools.geometry.jts.JTS
+import org.geotools.geometry.jts.JTSFactoryFinder
 import org.geotools.referencing.CRS
 import org.geotools.referencing.GeodeticCalculator
+import org.locationtech.jts.geom.*
+import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.io.WKTWriter
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier
+import org.locationtech.jts.util.GeometricShapeFactory
 import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.referencing.operation.MathTransform
 
 import java.awt.geom.Point2D
+import java.nio.charset.StandardCharsets
 
 /**
  * Helper class for working with site geometry.
@@ -25,6 +28,17 @@ class GeometryUtils {
     static Log log = LogFactory.getLog(GeometryUtils.class)
     static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326", true)
     static GeometryFactory geometryFactory = new GeometryFactory()
+
+    static Map wktToGeoJson(String wkt, int decimals = 20) {
+        WKTReader wktReader = new WKTReader()
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
+        def reader = new StringReader(wkt)
+        Geometry geom = wktReader.read(reader)
+        new GeometryJSON(decimals).write(geom, writer)
+        ObjectMapper mapper = new ObjectMapper()
+        return mapper.readValue(outputStream.toByteArray(), Map)
+    }
 
     static String wktToMultiPolygonWkt(String wkt) {
         Geometry geom = new WKTReader().read(wkt)
@@ -37,6 +51,19 @@ class GeometryUtils {
         Geometry geom = new GeometryJSON().read(geojson)
         MultiPolygon result = convertToMultiPolygon(geom)
         return result
+    }
+
+    static Geometry getFeatureCollectionConvexHull (List features) {
+        // Extract geometries from features
+        List<Geometry> geometries = []
+        features.each { feature -> geometries.add( geoJsonMapToGeometry(feature) ) }
+
+        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory()
+        GeometryCollection geometryCollection = geometryFactory.createGeometryCollection(geometries.toArray(new Geometry[0]))
+        Geometry unionGeometry = geometryCollection.union()
+
+        // Compute convex hull
+        unionGeometry.convexHull()
     }
 
     private static MultiPolygon convertToMultiPolygon(Geometry geom) {
@@ -220,11 +247,15 @@ class GeometryUtils {
         new GeometryJSON().read(json)
     }
 
-    static Map geometryToGeoJsonMap(Geometry input) {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream()
-        new GeometryJSON().write(input, new OutputStreamWriter(byteOut, 'UTF-8'))
+    static Map geometryToGeoJsonMap(Geometry input, int decimals = 4) {
+        String geoJson = geometryToGeoJsonString(input, decimals)
+        JSON.parse(geoJson)
+    }
 
-        JSON.parse(byteOut.toString('UTF-8'))
+    static String geometryToGeoJsonString(Geometry input, int decimals = 4) {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream()
+        new GeometryJSON(decimals).write(input, new OutputStreamWriter(byteOut, 'UTF-8'))
+        byteOut.toString('UTF-8')
     }
 
     /**
@@ -234,11 +265,13 @@ class GeometryUtils {
      * @return
      */
     static Map simplify(Map geoJson, double tolerance) {
-
         Geometry input = geoJsonMapToGeometry(geoJson)
-
-        Geometry result = TopologyPreservingSimplifier.simplify(input, tolerance)
+        Geometry result = simplifyGeometry(input, tolerance)
         geometryToGeoJsonMap(result)
+    }
+
+    static Geometry simplifyGeometry(Geometry input, double tolerance) {
+        TopologyPreservingSimplifier.simplify(input, tolerance)
     }
 
 

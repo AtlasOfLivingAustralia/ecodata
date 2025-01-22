@@ -54,6 +54,10 @@ class RecordService {
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
     static final List<String> MULTIMEDIA_DATA_TYPES = ['image', 'audio', 'document', 'photoPoints']
     static final String DWC_EVENT = 'Event', DWC_MEDIA = 'Media', DWC_MEASUREMENT = 'MeasurementOrFact', DWC_OCCURRENCE = 'Occurrence'
+    static final String COMMON_NAME = 'COMMONNAME'
+    static final String SCIENTIFIC_NAME = 'SCIENTIFICNAME'
+    static final String COMMON_NAME_SCIENTIFIC_NAME = 'COMMONNAME(SCIENTIFICNAME)'
+    static final String SCIENTIFIC_NAME_COMMON_NAME = 'SCIENTIFICNAME(COMMONNAME)'
 
     def getProjectActivityService() {
         grailsApplication.mainContext.projectActivityService
@@ -1531,11 +1535,43 @@ class RecordService {
     Map convertProjectActivityToEvent (pActivity, project) {
         String dwcClass = DWC_EVENT
         List configs = grailsApplication.config.darwinCore.projectActivityToDwC[dwcClass]
-        Map<String,Map> result = [:].withDefault {[:]}
+        Map<String, Map> result = [:].withDefault { [:] }
         configs.each { config ->
             transformToEventCoreTerm(config, pActivity, [project: project, pActivity: pActivity, recordService: this], result, dwcClass)
         }
 
         result[dwcClass]
+    }
+    /** format species by specific type **/
+    String formatTaxonName (Map data, String displayType) {
+        String name = ''
+        switch (displayType){
+            case COMMON_NAME_SCIENTIFIC_NAME:
+                if (data.commonName && data.scientificName) {
+                    name = "${data.commonName} (${data.scientificName})"
+                } else if (data.commonName) {
+                    name = data.commonName
+                } else if (data.scientificName) {
+                    name = data.scientificName
+                }
+                break
+            case SCIENTIFIC_NAME_COMMON_NAME:
+                if (data.scientificName && data.commonName) {
+                    name = "${data.scientificName} (${data.commonName})"
+                } else if (data.scientificName) {
+                    name = data.scientificName
+                } else if (data.commonName) {
+                    name = data.commonName
+                }
+                break
+            case COMMON_NAME:
+                name = data.commonName ?: data.scientificName ?: ""
+                break
+            case SCIENTIFIC_NAME:
+                name = data.scientificName ?: ""
+                break
+        }
+
+        name
     }
 }

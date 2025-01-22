@@ -1,21 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.DataDescription
-import au.org.ala.ecodata.ExternalId
-import au.org.ala.ecodata.ManagementUnit
-import au.org.ala.ecodata.ManagementUnitService
-import au.org.ala.ecodata.OrganisationService
-import au.org.ala.ecodata.ProgramService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Organisation
-import au.org.ala.ecodata.OrganisationService
-import au.org.ala.ecodata.Program
-import au.org.ala.ecodata.ProgramService
+import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
  */
@@ -35,11 +25,14 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"]
-    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated']
+    List<String> configurableIntersectionHeaders = getIntersectionHeaders()
+    List<String> configurableIntersectionProperties = getIntersectionProperties()
 
-    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Organisation', 'Service Provider', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', 'Termination Reason', 'Last Modified']
-    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'serviceProviderName', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status']
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Contracted recipient name', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status', "Last Modified"] + configurableIntersectionHeaders
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status', 'lastUpdated'] + configurableIntersectionProperties
+
+    List<String> projectHeadersWithTerminationReason = ['Project ID', 'Grant ID', 'External ID', 'Internal order number', 'Work order id', 'Contracted recipient name', 'Recipient (ID)', 'Management Unit', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Contracted Start Date', 'Contracted End Date', 'Funding', 'Funding Type', 'Status'] + configurableIntersectionHeaders + ['Termination Reason', 'Last Modified']
+    List<String> projectPropertiesTerminationReason =  ['grantId', 'externalId', 'internalOrderId', 'workOrderId', 'organisationName', 'organisationId', 'managementUnitName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'contractStartDate', 'contractEndDate', 'funding', 'fundingType', 'status'] + configurableIntersectionProperties
 
     List<String> projectPropertiesWithTerminationReason = ['projectId'] + projectPropertiesTerminationReason.collect{PROJECT_DATA_PREFIX+it} + ["terminationReason", PROJECT_DATA_PREFIX+"lastUpdated"]
 
@@ -52,8 +45,16 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders + projectApprovalHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties + projectApprovalProperties
 
-    List<String> projectHeaders = projectHeadersWithTerminationReason + projectStateHeaders
-    List<String> projectProperties = projectPropertiesWithTerminationReason + projectStateProperties
+    List<String> associatedOrgProjectHeaders = (1..3).collect{['Contracted recipient name '+it, 'Organisation ID '+it, 'Organisation relationship from date '+it, 'Organisation relationship to date '+it, 'Organisation relationship '+it]}.flatten()
+    List<String> associatedOrgProperties = ['name', 'organisationId', 'fromDate', 'toDate', 'description']
+
+    List<String> associatedOrgProjectProperties = (1..3).collect{['associatedOrg_name'+it, 'associatedOrg_organisationId'+it, 'associatedOrg_fromDate'+it, 'associatedOrg_toDate'+it, 'associatedOrg_description'+it]}.flatten()
+
+    List organisationDetailsHeaders = ['Project ID', 'Grant ID', 'External ID', 'Program', 'Sub-program', 'Management Unit', 'Project Name', 'Project start date', 'Project end date', 'Contracted recipient name', 'Organisation ID', 'Organisation relationship from date', 'Organisation relationship to date', 'Organisation relationship', 'ABN', 'MERIT organisation name']
+    List organisationDetailsProperties = ['projectId', 'project_grantId', 'project_externalId', 'project_associatedProgram', 'project_associatedSubProgram', 'project_managementUnitName', 'project_name', 'project_plannedStartDate', 'project_plannedEndDate', 'name', 'organisationId', 'fromDate', 'toDate', 'description', 'abn', 'organisationName']
+
+    List<String> projectHeaders = projectHeadersWithTerminationReason + associatedOrgProjectHeaders + projectStateHeaders
+    List<String> projectProperties = projectPropertiesWithTerminationReason + associatedOrgProjectProperties + projectStateProperties
 
 
     List<String> siteStateHeaders = (1..5).collect{'State '+it}
@@ -89,10 +90,12 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectPartnershipProperties = commonProjectProperties + ['data1', 'data2', 'data3']
     List<String> projectImplementationHeaders = commonProjectHeaders + ['Project implementation / delivery mechanism']
     List<String> projectImplementationProperties = commonProjectProperties + ['implementation']
+    List<String> projectDeliveryAssumptionsHeaders = commonProjectHeaders + ['Project delivery assumptions']
+
     List<String> keyEvaluationQuestionHeaders = commonProjectHeaders + ['Project Key evaluation question (KEQ)', 'How will KEQ be monitored?']
     List<String> keyEvaluationQuestionProperties = commonProjectProperties + ['data1', 'data2']
-    List<String> prioritiesHeaders = commonProjectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment']
-    List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3']
+    List<String> prioritiesHeaders = commonProjectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment', 'Link to document']
+    List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3', 'documentUrl']
     List<String> whsAndCaseStudyHeaders = commonProjectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
     List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
     List<String> projectAssetHeaders = commonProjectHeaders + ["Asset", "Category"]
@@ -114,18 +117,21 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> eventHeaders = commonProjectHeaders + ['Funding', 'Name', 'Description', 'Scheduled Date', 'Media', 'Grant Announcement Date', 'Type']
     List<String> eventProperties = commonProjectProperties + ['funding', 'name', 'description', 'scheduledDate', 'media', 'grantAnnouncementDate', 'Type']
-    List<String> baselineHeaders = commonProjectHeaders + ['Baseline Method', 'Baseline']
-    List<String> baselineProperties = commonProjectProperties + ['method', 'baseline']
+    List<String> baselineHeaders = commonProjectHeaders + ['Outcome statement/s','Baseline Method', 'Baseline', 'Code', 'Evidence', 'Monitoring Data Status', 'Baseline Protocol', 'Project Service/Target measure']
+    List<String> baselineProperties = commonProjectProperties + ['relatedOutcomes', 'method', 'baseline', 'code', 'evidence', 'monitoringDataStatus', 'protocols', 'relatedTargetMeasures']
 
     //Different data model   RLP outcomes show data on rows not cols
-    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority']
-    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority']
+    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority', 'Related Program Outcome']
+    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority','relatedOutcome']
 
     List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
     List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projectMethodology", "projectREI", "relatedProjects"]
 
-    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?", "What types of measurements or observations does the dataset include?", "Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Has your data been included in the Threatened Species Index?", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing"]
-    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority", "term", "type", "measurementTypes", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "threatenedSpeciesIndex", "collectorType", "qa", "published", "storageType", "publicationUrl", "format", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing"]
+    List<String> rdpProjectDetailsHeaders=commonProjectHeaders + ["Does this project directly support a priority place?","Supported priority places", "Are First Nations people (Indigenous) involved in the project?", "What is the nature of the involvement?","Project delivery assumptions","Project review, evaluation and improvement methodology"]
+    List<String> rdpProjectDetailsProperties =commonProjectProperties + ["supportsPriorityPlace", "supportedPriorityPlaces", "indigenousInvolved", "indigenousInvolvementType", "projectMethodology", "projectREI"]
+
+    List<String> datasetHeader = commonProjectHeaders + ["Dataset Title", "What program outcome does this dataset relate to?", "What primary or secondary investment priorities or assets does this dataset relate to?","Other Investment Priority","Which project service and outcome/s does this data set support?","Is this data being collected for reporting against short or medium term outcome statements?", "Is this (a) a baseline dataset associated with a project outcome i.e. against which, change will be measured, (b) a project progress dataset that is tracking change against an established project baseline dataset or (c) a standalone, foundational dataset to inform future management interventions?","Other Dataset Type","Which project baseline does this data set relate to or describe?","What EMSA protocol was used when collecting the data?", "What types of measurements or observations does the dataset include?","Other Measurement Type","Identify the method(s) used to collect the data", "Describe the method used to collect the data in detail", "Identify any apps used during data collection", "Provide a coordinate centroid for the area surveyed", "First collection date", "Last collection date", "Is this data an addition to existing time-series data collected as part of a previous project, or is being collected as part of a broader/national dataset?", "Has your data been included in the Threatened Species Index?","Date of upload", "Who developed/collated the dataset?", "Has a quality assurance check been undertaken on the data?", "Has the data contributed to a publication?", "Where is the data held?", "For all public datasets, please provide the published location. If stored internally by your organisation, write ‘stored internally'", "What format is the dataset?","What is the size of the dataset (KB)?","Unknown size", "Are there any sensitivities in the dataset?", "Primary source of data (organisation or individual that owns or maintains the dataset)", "Dataset custodian (name of contact to obtain access to dataset)", "Progress", "Is Data Collection Ongoing", "Technical data from Monitor"]
+    List<String> datasetProperties = commonProjectProperties + ["name", "programOutcome", "investmentPriorities","otherInvestmentPriority","projectOutcomes", "term", "type", "otherDataSetType","baselines", "protocol", "measurementTypes","otherMeasurementType", "methods", "methodDescription", "collectionApp", "location", "startDate", "endDate", "addition", "threatenedSpeciesIndex","threatenedSpeciesIndexUploadDate", "collectorType", "qa", "published", "storageType", "publicationUrl", "format","sizeInKB","sizeUnknown", "sensitivities", "owner", "custodian", "progress", "dataCollectionOngoing", "orgMintedIdentifier"]
 
     List<String> electorateInternalOrderNoHeader = (2..3).collect{'Internal order number '+it}
     List<String> electorateInternalOrderNoProperties = (1..2).collect{PROJECT_DATA_PREFIX+'internalOrderId'+it}
@@ -141,8 +147,25 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> pestControlMethodsHeaders =commonProjectHeaders + ['Are there any current control methods for this pest?', 'Has it been successful?', 'Type of method', 'Details']
     List<String> pestControlMethodsProperties =commonProjectProperties + ['currentControlMethod', 'hasBeenSuccessful', 'methodType', 'details']
 
+    List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Description', 'Project service / Target measure/s to address threats', 'Methodology', 'Evidence to be retained']
+    List<String> rdpKeyThreatProperties =commonProjectProperties + ['relatedOutcomes', 'threatCode', 'keyThreat','relatedTargetMeasures', 'keyTreatIntervention', 'evidence']
+
+    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+
+    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
+    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
+
+    List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
+    List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
+
+    List<String> rdpMonitoringIndicatorsHeaders =commonProjectHeaders + ['Code', 'Monitoring methodology', 'Project service / Target measure/s', 'Monitoring method', 'Evidence to be retained']
+    List<String> rdpMonitoringIndicatorsProperties =commonProjectProperties + ['relatedBaseline', 'data1', 'relatedTargetMeasures','protocols', 'evidence']
+
+
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
+    OrganisationService organisationService
 
     /** Enables us to pre-create headers for each electorate that will appear in the result set */
     List<String> distinctElectorates
@@ -162,7 +185,9 @@ class ProjectXlsExporter extends ProjectExporter {
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService) {
         super(exporter)
         this.projectService = projectService
+        this.organisationService = organisationService
         distinctElectorates = new ArrayList()
+        useSpeciesUrlGetter = true
         setupManagementUnits(managementUnitService)
         setupFundingAbn(organisationService)
         setupProgramData(programService)
@@ -171,7 +196,9 @@ class ProjectXlsExporter extends ProjectExporter {
     ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService, Map<String, DataDescription> downloadMetadata, boolean formSectionPerTab = false) {
         super(exporter, tabsToExport, [:], TimeZone.default)
         this.projectService = projectService
+        this.organisationService = organisationService
         this.formSectionPerTab = formSectionPerTab
+        useSpeciesUrlGetter = true
         addDataDescriptionToDownload(downloadMetadata)
         distinctElectorates = new ArrayList(electorates?:[])
         distinctElectorates.sort()
@@ -212,12 +239,59 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
+    private static List getIntersectionProperties() {
+        List props = []
+        def metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
+        Map config = metadataService.getGeographicConfig()
+        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+        intersectionLayers.each { layer ->
+            Map facetName = metadataService.getGeographicFacetConfig(layer)
+            if (facetName.name) {
+                props.add(getPropertyNameForFacet(facetName.name))
+                props.add(getPropertyNameForFacet(facetName.name, "other"))
+            }
+            else
+                log.error ("No facet config found for layer $layer.")
+        }
+
+        props
+    }
+
+    private static List getIntersectionHeaders() {
+        List headers = []
+        def metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
+        Map config = metadataService.getGeographicConfig()
+        List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+        intersectionLayers.each { layer ->
+            Map facetName = metadataService.getGeographicFacetConfig(layer)
+            if (facetName.name) {
+                headers.add(getHeaderNameForFacet(facetName.name))
+                headers.add(getHeaderNameForFacet(facetName.name, "Other"))
+            }
+            else
+                log.error ("No facet config found for layer $layer.")
+        }
+
+        headers
+    }
+
+    private static String getHeaderNameForFacet (String facetName, String prefix = "Primary") {
+        Map names = Holders.config.getProperty("app.facets.displayNames", Map)
+        String name = names[facetName]['headerName']
+        return "$prefix $name (Interpreted)"
+    }
+
+    private static String getPropertyNameForFacet (String facetName, String prefix = "primary") {
+        return "$prefix$facetName"
+    }
+
     void export(Map project) {
 
         addCommonProjectData(project)
 
         addProjectGeo(project)
         exportProject(project)
+        exportProjectOrganisationData(project)
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
@@ -242,13 +316,28 @@ class ProjectXlsExporter extends ProjectExporter {
      * @param project the project being exported.
      */
     private addCommonProjectData(Map project) {
+        addPrimaryAndOtherIntersections(project)
         commonProjectPropertiesRaw.each {
             project[PROJECT_DATA_PREFIX+it] = project.remove(it)
         }
         if (project.managementUnitId) {
             project[PROJECT_DATA_PREFIX+'managementUnitName'] = managementUnitNames[project.managementUnitId]
         }
+
+        Date now = new Date()
+        List orgs = project.associatedOrgs?.findAll{(!it.fromDate || it.fromDate <= now) && (!it.toDate || it.toDate >= now)}
+        if (orgs) {
+            project.organisationName = orgs[0].name
+            project.organisationId = orgs[0].organisationId
+        }
+
         filterExternalIds(project, PROJECT_DATA_PREFIX)
+
+    }
+
+    private void addPrimaryAndOtherIntersections (Map project) {
+        Map result = projectService.findStateAndElectorateForProject(project) ?: [:]
+        project << result
     }
 
     private addProjectGeo(Map project) {
@@ -273,6 +362,8 @@ class ProjectXlsExporter extends ProjectExporter {
             }
         }
     }
+
+
 
      void exportActivities(Map project) {
          tabsToExport.each { tab ->
@@ -328,6 +419,31 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
+    void exportProjectOrganisationData(Map project) {
+        String sheetName = 'Organisation Details'
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sitesSheet = getSheet(sheetName, organisationDetailsProperties, organisationDetailsHeaders)
+            List associatedOrgs = []
+
+            project.associatedOrgs?.each { org ->
+                Map orgProps = org+project
+                if (org.organisationId) {
+                    Map organisation = organisationService.get(org.organisationId)
+                    orgProps['abn'] = organisation?.abn
+                    orgProps['organisationName'] = organisation?.name
+                }
+                else {
+                    orgProps['organisationName'] = ''
+                }
+
+                associatedOrgs << orgProps
+
+            }
+            int row = sitesSheet.getSheet().lastRowNum
+            sitesSheet.add(associatedOrgs, organisationDetailsProperties, row + 1)
+        }
+    }
+
     private void exportSites(Map project) {
         String sheetName = 'Sites'
         if (shouldExport(sheetName)) {
@@ -363,7 +479,7 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.outputTargets) {
                 List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
-                List targets = approvedMetrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
+                List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
                     target.deliveredTotal = totalMetrics.find{it.label == target.scoreLabel}?.result?.result
                 }
@@ -371,6 +487,15 @@ class ProjectXlsExporter extends ProjectExporter {
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
             }
         }
+    }
+
+    /** Returns true if the target is a number (or string representation of a number) and is not zero
+     * For legacy reasons, some targets are strings */
+    private static boolean hasTarget(target) {
+        if (target instanceof String) {
+            return target && target != "0"
+        }
+        target && target != 0
     }
 
     private void exportProject(Map project) {
@@ -384,6 +509,13 @@ class ProjectXlsExporter extends ProjectExporter {
 
             distinctElectorates.each { electorate ->
                 project[electorate] = projectElectorates.contains(electorate) ? 'Y' : 'N'
+            }
+
+            project.associatedOrgs?.eachWithIndex { org, i ->
+                Map orgProps = associatedOrgProperties.collectEntries{
+                    [('associatedOrg_'+it+(i+1)):org[it]]
+                }
+                project.putAll(orgProps)
             }
 
             projectSheet.add([project], properties, row + 1)
@@ -400,8 +532,17 @@ class ProjectXlsExporter extends ProjectExporter {
                 Map dataSets = [:]
                 dataValue.each{k, v -> dataSets.put(k,v)}
 
-                // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
+                if (dataSets?.protocol){
+                    if (dataSets.protocol == "other") {
+                        dataSets["protocol"] = "other"
+                    } else {
+                        ActivityForm protocolForm = ActivityForm.findByExternalId(dataSets.protocol as String)
+                        dataSets["protocol"] = protocolForm?.name
+                    }
 
+                }
+
+                // joining all investmentPriority, methods, measurementTypes and sensitivities  from list to String
                 if (dataSets?.investmentPriorities){
                     dataSets["investmentPriorities"] = dataValue?.investmentPriorities?.join(", ")
                 }
@@ -433,7 +574,8 @@ class ProjectXlsExporter extends ProjectExporter {
                 "MERI_Key Evaluation Question","MERI_Priorities","MERI_WHS and Case Study",'MERI_Risks and Threats',
                 "MERI_Attachments", "MERI_Baseline", "MERI_Event", "MERI_Approvals", "MERI_Project Assets",
                 'MERI_Pest Control Methods', 'MERI_Native Species Threat',
-                "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets"
+                "RLP_Outcomes", "RLP_Project_Details", "RLP_Key_Threats", "RLP_Services_and_Targets",
+                "RDP_Outcomes", "RDP_Project_Details", "RDP_Key_Threats", "RDP_Services_and_Targets", "RDP_Monitoring"
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
@@ -449,6 +591,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportMonitoring(project)
         exportProjectPartnerships(project)
         exportProjectImplementation(project)
+        exportProjectDeliveryAssumptions(project)
         exportKeyEvaluationQuestion(project)
         exportPriorities(project)
         exportWHSAndCaseStudy(project)
@@ -463,6 +606,11 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRLPServicesTargets(project)
         exportControlMethods(project)
         exportNativeThreats(project)
+        exportRDPKeyThreats(project)
+        exportRDPProjectDetails(project)
+        exportRDPOutcomes(project)
+        exportRDPServicesTargets(project)
+        exportRdpMonitoring(project)
 
     }
 
@@ -568,6 +716,23 @@ class ProjectXlsExporter extends ProjectExporter {
 
     }
 
+    private void exportProjectDeliveryAssumptions(Map project) {
+        String sheetName = "RDP_Project_Delivery_Assumptions"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet("RDP Project Delivery Assumptions", projectImplementationProperties, projectDeliveryAssumptionsHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            if (project?.custom?.details?.implementation) {
+                Map data = [implementation:project?.custom?.details?.implementation?.description]
+                data.putAll(project)
+
+                sheet.add(data, projectImplementationProperties, row+1)
+            }
+        }
+
+    }
+
+
     private void exportKeyEvaluationQuestion(Map project) {
         exportList("MERI_Key Evaluation Question", project, project?.custom?.details?.keq?.rows,
                 keyEvaluationQuestionHeaders, keyEvaluationQuestionProperties)
@@ -630,13 +795,102 @@ class ProjectXlsExporter extends ProjectExporter {
         if (shouldExport(sheetName)) {
             AdditionalSheet sheet = getSheet(sheetName, baselineProperties, baselineHeaders)
             int row = sheet.getSheet().lastRowNum
-            List data = project?.custom?.details?.baseline?.rows?.collect { Map baseline ->
-                Map baseLineItem = [:]
-                baseline.each{k, v -> baseLineItem.put(k,v)}
-                baseLineItem.putAll(project)
-                baseLineItem
+            List data = []
+
+            if (project?.custom?.details?.baseline?.rows){
+                def items = project?.custom?.details?.baseline?.rows
+                items.each{ Map item ->
+                    Map baseline = [:]
+                    baseline["relatedOutcomes"] = item.relatedOutcomes
+                    baseline["method"] = item.method
+                    baseline["baseline"] = item.baseline
+                    baseline["code"] = item.code
+                    baseline["evidence"] = item.evidence
+                    baseline["monitoringDataStatus"] = item.monitoringDataStatus
+                    baseline["protocols"] = item.protocols
+                    baseline["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures as List)
+                    baseline.putAll(project)
+                    data.add(project + baseline)
+                }
             }
+
             sheet.add(data?:[], baselineProperties, row+1)
+        }
+
+    }
+
+    private void exportRdpMonitoring(Map project) {
+        String sheetName = "RDP_Monitoring"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, rdpMonitoringIndicatorsProperties, rdpMonitoringIndicatorsHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.monitoring?.rows){
+                def items = project?.custom?.details?.monitoring?.rows
+                items.each{ Map item ->
+                    Map monitoringIndicator = [:]
+                    monitoringIndicator["relatedBaseline"] = item.relatedBaseline
+                    monitoringIndicator["data1"] = item.data1
+                    monitoringIndicator["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures)
+                    monitoringIndicator["protocols"] = item.protocols
+                    monitoringIndicator["evidence"] = item.evidence
+
+                    monitoringIndicator.putAll(project)
+                    data.add(project + monitoringIndicator)
+                }
+            }
+
+            sheet.add(data?:[], rdpMonitoringIndicatorsProperties, row+1)
+        }
+
+    }
+
+    private void exportRLPKeyThreats(Map project) {
+        String sheetName = "RLP_Key_Threats"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, rlpKeyThreatProperties, rlpKeyThreatHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threats?.rows
+                items.each{ Map item ->
+                    Map threat = [:]
+                    threat["keyThreat"] = item.threat
+                    threat["keyTreatIntervention"] = item.intervention
+                    threat.putAll(project)
+                    data.add(project + threat)
+                }
+            }
+
+            sheet.add(data?:[], rlpKeyThreatProperties, row+1)
+        }
+    }
+
+    private void exportRDPKeyThreats(Map project) {
+        String sheetName = "RDP_Key_Threats"
+        if (shouldExport(sheetName)) {
+            AdditionalSheet sheet = getSheet(sheetName, rdpKeyThreatProperties, rdpKeyThreatHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threats?.rows
+                items.each{ Map item ->
+                    Map threat = [:]
+                    threat["relatedOutcomes"] = item.relatedOutcomes
+                    threat["threatCode"] = item.threatCode
+                    threat["keyThreat"] = item.threat
+                    threat["relatedTargetMeasures"] = findScoreLabels(item.relatedTargetMeasures as List)
+                    threat["keyTreatIntervention"] = item.intervention
+                    threat["evidence"] = item.evidence
+                    threat.putAll(project)
+                    data.add(project + threat)
+                }
+            }
+
+            sheet.add(data?:[], rdpKeyThreatProperties, row+1)
         }
     }
 
@@ -657,147 +911,40 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportRLPProjectDetails(Map project){
         if (shouldExport("RLP_Project_Details")) {
-            /**
-             * RLP outcome does not use HEADERs from DB
-             */
-            AdditionalSheet sheet = getSheet("RLP Project Details", rlpProjectDetailsProperties, rlpProjectDetailsHeaders)
-            int row = sheet.getSheet().lastRowNum
+            getProjectDetailsSheet(project, "RLP Project Details", rlpProjectDetailsHeaders, rlpProjectDetailsProperties)
+        }
+    }
 
-            List data = []
-            Map item = [:]
-            if (project?.custom?.details?.description){
-                item["projectDescription"]=project?.custom?.details?.description
-            }
-
-            if (project?.custom?.details?.implementation){
-                item["projectMethodology"]=project?.custom?.details?.implementation?.description
-            }
-
-            if (project?.custom?.details?.rationale){
-                item["projectRationale"]=project?.custom?.details?.rationale
-            }
-
-            if (project?.custom?.details?.projectEvaluationApproach){
-                item["projectREI"]=project?.custom?.details?.projectEvaluationApproach
-            }
-            if (project?.custom?.details?.relatedProjects){
-                item["relatedProjects"] = project?.custom?.details?.relatedProjects
-            }
-
-            item.putAll(project)
-
-            data.add(item)
-
-            sheet.add(data?:[], rlpProjectDetailsProperties, row+1)
+    private void exportRDPProjectDetails(Map project){
+        if (shouldExport("RDP_Project_Details")) {
+            getProjectDetailsSheet(project, "RDP Project Details", rdpProjectDetailsHeaders, rdpProjectDetailsProperties)
         }
     }
 
     private void exportRLPOutcomes(Map project) {
 
         if (shouldExport("RLP_Outcomes")) {
-            /**
-             * RLP outcome does not use HEADERs from DB
-             */
-            AdditionalSheet sheet = getSheet("RLP Outcomes", rlpOutcomeProperties, rlpOutcomeHeaders)
-            int row = sheet.getSheet().lastRowNum
-            Map fields = [:]
-            fields["secondaryOutcomes"] = "Secondary Outcome/s"
-            fields["shortTermOutcomes"] = "Short-term"
-            fields["midTermOutcomes"] = "Medium-term"
-            List data = []
-            //['outcomeType', 'outcome','priority']
-
-            if (project?.custom?.details?.outcomes?.primaryOutcome){
-                def po = project?.custom?.details?.outcomes?.primaryOutcome
-                Map outcome = [:]
-                outcome.put('outcomeType',"Primary outcome")
-                outcome.put('outcome',po.description)
-                String assets = po.assets?.join(", ")
-                outcome.put('priority',assets)
-                data.add(project+outcome)
-            }
-            if (project?.custom?.details?.outcomes?.otherOutcomes){
-                def assets = project?.custom?.details?.outcomes?.otherOutcomes
-                Map outcome = [:]
-                outcome.put("outcomeType", "Other Outcomes")
-                String otherOutcome = assets.join(",")
-                outcome.put("outcome", otherOutcome)
-                data.add(project + outcome)
-            }
-
-            fields.each{ocitem, desc->
-                List oocs = project?.custom?.details?.outcomes?.get(ocitem)
-                oocs?.collect{ Map oc ->
-                    Map outcome = [:]
-                    outcome.put('outcomeType',desc)
-                    outcome.put('outcome',oc.description)
-                    String assets = oc.assets?.join(",")
-                    outcome.put('priority',assets)
-                    data.add(project+outcome)
-                }
-            }
-
-            sheet.add(data?:[], rlpOutcomeProperties, row+1)
+            getOutcomeSheet(project,"RLP Outcomes")
         }
     }
 
-    private  void exportRLPKeyThreats(Map project){
-        List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
-        List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
+    private void exportRDPOutcomes(Map project) {
 
-        if (shouldExport("RLP_Key_Threats")) {
-            /**
-             * RLP outcome does not use HEADERs from DB
-             */
-            AdditionalSheet sheet = getSheet("RLP Key Threats", rlpKeyThreatProperties, rlpKeyThreatHeaders)
-            int row = sheet.getSheet().lastRowNum
-
-            List data = []
-
-            if (project?.custom?.details?.threats?.rows){
-                def items = project?.custom?.details?.threats?.rows
-                items.each{ Map item ->
-                    //['keyThreat', 'keyTreatIntervention']
-                    Map threat = [:]
-                    threat["keyThreat"] = item.threat
-                    threat["keyTreatIntervention"] = item.intervention
-                    threat.putAll(project)
-                    data.add(project + threat)
-                }
-            }
-
-            sheet.add(data?:[], rlpKeyThreatProperties, row+1)
+        if (shouldExport("RDP_Outcomes")) {
+            getOutcomeSheet(project,"RDP Outcomes")
         }
     }
 
     private void exportRLPServicesTargets(project){
-        if (!shouldExport("RLP_Services_and_Targets"))
-            return
-
-        List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
-        List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
-        def results = metadataService.getProjectServicesWithTargets(project)
-
-        AdditionalSheet sheet = getSheet("Project services and targets", rlpSTProperties, rlpSTHeaders)
-        int row = sheet.getSheet().lastRowNum
-
-        List data = []
-        results.each { item ->
-            def serviceName = item.name
-            item.scores.each {
-                    Map st = [:]
-                    st['service'] = serviceName
-                    st['targetMeasure'] = it.label
-                    st['total'] = it.target
-                    st['targetDate'] = it.targetDate
-                    it.periodTargets.each { pt ->
-                        st[pt.period] = pt.target
-                    }
-                    data.add(project+st)
-            }
+        if (shouldExport("RLP_Services_and_Targets")) {
+            getServicesTargetsSheet(project, "Project services and targets", rlpSTHeaders, rlpSTProperties)
         }
+    }
 
-        sheet.add(data?:[], rlpSTProperties, row+1)
+    private void exportRDPServicesTargets(project){
+        if (shouldExport("RDP_Services_and_Targets")) {
+            getServicesTargetsSheet(project, "RDP Project services and targets", rdpSTHeaders, rdpSTProperties)
+        }
     }
 
     private void exportControlMethods(Map project) {
@@ -933,5 +1080,132 @@ class ProjectXlsExporter extends ProjectExporter {
             }
         }
 
+    }
+
+    private AdditionalSheet getOutcomeSheet(Map project, String sheetName) {
+        AdditionalSheet sheet = getSheet(sheetName, rlpOutcomeProperties, rlpOutcomeHeaders)
+        int row = sheet.getSheet().lastRowNum
+        Map fields = [:]
+        fields["secondaryOutcomes"] = "Additional outcome/s"
+        fields["shortTermOutcomes"] = "Short-term"
+        fields["midTermOutcomes"] = "Medium-term"
+        List data = []
+        //['outcomeType', 'outcome','priority']
+
+        if (project?.custom?.details?.outcomes?.primaryOutcome){
+            def po = project?.custom?.details?.outcomes?.primaryOutcome
+            Map outcome = [:]
+            outcome.put('outcomeType',"Primary outcome")
+            outcome.put('outcome',po.description)
+            String assets = po.assets?.join(", ")
+            outcome.put('priority',assets)
+            data.add(project+outcome)
+        }
+        if (project?.custom?.details?.outcomes?.otherOutcomes){
+            def assets = project?.custom?.details?.outcomes?.otherOutcomes
+            Map outcome = [:]
+            outcome.put("outcomeType", "Other Outcomes")
+            String otherOutcome = assets.join(",")
+            outcome.put("outcome", otherOutcome)
+            data.add(project + outcome)
+        }
+
+        fields.each{ocitem, desc->
+            List oocs = project?.custom?.details?.outcomes?.get(ocitem)
+            oocs?.collect{ Map oc ->
+                Map outcome = [:]
+                outcome.put('outcomeType',desc)
+                outcome.put('outcome',oc.description)
+                String assets = oc.assets?.join(",")
+                outcome.put('priority',assets)
+                outcome.put('relatedOutcome',oc.relatedOutcome)
+                data.add(project+outcome)
+            }
+        }
+
+        sheet.add(data?:[], rlpOutcomeProperties, row+1)
+
+    }
+
+    private AdditionalSheet getProjectDetailsSheet(Map project, String sheetName, List projectDetailsHeaders, List projectDetailsProperties) {
+        AdditionalSheet sheet = getSheet(sheetName, projectDetailsProperties, projectDetailsHeaders)
+        int row = sheet.getSheet().lastRowNum
+
+        List data = []
+        Map item = [:]
+
+        if (project?.custom?.details?.description){
+            item["projectDescription"]=project?.custom?.details?.description
+        }
+
+        if (project?.custom?.details?.supportsPriorityPlace){
+            item["supportsPriorityPlace"]=project?.custom?.details?.supportsPriorityPlace
+        }
+
+        if (project?.custom?.details?.supportedPriorityPlaces){
+            item["supportedPriorityPlaces"]=project?.custom?.details?.supportedPriorityPlaces
+        }
+
+        if (project?.custom?.details?.indigenousInvolved){
+            item["indigenousInvolved"]=project?.custom?.details?.indigenousInvolved
+        }
+
+        if (project?.custom?.details?.indigenousInvolvementType){
+            item["indigenousInvolvementType"]=project?.custom?.details?.indigenousInvolvementType
+        }
+
+        if (project?.custom?.details?.implementation){
+            item["projectMethodology"]=project?.custom?.details?.implementation?.description
+        }
+
+        if (project?.custom?.details?.rationale){
+            item["projectRationale"]=project?.custom?.details?.rationale
+        }
+
+        if (project?.custom?.details?.projectEvaluationApproach){
+            item["projectREI"]=project?.custom?.details?.projectEvaluationApproach
+        }
+        if (project?.custom?.details?.relatedProjects){
+            item["relatedProjects"] = project?.custom?.details?.relatedProjects
+        }
+
+        item.putAll(project)
+
+        data.add(item)
+
+        sheet.add(data?:[], projectDetailsProperties, row+1)
+    }
+
+    private AdditionalSheet getServicesTargetsSheet(Map project, String sheetName, List stHeaders, List stProperties) {
+        List<Map> results = metadataService.getProjectServicesWithTargets(project)
+        AdditionalSheet sheet = getSheet(sheetName, stProperties, stHeaders)
+        int row = sheet.getSheet().lastRowNum
+
+        List data = []
+        results.each { item ->
+            def serviceName = item.name
+            item.scores.each {
+                Map st = [:]
+                st['service'] = serviceName
+                st['targetMeasure'] = it.label
+                st['relatedOutcomes'] = it.relatedOutcomes
+                st['total'] = it.target
+                st['targetDate'] = it.targetDate
+                it.periodTargets.each { pt ->
+                    st[pt.period] = pt.target
+                }
+                data.add(project+st)
+            }
+        }
+
+        sheet.add(data?:[], rdpSTProperties, row+1)
+    }
+
+    private static String findScoreLabels(List scoreIds) {
+        List labels = []
+        for (String scoreId : scoreIds) {
+            labels.add(au.org.ala.ecodata.Score.findByScoreId(scoreId)?.label)
+        }
+        return labels
     }
 }

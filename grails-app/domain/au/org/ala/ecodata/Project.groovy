@@ -1,21 +1,17 @@
 package au.org.ala.ecodata
 
-
-import au.org.ala.ecodata.graphql.models.MeriPlan
 import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
-import org.springframework.validation.Errors
-
-import static au.org.ala.ecodata.Status.COMPLETED
 import au.org.ala.ecodata.graphql.models.MeriPlan
-import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.Interval
+import org.springframework.validation.Errors
 
 import static au.org.ala.ecodata.Status.COMPLETED
 
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class Project {
 
     static graphql = ProjectGraphQLMapper.graphqlMapping()
@@ -74,6 +70,8 @@ class Project {
     List <String> ecoScienceType = []
     List <String> tags = []
     double funding
+    /** The most recent date the correctness of the project funding was checked */
+    Date fundingVerificatonDate
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
     boolean isExternal = false // An external project only has a listing with the ALA and is not using data capture capabilities
@@ -122,7 +120,10 @@ class Project {
 
     List<OutputTarget> outputTargets
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
+    /** Container to allow program config overrides for an individual Project */
+    Map config
+
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
@@ -236,10 +237,12 @@ class Project {
         isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
+        config nullable: true
         managementUnitId nullable: true
         mapDisplays nullable: true
         terminationReason nullable: true
         fundingType nullable: true
+        fundingVerificatonDate nullable: true
         electionCommitmentYear nullable: true
         geographicInfo nullable:true
         portfolio nullable: true

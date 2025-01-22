@@ -15,10 +15,15 @@
 
 package au.org.ala.ecodata
 
+
+import com.mongodb.client.model.Filters
+import grails.async.Promise
+import grails.async.Promises
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -58,6 +63,7 @@ import org.elasticsearch.search.sort.SortOrder
 import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -68,7 +74,6 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 import static org.elasticsearch.index.query.QueryBuilders.*
-
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -106,7 +111,7 @@ class ElasticSearchService {
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name, ProjectActivity.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -179,16 +184,17 @@ class ElasticSearchService {
      * @return IndexResponse
      */
     def indexDoc(doc, String index, BulkProcessor bulkProcessor = null) {
+        String docId = getEntityId(doc)
         if (!canIndex(doc)) {
+            deleteIfRequired(docId, index)
             return
         }
-        String docId = getEntityId(doc)
+
         // The purpose of the as JSON call below is to convert Date objects into the format we use
         // throughout the app - otherwise the elasticsearch XContentBuilder will transform them into
         // ISO dates with milliseconds which causes BioCollect problems as it uses the _source field of the
         // search result directly.
         Map docMap = doc
-
 
         index = index ?: DEFAULT_INDEX
 
@@ -257,13 +263,23 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId, String index = DEFAULT_INDEX) {
         def isDeleted = false
+        if (doc.status?.toLowerCase() == DELETED) {
+            isDeleted = deleteIfRequired(docId, index)
+        }
+
+        return isDeleted
+    }
+
+    /** Deletes the document with the supplied id from elasticsearch if it is indexed */
+    boolean deleteIfRequired(String docId, String index) {
+        def isDeleted = false
         GetResponse resp
 
         try {
             GetRequest request = new GetRequest(index, docId)
             resp = client.get(request, RequestOptions.DEFAULT)
 
-            if (resp.exists && doc.status?.toLowerCase() == DELETED) {
+            if (resp.exists) {
                 try {
                     deleteDocById(docId, index)
                     isDeleted = true
@@ -441,7 +457,7 @@ class ElasticSearchService {
 
     def buildFacetMapping() {
         def facetList = []
-        Map facetConfig = grailsApplication.config.getProperty('app.facets.geographic', Map)
+        Map facetConfig = metadataService.getGeographicConfig()
         // These groupings of facets determine the way the layers are used with a site, but can be treated the
         // same for the purposes of indexing the results.
         ['contextual', 'grouped', 'special'].each {
@@ -548,15 +564,9 @@ class ElasticSearchService {
 
         switch (docType) {
             case Project.class.name:
-                def doc = Project.findByProjectId(docId)
-                def projectMap = projectService.toMap(doc, "flat")
-                projectMap["className"] = docType
-                indexHomePage(doc, docType)
-                if(projectMap.siteId){
-                    indexDocType(projectMap.siteId, Site.class.name)
-                }
-
-                break;
+                Project project = Project.findByProjectId(docId)
+                indexHomePage(project, docType)
+                break
             case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, SiteService.FLAT)
@@ -567,11 +577,10 @@ class ElasticSearchService {
                 }
 
                 doc?.projects?.each { projectId ->
-                    def proj = Project.findByProjectId(projectId)
-                    Map projectMap = prepareProjectForHomePageIndex(proj)
-                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                    Project proj = Project.findByProjectId(projectId)
+                    indexHomePage(proj, Project.class.name)
                 }
-                break;
+                break
 
             case Record.class.name:
                 Record record = Record.findByOccurrenceID(docId)
@@ -604,7 +613,7 @@ class ElasticSearchService {
                 // update linked project -- index for homepage
                 def pDoc = Project.findByProjectId(doc.projectId)
                 if (pDoc) {
-                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                    indexHomePage(pDoc, Project.class.name)
                 }
 
                 if(activity.siteId){
@@ -630,9 +639,15 @@ class ElasticSearchService {
                 String projectId = UserPermission.findByIdAndEntityType(docId, Project.class.name)?.getEntityId()
                 if (projectId) {
                     Project doc = Project.findByProjectId(projectId)
-                    Map projectMap = projectService.toMap(doc, "flat")
-                    projectMap["className"] = Project.class.name
                     indexHomePage(doc, Project.class.name)
+                }
+                break
+            case ProjectActivity.class.name:
+                // make sure updates to project activity updates project object.
+                // helps BioCollect mobile app show correct surveys.
+                ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(docId)
+                if (projectActivity?.projectId) {
+                    indexDocType(projectActivity.projectId, Project.class.name)
                 }
                 break
         }
@@ -699,11 +714,10 @@ class ElasticSearchService {
         try {
             def docId = getEntityId(doc)
 
-            // Delete index if it exists and doc.status == 'deleted'
-            checkForDelete(doc, docId, HOMEPAGE_INDEX)
-
             // Prevent deleted document from been indexed regardless of whether it has a previous index entry
             if(doc.status?.toLowerCase() == DELETED) {
+                // Delete index if it exists and doc.status == 'deleted'
+                checkForDelete(doc, docId, HOMEPAGE_INDEX)
                 return null;
             }
 
@@ -781,6 +795,193 @@ class ElasticSearchService {
 
     }
 
+    def indexDependenciesOfProjects(List projectIds) {
+        log.info("Started indexing of projects: ${projectIds}")
+        projectIds?.each { projectId ->
+            log.debug("Started indexing assets of project: ${projectId}")
+            indexDependenciesOfProject(projectId)
+            log.debug("Indexed assets of project: ${projectId}")
+        }
+
+        log.info("Completed indexing of projects: ${projectIds}")
+    }
+
+    def indexDependenciesOfProject (String projectId) {
+        int batchSize = 50
+        log.debug "Indexing project"
+        Project.withNewSession { session ->
+            Project project = Project.findByProjectIdAndStatusNotEqual(projectId, DELETED)
+            try {
+                Map projectMap = prepareProjectForHomePageIndex(project)
+                indexDoc(projectMap, HOMEPAGE_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index project:  " + project?.projectId, e)
+            }
+
+            log.debug "Indexing sites"
+            int count = 0
+            siteService.doWithAllSites({ siteMap ->
+                siteMap["className"] = Site.class.name
+                try {
+                    siteMap = prepareSiteForIndexing(siteMap, false)
+                    if (siteMap) {
+                        indexDoc(siteMap, DEFAULT_INDEX)
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Unable index site: " + siteMap?.siteId, e)
+                }
+                count++
+                if (count % 1000 == 0) {
+                    session.clear()
+                    log.info("Processed " + count + " sites")
+                }
+            }, [Filters.eq('projectId', projectId)], batchSize)
+
+            if (project.organisationId) {
+                log.debug "Indexing organisations of project"
+                organisationService.doWithAllOrganisations ({ Map org ->
+                    try {
+                        prepareOrganisationForIndexing(org)
+                        indexDoc(org, DEFAULT_INDEX)
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index organisation: " + org?.organisationId, e)
+                    }
+                }, [Filters.eq('organisationId', project.organisationId)], batchSize)
+            }
+
+            log.debug "Indexing activities"
+            count = 0
+            activityService.doWithAllActivities({ Map activity ->
+                try {
+                    activity = prepareActivityForIndexing(activity)
+                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                }
+                catch (Exception e) {
+                    log.error("Unable to index activity: " + activity?.activityId, e)
+                }
+
+                count++
+                if (count % 1000 == 0) {
+                    session.clear()
+                    log.info("Processed " + count + " activities")
+                }
+            }, [Filters.eq('projectId', projectId)], batchSize)
+
+            log.debug "Indexing documents"
+            count = 0
+            Document.findAllByProjectIdAndStatusNotEqual(projectId, DELETED, [batchSize: batchSize]).each { Document document ->
+                try {
+                    Map doc = documentService.toMap(document)
+                    doc = prepareDocumentForIndexing(doc)
+                    if (doc) {
+                        indexDoc(doc, DEFAULT_INDEX)
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Unable to index document: " + doc?.documentId, e)
+                }
+
+                count++
+                if (count % 100 == 0) {
+                    session.clear()
+                    log.info("Processed " + count + " documents")
+                }
+            }
+        }
+    }
+
+    Promise reindexProjectsWithCriteriaAsync(Map searchCriteriaParams) {
+        Promises.task {
+            indexProjectsWithCriteria(searchCriteriaParams)
+        }
+    }
+
+    /**
+     * This method will re-index (in the current live search index) a set of Projects identified by
+     * the supplied criteria.  It should not be used for large re-indexing tasks.
+     * @param searchCriteriaParams
+     * @return the number projects indexed.
+     */
+    int indexProjectsWithCriteria(Map searchCriteriaParams) {
+        BulkProcessor.Listener listener = new LoggingBulkIndexingListener()
+
+        BulkProcessor bulkProcessor = BulkProcessor.builder(
+                { request, bulkListener ->
+                    client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-project-indexing"
+        ).build()
+
+        int count = 0
+        Closure query = { Map batchOptions ->
+            BuildableCriteria searchCriteria = Project.createCriteria()
+            searchCriteria.list(batchOptions) {
+                ne("status", DELETED)
+                searchCriteriaParams.each { prop, value ->
+
+                    if (value instanceof List) {
+                        inList(prop, value)
+                    } else {
+                        eq(prop, value)
+                    }
+                }
+            }
+        }
+
+        Project.withNewSession {
+            def batchParams = [offset: 0, max: 50, sort: 'projectId']
+            List projects = query(batchParams)
+
+            while (projects) {
+                projects.each { project ->
+                    try {
+                        Map projectMap = prepareProjectForHomePageIndex(project)
+                        indexDoc(projectMap,HOMEPAGE_INDEX, bulkProcessor)
+                        count++
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index project:  " + project?.projectId, e)
+                    }
+                }
+
+                batchParams.offset = batchParams.offset + batchParams.max
+                projects = query(batchParams)
+                log.info("Processed " + batchParams.offset + " projects")
+            }
+        }
+
+        bulkProcessor.close()
+        count
+    }
+
+    @Slf4j
+    static class LoggingBulkIndexingListener implements BulkProcessor.Listener {
+        int bulkIndexCount = 0
+        int lastReportedIndexCount = 0
+        int progressLogThreshold = 1000
+        @Override
+        void beforeBulk(long executionId, BulkRequest request) {}
+
+        @Override
+        void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+            bulkIndexCount += request.numberOfActions()
+            if (bulkIndexCount - lastReportedIndexCount > progressLogThreshold) {
+                log.info("Bulk indexed "+bulkIndexCount+" documents")
+                lastReportedIndexCount = bulkIndexCount
+            }
+
+            if (response.hasFailures()) {
+                log.warn(response.buildFailureMessage())
+            }
+        }
+
+        @Override
+        void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+            log.error("Error executing bulk indexing", failure)
+        }
+    }
+
     /**
      * Index all documents. Index is cleared first.
      */
@@ -793,30 +994,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
 
-        int bulkIndexCount = 0
-        int lastReportedIndexCount = 0
-        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
-            @Override
-            void beforeBulk(long executionId, BulkRequest request) {}
-
-            @Override
-            void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-                bulkIndexCount += request.numberOfActions()
-                if (bulkIndexCount - lastReportedIndexCount > 1000) {
-                    log.info("Bulk indexed "+bulkIndexCount+" documents")
-                    lastReportedIndexCount = bulkIndexCount
-                }
-
-                if (response.hasFailures()) {
-                    log.warn(response.buildFailureMessage())
-                }
-            }
-
-            @Override
-            void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                log.error("Error executing bulk indexing", failure)
-            }
-        }
+        BulkProcessor.Listener listener = new LoggingBulkIndexingListener()
 
         BulkProcessor bulkProcessor = BulkProcessor.builder(
                 { request, bulkListener ->
@@ -955,11 +1133,11 @@ class ElasticSearchService {
      */
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
-        projectMap["className"] = new Project().getClass().name
+        projectMap["className"] = Project.class.name
         // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
-        if(projectMap.isMERIT){
+        if (projectMap.isMERIT) {
 
             // Allow ESP sites to be hidden, even on the project explorer.  Needs to be tided up a bit as MERIT sites were
             // already marked as private to avoid discovery via BioCollect
@@ -994,8 +1172,19 @@ class ElasticSearchService {
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
             // all sites associated with project.
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
-            projectMap.projectArea = siteService.get(project.projectSiteId, [SiteService.FLAT, SiteService.INDEXING])
+            projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
+            projectMap.projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
+                [
+                        id: it.id,
+                        projectId: it.projectId,
+                        projectActivityId: it.projectActivityId,
+                        name: it.name,
+                        startDate: it.startDate,
+                        endDate: it.endDate,
+                        published: it.published
+                ]
+            })
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
@@ -1026,7 +1215,10 @@ class ElasticSearchService {
         if(projectMap.managementUnitId)
             projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
 
-        // Populate program facets from the project program, if available
+        // Populate program facets from the project program, if available, do visibility check
+        if (project.config?.visibility) {
+            projectMap.visibility = project.config.visibility
+        }
         if (project.programId) {
             Program program = programService.get(project.programId)
             if (program) {
@@ -1038,7 +1230,7 @@ class ElasticSearchService {
                 }
                 // This allows all projects associated with a particular program to be excluded from indexing.
                 // This is required to allow MERIT projects to be loaded before they have been announced.
-                if (program.inheritedConfig?.visibility) {
+                if (!projectMap.visibility && program.inheritedConfig?.visibility) {
                     projectMap.visibility = program.inheritedConfig.visibility
                 }
             }
@@ -1317,7 +1509,7 @@ class ElasticSearchService {
      * @param path
      * @return
      */
-    List getDataFromPath(output, List path){
+    static List getDataFromPath(output, List path){
         def temp = output
         List result = []
         List navigatedPath = []
@@ -1483,6 +1675,17 @@ class ElasticSearchService {
                     }
                     else {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                    }
+                }
+                break
+
+            case 'projectactivityrecords':
+                if (projectActivityId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ')'
+                    }
+                    else {
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
                     }
                 }
                 break

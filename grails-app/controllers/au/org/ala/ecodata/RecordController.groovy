@@ -7,14 +7,13 @@ import org.apache.http.HttpStatus
 import org.apache.http.entity.ContentType
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
-
 import java.text.SimpleDateFormat
-
 import static au.org.ala.ecodata.Status.DELETED
 import static javax.servlet.http.HttpServletResponse.*
 /**
  * Controller for record CRUD operations with support for handling images.
  */
+@au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class RecordController {
 
   //  def grailsApplication
@@ -367,7 +366,6 @@ class RecordController {
     /**
      * Get list of records for the given activityId
      */
-    @RequireApiKey
     def listForActivity (String id){
         String activityId = id
         log.debug("Retrieving a list for records for the given activityId: ${activityId}")
@@ -379,7 +377,6 @@ class RecordController {
     /**
      *Get a list of records for a the given project activity id, user id and last updated after since (if present)
      */
-    @RequireApiKey
     def listForProjectActivityAndUser(String id, String userId, Long since) {
         final pa = ProjectActivity.findByProjectActivityId(id)
         if (!pa) {
@@ -415,7 +412,7 @@ class RecordController {
     /**
      * Delete by occurrence ID
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def delete() {
         Record record = Record.findByOccurrenceID(params.id)
         if (record) {
@@ -436,7 +433,7 @@ class RecordController {
      * 2. Multipart request with base64 encoded image, and a "record" part encoded in JSON.
      * 3. JSON body post with image supplied via a URL.
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def create() {
 
         log.info("Create request received: " + request.getContentType())
@@ -525,7 +522,7 @@ class RecordController {
     /**
      * Update the supplied record.
      */
-    @RequireApiKey
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update() {
         def json = request.JSON
         Record record = Record.findByOccurrenceID(params.id)

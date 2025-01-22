@@ -42,7 +42,7 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
         def result
             when:
             Organisation.withNewTransaction {
-                result = service.create(orgData)
+                result = service.create(orgData, true)
             }
             then: "ensure the response contains the id of the new organisation"
                 result.status == 'ok'
@@ -69,7 +69,7 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
         when:
         Map result
         Organisation.withNewTransaction {
-            result = service.create(orgData)
+            result = service.create(orgData, true)
         }
 
         then:
@@ -93,61 +93,5 @@ class OrganisationServiceSpec extends Specification implements ServiceUnitTest<O
             result.errors.hasErrors()
 
     }
-
-/*
-    def "test organisation views"() {
-        // The dbo property on the domain object appears to be missing during unit tests which prevents toMap from working.
-
-        given:
-       // def orgId = 'organisation_id'
-        def projects = [[projectId:'1'], [projectId:'2']]
-        def orgId = Identifiers.getNew(true, '')
-        def org = new Organisation(organisationId: orgId, name: 'a test org', description: 'a test org description')
-      //  Organisation.withNewTransaction {
-          //  service.create(org)
-       // }
-     //   Organisation.withNewTransaction {
-            org.save(flush: true, failOnError: true)
-     //   }
-        ProjectService projectService = Mock(ProjectService)
-        service.projectService = projectService
-        projectService.search([organisationId: orgId]) >> projects
-        projectService.search([orgIdSvcProvider: orgId]) >> []
-
-
-        when:
-        def result
-     //   print (orgId)
-       // Organisation.withNewTransaction {
-            result = service.get(orgId)
-       //     print result
-      //  }
-     //   def result = service.toMap(org)
-
-        then:
-        result.organisationId == orgId
-        result.name == org.name
-        result.description == org.description
-        result.projects == null
-
-        when:
-      //  Organisation.withNewTransaction {
-      //     result = service.get(orgId, [OrganisationService.PROJECTS])
-      //  print result
-      //  }
-        def result1 = service.toMap(org, [OrganisationService.PROJECTS])
-
-        then:
-        result1.organisationId == orgId
-        result1.name == org.name
-        result1.description == org.description
-        result1.dynamicProperty == org['dynamicProperty']
-        result1.projects == projects
-
-    }
-*/
-
-
-
 
 }

@@ -14,6 +14,9 @@ class Site {
     static String TYPE_PROJECT_AREA = 'projectArea'
     static String TYPE_WORKS_AREA = 'worksArea'
     static String TYPE_SURVEY_AREA = 'surveyArea'
+    static String EMSA_SITE_CODE = 'E'
+    static String REPORTING_SITE_CODE = 'R'
+    static String PLANNING_SITE_CODE = 'P'
 
     static graphql = SiteGraphQLMapper.graphqlMapping()
 
@@ -25,18 +28,23 @@ class Site {
         sites may have 0..n Activities/Assessments - mapped from the Activity side
     */
 
+    static hasMany = [externalIds:ExternalId]
+    static embedded = ['externalIds']
+
     static mapping = {
         name index: true
         siteId index: true
         projects index: true
+        status index: true
         version false
     }
 
+    static transients = ['externalId', 'defaultExternalId']
     ObjectId id
     String siteId
     String status = 'active'
     String visibility
-    String externalId
+
     List projects = []
     String name
     String type
@@ -59,6 +67,9 @@ class Site {
      */
     List features
 
+    /** Tracks whether a Site has been used in a report and follows the Report publication lifecycle */
+    String publicationStatus
+
     static constraints = {
         visibility nullable: true
         name nullable: true
@@ -75,6 +86,7 @@ class Site {
         extent nullable: true
         features nullable: true
         catchment nullable: true
+        publicationStatus nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
             if(value){
@@ -88,6 +100,7 @@ class Site {
                 }
             }
         }
+        externalIds nullable: true
     }
 
     def getAssociations(){
@@ -126,5 +139,60 @@ class Site {
                 }
             }
         }
+    }
+
+    /**
+     * The MERIT and BioCollect UIs have a site page that allows the user to enter an external Id
+     * for the Site without specifying the type.
+     * Hence we treat this as the "Default" external Id which is either the first unspecified external Id
+     * or the first external Id if there are no unspecified external Ids.
+     * @return
+     */
+    private ExternalId defaultExternalId() {
+        if (!externalIds) {
+            return null
+        }
+        ExternalId defaultExternalId = externalIds?.find {it.idType == ExternalId.IdType.UNSPECIFIED}
+        if (!defaultExternalId) {
+            defaultExternalId = externalIds[0]
+        }
+        defaultExternalId
+    }
+
+    String getExternalId() {
+        ExternalId defaultExternalId = defaultExternalId()
+        defaultExternalId?.externalId
+    }
+
+    void setExternalId(String externalId) {
+        ExternalId defaultExternalId = defaultExternalId()
+        if (defaultExternalId) {
+            defaultExternalId.externalId = externalId
+
+        } else {
+            externalIds = [new ExternalId(idType: ExternalId.IdType.UNSPECIFIED, externalId: externalId)]
+        }
+        markDirty('externalIds')
+    }
+
+
+    static Site findByExternalId(ExternalId.IdType idType, String externalId) {
+        where {
+            externalIds {
+                idType == idType
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.find()
+    }
+
+    static List<Site> findAllByExternalId(ExternalId.IdType idType, String externalId, Map params) {
+        where {
+            externalIds {
+                idType == idType
+                externalId == externalId
+            }
+            status != Status.DELETED
+        }.list(params)
     }
 }

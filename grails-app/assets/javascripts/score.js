@@ -15,6 +15,7 @@ var ScoreModel = function (score, config) {
     self.entity = ko.observable(score.entity || 'Activity');
     self.tags = ko.observableArray(score.tags);
     self.tagOptions = ko.observableArray(score.tags);
+    self.decimalPlaces = ko.observable(score.decimalPlaces);
 
     var editorPane = document.getElementById(config.scoreEditorId);
 
@@ -52,6 +53,7 @@ var ScoreModel = function (score, config) {
             model.configuration = editor.get();
             delete model.configurationText;
             var data = JSON.stringify(model);
+            data.decimalPlaces = Number(data.decimalPlaces);
 
             delete model.transients;
             $.ajax(config.updateScoreUrl, {

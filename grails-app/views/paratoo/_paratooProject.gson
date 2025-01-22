@@ -7,7 +7,9 @@ model {
 json {
     id project.id
     name project.name
+    grantID project.grantID
     protocols tmpl.paratooProtocol('protocol', project.protocols)
     project_area project.projectArea ? tmpl.projectArea(projectArea:project.projectArea) : null
     plot_selections tmpl.plot('plot', project.plots)
+    role project.paratooRole
 }

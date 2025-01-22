@@ -17,6 +17,7 @@ import org.bson.Transformer
 import org.bson.types.ObjectId
 import grails.core.ApplicationAttributes
 import org.grails.datastore.mapping.mongo.MongoDatastore
+import org.grails.plugin.cache.GrailsCacheManager
 import org.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,6 +32,7 @@ class BootStrap {
     def auditService
     def hubService
     def messageSource
+    def grailsCacheManager
     @Autowired
     MongoDatastore mongoDatastore
 
@@ -129,7 +131,10 @@ class BootStrap {
     }
 
     def destroy = {
+        // Close ehcache so that disk cached items are persisted. Otherwise, it will clear it the next time it starts up.
+        grailsCacheManager.destroy()
         // shutdown ES server
         elasticSearchService.destroy()
+        log.info "Shutting down - completed destroy method"
     }
 }

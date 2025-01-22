@@ -18,6 +18,10 @@ grails:
         transactionManagement:
             proxies: false
 app:
+    clientId:
+        attribute: "audience"
+    readScope: ["ecodata/read_test"]
+    writeScope: ["ecodata/write_test"]
     http:
         header:
             hostName: "X-ALA-hostname"
@@ -72,6 +76,7 @@ server:
     servlet:
         session:
             timeout: 30m
+    shutdown: "graceful"
 management:
     endpoints:
         enabled-by-default: false
@@ -202,6 +207,8 @@ quartz:
 
 environments:
     development:
+        server:
+            shutdown: "graceful"
         grails.config.locations:
             - ~/data/ecodata/config/ecodata-config.properties
     test:
@@ -275,3 +282,6 @@ openapi:
         url: https://www.mozilla.org/en-US/MPL/1.1/
     version: '@info.app.version@'
     cachetimeoutms: 0
+---
+userProfile:
+    userIdAttribute: "username"

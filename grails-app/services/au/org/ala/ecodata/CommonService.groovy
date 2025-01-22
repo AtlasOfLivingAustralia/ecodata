@@ -34,7 +34,10 @@ class CommonService {
         // it was imported, we have another field for it.
         !overrideUpdateDate && props.remove('lastUpdated') // in case we are loading from dumped data
         props.each { k,v ->
-            log.debug "updating ${k} to ${v}"
+            if (log.debugEnabled) {
+                log.debug "updating ${k} to ${v}"
+            }
+
             /*
              * Checks the domain for properties of type Date and converts them.
              * Expects dates as strings in the form 'yyyy-MM-ddThh:mm:ssZ'. As indicated by the 'Z' these must be

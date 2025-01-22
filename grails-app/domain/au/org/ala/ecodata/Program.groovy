@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.graphql.mappers.ProgramGraphQLMapper
+import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 import org.bson.types.ObjectId
 import org.springframework.validation.Errors
 
@@ -7,6 +9,8 @@ import org.springframework.validation.Errors
  * A program acts as a container for projects, more or less.
  */
 class Program {
+
+    static graphql = ProgramGraphQLMapper.graphqlMapping()
 
     ObjectId id
     String programId

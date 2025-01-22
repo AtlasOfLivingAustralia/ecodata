@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.testing.web.controllers.ControllerUnitTest
+import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import spock.lang.Specification
 
@@ -15,6 +16,8 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     Closure doWithSpring() {{ ->
         formattedStringConverter(ISODateBindingConverter)
     }}
+
+    static Map DUMMY_POLYGON = [type:'Polygon', coordinates: [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]]
 
     def setup() {
         controller.userService = userService
@@ -161,6 +164,11 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         setup:
         String userId = 'u1'
         Map collection = buildCollectionJson()
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map dataSet = [surveyId:collectionId]
+
 
         when:
         request.method = "POST"
@@ -169,7 +177,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> [project:new ParatooProject(id:'p1'), dataSet:dataSet]
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
 
         and:
@@ -182,7 +190,10 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         setup:
         String userId = 'u1'
         Map collection = buildCollectionJson()
-        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
 
         when:
         request.method = "POST"
@@ -191,9 +202,9 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> searchResults
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}, searchResults.project) >> [:]
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [:], promise: null]
 
         and:
         response.status == HttpStatus.SC_OK
@@ -205,7 +216,10 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         setup:
         String userId = 'u1'
         Map collection = buildCollectionJson()
-        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[:]]
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
 
         when:
         request.method = "POST"
@@ -214,9 +228,9 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, collection.orgMintedIdentifier) >> searchResults
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
-        1 * paratooService.submitCollection({it.orgMintedIdentifier == "c1"}, searchResults.project) >> [error:"Error"]
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [error:"Error"], promise: null]
 
         and:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR
@@ -243,39 +257,76 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     }
 
+    void "The /projects call delegates to the paratooService"() {
+        setup:
+        String userId = 'u1'
+        String projectId = 'projectId'
+        List<ParatooProject> projects = stubUserProjects()
 
+        when:
+        request.method = "PUT"
+        params.id = projectId
+        Map result = controller.updateProjectSites()
+
+        then:
+        1 * userService.currentUserDetails >> [userId:userId]
+        1 * paratooService.userProjects(userId) >> projects
+        1 * paratooService.updateProjectSites(projects[0], _, projects) >> [success:true]
+
+        and:
+        response.status == HttpStatus.SC_OK
+
+    }
+
+    void "The getPlotSelections call returns all user plots, ignoring duplicates"() {
+        String userId = 'u1'
+        List<ParatooProject> projects = stubUserProjects()
+        for (int i=0; i<projects.size(); i++) {
+            for (int j=0; j<3; j++) {
+                projects[i].plots << stubPlot("s${j+1}", projects[i].id)
+            }
+        }
+        // Add a duplicate site
+        projects[0].plots << stubPlot("s1", projects[0].id)
+
+        when:
+        controller.getPlotSelections()
+
+        then:
+        1 * userService.currentUserDetails >> [userId:userId]
+        1 * paratooService.userProjects(userId) >> projects
+
+        and:
+        model.plots.size() == 3
+        response.status == HttpStatus.SC_OK
+    }
 
     private List<ParatooProject> stubUserProjects() {
-        ParatooProject project = new ParatooProject(id:'projectId')
+        ParatooProject project = new ParatooProject(id:'projectId', plots:[])
         [project]
     }
 
+    private Site stubPlot(String siteId, String projectId) {
+        new Site(siteId:siteId, name:"Site 2", type:Site.TYPE_SURVEY_AREA, extent: [geometry:DUMMY_POLYGON], projects:[projectId])
+    }
+
     private Map buildCollectionIdJson() {
-        [
-            "surveyId": [
-                    surveyType: "Bird",
-                    time: "2023-01-01T00:00:00Z",
-                    randNum: 1234,
-                    "projectId":"p1",
-                    "protocol": [
-                            "id": "guid-1",
-                            "version": 1
-                    ]
-            ]
-        ]
+        readData("mintCollectionIdPayload")
     }
 
     private Map buildCollectionJson() {
         [
-                "orgMintedIdentifier":"c1",
-                "projectId":"p1",
-                "userId": "u1",
-                "protocol": [
-                        "id": "guid-1",
-                        "version": 1
-                ],
-                "eventTime":"2023-01-01T00:00:00Z"
+                "orgMintedUUID":"c1",
+                "coreProvenance": [
+                    "system_core": "Monitor-test",
+                    "version_core": "1"
+                ]
         ]
+    }
+
+    private Map readData(String name) {
+        URL url = getClass().getResource("/paratoo/${name}.json")
+        new JsonSlurper().parse(url)
     }
 
 }
