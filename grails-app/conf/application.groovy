@@ -610,12 +610,17 @@ security {
         requiredScopes = []
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
+        callUserInfoEndpoint = false
+        alaUseridClaim = "username"
+        userIdClaim = "username"
     }
 }
 webservice.jwt = false
 webservice['jwt-scopes'] = "ala/internal users/read ala/attrs"
 webservice['client-id']='changeMe'
 webservice['client-secret'] = 'changeMe'
+webservice['callUserInfoEndpoint'] = false
+
 
 grails.gorm.graphql.browser = true
 

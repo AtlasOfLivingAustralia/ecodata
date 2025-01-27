@@ -156,13 +156,13 @@ public class IniReader {
      */
     public double getDoubleValue(String section, String key) {
         String str = document.get(section + "\\" + key);
-        Double ret;
+        double ret;
         try {
-            ret = new Double(str);
+            ret = Double.parseDouble(str);
         } catch (Exception e) {
-            ret = new Double(0);
+            ret = 0d;
         }
-        return ret.doubleValue();
+        return ret;
     }
 
     /**

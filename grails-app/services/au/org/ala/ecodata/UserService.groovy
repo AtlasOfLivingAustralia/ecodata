@@ -2,14 +2,15 @@ package au.org.ala.ecodata
 
 import au.org.ala.userdetails.UserDetailsClient
 import au.org.ala.web.AuthService
-import au.org.ala.ws.security.client.AlaOidcClient
+import au.org.ala.ws.security.profile.AlaM2MUserProfile
 import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.pac4j.core.config.Config
-import org.pac4j.core.context.WebContext
-import org.pac4j.core.credentials.Credentials
-import org.pac4j.core.util.FindBest
-import org.pac4j.jee.context.JEEContextFactory
+import org.pac4j.core.context.WebContextFactory
+import org.pac4j.core.context.session.SessionStoreFactory
+import org.pac4j.core.profile.UserProfile
+import org.pac4j.core.profile.factory.ProfileManagerFactory
+import org.pac4j.jee.context.JEEFrameworkParameters
 import org.springframework.beans.factory.annotation.Autowired
 
 import javax.servlet.http.HttpServletRequest
@@ -25,8 +26,15 @@ class UserService {
     UserDetailsClient userDetailsClient
     @Autowired(required = false)
     Config config
+
     @Autowired(required = false)
-    AlaOidcClient alaOidcClient
+    WebContextFactory webContextFactory
+
+    @Autowired(required = false)
+    SessionStoreFactory sessionStoreFactory
+
+    @Autowired(required = false)
+    ProfileManagerFactory profileManagerFactory
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
@@ -179,55 +187,42 @@ class UserService {
     }
 
 
-    /**
-     * Get user from JWT.
-     * @param authorizationHeader
-     * @return
-     */
-    au.org.ala.web.UserDetails getUserFromJWT(String authorizationHeader = null) {
-        if((config == null) || (alaOidcClient == null))
-            return
-        try {
-            GrailsWebRequest grailsWebRequest = GrailsWebRequest.lookup()
-            HttpServletRequest request = grailsWebRequest.getCurrentRequest()
-            HttpServletResponse response = grailsWebRequest.getCurrentResponse()
-            if (!authorizationHeader)
-                authorizationHeader = request?.getHeader(AUTHORIZATION_HEADER_FIELD)
-            if (authorizationHeader?.startsWith("Bearer")) {
-                final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
-                def optCredentials = alaOidcClient.getCredentials(context, config.sessionStore)
-                if (optCredentials.isPresent()) {
-                    Credentials credentials = optCredentials.get()
-                    def optUserProfile = alaOidcClient.getUserProfile(credentials, context, config.sessionStore)
-                    if (optUserProfile.isPresent()) {
-                        def userProfile = optUserProfile.get()
-                        String userId = userProfile?.userId ?: userProfile?.getAttribute(grailsApplication.config.getProperty('userProfile.userIdAttribute'))
-                        if (userId) {
-                            return authService.getUserForUserId(userId)
-                        }
-                    }
-                }
+    private String getUserIdFromPac4jProfile(HttpServletRequest request, HttpServletResponse response) {
+        // A simpler alternative here could be to check for the existence of the
+        // pac4j http request wrapper and pull the profile manager from it.
+        def params = new JEEFrameworkParameters(request, response)
+        def webContext = (this.webContextFactory ?: config.getWebContextFactory()).newContext(params)
+        def sessionStore = (this.sessionStoreFactory ?: config.getSessionStoreFactory()).newSessionStore(params)
+        def profileManager = (this.profileManagerFactory ?: config.getProfileManagerFactory()).apply(webContext, sessionStore)
+        Optional<UserProfile> pac4jProfile = profileManager.getProfile()
+
+        def profile = null
+        if (pac4jProfile.isPresent()) {
+            profile = pac4jProfile.get()
+
+            if (profile instanceof AlaM2MUserProfile) {
+                return request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
             }
-        } catch (Throwable e) {
-            log.error("Failed to get user details from JWT", e)
-            return null
         }
+        return profile?.userId
     }
 
     def setUser() {
-        String userId
         GrailsWebRequest grailsWebRequest = GrailsWebRequest.lookup()
         HttpServletRequest request = grailsWebRequest.getCurrentRequest()
+        HttpServletResponse response = grailsWebRequest.getCurrentResponse()
+
+        // First check if we've already saved the profile.
         def userDetails = request.getAttribute(UserDetails.REQUEST_USER_DETAILS_KEY)
 
-        if (userDetails)
+        if (userDetails) {
             return userDetails
+        }
 
-        // userId is set from either the request param userId or failing that it tries to get it from
-        // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
-        userId = getUserFromJWT()?.userId ?: authService.getUserId() ?: request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
+        String userId = getUserIdFromPac4jProfile(request, response)
 
         if (userId) {
+            log.debug("Setting current user to ${userId}")
             userDetails = setCurrentUser(userId)
             if (userDetails) {
                 // We set the current user details in the request scope because
