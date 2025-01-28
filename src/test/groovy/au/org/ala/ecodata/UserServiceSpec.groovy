@@ -170,7 +170,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
     void "The user service can identify an ALA M2M access token and identify the user from a request header"() {
         setup:
         AuditInterceptor.httpRequestHeaderForUserId = 'userId'
-        request.setUserPrincipal(new AlaM2MUserProfile('clientId', 'test', []))
+        request.addUserRole("ecodata/read_test")
 
         when:
         request.addHeader('userId', user.userId)

@@ -1,8 +1,7 @@
 package au.org.ala.ecodata
 
-
 import au.org.ala.web.AuthService
-import au.org.ala.ws.security.profile.AlaM2MUserProfile
+import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
 
 import javax.servlet.http.HttpServletRequest
@@ -13,6 +12,8 @@ class UserService {
     static String AUTHORIZATION_HEADER_FIELD = "Authorization"
     AuthService authService
     WebService webService
+    GrailsApplication grailsApplication
+
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
@@ -165,12 +166,17 @@ class UserService {
     }
 
 
-    private static String checkForDelegatedUserId(HttpServletRequest request) {
-        // When BioCollect or MERIT calls ecodata, they use a M2M access token which is able to be identified via
-        // the profile type.  We can then trust the userId header to be the user MERIT or BioCollect is representing.
-        def principal = request.getUserPrincipal()
+    private String checkForDelegatedUserId(HttpServletRequest request) {
+        // When BioCollect or MERIT calls ecodata, they use a M2M access token which contains custom scopes to
+        // enable access to the ecodata API.
+        // We can trust the requests containing bearer tokens with this scope and extract the userId from a header.
+        String scope = grailsApplication.config.getProperty('app.readScope')
+        if (!scope) {
+            log.error("No read scope specified in config.")
+            return null
+        }
 
-        if (principal && principal instanceof AlaM2MUserProfile) {
+        if (request.isUserInRole(scope)) {
             return request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
         }
         return null
