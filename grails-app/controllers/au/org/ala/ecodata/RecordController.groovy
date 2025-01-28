@@ -38,7 +38,6 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
-    @au.ala.org.ws.security.RequireApiKey
     def listHarvestDataResource() {
         def result, error
         try {
@@ -91,7 +90,6 @@ class RecordController {
      *
      */
     @Deprecated
-    @au.ala.org.ws.security.RequireApiKey
     def listRecordsForDataResourceId (){
         def result = [], error, project
         Date lastUpdated = null
@@ -559,7 +557,6 @@ class RecordController {
      * @param projectId
      * @return
      */
-    @au.ala.org.ws.security.RequireApiKey
     def getDarwinCoreArchiveForProject (String projectId) {
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
