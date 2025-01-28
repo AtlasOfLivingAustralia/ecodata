@@ -8,9 +8,7 @@ import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.pac4j.core.config.Config
 import org.pac4j.core.context.WebContextFactory
 import org.pac4j.core.context.session.SessionStoreFactory
-import org.pac4j.core.profile.UserProfile
 import org.pac4j.core.profile.factory.ProfileManagerFactory
-import org.pac4j.jee.context.JEEFrameworkParameters
 import org.springframework.beans.factory.annotation.Autowired
 
 import javax.servlet.http.HttpServletRequest
@@ -187,30 +185,20 @@ class UserService {
     }
 
 
-    private String getUserIdFromPac4jProfile(HttpServletRequest request, HttpServletResponse response) {
-        // A simpler alternative here could be to check for the existence of the
-        // pac4j http request wrapper and pull the profile manager from it.
-        def params = new JEEFrameworkParameters(request, response)
-        def webContext = (this.webContextFactory ?: config.getWebContextFactory()).newContext(params)
-        def sessionStore = (this.sessionStoreFactory ?: config.getSessionStoreFactory()).newSessionStore(params)
-        def profileManager = (this.profileManagerFactory ?: config.getProfileManagerFactory()).apply(webContext, sessionStore)
-        Optional<UserProfile> pac4jProfile = profileManager.getProfile()
+    private static String checkForDelegatedUserId(HttpServletRequest request) {
+        // When BioCollect or MERIT calls ecodata, they use a M2M access token which is able to be identified via
+        // the profile type.  We can then trust the userId header to be the user MERIT or BioCollect is representing.
+        def principal = request.getUserPrincipal()
 
-        def profile = null
-        if (pac4jProfile.isPresent()) {
-            profile = pac4jProfile.get()
-
-            if (profile instanceof AlaM2MUserProfile) {
-                return request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
-            }
+        if (principal && principal instanceof AlaM2MUserProfile) {
+            return request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
         }
-        return profile?.userId
+        return null
     }
 
     def setUser() {
         GrailsWebRequest grailsWebRequest = GrailsWebRequest.lookup()
         HttpServletRequest request = grailsWebRequest.getCurrentRequest()
-        HttpServletResponse response = grailsWebRequest.getCurrentResponse()
 
         // First check if we've already saved the profile.
         def userDetails = request.getAttribute(UserDetails.REQUEST_USER_DETAILS_KEY)
@@ -218,11 +206,18 @@ class UserService {
         if (userDetails) {
             return userDetails
         }
+        // If the user has logged in interactively or supplies a bearer token which identifies the user
+        // (e.g. the Monitor app passes the user token) the authService will be able to resolve the user from the token.
+        String userId = authService.getUserId()
 
-        String userId = getUserIdFromPac4jProfile(request, response)
-
+        // Otherwise, if the token is an ALA M2M token from MERIT or BioCollect, we can obtain the userId
+        // from a separate header.
+        if (!userId) {
+            userId = checkForDelegatedUserId(request)
+        }
         if (userId) {
             log.debug("Setting current user to ${userId}")
+
             userDetails = setCurrentUser(userId)
             if (userDetails) {
                 // We set the current user details in the request scope because
