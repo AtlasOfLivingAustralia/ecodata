@@ -1,18 +1,11 @@
 package au.org.ala.ecodata
 
-import au.org.ala.userdetails.UserDetailsClient
+
 import au.org.ala.web.AuthService
 import au.org.ala.ws.security.profile.AlaM2MUserProfile
-import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.pac4j.core.config.Config
-import org.pac4j.core.context.WebContextFactory
-import org.pac4j.core.context.session.SessionStoreFactory
-import org.pac4j.core.profile.factory.ProfileManagerFactory
-import org.springframework.beans.factory.annotation.Autowired
 
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class UserService {
 
@@ -20,19 +13,6 @@ class UserService {
     static String AUTHORIZATION_HEADER_FIELD = "Authorization"
     AuthService authService
     WebService webService
-    GrailsApplication grailsApplication
-    UserDetailsClient userDetailsClient
-    @Autowired(required = false)
-    Config config
-
-    @Autowired(required = false)
-    WebContextFactory webContextFactory
-
-    @Autowired(required = false)
-    SessionStoreFactory sessionStoreFactory
-
-    @Autowired(required = false)
-    ProfileManagerFactory profileManagerFactory
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
