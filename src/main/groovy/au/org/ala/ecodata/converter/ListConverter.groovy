@@ -7,7 +7,7 @@ import groovy.util.logging.Slf4j
 class ListConverter implements RecordFieldConverter {
 
     @Override
-    List<Map> convert(Map data, Map outputMetadata = [:]) {
+    List<Map> convert(Map data, Map outputMetadata = [:], Map context = [:]) {
         List<Map> records = []
         int index = 0
 
@@ -44,28 +44,26 @@ class ListConverter implements RecordFieldConverter {
             // For each singleItemModel, get the appropriate field converter for the data type, generate the individual
             // Record fields and add them to the skeleton Record
             baseRecordModels?.each { Map dataModel ->
+//                context.record = baseRecord
                 RecordFieldConverter converter = RecordConverter.getFieldConverter(dataModel.dataType)
-                List<Map> recordFieldSets = converter.convert(row, dataModel)
+                List<Map> recordFieldSets = converter.convert(row, dataModel, context)
 
                 Map recordFieldSet = recordFieldSets[0]
                 baseRecord = RecordConverter.overrideAllExceptLists(baseRecord, recordFieldSet)
                 RecordConverter.updateEventIdToMeasurements(baseRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
-
-// TODO: delete? commented code was in dev branch, removed on merge.
-//                if (recordFieldSets[0])
-//                    baseRecord << recordFieldSets[0]
             }
 
             // For each species dataType, where present we will generate a new record
             speciesModels?.each { Map dataModel ->
+//                context.record = baseRecord
                 RecordFieldConverter converter = RecordConverter.getFieldConverter(dataModel.dataType)
-                List<Map> recordFieldSets = converter.convert(row, dataModel)
+                List<Map> recordFieldSets = converter.convert(row, dataModel, context)
                 if (recordFieldSets) {
                     Map speciesRecord = RecordConverter.overrideFieldValues(baseRecord, recordFieldSets[0])
                     // We want to create a record in the DB only if species information is present
                     if (speciesRecord.outputSpeciesId) {
                         speciesRecord.outputItemId = index++
-                        RecordConverter.updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.outputSpeciesId)
+                        RecordConverter.updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
                         records << speciesRecord
                     } else {
                         log.warn("Record [${speciesRecord}] does not contain full species information. " +
@@ -79,8 +77,9 @@ class ListConverter implements RecordFieldConverter {
                 // sets which will be converted into Records. For each field set, add a copy of the skeleton Record so it has
                 // all the common fields
                 multiItemModels?.each { Map dataModel ->
+//                    context.record = baseRecord
                     RecordFieldConverter converter = RecordConverter.getFieldConverter(dataModel.dataType)
-                    List<Map> recordFieldSets = converter.convert(row, dataModel)
+                    List<Map> recordFieldSets = converter.convert(row, dataModel, context)
 
                     recordFieldSets.each {
                         Map rowRecord = RecordConverter.overrideFieldValues(baseRecord, it)

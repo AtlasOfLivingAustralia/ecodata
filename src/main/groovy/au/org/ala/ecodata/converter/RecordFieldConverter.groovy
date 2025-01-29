@@ -1,5 +1,4 @@
 package au.org.ala.ecodata.converter
-
 /**
  * Converts an Output's data model into one or more Records.
  *
@@ -11,6 +10,8 @@ package au.org.ala.ecodata.converter
  */
 trait RecordFieldConverter {
     static String DWC_ATTRIBUTE_NAME = "dwcAttribute"
+    static String DWC_EXPRESSION = "dwcExpression"
+    static String DWC_DEFAULT = "dwcDefault"
     static String DWC_MEASUREMENT_VALUE = "measurementValue"
     static String DWC_MEASUREMENT_TYPE = "measurementType"
     static String DWC_MEASUREMENT_TYPE_ID = "measurementTypeID"
@@ -22,6 +23,7 @@ trait RecordFieldConverter {
     abstract List<Map> convert(Map data)
 
     abstract List<Map> convert(Map data, Map outputMetadata)
+    abstract List<Map> convert(Map data, Map outputMetadata, Map context)
 
     Double toDouble(val) {
         Double result = null
@@ -41,10 +43,16 @@ trait RecordFieldConverter {
         dwcMappings
     }
 
-    Map getDwcAttributes(Map data, Map dwcMappings, Map metadata = null) {
+    // write test cases for this method
+
+    Map getDwcAttributes(Map data, Map dwcMappings, Map metadata = null, Map context = [:]) {
 
         Map fields = [:]
         dwcMappings.each { dwcAttribute, fieldName ->
+            if(metadata?.containsKey(DWC_EXPRESSION)) {
+                data[fieldName] = evaluateExpression((String)metadata[DWC_EXPRESSION], data, metadata[DWC_DEFAULT], metadata, context)
+            }
+
             fields[dwcAttribute] = data[fieldName]
         }
 
@@ -66,7 +74,7 @@ trait RecordFieldConverter {
 
             Map measurement = [:]
             measurement[DWC_MEASUREMENT_VALUE] = value
-            measurement[DWC_MEASUREMENT_TYPE] = getMeasurementType(metadata, data)
+            measurement[DWC_MEASUREMENT_TYPE] = getMeasurementType(metadata, data, context)
 
             if (metadata?.containsKey(DWC_MEASUREMENT_TYPE_ID)) {
                 measurement[DWC_MEASUREMENT_TYPE_ID] = metadata[DWC_MEASUREMENT_TYPE_ID]
@@ -98,17 +106,31 @@ trait RecordFieldConverter {
      * @param data
      * @return
      */
-    String getMeasurementType(metadata, data) {
+    def getMeasurementType(Map metadata, Map data, Map context = [:]) {
         def defaultValue = metadata?.description ?: metadata?.value ?: metadata?.name
         if (metadata?.measurementType && data) {
-            try {
-                def engine = new groovy.text.SimpleTemplateEngine()
-                return engine.createTemplate(metadata?.measurementType).make(data)
-            }
-            catch (Exception ex) {
-                return defaultValue
-            }
+            return evaluateExpression(metadata.measurementType, data, defaultValue, metadata, context)
         } else {
+            return defaultValue
+        }
+    }
+
+    def evaluateExpression (String expression, Map data, def defaultValue, Map metadata = null, Map context = [:]) {
+        try {
+            Map clonedData = data.clone()
+            context.metadata = metadata
+            clonedData.context = context
+            def binding = new Binding(clonedData)
+            GroovyShell shell = new GroovyShell(binding)
+            return  shell.evaluate(expression)
+        }
+        catch (MissingPropertyException exp) {
+            // This could happen if the expression references a field that is not in the data.
+            // Or, what is passed is a string and not an expression. This could happen when getMeasurementType calls this method.
+            // In such cases, return the value of measurementType i.e. expression itself.
+            return expression
+        }
+        catch (Exception ex) {
             return defaultValue
         }
     }

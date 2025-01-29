@@ -1147,6 +1147,7 @@ class RecordService {
     void getDarwinCoreArchiveForProject(outputStream, Project project) {
         Map result
         Map<String,List> headersByDwcClass = [:].withDefault {[]}
+        Map dwcGroups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass", Map)
         new ZipOutputStream(outputStream).withStream { zip ->
             try {
                 Long start = System.currentTimeMillis(), end
@@ -1162,7 +1163,7 @@ class RecordService {
                         zip.putNextEntry(new ZipEntry("${dwcClass}.csv"))
                         CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(zip))
                         List headers = getHeadersFromRows(rows)
-                        List defaultOrder = getHeaderOrder(grailsApplication.config.darwinCore.termsGroupedByClass[dwcClass])
+                        List defaultOrder = getHeaderOrder(dwcGroups[dwcClass])
                         headers = reorderHeaders(headers, defaultOrder)
                         headersByDwcClass[dwcClass] = headers
                         csvWriter.writeNext(headers as String[])
@@ -1383,12 +1384,12 @@ class RecordService {
     }
 
     Map getAttributeConfig(String dwcClass, String attribute) {
-        Map groups = grailsApplication.config.darwinCore.termsGroupedByClass
+        Map groups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass", Map)
         groups[dwcClass].find { it.name == attribute }
     }
 
     Map darwinCoreTermsGroupedByClass() {
-        Map groups = grailsApplication.config.darwinCore.termsGroupedByClass
+        Map groups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass", Map)
         Map<String, List> trimmedGroups = [:]
         groups.each { String key, List values ->
             trimmedGroups[key] = values?.collect {
@@ -1534,7 +1535,8 @@ class RecordService {
      */
     Map convertProjectActivityToEvent (pActivity, project) {
         String dwcClass = DWC_EVENT
-        List configs = grailsApplication.config.darwinCore.projectActivityToDwC[dwcClass]
+        Map paDWC = grailsApplication.config.getProperty("darwinCore.projectActivityToDwC", Map)
+        List configs = paDWC[dwcClass]
         Map<String, Map> result = [:].withDefault { [:] }
         configs.each { config ->
             transformToEventCoreTerm(config, pActivity, [project: project, pActivity: pActivity, recordService: this], result, dwcClass)

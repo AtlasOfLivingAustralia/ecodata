@@ -6,7 +6,7 @@ class ImageConverter implements RecordFieldConverter {
     private static final String DEFAULT_LICENCE = "CC BY 4.0"
     private static final String TYPE = "StillImage"
 
-    List<Map> convert(Map data, Map metadata = [:]) {
+    List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
         Map record = [:]
 
         record.multimedia = data[metadata.name]

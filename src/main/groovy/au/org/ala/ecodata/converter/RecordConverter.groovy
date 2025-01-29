@@ -80,6 +80,7 @@ class RecordConverter {
                 userId           : activity.userId,
                 multimedia :   []
         ]
+        Map context = ['project':project, 'organisation':organisation, 'site':site, 'projectActivity':projectActivity, 'activity':activity, 'output':output, outputMetadata: outputMetadata, rootData: data]
         Long start = System.currentTimeMillis(), end
 
 
@@ -112,7 +113,7 @@ class RecordConverter {
         // Record fields and add them to the skeleton Record
         baseRecordModels?.each { Map dataModel ->
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
-            List<Map> recordFieldSets = converter.convert(data, dataModel)
+            List<Map> recordFieldSets = converter.convert(data, dataModel, context)
             baseRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
             updateEventIdToMeasurements(baseRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
         }
@@ -121,7 +122,7 @@ class RecordConverter {
         // For each species dataType, where present we will generate a new record
         speciesModels?.each { Map dataModel ->
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
-            List<Map> recordFieldSets = converter.convert(data, dataModel)
+            List<Map> recordFieldSets = converter.convert(data, dataModel, context)
             Map speciesRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
             // We want to create a record in the DB only if species guid is present i.e. species is valid
             if(recordGeneration){
@@ -134,7 +135,7 @@ class RecordConverter {
                 }
             }
             else {
-                updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.outputSpeciesId)
+                updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
                 records << speciesRecord
             }
         }
@@ -148,7 +149,7 @@ class RecordConverter {
             // all the common fields
             multiItemModels?.each { Map dataModel ->
                 RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
-                List<Map> recordFieldSets = converter.convert(data, dataModel)
+                List<Map> recordFieldSets = converter.convert(data, dataModel, context)
 
                 recordFieldSets.each {
                     Map rowRecord = overrideAllExceptLists(baseRecord, it)
@@ -171,6 +172,13 @@ class RecordConverter {
         else if(!speciesModels && !recordGeneration) {
             records << baseRecord
         }
+
+        // Add measurements or facts only when event core archive is being created.
+        if (recordGeneration) {
+            records.each {
+                it.remove(PROP_MEASUREMENTS_OR_FACTS)
+            }
+        }
         end = System.currentTimeMillis()
         log.debug("Time in milliseconds to convert nested data model - ${end - start}")
         // We are now left with a list of one or more Maps, where each Map contains all the fields for an individual Record.
@@ -179,9 +187,7 @@ class RecordConverter {
 
     /**
      * Return a new Map with the union of source and additional giving precedence to values from additional
-     *
-     *
-     * If the same key already exists in target it will be overriden
+     * If the same key already exists in target it will be overridden
      * @param source the original entries
      * @param additional Entries with precedence
      * @return

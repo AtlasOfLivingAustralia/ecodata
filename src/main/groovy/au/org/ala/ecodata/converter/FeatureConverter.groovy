@@ -2,7 +2,7 @@ package au.org.ala.ecodata.converter
 
 class FeatureConverter  implements RecordFieldConverter {
 
-    List<Map> convert(Map data, Map metadata = [:]) {
+    List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
         Map record = [:]
         if (data[metadata.name]) {
             Double latitude = getDecimalLatitude(data[metadata.name])

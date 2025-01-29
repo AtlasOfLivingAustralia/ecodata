@@ -11,7 +11,7 @@ environments {
             mongodb {
                 host = "localhost"
                 port = "27017"
-                databaseName = "ecodata"
+                databaseName = "ecodata-test-server"
             }
         }
     }
@@ -1657,7 +1657,7 @@ if (!darwinCore.termsGroupedByClass) {
                                             multimedia = document
                                             return [
                                                     "eventID"     : params?.activity?.activityId,
-                                                    "occurrenceID": record?.outputSpeciesId ,
+                                                    "occurrenceID": record?.occurrenceID ,
                                                     "type"        : multimedia?.type,
                                                     "identifier"  : identifier,
                                                     "format"      : multimedia?.contentType,
@@ -1690,7 +1690,7 @@ if (!darwinCore.termsGroupedByClass) {
                             "name"     : "occurrenceID",
                             "namespace": "dwc",
                             "code"     : { record, params ->
-                                record?.outputSpeciesId
+                                record?.occurrenceID ?: record?.outputSpeciesId
                             }
                     ],
                     [

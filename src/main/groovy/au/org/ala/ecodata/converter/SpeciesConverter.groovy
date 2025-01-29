@@ -5,7 +5,7 @@ class SpeciesConverter implements RecordFieldConverter {
             "(Unmatched taxon)"
     ]
 
-    List<Map> convert(Map data, Map metadata = [:]) {
+    List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
         if ((data == null) || (data[metadata.name] == null) ) {
            return []
         }
@@ -26,7 +26,7 @@ class SpeciesConverter implements RecordFieldConverter {
             data[metadata.name].outputSpeciesId = UUID.randomUUID().toString()
         }
 
-        record.outputSpeciesId = data[metadata.name]?.outputSpeciesId
+        record.occurrenceID = record.outputSpeciesId = data[metadata.name]?.outputSpeciesId
 
         [record]
     }

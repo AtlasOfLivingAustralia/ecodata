@@ -2,7 +2,7 @@ package au.org.ala.ecodata.converter
 
 class GenericFieldConverter implements RecordFieldConverter {
 
-    List<Map> convert(Map data, Map metadata = [:]) {
+    List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
         Map record = [:]
 
 
@@ -20,7 +20,8 @@ class GenericFieldConverter implements RecordFieldConverter {
 
 
         Map dwcMappings = extractDwcMapping(metadata)
-        Map dwcAttributes = getDwcAttributes(data, dwcMappings, metadata)
+        context.record = record
+        Map dwcAttributes = getDwcAttributes(data, dwcMappings, metadata, context)
         record = RecordConverter.overrideAllExceptLists(dwcAttributes, record)
 
         if (data?.dwcAttribute) {
