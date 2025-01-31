@@ -192,14 +192,17 @@ class UserService {
         if (userDetails) {
             return userDetails
         }
-        // If the user has logged in interactively or supplies a bearer token which identifies the user
-        // (e.g. the Monitor app passes the user token) the authService will be able to resolve the user from the token.
-        String userId = authService.getUserId()
 
-        // Otherwise, if the token is an ALA M2M token from MERIT or BioCollect, we can obtain the userId
-        // from a separate header.
+        // if the token is an ALA M2M token from MERIT or BioCollect, we can obtain the userId
+        // from a separate header.  This is the most common scenario as most calls to ecodata will fall into
+        // this category.
+        String userId = checkForDelegatedUserId(request)
+
+        // Otherwise, if the user has logged in interactively or supplies a bearer token which identifies the user
+        // (e.g. the Monitor app passes the user token) the authService will be able to resolve the user from the token.
+        // If the OIDC provider is CAS, authService.getUser() will return the clientId, if it's Cognito, it will return null.
         if (!userId) {
-            userId = checkForDelegatedUserId(request)
+            userId = authService.getUserId()
         }
         if (userId) {
             log.debug("Setting current user to ${userId}")

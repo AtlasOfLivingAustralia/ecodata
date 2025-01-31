@@ -177,7 +177,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
         service.setUser()
 
         then:
-        1 * authService.getUserId() >> null
+        0 * authService.getUserId() >> null
 
         1 * authService.getUserForUserId(user.userId)  >> userDetails
 
