@@ -1233,6 +1233,16 @@ class ElasticSearchService {
                 if (!projectMap.visibility && program.inheritedConfig?.visibility) {
                     projectMap.visibility = program.inheritedConfig.visibility
                 }
+                List services = project.findProjectServices()
+
+                if (services) {
+                    projectMap.services = services?.collect{
+                        it.getProgramLabels()?[project.programId]?.label ?: it.name
+                    }
+                }
+
+
+
             }
             else {
                 log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
