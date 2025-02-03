@@ -2,12 +2,11 @@ os: linux
 dist: bionic
 language: groovy
 jdk:
-  - openjdk11
+  - openjdk17
 branches:
   only:
   - master
   - dev
-  - hot-fix
   - /^feature\/.*$/
   - /^hotfix\/.*$/
 
