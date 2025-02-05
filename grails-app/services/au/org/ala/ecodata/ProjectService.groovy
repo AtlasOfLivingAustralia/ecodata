@@ -1248,13 +1248,35 @@ class ProjectService {
         []
     }
 
+    Map findAndFormatStatesAndElectoratesForProject(Map project) {
+        Map result = findStateAndElectorateForProject (project)
+        if(!result) {
+            return [:]
+        }
+
+        List elect = result.remove('autoElectFacet') as List
+        List state = result.remove('autoStateFacet') as List
+
+        if (state) {
+            result["primarystate"] = state.pop()
+            result["otherstate"] = state?.join("; ")
+        }
+
+        if (elect) {
+            result["primaryelect"] = elect.pop()
+            result["otherelect"] = elect.join("; ")
+        }
+
+        result
+    }
+
     /**
      * Find primary/other state(s)/electorate(s) for a project.
      * 1. If isDefault is true, use manually assigned state(s)/electorate(s) i.e project.geographicInfo.
      * 2. If isDefault is false or missing, use the state(s)/electorate(s) from sites using site precedence.
      * 3. If isDefault is false and there are no sites, use manual state(s)/electorate(s) in project.geographicInfo.
      */
-    Map findStateAndElectorateForProject(Map project) {
+    Map findStateAndElectorateForProject (Map project) {
         Map result = [:]
         if(project == null) {
             return result
@@ -1271,8 +1293,7 @@ class ProjectService {
                 if (facetName.name) {
                     List intersectionValues = intersections[layer]
                     if (intersectionValues) {
-                        result["primary${facetName.name}"] = intersectionValues.pop()
-                        result["other${facetName.name}"] = intersectionValues.join("; ")
+                        result["auto${facetName.name.capitalize()}Facet"] = intersectionValues
                     }
                 }
                 else
@@ -1283,14 +1304,12 @@ class ProjectService {
         //isDefault is true or false and no sites.
         if (geographicInfo) {
             // load from manually assigned electorates/states
-            if (!result.containsKey("primaryelect")) {
-                result["primaryelect"] = geographicInfo.primaryElectorate
-                result["otherelect"] = geographicInfo.otherElectorates?.join("; ")
+            if (!result.containsKey("autoElectFacet")) {
+                result["autoElectFacet"] = (geographicInfo.primaryElectorate ? [geographicInfo.primaryElectorate] : []) + geographicInfo.otherElectorates
             }
 
-            if (!result.containsKey("primarystate")) {
-                result["primarystate"] = geographicInfo.primaryState
-                result["otherstate"] = geographicInfo.otherStates?.join("; ")
+            if (!result.containsKey("autoStateFacet")) {
+                result["autoStateFacet"] = (geographicInfo.primaryState ? [geographicInfo.primaryState] : []) + geographicInfo.otherStates
             }
         }
 

@@ -223,6 +223,12 @@
         "services": {
           "type": "keyword"
         },
+        "autoElectFacet": {
+          "type": "keyword"
+        },
+        "autoStateFacet": {
+          "type": "keyword"
+        },
         "extent":{
           "properties": {
             "geometry": {

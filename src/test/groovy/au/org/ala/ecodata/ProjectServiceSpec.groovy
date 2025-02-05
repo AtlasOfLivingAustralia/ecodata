@@ -1118,7 +1118,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         metadataService.getGeographicFacetConfig("layer2", _) >> [name: "elect", grouped: false]
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "state1"
@@ -1142,7 +1142,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "ACT"
@@ -1157,7 +1157,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Map project = [geographicInfo: [isDefault: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "ACT"
@@ -1169,7 +1169,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     def "findStateAndElectorateForProject should return empty map if project is null"() {
         when:
         Map project = null
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.isEmpty()

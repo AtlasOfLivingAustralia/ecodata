@@ -336,7 +336,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void addPrimaryAndOtherIntersections (Map project) {
-        Map result = projectService.findStateAndElectorateForProject(project) ?: [:]
+        Map result = projectService.findAndFormatStatesAndElectoratesForProject(project) ?: [:]
         project << result
     }
 
