@@ -126,8 +126,9 @@ trait RecordFieldConverter {
             data.context = context
             def binding = new Binding(data)
             GroovyShell shell = new GroovyShell(binding)
+            def value = shell.evaluate(expression)
             data.remove('context')
-            return  shell.evaluate(expression)
+            return value
         }
         catch (MissingPropertyException exp) {
             data.remove('context')
