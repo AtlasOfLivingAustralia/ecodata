@@ -232,6 +232,8 @@ class ProjectService {
                     mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
                 }
 
+                // add geographic info attributes such as primarystate, otherstate, primaryelect and otherelect
+                mapOfProperties << findAndFormatStatesAndElectoratesForProject(mapOfProperties)
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
                 Lock lock = lockService.get(project.projectId)
@@ -1254,8 +1256,8 @@ class ProjectService {
             return [:]
         }
 
-        List elect = result.remove('autoElectFacet') as List
-        List state = result.remove('autoStateFacet') as List
+        List elect = result.remove('projectElectFacet') as List
+        List state = result.remove('projectStateFacet') as List
 
         if (state) {
             result["primarystate"] = state.pop()
@@ -1293,7 +1295,7 @@ class ProjectService {
                 if (facetName.name) {
                     List intersectionValues = intersections[layer]
                     if (intersectionValues) {
-                        result["auto${facetName.name.capitalize()}Facet"] = intersectionValues
+                        result["project${facetName.name.capitalize()}Facet"] = intersectionValues
                     }
                 }
                 else
@@ -1304,12 +1306,12 @@ class ProjectService {
         //isDefault is true or false and no sites.
         if (geographicInfo) {
             // load from manually assigned electorates/states
-            if (!result.containsKey("autoElectFacet")) {
-                result["autoElectFacet"] = (geographicInfo.primaryElectorate ? [geographicInfo.primaryElectorate] : []) + geographicInfo.otherElectorates
+            if (!result.containsKey("projectElectFacet")) {
+                result["projectElectFacet"] = (geographicInfo.primaryElectorate ? [geographicInfo.primaryElectorate] : []) + geographicInfo.otherElectorates
             }
 
-            if (!result.containsKey("autoStateFacet")) {
-                result["autoStateFacet"] = (geographicInfo.primaryState ? [geographicInfo.primaryState] : []) + geographicInfo.otherStates
+            if (!result.containsKey("projectStateFacet")) {
+                result["projectStateFacet"] = (geographicInfo.primaryState ? [geographicInfo.primaryState] : []) + geographicInfo.otherStates
             }
         }
 

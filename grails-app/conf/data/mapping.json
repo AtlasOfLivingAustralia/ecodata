@@ -223,10 +223,10 @@
         "services": {
           "type": "keyword"
         },
-        "autoElectFacet": {
+        "projectElectFacet": {
           "type": "keyword"
         },
-        "autoStateFacet": {
+        "projectStateFacet": {
           "type": "keyword"
         },
         "extent":{
