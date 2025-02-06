@@ -1196,10 +1196,10 @@ class ProjectService {
         Map<String,Map<String,Double>> sumOfIntersectionsByLayer = [:].withDefault { [:].withDefault { 0 } }
         Map orderedIntersectionsByArea = [:]
         Map config = metadataService.getGeographicConfig(project.hubId)
-        List layers = config.checkForBoundaryIntersectionInLayers
+        List layers = config?.checkForBoundaryIntersectionInLayers
         List projectSites = getRepresentativeSitesOfProject(project)
         projectSites?.each { Map site ->
-            layers.each { String layer ->
+            layers?.each { String layer ->
                 Map facet = metadataService.getGeographicFacetConfig(layer, project.hubId)
                 site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.get(facet.name)?.get(SiteService.INTERSECTION_CURRENT)?.each { String layerValue, value ->
                     sumOfIntersectionsByLayer[layer][layerValue] += value
@@ -1289,7 +1289,7 @@ class ProjectService {
         if (geographicInfo == null || (geographicInfo.isDefault == false)) {
             Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
             Map config = metadataService.getGeographicConfig()
-            List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+            List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
             intersectionLayers?.each { layer ->
                 Map facetName = metadataService.getGeographicFacetConfig(layer)
                 if (facetName.name) {
