@@ -965,6 +965,49 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result["cl11163"][2] == "canberra"
     }
 
+    void "orderLayerIntersectionsByAreaOfProjectSites should order shapes over points"() {
+        setup:
+        Map projectMap
+        Map result
+        Project project1
+        Site site1, site2, site3
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
+        metadataService.getGeographicConfig(_) >> [
+                contextual: [
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl11163" ]
+        ]
+        metadataService.getGeographicFacetConfig("cl11163", "12345") >> [name: "elect", grouped: true]
+        project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true)
+        site1 = new Site(siteId: 's1', name: "Site 1", type: "surveyArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["fenner": 0]]]]])
+        site2 = new Site(siteId: 's2', name: "Site 2", type: "surveyArea", status: 'active', projects: ['111'], extent: [ source: "drawn", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4]]]]])
+        site3 = new Site(siteId: 's3', name: "Site 3", type: "surveyArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["adelaide": 0]]]]])
+        Project.withTransaction {
+            project1.save(flush: true, failOnError: true)
+            site1.save(flush: true, failOnError: true)
+            site2.save(flush: true, failOnError: true)
+            site3.save(flush: true, failOnError: true)
+        }
+        project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
+
+        when:
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
+
+        then:
+        result.size() == 1
+        result["cl11163"][0] == "bean"
+        result["cl11163"][1] == "canberra"
+        ["fenner", "adelaide"].contains(result["cl11163"][2])
+        ["fenner", "adelaide"].contains(result["cl11163"][3])
+    }
+
 
     void "getRepresentativeSitesOfProject should get EMSA site or Reporting sites only" () {
         setup:
@@ -1118,7 +1161,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         metadataService.getGeographicFacetConfig("layer2", _) >> [name: "elect", grouped: false]
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "state1"
@@ -1142,7 +1185,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "ACT"
@@ -1157,7 +1200,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Map project = [geographicInfo: [isDefault: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "ACT"
@@ -1169,7 +1212,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
     def "findStateAndElectorateForProject should return empty map if project is null"() {
         when:
         Map project = null
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.isEmpty()
