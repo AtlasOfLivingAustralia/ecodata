@@ -223,6 +223,12 @@
         "services": {
           "type": "keyword"
         },
+        "projectElectFacet": {
+          "type": "keyword"
+        },
+        "projectStateFacet": {
+          "type": "keyword"
+        },
         "extent":{
           "properties": {
             "geometry": {

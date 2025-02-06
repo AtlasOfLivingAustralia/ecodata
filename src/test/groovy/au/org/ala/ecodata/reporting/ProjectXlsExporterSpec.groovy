@@ -230,7 +230,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         setup:
         String sheet = "Electorate Coord"
         Map project = project()
-        projectService.findStateAndElectorateForProject(_) >> ["primarystate": "ACT", "otherstate": null, "primaryelect": "bean", "otherelect": "fenner; canberra"]
+        projectService.findAndFormatStatesAndElectoratesForProject(_) >> ["primarystate": "ACT", "otherstate": null, "primaryelect": "bean", "otherelect": "fenner; canberra"]
 
         when:
         projectXlsExporter.export(project)

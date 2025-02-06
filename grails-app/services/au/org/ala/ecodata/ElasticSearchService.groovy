@@ -1167,6 +1167,9 @@ class ElasticSearchService {
                 it.remove('periodTargets')
                 it.remove('outcomeTargets')
             } // Not useful for searching and is causing issues with the current mapping.
+
+            // add algorithmically generated or manually selected states and electorates of a project
+            projectMap << projectService.findStateAndElectorateForProject(projectMap)
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has

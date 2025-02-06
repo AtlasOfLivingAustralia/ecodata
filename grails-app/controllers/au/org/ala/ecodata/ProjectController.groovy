@@ -329,7 +329,7 @@ class ProjectController {
             render status:400, text: "projectId is a required parameter"
         } else {
             Map project = projectService.get(params.projectId)
-            asJson projectService.findStateAndElectorateForProject(project)
+            asJson projectService.findAndFormatStatesAndElectoratesForProject(project)
         }
     }
 
