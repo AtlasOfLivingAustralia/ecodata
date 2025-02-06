@@ -548,7 +548,7 @@ if (!biocacheService.baseURL) {
     biocacheService.baseURL = 'https://biocache.ala.org.au/ws'
 }
 if (!imagesService.baseURL) {
-    imagesService.baseURL = 'https://images-dev.ala.org.au'
+    imagesService.baseURL = 'https://images-test.ala.org.au'
 }
 if (!security.cas.bypass) {
     security.cas.bypass = false
