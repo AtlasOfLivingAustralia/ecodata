@@ -1,5 +1,5 @@
 import au.org.ala.ecodata.Document
-import au.org.ala.ecodata.Status
+import static au.org.ala.ecodata.Status.DELETED
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
@@ -1647,23 +1647,20 @@ if (!darwinCore.termsGroupedByClass) {
                     [
                             "name"      : "multimedia",
                             "substitute": { record, params ->
-                                record?.multimedia?.collect { multimedia ->
-                                    def identifier = multimedia?.identifier
-
-                                    if (multimedia.documentId) {
-                                        def document = Document.findByDocumentIdAndStatusNotEqual(multimedia.documentId, Status.DELETED)
+                                record?.multimedia?.collect { mediaRecord ->
+                                    if (mediaRecord.documentId) {
+                                        Document document = Document.findByDocumentIdAndStatusNotEqual(mediaRecord.documentId, DELETED)
                                         if (document) {
-                                            identifier = document.getUrl()
-                                            multimedia = document
+                                            String identifier =  document.getUrl()
                                             return [
                                                     "eventID"     : params?.activity?.activityId,
                                                     "occurrenceID": record?.occurrenceID ,
-                                                    "type"        : multimedia?.type,
-                                                    "identifier"  : identifier,
-                                                    "format"      : multimedia?.contentType,
-                                                    "creator"     : multimedia?.creator,
-                                                    "licence"     : multimedia?.license,
-                                                    "rightsHolder": multimedia?.rightsHolder
+                                                    "type"        : document?.type ?: mediaRecord.type,
+                                                    "identifier"  : identifier ?: mediaRecord.identifier,
+                                                    "format"      : document?.contentType ?: mediaRecord.contentType,
+                                                    "creator"     : document?.creator ?: document?.attribution ?: mediaRecord.creator,
+                                                    "licence"     : document?.licence ?: document?.license ?: mediaRecord.license,
+                                                    "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder
                                             ]
                                         }
                                     }

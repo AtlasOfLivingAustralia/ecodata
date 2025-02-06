@@ -1,4 +1,8 @@
 package au.org.ala.ecodata.converter
+
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+
 /**
  * Converts an Output's data model into one or more Records.
  *
@@ -9,6 +13,7 @@ package au.org.ala.ecodata.converter
  * target Record attribute is different (the converter is responsible for mapping one to the other).
  */
 trait RecordFieldConverter {
+    static Log log = LogFactory.getLog(RecordFieldConverter.class)
     static String DWC_ATTRIBUTE_NAME = "dwcAttribute"
     static String DWC_EXPRESSION = "dwcExpression"
     static String DWC_DEFAULT = "dwcDefault"
@@ -115,22 +120,25 @@ trait RecordFieldConverter {
         }
     }
 
-    def evaluateExpression (String expression, Map data, def defaultValue, Map metadata = null, Map context = [:]) {
+    def evaluateExpression (String expression, Map data = [:], def defaultValue, Map metadata = null, Map context = [:]) {
         try {
-            Map clonedData = data.clone()
             context.metadata = metadata
-            clonedData.context = context
-            def binding = new Binding(clonedData)
+            data.context = context
+            def binding = new Binding(data)
             GroovyShell shell = new GroovyShell(binding)
+            data.remove('context')
             return  shell.evaluate(expression)
         }
         catch (MissingPropertyException exp) {
+            data.remove('context')
             // This could happen if the expression references a field that is not in the data.
             // Or, what is passed is a string and not an expression. This could happen when getMeasurementType calls this method.
             // In such cases, return the value of measurementType i.e. expression itself.
             return expression
         }
         catch (Exception ex) {
+            data.remove('context')
+            log.error(ex.message, ex)
             return defaultValue
         }
     }

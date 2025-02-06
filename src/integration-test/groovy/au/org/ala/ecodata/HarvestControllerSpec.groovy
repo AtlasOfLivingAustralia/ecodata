@@ -39,6 +39,7 @@ class HarvestControllerSpec extends Specification {
         Output.collection.remove(new BasicDBObject())
         ActivityForm.collection.remove(new BasicDBObject())
         Organisation.collection.remove(new BasicDBObject())
+        Document.collection.remove(new BasicDBObject())
     }
 
     // write integration test for harvestController#getDarwinCoreArchiveForProject
@@ -136,12 +137,12 @@ class HarvestControllerSpec extends Specification {
         activity.save(flush: true, failOnError: true)
         def document = new Document(
                 documentId: "document1",
+                filename: 'z.png',
                 status: 'active',
                 imageId: 'image1',
-                creator    : "John Doe",
                 contentType: 'image/png',
-                rightsHolder: "John Doe",
-                license    : "CC BY 4.0"
+                attribution: "John Doe",
+                licence    : "CC BY 4.0"
         )
         document.save(flush: true, failOnError: true)
         // create an output
@@ -156,6 +157,7 @@ class HarvestControllerSpec extends Specification {
                         distance   : 1.0,
                         images     : [[
                                               documentId : "document1",
+                                              filename   : "z.png",
                                               identifier : "http://example.com/image",
                                               creator    : "John Doe",
                                               title      : "Image of a frog",
@@ -173,7 +175,9 @@ class HarvestControllerSpec extends Specification {
         ByteArrayInputStream zipStream = new ByteArrayInputStream(harvestController.response.contentAsByteArray)
         ZipInputStream zipInputStream = new ZipInputStream(zipStream)
         ZipEntry entry
+        int numberOfEntries = 0
         while ((entry = zipInputStream.getNextEntry()) != null) {
+            numberOfEntries ++
             StringBuffer buffer = new StringBuffer()
             BufferedReader reader = new BufferedReader(new InputStreamReader(zipInputStream))
             String line
@@ -217,7 +221,7 @@ class HarvestControllerSpec extends Specification {
                     List<String[]> lines = readerCSV.readAll()
                     assert lines.size() == 2
                     assert lines[0] == ["eventID","occurrenceID","type","identifier","format","creator","licence","rightsHolder"]
-                    assert lines[1] == ["activity1","outputSpecies1","","","","","",""]
+                    assert lines[1] == ["activity1","outputSpecies1","StillImage","https://images-test.ala.org.au/proxyImage?id=image1","image/png","John Doe","CC BY 4.0","John Doe"]
                     // check Media.csv
                     break
                 case "Occurrence.csv":
@@ -233,10 +237,12 @@ class HarvestControllerSpec extends Specification {
                     CSVReader readerCSV = new CSVReader(new StringReader(content))
                     List<String[]> lines = readerCSV.readAll()
                     assert lines[0] == ["eventID","occurrenceID","measurementValue","measurementAccuracy","measurementUnit","measurementUnitID","measurementType","measurementTypeID"]
-                    assert lines[1] == ["activity1","outputSpecies1","1.0","0.001","m","http://qudt.org/vocab/unit/M","distance from source","http://qudt.org/vocab/quantitykind/Number"]
+                    assert lines[1] == ["activity1","outputSpecies1","1.0","0.001","m","http://qudt.org/vocab/unit/M","number","http://qudt.org/vocab/quantitykind/Number"]
                     assert lines.size() ==2
                     break
             }
         }
+
+        assert numberOfEntries == 6
     }
 }
