@@ -244,6 +244,8 @@ class ProjectService {
                     mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
                 }
 
+                // add geographic info attributes such as primarystate, otherstate, primaryelect and otherelect
+                mapOfProperties << findAndFormatStatesAndElectoratesForProject(mapOfProperties)
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
                 Lock lock = lockService.get(project.projectId)
@@ -1206,10 +1208,10 @@ class ProjectService {
         Map<String,Map<String,Double>> sumOfIntersectionsByLayer = [:].withDefault { [:].withDefault { 0 } }
         Map orderedIntersectionsByArea = [:]
         Map config = metadataService.getGeographicConfig(project.hubId)
-        List layers = config.checkForBoundaryIntersectionInLayers
+        List layers = config?.checkForBoundaryIntersectionInLayers
         List projectSites = getRepresentativeSitesOfProject(project)
         projectSites?.each { Map site ->
-            layers.each { String layer ->
+            layers?.each { String layer ->
                 Map facet = metadataService.getGeographicFacetConfig(layer, project.hubId)
                 site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.get(facet.name)?.get(SiteService.INTERSECTION_CURRENT)?.each { String layerValue, value ->
                     sumOfIntersectionsByLayer[layer][layerValue] += value
@@ -1260,13 +1262,35 @@ class ProjectService {
         []
     }
 
+    Map findAndFormatStatesAndElectoratesForProject(Map project) {
+        Map result = findStateAndElectorateForProject (project)
+        if(!result) {
+            return [:]
+        }
+
+        List elect = result.remove('projectElectFacet') as List
+        List state = result.remove('projectStateFacet') as List
+
+        if (state) {
+            result["primarystate"] = state.pop()
+            result["otherstate"] = state?.join("; ")
+        }
+
+        if (elect) {
+            result["primaryelect"] = elect.pop()
+            result["otherelect"] = elect.join("; ")
+        }
+
+        result
+    }
+
     /**
      * Find primary/other state(s)/electorate(s) for a project.
      * 1. If isDefault is true, use manually assigned state(s)/electorate(s) i.e project.geographicInfo.
      * 2. If isDefault is false or missing, use the state(s)/electorate(s) from sites using site precedence.
      * 3. If isDefault is false and there are no sites, use manual state(s)/electorate(s) in project.geographicInfo.
      */
-    Map findStateAndElectorateForProject(Map project) {
+    Map findStateAndElectorateForProject (Map project) {
         Map result = [:]
         if(project == null) {
             return result
@@ -1277,14 +1301,13 @@ class ProjectService {
         if (geographicInfo == null || (geographicInfo.isDefault == false)) {
             Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
             Map config = metadataService.getGeographicConfig()
-            List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+            List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
             intersectionLayers?.each { layer ->
                 Map facetName = metadataService.getGeographicFacetConfig(layer)
                 if (facetName.name) {
                     List intersectionValues = intersections[layer]
                     if (intersectionValues) {
-                        result["primary${facetName.name}"] = intersectionValues.pop()
-                        result["other${facetName.name}"] = intersectionValues.join("; ")
+                        result["project${facetName.name.capitalize()}Facet"] = intersectionValues
                     }
                 }
                 else
@@ -1295,14 +1318,12 @@ class ProjectService {
         //isDefault is true or false and no sites.
         if (geographicInfo) {
             // load from manually assigned electorates/states
-            if (!result.containsKey("primaryelect")) {
-                result["primaryelect"] = geographicInfo.primaryElectorate
-                result["otherelect"] = geographicInfo.otherElectorates?.join("; ")
+            if (!result.containsKey("projectElectFacet")) {
+                result["projectElectFacet"] = (geographicInfo.primaryElectorate ? [geographicInfo.primaryElectorate] : []) + geographicInfo.otherElectorates
             }
 
-            if (!result.containsKey("primarystate")) {
-                result["primarystate"] = geographicInfo.primaryState
-                result["otherstate"] = geographicInfo.otherStates?.join("; ")
+            if (!result.containsKey("projectStateFacet")) {
+                result["projectStateFacet"] = (geographicInfo.primaryState ? [geographicInfo.primaryState] : []) + geographicInfo.otherStates
             }
         }
 

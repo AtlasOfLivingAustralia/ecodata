@@ -368,6 +368,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         then:
         1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == projectProps.projectId}, RequestOptions.DEFAULT) >>
                 { index, options -> result = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
+        1 * projectService.findStateAndElectorateForProject(_) >> [:]
         1 * projectService.toMap(project, ProjectService.FLAT) >> projectProps
 
         and:
@@ -396,6 +397,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         then:
         1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == meritProjectProps.projectId}, RequestOptions.DEFAULT) >>
                 { index, options  -> meritResult = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
+        1 * projectService.findStateAndElectorateForProject(_) >> [:]
         1 * projectService.toMap(meritProject, ProjectService.FLAT) >> meritProjectProps
         1 * siteService.findAllForProjectId(meritProject.projectId, SiteService.FLAT) >> [site1]
 
@@ -492,7 +494,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
 
         then:
         1 * projectService.toMap(project, ProjectService.FLAT) >> meritProjectProps
-
+        1 * projectService.findStateAndElectorateForProject(_) >> [:]
         1 * client.get(_, _) >> getResponse
         1 * getResponse.exists >> true
         1 * client.delete(_, _)

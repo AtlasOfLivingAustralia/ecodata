@@ -2128,7 +2128,9 @@ class ParatooService {
             result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
         }
         else {
-            result.name = result.scientificName ?: result.commonName
+            result.name = result.scientificName
+            // clear common name if it is same as scientific name
+            result.commonName = null
         }
 
         List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
