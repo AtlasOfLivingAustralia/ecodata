@@ -48,6 +48,7 @@ class SiteService {
             ExternalId.IdType.values().toList().each {
                 if (it.name().startsWith('MONITOR_')) {
                     monitorIdTypes << it
+                    monitorIdTypes << it.name()
                 }
             }
 
