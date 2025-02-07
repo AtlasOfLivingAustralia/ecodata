@@ -11,7 +11,7 @@ environments {
             mongodb {
                 host = "localhost"
                 port = "27017"
-                databaseName = "ecodata-test-server"
+                databaseName = "ecodata"
             }
         }
     }
@@ -1065,6 +1065,8 @@ biocollect.baseURL="https://biocollect.ala.org.au"
 biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
 biocollect.projectArea.simplificationThreshold=10000
 biocollect.projectArea.simplificationTolerance=0.0001
+
+fieldcapture.baseURL="https://fieldcapture.ala.org.au"
 
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM

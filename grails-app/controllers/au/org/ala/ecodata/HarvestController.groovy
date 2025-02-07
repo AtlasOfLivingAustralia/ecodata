@@ -13,6 +13,7 @@ class HarvestController {
     ProjectService projectService
     ProjectActivityService projectActivityService
     UserService userService
+    def grailsApplication
 
     /**
      * List of supported data resource id available for harvesting.
@@ -148,9 +149,9 @@ class HarvestController {
         if (projectId) {
             Project project = Project.findByProjectId(projectId)
             if(project?.alaHarvest) {
-                // Simulate BioCollect as the hostname calling this method. This is done to get the correct URL for
-                // documents.
-                DocumentHostInterceptor.documentHostUrlPrefix.set(grailsApplication.config.getProperty("biocollect.baseURL"))
+                // This is done to get the correct URL for documents.
+                String hostname = project.isMERIT ? grailsApplication.config.getProperty("fieldcapture.baseURL") : grailsApplication.config.getProperty("biocollect.baseURL")
+                DocumentHostInterceptor.documentHostUrlPrefix.set(hostname)
                 recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
             } else
                 response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON

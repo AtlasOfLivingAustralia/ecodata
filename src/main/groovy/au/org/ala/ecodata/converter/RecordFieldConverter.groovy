@@ -2,7 +2,10 @@ package au.org.ala.ecodata.converter
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
+import org.springframework.expression.Expression
+import org.springframework.expression.ExpressionParser
+import org.springframework.expression.spel.SpelEvaluationException
+import org.springframework.expression.spel.standard.SpelExpressionParser
 /**
  * Converts an Output's data model into one or more Records.
  *
@@ -123,14 +126,16 @@ trait RecordFieldConverter {
     def evaluateExpression (String expression, Map data = [:], def defaultValue, Map metadata = null, Map context = [:]) {
         try {
             context.metadata = metadata
+            String returnType = metadata.returnType ?: "java.lang.String"
+            Class returnClass = Class.forName(returnType)
             data.context = context
-            def binding = new Binding(data)
-            GroovyShell shell = new GroovyShell(binding)
-            def value = shell.evaluate(expression)
+            ExpressionParser expressionParser = new SpelExpressionParser()
+            Expression expObject = expressionParser.parseExpression(expression)
+            def value = expObject.getValue(data, returnClass)
             data.remove('context')
             return value
         }
-        catch (MissingPropertyException exp) {
+        catch (SpelEvaluationException exp) {
             data.remove('context')
             // This could happen if the expression references a field that is not in the data.
             // Or, what is passed is a string and not an expression. This could happen when getMeasurementType calls this method.
