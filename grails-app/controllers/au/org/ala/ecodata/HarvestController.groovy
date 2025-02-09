@@ -13,7 +13,6 @@ class HarvestController {
     ProjectService projectService
     ProjectActivityService projectActivityService
     UserService userService
-    def grailsApplication
 
     /**
      * List of supported data resource id available for harvesting.
