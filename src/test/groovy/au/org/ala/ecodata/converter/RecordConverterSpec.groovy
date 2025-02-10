@@ -498,7 +498,7 @@ class RecordConverterSpec extends Specification {
                                                 dataType: "number",
                                                 name: "distance",
                                                 dwcAttribute: "measurementValue",
-                                                dwcExpression: "['context']['rootData']['field1'] + distance",
+                                                dwcExpression: "['context']['rootData']['field1'] + ['distance']",
                                                 measurementType: "number",
                                                 measurementTypeID: "http://qudt.org/vocab/quantitykind/Number",
                                                 measurementAccuracy: "0.001",
