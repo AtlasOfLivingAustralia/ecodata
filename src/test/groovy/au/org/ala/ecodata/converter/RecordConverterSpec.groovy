@@ -542,19 +542,19 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].measurementsorfacts.size() == 3
         fieldsets[0].measurementsorfacts[0].eventID == "act1"
         fieldsets[0].measurementsorfacts[0].measurementValue == 10.056
-        fieldsets[0].measurementsorfacts[0].measurementType == "number"
+        fieldsets[0].measurementsorfacts[0].measurementType == "distance from source"
         fieldsets[0].measurementsorfacts[0].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
         fieldsets[0].measurementsorfacts[0].measurementAccuracy == "0.001"
         fieldsets[0].measurementsorfacts[0].measurementUnit == "m"
         fieldsets[0].measurementsorfacts[0].measurementUnitID == "http://qudt.org/vocab/unit/M"
         fieldsets[0].measurementsorfacts[1].measurementValue == 21.056
-        fieldsets[0].measurementsorfacts[1].measurementType == "number"
+        fieldsets[0].measurementsorfacts[1].measurementType == "distance from source"
         fieldsets[0].measurementsorfacts[1].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
         fieldsets[0].measurementsorfacts[1].measurementAccuracy == "0.001"
         fieldsets[0].measurementsorfacts[1].measurementUnit == "m"
         fieldsets[0].measurementsorfacts[1].measurementUnitID == "http://qudt.org/vocab/unit/M"
         fieldsets[0].measurementsorfacts[2].measurementValue == 23.056
-        fieldsets[0].measurementsorfacts[2].measurementType == "number"
+        fieldsets[0].measurementsorfacts[2].measurementType == "distance from source"
         fieldsets[0].measurementsorfacts[2].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
         fieldsets[0].measurementsorfacts[2].measurementAccuracy == "0.001"
         fieldsets[0].measurementsorfacts[2].measurementUnit == "m"
