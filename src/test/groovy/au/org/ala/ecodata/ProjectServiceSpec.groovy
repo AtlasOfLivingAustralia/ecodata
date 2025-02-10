@@ -1209,6 +1209,20 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result.otherelect == "Canberra; Fenner"
     }
 
+    def "findStateAndElectorateForProject should return default empty primary state or elect if not filled if isDefault is true"() {
+        given:
+        Map project = [geographicInfo: [isDefault: true, primaryState: null, otherStates: ['NSW', 'VIC'], primaryElectorate: null, otherElectorates: ['Canberra', 'Fenner']]]
+
+        when:
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
+
+        then:
+        result.primarystate == null
+        result.otherstate == "NSW; VIC"
+        result.primaryelect == null
+        result.otherelect == "Canberra; Fenner"
+    }
+
     def "findStateAndElectorateForProject should return empty map if project is null"() {
         when:
         Map project = null

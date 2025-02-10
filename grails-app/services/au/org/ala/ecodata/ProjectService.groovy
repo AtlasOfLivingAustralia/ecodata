@@ -1259,12 +1259,18 @@ class ProjectService {
         List elect = result.remove('projectElectFacet') as List
         List state = result.remove('projectStateFacet') as List
 
-        if (state) {
+        if (result['otherstate'] instanceof List) {
+            result["otherstate"] = result['otherstate']?.join("; ")
+        }
+        else if (state) {
             result["primarystate"] = state.pop()
             result["otherstate"] = state?.join("; ")
         }
 
-        if (elect) {
+        if (result['otherelect'] instanceof List) {
+            result["otherelect"] = result['otherelect']?.join("; ")
+        }
+        else if (elect) {
             result["primaryelect"] = elect.pop()
             result["otherelect"] = elect.join("; ")
         }
@@ -1308,10 +1314,14 @@ class ProjectService {
             // load from manually assigned electorates/states
             if (!result.containsKey("projectElectFacet")) {
                 result["projectElectFacet"] = (geographicInfo.primaryElectorate ? [geographicInfo.primaryElectorate] : []) + geographicInfo.otherElectorates
+                result["primaryelect"] = geographicInfo.primaryElectorate
+                result["otherelect"] = geographicInfo.otherElectorates
             }
 
             if (!result.containsKey("projectStateFacet")) {
                 result["projectStateFacet"] = (geographicInfo.primaryState ? [geographicInfo.primaryState] : []) + geographicInfo.otherStates
+                result["primarystate"] = geographicInfo.primaryState
+                result["otherstate"] = geographicInfo.otherStates
             }
         }
 
