@@ -453,7 +453,7 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].attribute1 == "fieldValue1"
         fieldsets[0].measurementsorfacts.size() == 1
         fieldsets[0].measurementsorfacts[0].measurementValue == 10.056
-        fieldsets[0].measurementsorfacts[0].measurementType == "number"
+        fieldsets[0].measurementsorfacts[0].measurementType == "distance from source"
         fieldsets[0].measurementsorfacts[0].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
         fieldsets[0].measurementsorfacts[0].measurementAccuracy == "0.001"
         fieldsets[0].measurementsorfacts[0].measurementUnit == "m"
