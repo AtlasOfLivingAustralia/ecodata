@@ -649,6 +649,26 @@ class ActivityService {
         }
     }
 
+    /**
+     * An activity is embargoed if either of the below conditions are satisfied
+     * 1. embargoed flag is set to true on an activity
+     * 2. project activity is embargoed until a defined date
+     * @param activity
+     * @param projectActivity
+     * @return
+     */
+    boolean isActivityEmbargoed(Activity activity, ProjectActivity projectActivity){
+        if (activity.embargoed) {
+            return activity.embargoed
+        }
+
+        if (projectActivity?.visibility?.embargoUntil) {
+            return projectActivity?.visibility?.embargoUntil.after(new Date())
+        }
+
+        return false
+    }
+
     List findAllForOrganisationId(id, levelOfDetail = [], includeDeleted = false) {
         List activities
         if (includeDeleted) {
@@ -659,5 +679,4 @@ class ActivityService {
         }
         activities
     }
-
 }

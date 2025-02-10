@@ -1,3 +1,7 @@
+import au.org.ala.ecodata.Document
+import static au.org.ala.ecodata.Status.DELETED
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 
 def appName = 'ecodata'
 
@@ -47,7 +51,7 @@ environments {
 
 grails.mongodb.default.mapping = {
     version false
-    '*'(reference:true)
+    '*'(reference: true)
 }
 
 
@@ -147,7 +151,7 @@ if (!biocollect.scienceType) {
     ]
 }
 
-if(!biocollect.dataCollectionWhiteList){
+if (!biocollect.dataCollectionWhiteList) {
     biocollect.dataCollectionWhiteList = [
             "Animals",
             "Biodiversity",
@@ -423,7 +427,7 @@ if (!countries) {
     ]
 }
 
-if(!spatial.geoJsonEnvelopeConversionThreshold){
+if (!spatial.geoJsonEnvelopeConversionThreshold) {
     spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
@@ -431,7 +435,7 @@ spatial.intersectionThreshold = 0.05
 spatial.intersectionAreaThresholdInHectare = 10_000
 
 homepageIdx {
-    elasticsearch   {
+    elasticsearch {
         fieldsAndBoosts {
             name = 50
             description = 30
@@ -544,7 +548,7 @@ if (!biocacheService.baseURL) {
     biocacheService.baseURL = 'https://biocache.ala.org.au/ws'
 }
 if (!imagesService.baseURL) {
-    imagesService.baseURL = 'https://images-dev.ala.org.au'
+    imagesService.baseURL = 'https://images-test.ala.org.au'
 }
 if (!security.cas.bypass) {
     security.cas.bypass = false
@@ -637,7 +641,6 @@ environments {
         grails.mail.host="localhost"
         grails.mail.port=1025
         ehcache.directory="./ehcache"
-
     }
     test {
         ehcache.directory="./ehcache"
@@ -711,86 +714,86 @@ environments {
 
 facets.data = [
         [
-                name: "projectNameFacet",
-                title: 'Project',
+                name    : "projectNameFacet",
+                title   : 'Project',
                 dataType: 'text',
                 helpText: 'Name of the project'
         ],
         [
-                name:  "organisationNameFacet",
-                title: 'Organisation',
+                name    : "organisationNameFacet",
+                title   : 'Organisation',
                 dataType: 'text',
                 helpText: 'Organisations either running projects or associated with projects (eg. as partners).'
         ],
         [
-                name: "projectActivityNameFacet",
-                title: 'Survey name',
+                name    : "projectActivityNameFacet",
+                title   : 'Survey name',
                 dataType: 'text',
                 helpText: 'Name of survey'
         ],
         [
-                name: "recordNameFacet",
-                title:  'Species name',
+                name    : "recordNameFacet",
+                title   : 'Species name',
                 dataType: 'text',
                 helpText: 'Sighting\'s scientific name'
         ],
         [
-                name: "userId",
-                title:  'Owner',
+                name    : "userId",
+                title   : 'Owner',
                 dataType: 'text',
                 helpText: 'User who created the record'
         ],
         [
-                name: "embargoed",
+                name    : "embargoed",
                 dataType: 'text',
-                title:  'Unpublished records'
+                title   : 'Unpublished records'
         ],
         [
-                name:  "activityLastUpdatedMonthFacet",
-                title:  'Month',
+                name    : "activityLastUpdatedMonthFacet",
+                title   : 'Month',
                 dataType: 'text',
                 helpText: 'Month the record was last edited'
         ],
         [
-                name:  "activityLastUpdatedYearFacet",
-                title:  'Year',
+                name    : "activityLastUpdatedYearFacet",
+                title   : 'Year',
                 dataType: 'text',
                 helpText: 'Year the record was last edited'
         ],
         [
-                name:  "surveyMonthFacet",
-                title:  'Month',
+                name    : "surveyMonthFacet",
+                title   : 'Month',
                 dataType: 'text',
                 helpText: 'Month the sighting was observed'
         ],
         [
-                name:  "surveyYearFacet",
-                title:  'Year',
+                name    : "surveyYearFacet",
+                title   : 'Year',
                 dataType: 'text',
                 helpText: 'Year the sighting was observed'
         ],
         [
-                name:  "individualCount",
-                title:  'Presence or Absence',
-                dataType: 'number',
-                helpText: 'Is species present or absent',
+                name         : "individualCount",
+                title        : 'Presence or Absence',
+                dataType     : 'number',
+                helpText     : 'Is species present or absent',
                 facetTermType: 'PresenceOrAbsence'
         ],
         [
-                name: "associatedProgramFacet",
-                title: 'Program Name',
+                name    : "associatedProgramFacet",
+                title   : 'Program Name',
                 dataType: 'text',
                 helpText: 'The administrative Program under which a project is being run.'
         ],
         [
-                name: "siteNameFacet",
-                title: 'Site Name',
+                name    : "siteNameFacet",
+                title   : 'Site Name',
                 dataType: 'text',
                 helpText: 'A site at which data has been collected for one or projects.'
         ],
         [
-                name: "associatedSubProgramFacet",
-                title: 'Sub Program',
+                name    : "associatedSubProgramFacet",
+                title   : 'Sub Program',
                 dataType: 'text',
                 helpText: 'Titles of sub-programmes under listed programmes.'
         ],
@@ -807,38 +810,38 @@ facets.data = [
                 helpText: ''
         ],
         [
-                name: "spatialAccuracy",
-                title: 'Spatial accuracy confidence',
+                name    : "spatialAccuracy",
+                title   : 'Spatial accuracy confidence',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "speciesIdentification",
-                title: 'Species identification confidence',
+                name    : "speciesIdentification",
+                title   : 'Species identification confidence',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "temporalAccuracy",
-                title: 'Temporal accuracy confidence',
+                name    : "temporalAccuracy",
+                title   : 'Temporal accuracy confidence',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "nonTaxonomicAccuracy",
-                title: 'Non-taxonomic data accuracy',
+                name    : "nonTaxonomicAccuracy",
+                title   : 'Non-taxonomic data accuracy',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "dataQualityAssuranceMethods",
-                title: 'Data quality assurance method',
+                name    : "dataQualityAssuranceMethods",
+                title   : 'Data quality assurance method',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "isDataManagementPolicyDocumented",
-                title: 'Is data management policy documented?',
+                name    : "isDataManagementPolicyDocumented",
+                title   : 'Is data management policy documented?',
                 dataType: 'text',
                 helpText: ''
         ]
@@ -847,211 +850,211 @@ facets.data = [
 
 facets.project = [
         [
-                name: "isExternal",
-                title: 'Project',
+                name    : "isExternal",
+                title   : 'Project',
                 dataType: 'text',
                 helpText: 'Name of the project'
         ],
         [
-                name: "isBushfire",
-                title: 'Bushfire Recovery',
+                name    : "isBushfire",
+                title   : 'Bushfire Recovery',
                 dataType: 'text',
                 helpText: 'Project associated to bushfire recovery'
         ],
         [
-                name: "organisationFacet",
-                title: 'Organisation',
+                name    : "organisationFacet",
+                title   : 'Organisation',
                 dataType: 'text',
                 helpText: 'Organisations either running projects or associated with projects (eg. as partners).'
         ],
         [
-                name: "uNRegions",
-                title: 'UN Regions',
+                name    : "uNRegions",
+                title   : 'UN Regions',
                 dataType: 'text',
                 helpText: 'The continental regions in which projects occur according to the United Nations regional classification scheme.'
         ],
         [
-                name: "countries",
-                title: 'Countries',
+                name    : "countries",
+                title   : 'Countries',
                 dataType: 'text',
                 helpText: 'Countries in which people can participate in the project.'
         ],
         [
-                name: "origin",
-                title: 'Source System',
+                name    : "origin",
+                title   : 'Source System',
                 dataType: 'text',
                 helpText: 'The project catalogue system in which the project is registered.'
         ],
         [
-                name: "scienceType",
-                title: 'Science Type',
+                name    : "scienceType",
+                title   : 'Science Type',
                 dataType: 'text',
                 helpText: 'Categories of science which survey-based projects are addressing.'
         ],
         [
-                name: "tags",
-                title: 'Tags',
+                name    : "tags",
+                title   : 'Tags',
                 dataType: 'text',
                 helpText: 'Classifications for citizen science projects to assist decision making for participation'
         ],
         [
-                name: "difficulty",
-                title: 'Difficulty',
+                name    : "difficulty",
+                title   : 'Difficulty',
                 dataType: 'text',
                 helpText: 'A general level of difficulty for citizen science participation'
         ],
         [
-                name: "status",
-                title: 'Status',
+                name    : "status",
+                title   : 'Status',
                 dataType: 'text',
                 helpText: 'Active projects are still running, whereas \'completed\' projects have ended and are no longer \'active\''
         ],
         [
-                name: "typeOfProject",
-                title: 'Project Types',
+                name    : "typeOfProject",
+                title   : 'Project Types',
                 dataType: 'text',
                 helpText: 'The project type reflects the hub in which projects were created, but will be either \'survey-based\' (Citizen and Ecological science) or \'schedule-based\' (Works and MERIT) formats for recording data.'
         ],
         [
-                name: "ecoScienceType",
-                title: 'Science Type',
+                name    : "ecoScienceType",
+                title   : 'Science Type',
                 dataType: 'text',
                 helpText: 'Categories of science which survey-based projects are addressing.'
         ],
         [
-                name: "associatedProgramFacet",
-                title: 'Program Name',
+                name    : "associatedProgramFacet",
+                title   : 'Program Name',
                 dataType: 'text',
                 helpText: 'The administrative Program under which a project is being run.'
         ],
         [
-                name: "siteNameFacet",
-                title: 'Site Name',
+                name    : "siteNameFacet",
+                title   : 'Site Name',
                 dataType: 'text',
                 helpText: 'A site at which data has been collected for one or projects.'
         ],
         [
-                name: "associatedSubProgramFacet",
-                title: 'Sub Program',
+                name    : "associatedSubProgramFacet",
+                title   : 'Sub Program',
                 dataType: 'text',
                 helpText: 'Titles of sub-programmes under listed programmes.'
         ],
         [
-                name: "plannedStartDate",
-                title: 'Project Start Date',
-                dataType: 'date',
-                helpText: 'Selects projects that start between the specified date range.',
+                name         : "plannedStartDate",
+                title        : 'Project Start Date',
+                dataType     : 'date',
+                helpText     : 'Selects projects that start between the specified date range.',
                 facetTermType: 'Date'
         ],
         [
-                name: "fundingSourceFacet",
-                title: 'Funding source',
+                name    : "fundingSourceFacet",
+                title   : 'Funding source',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "reportingThemesFacet",
-                title: 'Reporting theme',
+                name    : "reportingThemesFacet",
+                title   : 'Reporting theme',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "typeFacet",
-                title: 'Activity type',
+                name    : "typeFacet",
+                title   : 'Activity type',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "assessment",
-                title: 'Assessment',
+                name    : "assessment",
+                title   : 'Assessment',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "stateFacet",
-                title: 'State',
+                name    : "stateFacet",
+                title   : 'State',
                 dataType: 'text',
                 helpText: 'Australian State'
         ],
         [
-                name: "lgaFacet",
-                title: 'LGA',
+                name    : "lgaFacet",
+                title   : 'LGA',
                 dataType: 'text',
                 helpText: 'Local Government Areas'
         ],
         [
-                name: "nrmFacet",
-                title: 'Management Areas',
+                name    : "nrmFacet",
+                title   : 'Management Areas',
                 dataType: 'text',
                 helpText: 'Natural Resource Management Areas'
         ],
         [
-                name: "mvgFacet",
-                title: 'Major Vegetation Group',
+                name    : "mvgFacet",
+                title   : 'Major Vegetation Group',
                 dataType: 'text',
                 helpText: 'National Vegetation Information System Major Vegetation Group'
         ],
         [
-                name: "mainThemeFacet",
-                title: 'Reporting Theme',
+                name    : "mainThemeFacet",
+                title   : 'Reporting Theme',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "ibraFacet",
-                title: 'Biogeographic Regions',
+                name    : "ibraFacet",
+                title   : 'Biogeographic Regions',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "imcra4_pbFacet",
-                title: 'Marine Regions',
+                name    : "imcra4_pbFacet",
+                title   : 'Marine Regions',
                 helpText: ''
         ],
         [
-                name: "otherFacet",
-                title: 'Other Regions',
+                name    : "otherFacet",
+                title   : 'Other Regions',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "electFacet",
-                title: 'Federal Electorates',
+                name    : "electFacet",
+                title   : 'Federal Electorates',
                 dataType: 'text',
                 helpText: ''
         ],
         [
-                name: "cmzFacet",
-                title: 'CMZ',
+                name    : "cmzFacet",
+                title   : 'CMZ',
                 dataType: 'text',
                 helpText: 'Conservation Management Zones'
         ],
         [
-                name: "meriPlanAssetFacet",
-                title: 'Assets Addressed',
+                name    : "meriPlanAssetFacet",
+                title   : 'Assets Addressed',
                 dataType: 'text',
                 helpText: 'Assets addressed in the MERI plan'
         ],
         [
-                name: "projLifecycleStatus",
-                title: 'Project Lifecycle Status',
+                name    : "projLifecycleStatus",
+                title   : 'Project Lifecycle Status',
                 dataType: 'text',
                 helpText: 'Filters projects by project lifecycle status'
         ],
         [
-                name: "partnerOrganisationTypeFacet",
-                title: 'Partner Organisations',
+                name    : "partnerOrganisationTypeFacet",
+                title   : 'Partner Organisations',
                 dataType: 'text',
                 helpText: 'Organisation type of partner organisations'
         ],
         [
-                name: "industryFacet",
-                title: "Industry",
+                name    : "industryFacet",
+                title   : "Industry",
                 helpText: "The industries relevant to the project"
         ],
         [
-                name: "bushfireCategoriesFacet",
-                title: "Bushfire Categories",
+                name    : "bushfireCategoriesFacet",
+                title   : "Bushfire Categories",
                 helpText: "The bushfire categories relevant to the project"
         ]
 ]
@@ -1062,6 +1065,8 @@ biocollect.baseURL="https://biocollect.ala.org.au"
 biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"
 biocollect.projectArea.simplificationThreshold=10000
 biocollect.projectArea.simplificationTolerance=0.0001
+
+fieldcapture.baseURL="https://fieldcapture.ala.org.au"
 
 // elasticsearch cluster setting
 // can transport layer connection be made from apps outside JVM
@@ -1086,58 +1091,58 @@ geoServer.elasticPort = "9300"
 geoServer.clusterName = "elasticsearch"
 geoServer.readTimeout = 600000
 geoServer.layerNames = [
-        "_general" : [
-                "pa": [ name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],
-                "project": [ name: "generalproject", attributes: ['projectArea.geoIndex', 'projectArea.geometryType']],
+        "_general": [
+                "pa"     : [name: "general", attributes: ['sites.geoIndex', 'sites.geometryType']],
+                "project": [name: "generalproject", attributes: ['projectArea.geoIndex', 'projectArea.geometryType']],
         ],
-        "_info"    : [
-                "pa": [ name: "layerinfo",
-                                       attributes: [
-                                               'sites.geoIndex',
-                                               'dateCreated',
-                                               'projectId',
-                                               'thumbnailUrl',
-                                               'activityId',
-                                               'recordNameFacet',
-                                               'projectActivityNameFacet',
-                                               'projectNameFacet',
-                                               'surveyMonthFacet',
-                                               'surveyYearFacet',
-                                               'sites.geometryType'
-                                       ]
+        "_info"   : [
+                "pa"     : [name      : "layerinfo",
+                            attributes: [
+                                    'sites.geoIndex',
+                                    'dateCreated',
+                                    'projectId',
+                                    'thumbnailUrl',
+                                    'activityId',
+                                    'recordNameFacet',
+                                    'projectActivityNameFacet',
+                                    'projectNameFacet',
+                                    'surveyMonthFacet',
+                                    'surveyYearFacet',
+                                    'sites.geometryType'
+                            ]
                 ],
-                "project": [ name: "layerinfoproject",
-                             attributes: [
-                                     'projectArea.geoIndex',
-                                     'projectArea.geometryType',
-                                     'name',
-                                     'aim',
-                                     'projectId',
-                                     'imageUrl',
-                                     'logoAttribution',
-                                     'plannedStartDate',
-                                     'plannedEndDate'
-                             ]
+                "project": [name      : "layerinfoproject",
+                            attributes: [
+                                    'projectArea.geoIndex',
+                                    'projectArea.geometryType',
+                                    'name',
+                                    'aim',
+                                    'projectId',
+                                    'imageUrl',
+                                    'logoAttribution',
+                                    'plannedStartDate',
+                                    'plannedEndDate'
+                            ]
                 ],
         ],
-        "_time": [
-                "pa": [ name: "time", attributes: ['sites.geoIndex', 'sites.geometryType']]
+        "_time"   : [
+                "pa": [name: "time", attributes: ['sites.geoIndex', 'sites.geometryType']]
         ],
         "_indices": [
-                "pa": [ name: "colour_by", attributes: ['sites.geometryType']],
-                "project": [ name: "colour_byproject", attributes: ['projectArea.geometryType']],
+                "pa"     : [name: "colour_by", attributes: ['sites.geometryType']],
+                "project": [name: "colour_byproject", attributes: ['projectArea.geometryType']],
         ]
 ]
 
 geoServer.layerConfiguration = [
         "pasearch": [
-                "name": "layerName",
-                "nativeName": "layerNativeName",
-                "title": "BioCollect survey activity",
-                "keywords": ["activity", "survey", "biocollect"],
-                "timeEnabled": false,
+                "name"         : "layerName",
+                "nativeName"   : "layerNativeName",
+                "title"        : "BioCollect survey activity",
+                "keywords"     : ["activity", "survey", "biocollect"],
+                "timeEnabled"  : false,
                 "timeAttribute": "dateCreated",
-                "attributes": [
+                "attributes"   : [
                         [
                                 "name": "sites.geoIndex",
                                 "shortName": "sites.geoIndex",
@@ -1157,13 +1162,13 @@ geoServer.layerConfiguration = [
                 ]
         ],
         "homepage": [
-                "name": "layerName",
-                "nativeName": "layerNativeName",
-                "title": "BioCollect survey activity",
-                "keywords": ["activity", "survey", "biocollect"],
-                "timeEnabled": false,
+                "name"         : "layerName",
+                "nativeName"   : "layerNativeName",
+                "title"        : "BioCollect survey activity",
+                "keywords"     : ["activity", "survey", "biocollect"],
+                "timeEnabled"  : false,
                 "timeAttribute": "dateCreated",
-                "attributes": [
+                "attributes"   : [
                         [
                                 "name": "projectArea.geoIndex",
                                 "shortName": "projectArea.geoIndex",
@@ -1203,75 +1208,75 @@ if (!geoserver.facetRangeColour) {
 geohash.lookupTable = [
         [
                 length: 1,
-                width: 5009400,
+                width : 5009400,
                 height: 4992600,
-                area:25009930440000
+                area  : 25009930440000
         ],
         [
                 length: 2,
-                width: 1252300,
+                width : 1252300,
                 height: 624100,
-                area: 781560430000
+                area  : 781560430000
         ],
         [
                 length: 3,
-                width: 156500,
+                width : 156500,
                 height: 156000,
-                area: 24414000000
+                area  : 24414000000
         ],
         [
                 length: 4,
-                width: 39100,
+                width : 39100,
                 height: 19500,
-                area: 762450000
+                area  : 762450000
         ],
         [
                 length: 5,
-                width: 4900,
+                width : 4900,
                 height: 4900,
-                area: 24010000
+                area  : 24010000
         ],
         [
                 length: 6,
-                width: 1200,
+                width : 1200,
                 height: 609.4,
-                area: 731280
+                area  : 731280
         ],
         [
                 length: 7,
-                width: 152.9,
+                width : 152.9,
                 height: 152.4,
-                area: 23301.96
+                area  : 23301.96
         ],
         [
                 length: 8,
-                width: 38.2,
+                width : 38.2,
                 height: 19,
-                area: 725.8
+                area  : 725.8
         ],
         [
                 length: 9,
-                width: 4.8,
+                width : 4.8,
                 height: 4.8,
-                area: 23.04
+                area  : 23.04
         ],
         [
                 length: 10,
-                width: 1.2,
+                width : 1.2,
                 height: 0.0595,
-                area: 0.0714
+                area  : 0.0714
         ],
         [
                 length: 11,
-                width: 0.0149,
+                width : 0.0149,
                 height: 0.0149,
-                area: 0.00022201
+                area  : 0.00022201
         ],
         [
                 length: 12,
-                width: 0.0037,
+                width : 0.0037,
                 height: 0.0019,
-                area: 0.00000703
+                area  : 0.00000703
         ]
 
 ]
@@ -1280,7 +1285,7 @@ geohash.maxNumberOfGrids = 250
 // Sets the maximum precision geohash grid.
 // Using higher precision will be able to narrow the record to precise location. Use lower precision if the aim is to
 // hide exact location.
-geohash.maxLength =  5
+geohash.maxLength = 5
 
 if(!additionalFieldsForDataTypes){
     additionalFieldsForDataTypes = [
@@ -1398,6 +1403,489 @@ if(!additionalFieldsForDataTypes){
 elasticsearch {
     username = 'elastic'
     password = 'password'
+}
+
+if (!darwinCore.projectActivityToDwC) {
+    darwinCore.projectActivityToDwC = [
+            "Event": [
+                    [
+                            "name": "eventID",
+                            "ref" : "projectActivityId"
+                    ],
+                    [
+                            "name": "eventDate",
+                            "code" : { record, params ->
+                                def pActivity = params.pActivity
+                                if (pActivity.startDate && pActivity.endDate) {
+                                    return params.recordService.toStringIsoDateTime(pActivity.startDate) + "/" + params.recordService.toStringIsoDateTime(pActivity.endDate)
+                                }
+
+                                return ""
+                            }
+                    ],
+                    [
+                            "name": "eventRemarks",
+                            "ref" : "description"
+                    ],
+                    [
+                            "name": "samplingProtocol",
+                            "ref" : "methodName"
+                    ],
+                    [
+                            "name"   : "eventType",
+                            "default": "Survey"
+                    ],
+                    [
+                            "name"   : "name"
+                    ],
+                    [
+                            "name"   : "license",
+                            "ref"   : "attribution"
+                    ],
+                    [
+                            "name"   : "pActivityFormName"
+                    ],
+                    [
+                            "name" : "startDate",
+                            "code" : { record, params ->
+                                def pActivity = params.pActivity
+                                if (pActivity.startDate) {
+                                    return params.recordService.toStringIsoDateTime(pActivity.startDate)
+                                }
+
+                                return ""
+                            }
+                    ],
+                    [
+                            "name"   : "endDate",
+                            "code" : { record, params ->
+                                def pActivity = params.pActivity
+                                if (pActivity.endDate) {
+                                    return params.recordService.toStringIsoDateTime(pActivity.endDate)
+                                }
+
+                                return ""
+                            }
+                    ],
+                    [
+                            "name"   : "legalCustodianOrganisation"
+                    ],
+                    [
+                            "name"   : "dataAccessExternalURL"
+                    ],
+                    [
+                            "name"   : "dataManagementPolicyDescription"
+                    ],
+                    [
+                            "name"   : "dataManagementPolicyURL"
+                    ],
+                    [
+                            "name"   : "dataManagementPolicyDocument"
+                    ],
+                    [
+                            "name"   : "dataSharingLicense"
+                    ]
+            ]
+    ]
+}
+
+if (!darwinCore.termsGroupedByClass) {
+    darwinCore.termsGroupedByClass = [
+            "Dataset"             : [
+            ],
+            "Event"               : [
+                    [
+                            "name"     : "eventID",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "parentEventID",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "eventType",
+                            "namespace": "dwc",
+                            "default"  : "SiteVisit"
+                    ],
+                    [
+                            "name"     : "eventDate",
+                            "namespace": "dwc",
+                            "code" : { record, params ->
+                                if (record.eventTime && record.eventDate instanceof Date) {
+                                    Date date = record.eventDate
+                                    DateTime dt = new DateTime(date, DateTimeZone.UTC)
+                                    dt = dt.withTimeAtStartOfDay()
+                                    return dt.toDateTimeISO().toString()
+                                }
+                                else if (record.eventDate)
+                                    return params.recordService.toStringIsoDateTime (record.eventDate)
+                            }
+                    ],
+                    [
+                            "name"     : "eventTime",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "endDayOfYear",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "startDayOfYear",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "verbatimEventDate",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "day",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "month",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "year",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "eventRemarks",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "fieldNotes",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "fieldNumber",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "habitat",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "sampleSizeUnit",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "sampleSizeValue",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "samplingEffort",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "samplingProtocol",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name": "decimalLatitude"
+                    ],
+                    [
+                            "name": "decimalLongitude"
+                    ],
+                    [
+                            "name"   : "geodeticDatum",
+                            "default": "EPSG:4326"
+                    ],
+                    [
+                            "name": "coordinateUncertaintyInMeters"
+                    ],
+                    [
+                            "name": "footprintWKT"
+                    ],
+                    [
+                            "name"   : "geodeticDatum",
+                            "default": "EPSG:4326"
+                    ],
+                    [
+                            "name": "locationID",
+                            "code": { Map record, Map params ->
+                                params?.site?.siteId
+                            }
+                    ]
+            ],
+            "FossilSpecimen"      : [
+            ],
+            "GeologicalContext"   : [
+            ],
+            "HumanObservation"    : [
+            ],
+            "Identification"      : [
+            ],
+            "LivingSpecimen"      : [
+            ],
+            "Location"            : [
+            ],
+            "MachineObservation"  : [
+            ],
+            "MaterialCitation"    : [
+            ],
+            "MaterialSample"      : [
+            ],
+            "MeasurementOrFact"   : [
+                    [
+                            "name"      : "measurementsorfacts",
+                            "substitute": { record, params ->
+                                record.measurementsorfacts ?: []
+                            },
+                            order: [
+                                    "eventID",
+                                    "occurrenceID",
+                                    "measurementValue",
+                                    "measurementAccuracy",
+                                    "measurementUnit",
+                                    "measurementUnitID",
+                                    "measurementType",
+                                    "measurementTypeID",
+                                    "measurementID"
+                            ]
+                    ]
+            ],
+            "Media"               : [
+                    [
+                            "name"      : "multimedia",
+                            "substitute": { record, params ->
+                                record?.multimedia?.collect { mediaRecord ->
+                                    if (mediaRecord.documentId) {
+                                        Document document = Document.findByDocumentIdAndStatusNotEqual(mediaRecord.documentId, DELETED)
+                                        if (document) {
+                                            String identifier =  document.getUrl()
+                                            return [
+                                                    "eventID"     : params?.activity?.activityId,
+                                                    "occurrenceID": record?.occurrenceID ,
+                                                    "type"        : document?.type ?: mediaRecord.type,
+                                                    "identifier"  : identifier ?: mediaRecord.identifier,
+                                                    "format"      : document?.contentType ?: mediaRecord.contentType,
+                                                    "creator"     : document?.creator ?: document?.attribution ?: mediaRecord.creator,
+                                                    "licence"     : document?.licence ?: document?.license ?: mediaRecord.license,
+                                                    "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "order": [
+                                    "eventID",
+                                    "occurrenceID",
+                                    "type",
+                                    "identifier",
+                                    "format",
+                                    "creator",
+                                    "licence",
+                                    "rightsHolder"
+                            ]
+                    ]
+            ],
+            "Occurrence"          : [
+                    [
+                            "name"     : "eventID",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "occurrenceID",
+                            "namespace": "dwc",
+                            "code"     : { record, params ->
+                                record?.occurrenceID ?: record?.outputSpeciesId
+                            }
+                    ],
+                    [
+                            "name": "basisOfRecord"
+                    ],
+                    [
+                            "name": "scientificName"
+                    ],
+                    [
+                            "name"     : "occurrenceStatus",
+                            "namespace": "dwc",
+                            "code"     : { record, params ->
+                                String count = record?.individualCount?.toString()?.trim() ?: "1"
+                                try {
+                                    Integer.parseInt(count)
+                                }
+                                catch (NumberFormatException nfe) {
+                                    count == null
+                                }
+
+                                count == "0" ? "absent" : "present"
+                            }
+                    ],
+                    [
+                            "name"     : "individualCount",
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                String count = record?.individualCount?.toString()?.trim() ?: "1"
+                                try {
+                                    Integer.parseInt(count)
+                                    return count
+                                }
+                                catch (NumberFormatException nfe) {
+
+                                }
+
+                                return "1"
+                            }
+                    ],
+                    [
+                            "name"     : "occurrenceRemarks",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "associatedMedia",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "associatedOccurrences",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "associatedReferences",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "associatedSequences",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "associatedTaxa",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "behavior",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "catalogNumber",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "degreeOfEstablishment",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "disposition",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "establishmentMeans",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "georeferenceVerificationStatus",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "lifeStage",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "organismQuantity",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "organismQuantityType",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "otherCatalogNumbers",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "pathway",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "preparations",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "recordedBy",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "recordedByID",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "recordNumber",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "reproductiveCondition",
+                            "namespace": "dwc"
+                    ],
+                    [
+                            "name"     : "sex",
+                            "namespace": "dwc"
+                    ],
+            ],
+            "Organism"            : [
+            ],
+            "PreservedSpecimen"   : [
+            ],
+            "ResourceRelationship": [
+            ],
+            "Taxon"               : [
+            ]
+    ]
+
+
+}
+
+if (!darwinCore.namespaces) {
+    darwinCore.namespaces = [
+            Archive                      : "http://rs.tdwg.org/dwc/text/",
+            Event                        : "http://rs.tdwg.org/dwc/terms/Event",
+            Occurrence                   : "http://rs.tdwg.org/dwc/terms/Occurrence",
+            MeasurementOrFact            : "http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact",
+            Media                        : "http://rs.gbif.org/terms/1.0/Multimedia",
+            eventID                      : "http://rs.tdwg.org/dwc/terms/eventID",
+            parentEventID                : "http://rs.tdwg.org/dwc/terms/parentEventID",
+            eventType                    : "eventType",
+            eventTime                    : "http://rs.tdwg.org/dwc/terms/eventTime",
+            eventDate                    : "http://rs.tdwg.org/dwc/terms/eventDate",
+            samplingProtocol             : "http://rs.tdwg.org/dwc/terms/samplingProtocol",
+            sampleSizeValue              : "http://rs.tdwg.org/dwc/terms/sampleSizeValue",
+            sampleSizeUnit               : "http://rs.tdwg.org/dwc/terms/sampleSizeUnit",
+            samplingEffort               : "http://rs.tdwg.org/dwc/terms/samplingEffort",
+            locationID                   : "http://rs.tdwg.org/dwc/terms/locationID",
+            decimalLatitude              : "http://rs.tdwg.org/dwc/terms/decimalLatitude",
+            decimalLongitude             : "http://rs.tdwg.org/dwc/terms/decimalLongitude",
+            geodeticDatum                : "http://rs.tdwg.org/dwc/terms/geodeticDatum",
+            coordinateUncertaintyInMeters: "http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters",
+            footprintWKT                 : "http://rs.tdwg.org/dwc/terms/footprintWKT",
+            geodeticDatum                : "http://rs.tdwg.org/dwc/terms/geodeticDatum",
+            eventRemarks                 : "http://rs.tdwg.org/dwc/terms/eventRemarks",
+            occurrenceID                 : "http://rs.tdwg.org/dwc/terms/occurrenceID",
+            basisOfRecord                : "http://rs.tdwg.org/dwc/terms/basisOfRecord",
+            recordedBy                   : "http://rs.tdwg.org/dwc/terms/recordedBy",
+            individualCount              : "http://rs.tdwg.org/dwc/terms/individualCount",
+            organismQuantity             : "http://rs.tdwg.org/dwc/terms/organismQuantity",
+            organismQuantityType         : "http://rs.tdwg.org/dwc/terms/organismQuantityType",
+            occurrenceStatus             : "http://rs.tdwg.org/dwc/terms/occurrenceStatus",
+            scientificName               : "http://rs.tdwg.org/dwc/terms/scientificName",
+            kingdom                      : "http://rs.tdwg.org/dwc/terms/kingdom",
+            family                       : "http://rs.tdwg.org/dwc/terms/family",
+            measurementID                : "http://rs.tdwg.org/dwc/terms/measurementID",
+            measurementType              : "http://rs.tdwg.org/dwc/terms/measurementType",
+            measurementTypeID            : "http://rs.iobis.org/obis/terms/measurementTypeID",
+            measurementValue             : "http://rs.tdwg.org/dwc/terms/measurementValue",
+            measurementAccuracy          : "http://rs.tdwg.org/dwc/terms/measurementAccuracy",
+            measurementUnit              : "http://rs.tdwg.org/dwc/terms/measurementUnit",
+            measurementUnitID            : "http://rs.iobis.org/obis/terms/measurementUnitID",
+            measurementDeterminedDate    : "http://rs.tdwg.org/dwc/terms/measurementDeterminedDate",
+            measurementDeterminedBy      : "http://rs.tdwg.org/dwc/terms/measurementDeterminedBy",
+            measurementRemarks           : "http://rs.tdwg.org/dwc/terms/measurementRemarks",
+            type                         : "http://purl.org/dc/terms/type",
+            identifier                   : "http://purl.org/dc/terms/identifier",
+            format                       : "http://purl.org/dc/terms/format",
+            creator                      : "http://purl.org/dc/terms/creator",
+            license                      : "http://purl.org/dc/terms/license",
+            rightsHolder                 : "http://purl.org/dc/terms/rightsHolder"
+    ]
 }
 
 // paratoo / monitor
