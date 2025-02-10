@@ -482,7 +482,7 @@ class RecordConverterSpec extends Specification {
                                 measurementTypeID: "http://qudt.org/vocab/quantitykind/Number",
                                 measurementAccuracy: "0.001",
                                 measurementUnit: "m",
-                                returnType: "java.lang.Integer",
+                                returnType: "java.lang.Double",
                                 measurementUnitID: "http://qudt.org/vocab/unit/M",
                                 description: "distance from source"
                         ],
@@ -504,7 +504,7 @@ class RecordConverterSpec extends Specification {
                                                 measurementTypeID: "http://qudt.org/vocab/quantitykind/Number",
                                                 measurementAccuracy: "0.001",
                                                 measurementUnit: "m",
-                                                returnType: "java.lang.Integer",
+                                                returnType: "java.lang.Double",
                                                 measurementUnitID: "http://qudt.org/vocab/unit/M",
                                                 description: "distance from source"
                                         ]
