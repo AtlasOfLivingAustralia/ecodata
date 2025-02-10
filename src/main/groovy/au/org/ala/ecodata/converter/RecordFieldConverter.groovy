@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.expression.Expression
 import org.springframework.expression.ExpressionParser
-import org.springframework.expression.spel.SpelEvaluationException
 import org.springframework.expression.spel.standard.SpelExpressionParser
 /**
  * Converts an Output's data model into one or more Records.
@@ -135,17 +134,10 @@ trait RecordFieldConverter {
             data.remove('context')
             return value
         }
-        catch (SpelEvaluationException exp) {
-            data.remove('context')
-            // This could happen if the expression references a field that is not in the data.
-            // Or, what is passed is a string and not an expression. This could happen when getMeasurementType calls this method.
-            // In such cases, return the value of measurementType i.e. expression itself.
-            return expression
-        }
         catch (Exception ex) {
-            data.remove('context')
             log.error(ex.message, ex)
-            return defaultValue
+            data.remove('context')
+            return defaultValue == null ? expression : defaultValue
         }
     }
 

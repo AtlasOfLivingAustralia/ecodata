@@ -101,7 +101,7 @@ class GenericConverterSpec extends Specification {
         result[0].individualCount == "Total number of individuals 5"
     }
 
-    def "convert should return expression if binding not found"() {
+    def "convert should return expression if binding not found and no default value"() {
         setup:
         Map data = [
                 "juvenile" : 2
@@ -112,7 +112,6 @@ class GenericConverterSpec extends Specification {
                 dwcAttribute: "individualCount",
                 dwcExpression: "['juvenile'] + ['adult']",
                 returnType: "java.lang.Integer",
-                dwcDefault: 0,
                 description: "Total number of individuals"
         ]
         GenericFieldConverter converter = new GenericFieldConverter()
@@ -122,10 +121,21 @@ class GenericConverterSpec extends Specification {
 
         then:
         result.size() == 1
-        result[0].individualCount == "juvenile + adult"
+        result[0].individualCount == "['juvenile'] + ['adult']"
+
+        when:
+        data = [
+                "juvenile" : 2
+        ]
+        metadata.dwcDefault = 1
+        result = converter.convert(data, metadata)
+
+        then:
+        result.size() == 1
+        result[0].individualCount == 1
     }
 
-    def "convert should return default value for all other exceptions"() {
+    def "expression should check for null value"() {
         setup:
         Map data = [
                 "juvenile" : 2,
@@ -135,7 +145,7 @@ class GenericConverterSpec extends Specification {
         Map metadata = [
                 name: "juvenile",
                 dwcAttribute: "individualCount",
-                dwcExpression: "['juvenile'] + ['adult']",
+                dwcExpression: "(['juvenile'] != null ? ['juvenile'] : 0)  + (['adult'] != null ? ['adult'] : 0)",
                 returnType: "java.lang.Integer",
                 dwcDefault: 0,
                 description: "Total number of individuals"
@@ -147,6 +157,6 @@ class GenericConverterSpec extends Specification {
 
         then:
         result.size() == 1
-        result[0].individualCount == 0
+        result[0].individualCount == 2
     }
 }
