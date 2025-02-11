@@ -135,7 +135,7 @@ trait RecordFieldConverter {
             return value
         }
         catch (Exception ex) {
-            log.error(ex.message, ex)
+            log.error(ex.message)
             data.remove('context')
             return defaultValue == null ? expression : defaultValue
         }

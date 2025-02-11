@@ -1535,7 +1535,7 @@ class RecordService {
      */
     Map convertProjectActivityToEvent (pActivity, project) {
         String dwcClass = DWC_EVENT
-        Map paDWC = grailsApplication.config.getProperty("darwinCore.projectActivityToDwC", Map)
+        Map paDWC = grailsApplication.config.getProperty("darwinCore.projectActivityToDwC.${DWC_EVENT}", Map)
         List configs = paDWC[dwcClass]
         Map<String, Map> result = [:].withDefault { [:] }
         configs.each { config ->
