@@ -1059,10 +1059,10 @@ class ParatooService {
                 cleanedDefinition << cleanSwaggerDefinition(value)
             }
         } else {
-            try {
-                cleanedDefinition = definition?.clone()
+            if (definition instanceof Cloneable) {
+                cleanedDefinition = definition.clone()
             }
-            catch (CloneNotSupportedException e) {
+            else {
                 // if not cloneable, then it is a primitive type
                 cleanedDefinition = definition
             }
