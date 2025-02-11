@@ -220,7 +220,6 @@ grails:
     mongodb:
         codecs:
             - au.org.ala.ecodata.customcodec.AccessLevelCodec
-
     cors:
         enabled: true
         allowedHeaders:

@@ -5,7 +5,7 @@ class AudioConverter implements RecordFieldConverter {
     private static final String DEFAULT_RIGHTS_STATEMENT = "The rights to all uploaded audio are held equally, under a Creative Commons Attribution (CC-BY v3.0) license, by the contributor of the audio and the primary organisation responsible for the project to which they are contributed."
     private static final String DEFAULT_LICENCE = "Creative Commons Attribution"
 
-    List<Map> convert(Map data, Map metadata = [:]) {
+    List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
         Map record = [:]
 
         record.multimedia = data[metadata.name]
