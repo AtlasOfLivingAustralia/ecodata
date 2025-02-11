@@ -1,5 +1,4 @@
 package au.org.ala.ecodata.reporting
-
 /**
  * An AggregationBuilder can create instances of the Aggregator class based on the supplied information about
  * how the aggregation should be performed.
@@ -10,8 +9,10 @@ class AggregatorFactory {
         if (config instanceof GroupingAggregationConfig) {
             new GroupingAggregator(config)
         }
+        else if (config instanceof ExpressionAggregationConfig) {
+            new ExpressionAggregator(config)
+        }
         else if (config instanceof CompositeAggregationConfig) {
-
             new CompositeAggregator(config)
         }
         else if (config instanceof FilteredAggregationConfig) {
@@ -35,6 +36,11 @@ class AggregatorFactory {
             GroupingConfig groupingConfig = new GroupingConfig(config.groups)
 
             configObject = new GroupingAggregationConfig(label:config.label, groups: groupingConfig, childAggregations: createChildConfig(config))
+        }
+        else if (config.containsKey('expression')) {
+            configObject = new ExpressionAggregationConfig(
+                    expression:config.expression, label:config.label, childAggregations: createChildConfig(config)
+            )
         }
         else if (config.containsKey('filter')) {
             GroupingConfig filterConfig = new GroupingConfig(config.filter)

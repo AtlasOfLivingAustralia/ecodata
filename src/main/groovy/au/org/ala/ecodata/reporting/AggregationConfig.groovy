@@ -25,6 +25,10 @@ class FilteredAggregationConfig extends AggregationConfig {
     }
 }
 
+class ExpressionAggregationConfig extends CompositeAggregationConfig {
+    String expression
+}
+
 class GroupingConfig extends Aggregation {
     String type // DATE, DISCRETE, FILTER, HISTOGRAM
     Object filterValue
