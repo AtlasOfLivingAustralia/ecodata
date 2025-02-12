@@ -40,6 +40,10 @@ class Aggregation extends AggregationConfig {
     String property
 }
 
+class DistinctAggregationConfig extends Aggregation {
+    String keyProperty
+}
+
 class AggregationResult {
     String label
     int count

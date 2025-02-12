@@ -17,7 +17,8 @@ class ExpressionAggregatorSpec extends Specification {
                         [
                                 label:"value2",
                                 "property": "data.value2",
-                                "type": "SUM"
+                                "keyProperty": "data.group",
+                                "type": "DISTINCT_SUM"
                         ],
                         [
                                 label:"value3",
