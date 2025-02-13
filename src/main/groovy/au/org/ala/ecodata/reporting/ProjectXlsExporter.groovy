@@ -240,7 +240,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private static List getIntersectionProperties() {
-        List props = []
+        List props = [ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN]
         def metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
         Map config = metadataService.getGeographicConfig()
         List intersectionLayers = config.checkForBoundaryIntersectionInLayers
@@ -258,7 +258,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private static List getIntersectionHeaders() {
-        List headers = []
+        List headers = ["Geographic range overridden"]
         def metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
         Map config = metadataService.getGeographicConfig()
         List intersectionLayers = config.checkForBoundaryIntersectionInLayers

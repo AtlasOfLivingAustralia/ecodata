@@ -29,6 +29,15 @@ class ProjectService {
      * is to support concurrent edits on different project data set summaries which are currently modelled as
      * an embedded array but can be added and updated by both the UI and the Monitor (Parataoo) application API */
     static final Map PROJECT_UPDATE_LOCKS = Collections.synchronizedMap([:].withDefault{ new Object() })
+    public static final String PRIMARY_STATE = "primarystate"
+    public static final String PRIMARY_ELECT = "primaryelect"
+    public static final String PROJECT_STATE_FACET = "projectStateFacet"
+    public static final String PROJECT_ELECT_FACET = "projectElectFacet"
+    public static final String OTHER_STATES_LIST = "otherStates"
+    public static final String OTHER_ELECTORATES_LIST = "otherElectorates"
+    public static final String OTHER_STATE = "otherstate"
+    public static final String OTHER_ELECT = "otherelect"
+    public static final String GEOGRAPHIC_RANGE_OVERRIDDEN = "geographicRangeOverridden"
 
     GrailsApplication grailsApplication
     MessageSource messageSource
@@ -1230,9 +1239,9 @@ class ProjectService {
 
     /**
      * Get representative sites of a project.
-     * 1. Check EMSA/Reporting sites
-     * 2. If there are no EMSA/Reporting sites, return planning/project extent sites
-     * 3. If there are no EMSA/Reporting/Planning/extent sites, return Management Unit boundaries.
+     * 1. All sites except project area. This includes Reporting, EMSA and Planning sites.
+     * 2. Get project area(s)
+     * 3. If there are no sites associated with project, return Management Unit boundaries.
      * 4. Where none exist, return none
      * @param project
      * @return
@@ -1240,9 +1249,9 @@ class ProjectService {
     List getRepresentativeSitesOfProject(Map project) {
         if (project) {
             List sites = project.sites
-            List projectSites = siteService.filterSitesByPurposeIsReportingOrEMSA(sites) ?: []
+            List projectSites = siteService.findAllSitesExceptProjectArea(sites) ?: []
             if (projectSites.isEmpty()) {
-                projectSites =  siteService.filterSitesByPurposeIsPlanning(sites) ?: []
+                projectSites =  siteService.findAllSitesByTypeProjectArea(sites) ?: []
                 if (projectSites.isEmpty() && project.managementUnitId) {
                     ManagementUnit mu = ManagementUnit.findByManagementUnitId(project.managementUnitId)
                     String managementUnitSiteId = mu?.managementUnitSiteId
@@ -1258,7 +1267,6 @@ class ProjectService {
             return projectSites
         }
 
-
         []
     }
 
@@ -1268,17 +1276,15 @@ class ProjectService {
             return [:]
         }
 
-        List elect = result.remove('projectElectFacet') as List
-        List state = result.remove('projectStateFacet') as List
-
-        if (state) {
-            result["primarystate"] = state.pop()
-            result["otherstate"] = state?.join("; ")
+        List electorates = result.remove(OTHER_ELECTORATES_LIST) as List
+        List states = result.remove(OTHER_STATES_LIST) as List
+        def separator = "; "
+        if (states) {
+            result[OTHER_STATE] = states.join(separator)
         }
 
-        if (elect) {
-            result["primaryelect"] = elect.pop()
-            result["otherelect"] = elect.join("; ")
+        if (electorates) {
+            result[OTHER_ELECT] = electorates.join(separator)
         }
 
         result
@@ -1286,9 +1292,19 @@ class ProjectService {
 
     /**
      * Find primary/other state(s)/electorate(s) for a project.
-     * 1. If isDefault is true, use manually assigned state(s)/electorate(s) i.e project.geographicInfo.
-     * 2. If isDefault is false or missing, use the state(s)/electorate(s) from sites using site precedence.
-     * 3. If isDefault is false and there are no sites, use manual state(s)/electorate(s) in project.geographicInfo.
+     * 1. Get eligible sites and do automatic ordering of states and electorates
+     * 2. If overridePrimaryState and/or overridePrimaryElectorate is true, then override calculated value with manual value.
+     * 3. Add all other states and electorates to end of list
+     * 4. Remove any value in exclude list
+     * @params project - map of a project with all sites associated in sites property
+     * @return [
+     *  "projectStateFacet": [] - all states
+     *  "projectElectFacet": [] - all electorates
+     *  "primarystate": "",
+     *  "primaryelect": "",
+     *  "otherStates": []
+     *  "otherElectorates": []
+     * ]
      */
     Map findStateAndElectorateForProject (Map project) {
         Map result = [:]
@@ -1297,35 +1313,83 @@ class ProjectService {
         }
 
         Map geographicInfo = project?.geographicInfo
-        // isDefault is false or missing
-        if (geographicInfo == null || (geographicInfo.isDefault == false)) {
-            Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
-            Map config = metadataService.getGeographicConfig()
-            List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
-            intersectionLayers?.each { layer ->
-                Map facetName = metadataService.getGeographicFacetConfig(layer)
-                if (facetName.name) {
-                    List intersectionValues = intersections[layer]
-                    if (intersectionValues) {
-                        result["project${facetName.name.capitalize()}Facet"] = intersectionValues
-                    }
+        Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
+        Map config = metadataService.getGeographicConfig()
+        List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
+        intersectionLayers?.each { layer ->
+            Map facetName = metadataService.getGeographicFacetConfig(layer)
+            if (facetName.name) {
+                List intersectionValues = intersections[layer]
+                if (intersectionValues) {
+                    result["project${facetName.name.capitalize()}Facet"] = intersectionValues
                 }
-                else
-                    log.error ("No facet config found for layer $layer.")
+            }
+            else
+                log.error ("No facet config found for layer $layer.")
+        }
+
+        // take a copy of calculated states & electorates for comparison
+        List statesInferredFromSites = result[PROJECT_STATE_FACET] ? new ArrayList<String>(result[PROJECT_STATE_FACET]) : []
+        List electoratesInferredFromSites = result[PROJECT_ELECT_FACET] ? new ArrayList<String>(result[PROJECT_ELECT_FACET]) : []
+
+        // override primary state with manually entered value
+        if (geographicInfo?.overridePrimaryState) {
+            if (geographicInfo.primaryState) {
+                List states = result[PROJECT_STATE_FACET] = result[PROJECT_STATE_FACET] ?: []
+                states.add(0, geographicInfo.primaryState)
             }
         }
 
-        //isDefault is true or false and no sites.
-        if (geographicInfo) {
-            // load from manually assigned electorates/states
-            if (!result.containsKey("projectElectFacet")) {
-                result["projectElectFacet"] = (geographicInfo.primaryElectorate ? [geographicInfo.primaryElectorate] : []) + geographicInfo.otherElectorates
-            }
-
-            if (!result.containsKey("projectStateFacet")) {
-                result["projectStateFacet"] = (geographicInfo.primaryState ? [geographicInfo.primaryState] : []) + geographicInfo.otherStates
+        // override primary electorate with manually entered value
+        if (geographicInfo?.overridePrimaryElectorate) {
+            if (geographicInfo.primaryElectorate) {
+                List elects = result[PROJECT_ELECT_FACET] = result[PROJECT_ELECT_FACET] ?: []
+                elects.add(0, geographicInfo.primaryElectorate)
             }
         }
+
+        List otherStates = new ArrayList(result[PROJECT_STATE_FACET] ?: [] as Collection)
+        List otherElectorates = new ArrayList(result[PROJECT_ELECT_FACET] ?: [] as Collection)
+        // choose primary states and electorates here so that values in other fields do not
+        // influence the result
+        result[PRIMARY_STATE] = otherStates ? otherStates.pop() : null
+        result[PRIMARY_ELECT] = otherElectorates ? otherElectorates.pop() : null
+
+        // adds missing states
+        if (geographicInfo?.otherStates) {
+            otherStates.addAll(geographicInfo.otherStates)
+            otherStates = otherStates.toUnique()
+        }
+
+        // removes excluded states
+        if (geographicInfo?.otherExcludedStates) {
+            otherStates.removeAll(geographicInfo.otherExcludedStates)
+        }
+
+        // otherElectorates are by default added to end of list
+        if (geographicInfo?.otherElectorates) {
+            otherElectorates.addAll(geographicInfo.otherElectorates)
+            otherElectorates = otherElectorates.toUnique()
+        }
+
+        // removes excluded electorates
+        if (geographicInfo?.otherExcludedElectorates) {
+            otherElectorates.removeAll(geographicInfo.otherExcludedElectorates)
+        }
+
+        // update fields containing all states and electorates
+        result[PROJECT_STATE_FACET] = result[PRIMARY_STATE] ? [result[PRIMARY_STATE]] + otherStates : otherStates
+        result[PROJECT_ELECT_FACET] = result[PRIMARY_ELECT] ? [result[PRIMARY_ELECT]] + otherElectorates : otherElectorates
+
+        // add other fields to result
+        result[OTHER_STATES_LIST] = otherStates
+        result[OTHER_ELECTORATES_LIST] = otherElectorates
+
+        // compare inferred values and final values to find if they are the same
+        if ((statesInferredFromSites != result[PROJECT_STATE_FACET]) || (electoratesInferredFromSites != result[PROJECT_ELECT_FACET] ))
+            result[GEOGRAPHIC_RANGE_OVERRIDDEN] = true
+        else
+            result[GEOGRAPHIC_RANGE_OVERRIDDEN] = false
 
         result
     }
