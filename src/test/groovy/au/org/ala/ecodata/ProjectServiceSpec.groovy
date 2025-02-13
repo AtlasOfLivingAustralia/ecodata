@@ -1186,7 +1186,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result.otherstate == "NSW; VIC"
         result.primaryelect == null
         result.otherelect == "Canberra; Fenner"
-        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == false
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == true
     }
 
 
