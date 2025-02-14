@@ -7,7 +7,7 @@ package au.org.ala.ecodata.reporting
 class Score {
 
     /** Enumerates the currently supported ways to aggregate output scores. */
-    enum AGGREGATION_TYPE {SUM, AVERAGE, COUNT, HISTOGRAM, SET}
+    enum AGGREGATION_TYPE {SUM, AVERAGE, COUNT, HISTOGRAM, SET, DISTINCT_SUM}
 
     /** The name of the output to which the score belongs */
     String outputName
