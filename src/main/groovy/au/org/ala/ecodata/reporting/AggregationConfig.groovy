@@ -26,7 +26,11 @@ class FilteredAggregationConfig extends AggregationConfig {
 }
 
 class ExpressionAggregationConfig extends CompositeAggregationConfig {
+    /** The expression to evaluate */
     String expression
+
+    /** The value to return if the expression evaluation fails (e.g. missing variables due to no data, divide by 0) */
+    def defaultValue
 }
 
 class GroupingConfig extends Aggregation {

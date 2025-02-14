@@ -236,7 +236,7 @@ class OrganisationService implements DataBinder {
         def org = Organisation.findByOrganisationId(id)
         if (org) {
             List toAggregate = Score.findAllByScoreIdInList(scoreIds)
-            List outputSummary = reportService.organisationSummary(id, toAggregate, approvedOnly, aggregationConfig) ?: []
+            List outputSummary = reportService.organisationSummary(org, toAggregate, approvedOnly, aggregationConfig) ?: []
 
             return outputSummary
         } else {

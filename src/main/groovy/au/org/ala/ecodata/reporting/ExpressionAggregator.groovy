@@ -16,11 +16,13 @@ class ExpressionAggregator extends BaseAggregator {
 
     AggregatorFactory factory = new AggregatorFactory()
     Expression expression
+    def defaultValue = 0
 
     ExpressionAggregator(ExpressionAggregationConfig config) {
 
         ExpressionParser expressionParser = new SpelExpressionParser()
         expression = expressionParser.parseExpression(config.expression)
+        defaultValue = config.defaultValue ?: 0
 
         aggregators = config.childAggregations.collect {
             factory.createAggregator(it)
@@ -60,7 +62,7 @@ class ExpressionAggregator extends BaseAggregator {
             }
         }
 
-        result.result = ExpressionUtil.evaluate(expression, expressionContext)
+        result.result = ExpressionUtil.evaluateWithDefault(expression, expressionContext, defaultValue)
 
         result
     }
