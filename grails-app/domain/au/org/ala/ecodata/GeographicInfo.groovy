@@ -15,6 +15,8 @@ class GeographicInfo {
         primaryElectorate nullable: true
         otherStates nullable: true
         otherElectorates nullable: true
+        otherExcludedStates nullable: true
+        otherExcludedElectorates nullable: true
     }
 
     /** Some projects don't have specific geographic areas and are flagged as being run nationwide */
@@ -23,8 +25,11 @@ class GeographicInfo {
     /** A flag to indicate that the project is running statewide i.e. all electorates in a state */
     boolean statewide = false
 
-    /** A flag to override calculated values for states and electorates with manually entered values */
-    boolean isDefault = false
+    /** A flag to override calculated primary state value */
+    boolean overridePrimaryState = false
+
+    /** A flag to override calculated primary electorate value */
+    boolean overridePrimaryElectorate = false
 
     /** The primary state in which this project is running, if applicable */
     String primaryState
@@ -35,6 +40,12 @@ class GeographicInfo {
     /** States in which this project is running */
     List<String> otherStates
 
+    /** States to exclude from project list */
+    List<String> otherExcludedStates
+
     /** Electorates in which this project is running */
     List<String> otherElectorates
+
+    /** Electorates to exclude from project list */
+    List<String> otherExcludedElectorates
 }

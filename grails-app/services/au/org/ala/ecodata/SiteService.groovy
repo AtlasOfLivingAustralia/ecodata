@@ -1084,12 +1084,14 @@ class SiteService {
         code
     }
 
-    List filterSitesByPurposeIsReportingOrEMSA (List<Map> sites) {
-        sites?.findAll { getPurpose(it) == Site.EMSA_SITE_CODE || getPurpose(it) == Site.REPORTING_SITE_CODE }
+    List findAllSitesExceptProjectArea(List<Map> sites) {
+        sites?.findAll {
+            it.type != Site.TYPE_PROJECT_AREA
+        }
     }
 
-    List filterSitesByPurposeIsPlanning (List<Map> sites) {
-        sites?.findAll { getPurpose(it) == Site.PLANNING_SITE_CODE }
+    List findAllSitesByTypeProjectArea(List<Map> sites) {
+        sites?.findAll { it.type == Site.TYPE_PROJECT_AREA }
     }
 
     /**
