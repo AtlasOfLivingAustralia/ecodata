@@ -46,6 +46,7 @@ class ExpressionAggregatorSpec extends Specification {
     }
 
     def "The expression aggregator can accept a default value for when the expression can't be evaluated"() {
+        setup:
         Map config = [
                 label: "score",
                 expression: "value1/value2",
@@ -66,14 +67,15 @@ class ExpressionAggregatorSpec extends Specification {
 
         ExpressionAggregator aggregator = new AggregatorFactory().createAggregator(config)
 
+        when:
         aggregator.aggregate([data:[:]])
         AggregationResult result = aggregator.result()
 
-        expect:
+        then:
         result.result == 0
 
         when:
-        aggregator.aggegate([value1:0, value2:0]) // cause a divide by zero
+        aggregator.aggregate([value1:0, value2:0]) // cause a divide by zero
         result = aggregator.result()
 
         then:
