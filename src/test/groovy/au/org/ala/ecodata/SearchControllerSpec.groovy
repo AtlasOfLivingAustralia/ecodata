@@ -89,8 +89,8 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         projectExporter instanceof ProjectXlsExporter
         ((ProjectXlsExporter)projectExporter).formSectionPerTab == formSectionPerTab
         projectExporter.tabsToExport == params.tabs
-        ((ProjectXlsExporter)projectExporter).configurableIntersectionHeaders == ["Primary State(s) (Interpreted)",	"Other State(s) (Interpreted)",	"Primary Electorate(s) (Interpreted)",	"Other Electorate(s) (Interpreted)"]
-        ((ProjectXlsExporter)projectExporter).configurableIntersectionProperties == ["primarystate", "otherstate", "primaryelect", "otherelect"]
+        ((ProjectXlsExporter)projectExporter).configurableIntersectionHeaders == ["Geographic range overridden", "Primary State(s) (Interpreted)",	"Other State(s) (Interpreted)",	"Primary Electorate(s) (Interpreted)",	"Other Electorate(s) (Interpreted)"]
+        ((ProjectXlsExporter)projectExporter).configurableIntersectionProperties == [ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN, "primarystate", "otherstate", "primaryelect", "otherelect"]
 
         where:
         formSectionPerTab | _
