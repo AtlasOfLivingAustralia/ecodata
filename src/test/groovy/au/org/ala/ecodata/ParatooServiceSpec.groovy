@@ -1360,6 +1360,22 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "usesPlotLayout": false,
                 "tags"          : ["survey"],
                 "apiEndpoint"   : "s1s",
+                "insertions": [
+                        "dataModel": [
+                                "<root>": [
+                                        [
+                                                "dataType": "text",
+                                                "name": "countTypeIndividual",
+                                                "dwcAttribute": "individualsOrGroups",
+                                                "dwcExpression": "'Individuals'",
+                                                "constraints": [
+                                                        "Individuals",
+                                                        "Groups"
+                                                ]
+                                        ]
+                                ]
+                        ]
+                ],
                 "overrides"     : [
                         "dataModel": null,
                         "viewModel": null
@@ -1374,6 +1390,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "name"         : "height",
                 "description"  : "height",
                 "decimalPlaces": 0
+        ]
+        result.dataModel[1] == [
+                "dataType": "text",
+                "name": "countTypeIndividual",
+                "dwcAttribute": "individualsOrGroups",
+                "dwcExpression": "'Individuals'",
+                "constraints": [
+                        "Individuals",
+                        "Groups"
+                ]
         ]
         result.viewModel[0] == [
                 "type"    : "number",
@@ -1394,6 +1420,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "name"         : "height",
                 "description"  : "height",
                 "decimalPlaces": 6
+        ]
+        result.dataModel[1] == [
+                "dataType": "text",
+                "name": "countTypeIndividual",
+                "dwcAttribute": "individualsOrGroups",
+                "dwcExpression": "'Individuals'",
+                "constraints": [
+                        "Individuals",
+                        "Groups"
+                ]
         ]
         result.viewModel[0] == [
                 "type"    : "number",
@@ -1453,6 +1489,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         "tags"       : true
                 ],
                 "x-lut-ref":"lut1"
+        ]
+        result.dataModel[1] == [
+                "dataType": "text",
+                "name": "countTypeIndividual",
+                "dwcAttribute": "individualsOrGroups",
+                "dwcExpression": "'Individuals'",
+                "constraints": [
+                        "Individuals",
+                        "Groups"
+                ]
         ]
         result.viewModel[0] == [
                 "type"    : "selectOne",

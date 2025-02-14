@@ -41,6 +41,7 @@ class ParatooProtocolConfig {
         apiEndpoint ?: defaultEndpoint(surveyId)
     }
     Map overrides = [dataModel: [:], viewModel: [:]]
+    Map<String, Map<String,List>> insertions = [dataModel: new LinkedHashMap<String, List>(), viewModel: new LinkedHashMap<String, List>()]
 
     ParatooCollectionId surveyId
     TimeZone clientTimeZone
