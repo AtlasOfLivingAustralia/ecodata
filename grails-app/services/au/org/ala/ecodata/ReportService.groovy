@@ -529,7 +529,7 @@ class ReportService {
 
     /**
      * Returns aggregated scores for a specified project.
-     * @param organisationId the organisation of interest.
+     * @param organisation the organisation of interest.
      * @param aggregationSpec defines the scores to be aggregated and if any grouping needs to occur.
      * [{score:{name: , units:, aggregationType}, groupBy: {entity: <one of 'activity', 'output', 'organisation', 'site>, property: String <the entity property to group by>}, ...]
      *
@@ -537,9 +537,12 @@ class ReportService {
      * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
      *
      */
-    List organisationSummary(String organisationId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
+    List organisationSummary(Organisation organisation, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
 
-        List activities = activityService.findAllForOrganisationId(organisationId, 'FLAT')
-        aggregate(activities, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
+        List activities = activityService.findAllForOrganisationId(organisation.organisationId, 'FLAT')
+        // Make the organisation available to the aggregation as one of the Scores
+        // needs access to it.
+        List aggregationData = activities.collect{it+[organisation:organisation]}
+        aggregate(aggregationData, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
     }
 }
