@@ -1384,8 +1384,8 @@ class RecordService {
     }
 
     Map getAttributeConfig(String dwcClass, String attribute) {
-        Map groups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass", Map)
-        groups[dwcClass].find { it.name == attribute }
+        List groups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass.$dwcClass", List<Map>)
+        groups.find { it.name == attribute }
     }
 
     Map darwinCoreTermsGroupedByClass() {
@@ -1535,8 +1535,7 @@ class RecordService {
      */
     Map convertProjectActivityToEvent (pActivity, project) {
         String dwcClass = DWC_EVENT
-        Map paDWC = grailsApplication.config.getProperty("darwinCore.projectActivityToDwC", Map)
-        List configs = paDWC[dwcClass]
+        List configs = grailsApplication.config.getProperty("darwinCore.projectActivityToDwC.${DWC_EVENT}", List<Map>)
         Map<String, Map> result = [:].withDefault { [:] }
         configs.each { config ->
             transformToEventCoreTerm(config, pActivity, [project: project, pActivity: pActivity, recordService: this], result, dwcClass)
