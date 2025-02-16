@@ -1297,6 +1297,7 @@ class ParatooService {
             }
         }
 
+        addInsertions(template.dataModel, template.viewModel, "", config)
         template
     }
 
@@ -1521,6 +1522,7 @@ class ParatooService {
             modelVisitStack.pop()
         }
 
+        addInsertions(model.dataModel, model.viewModel, path, config)
         model
     }
 
@@ -1537,6 +1539,24 @@ class ParatooService {
             Map override = overrides?.viewModel[path]
             if (override) {
                 viewModel.putAll(override)
+            }
+        }
+    }
+
+    void addInsertions(List dataModels, List viewModels, String path = "", ParatooProtocolConfig config) {
+        path = path ?: "<root>"
+        Map insertions = config.insertions
+        if (insertions?.dataModel?.containsKey(path)) {
+            List items = insertions?.dataModel[path] as List
+            if (items) {
+                dataModels.addAll(items)
+            }
+        }
+
+        if (insertions?.viewModel?.containsKey(path)) {
+            List items = insertions?.viewModel[path] as List
+            if (items) {
+                viewModels.addAll(items)
             }
         }
     }
