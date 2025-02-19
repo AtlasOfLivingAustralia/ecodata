@@ -12,7 +12,7 @@ class ListConverter implements RecordFieldConverter {
         int index = 0
 
         // delegate the conversion of each column in each row to a specific converter for the column type
-        data[outputMetadata.name].each { row ->
+        data?.get(outputMetadata.name)?.each { row ->
             if (row == null) {
                 return
             }
