@@ -448,7 +448,8 @@ class RecordConverterSpec extends Specification {
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata, false)
-        measurementsOrFacts = fieldsets[0].measurementsOrFacts.values().toList()
+        measurementsOrFacts = fieldsets[0].measurementsOrFacts
+
         then:
         fieldsets.size() == 1
         fieldsets[0].attribute1 == "fieldValue1"
@@ -543,7 +544,7 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].name == "scientificName1"
         fieldsets[0].outputSpeciesId == "speciesFieldId1"
         fieldsets[0].occurrenceID == "speciesFieldId1"
-        fieldsets[0].measurementsOrFacts.size() == 3
+        fieldsets[0].measurementsOrFacts.size() == 2
         fieldsets[0].measurementsOrFacts[0].eventID == "act1"
         fieldsets[0].measurementsOrFacts[0].measurementValue == 10.056
         fieldsets[0].measurementsOrFacts[0].measurementType == "distance from source"
@@ -557,12 +558,12 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].measurementsOrFacts[1].measurementAccuracy == "0.001"
         fieldsets[0].measurementsOrFacts[1].measurementUnit == "m"
         fieldsets[0].measurementsOrFacts[1].measurementUnitID == "http://qudt.org/vocab/unit/M"
-        fieldsets[0].measurementsOrFacts[2].measurementValue == 23.056
-        fieldsets[0].measurementsOrFacts[2].measurementType == "distance from source"
-        fieldsets[0].measurementsOrFacts[2].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
-        fieldsets[0].measurementsOrFacts[2].measurementAccuracy == "0.001"
-        fieldsets[0].measurementsOrFacts[2].measurementUnit == "m"
-        fieldsets[0].measurementsOrFacts[2].measurementUnitID == "http://qudt.org/vocab/unit/M"
+        fieldsets[1].measurementsOrFacts[1].measurementValue == 23.056
+        fieldsets[1].measurementsOrFacts[1].measurementType == "distance from source"
+        fieldsets[1].measurementsOrFacts[1].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
+        fieldsets[1].measurementsOrFacts[1].measurementAccuracy == "0.001"
+        fieldsets[1].measurementsOrFacts[1].measurementUnit == "m"
+        fieldsets[1].measurementsOrFacts[1].measurementUnitID == "http://qudt.org/vocab/unit/M"
         fieldsets[1].attribute1 == 1
         fieldsets[1].attribute2 == "present"
         fieldsets[1].scientificName == "scientificName2"
@@ -571,6 +572,6 @@ class RecordConverterSpec extends Specification {
         fieldsets[1].name == "scientificName2"
         fieldsets[1].outputSpeciesId == "speciesFieldId2"
         fieldsets[1].occurrenceID == "speciesFieldId2"
-        fieldsets[1].measurementsOrFacts.size() == 3
+        fieldsets[1].measurementsOrFacts.size() == 2
     }
 }
