@@ -1628,9 +1628,9 @@ if (!darwinCore.termsGroupedByClass) {
             ],
             "MeasurementOrFact"   : [
                     [
-                            "name"      : "measurementsorfacts",
+                            "name"      : "measurementsOrFacts",
                             "substitute": { record, params ->
-                                record.measurementsorfacts ?: []
+                                record.measurementsOrFacts ?: []
                             },
                             order: [
                                     "eventID",
@@ -1649,7 +1649,7 @@ if (!darwinCore.termsGroupedByClass) {
                     [
                             "name"      : "multimedia",
                             "substitute": { record, params ->
-                                record?.multimedia?.collect { mediaRecord ->
+                                record?.multimedia?.findResults { mediaRecord ->
                                     if (mediaRecord.documentId) {
                                         Document document = Document.findByDocumentIdAndStatusNotEqual(mediaRecord.documentId, DELETED)
                                         if (document) {

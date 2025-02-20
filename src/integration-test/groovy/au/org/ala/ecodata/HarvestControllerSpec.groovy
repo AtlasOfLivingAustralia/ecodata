@@ -236,8 +236,8 @@ class HarvestControllerSpec extends Specification {
                     // check MeasurementOrFact.csv
                     CSVReader readerCSV = new CSVReader(new StringReader(content))
                     List<String[]> lines = readerCSV.readAll()
-                    assert lines[0] == ["eventID","occurrenceID","measurementValue","measurementAccuracy","measurementUnit","measurementUnitID","measurementType","measurementTypeID"]
-                    assert lines[1] == ["activity1","outputSpecies1","1.0","0.001","m","http://qudt.org/vocab/unit/M","distance from source","http://qudt.org/vocab/quantitykind/Number"]
+                    assert lines[0] == ["eventID","occurrenceID","measurementValue","measurementAccuracy","measurementUnit","measurementUnitID","measurementType","measurementTypeID", "measurementID"]
+                    assert lines[1] == ["activity1","outputSpecies1","1.0","0.001","m","http://qudt.org/vocab/unit/M","distance from source","http://qudt.org/vocab/quantitykind/Number",""]
                     assert lines.size() ==2
                     break
             }

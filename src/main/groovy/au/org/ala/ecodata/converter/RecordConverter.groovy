@@ -173,15 +173,18 @@ class RecordConverter {
             records << baseRecord
         }
 
-        // Add measurements or facts only when event core archive is being created.
-        if (recordGeneration) {
-            records.each {
-                it.remove(PROP_MEASUREMENTS_OR_FACTS)
-            }
-        }
+        convertMeasurementsOrFactsToList(records)
         end = System.currentTimeMillis()
         log.debug("Time in milliseconds to convert nested data model - ${end - start}")
         // We are now left with a list of one or more Maps, where each Map contains all the fields for an individual Record.
+        records
+    }
+
+    static List convertMeasurementsOrFactsToList (List records) {
+        records?.each { record ->
+            record[PROP_MEASUREMENTS_OR_FACTS] = record[PROP_MEASUREMENTS_OR_FACTS]?.collect { it.value } ?: []
+        }
+
         records
     }
 
@@ -289,17 +292,21 @@ class RecordConverter {
         dwcFields
     }
 
-    static void updateSpeciesIdToMeasurements(List measurements, String id) {
-        measurements?.each {
-            if(!it.occurrenceID)
-                it.occurrenceID = id
+    static void updateSpeciesIdToMeasurements(Map measurements, String id) {
+        measurements?.each { key, value ->
+            if (!value.occurrenceID) {
+                value.occurrenceID = id
+                key.occurrenceID = id
+            }
         }
     }
 
-    static void updateEventIdToMeasurements(List measurements, String id) {
-        measurements?.each {
-            if(!it.eventID)
-                it.eventID = id
+    static void updateEventIdToMeasurements(Map measurements, String id) {
+        measurements?.each { key, value ->
+            if (!value.eventID) {
+                value.eventID = id
+                key.eventID = id
+            }
         }
     }
 
@@ -332,6 +339,10 @@ class RecordConverter {
 
                 result[entry.key].addAll(entry.value)
             }
+            if (entry.value instanceof Map) {
+                result[entry.key] = result[entry.key] ?: [:]
+                result[entry.key] << entry.value
+            }
             else {
                 result[entry.key] = entry.value
             }
@@ -340,17 +351,4 @@ class RecordConverter {
         result
     }
 
-    /**
-     * Removes for duplicate entries. A duplicate entry is when all values in a map are the same.
-     * [a: 'b', c: 'd'] & [a: 'b', c: 'd'] are duplicates.
-     * [a: 'b', c: 'd'] & [a: 'b', c: 'e'] are not duplicates.
-     * @param measurements
-     * @return
-     */
-    static List removeDuplicates (List measurements) {
-        measurements?.groupBy {
-            it.values().toString() }.collect { key, values ->
-            values?.get(0)
-        }
-    }
 }
