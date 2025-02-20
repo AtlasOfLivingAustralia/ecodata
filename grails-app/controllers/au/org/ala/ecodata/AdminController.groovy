@@ -740,7 +740,8 @@ class AdminController {
     def regenerateRecordsForALAHarvestableProjects() {
         def result = [:]
         try {
-            recordService.regenerateRecordsForBioCollectProjects()
+            List projects = params.projectId?.split(',')?.toList()
+            recordService.regenerateRecordsForBioCollectProjectsOrProjectList(projects)
             result.message = "Submitted regeneration of records"
         }
         catch (Exception e) {

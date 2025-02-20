@@ -45,6 +45,7 @@ class Record {
     String outputId
     String json
     Integer outputItemId
+    List measurementsOrFacts = []
     String status = ACTIVE
 
     static transients = ['recordNumber']
@@ -78,6 +79,7 @@ class Record {
         name nullable: true
         vernacularName nullable: true
         scientificName nullable: true
+        measurementsOrFacts nullable: true
     }
 
     String getRecordNumber(sightingsUrl){

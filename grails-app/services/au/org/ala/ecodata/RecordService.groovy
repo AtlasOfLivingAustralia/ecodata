@@ -1007,7 +1007,7 @@ class RecordService {
      * regenerate records for all BioCollect projects
      * @return
      */
-    def regenerateRecordsForBioCollectProjects() {
+    def regenerateRecordsForBioCollectProjectsOrProjectList(List projectIds) {
         task {
             // prevent simultaneous record generation when clicked multiple times.
             synchronized (LOCK_1) {
@@ -1026,6 +1026,10 @@ class RecordService {
                                     status: [ACTIVE]
                             ]
                     ]
+
+                    if (projectIds) {
+                        pagination.searchCriteria.projectId = projectIds
+                    }
 
                     int counter = 1
                     def projects = projectService.listProjects(pagination)
@@ -1146,6 +1150,7 @@ class RecordService {
      */
     void getDarwinCoreArchiveForProject(outputStream, Project project) {
         Map result
+        List doNotWriteClasses = [DWC_MEDIA, DWC_MEASUREMENT]
         Map<String,List> headersByDwcClass = [:].withDefault {[]}
         Map dwcGroups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass", Map)
         new ZipOutputStream(outputStream).withStream { zip ->
@@ -1156,26 +1161,29 @@ class RecordService {
                 zip << getEmlXML(project)
                 zip.closeEntry()
 
-                result = generateEventCoreFiles (project)
+                result = generateEventCoreFiles (project, zip)
 
                 result.each { dwcClass, rows ->
-                    if (rows.size()) {
-                        zip.putNextEntry(new ZipEntry("${dwcClass}.csv"))
-                        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(zip))
-                        List headers = getHeadersFromRows(rows)
-                        List defaultOrder = getHeaderOrder(dwcGroups[dwcClass])
-                        headers = reorderHeaders(headers, defaultOrder)
-                        headersByDwcClass[dwcClass] = headers
-                        csvWriter.writeNext(headers as String[])
-                        rows.each { row ->
-                            List line = headers.collect {
-                                row[it] instanceof Collection ? row[it].join(" | ") :  row[it] ?: ""
+                    if ((dwcClass !in doNotWriteClasses)) {
+                        if (rows.size()) {
+                            zip.putNextEntry(new ZipEntry(getEventCoreFileName(dwcClass)))
+                            CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(zip))
+                            List headers = getHeadersFromRows(rows)
+                            List defaultOrder = getHeaderOrder(dwcGroups[dwcClass])
+                            headers = reorderHeaders(headers, defaultOrder)
+                            headersByDwcClass[dwcClass] = headers
+                            csvWriter.writeNext(headers as String[])
+                            rows.each { row ->
+                                List line = serialiseMapToCSV(headers, row)
+                                csvWriter.writeNext(line as String[])
                             }
-                            csvWriter.writeNext(line as String[])
-                        }
 
-                        csvWriter.flush()
-                        log.info("finished writing ${dwcClass}.csv")
+                            csvWriter.flush()
+                            log.info("finished writing ${dwcClass}.csv")
+                        }
+                    }
+                    else {
+                        headersByDwcClass[dwcClass] = getHeaderOrder(dwcGroups[dwcClass])
                     }
                 }
                 end = System.currentTimeMillis()
@@ -1201,6 +1209,28 @@ class RecordService {
     }
 
     /**
+     * Extracts information from Map into a list in the order given in headers.
+     * @param headers
+     * @param row
+     * @return
+     */
+    List serialiseMapToCSV(List<String> headers, row) {
+        headers.collect { String header ->
+            row[header] instanceof Collection ? row[header].join(" | ") : row[header] ?: ""
+        }
+    }
+
+    /**
+     * get file name for event core class
+     * i.e. Media.csv, MeasurementOrFact.csv etc.
+     * @param dwcClass
+     * @return
+     */
+    String getEventCoreFileName(dwcClass) {
+        "${dwcClass}.csv"
+    }
+
+    /**
      * Creates a data structure that enables creation of Darwin Core Archive. Project activity is a survey type in Event table.
      * [
      *      'Event' : [[a: 'b']],
@@ -1211,86 +1241,283 @@ class RecordService {
      * @param project
      * @return
      */
-    Map generateEventCoreFiles(Project project) {
+    Map generateEventCoreFiles(Project project, ZipOutputStream zip) {
+
         Map<String,List> result = [:].withDefault {[]}
-        Organisation organisation = project?.organisationName ? Organisation.findByName(project?.organisationName) : null
-        List<ProjectActivity> projectActivitiesForProject = ProjectActivity.findAllByProjectIdAndStatusNotEqualAndPublished(project.projectId, Status.DELETED, true)
-        projectActivitiesForProject.each { ProjectActivity projectActivity ->
-            int batchSize = 100
-            int offset = 0
-            int size = batchSize
-
-            // adds project activity to event table.
-            result[DWC_EVENT].add(convertProjectActivityToEvent(projectActivity, project))
-            while ( batchSize == size ) {
-                List<Activity> activities = Activity.findAllByProjectIdAndStatusNotEqualAndProjectActivityId(project.projectId, Status.DELETED, projectActivity.projectActivityId, [max: batchSize, offset: offset])
-                activities.each { Activity activity ->
-                    if(activityService.isActivityEmbargoed(activity, projectActivity))
-                        return
-
-                    Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
-                    List<Output> outputs = Output.findAllByActivityId(activity.activityId)
-                    outputs.eachWithIndex { output, outputIndex ->
-                        Map props = outputService.toMap(output)
-                        Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
-                        try {
-                            List<Map> records = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, props.data, outputMetadata, false)
-                            records.eachWithIndex { record, recordIndex ->
-                                Map params = [
-                                        activity: activity,
-                                        site: site,
-                                        output: output,
-                                        data: props.data,
-                                        metadata: outputMetadata,
-                                        organisation: organisation,
-                                        project: project,
-                                        recordService: this,
-                                        index: "${activity.activityId}-${outputIndex}-${recordIndex}"
-                                ]
-                                // groups dwc attributes to event core tables
-                                Map normalised = normaliseRecords(record, params)
-                                normalised.each { dwcClass, attributes ->
-                                    switch (dwcClass) {
-                                        case DWC_EVENT:
-                                            if (attributes && !result[dwcClass].find { it.eventID == attributes.eventID }) {
-                                                attributes.parentEventID = projectActivity.projectActivityId
-                                                result[dwcClass].add (attributes)
-                                            }
-                                            break
-                                        case DWC_MEDIA:
-                                        case DWC_MEASUREMENT:
-                                            if(attributes){
-                                                result[dwcClass].addAll(attributes)
-                                            }
-                                            break
-                                        case DWC_OCCURRENCE:
-                                        default:
-                                            if(attributes && attributes.scientificName) {
-                                                result[dwcClass].add (attributes)
-                                            }
-                                            break
-                                    }
-                                }
-                            }
-                        } catch (Exception ex) {
-                            log.error("error converting record - activity id " + activity.activityId, ex)
-                        }
-                    }
-                }
-                offset += batchSize
-                size = activities.size()
+        Map dwcGroups = grailsApplication.config.getProperty("darwinCore.termsGroupedByClass", Map)
+        Set<String> measurementUniqueness = new HashSet<String>(), mediaUniqueness = new HashSet<String>()
+        String currentZipEntry = null
+        File tmpFile = null
+        CSVWriter measurementCsvWriter = null, mediaCsvWriter = null, tmpCsvWriter = null
+        List measurementHeaders = getHeaderOrder(dwcGroups[DWC_MEASUREMENT] as List),
+                mediaHeaders = getHeaderOrder(dwcGroups[DWC_MEDIA] as List)
+        try {
+            tmpFile = File.createTempFile("temp", ".csv")
+            tmpCsvWriter = new CSVWriter(new FileWriter(tmpFile))
+            boolean isMediaHeaderWritten = false, isMeasurementHeaderWritten = false
+            Organisation organisation = project?.organisationName ? Organisation.findByName(project?.organisationName) : null
+            List<ProjectActivity> projectActivitiesForProject = ProjectActivity.findAllByProjectIdAndStatusNotEqualAndPublished(project.projectId, Status.DELETED, true)
+            projectActivitiesForProject.each { ProjectActivity projectActivity ->
+                (currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter) = processProjectActivity(result, projectActivity, project, organisation, currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaCsvWriter, mediaHeaders, mediaUniqueness, isMeasurementHeaderWritten, measurementCsvWriter, measurementHeaders, measurementUniqueness)
             }
-        }
 
-        if (result[DWC_MEASUREMENT]?.size()) {
-            result[DWC_MEASUREMENT] = RecordConverter.removeDuplicates(result[DWC_MEASUREMENT])
-        }
+            // write to zip output stream content of written to local temp file
+            if (currentZipEntry) {
+                // find out which event core class was writing to temporary file
+                String tmpFileName = getEventCoreFileName(DWC_MEASUREMENT)
+                if (currentZipEntry == DWC_MEASUREMENT) {
+                    tmpFileName = getEventCoreFileName(DWC_MEDIA)
+                }
 
-        if (result[DWC_MEDIA]?.size()) {
-            result[DWC_MEDIA] = RecordConverter.removeDuplicates(result[DWC_MEDIA])
+                tmpCsvWriter.flush()
+                tmpCsvWriter.close()
+                zip.closeEntry()
+                zip.flush()
+
+                // write to zip output stream content written to local temp file
+                zip.putNextEntry(new ZipEntry(tmpFileName))
+                zip << new FileInputStream(tmpFile)
+            }
+        } catch (Exception e) {
+            log.error("Error generating event core archive", e)
+        }
+        finally {
+            tmpCsvWriter?.close()
+            tmpFile?.delete()
+            zip.closeEntry()
+            zip.flush()
         }
 
         result
+    }
+
+    /**
+     * Find activities of a project activity and process them.
+     * @param result
+     * @param projectActivity
+     * @param project
+     * @param organisation
+     * @param currentZipEntry
+     * @param zip
+     * @param tmpCsvWriter
+     * @param isMediaHeaderWritten
+     * @param mediaCsvWriter
+     * @param mediaHeaders
+     * @param mediaUniqueness
+     * @param isMeasurementHeaderWritten
+     * @param measurementCsvWriter
+     * @param measurementHeaders
+     * @param measurementUniqueness
+     * @return
+     */
+    List processProjectActivity(Map<String, List> result, ProjectActivity projectActivity, Project project, Organisation organisation, String currentZipEntry, ZipOutputStream zip, CSVWriter tmpCsvWriter, boolean isMediaHeaderWritten, CSVWriter mediaCsvWriter, List mediaHeaders, Set<String> mediaUniqueness, boolean isMeasurementHeaderWritten, CSVWriter measurementCsvWriter, List measurementHeaders, Set<String> measurementUniqueness) {
+        int batchSize = 100
+        int offset = 0
+        int size = batchSize
+
+        // adds project activity to event table.
+        result[DWC_EVENT].add(convertProjectActivityToEvent(projectActivity, project))
+        while (batchSize == size) {
+            List<Activity> activities = Activity.findAllByProjectIdAndStatusNotEqualAndProjectActivityId(project.projectId, Status.DELETED, projectActivity.projectActivityId, [max: batchSize, offset: offset])
+            activities.each { Activity activity ->
+                (currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter) = processActivity(activity, projectActivity, project, organisation, result, currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaCsvWriter, mediaHeaders, mediaUniqueness, isMeasurementHeaderWritten, measurementCsvWriter, measurementHeaders, measurementUniqueness)
+            }
+            offset += batchSize
+            size = activities.size()
+        }
+
+        [currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter]
+    }
+
+    /**
+     * Gets outputs of an activity and processes them.
+     * @param activity
+     * @param projectActivity
+     * @param project
+     * @param organisation
+     * @param result
+     * @param currentZipEntry
+     * @param zip
+     * @param tmpCsvWriter
+     * @param isMediaHeaderWritten
+     * @param mediaCsvWriter
+     * @param mediaHeaders
+     * @param mediaUniqueness
+     * @param isMeasurementHeaderWritten
+     * @param measurementCsvWriter
+     * @param measurementHeaders
+     * @param measurementUniqueness
+     * @return
+     */
+    List processActivity(Activity activity, ProjectActivity projectActivity, Project project, Organisation organisation, Map<String, List> result, String currentZipEntry, ZipOutputStream zip, CSVWriter tmpCsvWriter, boolean isMediaHeaderWritten, CSVWriter mediaCsvWriter, List mediaHeaders, Set<String> mediaUniqueness, boolean isMeasurementHeaderWritten, CSVWriter measurementCsvWriter, List measurementHeaders, Set<String> measurementUniqueness) {
+        if (activityService.isActivityEmbargoed(activity, projectActivity))
+            return [currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter]
+
+        Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
+        List<Output> outputs = Output.findAllByActivityId(activity.activityId)
+        outputs.eachWithIndex { output, outputIndex ->
+            (currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter) = processOutput(output, project, organisation, site, projectActivity, activity, outputIndex, result, currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaCsvWriter, mediaHeaders, mediaUniqueness, isMeasurementHeaderWritten, measurementCsvWriter, measurementHeaders, measurementUniqueness)
+        }
+
+        [currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter]
+    }
+
+    /**
+     * Converts an output to darwin core records. Then, groups the attributes to Event Core tables.
+     * @param output
+     * @param project
+     * @param organisation
+     * @param site
+     * @param projectActivity
+     * @param activity
+     * @param outputIndex
+     * @param result
+     * @param currentZipEntry
+     * @param zip
+     * @param tmpCsvWriter
+     * @param isMediaHeaderWritten
+     * @param mediaCsvWriter
+     * @param mediaHeaders
+     * @param mediaUniqueness
+     * @param isMeasurementHeaderWritten
+     * @param measurementCsvWriter
+     * @param measurementHeaders
+     * @param measurementUniqueness
+     * @return
+     */
+    List processOutput(output, Project project, Organisation organisation, Site site, ProjectActivity projectActivity, Activity activity, outputIndex, Map<String, List> result, String currentZipEntry, ZipOutputStream zip, CSVWriter tmpCsvWriter, boolean isMediaHeaderWritten, CSVWriter mediaCsvWriter, List mediaHeaders, Set<String> mediaUniqueness, boolean isMeasurementHeaderWritten, CSVWriter measurementCsvWriter, List measurementHeaders, Set<String> measurementUniqueness) {
+        Map props = outputService.toMap(output)
+        Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
+        try {
+            List<Map> records = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, props.data, outputMetadata, false)
+            records.eachWithIndex { record, recordIndex ->
+                Map params = [
+                        activity     : activity,
+                        site         : site,
+                        output       : output,
+                        data         : props.data,
+                        metadata     : outputMetadata,
+                        organisation : organisation,
+                        project      : project,
+                        recordService: this,
+                        index        : "${activity.activityId}-${outputIndex}-${recordIndex}"
+                ]
+                // groups dwc attributes to event core tables
+                Map normalised = normaliseRecords(record, params)
+                normalised.each { String dwcClass, def attributes ->
+                    (currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter) = handleDwcClass(dwcClass, attributes, result, projectActivity, currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaCsvWriter, mediaHeaders, mediaUniqueness, isMeasurementHeaderWritten, measurementCsvWriter, measurementHeaders, measurementUniqueness)
+                }
+
+                zip.flush()
+            }
+        } catch (Exception ex) {
+            log.error("error converting record - activity id " + activity.activityId, ex)
+        }
+
+        [currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter]
+    }
+
+    /**
+     * Transforms attributes in event core classes.
+     * @param dwcClass
+     * @param attributes
+     * @param result
+     * @param projectActivity
+     * @param currentZipEntry
+     * @param zip
+     * @param tmpCsvWriter
+     * @param isMediaHeaderWritten
+     * @param mediaCsvWriter
+     * @param mediaHeaders
+     * @param mediaUniqueness
+     * @param isMeasurementHeaderWritten
+     * @param measurementCsvWriter
+     * @param measurementHeaders
+     * @param measurementUniqueness
+     * @return
+     */
+    List handleDwcClass(String dwcClass, def attributes, Map<String, List> result, ProjectActivity projectActivity, String currentZipEntry, ZipOutputStream zip, CSVWriter tmpCsvWriter, boolean isMediaHeaderWritten, CSVWriter mediaCsvWriter, List mediaHeaders, HashSet mediaUniqueness, boolean isMeasurementHeaderWritten, CSVWriter measurementCsvWriter, List measurementHeaders, HashSet measurementUniqueness) {
+        switch (dwcClass) {
+            case DWC_EVENT:
+                if (attributes && !result[dwcClass].find { it.eventID == attributes.eventID }) {
+                    attributes.parentEventID = projectActivity.projectActivityId
+                    result[dwcClass].add(attributes)
+                }
+                break
+            case DWC_MEDIA:
+                (currentZipEntry, isMediaHeaderWritten, mediaCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaHeaders, attributes, mediaUniqueness, result, dwcClass, mediaCsvWriter)
+                break
+            case DWC_MEASUREMENT:
+                (currentZipEntry, isMeasurementHeaderWritten, measurementCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMeasurementHeaderWritten, measurementHeaders, attributes, measurementUniqueness, result, dwcClass, measurementCsvWriter)
+                break
+            case DWC_OCCURRENCE:
+            default:
+                if (attributes && attributes.scientificName) {
+                    result[dwcClass].addAll(attributes)
+                }
+                break
+        }
+
+        [currentZipEntry, isMediaHeaderWritten, isMeasurementHeaderWritten, mediaCsvWriter, measurementCsvWriter]
+    }
+
+    /**
+     * writeToCsvIfUnique is called either by MeasurementOrFact or Media Event Core group.
+     * It writes either to zip file or a temporary file. If MeasurementOrFact calls this method first,
+     * it gets to write to zip file and Media writes to temporary file. It helps better manage memory by not storing
+     * them in a variable. Also, sending a steady stream of information while processing each activity keeps connection
+     * alive. Alternatively, sending information after processing all activities in a project becomes an issue when
+     * projects have large number of activities. It builds memory pressure and increases likelyhood of a timeout.
+     * @param currentZipEntry
+     * @param zip
+     * @param tmpCsvWriter
+     * @param isHeaderWritten
+     * @param headers
+     * @param attributes
+     * @param uniqueListOfKeys
+     * @param result
+     * @param dwcClass
+     * @param csvWriter
+     * @return
+     */
+    List writeToCsvIfUnique(String currentZipEntry, ZipOutputStream zip, CSVWriter tmpCsvWriter, boolean isHeaderWritten, List headers, List attributes, HashSet uniqueListOfKeys, Map<String, List> result, String dwcClass, CSVWriter csvWriter) {
+        if (currentZipEntry == null) {
+            currentZipEntry = dwcClass
+            zip.putNextEntry(new ZipEntry(getEventCoreFileName(dwcClass)))
+            csvWriter = new CSVWriter(new OutputStreamWriter(zip))
+        }
+        else if (currentZipEntry != dwcClass)
+            csvWriter = tmpCsvWriter
+
+        if (!isHeaderWritten) {
+            csvWriter.writeNext(headers as String[])
+            isHeaderWritten = true
+        }
+
+        // attributes are a list of maps. convert to map to remove duplicates.
+        attributes?.each {
+            String key = it.toString()
+            if (!uniqueListOfKeys.contains(key)) {
+                writeRowToStream(csvWriter, it as Map, headers)
+                uniqueListOfKeys.add(key)
+            }
+        }
+
+        if (!result[dwcClass])
+            result[dwcClass].add("${dwcClass} added to zip.")
+        csvWriter.flush()
+        [currentZipEntry, isHeaderWritten, csvWriter]
+    }
+
+    /**
+     * Extracts information from Map into a list in the order given in headers. Then, writes them into CSV file.
+     * @param writer
+     * @param row
+     * @param headers
+     */
+    void writeRowToStream (CSVWriter writer, Map row, List headers) {
+        List line = serialiseMapToCSV(headers, row)
+        writer.writeNext(line as String[])
     }
 
     /**
@@ -1447,7 +1674,7 @@ class RecordService {
      */
     Map getMetaXMLData(Map headersByDwcClass) {
         Map dataBinding = [
-                archiveNameSpace: grailsApplication.config.darwinCore.namespaces["Archive"],
+                archiveNameSpace: grailsApplication.config.getProperty("darwinCore.namespaces.Archive"),
                 emlFileName: "eml.xml",
                 core: [:],
                 extensions: []
@@ -1465,14 +1692,14 @@ class RecordService {
 
             switch (dwcClass) {
                 case DWC_EVENT:
-                    defaultValues.rowType = grailsApplication.config.darwinCore.namespaces[dwcClass]
+                    defaultValues.rowType = grailsApplication.config.getProperty("darwinCore.namespaces.$dwcClass")
                     defaultValues.location = "${dwcClass}.csv"
                     defaultValues.fields = result.fields
                     defaultValues.coreIndex = result.coreIndex
                     dataBinding.core  = defaultValues
                     break
                 default:
-                    defaultValues.rowType = grailsApplication.config.darwinCore.namespaces[dwcClass]
+                    defaultValues.rowType = grailsApplication.config.getProperty("darwinCore.namespaces.$dwcClass")
                     defaultValues.location = "${dwcClass}.csv"
                     defaultValues.fields = result.fields
                     defaultValues.coreIndex = result.coreIndex
@@ -1498,7 +1725,7 @@ class RecordService {
             if (header == coreID)
                 coreIndex = hIndex
 
-            fields.add([index: hIndex, term: grailsApplication.config.darwinCore.namespaces[header] ?: header])
+            fields.add([index: hIndex, term: grailsApplication.config.getProperty("darwinCore.namespaces.$header") ?: header])
         }
 
         [coreIndex: coreIndex, fields: fields]

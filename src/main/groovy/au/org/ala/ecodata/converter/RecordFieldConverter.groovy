@@ -25,7 +25,7 @@ trait RecordFieldConverter {
     static String DWC_MEASUREMENT_ACCURACY = "measurementAccuracy"
     static String DWC_MEASUREMENT_UNIT = "measurementUnit"
     static String DWC_MEASUREMENT_UNIT_ID = "measurementUnitID"
-    static String PROP_MEASUREMENTS_OR_FACTS = "measurementsorfacts"
+    static String PROP_MEASUREMENTS_OR_FACTS = "measurementsOrFacts"
 
     abstract List<Map> convert(Map data)
 
@@ -73,11 +73,14 @@ trait RecordFieldConverter {
         // It dwcAttribute measurementValue is taken from output data.
         // If measurementType is provided in metadata, its event core value is created by binding metadata value and
         // output data. Rest of the attributes are provided by metadata.
+        if(!dwcMappings.containsKey(DWC_MEASUREMENT_VALUE))
+            return fields
+
         String fieldName = dwcMappings[DWC_MEASUREMENT_VALUE]
         def value = data[fieldName]
-        if (dwcMappings.containsKey(DWC_MEASUREMENT_VALUE) && ![null, ""].contains(value)) {
+        if (value !in [null, ""]) {
             if (!fields[PROP_MEASUREMENTS_OR_FACTS])
-                fields[PROP_MEASUREMENTS_OR_FACTS] = []
+                fields[PROP_MEASUREMENTS_OR_FACTS] = [:]
 
             Map measurement = [:]
             measurement[DWC_MEASUREMENT_VALUE] = value
@@ -99,7 +102,8 @@ trait RecordFieldConverter {
                 measurement[DWC_MEASUREMENT_UNIT_ID] = metadata[DWC_MEASUREMENT_UNIT_ID]
             }
 
-            fields[PROP_MEASUREMENTS_OR_FACTS].add(measurement)
+            // to remove/overwrite duplicate measurements
+            fields[PROP_MEASUREMENTS_OR_FACTS][measurement] = measurement
         }
 
         fields
@@ -135,7 +139,6 @@ trait RecordFieldConverter {
             return value
         }
         catch (Exception ex) {
-            log.error(ex.message)
             data.remove('context')
             return defaultValue == null ? expression : defaultValue
         }
