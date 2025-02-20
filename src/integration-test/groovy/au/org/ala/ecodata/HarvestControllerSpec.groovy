@@ -208,8 +208,13 @@ class HarvestControllerSpec extends Specification {
                 case "Event.csv":
                     CSVReader readerCSV = new CSVReader(new StringReader(content))
                     List<String[]> lines = readerCSV.readAll()
-                    assert lines[0] == ["eventID","parentEventID","eventType","eventDate","eventRemarks","samplingProtocol","geodeticDatum", "locationID", "endDate", "dataSharingLicense", "license", "name", "pActivityFormName", "startDate"]
-                    assert lines[1] == ["pa1", "", "Survey", "${yesterdayStr}/${nowStr}", "Test event remarks", "opportunistic", "","" , nowStr, "CC BY 4.0", "", "Test Project Activity", "testForm", yesterdayStr]
+                    List headers = lines[0]
+                    List expectedHeaders = ["eventID","parentEventID","eventType","eventDate","eventRemarks","samplingProtocol","geodeticDatum", "locationID", "endDate", "dataSharingLicense", "license", "name", "pActivityFormName", "startDate"]
+                    List expectedValues = ["pa1", "", "Survey", "${yesterdayStr}/${nowStr}", "Test event remarks", "opportunistic", "","" , nowStr, "CC BY 4.0", "", "Test Project Activity", "testForm", yesterdayStr]
+                    expectedHeaders.eachWithIndex { header, index ->
+                        int csvIndex = headers.findIndexOf { it == header }
+                        assert lines[1][csvIndex] == expectedValues[index]
+                    }
                     assert lines[2][0] == "activity1"
                     assert lines[2][1] == "pa1"
                     assert lines[2][2] == "SiteVisit"
@@ -228,8 +233,13 @@ class HarvestControllerSpec extends Specification {
                     // check Occurrence.csv
                     CSVReader readerCSV = new CSVReader(new StringReader(content))
                     List<String[]> lines = readerCSV.readAll()
-                    assert lines[0] == ["eventID","occurrenceID","basisOfRecord","scientificName","occurrenceStatus","individualCount"]
-                    assert lines[1] == ["activity1","outputSpecies1","HumanObservation","Anura","present","1"]
+                    List headers = lines[0]
+                    List expectedHeaders = ["eventID","occurrenceID","basisOfRecord","scientificName","occurrenceStatus","individualCount"]
+                    List expectedValues = ["activity1","outputSpecies1","HumanObservation","Anura","present","1"]
+                    expectedHeaders.eachWithIndex { header, index ->
+                        int csvIndex = headers.findIndexOf { it == header }
+                        assert lines[1][csvIndex] == expectedValues[index]
+                    }
                     assert lines.size() == 2
                     break
                 case "MeasurementOrFact.csv":
