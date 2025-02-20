@@ -1146,9 +1146,9 @@ class ElasticSearchService {
                     site.remove('geoIndex')
                     site
                 }
-                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name(), false, true)
             } else {
-                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name()).collect{[type:it.type]}
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name(), false, true).collect{[type:it.type]}
             }
 
             // If we don't flatten these values into the root of the project, they are not currently usable by

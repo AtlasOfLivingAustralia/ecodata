@@ -165,13 +165,19 @@ class ActivityService {
         }
     }
 
-    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
+    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false, includeExternalActivities = false) {
         List activities
         if (includeDeleted) {
             activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
         }
-        else {
+        else if (includeExternalActivities) {
             activities = Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
+        else {
+            // By specifying externalIds:null we are excluding Monitor activities from the search as they can't
+            // contribute to the output scores and for some projects there are a lot of them and they can have
+            // a very large amount of data associated with them.
+            activities = Activity.findAllByProjectIdAndStatusAndExternalIds(id, ACTIVE, null).collect { toMap(it, levelOfDetail) }
         }
         activities
     }
