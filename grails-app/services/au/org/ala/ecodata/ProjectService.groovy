@@ -1313,19 +1313,21 @@ class ProjectService {
         }
 
         Map geographicInfo = project?.geographicInfo
-        Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
-        Map config = metadataService.getGeographicConfig()
-        List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
-        intersectionLayers?.each { layer ->
-            Map facetName = metadataService.getGeographicFacetConfig(layer)
-            if (facetName.name) {
-                List intersectionValues = intersections[layer]
-                if (intersectionValues) {
-                    result["project${facetName.name.capitalize()}Facet"] = intersectionValues
+        if (!geographicInfo?.statewide && !geographicInfo?.nationwide) {
+            Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
+            Map config = metadataService.getGeographicConfig()
+            List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
+            intersectionLayers?.each { layer ->
+                Map facetName = metadataService.getGeographicFacetConfig(layer)
+                if (facetName.name) {
+                    List intersectionValues = intersections[layer]
+                    if (intersectionValues) {
+                        result["project${facetName.name.capitalize()}Facet"] = intersectionValues
+                    }
                 }
+                else
+                    log.error ("No facet config found for layer $layer.")
             }
-            else
-                log.error ("No facet config found for layer $layer.")
         }
 
         // take a copy of calculated states & electorates for comparison
