@@ -171,7 +171,10 @@ class ActivityService {
             activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
         }
         else {
-            activities = Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+            // By specifying externalIds:null we are excluding Monitor activities from the search as they can't
+            // contribute to the output scores and for some projects there are a lot of them and they can have
+            // a very large amount of data associated with them.
+            activities = Activity.findAllByProjectIdAndStatusAndExternalIds(id, ACTIVE, null).collect { toMap(it, levelOfDetail) }
         }
         activities
     }
