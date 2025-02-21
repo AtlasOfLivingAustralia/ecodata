@@ -1080,7 +1080,7 @@ class RecordService {
         List activities = activityService.searchAndListActivityDomainObjects(searchCriteria, null, null, null, activityParams)
 
         while (activities) {
-            activities?.parallelStream().forEach({ Activity activity ->
+            activities?.forEach({ Activity activity ->
                 regenerateRecordsForActivity(activity)
             })
 
