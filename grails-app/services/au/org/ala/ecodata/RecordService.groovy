@@ -1080,7 +1080,7 @@ class RecordService {
         List activities = activityService.searchAndListActivityDomainObjects(searchCriteria, null, null, null, activityParams)
 
         while (activities) {
-            activities?.parallelStream().forEach({ Activity activity ->
+            activities?.forEach({ Activity activity ->
                 regenerateRecordsForActivity(activity)
             })
 
@@ -1580,7 +1580,30 @@ class RecordService {
             }
         }
 
+        addUnlistedAttributesToResult(record, result)
         result
+    }
+
+    Map addUnlistedAttributesToResult(Map record, Map<String, Map> result) {
+        List ignoreAttributes = ["multimedia", "measurementsOrFacts"]
+        if (record.occurrenceID) {
+            copyMissingAttributes(record, result[DWC_OCCURRENCE], ignoreAttributes)
+        }
+        else if (record.eventID) {
+            copyMissingAttributes(record, result[DWC_EVENT], ignoreAttributes)
+        }
+
+        result
+    }
+
+    Map copyMissingAttributes (Map source, Map destination, List ignoreAttributes = []) {
+        source.each { key, value ->
+            if (!destination.containsKey(key) && key !in ignoreAttributes) {
+                destination[key] = value
+            }
+        }
+
+        destination
     }
 
     /**
