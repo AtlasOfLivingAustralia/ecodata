@@ -42,6 +42,10 @@ class Score {
 
     List<RelatedScore> relatedScores
 
+    Integer decimalPlaces
+
+    String units
+
 
     /** Embedded document describing how the score should be calculated */
     Map configuration
@@ -57,6 +61,8 @@ class Score {
         label unique: true
         scoreId unique: true
         name nullable: true, unique: true
+        decimalPlaces nullable: true
+        units nullable: true
     }
 
     static mapping = {
@@ -86,14 +92,16 @@ class Score {
                 category:category,
                 outputType:outputType,
                 isOutputTarget:isOutputTarget,
-                    label:label,
+                label:label,
                 description:description,
                 displayType:displayType,
                 entity:entity,
                 externalId:externalId,
                 entityTypes:entityTypes,
                 tags:tags,
-                name:name
+                name:name,
+                units:units,
+                decimalPlaces:decimalPlaces?:2
         ]
         if (includeConfig) {
             scoreMap.configuration = configuration

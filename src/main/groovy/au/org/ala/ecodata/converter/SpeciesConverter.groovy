@@ -5,24 +5,28 @@ class SpeciesConverter implements RecordFieldConverter {
             "(Unmatched taxon)"
     ]
 
-    List<Map> convert(Map data, Map metadata = [:]) {
+    List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
         if ((data == null) || (data[metadata.name] == null) ) {
            return []
         }
 
         Map record = [:]
+        // if species data not found, return a list of empty map
+        if(data[metadata.name] == null){
+            return [record]
+        }
 
-        record.scientificNameID = record.guid = data[metadata.name].guid
+        record.scientificNameID = record.guid = data[metadata.name]?.guid
         record.scientificName = getScientificName(data, metadata)
-        record.vernacularName = data[metadata.name].commonName
+        record.vernacularName = data[metadata.name]?.commonName
         record.name = record.scientificName ?: record.vernacularName
 
         // Force outputSpeciesId generation if not coming in the original data
-        if(!data[metadata.name].outputSpeciesId) {
+        if(data[metadata.name] && !data[metadata.name]?.outputSpeciesId) {
             data[metadata.name].outputSpeciesId = UUID.randomUUID().toString()
         }
 
-        record.outputSpeciesId = data[metadata.name].outputSpeciesId
+        record.occurrenceID = record.outputSpeciesId = data[metadata.name]?.outputSpeciesId
 
         [record]
     }
@@ -36,7 +40,7 @@ class SpeciesConverter implements RecordFieldConverter {
      * @return
      */
     String getScientificName(Map data, Map metadata) {
-        data[metadata.name].scientificName ?: cleanName(data[metadata.name].name)
+        data[metadata.name]?.scientificName ?: cleanName(data[metadata.name]?.name)
     }
 
     String cleanName (String name) {

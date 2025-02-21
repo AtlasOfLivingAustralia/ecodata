@@ -800,13 +800,38 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
 
+        when: // user inputs scientific name to field
+        result = service.transformSpeciesName("Centipeda cunninghamii")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Centipeda cunninghamii (Common Sneezeweed)", scientificName: "Centipeda cunninghamii", guid: "https://id.biodiversity.org.au/node/apni/2916674", commonName: "Common Sneezeweed", taxonRank: "species"]
+        1 * speciesReMatchService.searchByName(_) >> [
+                scientificName: "Centipeda cunninghamii",
+                commonName: "Common Sneezeweed",
+                guid: "https://id.biodiversity.org.au/node/apni/2916674",
+                taxonRank: "species"
+        ]
+        0 * speciesReMatchService.searchByName(_, false, true)
+
+        when: // user inputs scientific name to field and ALA cannot match the name
+        result = service.transformSpeciesName("Centipeda cunninghamii")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [name: "Centipeda cunninghamii", scientificName: "Centipeda cunninghamii", commonName: null, taxonRank: null, guid: "A_GUID"]
+        1 * speciesReMatchService.searchByName(_) >> null
+        1 * speciesReMatchService.searchByName(_, false, true) >> null
+
         when: // Do not create record when value equals special cases. Therefore, removes guid.
         result = service.transformSpeciesName("Other")
         outputSpeciesId = result.remove("outputSpeciesId")
 
         then:
         outputSpeciesId != null
-        result == [name: "Other", scientificName: null, commonName: "Other", taxonRank: null]
+        result == [name: "Other", scientificName: "Other", commonName: null, taxonRank: null]
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
 
@@ -1335,6 +1360,22 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "usesPlotLayout": false,
                 "tags"          : ["survey"],
                 "apiEndpoint"   : "s1s",
+                "insertions": [
+                        "dataModel": [
+                                "<root>": [
+                                        [
+                                                "dataType": "text",
+                                                "name": "countTypeIndividual",
+                                                "dwcAttribute": "individualsOrGroups",
+                                                "dwcExpression": "'Individuals'",
+                                                "constraints": [
+                                                        "Individuals",
+                                                        "Groups"
+                                                ]
+                                        ]
+                                ]
+                        ]
+                ],
                 "overrides"     : [
                         "dataModel": null,
                         "viewModel": null
@@ -1349,6 +1390,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "name"         : "height",
                 "description"  : "height",
                 "decimalPlaces": 0
+        ]
+        result.dataModel[1] == [
+                "dataType": "text",
+                "name": "countTypeIndividual",
+                "dwcAttribute": "individualsOrGroups",
+                "dwcExpression": "'Individuals'",
+                "constraints": [
+                        "Individuals",
+                        "Groups"
+                ]
         ]
         result.viewModel[0] == [
                 "type"    : "number",
@@ -1369,6 +1420,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 "name"         : "height",
                 "description"  : "height",
                 "decimalPlaces": 6
+        ]
+        result.dataModel[1] == [
+                "dataType": "text",
+                "name": "countTypeIndividual",
+                "dwcAttribute": "individualsOrGroups",
+                "dwcExpression": "'Individuals'",
+                "constraints": [
+                        "Individuals",
+                        "Groups"
+                ]
         ]
         result.viewModel[0] == [
                 "type"    : "number",
@@ -1428,6 +1489,16 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                         "tags"       : true
                 ],
                 "x-lut-ref":"lut1"
+        ]
+        result.dataModel[1] == [
+                "dataType": "text",
+                "name": "countTypeIndividual",
+                "dwcAttribute": "individualsOrGroups",
+                "dwcExpression": "'Individuals'",
+                "constraints": [
+                        "Individuals",
+                        "Groups"
+                ]
         ]
         result.viewModel[0] == [
                 "type"    : "selectOne",

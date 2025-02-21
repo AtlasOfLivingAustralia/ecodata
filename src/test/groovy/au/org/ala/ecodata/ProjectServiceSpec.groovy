@@ -965,6 +965,49 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result["cl11163"][2] == "canberra"
     }
 
+    void "orderLayerIntersectionsByAreaOfProjectSites should order shapes over points"() {
+        setup:
+        Map projectMap
+        Map result
+        Project project1
+        Site site1, site2, site3
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
+        metadataService.getGeographicConfig(_) >> [
+                contextual: [
+                        elect : 'cl11163'
+                ],
+                "checkForBoundaryIntersectionInLayers" : [ "cl11163" ]
+        ]
+        metadataService.getGeographicFacetConfig("cl11163", "12345") >> [name: "elect", grouped: true]
+        project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true)
+        site1 = new Site(siteId: 's1', name: "Site 1", type: "surveyArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["fenner": 0]]]]])
+        site2 = new Site(siteId: 's2', name: "Site 2", type: "surveyArea", status: 'active', projects: ['111'], extent: [ source: "drawn", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4]]]]])
+        site3 = new Site(siteId: 's3', name: "Site 3", type: "surveyArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["adelaide": 0]]]]])
+        Project.withTransaction {
+            project1.save(flush: true, failOnError: true)
+            site1.save(flush: true, failOnError: true)
+            site2.save(flush: true, failOnError: true)
+            site3.save(flush: true, failOnError: true)
+        }
+        project1.metaClass.getDbo = { new BasicDBObject(project1.properties) }
+
+        when:
+        Project.withTransaction {
+            projectMap = service.toMap(project1, ProjectService.ALL)
+        }
+
+        result = service.orderLayerIntersectionsByAreaOfProjectSites(projectMap)
+
+        then:
+        result.size() == 1
+        result["cl11163"][0] == "bean"
+        result["cl11163"][1] == "canberra"
+        ["fenner", "adelaide"].contains(result["cl11163"][2])
+        ["fenner", "adelaide"].contains(result["cl11163"][3])
+    }
+
 
     void "getRepresentativeSitesOfProject should get EMSA site or Reporting sites only" () {
         setup:
@@ -979,7 +1022,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         site2 = new Site(siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
         site3 = new Site(siteId: 's3', name: "Site 3", externalIds: [[idType: ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId: '1']], status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.0, "canberra": 0.1, "fenner": 0.6]]]]])
         site4 = new Site(siteId: 's4', name: "Site 4", type: "worksArea", status: 'active', extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
-        site5 = new Site(siteId: 's5', name: "Site 5", type: "worksArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
+        site5 = new Site(siteId: 's5', name: "Site 5", type: "projectArea", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["elect": ["CURRENT": ["bean": 0.7, "canberra": 0.4, "fenner": 0.5]]]]])
         Project.withTransaction {
             project1.save(flush: true, failOnError: true)
             mu.save(flush: true, failOnError: true)
@@ -1012,14 +1055,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result.siteId[1] == 's2'
         result.siteId[2] == 's3'
 
-        when: // returns planning/project extent sites
-        site1.type = Site.TYPE_PROJECT_AREA
-        site2.type = Site.TYPE_WORKS_AREA
+        when: // returns project area
         Project.withTransaction {
-            site1.save(flush: true)
-            site2.save(flush: true)
+            site1.delete(flush: true)
+            site2.delete(flush: true)
             site3.delete(flush: true)
-
         }
         Project.withTransaction {
             projectMap = service.toMap(project1, ProjectService.ALL)
@@ -1027,16 +1067,12 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result = service.getRepresentativeSitesOfProject(projectMap)
 
         then:
-        result.size() == 3
-        result.siteId[0] == 's1'
-        result.siteId[1] =='s2'
-        result.siteId[2] == 's5'
+        result.size() == 1
+        result.siteId[0] == 's5'
 
         when: // returns Management Unit boundaries
-        site1.projects = site2.projects = site5.projects = []
+        site5.projects = []
         Project.withTransaction {
-            site1.save(flush: true)
-            site2.save(flush: true)
             site5.save(flush: true)
         }
         Project.withTransaction {
@@ -1101,7 +1137,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     def "findStateAndElectorateForProject should return primary and other states/electorates based on site intersections"() {
         given:
-        Map project = [hubId: 'hub1', geographicInfo: [isDefault: false], sites: [
+        Map project = [hubId: 'hub1', geographicInfo: [overridePrimaryState: false, overridePrimaryElectorate: false], sites: [
             [siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["state1": 0.9, "state2": 0.3, "state3": 0.25]], "elect": ["CURRENT": ["electorate2": 0.9, "electorate1": 0.3]]]]]],
             [siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["state1": 0.9, "state2": 0.3, "state3": 0.25]], "elect": ["CURRENT": ["electorate2": 0.9, "electorate1": 0.3]]]]]]]
         ]
@@ -1118,18 +1154,19 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         metadataService.getGeographicFacetConfig("layer2", _) >> [name: "elect", grouped: false]
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "state1"
         result.otherstate == "state2; state3"
         result.primaryelect == "electorate2"
         result.otherelect == "electorate1"
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == false
     }
 
-    def "findStateAndElectorateForProject should return default geographic info if isDefault is false and project sites are empty"() {
+    def "findStateAndElectorateForProject should return value for other state/elect geographic info if override is false and project sites are empty"() {
         given:
-        Map project = [geographicInfo: [isDefault: false, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
+        Map project = [geographicInfo: [overridePrimaryState: false, overridePrimaryElectorate: false, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
         Map geographicConfig = [
                 contextual: [state: 'layer1', elect: 'layer2'],
                 checkForBoundaryIntersectionInLayers: ["layer1", "layer2"]
@@ -1142,34 +1179,58 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
-        result.primarystate == "ACT"
+        result.primarystate == null
         result.otherstate == "NSW; VIC"
-        result.primaryelect == "Bean"
+        result.primaryelect == null
         result.otherelect == "Canberra; Fenner"
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == true
     }
 
 
-    def "findStateAndElectorateForProject should return default geographic info if isDefault is true"() {
+    def "findStateAndElectorateForProject should return default geographic info if override is true"() {
         given:
-        Map project = [geographicInfo: [isDefault: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
+        Map project = [geographicInfo: [overridePrimaryState: true, overridePrimaryElectorate: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner'], otherExcludedElectorates: ['Fenner'], otherExcludedStates: ['NSW']]]
 
         when:
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.primarystate == "ACT"
-        result.otherstate == "NSW; VIC"
+        result.otherstate == "VIC"
         result.primaryelect == "Bean"
-        result.otherelect == "Canberra; Fenner"
+        result.otherelect == "Canberra"
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == true
+
+        when:
+        project = [geographicInfo: [overridePrimaryState: false, overridePrimaryElectorate: true, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner'], otherExcludedElectorates: ['Fenner'], otherExcludedStates: ['NSW']]]
+        result = service.findAndFormatStatesAndElectoratesForProject(project)
+
+        then:
+        result.primarystate == null
+        result.otherstate == "VIC"
+        result.primaryelect == "Bean"
+        result.otherelect == "Canberra"
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == true
+
+        when:
+        project = [geographicInfo: [overridePrimaryState: true, overridePrimaryElectorate: false, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner'], otherExcludedElectorates: ['Fenner'], otherExcludedStates: ['NSW']]]
+        result = service.findAndFormatStatesAndElectoratesForProject(project)
+
+        then:
+        result.primarystate == "ACT"
+        result.otherstate == "VIC"
+        result.primaryelect == null
+        result.otherelect == "Canberra"
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == true
     }
 
     def "findStateAndElectorateForProject should return empty map if project is null"() {
         when:
         Map project = null
-        Map result = service.findStateAndElectorateForProject(project)
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
 
         then:
         result.isEmpty()

@@ -409,4 +409,169 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].dwc == "firstValue"
         fieldsets[1].dwc == "secondValue"
     }
+
+
+    def "converter should add measurements or facts to the record field set"() {
+        setup:
+        List measurementsOrFacts
+        Project project = new Project(projectId: "project1")
+        Organisation organisation = new Organisation(orgId: "org1")
+        Site site = new Site(siteId: "site1")
+        ProjectActivity projectActivity = new ProjectActivity(projectActivityId: "pa1")
+        Activity activity = new Activity(activityId: "act1")
+        Output output = new Output(outputId: "output1", activityId: "act1")
+        Map outputMetadata = [
+                record: true,
+                dataModel: [
+                        [
+                                dataType: "text",
+                                name: "field1",
+                                dwcAttribute: "attribute1"
+                        ],
+                        [
+                                dataType: "number",
+                                name: "distance",
+                                dwcAttribute: "measurementValue",
+                                measurementType: "number",
+                                measurementTypeID: "http://qudt.org/vocab/quantitykind/Number",
+                                measurementAccuracy: "0.001",
+                                measurementUnit: "m",
+                                measurementUnitID: "http://qudt.org/vocab/unit/M",
+                                description: "distance from source"
+                        ]
+                ]
+        ]
+        Map submittedData = [
+            "field1": "fieldValue1",
+            "distance": 10.056
+        ]
+
+        when:
+        List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata, false)
+        measurementsOrFacts = fieldsets[0].measurementsOrFacts
+
+        then:
+        fieldsets.size() == 1
+        fieldsets[0].attribute1 == "fieldValue1"
+        fieldsets[0].measurementsOrFacts.size() == 1
+
+        measurementsOrFacts[0].measurementValue == 10.056
+        measurementsOrFacts[0].measurementType == "distance from source"
+        measurementsOrFacts[0].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
+        measurementsOrFacts[0].measurementAccuracy == "0.001"
+        measurementsOrFacts[0].measurementUnit == "m"
+        fieldsets[0].measurementsOrFacts[0].measurementUnitID == "http://qudt.org/vocab/unit/M"
+
+        when: "the measurement is associated with a species and non-species"
+        outputMetadata = [
+                record: true,
+                dataModel: [
+                        [
+                                dataType: "number",
+                                name: "field1",
+                                dwcAttribute: "attribute1"
+                        ],
+                        [
+                                dataType: "text",
+                                name: "field2",
+                                dwcAttribute: "attribute2",
+                                dwcExpression: "['field1'] == 0 ? \"absent\" : \"present\""
+                        ],
+                        [
+                                dataType: "number",
+                                name: "distance",
+                                dwcAttribute: "measurementValue",
+                                measurementType: "number",
+                                measurementTypeID: "http://qudt.org/vocab/quantitykind/Number",
+                                measurementAccuracy: "0.001",
+                                measurementUnit: "m",
+                                returnType: "java.lang.Double",
+                                measurementUnitID: "http://qudt.org/vocab/unit/M",
+                                description: "distance from source"
+                        ],
+                        [
+                                dataType: "list",
+                                name: "speciesList",
+                                columns: [
+                                        [
+                                                dataType: "species",
+                                                name: "speciesField",
+                                                dwcAttribute: "species"
+                                        ],
+                                        [
+                                                dataType: "number",
+                                                name: "distance",
+                                                dwcAttribute: "measurementValue",
+                                                dwcExpression: "['context']['rootData']['field1'] + ['distance']",
+                                                measurementType: "number",
+                                                measurementTypeID: "http://qudt.org/vocab/quantitykind/Number",
+                                                measurementAccuracy: "0.001",
+                                                measurementUnit: "m",
+                                                returnType: "java.lang.Double",
+                                                measurementUnitID: "http://qudt.org/vocab/unit/M",
+                                                description: "distance from source"
+                                        ]
+                                ]
+                        ]
+                ]
+        ]
+
+
+        submittedData = [
+                "field1": 1,
+                "distance": 10.056,
+                "speciesList": [
+                        [
+                                "speciesField": [commonName: "commonName1", scientificName: "scientificName1", "outputSpeciesId": "speciesFieldId1", "guid": "someguid1"],
+                                "distance": 20.056
+                        ],
+                        [
+                                "speciesField": [commonName: "commonName2", scientificName: "scientificName2", "outputSpeciesId": "speciesFieldId2", "guid": "someguid2"],
+                                "distance": 22.056
+                        ]
+                ]
+        ]
+
+        fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata, false)
+
+        then:
+        fieldsets.size() == 2
+        fieldsets[0].attribute1 == 1
+        fieldsets[0].attribute2 == "present"
+        fieldsets[0].scientificName == "scientificName1"
+        fieldsets[0].vernacularName == "commonName1"
+        fieldsets[0].scientificNameID == "someguid1"
+        fieldsets[0].name == "scientificName1"
+        fieldsets[0].outputSpeciesId == "speciesFieldId1"
+        fieldsets[0].occurrenceID == "speciesFieldId1"
+        fieldsets[0].measurementsOrFacts.size() == 2
+        fieldsets[0].measurementsOrFacts[0].eventID == "act1"
+        fieldsets[0].measurementsOrFacts[0].measurementValue == 10.056
+        fieldsets[0].measurementsOrFacts[0].measurementType == "distance from source"
+        fieldsets[0].measurementsOrFacts[0].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
+        fieldsets[0].measurementsOrFacts[0].measurementAccuracy == "0.001"
+        fieldsets[0].measurementsOrFacts[0].measurementUnit == "m"
+        fieldsets[0].measurementsOrFacts[0].measurementUnitID == "http://qudt.org/vocab/unit/M"
+        fieldsets[0].measurementsOrFacts[1].measurementValue == 21.056
+        fieldsets[0].measurementsOrFacts[1].measurementType == "distance from source"
+        fieldsets[0].measurementsOrFacts[1].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
+        fieldsets[0].measurementsOrFacts[1].measurementAccuracy == "0.001"
+        fieldsets[0].measurementsOrFacts[1].measurementUnit == "m"
+        fieldsets[0].measurementsOrFacts[1].measurementUnitID == "http://qudt.org/vocab/unit/M"
+        fieldsets[1].measurementsOrFacts[1].measurementValue == 23.056
+        fieldsets[1].measurementsOrFacts[1].measurementType == "distance from source"
+        fieldsets[1].measurementsOrFacts[1].measurementTypeID == "http://qudt.org/vocab/quantitykind/Number"
+        fieldsets[1].measurementsOrFacts[1].measurementAccuracy == "0.001"
+        fieldsets[1].measurementsOrFacts[1].measurementUnit == "m"
+        fieldsets[1].measurementsOrFacts[1].measurementUnitID == "http://qudt.org/vocab/unit/M"
+        fieldsets[1].attribute1 == 1
+        fieldsets[1].attribute2 == "present"
+        fieldsets[1].scientificName == "scientificName2"
+        fieldsets[1].vernacularName == "commonName2"
+        fieldsets[1].scientificNameID == "someguid2"
+        fieldsets[1].name == "scientificName2"
+        fieldsets[1].outputSpeciesId == "speciesFieldId2"
+        fieldsets[1].occurrenceID == "speciesFieldId2"
+        fieldsets[1].measurementsOrFacts.size() == 2
+    }
 }

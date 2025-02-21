@@ -30,7 +30,7 @@ class ActivityController {
     }
 
     def get(String id) {
-        def detail = params.view == SCORES ? [SCORES] : []
+        def detail = params.view == SCORES ? [SCORES] : params.view
         if (!id) {
 
             def list = activityService.getAll(params.boolean('includeDeleted'), params.view)

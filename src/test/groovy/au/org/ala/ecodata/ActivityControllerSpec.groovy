@@ -51,6 +51,7 @@ class ActivityControllerSpec extends Specification implements ControllerUnitTest
 
         when:
         params.id = '1'
+        params.view = []
         controller.get()
 
         then:
@@ -67,6 +68,7 @@ class ActivityControllerSpec extends Specification implements ControllerUnitTest
 
         when:
         params.id = '2'
+        params.view = []
         controller.get()
 
         then:

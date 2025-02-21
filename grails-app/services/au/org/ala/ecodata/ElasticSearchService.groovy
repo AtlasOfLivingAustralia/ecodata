@@ -1146,9 +1146,9 @@ class ElasticSearchService {
                     site.remove('geoIndex')
                     site
                 }
-                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name(), false, true)
             } else {
-                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name()).collect{[type:it.type]}
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name(), false, true).collect{[type:it.type]}
             }
 
             // If we don't flatten these values into the root of the project, they are not currently usable by
@@ -1167,6 +1167,9 @@ class ElasticSearchService {
                 it.remove('periodTargets')
                 it.remove('outcomeTargets')
             } // Not useful for searching and is causing issues with the current mapping.
+
+            // add algorithmically generated or manually selected states and electorates of a project
+            projectMap << projectService.findStateAndElectorateForProject(projectMap)
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
@@ -1233,6 +1236,16 @@ class ElasticSearchService {
                 if (!projectMap.visibility && program.inheritedConfig?.visibility) {
                     projectMap.visibility = program.inheritedConfig.visibility
                 }
+                List services = project.findProjectServices()
+
+                if (services) {
+                    projectMap.services = services?.collect{
+                        it.getProgramLabels()?[project.programId]?.label ?: it.name
+                    }
+                }
+
+
+
             }
             else {
                 log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)

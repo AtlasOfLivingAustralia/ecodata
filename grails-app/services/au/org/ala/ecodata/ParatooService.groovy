@@ -1059,10 +1059,10 @@ class ParatooService {
                 cleanedDefinition << cleanSwaggerDefinition(value)
             }
         } else {
-            try {
-                cleanedDefinition = definition?.clone()
+            if (definition instanceof Cloneable) {
+                cleanedDefinition = definition.clone()
             }
-            catch (CloneNotSupportedException e) {
+            else {
                 // if not cloneable, then it is a primitive type
                 cleanedDefinition = definition
             }
@@ -1297,6 +1297,7 @@ class ParatooService {
             }
         }
 
+        addInsertions(template.dataModel, template.viewModel, "", config)
         template
     }
 
@@ -1521,6 +1522,7 @@ class ParatooService {
             modelVisitStack.pop()
         }
 
+        addInsertions(model.dataModel, model.viewModel, path, config)
         model
     }
 
@@ -1537,6 +1539,24 @@ class ParatooService {
             Map override = overrides?.viewModel[path]
             if (override) {
                 viewModel.putAll(override)
+            }
+        }
+    }
+
+    void addInsertions(List dataModels, List viewModels, String path = "", ParatooProtocolConfig config) {
+        path = path ?: "<root>"
+        Map insertions = config.insertions
+        if (insertions?.dataModel?.containsKey(path)) {
+            List items = insertions?.dataModel[path] as List
+            if (items) {
+                dataModels.addAll(items)
+            }
+        }
+
+        if (insertions?.viewModel?.containsKey(path)) {
+            List items = insertions?.viewModel[path] as List
+            if (items) {
+                viewModels.addAll(items)
             }
         }
     }
@@ -2097,7 +2117,7 @@ class ParatooService {
         }
 
         String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
-        String commonName, scientificName = name
+        String commonName, scientificName, taxonRank
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
         Map result = [scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
@@ -2105,17 +2125,18 @@ class ParatooService {
         if (matcher.find()) {
             commonName = matcher.group(1)?.trim()
             scientificName = matcher.group(3)?.trim()
-            result.taxonRank = matcher.group(2)?.trim()
-            result.scientificName = scientificName
-            result.commonName = commonName
+            taxonRank = matcher.group(2)?.trim()
+            result.taxonRank = taxonRank
+            result.scientificName = scientificName == null ? result.scientificName : scientificName
+            result.commonName = commonName == null ? result.commonName : commonName
         }
 
-        Map resp = speciesReMatchService.searchByName(scientificName)
+        Map resp = speciesReMatchService.searchByName(result.scientificName)
         if (resp) {
             result.putAll(resp)
         }
         // try again with common name
-        if ((result.guid == null) && commonName) {
+        if ((result.guid == null) && result.commonName) {
             resp = speciesReMatchService.searchByName(commonName, false, true)
             if (resp) {
                 result.putAll(resp)
@@ -2123,7 +2144,15 @@ class ParatooService {
             }
         }
 
-        result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
+        if (result.commonName != result.scientificName) {
+            result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
+        }
+        else {
+            result.name = result.scientificName
+            // clear common name if it is same as scientific name
+            result.commonName = null
+        }
+
         List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
         // do not create record for special cases
         if (specialCases.contains(name)) {

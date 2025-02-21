@@ -25,6 +25,14 @@ class FilteredAggregationConfig extends AggregationConfig {
     }
 }
 
+class ExpressionAggregationConfig extends CompositeAggregationConfig {
+    /** The expression to evaluate */
+    String expression
+
+    /** The value to return if the expression evaluation fails (e.g. missing variables due to no data, divide by 0) */
+    def defaultValue
+}
+
 class GroupingConfig extends Aggregation {
     String type // DATE, DISCRETE, FILTER, HISTOGRAM
     Object filterValue
@@ -34,6 +42,10 @@ class GroupingConfig extends Aggregation {
 
 class Aggregation extends AggregationConfig {
     String property
+}
+
+class DistinctAggregationConfig extends Aggregation {
+    String keyProperty
 }
 
 class AggregationResult {

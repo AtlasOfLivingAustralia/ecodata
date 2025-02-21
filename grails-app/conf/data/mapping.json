@@ -220,11 +220,27 @@
           "type": "text",
           "index": "false"
         },
+        "services": {
+          "type": "keyword"
+        },
+        "projectElectFacet": {
+          "type": "keyword"
+        },
+        "projectStateFacet": {
+          "type": "keyword"
+        },
         "extent":{
           "properties": {
             "geometry": {
               "properties": {
-
+                "geometry": {
+                  "properties": {
+                    "intersectionAreaByFacets": {
+                      "type": "object",
+                      "enabled": false
+                    }
+                  }
+                }
 
               }
             }
@@ -236,7 +252,10 @@
               "properties": {
                 "geometry": {
                   "properties": {
-
+                    "intersectionAreaByFacets": {
+                      "type": "object",
+                      "enabled": false
+                    }
                   }
                 }
               }
