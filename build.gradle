@@ -20,7 +20,8 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
-version "5.3-SNAPSHOT"
+
+version "$ecodataVersion"
 group "au.org.ala"
 description "Ecodata"
 
@@ -38,7 +39,7 @@ if (Boolean.valueOf(enableJacoco)) {
 }
 
 sourceCompatibility = '11'
-targetCompatibility = '11'
+targetCompatibility = '17'
 
 apply from: "${project.projectDir}/gradle/publish.gradle"
 
