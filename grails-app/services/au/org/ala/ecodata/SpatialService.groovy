@@ -206,6 +206,7 @@ class SpatialService {
      * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
      */
     private List filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
+        Double lineStringBufferDistance = grailsApplication.config.getProperty("spatial.lineStringBufferDistance", Double, 0.5)
         List checkForBoundaryIntersectionInLayers = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
         if (!mainGeometry.isValid()) {
             // fix invalid geometry
@@ -245,6 +246,8 @@ class SpatialService {
 
                         // check if intersection should be ignored
                         start = end
+                        // convert line string or multi line string to thin polygon so as to make sure boundary geometry is not discarded if 5% of site area is intersected.
+                        mainGeometry = GeometryUtils.convertLineStringOrMultiLineStringToThinPolygon(mainGeometry, lineStringBufferDistance)
                         if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
                             filteredResponse[fid].add(obj)
                             def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
