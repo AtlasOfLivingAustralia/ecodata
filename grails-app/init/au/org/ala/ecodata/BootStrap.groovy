@@ -11,6 +11,7 @@ import au.org.ala.ecodata.customcodec.AccessLevelCodec
 import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import static grails.async.Promises.task
 //import net.sf.json.JSONNull
 import org.bson.BSON
 import org.bson.Transformer
@@ -33,10 +34,13 @@ class BootStrap {
     def hubService
     def messageSource
     def grailsCacheManager
+    SpatialService spatialService
+    MetadataService metadataService
     @Autowired
     MongoDatastore mongoDatastore
 
     def init = { servletContext ->
+        initializeSpatialIntersection()
         messageSource.setBasenames(
                 "file:///var/opt/atlas/i18n/ecodata/messages",
                 "file:///opt/atlas/i18n/ecodata/messages",
@@ -127,6 +131,20 @@ class BootStrap {
         int formCount = ActivityForm.count()
         if (formCount == 0) {
             new ActivityFormMigrator(grailsApplication.config.getProperty('app.external.model.dir')).migrateActivitiesModel()
+        }
+    }
+
+
+    /**
+     * Cache intersect of electorates and states layer so that fieldcapture does not have to wait a long time.
+     */
+    void initializeSpatialIntersection() {
+        task {
+            Hub meritHub = Hub.findByUrlPath('merit')
+            Map config = metadataService.getGeographicConfig(meritHub.hubId)
+            String electorateLayerId = config.contextual.elect
+            List stateLayerIds = [config.contextual.state]
+            spatialService.features(electorateLayerId, stateLayerIds)
         }
     }
 

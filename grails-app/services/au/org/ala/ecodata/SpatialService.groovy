@@ -404,6 +404,15 @@ class SpatialService {
                             def intersectedObjects = webService.getJson("${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/intersect/object/${fid}/${obj.pid}")
                             if (intersectedObjects instanceof List) {
                                 Map facetConfig = metadataService.getGeographicFacetConfig(fid)
+                                // get geometry of the objects in layer (get electorates list)
+                                Geometry mainGeometry = getGeometryForPid(obj.pid)
+                                // filter out objects that are near boundary (get intersection of electorate with state
+                                // layer and check if they are at boundary)
+                                intersectedObjects = intersectedObjects.findAll { intersectObject ->
+                                    Geometry intersectGeometry = getGeometryForPid(intersectObject.pid)
+                                    isValidGeometryIntersection(mainGeometry, intersectGeometry)
+                                }
+
                                 intersectedObjects.sort { it.name }
                                 obj[(facetConfig.name)] = obj[fid] = intersectedObjects.collect { standardiseSpatialLayerObjectName(it.name, facetConfig.name) }
                             }
