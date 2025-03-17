@@ -417,6 +417,7 @@ class SpatialService {
                                 }
 
                                 intersectedObjects.sort { it.name }
+                                println obj.name + intersectedObjects
                                 obj[(facetConfig.name)] = obj[fid] = intersectedObjects.collect { standardiseSpatialLayerObjectName(it.name, facetConfig.name) }
                             }
                         }

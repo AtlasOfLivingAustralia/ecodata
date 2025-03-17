@@ -1021,6 +1021,13 @@ class ElasticSearchService {
             }
         }
 
+        // Switch the homepage index to the new one
+        indexManager.updateAlias(HOMEPAGE_INDEX, newIndexes[HOMEPAGE_INDEX])
+        // We've already swapped this so we don't want to do that again when the rest of the indexing completes
+        newIndexes.remove(HOMEPAGE_INDEX)
+
+        log.info "Homepage indexing complete"
+
         log.info "Indexing all sites"
         int count = 0
         Site.withNewSession { session ->
