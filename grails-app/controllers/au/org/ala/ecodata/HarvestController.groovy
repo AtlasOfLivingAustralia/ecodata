@@ -151,6 +151,9 @@ class HarvestController {
                 // This is done to get the correct URL for documents.
                 String hostname = project.isMERIT ? grailsApplication.config.getProperty("fieldcapture.baseURL") : grailsApplication.config.getProperty("biocollect.baseURL")
                 DocumentHostInterceptor.documentHostUrlPrefix.set(hostname)
+                String filename = "darwin-core-${projectId}.zip"
+                response.setContentType("application/zip")
+                response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
                 recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
             } else
                 response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON
