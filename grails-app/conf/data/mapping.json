@@ -837,6 +837,14 @@
           }
         },
         {
+          "custom_funding_totals_template": {
+            "path_match":"custom.details.funding.columnTotal.data",
+            "mapping": {
+              "type":"float"
+            }
+          }
+        },
+        {
           "custom_event_date_template": {
             "path_match":"custom.details.events.scheduledDate",
             "mapping": {
