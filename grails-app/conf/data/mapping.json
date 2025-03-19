@@ -281,6 +281,10 @@
             "notes": {
               "type": "text"
             },
+            "area": {
+              "type": "text",
+              "index": false
+            },
             "features": {
               "type": "object",
               "enabled": false
