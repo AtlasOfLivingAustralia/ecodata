@@ -150,11 +150,11 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Description', 'Project service / Target measure/s to address threats', 'Methodology', 'Evidence to be retained']
     List<String> rdpKeyThreatProperties =commonProjectProperties + ['relatedOutcomes', 'threatCode', 'keyThreat','relatedTargetMeasures', 'keyTreatIntervention', 'evidence']
 
-    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
-    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
-    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
-    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
+    List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
+    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
 
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
@@ -481,7 +481,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
                 List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
-                    target.deliveredTotal = totalMetrics.find{it.label == target.scoreLabel}?.result?.result
+                    target.deliveredTotal = totalMetrics.find{it.scoreId == target.scoreId}?.result?.result
                 }
                 int row = outputTargetsSheet.getSheet().lastRowNum
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
@@ -1180,17 +1180,23 @@ class ProjectXlsExporter extends ProjectExporter {
         List<Map> results = metadataService.getProjectServicesWithTargets(project)
         AdditionalSheet sheet = getSheet(sheetName, stProperties, stHeaders)
         int row = sheet.getSheet().lastRowNum
-
+        List scoreIds = results?.scores?.scoreId?.flatten()?.unique()
+        List approvedMetrics = projectService.projectMetrics(project.projectId, true, true, scoreIds)
+        List totalMetrics = projectService.projectMetrics(project.projectId, false, false, scoreIds )
         List data = []
         results.each { item ->
             def serviceName = item.name
             item.scores.each {
+                Map totalMetric = totalMetrics?.find { metric -> metric.scoreId == it.scoreId}
+                Map approvedMetric = approvedMetrics?.find {metric -> metric.scoreId == it.scoreId}
                 Map st = [:]
                 st['service'] = serviceName
                 st['targetMeasure'] = it.label
                 st['relatedOutcomes'] = it.relatedOutcomes
                 st['total'] = it.target
                 st['targetDate'] = it.targetDate
+                st['deliveredTotal'] = totalMetric?.result?.result
+                st['deliveredApproved'] = approvedMetric?.result?.result
                 it.periodTargets.each { pt ->
                     st[pt.period] = pt.target
                 }
@@ -1198,7 +1204,7 @@ class ProjectXlsExporter extends ProjectExporter {
             }
         }
 
-        sheet.add(data?:[], rdpSTProperties, row+1)
+        sheet.add(data?:[], stProperties, row+1)
     }
 
     private static String findScoreLabels(List scoreIds) {
