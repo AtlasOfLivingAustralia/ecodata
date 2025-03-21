@@ -479,7 +479,7 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.outputTargets) {
                 List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
-                List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
+                List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreId: it.scoreId, scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
                     target.deliveredTotal = totalMetrics.find{it.scoreId == target.scoreId}?.result?.result
                 }
