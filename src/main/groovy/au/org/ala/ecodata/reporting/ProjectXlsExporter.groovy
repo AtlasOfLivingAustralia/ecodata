@@ -154,7 +154,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
     List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
-    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "Target Date"]
+    List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "2023/2024", "2024/2025", "Target Date"]
 
     List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
     List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
@@ -479,7 +479,7 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.outputTargets) {
                 List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
-                List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
+                List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreId: it.scoreId, scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
                     target.deliveredTotal = totalMetrics.find{it.scoreId == target.scoreId}?.result?.result
                 }
