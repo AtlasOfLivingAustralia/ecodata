@@ -12,7 +12,7 @@ class DarwinCoreArchiveJob {
         if (enabled) {
             cron name: "Darwin Core Archive: At 9 PM on Tuesday, Thursday and Saturday",
                     cronExpression: grailsApplication.config.getProperty("export.darwinCoreArchive.cronSchedule",
-                            "0 0 21 ? * TUE,THU,SAT *")
+                            "0 0 22 ? * TUE,THU,SAT *")
         }
     }
 

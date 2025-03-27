@@ -21,6 +21,9 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.locks.ReentrantLock
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -1851,6 +1854,7 @@ class RecordService {
                 ]
 
                 Map result = projectService.listProjectForAlaHarvesting(pagination)
+                createDarwinCoreArchiveDirectory(grailsApplication.config.getProperty('app.file.darwincore.path'))
                 while (result?.list) {
                     result.list.each { projectMap ->
                         try {
@@ -1880,10 +1884,16 @@ class RecordService {
      */
     void saveToDiskDarwinCoreArchiveForProject(Project project) {
         log.info("Creating darwin core archive for project ${project.name} ${project.projectId}")
-        createDarwinCoreArchiveDirectory(grailsApplication.config.getProperty('app.file.darwincore.path'))
         File darwinCore = getDarwinCoreArchiveFile(project.projectId)
         // delete existing darwin core archive
         if (darwinCore.exists()) {
+            // check date of file was created
+            Date dateCreated = getCreatedTime(darwinCore)
+            if (!doesDarwinCoreArchiveNeedUpdate(project, dateCreated)) {
+                log.info("Darwin core archive for project ${project.name} ${project.projectId} does not needs to be updated")
+                return
+            }
+
             darwinCore.delete()
         }
 
@@ -1941,5 +1951,36 @@ class RecordService {
         File dirFile = new File(directory)
         if (!dirFile.exists())
             dirFile.mkdirs()
+    }
+
+    /**
+     * check if project, project activity or activities have been updated since the creation of last Darwin Core Archive.
+     * @param project
+     * @param dateCreated
+     * @return
+     */
+    boolean doesDarwinCoreArchiveNeedUpdate (Project project, Date dateCreated) {
+        //  project updated
+        if (project.lastUpdated.after(dateCreated))
+            return true
+
+        // project activity updated
+        Integer countOfProjectActivities = ProjectActivity.countByProjectIdAndStatusNotEqualAndPublishedAndLastUpdatedGreaterThanEquals(project.projectId, Status.DELETED, true, dateCreated)
+        if (countOfProjectActivities > 0)
+            return true
+
+        // check output since activity attribute is not updated
+        List activityIds = activityService.getAllActivityIdsForProject(project.projectId)
+        Output.countByActivityIdInListAndLastUpdatedGreaterThanEqualsAndStatusNotEqual(activityIds, dateCreated, Status.DELETED) > 0
+    }
+
+    /**
+     * Get the creation time of a file.
+     * @param file
+     * @return
+     */
+    Date getCreatedTime(File file) {
+        BasicFileAttributes attrs = Files.readAttributes(Paths.get(file.toURI()), BasicFileAttributes.class)
+        new Date(attrs.creationTime().toMillis())
     }
 }
