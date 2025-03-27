@@ -152,7 +152,7 @@ class HarvestController {
                 String hostname = project.isMERIT ? grailsApplication.config.getProperty("fieldcapture.baseURL") : grailsApplication.config.getProperty("biocollect.baseURL")
                 DocumentHostInterceptor.documentHostUrlPrefix.set(hostname)
                 String filename = "darwin-core-${projectId}.zip"
-                boolean force = params.force ? params.force.toBoolean() : false
+                boolean force = params.getBoolean("force", false)
                 response.setContentType("application/zip")
                 response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
                 recordService.getDarwinCoreArchiveForProjectFromDiskOrOnDemand(response.outputStream, project, force)

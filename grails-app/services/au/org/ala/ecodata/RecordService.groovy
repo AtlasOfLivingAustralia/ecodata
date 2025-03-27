@@ -1897,7 +1897,7 @@ class RecordService {
             darwinCore.delete()
         }
 
-        // save new darwin core archive file and close the stream using try-with-resources
+        // save new darwin core archive file and close the stream
         FileOutputStream outputStream = new FileOutputStream(darwinCore)
         getDarwinCoreArchiveForProject(outputStream, project)
         outputStream.close()
