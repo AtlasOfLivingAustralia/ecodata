@@ -2,12 +2,12 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.apache.http.HttpStatus
-import org.apache.http.entity.ContentType
 
-import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat
 
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class HarvestController {
+    static responseFormats = ['json']
 
     RecordService recordService
     ProjectService projectService
@@ -152,13 +152,14 @@ class HarvestController {
                 String hostname = project.isMERIT ? grailsApplication.config.getProperty("fieldcapture.baseURL") : grailsApplication.config.getProperty("biocollect.baseURL")
                 DocumentHostInterceptor.documentHostUrlPrefix.set(hostname)
                 String filename = "darwin-core-${projectId}.zip"
+                boolean force = params.force ? params.force.toBoolean() : false
                 response.setContentType("application/zip")
                 response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
-                recordService.getDarwinCoreArchiveForProject(response.outputStream, project)
+                recordService.getDarwinCoreArchiveForProjectFromDiskOrOnDemand(response.outputStream, project, force)
             } else
-                response status: HttpStatus.SC_NOT_FOUND, text: [error: "project not found or ala harvest flag is switched off"] as JSON, contentType: ContentType.APPLICATION_JSON
+                respond([error: "project not found or ala harvest flag is switched off"], status: HttpStatus.SC_NOT_FOUND)
         } else {
-            response status: HttpStatus.SC_BAD_REQUEST, text: [error: "projectId is required"] as JSON, contentType: ContentType.APPLICATION_JSON
+            respond([error: "projectId is required"], status: HttpStatus.SC_BAD_REQUEST)
         }
     }
 }

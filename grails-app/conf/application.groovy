@@ -84,6 +84,9 @@ if (!app.file.upload.path) {
 if (!app.file.archive.path) {
     app.file.archive.path = "/data/ecodata/archive"
 }
+if (!app.file.darwincore.path) {
+    app.file.darwincore.path = "/data/ecodata/darwin-core-archive"
+}
 if (!app.external.api.version) {
     app.external.api.version = 'draft'
 }
