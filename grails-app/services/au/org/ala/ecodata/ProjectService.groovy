@@ -1339,6 +1339,7 @@ class ProjectService {
             if (geographicInfo.primaryState) {
                 List states = result[PROJECT_STATE_FACET] = result[PROJECT_STATE_FACET] ?: []
                 states.add(0, geographicInfo.primaryState)
+                states.unique()
             }
         }
 
@@ -1347,6 +1348,7 @@ class ProjectService {
             if (geographicInfo.primaryElectorate) {
                 List elects = result[PROJECT_ELECT_FACET] = result[PROJECT_ELECT_FACET] ?: []
                 elects.add(0, geographicInfo.primaryElectorate)
+                elects.unique()
             }
         }
 

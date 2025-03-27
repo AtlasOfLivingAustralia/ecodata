@@ -21,6 +21,10 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+import java.util.concurrent.locks.ReentrantLock
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -33,6 +37,7 @@ import static grails.async.Promises.task
  */
 class RecordService {
     private static final Object LOCK_1 = new Object() {};
+    private final ReentrantLock lock = new ReentrantLock();
     static transactional = false
 
     def grailsApplication
@@ -1481,6 +1486,9 @@ class RecordService {
      * @return
      */
     List writeToCsvIfUnique(String currentZipEntry, ZipOutputStream zip, CSVWriter tmpCsvWriter, boolean isHeaderWritten, List headers, List attributes, HashSet uniqueListOfKeys, Map<String, List> result, String dwcClass, CSVWriter csvWriter) {
+        if (!attributes)
+            return [currentZipEntry, isHeaderWritten, csvWriter]
+
         if (currentZipEntry == null) {
             currentZipEntry = dwcClass
             zip.putNextEntry(new ZipEntry(getEventCoreFileName(dwcClass)))
@@ -1824,5 +1832,155 @@ class RecordService {
         }
 
         name
+    }
+
+    /**
+     *  Run by quartz job to periodically create darwin core archive for all projects
+     */
+    void saveToDiskDarwinCoreArchiveForAllProjects () {
+        if(!lock.tryLock()) {
+            log.info("Darwin core archive creation is already in progress")
+            return
+        }
+
+        try {
+            log.info("Creating darwin core archive for all projects")
+            Project.withNewSession { session ->
+                Map pagination = [
+                        max   : 10,
+                        offset: 0,
+                        order : 'asc',
+                        sort  : 'lastUpdated'
+                ]
+
+                Map result = projectService.listProjectForAlaHarvesting(pagination)
+                createDarwinCoreArchiveDirectory(grailsApplication.config.getProperty('app.file.darwincore.path'))
+                while (result?.list) {
+                    result.list.each { projectMap ->
+                        try {
+                            Project project = Project.findByProjectId(projectMap.projectId)
+                            saveToDiskDarwinCoreArchiveForProject(project)
+                        }
+                        catch (Exception e) {
+                            log.error("Error creating darwin core archive for project ${projectMap.name} ${projectMap.projectId}", e)
+                        }
+                    }
+
+                    pagination.offset += pagination.max
+                    result = projectService.listProjectForAlaHarvesting(pagination)
+                }
+            }
+
+            log.info("Finished creating darwin core archive for all projects")
+        }
+        finally {
+            lock.unlock()
+        }
+    }
+
+    /**
+     * Save darwin core archive to disk for a project
+     * @param project
+     */
+    void saveToDiskDarwinCoreArchiveForProject(Project project) {
+        log.info("Creating darwin core archive for project ${project.name} ${project.projectId}")
+        File darwinCore = getDarwinCoreArchiveFile(project.projectId)
+        // delete existing darwin core archive
+        if (darwinCore.exists()) {
+            // check date of file was created
+            Date dateCreated = getCreatedTime(darwinCore)
+            if (!doesDarwinCoreArchiveNeedUpdate(project, dateCreated)) {
+                log.info("Darwin core archive for project ${project.name} ${project.projectId} does not needs to be updated")
+                return
+            }
+
+            darwinCore.delete()
+        }
+
+        // save new darwin core archive file and close the stream
+        FileOutputStream outputStream = new FileOutputStream(darwinCore)
+        getDarwinCoreArchiveForProject(outputStream, project)
+        outputStream.close()
+        log.info("Finished creating darwin core archive for project ${project.name} ${project.projectId}")
+    }
+
+    /**
+     * Used by controller to allow download of darwin core archive for a project from disk or on demand using force flag.
+     * @param outputStream
+     * @param project
+     * @param force
+     */
+    void getDarwinCoreArchiveForProjectFromDiskOrOnDemand (OutputStream outputStream, Project project, boolean force = false) {
+        if (force) {
+            getDarwinCoreArchiveForProject(outputStream, project)
+        }
+        else {
+            createDarwinCoreArchiveDirectory(grailsApplication.config.getProperty('app.file.darwincore.path'))
+            File darwinCore = getDarwinCoreArchiveFile(project.projectId)
+            if (darwinCore.exists()) {
+                try (BufferedInputStream inputStream = darwinCore.newInputStream()) {
+                    inputStream.transferTo (outputStream)
+                    outputStream.flush()
+                }
+                catch (Exception e) {
+                    log.error("Error reading darwin core archive from disk", e)
+                }
+            }
+            else {
+                getDarwinCoreArchiveForProject(outputStream, project)
+            }
+        }
+    }
+
+    /**
+     * Get file object of a project's Darwin Core Archive.
+     * @param projectId
+     * @return
+     */
+    File getDarwinCoreArchiveFile (String projectId) {
+        String directory = grailsApplication.config.getProperty('app.file.darwincore.path')
+        return new File(directory, "${projectId}.zip")
+    }
+
+    /**
+     * Create parent directory that contains all Darwin Core Archive files.
+     * @param directory
+     * @return
+     */
+    String createDarwinCoreArchiveDirectory (String directory) {
+        File dirFile = new File(directory)
+        if (!dirFile.exists())
+            dirFile.mkdirs()
+    }
+
+    /**
+     * check if project, project activity or activities have been updated since the creation of last Darwin Core Archive.
+     * @param project
+     * @param dateCreated
+     * @return
+     */
+    boolean doesDarwinCoreArchiveNeedUpdate (Project project, Date dateCreated) {
+        //  project updated
+        if (project.lastUpdated.after(dateCreated))
+            return true
+
+        // project activity updated
+        Integer countOfProjectActivities = ProjectActivity.countByProjectIdAndStatusNotEqualAndPublishedAndLastUpdatedGreaterThanEquals(project.projectId, Status.DELETED, true, dateCreated)
+        if (countOfProjectActivities > 0)
+            return true
+
+        // check output since activity attribute is not updated
+        List activityIds = activityService.getAllActivityIdsForProject(project.projectId)
+        Output.countByActivityIdInListAndLastUpdatedGreaterThanEqualsAndStatusNotEqual(activityIds, dateCreated, Status.DELETED) > 0
+    }
+
+    /**
+     * Get the creation time of a file.
+     * @param file
+     * @return
+     */
+    Date getCreatedTime(File file) {
+        BasicFileAttributes attrs = Files.readAttributes(Paths.get(file.toURI()), BasicFileAttributes.class)
+        new Date(attrs.creationTime().toMillis())
     }
 }

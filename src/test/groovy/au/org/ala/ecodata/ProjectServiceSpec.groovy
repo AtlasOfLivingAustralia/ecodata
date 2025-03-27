@@ -1164,6 +1164,36 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == false
     }
 
+
+    def "findStateAndElectorateForProject should return primary and other states/electorates based on site intersections and project config and remove any duplicates"() {
+        given:
+        Map project = [hubId: 'hub1', geographicInfo: [overridePrimaryState: true, overridePrimaryElectorate: true,  primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner'], otherExcludedElectorates: ['Fenner'], otherExcludedStates: ['NSW']], sites: [
+                [siteId: 's1', name: "Site 1", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["ACT": 0.9, "NSW": 0.3, "VIC": 0.25]], "elect": ["CURRENT": ["Bean": 0.9, "Canberra": 0.3]]]]]],
+                [siteId: 's2', name: "Site 2", type: "compound", status: 'active', projects: ['111'], extent: [ source: "point", geometry: [intersectionAreaByFacets: ["state": ["CURRENT": ["ACT": 0.9, "NSW": 0.3, "VIC": 0.25]], "elect": ["CURRENT": ["Bean": 0.9, "Canberra": 0.3]]]]]]]
+        ]
+        Map geographicConfig = [
+                contextual: [state: 'layer1', elect: 'layer2'],
+                checkForBoundaryIntersectionInLayers: ["layer1", "layer2"]
+        ]
+
+        metadataService.getGeographicConfig() >> geographicConfig
+        metadataService.getGeographicConfig(*_) >> geographicConfig
+        metadataService.getGeographicFacetConfig("layer1") >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer1", _) >> [name: "state", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2") >> [name: "elect", grouped: false]
+        metadataService.getGeographicFacetConfig("layer2", _) >> [name: "elect", grouped: false]
+
+        when:
+        Map result = service.findAndFormatStatesAndElectoratesForProject(project)
+
+        then:
+        result.primarystate == "ACT"
+        result.otherstate == "VIC"
+        result.primaryelect == "Bean"
+        result.otherelect == "Canberra"
+        result[ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN] == true
+    }
+
     def "findStateAndElectorateForProject should return value for other state/elect geographic info if override is false and project sites are empty"() {
         given:
         Map project = [geographicInfo: [overridePrimaryState: false, overridePrimaryElectorate: false, primaryState: "ACT", otherStates: ['NSW', 'VIC'], primaryElectorate: "Bean", otherElectorates: ['Canberra', 'Fenner']]]
