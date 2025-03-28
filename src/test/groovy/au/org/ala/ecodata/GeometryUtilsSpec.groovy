@@ -3,6 +3,8 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import org.locationtech.jts.geom.*
+import org.opengis.referencing.crs.CoordinateReferenceSystem
 import spock.lang.Specification
 
 class GeometryUtilsSpec extends Specification {
@@ -105,5 +107,36 @@ class GeometryUtilsSpec extends Specification {
         result != null
         result.type == "Point"
         result.coordinates == [30.12346, 10.12346]
+    }
+
+    def "a point in UTM should be converted to WGS84" () {
+        GeometryFactory factory = new GeometryFactory()
+        // Create a point in UTM (approximate meters)
+        Point utmPoint = factory.createPoint(new Coordinate(724061.775, 7973106.940))
+
+
+        when:
+        CoordinateReferenceSystem utmCrs = org.geotools.referencing.CRS.decode("AUTO2:42001,143.12,-18.32", true)
+        Geometry wgs84Point = GeometryUtils.utmToWgs84(utmPoint, utmCrs)
+
+        then:
+        (143.1199..143.1201).containsWithinBounds(wgs84Point.getCoordinate().x)
+        (-18.3201..-18.3199).containsWithinBounds(wgs84Point.getCoordinate().y)
+    }
+
+    def "should correctly convert a buffered UTM polygon to WGS84"() {
+        given: "A line with two coordinates UTM"
+        GeometryFactory factory = new GeometryFactory()
+        LineString line = factory.createLineString([
+                new Coordinate(143.12, -18.32),
+                new Coordinate(143.13, -18.31)
+        ] as Coordinate[])
+
+        when: "It is converted to WGS84"
+        Geometry wgs84Buffer = GeometryUtils.convertLineStringOrMultiLineStringToThinPolygon(line, 0.5)
+
+        then: "The resulting geometry is a valid polygon"
+        wgs84Buffer.isValid()
+        wgs84Buffer.geometryType == "Polygon"
     }
 }

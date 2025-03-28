@@ -655,6 +655,16 @@ class ActivityService {
         }
     }
 
+    def getAllActivityIdsForProject(String projectId) {
+        Activity.withCriteria {
+            eq "projectId", projectId
+            projections {
+                property("activityId")
+            }
+        }
+    }
+
+
     /**
      * An activity is embargoed if either of the below conditions are satisfied
      * 1. embargoed flag is set to true on an activity

@@ -206,6 +206,7 @@ class SpatialService {
      * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
      */
     private List filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
+        Double lineStringBufferDistance = grailsApplication.config.getProperty("spatial.lineStringBufferDistance", Double, 0.5)
         List checkForBoundaryIntersectionInLayers = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
         if (!mainGeometry.isValid()) {
             // fix invalid geometry
@@ -245,6 +246,8 @@ class SpatialService {
 
                         // check if intersection should be ignored
                         start = end
+                        // convert line string or multi line string to thin polygon so as to make sure boundary geometry is not discarded if 5% of site area is intersected.
+                        mainGeometry = GeometryUtils.convertLineStringOrMultiLineStringToThinPolygon(mainGeometry, lineStringBufferDistance)
                         if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
                             filteredResponse[fid].add(obj)
                             def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
@@ -404,6 +407,15 @@ class SpatialService {
                             def intersectedObjects = webService.getJson("${grailsApplication.config.getProperty('spatial.baseUrl')}/ws/intersect/object/${fid}/${obj.pid}")
                             if (intersectedObjects instanceof List) {
                                 Map facetConfig = metadataService.getGeographicFacetConfig(fid)
+                                // get geometry of the objects in layer (get electorates list)
+                                Geometry mainGeometry = getGeometryForPid(obj.pid)
+                                // filter out objects that are near boundary (get intersection of electorate with state
+                                // layer and check if they are at boundary)
+                                intersectedObjects = intersectedObjects.findAll { intersectObject ->
+                                    Geometry intersectGeometry = getGeometryForPid(intersectObject.pid)
+                                    isValidGeometryIntersection(mainGeometry, intersectGeometry)
+                                }
+
                                 intersectedObjects.sort { it.name }
                                 obj[(facetConfig.name)] = obj[fid] = intersectedObjects.collect { standardiseSpatialLayerObjectName(it.name, facetConfig.name) }
                             }

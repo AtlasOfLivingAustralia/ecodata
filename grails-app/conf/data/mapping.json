@@ -281,6 +281,10 @@
             "notes": {
               "type": "text"
             },
+            "area": {
+              "type": "text",
+              "index": false
+            },
             "features": {
               "type": "object",
               "enabled": false
@@ -833,6 +837,14 @@
             "path_match":"custom.details.budget.rows.costs.dollar",
             "mapping": {
               "type":"keyword"
+            }
+          }
+        },
+        {
+          "custom_funding_totals_template": {
+            "path_match":"custom.details.funding.columnTotal.data",
+            "mapping": {
+              "type":"float"
             }
           }
         },
