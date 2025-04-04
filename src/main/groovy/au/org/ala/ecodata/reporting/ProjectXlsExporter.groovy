@@ -327,8 +327,8 @@ class ProjectXlsExporter extends ProjectExporter {
         Date now = new Date()
         List orgs = project.associatedOrgs?.findAll{(!it.fromDate || it.fromDate <= now) && (!it.toDate || it.toDate >= now)}
         if (orgs) {
-            project.organisationName = orgs[0].name
-            project.organisationId = orgs[0].organisationId
+            project[PROJECT_DATA_PREFIX+'organisationName'] = orgs[0].name
+            project[PROJECT_DATA_PREFIX+'organisationId'] = orgs[0].organisationId
         }
 
         filterExternalIds(project, PROJECT_DATA_PREFIX)
