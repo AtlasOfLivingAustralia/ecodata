@@ -715,6 +715,17 @@
                       "type": "text"
                     }
                   }
+                },
+                "assets": {
+                  "properties": {
+                    "category": {
+                      "type": "keyword"
+                    },
+                    "description": {
+                      "type": "text",
+                      "copy_to": "meriPlanAssetFacet"
+                    }
+                  }
                 }
 
               }
@@ -824,6 +835,15 @@
         }
       },
       "dynamic_templates": [
+        {
+          "investment_priorities_template": {
+            "path_match":"custom.details.outcomes.*.assets",
+            "mapping": {
+              "type":"keyword",
+              "copy_to":"meriPlanAssetFacet"
+            }
+          }
+        },
         {
           "output_template": {
             "path_match": "outputTargets.*",
