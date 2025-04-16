@@ -129,8 +129,14 @@ class UrlMappings {
             action = [POST:"search"]
         }
 
-		"/ws/$controller/$action?/$id?(.$format)?" {
+        "/reporting/ws/$controller/$action?/$id?(.$format)?" {
+        }
+
+        "/ws/$controller/$action?/$id?(.$format)?" {
 		}
+
+        "/reporting/$controller/$action?/$id?(.$format)?" {
+        }
 
 		"/$controller/$action?/$id?(.$format)?" {
 		}
