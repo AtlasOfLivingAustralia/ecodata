@@ -22,7 +22,6 @@ import java.util.zip.ZipInputStream
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
-@Transactional
 class MetadataService implements DataBinder {
 
     static final String BUILD_VERSION_PROPERTY = "git.build.version"
