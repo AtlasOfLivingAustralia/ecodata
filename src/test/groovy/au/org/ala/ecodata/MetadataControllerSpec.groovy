@@ -24,9 +24,9 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
     def "Get excel template that can be populated with output data and uploaded"() {
         setup:
         String outputName = 'test'
-        def model = [modelName:'test', dataModel:[[dataType:'text',name:'testField']],
-                     viewModel:[[type:"row", items:[source:'testField',type:'text', preLabel:'testField']]]]
-        def annotatedModel = [[dataType:'text',name:'testField', preLabel:'testField', label:'testField',source:'testField',type:'text']]
+        def model = [modelName: 'test', dataModel: [[dataType: 'text', name: 'testField']],
+                     viewModel: [[type: "row", items: [source: 'testField', type: 'text', preLabel: 'testField']]]]
+        def annotatedModel = [[dataType: 'text', name: 'testField', preLabel: 'testField', label: 'testField', source: 'testField', type: 'text']]
 
         when:
         params.type = outputName
@@ -44,7 +44,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
 
         OutputStream outStream = new FileOutputStream(outputFile)
         outStream.setBytes(response.contentAsByteArray)
-        Workbook workbook =  ExportTestUtils.readWorkbook(outputFile)
+        Workbook workbook = ExportTestUtils.readWorkbook(outputFile)
         Sheet sheet = workbook.getSheet(outputName)
         sheet.physicalNumberOfRows == 1 //header row
         sheet.head().getPhysicalNumberOfCells() == 1 //one field
@@ -55,9 +55,9 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
     def "Get excel template that can be populated with data header"() {
         setup:
         String outputName = 'test'
-        def model = [modelName:'test', dataModel:[[dataType:'text',name:'testField']],
-                     viewModel:[[type:"row", items:[source:'testField',type:'text', preLabel:'testField']]]]
-        def annotatedModel = [[dataType:'text',name:'testField', preLabel:'Test Field', label:'Test Field', source:'testField', type:'text']]
+        def model = [modelName: 'test', dataModel: [[dataType: 'text', name: 'testField']],
+                     viewModel: [[type: "row", items: [source: 'testField', type: 'text', preLabel: 'testField']]]]
+        def annotatedModel = [[dataType: 'text', name: 'testField', preLabel: 'Test Field', label: 'Test Field', source: 'testField', type: 'text']]
 
         when:
         params.type = outputName
@@ -76,7 +76,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
 
         OutputStream outStream = new FileOutputStream(outputFile)
         outStream.setBytes(response.contentAsByteArray)
-        Workbook workbook =  ExportTestUtils.readWorkbook(outputFile)
+        Workbook workbook = ExportTestUtils.readWorkbook(outputFile)
         Sheet sheet = workbook.getSheet(outputName)
         sheet.physicalNumberOfRows == 2 //header row
         sheet.head().getPhysicalNumberOfCells() == 2 //one field
@@ -84,6 +84,50 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         sheet.head().getCell(1).toString() == 'testField'
         sheet.getRow(1).getCell(0).toString() == 'Serial Number'
         sheet.getRow(1).getCell(1).toString() == 'Test Field'
+    }
+
+    def "should return terms for a given category and hubId"() {
+        setup:
+        String category = "testCategory"
+        String hubId = "testHubId"
+        def terms = [[term: "term1"], [term: "term2"]]
+        metadataService.findTermsByCategory(category, hubId) >> terms
+
+        when:
+        controller.terms(category, hubId)
+
+        then:
+        response.status == HttpStatus.SC_OK
+        response.json == terms
+    }
+
+    def "should delete a term and mark it as deleted"() {
+        setup:
+        Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory")
+        Term savedTerm = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory", status: Status.ACTIVE)
+
+        when:
+        controller.deleteTerm(term.termId)
+
+        then:
+        savedTerm.status == Status.DELETED
+        1 * savedTerm.save()
+        response.status == HttpStatus.SC_OK
+        response.json.term == "testTerm"
+        response.json.status == Status.DELETED.toString()
+    }
+
+    def "should update a term and save it"() {
+        setup:
+        Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory")
+
+        when:
+        controller.updateTerm(term.properties)
+
+        then:
+        1 * term.save()
+        response.status == HttpStatus.SC_OK
+        response.json.term == "testTerm"
     }
 
 }

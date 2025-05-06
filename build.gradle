@@ -211,16 +211,6 @@ tasks.withType(Test) {
     }
 }
 
-tasks.register("mongoSpecTests", Test) {
-    useJUnitPlatform {
-        includeTags "mongo"
-    }
-}
-
-test {
-    dependsOn "mongoSpecTests"
-}
-
 assets {
     minifyJs = true
     minifyCss = true
