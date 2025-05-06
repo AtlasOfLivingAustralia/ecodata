@@ -19,6 +19,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         controller.metadataService = metadataService
         outputFile = File.createTempFile('test', '.xlsx')
         excelImportService = new ExcelImportService()
+        mockDomain(Term)
     }
 
     def "Get excel template that can be populated with output data and uploaded"() {
@@ -86,46 +87,45 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         sheet.getRow(1).getCell(1).toString() == 'Test Field'
     }
 
-    def "should return terms for a given category and hubId"() {
+    def "The controller should delegate to the MetadataService to find terms"() {
         setup:
         String category = "testCategory"
         String hubId = "testHubId"
         def terms = [[term: "term1"], [term: "term2"]]
-        metadataService.findTermsByCategory(category, hubId) >> terms
 
         when:
         controller.terms(category, hubId)
 
         then:
+        1 *  metadataService.findTermsByCategory(category, hubId) >> terms
         response.status == HttpStatus.SC_OK
         response.json == terms
     }
 
-    def "should delete a term and mark it as deleted"() {
+    def "The controller should delegate to the MetadataService to delete a Term"() {
         setup:
-        Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory")
-        Term savedTerm = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory", status: Status.ACTIVE)
+        Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory", status:Status.DELETED)
 
         when:
         controller.deleteTerm(term.termId)
 
         then:
-        savedTerm.status == Status.DELETED
-        1 * savedTerm.save()
+        1 * metadataService.deleteTerm(term.termId) >> term
+
         response.status == HttpStatus.SC_OK
-        response.json.term == "testTerm"
-        response.json.status == Status.DELETED.toString()
+        response.json.status == Status.DELETED
     }
 
-    def "should update a term and save it"() {
+    def "The controller should delegate to the MetadataService to update a Term"() {
         setup:
-        Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory")
+        Map term = [term: "testTerm", hubId: "testHubId", category: "testCategory"]
 
         when:
-        controller.updateTerm(term.properties)
+        request.JSON = term
+        controller.updateTerm()
 
         then:
-        1 * term.save()
+        1 * metadataService.updateTerm(term) >> new Term(term)
         response.status == HttpStatus.SC_OK
         response.json.term == "testTerm"
     }
