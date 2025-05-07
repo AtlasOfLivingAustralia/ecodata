@@ -33,7 +33,7 @@ class DateUtilSpec extends Specification {
     def "A date can be parsed and formatted using the ISO 8601 format with milliseconds"() {
         given:
         String date = "2021-06-30T00:12:33.123Z"
-
+4
         expect:
         DateUtil.formatWithMilliseconds(DateUtil.parseWithMilliseconds(date)) == date
     }
@@ -44,5 +44,19 @@ class DateUtilSpec extends Specification {
 
         expect:
         DateUtil.convertUTCDateToStringInTimeZone(date, TimeZone.getTimeZone("Australia/Sydney"), "dd/MM/yyyy") == "30/06/2021"
+    }
+
+    def "A date can be parsed and displayed in provided timezone with and without milliseconds"(){
+        given:
+        String date = "2021-06-30T00:12:33.123Z"
+
+        expect:
+        DateUtil.formatWithMilliseconds(DateUtil.parseDateWithAndWithoutMilliSeconds(date)) == date
+
+        when:
+        date = "2021-06-15T00:12:33Z"
+
+        then:
+        DateUtil.format(DateUtil.parseDateWithAndWithoutMilliSeconds(date)) == date
     }
 }

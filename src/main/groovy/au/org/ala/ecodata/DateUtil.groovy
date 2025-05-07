@@ -1,23 +1,23 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.ISODateBindingConverter
+import groovy.util.logging.Slf4j
 
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Month
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-
 /**
  * Created by mol109 on 25/5/17.
  */
-
+@Slf4j
 class DateUtil {
-
     private static String dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
     private static String dateFormatWithMillis = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
 
@@ -32,6 +32,21 @@ class DateUtil {
     static Date parseWithMilliseconds(String dateStr) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormatWithMillis)
         return format.parse(dateStr.replace("Z", "+0000"))
+    }
+
+    static Date parseDateWithAndWithoutMilliSeconds(String dateStr) {
+        Date date = null
+        try {
+            date = parseWithMilliseconds(dateStr)
+        } catch (ParseException e1) {
+            try {
+                date = parse(dateStr)
+            } catch (ParseException e2) {
+                log.error("Failed to parse date with and without milliseconds: ${dateStr}", e2)
+            }
+        }
+
+        date
     }
 
     static String format(Date date) {
