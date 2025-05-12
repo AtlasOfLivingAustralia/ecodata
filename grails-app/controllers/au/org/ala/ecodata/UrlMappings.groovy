@@ -289,11 +289,6 @@ class UrlMappings {
             action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }
 
-        "/ws/metadata/terms/$category/$hubId?" {
-            controller = 'metadata'
-            action = 'terms'
-        }
-
         "/ws/metadata/term/$termId?" {
             controller = 'metadata'
             action = [POST: 'updateTerm', DELETE: 'deleteTerm']
