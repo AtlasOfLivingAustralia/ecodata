@@ -373,9 +373,32 @@ class MetadataController {
         render( text: indices as JSON, contentType: 'application/json')
     }
 
-    /** Returns all Services, including associated Scores based on the forms assocaited with each service */
+    /** Returns all Services, including associated Scores based on the forms associated with each service */
     def services() {
         render metadataService.getServiceList() as JSON
+    }
+
+    def terms(String category, String hubId) {
+        respond metadataService.findTermsByCategory(category, hubId)
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def deleteTerm(String termId) {
+        Term term = metadataService.deleteTerm(termId)
+        if (term.hasErrors()) {
+            respond term.errors
+        }
+        else {
+            Map result = [status:Status.DELETED]
+            respond result
+        }
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def updateTerm() {
+        Map termProperties = request.JSON
+        Term term = metadataService.updateTerm(termProperties)
+        respond term
     }
 
 }

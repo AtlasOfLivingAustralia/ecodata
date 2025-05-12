@@ -289,6 +289,11 @@ class UrlMappings {
             action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }
 
+        "/ws/metadata/term/$termId?" {
+            controller = 'metadata'
+            action = [POST: 'updateTerm', DELETE: 'deleteTerm']
+        }
+
         "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
 	}
