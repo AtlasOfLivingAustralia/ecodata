@@ -6,7 +6,7 @@ import org.bson.types.ObjectId
  * A Hub is a mechanism used to provide a filtered / skinned view of the data in ecodata.
  * It provides some options for configuring default searches, faceting, skin and homepage.
  */
-class Hub {
+class Hub implements ProcessEmbedded {
     ObjectId id
 
     String hubId
@@ -26,12 +26,14 @@ class Hub {
     List adminFacets
     /** Defines the facets that can be used to colour points on maps */
     List availableMapFacets
+    /** Defines the facets that can be used to colour points on maps */
+    List officerFacets
     /** Defines facet terms that will be applied to searches made by a user using this hub */
     List defaultFacetQuery
     /** Defines the path used as an entry point to this hub */
     String homePagePath
     /** If configurable template is chosen, then use this config to layout the page **/
-    Map templateConfiguration
+    TemplateConfiguration templateConfiguration
     /**
      * contains configuration for hiding bread crumbs, cancel button and survey and project names
      */
@@ -44,6 +46,7 @@ class Hub {
     Map pages
     /** on record listing pages like all records, my records etc., configure table columns using this property */
     List dataColumns
+    List userPermissions
     MapLayersConfiguration mapLayersConfig
     /** configure how activity is displayed on map for example point, heatmap or cluster. */
     List mapDisplays
@@ -54,6 +57,12 @@ class Hub {
 
     Date dateCreated
     Date lastUpdated
+
+    /** The URL to the banner image for this hub */
+    String bannerUrl
+
+    /** The URL to the logo image for this hub */
+    String logoUrl
 
     /** If an email is generated relating to this hub, use this sender address instead of the default it the config */
     String emailFromAddress
@@ -71,6 +80,9 @@ class Hub {
     Map geographicConfig
 
     AccessManagementOptions accessManagementOptions
+
+    /** Controller and action of home page action */
+    Map homePageControllerAndAction
 
     static mapping = {
         hubId index: true
@@ -97,7 +109,27 @@ class Hub {
         accessManagementOptions nullable: true
         fathomSiteId nullable: true
         geographicConfig nullable: true
+        bannerUrl nullable: true
+        logoUrl nullable: true
+        userPermissions nullable: true
+        homePageControllerAndAction nullable: true
+        officerFacets nullable: true
+        templateConfiguration nullable: true
+        supportedPrograms nullable: true
+        availableFacets nullable: true
+        adminFacets nullable: true
+        availableMapFacets nullable: true
+        defaultFacetQuery nullable: true
+        quickLinks nullable: true
     }
 
-    static embedded = ['mapLayersConfig', 'accessManagementOptions']
+    static embedded = ['mapLayersConfig', 'accessManagementOptions', 'templateConfiguration']
+
+    def beforeInsert () {
+        processEmbeddedObjects()
+    }
+
+    def beforeUpdate () {
+        processEmbeddedObjects()
+    }
 }

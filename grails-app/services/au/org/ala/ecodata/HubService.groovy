@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.validation.ValidationException
+import grails.web.databinding.DataBinder
 import groovy.util.logging.Slf4j
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.context.MessageSource
@@ -8,8 +9,8 @@ import org.springframework.context.MessageSource
 import static au.org.ala.ecodata.Status.DELETED
 
 @Slf4j
-class HubService {
-
+class HubService implements DataBinder {
+    private static final List EXCLUDE_FROM_BINDING = ['hubId', 'status', 'id', 'urlPath']
     static transactional = 'mongo'
     MessageSource messageSource
     CommonService commonService
@@ -39,8 +40,7 @@ class HubService {
         try {
             props.remove('urlPath')
             props.remove('hubId')
-
-            commonService.updateProperties(hub, props)
+            bindData(hub, props, EXCLUDE_FROM_BINDING)
             // urlPath is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             hub.save(failOnError: true, flush:true)
 
@@ -62,7 +62,8 @@ class HubService {
         Hub hub = get(id, false)
         if (hub) {
             try {
-                commonService.updateProperties(hub, props)
+                bindData(hub, props, EXCLUDE_FROM_BINDING)
+                hub.save(flush: true, failOnError: true)
                 return [status:'ok']
             } catch (Exception e) {
                 Hub.withSession { session -> session.clear() }
