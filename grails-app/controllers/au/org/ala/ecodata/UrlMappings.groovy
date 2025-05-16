@@ -129,8 +129,14 @@ class UrlMappings {
             action = [POST:"search"]
         }
 
-		"/ws/$controller/$action?/$id?(.$format)?" {
+        "/reporting/ws/$controller/$action?/$id?(.$format)?" {
+        }
+
+        "/ws/$controller/$action?/$id?(.$format)?" {
 		}
+
+        "/reporting/$controller/$action?/$id?(.$format)?" {
+        }
 
 		"/$controller/$action?/$id?(.$format)?" {
 		}
@@ -281,6 +287,11 @@ class UrlMappings {
         "/ws/paratoo/projects/$id" {
             controller = 'paratoo'
             action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
+        }
+
+        "/ws/metadata/term/$termId?" {
+            controller = 'metadata'
+            action = [POST: 'updateTerm', DELETE: 'deleteTerm']
         }
 
         "/"(redirect:[controller:"documentation"])

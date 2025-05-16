@@ -6,6 +6,8 @@ import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.web.databinding.DataBinder
+import grails.gorm.transactions.Transactional
 import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
 import org.apache.poi.ss.usermodel.Sheet
@@ -20,7 +22,7 @@ import java.util.zip.ZipInputStream
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
-class MetadataService {
+class MetadataService implements DataBinder {
 
     static final String BUILD_VERSION_PROPERTY = "git.build.version"
     private static final String GIT_PROPERTIES_FILE = "git.properties"
@@ -1275,6 +1277,52 @@ class MetadataService {
 
     }
 
+    List<Term> findTermsByCategory(String category, String hubId = null) {
+        List<Term> terms = Term.createCriteria().list {
+            if (hubId) { // Support categories that are used in multiple hubs
+                eq('hubId', hubId)
+            }
+            eq('category', category)
+            ne('status', Status.DELETED)
+            order('term', 'asc')
+        }
+        terms
+    }
 
+    Term deleteTerm(String termId) {
+
+        Term term = Term.findByTermIdAndStatus(termId, Status.ACTIVE)
+        if (!term) {
+            return null
+        }
+
+        // Because of the unique constraint on Terms, if the same Term is deleted then
+        // re-added we can't soft delete it a second time without hard deleting any existing
+        // soft deleted Term.
+        Term deletedTerm = Term.findByTermAndCategoryAndHubIdAndStatus(
+                term.term, term.category, term.hubId, Status.DELETED)
+        if (deletedTerm) {
+            deletedTerm.delete(flush:true)
+        }
+
+        term.status = Status.DELETED
+        term.save(flush:true)
+
+        term
+    }
+
+    Term updateTerm(Map termProps) {
+        Term term
+        if (!termProps?.termId) {
+            term = new Term()
+        }
+        else {
+            term = Term.findByTermId(termProps.termId)
+        }
+
+        bindData(term, termProps)
+        term.save(flush:true)
+        term
+    }
 
 }
