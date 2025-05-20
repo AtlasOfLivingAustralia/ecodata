@@ -19,16 +19,24 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     def setupSpec() {
         setupTerms()
-
+        setupInvestmentPriorities()
     }
 
     private void setupTerms() {
-            // Mock test data
-            new Term(termId: 't1', term: "testTerm1", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't2', term: "testTerm2", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't3', term: "testTerm3", category: "otherCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't4', term: "testTerm4", category: "testCategory", hubId: "hub2", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't5', term: "testTerm5", category: "testCategory", hubId: "hub1", status: Status.DELETED).save(flush: true, failOnError:true)
+        // Mock test data
+        new Term(termId: 't1', term: "testTerm1", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't2', term: "testTerm2", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't3', term: "testTerm3", category: "otherCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't4', term: "testTerm4", category: "testCategory", hubId: "hub2", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't5', term: "testTerm5", category: "testCategory", hubId: "hub1", status: Status.DELETED).save(flush: true, failOnError:true)
+    }
+    
+    private void setupInvestmentPriorities() {
+        new InvestmentPriority(investmentPriorityId: 'ip1', name: "testInvestmentPriority1", categories: ["testCategory"], hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip2', name: "testInvestmentPriority2", categories: ["testCategory"], hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip3', name: "testInvestmentPriority3", categories: ["otherCategory"], hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip4', name: "testInvestmentPriority4", categories: ["testCategory2"], hubId: "hub2", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip5', name: "testInvestmentPriority5", categories: ["testCategory2"], hubId: "hub1", status: Status.DELETED).save(flush: true, failOnError: true)
     }
 
     def setup() {
@@ -55,6 +63,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     def cleanupSpec() {
         Term.findAll().each { it.delete(flush:true) }
+        InvestmentPriority.findAll().each { it.delete(flush:true) }
     }
 
     private void setupServices() {
@@ -538,6 +547,89 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
         then:
         !deletedTerm.hasErrors()
+
+    }
+
+
+    def "findInvestmentPrioritiesByCategory should investment priorities filtered by category"() {
+
+        when: "findInvestmentPrioritiesByCategory is called with a category"
+        List<Term> result = service.findInvestmentPrioritiesByCategory(["testCategory"])
+
+        then: "Only investment priorities matching the category are returned, excluding deleted ones"
+        result.size() == 2
+        result*.name.containsAll(["testInvestmentPriority1", "testInvestmentPriority2"])
+
+        when: "findInvestmentPrioritiesByCategory is called with a multiple categories"
+        result = service.findInvestmentPrioritiesByCategory(["testCategory", "otherCategory"])
+
+        then: "Investment priorities matching either category are returned, excluding deleted ones"
+        result.size() == 3
+        result*.name.containsAll(["testInvestmentPriority1", "testInvestmentPriority2", "testInvestmentPriority3"])
+
+    }
+
+    def "The metadataservice will update the status to deleted when asked to delete a investment priority"() {
+        setup:
+        String investmentPriorityId = 'ip2'
+        when:
+        InvestmentPriority deletedInvestmentPriority = service.deleteInvestmentPriority(investmentPriorityId)
+
+        then:
+        deletedInvestmentPriority.status == Status.DELETED
+        InvestmentPriority.findByInvestmentPriorityId(investmentPriorityId).status == Status.DELETED
+
+    }
+
+    def "An investment priority can be updated"() {
+        setup:
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: 'ip1', name: "Investment priority - updated", hubId: "hub1", categories: ["testCategory"])
+
+        when:
+        InvestmentPriority updatedInvestmentPriority = service.updateInvestmentPriority(investmentPriority.properties)
+        InvestmentPriority.withSession{
+            it.clear()
+        }
+
+        then:
+        !updatedInvestmentPriority.hasErrors()
+        InvestmentPriority.findByInvestmentPriorityId(investmentPriority.investmentPriorityId).name == investmentPriority.name
+
+    }
+
+    def "An InvestmentPriority hubId should not be able to be overwritten once set"() {
+        setup:
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: 'ip1', name: "Investment priority - updated", hubId: "hub2", categories: ["testCategory"])
+
+        when:
+        InvestmentPriority updatedInvestmentPriority = service.updateInvestmentPriority(investmentPriority.properties)
+
+        then:
+        updatedInvestmentPriority.hasErrors()
+        updatedInvestmentPriority.errors.getFieldErrorCount('hubId') == 1
+
+    }
+
+    /**
+     * This test is because the unique constraint on InvestmentPriority name/status prevents multiple deleted investment priorities in the
+     * same name
+     */
+    def "An InvestmentPriority can be deleted more than once"() {
+        setup:
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: 'ip3', name: "investmentPriority3", category: "otherCategory", hubId: "hub1", status: Status.ACTIVE)
+
+        when:
+        InvestmentPriority updatedInvestmentPriority = service.deleteInvestmentPriority(investmentPriority.investmentPriorityId)
+
+        then:
+        !updatedInvestmentPriority.hasErrors()
+
+        when: "We re-add then re-delete the InvestmentPriority"
+        InvestmentPriority newInvestmentPriority = service.updateInvestmentPriority([name:investmentPriority.name, description: investmentPriority.description, categories: investmentPriority.categories, hubId: investmentPriority.hubId])
+        InvestmentPriority deletedInvestmentPriority = service.deleteInvestmentPriority(newInvestmentPriority.investmentPriorityId)
+
+        then:
+        !deletedInvestmentPriority.hasErrors()
 
     }
 

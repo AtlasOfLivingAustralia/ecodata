@@ -20,6 +20,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         outputFile = File.createTempFile('test', '.xlsx')
         excelImportService = new ExcelImportService()
         mockDomain(Term)
+        mockDomain(InvestmentPriority)
     }
 
     def "Get excel template that can be populated with output data and uploaded"() {
@@ -107,6 +108,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory", status:Status.DELETED)
 
         when:
+        request.method = "DELETE"
         controller.deleteTerm(term.termId)
 
         then:
@@ -121,6 +123,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         Map term = [term: "testTerm", hubId: "testHubId", category: "testCategory"]
 
         when:
+        request.method = "POST"
         request.JSON = term
         controller.updateTerm()
 
@@ -128,6 +131,52 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         1 * metadataService.updateTerm(term) >> new Term(term)
         response.status == HttpStatus.SC_OK
         response.json.term == "testTerm"
+    }
+
+    def "The controller should delegate to the MetadataService to find InvestmentPriorities"() {
+        setup:
+        String category = "testCategory"
+        def investmentPriorities = [[name: "investment priority 1"], [name: "investment priority 2"]]
+
+        when:
+        params.category = category
+        controller.investmentPriorities()
+
+        then:
+        1 *  metadataService.findInvestmentPrioritiesByCategory([category]) >> investmentPriorities
+        response.status == HttpStatus.SC_OK
+        response.json == investmentPriorities
+    }
+
+    def "The controller should delegate to the MetadataService to delete an InvestmentPriority"() {
+        setup:
+        String investmentPriorityId = 'ip2'
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: investmentPriorityId, name:"investment priority")
+
+        when:
+        request.method = "DELETE"
+        controller.deleteInvestmentPriority(investmentPriorityId)
+
+        then:
+        1 * metadataService.deleteInvestmentPriority(investmentPriorityId) >> investmentPriority
+
+        response.status == HttpStatus.SC_OK
+        response.json.status == Status.DELETED
+    }
+
+    def "The controller should delegate to the MetadataService to update an InvestmentPriority"() {
+        setup:
+        Map investmentPriorityProps = [name: "test investment priority", hubId: "testHubId", categories: ["testCategory"]]
+
+        when:
+        request.method = "POST"
+        request.JSON = investmentPriorityProps
+        controller.updateInvestmentPriority()
+
+        then:
+        1 * metadataService.updateInvestmentPriority(investmentPriorityProps) >> new InvestmentPriority(investmentPriorityProps)
+        response.status == HttpStatus.SC_OK
+        response.json.name == investmentPriorityProps.name
     }
 
 }

@@ -1325,4 +1325,49 @@ class MetadataService implements DataBinder {
         term
     }
 
+    List<InvestmentPriority> findInvestmentPrioritiesByCategory(List categories) {
+        List<InvestmentPriority> investmentPriorities = InvestmentPriority.createCriteria().list {
+            inList('categories', categories)
+            ne('status', Status.DELETED)
+            order('name', 'asc')
+        }
+        investmentPriorities
+    }
+
+    InvestmentPriority deleteInvestmentPriority(String investmentPriorityId) {
+
+        InvestmentPriority investmentPriority = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityId, Status.ACTIVE)
+        if (!investmentPriority) {
+            return null
+        }
+
+        // Because of the unique constraint on Terms, if the same Term is deleted then
+        // re-added we can't soft delete it a second time without hard deleting any existing
+        // soft deleted Term.
+        InvestmentPriority deletedInvestmentPriority = InvestmentPriority.findByInvestmentPriorityIdAndStatus(
+                investmentPriority.name, Status.DELETED)
+        if (deletedInvestmentPriority) {
+            deletedInvestmentPriority.delete(flush:true)
+        }
+
+        investmentPriority.status = Status.DELETED
+        investmentPriority.save(flush:true)
+
+        investmentPriority
+    }
+
+    InvestmentPriority updateInvestmentPriority(Map investmentPriorityProps) {
+        InvestmentPriority investmentPriority
+        if (!investmentPriorityProps?.investmentPriorityId) {
+            investmentPriority = new InvestmentPriority()
+        }
+        else {
+            investmentPriority = InvestmentPriority.findByInvestmentPriorityId(investmentPriorityProps.investmentPriorityId)
+        }
+
+        bindData(investmentPriority, investmentPriorityProps)
+        investmentPriority.save(flush:true)
+        investmentPriority
+    }
+
 }

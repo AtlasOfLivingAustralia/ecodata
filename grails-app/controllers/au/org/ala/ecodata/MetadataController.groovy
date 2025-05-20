@@ -10,6 +10,7 @@ import static au.org.ala.ecodata.Status.DELETED
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
     static responseFormats = ['json']
+    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE']
 
     def metadataService, activityService, commonService, projectService, webService
     ActivityFormService activityFormService
@@ -399,6 +400,30 @@ class MetadataController {
         Map termProperties = request.JSON
         Term term = metadataService.updateTerm(termProperties)
         respond term
+    }
+
+    def investmentPriorities() {
+        List categories = params.getList('category')
+        respond metadataService.findInvestmentPrioritiesByCategory(categories)
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def deleteInvestmentPriority(String investmentPriorityId) {
+        InvestmentPriority investmentPriority = metadataService.deleteInvestmentPriority(investmentPriorityId)
+        if (investmentPriority.hasErrors()) {
+            respond investmentPriority.errors
+        }
+        else {
+            Map result = [status:Status.DELETED]
+            respond result
+        }
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def updateInvestmentPriority() {
+        Map investmentPriorityProperties = request.JSON
+        InvestmentPriority investmentPriority = metadataService.updateInvestmentPriority(investmentPriorityProperties)
+        respond investmentPriority
     }
 
 }
