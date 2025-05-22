@@ -99,7 +99,7 @@ if (!webservice.readTimeout) {
 }
 // spatial services
 if (!spatial.baseUrl) {
-    spatial.baseUrl = "https://spatial-test.ala.org.au"
+    spatial.baseUrl = "https://spatial.test.ala.org.au"
 }
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
@@ -466,7 +466,7 @@ app {
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl11163'
+                elect = 'cl11225'
                 cmz = 'cl2112'
             }
             grouped {
@@ -501,7 +501,7 @@ app {
                 mvg = '/data/nvis_grids/mvg'
                 mvs = '/data/nvis_grids/mvs'
             }
-            checkForBoundaryIntersectionInLayers = [ "cl927", "cl11163" ]
+            checkForBoundaryIntersectionInLayers = [ "cl927", "cl11225" ]
         }
         displayNames = [
                 elect: [
