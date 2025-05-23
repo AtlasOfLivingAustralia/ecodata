@@ -1194,17 +1194,92 @@ class ProjectService {
         }
     }
 
+    /** Data sets that have been used in a Report cannot be deleted */
+    private boolean canModifyDataSet(Map dataSet) {
+        return dataSet.publicationStatus == DRAFT && !dataSet.reportId
+    }
+
+    /**
+     * Returns true if every data set associated with the site can be modified.
+     * @param site the site to check
+     * @param project optionally supplied to prevent re-querying a project already available in the calling context
+     */
+    boolean canModifyDataSetSite(Map site, Map project = null) {
+        boolean canModify = site != null
+        if (site.projects.size() != 1) {
+            canModify = false
+        }
+        else {
+            if (site.projects[0] != project?.projectId) {
+                project = get(site.projects[0])
+            }
+        }
+
+        if (project) {
+            project.custom?.dataSets?.each { Map dataSet ->
+                if (dataSet.siteId == siteId) {
+                    canModifySite = canModifySite && canModifyDataSet(dataSet)
+                }
+            }
+        }
+        canModify
+    }
+
+    private boolean canDeleteDataSetSite(String dataSetId, Map site, Map project = null) {
+        boolean canDelete = site != null
+        if (site.projects.size() != 1) {
+            canDelete = false
+        }
+        else {
+            if (site.projects[0] != project?.projectId) {
+                project = get(site.projects[0])
+            }
+        }
+
+        if (project) {
+            project.custom?.dataSets?.each { Map dataSet ->
+                if (dataSet.siteId == siteId && dataSet.dataSetId != dataSetId) {
+                    canDelete = false
+                }
+            }
+        }
+        canDelete
+    }
+
     Map deleteDataSet(String projectId, String dataSetId) {
         synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
+            Map result
             Project project = Project.findByProjectId(projectId)
 
-            boolean foundMatchingDataSet = project?.custom?.dataSets?.removeAll { it.dataSetId == dataSetId }
-            if (!foundMatchingDataSet) {
-                return [status: 'error', error: 'No such data set']
+            Map matchingDataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
+
+            if (!matchingDataSet || !canModifyDataSet(dataSet)) {
+                return [status: 'error', error: 'Data set with id: '+dataSetId + ' cannot be deleted']
             }
             else {
-                update([custom: project.custom], project.projectId, false)
+                project.custom.dataSets.remove(matchingDataSet)
+                result = update([custom: project.custom], project.projectId, false)
+
+                if (result.status != 'error') {
+                    String activityId = matchingDataSet.activityId
+                    if (activityId) {
+                        Map activityResult = activityService.delete(activityId)
+                        result.activityStatus = activityResult.status
+                    }
+                    String siteId = matchingDataSet.siteId
+                    if (siteId) {
+
+                        Map site = siteService.get(siteId)
+                        if (canDeleteDataSetSite(dataSetId, site, project)) {
+                            siteService.delete(site)
+                        }
+
+                    }
+
+                }
+
             }
+            result
         }
     }
 

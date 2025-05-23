@@ -212,21 +212,20 @@ class ParatooService {
      * @param userId - user making the data submission
      * @return
      */
-    Map submitCollection(ParatooCollection collection, ParatooProject project, String userId = null) {
+    Map submitCollection(ParatooCollection collection, ParatooProject project, String userId = null, boolean canModifySite = false) {
         userId = userId ?: userService.currentUserDetails?.userId
         Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
         if (!dataSet) {
             throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
         }
-        dataSet.progress = Activity.STARTED
         dataSet.surveyId.coreSubmitTime = new Date()
         dataSet.surveyId.survey_metadata.provenance.putAll(collection.coreProvenance)
 
         Map authHeader = getAuthHeader()
         Promise promise = task {
             userService.setCurrentUser(userId)
-            asyncFetchCollection(collection, authHeader, userId, project)
+            asyncFetchCollection(collection, authHeader, userId, project, canModifySite)
         }
         promise.onError { Throwable e ->
             log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
@@ -242,7 +241,7 @@ class ParatooService {
         [updateResult: result, promise: promise]
     }
 
-    Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project) {
+    Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project, boolean canModifySite) {
         Activity.withSession { session ->
             int counter = 0
             Map surveyDataAndObservations = null
@@ -282,15 +281,20 @@ class ParatooService {
                 // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
 
                 String siteName = null
-                if (!dataSet.siteId) {
-                    try {
-                        Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                try {
+                    if (!dataSet.siteId) {
+                        Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, project.project, config, form)
                         dataSet.siteId = site.siteId
                         siteName = site.name
+
                     }
-                    catch (Exception ex) {
-                        log.error("Error creating site for ${collection.orgMintedUUID}: ${ex.message}")
+                    else if (canModifySite) {
+                        Map siteProps = mapSurveyDataToSite(surveyDataAndObservations, collection, project.project, config, form)
+                        siteService.update(siteProps, dataSet.siteId)
                     }
+                }
+                catch (Exception ex) {
+                    log.error("Error creating site for ${collection.orgMintedUUID}: ${ex.message}")
                 }
 
                 // plot layout is of type geoMap. Therefore, expects a site id.
@@ -298,6 +302,7 @@ class ParatooService {
                     surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
                 }
 
+                dataSet.progress = Activity.STARTED
                 dataSet.startDate = config.getStartDate(surveyDataAndObservations)
                 dataSet.endDate = config.getEndDate(surveyDataAndObservations)
                 dataSet.format = DATASET_DATABASE_TABLE
@@ -497,7 +502,14 @@ class ParatooService {
                                     ]]
         ]
 
-        Map result = activityService.create(activityProps)
+        Map result
+        if (dataSet.activityId) {
+            result = activityService.update(activityProps, dataSet.activityId)
+            result.activityid = dataSet.activityId
+        }
+        else {
+            result = activityService.create(activityProps)
+        }
         result.activityId
     }
 
@@ -596,43 +608,54 @@ class ParatooService {
         output
     }
 
-    private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
-        String siteId = null
-        Date updatedPlotLayoutDate
-        // Create a site representing the location of the collection
-        Map siteProps = null
+    /**
+     * Transforms data from the Monitor protocol to a form suitable for creating or updating a Site
+     */
+    private Map mapSurveyDataToSite(Map observation, ParatooCollection collection, Project project, ParatooProtocolConfig config, ActivityForm form) {
         Map geoJson = config.getGeoJson(observation, form)
+        Map siteProps = null
         if (geoJson) {
             siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
             List features = geoJson?.features ?: []
             geoJson.remove('features')
             siteProps.features = features
-            if (features)
+            if (features) {
                 siteProps.type = Site.TYPE_COMPOUND
-            else
+            }
+            else {
                 siteProps.type = Site.TYPE_SURVEY_AREA
+            }
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
             String externalId = geoJson.properties?.externalId
             if (config.usesPlotLayout) {
                 if (externalId) {
                     siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
-                }
-                else {
+                } else {
                     log.error("No externalId found for plot layout for survey ${collection.orgMintedUUID}, project ${project.projectId}")
                 }
-            }
-            else {
+            } else {
                 // non-plot based data sets will have the dataSetId/orgMintedUUID as the external id
                 siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: collection.orgMintedUUID)]
             }
-            Site site
+        }
+        siteProps
+    }
+
+    private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, Project project, ParatooProtocolConfig config, ActivityForm form) {
+        String siteId = null
+        Date updatedPlotLayoutDate
+        // Create a site representing the location of the collection
+        Map siteProps = mapSurveyDataToSite(observation, collection, project, config, form)
+        if (siteProps) {
+            Site site = null
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
                 updatedPlotLayoutDate = config.getPlotLayoutUpdatedAt(observation)
                 List sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId, [sort: "lastUpdated", order: "desc"])
-                if (sites)
+                if (sites) {
                     site = sites.first()
+                }
             }
 
             Map result
