@@ -1195,8 +1195,8 @@ class ProjectService {
     }
 
     /** Data sets that have been used in a Report cannot be deleted */
-    private boolean canModifyDataSet(Map dataSet) {
-        return dataSet.publicationStatus == DRAFT && !dataSet.reportId
+    private static boolean canModifyDataSet(Map dataSet) {
+        return (!dataSet.publicationStatus || dataSet.publicationStatus == PublicationStatus.DRAFT) && !dataSet.reportId
     }
 
     /**
@@ -1204,41 +1204,57 @@ class ProjectService {
      * @param site the site to check
      * @param project optionally supplied to prevent re-querying a project already available in the calling context
      */
-    boolean canModifyDataSetSite(Map site, Map project = null) {
-        boolean canModify = site != null
+    boolean canModifyDataSetSite(Map site, Project project = null) {
+        if (!site) {
+            return false
+        }
+        boolean canModifySite = true
         if (site.projects.size() != 1) {
-            canModify = false
+            canModifySite = false
         }
         else {
             if (site.projects[0] != project?.projectId) {
-                project = get(site.projects[0])
+                project = Project.findByProjectId(site.projects[0])
             }
         }
 
         if (project) {
             project.custom?.dataSets?.each { Map dataSet ->
-                if (dataSet.siteId == siteId) {
+                if (dataSet.siteId == site.siteId) {
                     canModifySite = canModifySite && canModifyDataSet(dataSet)
                 }
             }
         }
-        canModify
+        canModifySite
     }
 
-    private boolean canDeleteDataSetSite(String dataSetId, Map site, Map project = null) {
-        boolean canDelete = site != null
+    /**
+     * Returns true if the Site associated with a data set can be deleted.  Generally it can only be
+     * deleted if it was created by the Monitor app and is only associated with the supplied data set and no others.
+     * @param dataSetId The id of the data set the Site is related to.
+     * @param site The Site to check
+     * @param project The Project related to the Site to check (used to prevent an unnecessary query if available.
+     * @return true if the Site can be deleted.
+     */
+    private boolean canDeleteDataSetSite(String dataSetId, Map site, Project project = null) {
+        if (!site) {
+            return false
+        }
+        boolean canDelete = true
+        /// Don't delete the site if it's used by another Project
         if (site.projects.size() != 1) {
             canDelete = false
         }
         else {
             if (site.projects[0] != project?.projectId) {
-                project = get(site.projects[0])
+                project = Project.findByProjectId(site.projects[0])
             }
         }
 
+        // Don't delete the site if it's used by another data set in this project.
         if (project) {
             project.custom?.dataSets?.each { Map dataSet ->
-                if (dataSet.siteId == siteId && dataSet.dataSetId != dataSetId) {
+                if (dataSet.siteId == site.siteId && dataSet.dataSetId != dataSetId) {
                     canDelete = false
                 }
             }
@@ -1253,7 +1269,7 @@ class ProjectService {
 
             Map matchingDataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
 
-            if (!matchingDataSet || !canModifyDataSet(dataSet)) {
+            if (!matchingDataSet || !canModifyDataSet(matchingDataSet)) {
                 return [status: 'error', error: 'Data set with id: '+dataSetId + ' cannot be deleted']
             }
             else {
@@ -1271,7 +1287,7 @@ class ProjectService {
 
                         Map site = siteService.get(siteId)
                         if (canDeleteDataSetSite(dataSetId, site, project)) {
-                            siteService.delete(site)
+                            siteService.delete(siteId)
                         }
 
                     }

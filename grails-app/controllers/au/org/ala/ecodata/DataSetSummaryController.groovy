@@ -13,6 +13,7 @@ class DataSetSummaryController {
     ProjectService projectService
     ParatooService paratooService
     SiteService siteService
+    UserService userService
 
     /** Updates a single dataset for a project */
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
@@ -71,22 +72,26 @@ class DataSetSummaryController {
     }
 
     /** Monitor data often needs to be re-synced with MERIT/ecodata due to errors/updates. */
-    def reImportDataSetFromMonitor(String id, String dataSetId) {
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def resync(String projectId, String dataSetId) {
         String userId = userService.currentUserDetails.userId
-        List<ParatooProject> projects = paratooService.userProjects(userId)
-        ParatooProject project = projects.find {it.project.projectId == id }
-        ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
+        Project project = Project.findByProjectId(projectId)
+        Map dataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
 
-        if (project) {
-            Map dataSet = project.project.custom.dataSets.find {it.dataSetId == dataSetId}
+        if (project && dataSet) {
+            ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
+            // The access level is not required for a resync and has been checked in MERIT.  This is to avoid
+            // requiring the user to add themselves to the project ACL before being able to resync as it will
+            // be generally be done by high level users such as site admins.
+            ParatooProject paratooProject = paratooService.paratooProjectfromProject(project, null)
             boolean canModifySite = false
             if (dataSet.siteId) {
                 Map site = siteService.get(dataSet.siteId)
-                canModifySite = projectService.canModifyDataSetSite(dataSetId, site, project.project)
+                canModifySite = projectService.canModifyDataSetSite(site, project)
             }
 
-            paratooService.submitCollection(collection, project, userId, canModifySite)
-            render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $id by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+            paratooService.submitCollection(collection, paratooProject, userId, canModifySite)
+            render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
         }
         else {
             render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND

@@ -1,14 +1,24 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooProject
+import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import spock.lang.Specification
 
-class DataSetSummaryControllerSpec extends Specification implements ControllerUnitTest<DataSetSummaryController> {
+class DataSetSummaryControllerSpec extends Specification implements ControllerUnitTest<DataSetSummaryController>, DataTest {
 
     ProjectService projectService = Mock(ProjectService)
+    UserService userService = Mock(UserService)
+    ParatooService paratooService = Mock(ParatooService)
+    SiteService siteService = Mock(SiteService)
+
     def setup() {
         controller.projectService = projectService
+        controller.userService = userService
+        controller.paratooService = paratooService
+        controller.siteService = siteService
+        mockDomain(Project)
     }
 
     def cleanup() {
@@ -86,5 +96,47 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         then:
         0 * projectService.updateDataSets(_, _)
         response.status == HttpStatus.SC_BAD_REQUEST
+    }
+
+    void "The resync method submits a collection and returns success"() {
+        setup:
+        String projectId = 'p1'
+        String dataSetId = 'd1'
+        userService.currentUserDetails >> [userId: 'u1']
+
+        Project project = new Project(projectId: projectId, name:'Project 1', custom: [dataSets: [[dataSetId: dataSetId, siteId: 's1']]])
+        project.save(failOnError: true)
+        ParatooProject paratooProject = new ParatooProject()
+        paratooProject.project = project
+
+        def site = [siteId: 's1']
+
+        when:
+        controller.resync(projectId, dataSetId)
+
+        then:
+        siteService.get('s1') >> site
+        1 * projectService.canModifyDataSetSite(site, project) >> true
+        1 * paratooService.paratooProjectfromProject(project, null) >> paratooProject
+        paratooService.submitCollection({it.orgMintedUUID == dataSetId}, paratooProject, 'u1', true) >> null
+
+        response.status == HttpStatus.SC_OK
+        response.json.message == "Submitted request to fetch data for dataSet d1 in project p1 by user u1"
+    }
+
+    void "The resync method returns not found if project or dataset is missing"() {
+        setup:
+        String projectId = 'p1'
+        String dataSetId = 'd1'
+        def userService = Mock(UserService)
+        controller.userService = userService
+        userService.currentUserDetails >> [userId: 'u1']
+
+        when:
+        controller.resync(projectId, dataSetId)
+
+        then:
+        response.status == HttpStatus.SC_NOT_FOUND
+        response.json.message == "Project not found"
     }
 }

@@ -164,14 +164,17 @@ class ParatooService {
         List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevels.keySet()), Status.ACTIVE)
 
         List paratooProjects = projects.collect { Project project ->
-            List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
-            AccessLevel accessLevel = projectAccessLevels[project.projectId]
-            mapProject(project, accessLevel, sites)
+            paratooProjectFromProject(project, projectAccessLevels[project.projectId])
         }
 
         paratooProjects = paratooProjects.findAll { it.isParatooEnabled()}
         paratooProjects
 
+    }
+
+    ParatooProject paratooProjectFromProject(Project project, AccessLevel accessLevel) {
+        List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
+        mapProject(project, accessLevel, sites)
     }
 
     Map mintCollectionId(String userId, ParatooCollectionId paratooCollectionId) {
