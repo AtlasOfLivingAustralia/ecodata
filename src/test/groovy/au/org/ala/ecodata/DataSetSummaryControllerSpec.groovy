@@ -117,7 +117,7 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         then:
         siteService.get('s1') >> site
         1 * projectService.canModifyDataSetSite(site, project) >> true
-        1 * paratooService.paratooProjectfromProject(project, null) >> paratooProject
+        1 * paratooService.paratooProjectFromProject(project, null) >> paratooProject
         paratooService.submitCollection({it.orgMintedUUID == dataSetId}, paratooProject, 'u1', true) >> null
 
         response.status == HttpStatus.SC_OK
