@@ -505,14 +505,7 @@ class ParatooService {
                                     ]]
         ]
 
-        Map result
-        if (dataSet.activityId) {
-            result = activityService.update(activityProps, dataSet.activityId)
-            result.activityid = dataSet.activityId
-        }
-        else {
-            result = activityService.create(activityProps)
-        }
+        Map result = activityService.create(activityProps)
         result.activityId
     }
 
@@ -647,7 +640,7 @@ class ParatooService {
 
     private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, Project project, ParatooProtocolConfig config, ActivityForm form) {
         String siteId = null
-        Date updatedPlotLayoutDate
+        Date updatedPlotLayoutDate = null
         // Create a site representing the location of the collection
         Map siteProps = mapSurveyDataToSite(observation, collection, project, config, form)
         if (siteProps) {
@@ -655,6 +648,7 @@ class ParatooService {
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
                 updatedPlotLayoutDate = config.getPlotLayoutUpdatedAt(observation)
+                String externalId = siteProps.externalIds?.find { it.idType == ExternalId.IdType.MONITOR_PLOT_GUID }?.externalId
                 List sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId, [sort: "lastUpdated", order: "desc"])
                 if (sites) {
                     site = sites.first()
