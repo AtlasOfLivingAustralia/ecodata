@@ -83,7 +83,7 @@ class DataSetSummaryController {
             // The access level is not required for a resync and has been checked in MERIT.  This is to avoid
             // requiring the user to add themselves to the project ACL before being able to resync as it will
             // be generally be done by high level users such as site admins.
-            ParatooProject paratooProject = paratooService.paratooProjectfromProject(project, null)
+            ParatooProject paratooProject = paratooService.paratooProjectFromProject(project, null)
             boolean canModifySite = false
             if (dataSet.siteId) {
                 Map site = siteService.get(dataSet.siteId)
