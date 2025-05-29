@@ -255,6 +255,7 @@ class ParatooService {
                 throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
             }
 
+            log.info("Fetching collection data for ${collection.orgMintedUUID} in project ${project.project.projectId} by user ${userId}")
             // wait for 5 seconds before fetching data
             while(response == null && counter < PARATOO_MAX_RETRIES) {
                 sleep(5 * 1000)
@@ -293,6 +294,7 @@ class ParatooService {
                     }
                     else if (canModifySite) {
                         Map siteProps = mapSurveyDataToSite(surveyDataAndObservations, collection, project.project, config, form)
+                        log.info("Updating site ${dataSet.siteId} for collection ${collection.orgMintedUUID}")
                         siteService.update(siteProps, dataSet.siteId)
                     }
                 }
@@ -658,6 +660,7 @@ class ParatooService {
             Map result
             // If the plot layout has been updated, create a new site
             if (!site) {
+                log.info("Creating a new site for survey ${collection.orgMintedUUID}, project ${project.projectId} with name: ${siteProps.name}")
                 result = siteService.create(siteProps)
             }
             else if(isUpdatedPlotLayout(site.lastUpdated, updatedPlotLayoutDate)){
@@ -897,7 +900,10 @@ class ParatooService {
 
         String url = paratooBaseUrl + apiEndpoint
         Map response = webService.doPost(url, payload, false, authHeader)
-        log.debug((response as JSON).toString())
+        if (log.isDebugEnabled()) {
+            log.debug((response as JSON).toString())
+        }
+
 
         response?.resp
     }

@@ -92,6 +92,8 @@ class DataSetSummaryController {
                 return
             }
 
+            log.info("Resyncing data set $dataSetId in project $projectId by user $userId")
+
             ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
             // The access level is not required for a resync and has been checked in MERIT.  This is to avoid
             // requiring the user to add themselves to the project ACL before being able to resync as it will
