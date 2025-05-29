@@ -104,7 +104,7 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         String dataSetId = 'd1'
         userService.currentUserDetails >> [userId: 'u1']
 
-        Project project = new Project(projectId: projectId, name:'Project 1', custom: [dataSets: [[dataSetId: dataSetId, siteId: 's1']]])
+        Project project = new Project(projectId: projectId, name:'Project 1', custom: [dataSets: [[dataSetId: dataSetId, siteId: 's1', surveyId:[survey_metadata:[provenance:[:], survey_details:[protocol_id:'p1']]]]]])
         project.save(failOnError: true)
         ParatooProject paratooProject = new ParatooProject()
         paratooProject.project = project
@@ -115,6 +115,7 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         controller.resync(projectId, dataSetId)
 
         then:
+        1 * paratooService.protocolWriteCheck('u1', projectId,'p1') >> true
         siteService.get('s1') >> site
         1 * projectService.canModifyDataSetSite(site, project) >> true
         1 * paratooService.paratooProjectFromProject(project, null) >> paratooProject

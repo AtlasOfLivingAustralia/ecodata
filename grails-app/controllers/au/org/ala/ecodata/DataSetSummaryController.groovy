@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.converters.JSON
 import org.apache.http.HttpStatus
@@ -71,14 +72,26 @@ class DataSetSummaryController {
         respond projectService.deleteDataSet(projectId, dataSetId)
     }
 
-    /** Monitor data often needs to be re-synced with MERIT/ecodata due to errors/updates. */
-    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    /**
+     * Monitor data often needs to be re-synced with MERIT/ecodata due to errors/updates.
+     * We are requiring the user token and using the paratoo authorization check because this token
+     * will be passed to Monitor to perform the resync.
+     */
+    @au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"])
     def resync(String projectId, String dataSetId) {
         String userId = userService.currentUserDetails.userId
         Project project = Project.findByProjectId(projectId)
+
         Map dataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
 
         if (project && dataSet) {
+            ParatooCollectionId paratooCollectionId = ParatooCollectionId.fromMap(dataSet.surveyId)
+            String protocolId = paratooCollectionId.getProtocolId()
+            if (!protocolId || !paratooService.protocolWriteCheck(userId, projectId, protocolId)) {
+                render status: HttpStatus.SC_UNAUTHORIZED
+                return
+            }
+
             ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
             // The access level is not required for a resync and has been checked in MERIT.  This is to avoid
             // requiring the user to add themselves to the project ACL before being able to resync as it will
