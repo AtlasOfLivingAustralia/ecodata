@@ -773,7 +773,7 @@ class ParatooService {
             result.messages << "Form ${activityForm.name} with guid: ${activityForm.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }.externalId} has been deleted"
         }
 
-        log.debug("Completed syncing paratoo protocols")
+        log.info("Completed syncing paratoo protocols")
         result
 
     }
@@ -1305,7 +1305,10 @@ class ParatooService {
         resolveModelReferences(cleanedProperties, components)
 //        cleanedProperties = rearrangePropertiesAccordingToModelRelationship(cleanedProperties, template.relationships.apiOutput, template.relationships.ecodata)
         cleanedProperties = deepCopy(cleanedProperties)
-        log.debug((properties as JSON).toString())
+        if (log.isDebugEnabled()) {
+            log.debug((properties as JSON).toString())
+        }
+
 
         if (isPlotLayoutNeededByProtocol(protocol)) {
             template.dataModel.addAll(grailsApplication.config.getProperty("paratoo.defaultPlotLayoutDataModels", List))
