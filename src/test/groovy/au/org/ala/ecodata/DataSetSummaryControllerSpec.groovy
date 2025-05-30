@@ -1,12 +1,12 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooProject
-import grails.testing.gorm.DataTest
+import grails.test.mongodb.MongoSpec
+
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
-import spock.lang.Specification
 
-class DataSetSummaryControllerSpec extends Specification implements ControllerUnitTest<DataSetSummaryController>, DataTest {
+class DataSetSummaryControllerSpec extends MongoSpec implements ControllerUnitTest<DataSetSummaryController> {
 
     ProjectService projectService = Mock(ProjectService)
     UserService userService = Mock(UserService)
@@ -18,10 +18,12 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         controller.userService = userService
         controller.paratooService = paratooService
         controller.siteService = siteService
-        mockDomain(Project)
+
     }
 
     def cleanup() {
+        Project.findAll().each { it.delete(flush: true) }
+        ActivityForm.findAll().each{ it.delete(flush: true) }
     }
 
     void "The update method delegates to the projectService"() {
@@ -108,7 +110,11 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         project.save(failOnError: true)
         ParatooProject paratooProject = new ParatooProject()
         paratooProject.project = project
+        ActivityForm siteForm = new ActivityForm(name: 'Site Form', type:"EMSA", externalIds: [new ExternalId(externalId:'p1')], tags:['site'])
+        siteForm.save(failOnError: true)
 
+        ActivityForm form2 = ActivityForm.findByName("Site Form")
+        println form2
         def site = [siteId: 's1']
 
         when:

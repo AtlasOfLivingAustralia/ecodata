@@ -101,8 +101,14 @@ class DataSetSummaryController {
             ParatooProject paratooProject = paratooService.paratooProjectFromProject(project, null)
             boolean canModifySite = false
             if (dataSet.siteId) {
-                Map site = siteService.get(dataSet.siteId)
-                canModifySite = projectService.canModifyDataSetSite(site, project)
+                ActivityForm form = ActivityForm.findByExternalId(protocolId)
+                // Only allow the site to be modified if we are resyncing a site protocol.
+                // This is to avoid an issue where a data set attached to the wrong site is resynced -
+                // it could update the site with the wrong data.
+                if (form?.getTags()?.contains(ActivityForm.SITE_TAG)) {
+                    Map site = siteService.get(dataSet.siteId)
+                    canModifySite = projectService.canModifyDataSetSite(site, project)
+                }
             }
 
             paratooService.submitCollection(collection, paratooProject, userId, canModifySite)
