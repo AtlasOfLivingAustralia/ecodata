@@ -1265,4 +1265,71 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         then:
         result.isEmpty()
     }
+
+    void "deleteDataSet returns error if data set does not exist"() {
+        given:
+        Project project = new Project(projectId: 'p1', name: "Project 1", custom: [dataSets: [[dataSetId:'d2']]])
+        project.save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.deleteDataSet(project.projectId, 'd1')
+
+        then:
+        result.status == 'error'
+        0 * activityService._
+        0 * siteService._
+    }
+
+    void "deleteDataSet returns an error if the dataset is published"() {
+        given:
+        Map dataSet1 = [dataSetId: 'd1', siteId:'s1', activityId: 'a1', publicationStatus: PublicationStatus.PUBLISHED]
+        Project project = new Project(projectId: 'p1', name: "Project 1", custom: [dataSets: [dataSet1]])
+        project.save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.deleteDataSet(project.projectId, dataSet1.dataSetId)
+
+        then:
+        result.status == 'error'
+        0 * activityService._
+        0 * siteService._
+    }
+
+    void "deleteDataSet can delete the activity but leave the site if it is used by other data sets"() {
+        given:
+        Map dataSet1 = [dataSetId: 'd1', siteId:'s1', activityId: 'a1', publicationStatus: PublicationStatus.DRAFT]
+        Map dataSet2 = [dataSetId: 'd2', siteId:'s1', activityId: 'a2', publicationStatus: PublicationStatus.DRAFT]
+        SiteService siteServiceMock = Mock(SiteService)
+        service.siteService = siteServiceMock
+        Project project = new Project(projectId: 'p1', name: "Project 1", custom: [dataSets: [dataSet1, dataSet2]])
+        project.save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.deleteDataSet(project.projectId, dataSet1.dataSetId)
+
+        then:
+        result.status == 'ok'
+        1 * activityService.delete(dataSet1.activityId) >> [status: 'deleted']
+        1 * siteServiceMock.get(dataSet1.siteId) >> [siteId: dataSet1.siteId, projects: [project.projectId]]
+        0 * siteServiceMock.delete(_)
+    }
+
+    void "deleteDataSet can delete the activity and the site if it is not used by other data sets"() {
+        given:
+        Map dataSet1 = [dataSetId: 'd1', siteId:'s1', activityId: 'a1']
+        Map dataSet2 = [dataSetId: 'd2', siteId:'s2', 'activityId': 'a2']
+        Project project = new Project(projectId: 'p1', name: "Project 1", custom: [dataSets: [dataSet1, dataSet2]])
+        project.save(flush: true, failOnError: true)
+        SiteService siteServiceMock = Mock(SiteService)
+        service.siteService = siteServiceMock
+
+        when:
+        Map result = service.deleteDataSet(project.projectId, dataSet1.dataSetId)
+
+        then:
+        result.status == 'ok'
+        1 * activityService.delete(dataSet1.activityId) >> [status: 'deleted']
+        1 * siteServiceMock.get(dataSet1.siteId) >> [siteId: dataSet1.siteId, projects: [project.projectId]]
+        1 * siteServiceMock.delete(dataSet1.siteId)
+    }
 }

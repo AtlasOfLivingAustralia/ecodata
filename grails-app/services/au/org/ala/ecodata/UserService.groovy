@@ -46,9 +46,7 @@ class UserService {
 
         def userDetails = getUserForUserId(userId)
         if (!userDetails) {
-            if (log.debugEnabled) {
-                log.debug("Unable to lookup user details for userId: ${userId}")
-            }
+            log.warn("Unable to lookup user details for userId: ${userId}")
             userDetails = new UserDetails(userId: userId, userName: 'unknown', displayName: 'Unknown')
         }
 
@@ -205,7 +203,10 @@ class UserService {
             userId = authService.getUserId()
         }
         if (userId) {
-            log.debug("Setting current user to ${userId}")
+            if (log.isDebugEnabled()) {
+                log.debug("Setting current user to ${userId}")
+            }
+
 
             userDetails = setCurrentUser(userId)
             if (userDetails) {

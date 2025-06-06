@@ -213,6 +213,7 @@ class UrlMappings {
         }
 
         "/ws/dataSetSummary/bulkUpdate/$projectId"(controller:'dataSetSummary', action:'bulkUpdate')
+        "/ws/dataSetSummary/resync/$projectId/$dataSetId"(controller:'dataSetSummary', action:'resync')
 
         "/ws/document/download"(controller:"document", action:"download")
 

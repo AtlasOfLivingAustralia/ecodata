@@ -20,7 +20,10 @@ class OutputTarget {
         exclude('scoreId')
         add('targetMeasure', Score) {
             dataFetcher { OutputTarget outputTarget ->
-                Score.findByScoreId(outputTarget.scoreId)
+                if (outputTarget?.scoreId) {
+                    Score.findByScoreId(outputTarget.scoreId)
+                }
+
             }
         }
     }

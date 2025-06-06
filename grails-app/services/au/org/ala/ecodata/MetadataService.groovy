@@ -68,7 +68,7 @@ class MetadataService implements DataBinder {
         Map maxVersionsByName = [:]
         Map activitiesByName = [:]
 
-        ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED).each { ActivityForm activityForm ->
+        ActivityForm.findAllByPublicationStatusAndStatusNotEqual(PublicationStatus.PUBLISHED, Status.DELETED).each { ActivityForm activityForm ->
             Map activityModel = [
                     name: activityForm.name,
                     gmsId: activityForm.gmsId,
