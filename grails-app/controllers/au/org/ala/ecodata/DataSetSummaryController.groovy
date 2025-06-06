@@ -108,6 +108,11 @@ class DataSetSummaryController {
                 if (form?.getTags()?.contains(ActivityForm.SITE_TAG)) {
                     Map site = siteService.get(dataSet.siteId)
                     canModifySite = projectService.canModifyDataSetSite(site, project)
+
+                    if (!canModifySite) {
+                        render text: [message:"This data set cannot be re-synced"] as JSON, status: HttpStatus.SC_BAD_REQUEST
+                        return
+                    }
                 }
             }
 
