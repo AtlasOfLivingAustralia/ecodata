@@ -296,6 +296,11 @@ class ParatooService {
                         Map siteProps = mapSurveyDataToSite(surveyDataAndObservations, collection, project.project, config, form)
                         log.info("Updating site ${dataSet.siteId} for collection ${collection.orgMintedUUID}")
                         siteService.update(siteProps, dataSet.siteId)
+                        siteName = siteProps.name
+                    }
+                    else {
+                        Map siteProps = siteService.get(dataSet.siteId, [SiteService.FLAT])
+                        siteName = siteProps.name
                     }
                 }
                 catch (Exception ex) {
