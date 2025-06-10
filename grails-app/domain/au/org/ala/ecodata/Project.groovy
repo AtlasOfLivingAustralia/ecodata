@@ -251,8 +251,8 @@ class Project {
         portfolio nullable: true
         comment nullable: true
         nespRaid nullable: true
-        nespCategory nullable:true, inList: ['Category 1','Category 2','Category 3']
-        nespNationalScale nullable:true, inList: ['Scale 1','Scale 2','Scale 3']
+        nespCategory nullable:true, inList: ['Category 1: Indigenous-led','Category 2: Co-design','Category 3: Communicate', 'N/A']
+        nespNationalScale nullable:true, inList: ['Yes','No']
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
