@@ -206,7 +206,6 @@ class SpatialService {
      * @param mainObjectGeoJson - GeoJSON object that is used to intersect with layers.
      */
     private List filterOutObjectsInBoundary(Map response, Geometry mainGeometry) {
-        Double lineStringBufferDistance = grailsApplication.config.getProperty("spatial.lineStringBufferDistance", Double, 0.5)
         List checkForBoundaryIntersectionInLayers = metadataService.getGeographicConfig().checkForBoundaryIntersectionInLayers
         if (!mainGeometry.isValid()) {
             // fix invalid geometry
@@ -246,8 +245,6 @@ class SpatialService {
 
                         // check if intersection should be ignored
                         start = end
-                        // convert line string or multi line string to thin polygon so as to make sure boundary geometry is not discarded if 5% of site area is intersected.
-                        mainGeometry = GeometryUtils.convertLineStringOrMultiLineStringToThinPolygon(mainGeometry, lineStringBufferDistance)
                         if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
                             filteredResponse[fid].add(obj)
                             def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
@@ -294,20 +291,48 @@ class SpatialService {
     }
 
     List getIntersectionProportionAndArea (Geometry mainGeometry, Geometry boundaryGeometry) {
-        Geometry intersection = boundaryGeometry.intersection(mainGeometry)
-        double intersectArea = intersection.getArea()
-        double mainGeometryArea = mainGeometry.getArea()
-        double proportion = 0.0
-        double area = 0.0d
-        if (mainGeometryArea != 0.0d) {
-            proportion = intersectArea/mainGeometryArea
+        Geometry intersection
+        double proportion = 0.0d
+        double areaM2 = 0.0d
+        double intersectionMeasure
+        double mainGeometryMeasure
+        try {
+            intersection = boundaryGeometry.intersection(mainGeometry)
+        }
+        catch (TopologyException e) {
+            // This can happen if the geometries are invalid or self-intersecting.
+            // An invalid polygon will have been corrected by now but a self-intersecting
+            // linestring is still considered valid and can cause this exception.
+            log.warn("TopologyException when calculating intersection between geometries: ${e.message}")
+            mainGeometry = mainGeometry.getEnvelope()
+            intersection = boundaryGeometry.intersection(mainGeometry.getEnvelope())
+        }
+        if (GeometryUtils.isLine(mainGeometry)) {
+            mainGeometryMeasure = mainGeometry.getLength()
+            intersectionMeasure = intersection.getLength()
+        }
+        else {
+            mainGeometryMeasure = mainGeometry.getArea()
+            intersectionMeasure = intersection.getArea()
         }
 
-        if (intersectArea != 0.0d) {
-            area = GeometryUtils.area(intersection)
+        if (mainGeometryMeasure != 0.0d) {
+            proportion = intersectionMeasure/mainGeometryMeasure
         }
 
-        [proportion, area]
+        if (proportion != 0.0d) {
+            if (GeometryUtils.isLine(mainGeometry)) {
+                Double lineStringBufferDistance = grailsApplication.config.getProperty("spatial.lineStringBufferDistance", Double, 0.5)
+
+                // for line strings we fake an area by using a buffer - a 0.5m buffer is used to create a 1m wide line by default
+                // (hence length in m2 * 1m wide ~= area in m2)
+                areaM2 = GeometryUtils.lengthM2(intersection) * lineStringBufferDistance*2
+            } else {
+                areaM2 = GeometryUtils.area(intersection)
+            }
+        }
+
+        [proportion, areaM2]
     }
 
     /**

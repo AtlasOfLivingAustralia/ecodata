@@ -234,6 +234,15 @@ class GeometryUtils {
         utmGeom.area
     }
 
+    static double lengthM2(Geometry wgs84Geom) {
+        Geometry utmGeom = wgs84ToUtm(wgs84Geom)
+        utmGeom.length
+    }
+
+    static boolean isLine(Geometry geom) {
+        return geom.geometryType in ['LineString', 'MultiLineString']
+    }
+
     static Geometry wgs84ToUtm(Geometry wgs84Geom) {
         CoordinateReferenceSystem utm = getUtmCoordinateReferenceSystem(wgs84Geom)
         MathTransform toMetres = CRS.findMathTransform(sourceCRS, utm)
