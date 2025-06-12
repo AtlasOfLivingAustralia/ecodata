@@ -82,9 +82,8 @@ class Project {
     List<String> bushfireCategories = []
     boolean isBushfire
     String projLifecycleStatus
-    String nespRaid
-    String nespCategory
-    String nespNationalScale
+
+    ProjectMetadata metadata
 
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
@@ -191,6 +190,10 @@ class Project {
         return (int)Math.ceil(numWeeks)
     }
 
+    Map<String, Object> flattenMetadata() {
+        return metadata?.toMap() ?: [:]
+    }
+
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
@@ -250,9 +253,6 @@ class Project {
         geographicInfo nullable:true
         portfolio nullable: true
         comment nullable: true
-        nespRaid nullable: true
-        nespCategory nullable:true, inList: ['Category 1: Indigenous-led','Category 2: Co-design','Category 3: Communicate', 'N/A']
-        nespNationalScale nullable:true, inList: ['Yes','No']
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
