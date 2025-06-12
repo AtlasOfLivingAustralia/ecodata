@@ -296,7 +296,7 @@ class AdminController {
         }
         else if (isMERIT) {
             projectIds = projectService.getAllMERITProjectIds()
-            totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThan('active', projectIds, startDate)
+            totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThanAndLastUpdatedLessThan('active', projectIds, startDate, lastUpdated)
         }
         else {
             totalSites = Site.countByStatus('active')
