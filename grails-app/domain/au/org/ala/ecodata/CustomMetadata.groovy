@@ -1,13 +1,15 @@
 package au.org.ala.ecodata
 
 class CustomMetadata {
-
+    String raid
     String category
+    String nationalScale
 
-    @Override
     Map<String, Object> toMap() {
-        return [
-            nespCategory: category
+        [
+            nespRaid: raid,
+            nespCategory: category,
+            nespNationalScale: nationalScale
         ]
     }
 }
