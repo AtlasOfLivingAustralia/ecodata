@@ -21,8 +21,8 @@ class WorksProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Project Status']
     List<String> commonProjectProperties = ['externalId', 'name', 'associatedProgram', 'projectStatus']
 
-    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Sub-Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update', 'Overall risk rating']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', 'plannedStartDate', 'plannedEndDate', 'projectStatus', 'funding', 'keywords', 'outcomeDate', new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk']
+    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Sub-Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update', 'Overall risk rating', 'RaID', 'Category', 'National Scale']
+    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', 'plannedStartDate', 'plannedEndDate', 'projectStatus', 'funding', 'keywords', 'outcomeDate', new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk', 'nespRaid','nespCategory','nespNationalScale']
 
     List<String> outcomeHeaders = commonProjectHeaders + ['Date', 'Interim/Final', 'Outcome']
     List<String> outcomeProperties = commonProjectProperties + [new ISODateStringGetter('date'), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
