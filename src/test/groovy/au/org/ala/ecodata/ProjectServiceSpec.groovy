@@ -301,7 +301,8 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Map externalIds = [externalIds:[
                 [idType:'INTERNAL_ORDER_NUMBER', externalId: 'internalOrderNumber1'],
                 [idType:'INTERNAL_ORDER_NUMBER', externalId: 'internalOrderNumber2'],
-                [idType:'WORK_ORDER', externalId: 'workOrderId1']
+                [idType:'WORK_ORDER', externalId: 'workOrderId1'],
+                [idType:'RAID', externalId: 'raid1']
         ]]
         Project project = new Project([projectId:'p1', name:"Project", externalId:'e1'])
         project.save()
@@ -318,10 +319,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         then:
         project2.name == "Project"
         project2.externalId == "e1"
-        project2.externalIds.size() == 3
+        project2.externalIds.size() == 4
 
         project2.getWorkOrderId() == "workOrderId1"
         project2.getInternalOrderId() == "internalOrderNumber1"
+        project2.getRaId() == "raid1"
     }
 
     def "The project supports an externalIds embedded mapping when creating a project"() {
