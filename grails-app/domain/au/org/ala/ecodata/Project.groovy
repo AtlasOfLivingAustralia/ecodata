@@ -83,7 +83,7 @@ class Project {
     boolean isBushfire
     String projLifecycleStatus
 
-    ProjectMetadata metadata
+    CustomMetadata customMetadata
 
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
@@ -191,7 +191,7 @@ class Project {
     }
 
     Map<String, Object> flattenMetadata() {
-        return metadata?.toMap() ?: [:]
+        return customMetadata?.toMap() ?: [:]
     }
 
     static constraints = {
