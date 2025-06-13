@@ -125,7 +125,7 @@ class Project {
     /** Container to allow program config overrides for an individual Project */
     Map config
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets', 'customMetadata']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
