@@ -177,6 +177,10 @@ class Project {
         externalIds.find{it.idType == ExternalId.IdType.INTERNAL_ORDER_NUMBER}?.externalId
     }
 
+    String getRaId() {
+        externalIds.find{it.idType == ExternalId.IdType.RAID}?.externalId
+    }
+
     private Integer intervalInWeeks(Date startDate, Date endDate) {
         if (!startDate || !endDate) {
             return null
@@ -254,6 +258,7 @@ class Project {
         portfolio nullable: true
         comment nullable: true
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
+        customMetadata nullable: true
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }
