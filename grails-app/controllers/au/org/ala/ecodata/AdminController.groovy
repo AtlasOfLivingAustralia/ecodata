@@ -273,6 +273,7 @@ class AdminController {
         Boolean isForceFetch = params.getBoolean('force', true)
         Boolean isMERIT = params.getBoolean('isMERIT', true)
         Date startDate = params.getDate("startDate", ["yyyy", "yyyy-MM-dd"]) ?: dateFormat.parse(defaultStartDate)
+        Date lastUpdated = params.getDate("lastUpdated", ["yyyy", "yyyy-MM-dd"]) ?: new Date()
         List siteIds = params.get("siteId")?.split(",") ?: []
         List projectIds = params.get("projectId")?.split(",") ?: []
         def code = 'success'
@@ -295,7 +296,7 @@ class AdminController {
         }
         else if (isMERIT) {
             projectIds = projectService.getAllMERITProjectIds()
-            totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThan('active', projectIds, startDate)
+            totalSites = Site.countByStatusAndProjectsInListAndDateCreatedGreaterThanAndLastUpdatedLessThan('active', projectIds, startDate, lastUpdated)
         }
         else {
             totalSites = Site.countByStatus('active')
@@ -311,7 +312,7 @@ class AdminController {
                 }
             }
             else if (isMERIT) {
-                sites = Site.findAllByProjectsInListAndStatusAndDateCreatedGreaterThan(projectIds, 'active', startDate, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
+                sites = Site.findAllByProjectsInListAndStatusAndDateCreatedGreaterThanAndLastUpdatedLessThan(projectIds, 'active', startDate, lastUpdated, [offset: offset, max: batchSize, sort: "siteId", order: "asc"]).collect {
                     siteService.toMap(it, 'flat')
                 }
             }
