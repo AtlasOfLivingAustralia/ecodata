@@ -133,6 +133,7 @@ dependencies {
     implementation "com.drewnoakes:metadata-extractor:2.10.1"
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+    implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
 
     implementation 'org.grails.plugins:quartz:2.0.13'
     implementation 'org.quartz-scheduler:quartz:2.2.1' // Need transitive dependency from plugin
