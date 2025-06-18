@@ -177,10 +177,6 @@ class Project {
         externalIds.find{it.idType == ExternalId.IdType.INTERNAL_ORDER_NUMBER}?.externalId
     }
 
-    String getRaId() {
-        externalIds.find{it.idType == ExternalId.IdType.RAID}?.externalId
-    }
-
     private Integer intervalInWeeks(Date startDate, Date endDate) {
         if (!startDate || !endDate) {
             return null
