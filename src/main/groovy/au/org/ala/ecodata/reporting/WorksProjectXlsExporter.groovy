@@ -87,8 +87,7 @@ class WorksProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProject(Map project) {
-
-        def raidEntry = (project.externalIds ?: []).find { it?.idType?.toString() == 'RAID' }
+        def raidEntry = (project.externalIds ?: []).find { it?.idType == ExternalId.IdType.ARDC_RAID }
         project.raidExternalId = raidEntry?.externalId ?: ''
 
         projectSheet()
