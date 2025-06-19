@@ -475,6 +475,19 @@ class SearchController {
         }
     }
 
+    /**
+     * Download documents with search criteria on resource listing page.
+     */
+    def downloadAllDocuments() {
+        if (!params.email) {
+            response.setStatus(400)
+            render text: [message: "An email address must be provided to download documents."] as JSON
+        } else {
+            downloadService.downloadAllDocuments(params)
+            render text: [message: "Submitted download request."] as JSON, status: 200
+        }
+    }
+
     void downloadProjectData(GrailsParameterMap params) {
         if (!params.max) {
             params.max = 5000

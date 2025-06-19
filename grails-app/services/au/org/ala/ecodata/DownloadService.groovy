@@ -16,6 +16,7 @@ import org.elasticsearch.search.SearchHit
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static grails.async.Promises.task
 
@@ -34,6 +35,137 @@ class DownloadService {
     def grailsApplication
     def groovyPageRenderer
     def grailsLinkGenerator
+
+    /**
+     * Downloads currently selected documents and sends an email to the user when the download is complete.
+     * @param params
+     */
+    void downloadAllDocuments(GrailsParameterMap params) {
+        String downloadId = UUID.randomUUID().toString()
+        File directoryPath = new File("${grailsApplication.config.getProperty('temp.dir')}")
+        directoryPath.mkdirs()
+        String fileExtension = params.fileExtension ?: 'zip'
+        FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
+        // Make the document host url prefix available on the thread running data export
+        String documentHostUrlPrefix = DocumentHostInterceptor.documentHostUrlPrefix.get()
+        Promise p = task {
+            DocumentHostInterceptor.documentHostUrlPrefix.set(documentHostUrlPrefix)
+            Project.withNewSession {
+                downloadAllDocuments(outputStream, params)
+            }
+        }
+
+        p.onComplete {
+            int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
+            // download url entry point is either BioCollect or MERIT.
+            String urlPrefix = params.remove('downloadUrl') ?: grailsApplication.config.getProperty('async.download.url.prefix')
+            String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
+            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
+            if (outputStream) {
+                outputStream.flush()
+                outputStream.close()
+            }
+
+            DocumentHostInterceptor.documentHostUrlPrefix.set(null)
+        }
+
+        p.onError { Throwable error ->
+            log.error("Failed to generate file for download.", error)
+            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
+            if (outputStream) {
+                outputStream.flush()
+                outputStream.close()
+            }
+
+            DocumentHostInterceptor.documentHostUrlPrefix.set(null)
+        }
+    }
+
+    /**
+     * Downloads all documents that match the search criteria specified in the params.
+     * @param outputStream
+     * @param params
+     */
+    void downloadAllDocuments(FileOutputStream outputStream, GrailsParameterMap params) {
+        // this call groups documents by project
+        Map<String, Set<String>> documentsByProject = getDocumentIdsForDownload(params)
+        long start = System.currentTimeMillis()
+        TimeZone timeZone = DateUtil.getTimeZoneFromString(params.clientTimezone) ?: TimeZone.getDefault()
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)
+             ByteArrayOutputStream xslFile = new ByteArrayOutputStream()) {
+            zipOutputStream.withStream { ZipOutputStream zip ->
+                XlsExporter xlsExporter = exportDocumentsToXls(documentsByProject, "data", timeZone)
+                zip.putNextEntry(new ZipEntry("data.xlsx"))
+                xlsExporter.save(xslFile)
+                xslFile.flush()
+                zip << xslFile.toByteArray()
+                xslFile.flush()
+                xslFile.close()
+                zip.closeEntry()
+            }
+        }
+
+        log.info "Exporting documents took ${System.currentTimeMillis() - start} millis"
+    }
+
+    /**
+     * Group documents by project
+     * @param params
+     * @param searchIndexName
+     * @return
+     */
+    Map<String, Set<String>> getDocumentIdsForDownload(GrailsParameterMap params, String searchIndexName = DEFAULT_INDEX) {
+        long start = System.currentTimeMillis()
+        params.put('max', 100)
+        // we only need projectId and documentId to group documents by project
+        List include = ['projectId', 'documentId']
+        params.put('include', include)
+        SearchResponse result = elasticSearchService.search(params.query ?:"*:*" , params, searchIndexName, [:], true)
+        Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
+        while (result.getHits().getHits().length != 0) {
+            for (SearchHit hit : result.getHits().getHits()) {
+                Map source = hit.sourceAsMap
+                if (source.projectId) {
+                    ids[source.projectId] << source.documentId
+                }
+            }
+
+            // get the next batch of results
+            result = elasticSearchService.client.scroll(new SearchScrollRequest(result.getScrollId()).scroll(new TimeValue(60000)), RequestOptions.DEFAULT)
+        }
+
+        log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
+
+        ids
+    }
+
+    /**
+     * Exports all documents to an sheet on an XLS file.
+     * @param documentsByProject
+     * @param fileName
+     * @param timeZone
+     * @return
+     */
+    XlsExporter exportDocumentsToXls (Map<String, Set<String>> documentsByProject, String fileName, TimeZone timeZone) {
+        long start = System.currentTimeMillis()
+
+        XlsExporter xlsExporter = new StreamingXlsExporter(fileName)
+
+        log.info "Exporting documents"
+
+        ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter, [:], timeZone)
+
+        log.info "Before exportDocuments projects took ${System.currentTimeMillis() - start} millis"
+        start = System.currentTimeMillis()
+
+        projectExporter.exportDocumentsByProjects(documentsByProject)
+
+        log.info "Creating spreadsheet with ${documentsByProject.size()} projects took ${System.currentTimeMillis() - start} millis"
+
+        xlsExporter
+    }
 
     /**
      * Produces the same file as {@link #downloadProjectData(java.io.OutputStream, org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap)}
