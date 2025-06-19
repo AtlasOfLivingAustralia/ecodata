@@ -44,6 +44,9 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
     List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
 
+    List<String> documentHeaders = ['Project ID', 'Document ID', 'Name', 'Description', 'Role', 'Content type', 'Citation', 'Labels', 'Filename', 'URL', 'Video', 'Date created', 'Last updated']
+    List<String> documentProperties = ['projectId', 'documentId', 'name', 'description', 'role', 'contentType', 'citation', 'labels', 'filename', 'url', 'embeddedVideo', new DatePropertyGetter('dateCreated', DateTimeParser.Style.DATE,null, null,  timeZone),new DatePropertyGetter('lastUpdated', DateTimeParser.Style.DATE,null, null,  timeZone)]
+
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
     DoublePropertyGetter locationLatitudeGetter = new DoublePropertyGetter("locationLatitude")
@@ -65,10 +68,12 @@ class CSProjectXlsExporter extends ProjectExporter {
     RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
     PermissionService permissionService = Holders.grailsApplication.mainContext.getBean("permissionService")
+    DocumentService documentService = Holders.grailsApplication.mainContext.getBean("documentService")
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet recordSheet
+    AdditionalSheet documentSheet
 
     Map<String, AdditionalSheet> surveySheets = [:]
     Map<String, Object> documentMap
@@ -123,6 +128,22 @@ class CSProjectXlsExporter extends ProjectExporter {
 
         int row = projectSheet.getSheet().lastRowNum
         projectSheet.add([project], projectProperties, row + 1)
+    }
+
+    @Override
+    void exportDocumentsByProject(String projectId, Set<String> documentIds) {
+        documentIds?.each { String documentId ->
+            def doc = documentService.get(documentId)
+            if (doc) {
+                // Add the document to the sheet.
+                def sheet = documentSheet()
+                int row = sheet.getSheet().lastRowNum + 1
+                sheet.add([doc], documentProperties, row)
+            } else {
+                log.warn("Document with ID ${documentId} not found.")
+            }
+        }
+
     }
 
     private void addSites(Map project) {
@@ -456,6 +477,13 @@ class CSProjectXlsExporter extends ProjectExporter {
             recordSheet = exporter.addSheet('DwC Records', recordHeaders)
         }
         recordSheet
+    }
+
+    private AdditionalSheet documentSheet() {
+        if (!documentSheet) {
+            documentSheet = exporter.addSheet('Product', documentHeaders)
+        }
+        documentSheet
     }
 
 }
