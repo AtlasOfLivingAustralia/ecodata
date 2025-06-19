@@ -21,8 +21,10 @@ class WorksProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Project Status']
     List<String> commonProjectProperties = ['externalId', 'name', 'associatedProgram', 'projectStatus']
 
-    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Sub-Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update', 'Overall risk rating']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', 'plannedStartDate', 'plannedEndDate', 'projectStatus', 'funding', 'keywords', 'outcomeDate', new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk']
+    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Sub-Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'External ID', 'Grant ID', 'Actual Start Date', 'Actual End Date', 'Date Created', 'Date Last Updated', 'Project Type', 'Science Type', 'EcoScience Type', 'Tags',
+                                   'Org ID Grantee', 'Org ID Sponsor', 'Org ID Service Provider', 'User Created', 'User Last Modified', 'Project Life Cycle Status', 'Category', 'National Scale', 'RAID', 'Indigenous Cultural IP', 'Ethics Approval', 'Ethics Approval Number', 'Ethics Contact Details']
+    List<String> projectProperties = ['projectId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', 'plannedStartDate', 'plannedEndDate', 'projectStatus', 'externalId', 'grantId', 'actualStartDate', 'actualEndDate', 'dateCreated', 'lastUpdated', 'projectType', 'scienceType', 'ecoScienceType', 'tags',
+                                      'orgIdGrantee', 'orgIdSponsor', 'orgIdSvcProvider', 'userCreated', 'userLastModified', 'projLifecycleStatus', 'customMetadata.category', 'geographicInfo.nationwide', 'raidExternalId', 'customMetadata.indigenousCulturalIP', 'customMetadata.ethicsApproval', 'customMetadata.ethicsApprovalNumber', 'customMetadata.ethicsContactDetails']
 
     List<String> outcomeHeaders = commonProjectHeaders + ['Date', 'Interim/Final', 'Outcome']
     List<String> outcomeProperties = commonProjectProperties + [new ISODateStringGetter('date'), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
@@ -85,13 +87,21 @@ class WorksProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProject(Map project) {
+        def raidEntry = (project.externalIds ?: []).find { it?.idType == ExternalId.IdType.ARDC_RAID }
+        project.raidExternalId = raidEntry?.externalId ?: ''
+
         projectSheet()
         int row = projectSheet.getSheet().lastRowNum
         project.allOrganisations = organisationNames(project).join(',')
+        project.scienceType = project.scienceType.join(',')
+        project.ecoScienceType = project.ecoScienceType.join(',')
+        project.tags = project.tags.join(',')
+
         Map outcome = mostRecentOutcome(project)
         project.outcomeDate = outcome?.date ?: ''
         project.outcome = outcome?.progress ?: ''
         project.outcomeType = outcome?.type ?: ''
+
         projectSheet.add([project], projectProperties, row + 1)
     }
 
