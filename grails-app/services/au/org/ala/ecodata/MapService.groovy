@@ -1,9 +1,9 @@
 package au.org.ala.ecodata
 
 import asset.pipeline.AssetHelper
-import com.spatial4j.core.context.SpatialContext
-import com.spatial4j.core.io.GeohashUtils
-import com.spatial4j.core.shape.Rectangle
+import org.locationtech.spatial4j.context.SpatialContext
+import org.locationtech.spatial4j.io.GeohashUtils
+import org.locationtech.spatial4j.shape.Rectangle
 import grails.converters.JSON
 import grails.web.http.HttpHeaders
 import groovy.json.JsonSlurper

@@ -1,18 +1,6 @@
 {
     "activities": [
         {
-            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"],
-            "outputConfig": [{
-                "outputName": "Biodiversity Fund Outcomes & Monitoring Methodology",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Biodiversity Fund - Outcomes and Monitoring",
-            "type": "Assessment",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
             "outputs": [
                 "Event Details",
                 "Participant Information",
@@ -194,35 +182,6 @@
             "type": "Activity",
             "category": "Implementation actions",
             "minOptionalSectionsCompleted": 1
-        },
-        {
-            "outputs": [
-                "Asset Protection Details",
-                "Ecological Burn Details",
-                "Participant Information"
-            ],
-            "supportsPhotoPoints": true,
-            "outputConfig": [
-                {
-                    "outputName": "Asset Protection Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Ecological Burn Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Ecological Fire Management",
-            "supportsSites": true,
-            "type": "Activity",
-            "category": "Implementation actions",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
         },
         {
             "outputs": [
@@ -1003,33 +962,7 @@
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
-        {
-            "outputs": ["BioCondition Method"],
-            "outputConfig": [{
-                "outputName": "BioCondition Method",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Vegetation Assessment - BioCondition (QLD)",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["Floristic Composition"],
-            "supportsPhotoPoints": true,
-            "outputConfig": [{
-                "outputName": "Floristic Composition",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Vegetation Assessment - BioMetric (NSW)",
-            "supportsSites": true,
-            "type": "Assessment",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
+
         {
             "outputs": [
                 "Vegetation Assessment - Survey Information",
@@ -1064,20 +997,7 @@
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
         },
-        {
-            "outputs": ["Floristic Composition"],
-            "supportsPhotoPoints": true,
-            "outputConfig": [{
-                "outputName": "Floristic Composition",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
-            "supportsSites": true,
-            "type": "Assessment",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
+
         {
             "outputs": ["TasVeg Native Vegetation Assessment Method - Forest Vegetation"],
             "outputConfig": [{
@@ -1090,170 +1010,6 @@
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1,
             "status": "active"
-        },
-        {
-            "outputs": ["TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"],
-            "outputConfig": [{
-                "outputName": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": [
-                "Feral Animal Abundance Score",
-                "Feral Animal Frequency Score"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Feral Animal Abundance Score",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Feral Animal Frequency Score",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Feral animal assessment",
-            "type": "Assessment",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": [
-                "Participant Information",
-                "Vegetation Assessment",
-                "Site Condition Components",
-                "Landscape Context Components",
-                "Threatening Processes and Site Condition Risks",
-                "Photo Points"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Vegetation Assessment",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Site Condition Components",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Landscape Context Components",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Threatening Processes and Site Condition Risks",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Site assessment",
-            "type": "Assessment",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": [
-                "Bushland Condition - Site Health Summary",
-                "Indicator 1 - Plant Species Diversity",
-                "Indicator 2 - Weed Abundance & Threat",
-                "Indicator 3 - Structural Diversity",
-                "Indicator 4 - Regeneration",
-                "Indicator 5 - Tree and Shrub Health",
-                "Indicator 6 - Tree Habitat",
-                "Indicator 7 - Feral Animals",
-                "Indicator 8 - Total Grazing Pressure",
-                "Indicator 9 - Animal Species",
-                "Indicator 10 - Bushland Degradation Risk",
-                "Benchmarks - SA"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Bushland Condition - Site Health Summary",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 1 - Plant Species Diversity",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 2 - Weed Abundance & Threat",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 3 - Structural Diversity",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 4 - Regeneration",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 5 - Tree and Shrub Health",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 6 - Tree Habitat",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 7 - Feral Animals",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 8 - Total Grazing Pressure",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 9 - Animal Species",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 10 - Bushland Degradation Risk",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Benchmarks - SA",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
-            "type": "Assessment",
-            "category": "Assessment & monitoring",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
         },
         {
             "outputs": [
@@ -1319,110 +1075,7 @@
             "minOptionalSectionsCompleted": 1,
             "status": "active"
         },
-        {
-            "outputs": ["Upload of stage 1 and 2 reporting data"],
-            "outputConfig": [{
-                "outputName": "Upload of stage 1 and 2 reporting data",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "gmsId": "",
-            "name": "Upload of stage 1 and 2 reporting data",
-            "type": "Activity",
-            "category": "None",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["Monthly Status Report Data"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Monthly Status Report Data",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Green Army - Monthly project status report",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Programme Reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["Three Monthly Report"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Three Monthly Report",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Green Army - Quarterly project report",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Programme Reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["End of Project Report Details"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "End of Project Report Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Green Army - End of Project Report",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Programme Reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["Desktop Audit Checklist Details"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Desktop Audit Checklist Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Green Army - Desktop Audit Checklist",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Programme Reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["Change or Absence of Team Supervisor Report"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Change or Absence of Team Supervisor Report",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Green Army - Change or Absence of Team Supervisor",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Programme Reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
-        {
-            "outputs": ["Site Visit Details"],
-            "supportsPhotoPoints": false,
-            "outputConfig": [{
-                "outputName": "Site Visit Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "name": "Green Army - Site Visit Checklist",
-            "supportsSites": false,
-            "type": "Report",
-            "category": "Programme Reporting",
-            "minOptionalSectionsCompleted": 1,
-            "status": "deleted"
-        },
+
         {
             "outputs": ["Single Sighting"],
             "outputConfig": [
