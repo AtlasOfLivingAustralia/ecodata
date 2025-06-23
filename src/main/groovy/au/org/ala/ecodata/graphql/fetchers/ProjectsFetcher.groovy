@@ -5,8 +5,6 @@ import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.models.KeyValue
 import au.org.ala.ecodata.graphql.models.OutputData
-import com.mongodb.client.FindIterable
-import com.mongodb.client.model.Filters
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher

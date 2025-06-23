@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.gorm.transactions.Transactional
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
@@ -16,8 +17,10 @@ class DataDescriptionService {
             'Status':'excelExportedStatus',
             'Required':'excelExportedRequired',
             'Source':'excelExportedSource',
-            'Description':'excelExportedDescription',
+            'Description':'description',
             'Example':'excelExportedExample',
+            'Entity':'entity',
+            'Field':'field'
     ]
 
     /**
@@ -29,8 +32,12 @@ class DataDescriptionService {
         Workbook workbook = WorkbookFactory.create(inputStream)
 
         def columnMap = [:]
-        EXCEL_COLUMN_MAP.eachWithIndex { headerMap, i ->
-            columnMap << [(CellReference.convertNumToColString(i)):headerMap.value]
+        Sheet sheet = workbook.getSheetAt(0)
+        Map headers = excelImportService.getDataHeaders(sheet)
+
+        headers.each { String cellRef, String header ->
+            String field = EXCEL_COLUMN_MAP[header]
+            columnMap << [(cellRef):field]
         }
         def config = [
                 sheet: workbook.getSheetAt(0).getSheetName(),
@@ -46,13 +53,15 @@ class DataDescriptionService {
 
 
         dataDescriptions.each { dataDescription->
-            DataDescription dataDesc = DataDescription.findByExcelExportedColumn(dataDescription.excelExportedColumn)
+            DataDescription dataDesc = DataDescription.findByEntityAndField(dataDescription.entity, dataDescription.field)
             if (dataDesc) {
                 dataDesc.excelExportedStatus = dataDescription.excelExportedStatus
                 dataDesc.excelExportedRequired = dataDescription.excelExportedRequired
                 dataDesc.excelExportedSource = dataDescription.excelExportedSource
-                dataDesc.excelExportedDescription = dataDescription.excelExportedDescription
+                dataDesc.excelExportedDescription = dataDescription.description
                 dataDesc.excelExportedExample = dataDescription.excelExportedExample
+                dataDesc.description = dataDescription.description
+
                 dataDesc.save(flush:true,failOnError:true)
             } else {
                 DataDescription newDataDesc = new DataDescription(dataDescription)

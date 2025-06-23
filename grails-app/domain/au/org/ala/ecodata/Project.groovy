@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
-import au.org.ala.ecodata.graphql.models.MeriPlan
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
@@ -264,9 +263,7 @@ class Project {
             return null
         }
 
-        MeriPlan meriPlan = new MeriPlan()
-        meriPlan.details = custom.get("details")
-        meriPlan.outputTargets = this.outputTargets
+        MeriPlan meriPlan = new MeriPlan(custom.details, getOutputTargets())
         return meriPlan
     }
 

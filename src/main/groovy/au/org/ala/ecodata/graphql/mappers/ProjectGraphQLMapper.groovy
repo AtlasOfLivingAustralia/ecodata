@@ -14,18 +14,14 @@ import au.org.ala.ecodata.graphql.enums.DateRange
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.enums.YesNo
 import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
-import au.org.ala.ecodata.graphql.fetchers.Helper
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
-import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.MeriPlan
 import au.org.ala.ecodata.graphql.models.OutputData
-import grails.gorm.DetachedCriteria
 import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
-import org.grails.gorm.graphql.fetcher.impl.SingleEntityDataFetcher
-import org.apache.commons.lang.WordUtils
 
 class ProjectGraphQLMapper {
 
@@ -41,10 +37,10 @@ class ProjectGraphQLMapper {
 
             exclude("custom")
 
-            Map activityModel = [:] //new Helper().getActivityOutputModels()
-            String[] duplicateOutputs = [] //activityModel["activities"].outputs.name.flatten().groupBy { it }.findAll { it.value.size() > 1}.keySet()
+            Map activityModel = [:]
+            String[] duplicateOutputs = []
 
-            List<String> restrictedProperties = ['name']
+            List<String> restrictedProperties = []
             restrictedProperties.each { String prop ->
                 property(prop) {
                     dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
@@ -242,7 +238,7 @@ class ProjectGraphQLMapper {
                 dataFetcher(new DataFetcher() {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {
-                        ProjectGraphQLMapper.buildTestFetcher().searchMeritProject(environment)
+                        ProjectGraphQLMapper.buildProjectFetcher().searchMeritProject(environment)
                     }
                 })
             }
@@ -293,7 +289,7 @@ class ProjectGraphQLMapper {
                 dataFetcher(new DataFetcher() {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {
-                        ProjectGraphQLMapper.buildTestFetcher().searchActivityOutput(environment)
+                        ProjectGraphQLMapper.buildProjectFetcher().searchActivityOutput(environment)
                     }
                 })
                 returns {
@@ -355,7 +351,7 @@ class ProjectGraphQLMapper {
                 dataFetcher(new DataFetcher() {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {
-                        ProjectGraphQLMapper.buildTestFetcher().searchOutputTargetsByProgram(environment)
+                        ProjectGraphQLMapper.buildProjectFetcher().searchOutputTargetsByProgram(environment)
                     }
                 })
                 returns {
@@ -415,16 +411,17 @@ class ProjectGraphQLMapper {
                 dataFetcher(new DataFetcher() {
                     @Override
                     Object get(DataFetchingEnvironment environment) throws Exception {
-                        ProjectGraphQLMapper.buildTestFetcher().searchBioCollectProject(environment)
+                        ProjectGraphQLMapper.buildProjectFetcher().searchBioCollectProject(environment)
                     }
                 })
             }
 
         }
+
     }
 
 
-    static ProjectsFetcher buildTestFetcher() {
+    static ProjectsFetcher buildProjectFetcher() {
 
         new ProjectsFetcher(Holders.applicationContext.projectService, Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.reportService,
         Holders.applicationContext.cacheService, Holders.applicationContext.hubService)

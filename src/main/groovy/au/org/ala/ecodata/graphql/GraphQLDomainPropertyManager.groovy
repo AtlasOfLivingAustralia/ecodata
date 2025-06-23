@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.graphql
 
+import au.org.ala.ecodata.DataDescription
 import org.grails.datastore.mapping.config.Property
 import org.grails.datastore.mapping.model.MappingContext
 import org.grails.datastore.mapping.model.PersistentEntity
@@ -77,7 +78,19 @@ class GraphQLDomainPropertyManager implements org.grails.gorm.graphql.entity.pro
 
         @Override
         List<GraphQLDomainProperty> getProperties(PersistentEntity entity) {
-            getProperties(entity, GraphQLEntityHelper.getMapping(entity))
+            List<GraphQLDomainProperty> properties = getProperties(entity, GraphQLEntityHelper.getMapping(entity))
+            List<GraphQLDomainProperty> includedProperties = []
+            // Annotate properties with descriptions from the database
+            List<DataDescription> descriptions = DataDescription.findAllByEntity(entity.name)
+
+            properties.each { GraphQLDomainProperty property ->
+                DataDescription description = descriptions.find { it.field == property.name }
+                if (description) {
+                    property.description = description.graphQLDescription ?: description.description
+                    includedProperties << property
+                }
+            }
+            includedProperties
         }
 
         private GraphQLPropertyMapping getPropertyMapping(PersistentProperty property, GraphQLMapping mapping, boolean id = false) {

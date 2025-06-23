@@ -1,6 +1,6 @@
 package au.org.ala.ecodata.graphql.converters
 
-import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.MeriPlan
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseValueException
 import graphql.schema.CoercingSerializeException

@@ -9,7 +9,7 @@ import au.org.ala.ecodata.graphql.converters.OutputDataConverter
 import au.org.ala.ecodata.graphql.converters.SchemaConverter
 import au.org.ala.ecodata.graphql.converters.SectionTemplateConverter
 import au.org.ala.ecodata.graphql.converters.SummaryConverter
-import au.org.ala.ecodata.graphql.models.MeriPlan
+import au.org.ala.ecodata.MeriPlan
 import au.org.ala.ecodata.graphql.models.OutputData
 import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.SectionTemplate
@@ -35,15 +35,14 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
     @Override
     void doWith(GraphQLTypeManager graphQLTypeManager) {
         // GraphQL type conversion for Mongo ObjectIds
-        graphQLTypeManager.registerType(ObjectId, new GraphQLScalarType("ObjectId", "Hex representation of a Mongo object id", new ObjectIdConverter()))
-        graphQLTypeManager.registerType(Object, new GraphQLScalarType("object", "", new ObjectConverter()))
-        //graphQLTypeManager.registerType(Map, GraphQLInterfaceType.newInterface().)
-        graphQLTypeManager.registerType(MeriPlan, new GraphQLScalarType("MeriPlan", "", new MeriPlanConverter()))
-        graphQLTypeManager.registerType(OutputData, new GraphQLScalarType("OutputData", "", new OutputDataConverter()))
-        graphQLTypeManager.registerType(SectionTemplate, new GraphQLScalarType("SectionTemplate", "", new SectionTemplateConverter()))
-        graphQLTypeManager.registerType(Summary, new GraphQLScalarType("Summary", "", new SummaryConverter()))
-        graphQLTypeManager.registerType(Schema, new GraphQLScalarType("Schema", "", new SchemaConverter()))
-        graphQLTypeManager.registerType(Date, new GraphQLScalarType("Date", "", new DateFormatting()))
+        graphQLTypeManager.registerType(ObjectId, GraphQLScalarType.newScalar().name("ObjectId").description("Hex representation of a Mongo object id").coercing(new ObjectIdConverter()).build())
+        graphQLTypeManager.registerType(Object, GraphQLScalarType.newScalar().name("object").description("").coercing(new ObjectConverter()).build())
+        //graphQLTypeManager.registerType(MeriPlan, GraphQLScalarType.newScalar().name("MeriPlan").description("").coercing(new MeriPlanConverter()).build())
+        graphQLTypeManager.registerType(OutputData, GraphQLScalarType.newScalar().name("OutputData").description("").coercing(new OutputDataConverter()).build())
+        graphQLTypeManager.registerType(SectionTemplate, GraphQLScalarType.newScalar().name("SectionTemplate").description("").coercing( new SectionTemplateConverter()).build())
+        graphQLTypeManager.registerType(Summary, GraphQLScalarType.newScalar().name("Summary").description("").coercing(new SummaryConverter()).build())
+        graphQLTypeManager.registerType(Schema, GraphQLScalarType.newScalar().name("Schema").description("").coercing(new SchemaConverter()).build())
+        graphQLTypeManager.registerType(Date, GraphQLScalarType.newScalar().name("Date").description("").coercing(new DateFormatting()).build())
     }
 
     @Override

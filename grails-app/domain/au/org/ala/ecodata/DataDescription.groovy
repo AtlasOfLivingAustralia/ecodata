@@ -7,6 +7,7 @@ class DataDescription {
 
     String name
     String graphQlName
+    String graphQLDescription
     String xlsxName
     String xlsxHeader
     String type
@@ -46,6 +47,7 @@ class DataDescription {
         excelExportedSource nullable: true
         excelExportedDescription nullable: true
         excelExportedExample nullable: true
+        graphQLDescription nullable: true
 
     }
 }
