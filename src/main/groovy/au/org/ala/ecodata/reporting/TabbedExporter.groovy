@@ -1,12 +1,7 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
-import au.org.ala.ecodata.metadata.OutputDataGetter
-import au.org.ala.ecodata.metadata.OutputDateGetter
-import au.org.ala.ecodata.metadata.OutputMetadata
-import au.org.ala.ecodata.metadata.OutputModelProcessor
-import au.org.ala.ecodata.metadata.OutputNumberGetter
-import au.org.ala.ecodata.metadata.SpeciesUrlGetter
+import au.org.ala.ecodata.metadata.*
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -14,7 +9,6 @@ import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 import java.text.SimpleDateFormat
-
 /**
  * Basic support for exporting data based on a selection of content.
  */
@@ -37,7 +31,7 @@ class TabbedExporter {
     TimeZone timeZone
     Boolean useDateGetter = false
     Boolean useNumberGetter = false
-    boolean useSpeciesUrlGetter = false
+    boolean addAdditionalSpeciesColumns = false
     // These fields map full activity names to shortened names that are compatible with Excel tabs.
     protected Map<String, String> activitySheetNames = [:]
     protected Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
@@ -235,7 +229,7 @@ class TabbedExporter {
                             getter:new OutputNumberGetter(propertyPath, dataNode, documentMap, timeZone)]
                     fieldConfiguration << field
                 }
-                else if ((dataNode.dataType == 'species') && useSpeciesUrlGetter) {
+                else if ((dataNode.dataType == 'species')) {
                     // Return a property for the species name and a property for the species URL
                     Map nameField = field + [
                             header:outputMetadata.getLabel(viewNode, dataNode),
@@ -243,13 +237,30 @@ class TabbedExporter {
                             getter:new OutputDataGetter(propertyPath, dataNode, documentMap, timeZone)]
                     fieldConfiguration << nameField
 
-                    Map urlField = field + [
-                            description: "Link to species in the ALA",
-                            header:outputMetadata.getLabel(viewNode, dataNode),
-                            property:propertyPath,
-                            getter:new SpeciesUrlGetter(propertyPath, dataNode, documentMap, timeZone, biePrefix)
-                    ]
-                    fieldConfiguration << urlField
+                    if (addAdditionalSpeciesColumns) {
+                        String header = outputMetadata.getLabel(viewNode, dataNode)
+                        Map scientificNameNode = field + [
+                                header:header + ' (scientific name)',
+                                property:propertyPath + '.scientificName',
+                                getter:new SpeciesAttributeGetter(propertyPath, dataNode, documentMap, timeZone, SpeciesAttributeGetter.SPECIES_SCIENTIFIC_NAME, biePrefix)
+                        ]
+                        fieldConfiguration << scientificNameNode
+
+                        Map commonNameNode = field + [
+                                header:header + ' (common name)',
+                                property:propertyPath + '.commonName',
+                                getter:new SpeciesAttributeGetter(propertyPath, dataNode, documentMap, timeZone, SpeciesAttributeGetter.SPECIES_COMMON_NAME, biePrefix)
+                        ]
+                        fieldConfiguration << commonNameNode
+
+                        Map urlField = field + [
+                                description: "Link to species in the ALA",
+                                header:header + " (Link to species in the ALA)",
+                                property:propertyPath,
+                                getter:new SpeciesAttributeGetter(propertyPath, dataNode, documentMap, timeZone, SpeciesAttributeGetter.SPECIES_ID, biePrefix)
+                        ]
+                        fieldConfiguration << urlField
+                    }
                 }
                 else {
                     field += [
