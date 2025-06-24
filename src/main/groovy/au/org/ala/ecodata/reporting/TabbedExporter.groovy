@@ -241,14 +241,14 @@ class TabbedExporter {
                         String header = outputMetadata.getLabel(viewNode, dataNode)
                         Map scientificNameNode = field + [
                                 header:header + ' (scientific name)',
-                                property:propertyPath + '.scientificName',
+                                property:propertyPath,
                                 getter:new SpeciesAttributeGetter(propertyPath, dataNode, documentMap, timeZone, SpeciesAttributeGetter.SPECIES_SCIENTIFIC_NAME, biePrefix)
                         ]
                         fieldConfiguration << scientificNameNode
 
                         Map commonNameNode = field + [
                                 header:header + ' (common name)',
-                                property:propertyPath + '.commonName',
+                                property:propertyPath,
                                 getter:new SpeciesAttributeGetter(propertyPath, dataNode, documentMap, timeZone, SpeciesAttributeGetter.SPECIES_COMMON_NAME, biePrefix)
                         ]
                         fieldConfiguration << commonNameNode
