@@ -41,8 +41,8 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Verification status','Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
 
-    List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
-    List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
+    List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Vernacular name", "Common name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
+    List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "vernacularName", "commonName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
 
     List<String> documentHeaders = ['Project ID', 'Document ID', 'Name', 'Description', 'Role', 'Content type', 'Citation', 'Labels', 'Filename', 'URL', 'Video', 'Date created', 'Last updated']
     List<String> documentProperties = ['projectId', 'documentId', 'name', 'description', 'role', 'contentType', 'citation', 'labels', 'filename', 'url', 'embeddedVideo', new DatePropertyGetter('dateCreated', DateTimeParser.Style.DATE,null, null,  timeZone),new DatePropertyGetter('lastUpdated', DateTimeParser.Style.DATE,null, null,  timeZone)]
@@ -82,6 +82,7 @@ class CSProjectXlsExporter extends ProjectExporter {
         super(exporter, [], documentMap, timeZone)
         this.useDateGetter = true
         this.useNumberGetter = true
+        this.addAdditionalSpeciesColumns = true
         this.documentMap = documentMap
     }
 

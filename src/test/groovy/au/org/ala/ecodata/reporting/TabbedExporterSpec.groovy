@@ -2,7 +2,7 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.metadata.OutputDataGetter
-import au.org.ala.ecodata.metadata.SpeciesUrlGetter
+import au.org.ala.ecodata.metadata.SpeciesAttributeGetter
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.web.GrailsWebUnitTest
 import grails.util.Holders
@@ -99,36 +99,44 @@ class TabbedExporterSpec extends Specification implements GrailsWebUnitTest, Dom
 
     }
 
-    def "Species data types will be expanded into two export columns if useSpeciesUrlGetter is true"() {
+    def "Species data types will be expanded into four export columns if addAdditionalSpeciesColumns is true"() {
         setup:
         String type = 'form'
         ActivityForm form = buildMockForm(type, buildFormTemplateWithSpecies())
 
         when:
-        tabbedExporter.useSpeciesUrlGetter = true
+        tabbedExporter.addAdditionalSpeciesColumns = true
         List config = tabbedExporter.getActivityExportConfig(type, true)
 
         then:
         1 * activityFormService.findVersionedActivityForm(type) >> [form]
 
-        config.size() == 3
+        config.size() == 5
         config[1].header == 'Species label'
         config[1].property == 'form.species'
         config[1].getter instanceof OutputDataGetter
 
-        config[2].header == 'Species label'
+        config[2].header == 'Species label (scientific name)'
         config[2].property == 'form.species'
-        config[2].getter instanceof SpeciesUrlGetter
+        config[2].getter instanceof SpeciesAttributeGetter
+
+        config[3].header == 'Species label (common name)'
+        config[3].property == 'form.species'
+        config[3].getter instanceof SpeciesAttributeGetter
+
+        config[4].header == 'Species label (Link to species in the ALA)'
+        config[4].property == 'form.species'
+        config[4].getter instanceof SpeciesAttributeGetter
 
     }
 
-    def "Species data types will only export the species name if useSpeciesUrlGetter is false"() {
+    def "Species data types will only export the species name if addAdditionalSpeciesColumns is false"() {
         setup:
         String type = 'form'
         ActivityForm form = buildMockForm(type, buildFormTemplateWithSpecies())
 
         when:
-        tabbedExporter.useSpeciesUrlGetter = false
+        tabbedExporter.addAdditionalSpeciesColumns = false
         List config = tabbedExporter.getActivityExportConfig(type, true)
 
         then:
