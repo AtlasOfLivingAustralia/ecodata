@@ -16,6 +16,8 @@
 package au.org.ala.ecodata
 
 
+import au.org.ala.ecodata.metadata.OutputDateGetter
+import au.org.ala.ecodata.metadata.OutputMetadata
 import com.mongodb.client.model.Filters
 import grails.async.Promise
 import grails.async.Promises
@@ -107,6 +109,7 @@ class ElasticSearchService {
     CacheService cacheService
     ProgramService programService
     ManagementUnitService managementUnitService
+    ActivityFormService activityFormService
 
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
@@ -1269,6 +1272,39 @@ class ElasticSearchService {
         projectMap
     }
 
+    /**
+     * Get the first date recorded in the survey. This will ignore nested date in the survey such as date in a table.
+     * BioCollect forms usually have a single date field in the survey form.
+     * @return
+     */
+    Date getSurveyDateForActivity (Map activity) {
+        Date date
+        String activityId = activity.activityId
+        // get form associated with the activity
+        ActivityForm activityForm = activityFormService.findActivityForm (activity.type, activity.formVersion)
+        List outputs = outputService.findAllForActivityId (activityId)
+        outputs?.each { Map output ->
+            // only one date is needed
+            if (date != null)
+                return
+
+            FormSection model = activityForm?.sections?.find{it.name == output.name}
+            OutputMetadata metadata = new OutputMetadata(model?.template)
+            // filter data model by date data type
+            Map dateDataModelItems = metadata.getNamesForDataType('date', null)
+            dateDataModelItems?.each { String key, def value ->
+                if (value == true && date == null) {
+                    Map dataNode = metadata.findDataModelItemByName(key)
+                    OutputDateGetter dateGetter = new OutputDateGetter(key, dataNode, null, TimeZone.getTimeZone("UTC"))
+                    // parse date from output data
+                    date = dateGetter.getFormattedValue(output.data)
+                }
+            }
+        }
+
+        date
+    }
+
     private Map prepareActivityForIndexing(Map activity, version = null) {
         activity["className"] = Activity.class.getName()
 
@@ -1357,6 +1393,11 @@ class ElasticSearchService {
             }
 
             addYearAndMonthToEntity(activity, activity)
+            // Attempt to get survey date from outputs. The above code does not capture date if no species occurrence
+            // is created from a survey.
+            if (eventDate == null) {
+                eventDate = getSurveyDateForActivity(activity)
+            }
 
             if(eventDate){
                 activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)
