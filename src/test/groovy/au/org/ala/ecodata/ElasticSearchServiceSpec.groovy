@@ -66,6 +66,8 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         service.activityService = Mock(ActivityService)
         service.organisationService = Mock(OrganisationService)
         service.documentService = Mock(DocumentService)
+        service.activityFormService = Mock(ActivityFormService)
+        service.outputService = Mock(OutputService)
         service.projectService = projectService
         service.metadataService.grailsApplication = grailsApplication
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
@@ -253,6 +255,95 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         projectService.get(document.projectId, ProjectService.FLAT) >> project
     }
 
+    def "getSurveyDateForActivity should return the first date from output data when date field is found"() {
+        given:
+        def activity = [activityId: '1234', type: 'Survey', formVersion: 1]
+
+        def mockDate = "2024-01-01"
+        def outputData = [data: [someDate: "2024-01-01T00:00:00Z"], name: "Section A", activityId: '1234']
+        def outputs = [outputData]
+
+        def formSection = new FormSection(name: "Section A", template: [dataModel: [[dataType: "date", name: "someDate"]]])
+        def activityForm = new ActivityForm(sections: [formSection], name: 'Survey', formVersion: 1)
+
+        and:
+        service.activityFormService.findActivityForm('Survey', 1) >> activityForm
+        service.outputService.findAllForActivityId('1234') >> outputs
+
+        when:
+        def result = service.getSurveyDateForActivity(activity)
+        result = result?.format('yyyy-MM-dd')
+
+        then:
+        result == mockDate
+    }
+
+    def "getSurveyDateForActivity should return null if no outputs exist"() {
+        given:
+        def activity = [activityId: '1234', type: 'Survey', formVersion: 1]
+
+        def mockDate = null
+        def outputs = []
+
+        def formSection = new FormSection(name: "Section A", template: [dataModel: [[dataType: "date", name: "someDate"]]])
+        def activityForm = new ActivityForm(sections: [formSection], name: 'Survey', formVersion: 1)
+
+        and:
+        service.activityFormService.findActivityForm('Survey', 1) >> activityForm
+        service.outputService.findAllForActivityId('1234') >> outputs
+
+        when:
+        def result = service.getSurveyDateForActivity(activity)
+
+        then:
+        result == mockDate
+    }
+
+
+    def "getSurveyDateForActivity should return null if no date fields are present in output"() {
+        given:
+        def activity = [activityId: '1234', type: 'Survey', formVersion: 1]
+
+        def mockDate = null
+        def outputData = [data: [someDate: 20], name: "Section A", activityId: '1234']
+        def outputs = [outputData]
+
+        def formSection = new FormSection(name: "Section A", template: [dataModel: [[dataType: "number", name: "someDate"]]])
+        def activityForm = new ActivityForm(sections: [formSection], name: 'Survey', formVersion: 1)
+
+        and:
+        service.activityFormService.findActivityForm('Survey', 1) >> activityForm
+        service.outputService.findAllForActivityId('1234') >> outputs
+
+        when:
+        def result = service.getSurveyDateForActivity(activity)
+
+        then:
+        result == mockDate
+    }
+
+    def "getSurveyDateForActivity should return only the first valid date even if multiple exist"() {
+        given:
+        def activity = [activityId: '1234', type: 'Survey', formVersion: 1]
+
+        def mockDate = "2024-01-01"
+        def outputData = [data: [someDate: "2024-01-01T00:00:00Z", anotherDate: "2025-01-01T00:00:00Z"], name: "Section A", activityId: '1234']
+        def outputs = [outputData]
+
+        def formSection = new FormSection(name: "Section A", template: [dataModel: [[dataType: "date", name: "someDate"], [dataType: "date", name: "anotherDate"]]])
+        def activityForm = new ActivityForm(sections: [formSection], name: 'Survey', formVersion: 1)
+
+        and:
+        service.activityFormService.findActivityForm('Survey', 1) >> activityForm
+        service.outputService.findAllForActivityId('1234') >> outputs
+
+        when:
+        def result = service.getSurveyDateForActivity(activity)
+        result = result?.format('yyyy-MM-dd')
+
+        then:
+        result == mockDate
+    }
     /**
      * Creates a minimal version of an Activity that has just the attributes we will be searching.
      */

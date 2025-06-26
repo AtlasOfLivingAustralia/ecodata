@@ -82,6 +82,8 @@ class Project {
     boolean isBushfire
     String projLifecycleStatus
 
+    CustomMetadata customMetadata
+
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
     String baseLayer
@@ -122,7 +124,7 @@ class Project {
     /** Container to allow program config overrides for an individual Project */
     Map config
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets', 'customMetadata']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 
@@ -187,6 +189,10 @@ class Project {
         return (int)Math.ceil(numWeeks)
     }
 
+    Map<String, Object> flattenMetadata() {
+        return customMetadata?.toMap() ?: [:]
+    }
+
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
@@ -247,6 +253,7 @@ class Project {
         portfolio nullable: true
         comment nullable: true
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
+        customMetadata nullable: true
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }
