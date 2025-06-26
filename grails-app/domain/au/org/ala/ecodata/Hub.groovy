@@ -64,6 +64,9 @@ class Hub implements ProcessEmbedded {
     /** The URL to the logo image for this hub */
     String logoUrl
 
+    /** The URL to the favicon image for this hub */
+    String faviconlogoUrl
+
     /** If an email is generated relating to this hub, use this sender address instead of the default it the config */
     String emailFromAddress
 
@@ -121,6 +124,7 @@ class Hub implements ProcessEmbedded {
         availableMapFacets nullable: true
         defaultFacetQuery nullable: true
         quickLinks nullable: true
+        faviconlogoUrl nullable: true
     }
 
     static embedded = ['mapLayersConfig', 'accessManagementOptions', 'templateConfiguration']
