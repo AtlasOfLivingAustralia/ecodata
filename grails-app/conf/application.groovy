@@ -1064,6 +1064,11 @@ facets.project = [
                 name    : "bushfireCategoriesFacet",
                 title   : "Bushfire Categories",
                 helpText: "The bushfire categories relevant to the project"
+        ],
+        [
+                name    : "nationwideFacet",
+                title   : "National Project",
+                helpText: "Is the project a nation wide project?",
         ]
 ]
 
