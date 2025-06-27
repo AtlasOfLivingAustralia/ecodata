@@ -50,4 +50,11 @@ class Service {
         ]
     }
 
+    String getNameForProgramId(String programId) {
+        if (programLabels && programLabels[programId]) {
+            return programLabels[programId].label ?: name
+        }
+        return name
+    }
+
 }
