@@ -54,6 +54,9 @@ class Program {
     /** Grant/procurement etc */
     String fundingType
 
+    /** The total funding for this program */
+    BigDecimal totalFunding
+
     /** Records the id/s of this program has held in external systems */
     List<ExternalId> externalIds
 
@@ -82,6 +85,7 @@ class Program {
         program.acronym = acronym
         program.fundingType = fundingType
         program.externalIds = externalIds
+        program.totalFunding = totalFunding
 
         program.associatedOrganisations = associatedOrganisations
 
@@ -153,6 +157,7 @@ class Program {
         acronym nullable: true
         fundingType nullable: true
         externalIds nullable: true
+        totalFunding nullable: true
         hubId nullable: true, validator: { String hubId, Program program, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(program, 'programId', 'hubId', errors)
         }
