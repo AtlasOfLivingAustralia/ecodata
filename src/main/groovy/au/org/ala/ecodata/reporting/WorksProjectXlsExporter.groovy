@@ -90,7 +90,7 @@ class WorksProjectXlsExporter extends ProjectExporter {
         List<String> headers = new ArrayList<>(projectHeaders)
         List<String> properties = new ArrayList<>(projectProperties)
 
-        if (!project.isBushfire && !project.isCitizenScience && !project.isSciStarter) {
+        if (project.isEcoScience) {
             headers += ['Category', 'National Scale', 'Indigenous Cultural IP', 'Ethics Approval', 'Ethics Approval Number', 'Ethics Contact Details']
             properties += ['customMetadata.category', 'geographicInfo.nationwide', 'customMetadata.indigenousCulturalIP', 'customMetadata.ethicsApproval', 'customMetadata.ethicsApprovalNumber', 'customMetadata.ethicsContactDetails']
         }
