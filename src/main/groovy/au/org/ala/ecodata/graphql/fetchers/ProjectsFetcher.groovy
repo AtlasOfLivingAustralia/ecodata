@@ -2,9 +2,11 @@ package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
+
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.models.KeyValue
 import au.org.ala.ecodata.graphql.models.OutputData
+import grails.gorm.PagedResultList
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher
@@ -18,7 +20,7 @@ import java.text.SimpleDateFormat
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
 
-class ProjectsFetcher implements DataFetcher<List<Project>> {
+class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
 
     ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
                            ReportService reportService, CacheService cacheService, HubService hubService) {
@@ -46,13 +48,13 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
                              hubFq:null, facets: null]
 
     @Override
-    List<Project> get(DataFetchingEnvironment environment) throws Exception {
+    Map<Integer, List<Project>> get(DataFetchingEnvironment environment) throws Exception {
 
         String query = environment.arguments.term ?:"*:*"
         return queryElasticSearch(environment, query, [include:'projectId'])
     }
 
-    private List<Project> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
+    private Map<Integer, List<Project>> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
         EcodataGraphQLContextBuilder.EcodataGraphQLContext context = (EcodataGraphQLContextBuilder.EcodataGraphQLContext)environment.context
         String query = queryString ?:"*:*"
@@ -86,10 +88,10 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
             results << (fullAccessProjects.find{it.projectId == projectId} ?: restrictedAccessProjects.find{it.projectId == projectId})
         }
 
-        results
+        [totalCount: searchResponse.hits?.totalHits?.value ?: 0, results: results]
     }
 
-    List<Project> searchMeritProject (DataFetchingEnvironment environment) {
+    Map<Integer, List<Project>> searchMeritProject (DataFetchingEnvironment environment) {
 
         def fqList = mapFq(environment)
 
@@ -129,10 +131,10 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
         }
 
         String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
-        List<Project> projects =  queryElasticSearch(environment, query, params)
+        Map<Integer, List<Project>> results =  queryElasticSearch(environment, query, params)
 
         if(environment.arguments.get("activities")) {
-            List projectIdList = projects.projectId
+            List projectIdList = results.results.projectId
 
             List activities = new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
                     Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(environment.arguments.get("activities") as List)
@@ -140,10 +142,10 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
             //get projects with requested activity output types
             List projectIds = activities.findAll { it.projectId in projectIdList }.projectId.unique()
 
-            projects =  projects.findAll{ it.projectId in projectIds}
+            results.results =  results.results.findAll{ it.projectId in projectIds}
         }
 
-        return projects
+        return results
     }
 
     void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {

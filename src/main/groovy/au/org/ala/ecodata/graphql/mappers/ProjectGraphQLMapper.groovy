@@ -22,6 +22,7 @@ import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
+import org.grails.gorm.graphql.response.pagination.PaginatedType
 
 class ProjectGraphQLMapper {
 
@@ -185,7 +186,7 @@ class ProjectGraphQLMapper {
                 })
             }
 
-            query('searchMeritProject', [Project]) {
+            query('searchMeritProject', new PaginatedType(type:Project)) {
                 argument('projectId', String) { nullable true }
                 argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
                 argument('toDate', String){ nullable true description "yyyy-mm-dd" }
