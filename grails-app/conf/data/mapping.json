@@ -761,6 +761,10 @@
         },
         "geographicInfo": {
           "properties": {
+            "nationwide": {
+              "type": "keyword",
+              "copy_to": "nationwideFacet"
+            },
             "primaryState": {
               "type": "keyword",
               "copy_to": "stateFacet"
