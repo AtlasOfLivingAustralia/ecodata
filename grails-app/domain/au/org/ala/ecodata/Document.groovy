@@ -61,6 +61,7 @@ class Document {
     String managementUnitId
     String hubId
     String externalUrl
+    String isbn
     Boolean isSciStarter = false
     String hosted
     String identifier
@@ -192,5 +193,6 @@ class Document {
         contentType nullable: true
         hubId nullable: true
         imageId nullable: true
+        isbn nullable: true
     }
 }
