@@ -153,6 +153,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
 
         documentService.get('doc1') >> [name: 'doc 1', type: 'image', role: 'primary', projectId: 'abc', documentId: 'doc1', filepath: '/path/to/doc1.jpg']
         documentService.get('doc2') >> [name: 'doc 2', type: 'image', role: 'primary', projectId: 'abc', documentId: 'doc2', filepath: '/path/to/doc1.jpg']
+        projectService.get('abc', projectService.BASIC) >> [projectId: 'abc', name: 'Project ABC', organisationName: 'Test Org']
         when:
         csProjectXlsExporter.exportDocumentsByProjects(documentsByProjects)
         xlsExporter.save()
@@ -165,11 +166,13 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         workbook.numberOfSheets == 1
         products.physicalNumberOfRows == 3 //returns 2 rows, header and one data row
         doc1Row[0] == 'abc'
-        doc1Row[1] == 'doc1'
-        doc1Row[2] == 'doc 1'
+        doc1Row[1] == 'Project ABC'
+        doc1Row[2] == 'doc1'
+        doc1Row[3] == 'doc 1'
         doc2Row[0] == 'abc'
-        doc2Row[1] == 'doc2'
-        doc2Row[2] == 'doc 2'
+        doc1Row[1] == 'Project ABC'
+        doc2Row[2] == 'doc2'
+        doc2Row[3] == 'doc 2'
     }
 
 
