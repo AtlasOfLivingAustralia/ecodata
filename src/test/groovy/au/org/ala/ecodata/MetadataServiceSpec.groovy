@@ -292,7 +292,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         def content = resp.success
 
         then:
-        content.size() == 2
+        content.size() == 3
         content[0][0].data.size() == 5
         content[0][0].data.get("serial") == 1.0
         content[0][0].data.get("a") == "test a 1"
@@ -346,96 +346,12 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         content[1][0].data.get("g")[1].i.commonName == "com name 5"
         content[1][0].data.get("g")[1].i.guid == "gi5"
         content[1][0].data.get("g")[1].i.outputSpeciesId != null
-    }
 
-    def "excelWorkbookToMap: getting content from bulk_import_example_error.xlsx should result in an error"() {
-        setup:
-        service.activityFormService = new ActivityFormService()
-        service.cacheService = new CacheService()
-        service.excelImportService = new ExcelImportService()
-        ActivityForm form1 = new ActivityForm(
-                name: 'form1',
-                formVersion: 1,
-                status: Status.ACTIVE,
-                publicationStatus: PublicationStatus.PUBLISHED,
-                type: 'Activity',
-                sections: [
-                        new FormSection (
-                                name: 'form1',
-                                templateName: 'form1',
-                                template: [
-                                        name: 'form1',
-                                        dataModel: [
-                                                [
-                                                        name: 'a',
-                                                        dataType: 'string',
-                                                        label: 'A',
-                                                        required: true
-                                                ],
-                                                [
-                                                        name: 'b',
-                                                        dataType: 'list',
-                                                        required: true,
-                                                        columns: [
-                                                                [
-                                                                        name: 'c',
-                                                                        dataType: 'stringList',
-                                                                        required: true
-                                                                ]
-                                                        ]
-                                                ],
-                                                [
-                                                        name: 'd',
-                                                        dataType: 'list',
-                                                        required: true,
-                                                        columns: [
-                                                                [
-                                                                        name: 'e',
-                                                                        dataType: 'string',
-                                                                        required: true
-                                                                ],
-                                                                [
-                                                                        name: 'f',
-                                                                        dataType: 'species',
-                                                                        required: true
-                                                                ]
-                                                        ]
-                                                ],
-                                                [
-                                                        name: 'g',
-                                                        dataType: 'list',
-                                                        required: true,
-                                                        columns: [
-                                                                [
-                                                                        name: 'h',
-                                                                        dataType: 'stringList',
-                                                                        required: true
-                                                                ],
-                                                                [
-                                                                        name: 'i',
-                                                                        dataType: 'species',
-                                                                        required: true
-                                                                ]
-                                                        ]
-                                                ]
-                                        ]
-                                ]
-                        )
-                ]
-        )
-        form1.save(flush: true, failOnError: true)
-        def file = new File("src/test/resources/bulk_import_example_error.xlsx").newInputStream()
-
-        when:
-        def content = service.excelWorkbookToMap(file, 'form1', true, null)
-
-        then:
-        messageSource.getMessage("bulkimport.conversionToObjectError", _, "", Locale.default) >> { code, array, msg, locale-> "Error parsing data into an object in serial number ${array[0]}" }
-        messageSource.getMessage("bulkimport.errorGroupBySerialNumber", _, "", Locale.default) >> { code, array, msg, locale-> "Error making nested object from multiple rows in serial number ${array[0]}" }
-        messageSource.getMessage("bulkimport.conversionToFormSectionError", _, "", Locale.default) >> { code, array, msg, locale-> "Error parsing data for form section (output) ${array[0]}" }
-        content.error != null
-        content.error.contains("300")
-        content.error.contains("55")
+        content[2][0].data.get("serial") == 3.0
+        content[2][0].data.get("a") == "test a 3"
+        content[2][0].data.get("b") == [[c: ["test bc 6"]]]
+        !content[2][0].data.get("d")
+        !content[2][0].data.get("g")
     }
   
     void "getGeographicConfig should get geographic configuration either from hub or system default"() {

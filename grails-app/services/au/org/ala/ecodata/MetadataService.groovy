@@ -851,7 +851,8 @@ class MetadataService implements DataBinder {
                                 firstRow[key].add(value)
                         }
 
-                        rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                        if (firstRow[key])
+                            rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
                         break
                     case DataTypes.IMAGE:
                     case DataTypes.PHOTOPOINTS:
