@@ -292,7 +292,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         def content = resp.success
 
         then:
-        content.size() == 3
+        content.size() == 4
         content[0][0].data.size() == 5
         content[0][0].data.get("serial") == 1.0
         content[0][0].data.get("a") == "test a 1"
