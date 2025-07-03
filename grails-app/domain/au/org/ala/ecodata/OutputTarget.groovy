@@ -19,6 +19,7 @@ class OutputTarget {
         operations.delete.enabled false
         exclude('scoreId')
         add('targetMeasure', Score) {
+            description("A target measure")
             dataFetcher { OutputTarget outputTarget ->
                 if (outputTarget?.scoreId) {
                     Score.findByScoreId(outputTarget.scoreId)

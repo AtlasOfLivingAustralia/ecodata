@@ -10,10 +10,12 @@ import au.org.ala.ecodata.graphql.converters.SchemaConverter
 import au.org.ala.ecodata.graphql.converters.SectionTemplateConverter
 import au.org.ala.ecodata.graphql.converters.SummaryConverter
 import au.org.ala.ecodata.MeriPlan
+import au.org.ala.ecodata.graphql.converters.TargetMeasureConverter
 import au.org.ala.ecodata.graphql.models.OutputData
 import au.org.ala.ecodata.graphql.models.Schema
 import au.org.ala.ecodata.graphql.models.SectionTemplate
 import au.org.ala.ecodata.graphql.models.Summary
+import au.org.ala.ecodata.graphql.models.TargetMeasure
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLObjectType
@@ -43,6 +45,7 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
         graphQLTypeManager.registerType(Summary, GraphQLScalarType.newScalar().name("Summary").description("").coercing(new SummaryConverter()).build())
         graphQLTypeManager.registerType(Schema, GraphQLScalarType.newScalar().name("Schema").description("").coercing(new SchemaConverter()).build())
         graphQLTypeManager.registerType(Date, GraphQLScalarType.newScalar().name("Date").description("").coercing(new DateFormatting()).build())
+        graphQLTypeManager.registerType(TargetMeasure, GraphQLScalarType.newScalar().name('TargetMeasure').description('Target Measure').coercing(new TargetMeasureConverter()).build())
     }
 
     @Override
@@ -62,7 +65,8 @@ class EcodataGraphQLCustomiser extends GraphQLPostProcessor {
 
             @Override
             void interceptSchema(GraphQLObjectType.Builder queryType, GraphQLObjectType.Builder mutationType, Set<GraphQLType> additionalTypes) {
-
+                // Print the schema to the log
+                log.info("GraphQL Schema: \n" + queryType.build().toString())
             }
         })
 

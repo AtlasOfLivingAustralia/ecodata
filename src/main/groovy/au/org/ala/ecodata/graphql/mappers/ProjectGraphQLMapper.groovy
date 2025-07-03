@@ -41,20 +41,21 @@ class ProjectGraphQLMapper {
             Map activityModel = [:]
             String[] duplicateOutputs = []
 
-            List<String> restrictedProperties = []
-            restrictedProperties.each { String prop ->
-                property(prop) {
-                    dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
-                        boolean canRead = env.environment.context.hasPermission(project)
-                        if (canRead) {
-                            return project[prop]
-                        }
-                        return null
-                    }
-                }
-            }
+//            List<String> restrictedProperties = ['reports', 'documents', 'meriPlan', 'activities', 'sites' ]
+//            restrictedProperties.each { String prop ->
+//                property(prop) {
+//                    dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
+//                        boolean canRead = env.environment.context.hasPermission(project)
+//                        if (canRead) {
+//                            return project[prop]
+//                        }
+//                        return null
+//                    }
+//                }
+//            }
 
             add('meriPlan', MeriPlan) {
+                description("Has a meriPlan")
                 dataFetcher { Project project ->
                     project.getMeriPlan()
                 }
@@ -72,11 +73,24 @@ class ProjectGraphQLMapper {
                     Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED)
                 }
             }
-            add('reports', [Report]) {
-                dataFetcher { Project project ->
-                    Report.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED)
+            add('reports', 'PagedReports') {
+                description("Has reports")
+                type {
+                    field('totalCount', int) {
+                        description("Total number of reports for the project")
+                    }
+                    field('results', [Report]) {
+                        description("List of reports for the project")
+                    }
+                }
+
+                dataFetcher { Project project, ClosureDataFetchingEnvironment env ->
+
+                    List reports = Report.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED)
+                    [totalCount: reports.size(), results: reports]
                 }
             }
+
 
             add('program', Program) {
                 dataFetcher { Project project ->
@@ -108,6 +122,8 @@ class ProjectGraphQLMapper {
                             Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(project.tempArgs, project.projectId)
                 }
             }
+
+
 
             //add graphql type for each activity type
             activityModel["activities"].each {
@@ -219,6 +235,19 @@ class ProjectGraphQLMapper {
                 argument('page', int){ nullable true }
                 argument('max', int){ nullable true }
                 argument('myProjects', Boolean){ nullable true }
+                argument('reports', 'ReportQuery') {
+                    nullable true
+                    accepts {
+                        field('reportId', String) { nullable true }
+                        field('reportType', String) { nullable true }
+                        field('status', [String]) { nullable true }
+                        field('fromDate', String) { nullable true description "yyyy-mm-dd" }
+                        field('toDate', String) { nullable true description "yyyy-mm-dd" }
+                        field('page', int) { nullable true }
+                        field('max', int) { nullable true }
+                    }
+
+                }
 
                 //activities filter
                 argument('activities', 'activities') {
@@ -244,6 +273,7 @@ class ProjectGraphQLMapper {
                 })
             }
 
+            /*
             query('activityOutput', "activityOutput") {
                 argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
                 argument('toDate', String){ nullable true description "yyyy-mm-dd" }
@@ -316,6 +346,8 @@ class ProjectGraphQLMapper {
                     }
                 }
             }
+
+
 
             query('outputTargetsByProgram', "outputTargetsByProgram") {
                 argument('fromDate', String){ nullable true description "yyyy-mm-dd"  }
@@ -416,6 +448,8 @@ class ProjectGraphQLMapper {
                     }
                 })
             }
+
+            */
 
         }
 

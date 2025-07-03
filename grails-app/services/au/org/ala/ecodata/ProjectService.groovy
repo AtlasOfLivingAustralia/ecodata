@@ -112,6 +112,12 @@ class ProjectService {
             return null
     }
 
+    List<Score> getProjectTargetMeasures(String projectId) {
+        Map project = get(projectId, [ProjectService.FLAT])
+        List<String> scoreIds = project.outputTargets.collect {it.scoreId}
+        Score.findAllByScoreIdInListAndStatusNotEqual(scoreIds, Status.DELETED)
+    }
+
     def getByDataResourceId(String id, String status = "active", levelOfDetail = []) {
         def project = Project.findByDataResourceIdAndStatus(id, status)
         project ? toMap(project, levelOfDetail) : null

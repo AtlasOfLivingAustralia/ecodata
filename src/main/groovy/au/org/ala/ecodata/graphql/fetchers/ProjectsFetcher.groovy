@@ -303,7 +303,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
                              "federalElectorate": "electFacet:", "assetsAddressed": "meriPlanAssetFacet:", "userNominatedProject": "custom.details.caseStudy:", "managementUnit": "muFacet:"]
 
         environment.arguments.each {
-            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs",
+            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs", "reports",
                           "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page", "max", "myProjects", "hub"]) {
                 return
             }

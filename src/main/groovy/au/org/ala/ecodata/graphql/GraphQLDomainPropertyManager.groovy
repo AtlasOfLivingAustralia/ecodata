@@ -84,9 +84,13 @@ class GraphQLDomainPropertyManager implements org.grails.gorm.graphql.entity.pro
             List<DataDescription> descriptions = DataDescription.findAllByEntity(entity.name)
 
             properties.each { GraphQLDomainProperty property ->
-                DataDescription description = descriptions.find { it.field == property.name }
-                if (description) {
-                    property.description = description.graphQLDescription ?: description.description
+                if (!property.description) {
+                    DataDescription description = descriptions.find { it.field == property.name }
+                    if (description) {
+                        property.description = description.graphQLDescription ?: description.description
+                    }
+                }
+                if (property.description) {
                     includedProperties << property
                 }
             }

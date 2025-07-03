@@ -32,6 +32,7 @@ class ActivityGraphQLMapper {
                 input false
             }
 
+            /*
             //get activity by activity id
             query('activity', [Activity]) {
                 argument('activityId', String) { nullable true }
@@ -98,6 +99,7 @@ class ActivityGraphQLMapper {
                     }
                 })
             }
+            */
         }
 
     }
