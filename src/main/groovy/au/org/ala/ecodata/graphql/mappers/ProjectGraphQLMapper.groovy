@@ -36,7 +36,7 @@ class ProjectGraphQLMapper {
             operations.update.enabled false
             operations.delete.enabled false
 
-            exclude("custom")
+            exclude("custom", "associatedOrgs")
 
             Map activityModel = [:]
             String[] duplicateOutputs = []
@@ -457,9 +457,7 @@ class ProjectGraphQLMapper {
 
 
     static ProjectsFetcher buildProjectFetcher() {
-
-        new ProjectsFetcher(Holders.applicationContext.projectService, Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.reportService,
-        Holders.applicationContext.cacheService, Holders.applicationContext.hubService)
+        Holders.applicationContext.projectsFetcher
 
     }
 }

@@ -17,7 +17,7 @@ class OutputTarget {
         operations.create.enabled false
         operations.update.enabled false
         operations.delete.enabled false
-        exclude('scoreId')
+        exclude('scoreId', 'periodTargets', 'outcomeTargets')
         add('targetMeasure', Score) {
             description("A target measure")
             dataFetcher { OutputTarget outputTarget ->

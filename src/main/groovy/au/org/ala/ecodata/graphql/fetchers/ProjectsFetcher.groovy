@@ -11,34 +11,36 @@ import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.idl.SchemaPrinter
+import graphql.schema.GraphQLSchema
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.aggregations.Aggregation
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
 
+@Component
 class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
 
-    ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
-                           ReportService reportService, CacheService cacheService, HubService hubService) {
-        this.projectService = projectService
-        this.elasticSearchService = elasticSearchService
-        this.permissionService = permissionService
-        this.reportService  = reportService
-        this.cacheService = cacheService
-        this.hubService = hubService
-    }
-
-
+    @Autowired
     PermissionService permissionService
+    @Autowired
     ElasticSearchService elasticSearchService
+    @Autowired
     ReportService reportService
+    @Autowired
     ProjectService projectService
+    @Autowired
     CacheService cacheService
+    @Autowired
     HubService hubService
+    @Autowired
+    EcodataGraphQLContextBuilder ecodataGraphQLContextBuilder
 
     static String meritFacets = "status,organisationFacet,associatedProgramFacet,associatedSubProgramFacet,mainThemeFacet,stateFacet,nrmFacet,lgaFacet,mvgFacet,ibraFacet,imcra4_pbFacet,otherFacet,electFacet,meriPlanAssetFacet," +
             "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet"
@@ -56,7 +58,8 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
 
     private Map<Integer, List<Project>> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
-        EcodataGraphQLContextBuilder.EcodataGraphQLContext context = (EcodataGraphQLContextBuilder.EcodataGraphQLContext)environment.context
+        EcodataGraphQLContextBuilder.EcodataGraphQLContext context = ecodataGraphQLContextBuilder.buildContext(null)
+        environment.graphQlContext.put("securityContext", context)
         String query = queryString ?:"*:*"
         SearchResponse searchResponse
 
@@ -71,7 +74,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
             projectIds.add(projectInfo.projectId)
 
             if (context.hasPermission(projectInfo)) {
-                fullAccessProjectIds << projectInfo.projectId
+                fullAccessProjectIds << projectInfo
             }
             else {
                 restrictedAccessProjects << new Project(projectId:projectInfo.projectId, name:projectInfo.name, description:projectInfo.description)

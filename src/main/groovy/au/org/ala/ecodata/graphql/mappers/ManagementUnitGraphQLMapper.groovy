@@ -20,7 +20,7 @@ class ManagementUnitGraphQLMapper {
             operations.update.enabled false
             operations.delete.enabled false
 
-            exclude("outcomes", "priorities", "config")
+            exclude("outcomes", "priorities", "config", "associatedOrganisations")
 
             add("muPriorities", "outcomes") {
                 type {

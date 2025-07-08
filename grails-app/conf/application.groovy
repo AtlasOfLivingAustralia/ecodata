@@ -596,7 +596,7 @@ security {
         loginUrl = 'https://auth-test.ala.org.au/cas/login'
         logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
         casServerName = 'https://auth-test.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*']
+        uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*', '/graphql-spring/*']
         authenticateOnlyIfLoggedInPattern = "/graphql/*"
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
     }

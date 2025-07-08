@@ -932,4 +932,9 @@ class AdminController {
             render text: [message: "Cache name not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
         }
     }
+    @AlaSecured(["ROLE_ADMIN"])
+    def igraphql() {
+        render view:'igraphql'
+    }
+
 }

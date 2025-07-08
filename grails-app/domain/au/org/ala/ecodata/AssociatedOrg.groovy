@@ -3,12 +3,22 @@ package au.org.ala.ecodata
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 
 @EqualsAndHashCode
 @ToString
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class AssociatedOrg {
+
+    static graphql = GraphQLMapping.build {
+        operations.get.enabled false
+        operations.list.enabled false
+        operations.count.enabled false
+        operations.create.enabled false
+        operations.update.enabled false
+        operations.delete.enabled false
+    }
 
     /** Reference to the Organisation entity if ecodata has a record of the Organisation */
     String organisationId

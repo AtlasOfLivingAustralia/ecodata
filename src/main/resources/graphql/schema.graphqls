@@ -1,0 +1,323 @@
+"Directs the executor to include this field or fragment only when the `if` argument is true"
+directive @include(
+    "Included when true."
+    if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Directs the executor to skip this field or fragment when the `if`'argument is true."
+directive @skip(
+    "Skipped when true."
+    if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Marks the field or enum value as deprecated"
+directive @deprecated(
+    "The reason for the deprecation"
+    reason: String! = "No longer supported"
+) on FIELD_DEFINITION | ENUM_VALUE
+
+type ActivityForm {
+    name: String
+}
+
+type Organisation {
+    name: String
+    acronym: String
+    abn: String
+
+}
+
+type AssociatedOrg {
+    name: String
+    description: String
+    fromDate: Date
+    toDate: Date
+    organisation: Organisation
+}
+
+"Validation Errors"
+type Error {
+    field: String!
+    message: String
+}
+
+type ExternalId {
+    "The id used in the external system"
+    externalId: String
+    "Identifies the system this externaId is used in"
+    idType: IdType
+}
+
+type ManagementUnit {
+    name: String
+    description: String
+}
+
+type MeriPlan {
+    "A list of validation errors on the entity"
+    errors: [Error]
+    "Environmental assets the Project is investing in protected"
+    investmentPriorities: [String]
+    "Project specific outcomes that are planned to be achieved in the medium term (3-5 years)"
+    midTermOutcomes: [ProjectOutcome]
+    "Measurable targets the Project plans to achieve"
+    outputTargets: [OutputTarget]
+    "The Program outcome that is the primary outcome the Project plans to achieve"
+    primaryOutcome: ProjectOutcome
+    "Other Program outcomes that the Project plans to achieve"
+    secondaryOutcomes: [ProjectOutcome]
+    "Project specific outcomes that are planned to be achieved in the short term (1-3 years)"
+    shortTermOutcomes: [ProjectOutcome]
+}
+
+type Output {
+    "A list of validation errors on the entity"
+    errors: [Error]
+}
+
+type OutcomeTarget {
+    outcomeCodes: [String]
+    target: Float
+}
+
+type PeriodTarget {
+    period: Date
+    target: Float
+}
+
+type OutputTarget {
+    "Description"
+    outcomeTargets: [OutcomeTarget]
+    "Description"
+    periodTargets: [PeriodTarget]
+    "Description"
+    target: Float
+    "Description"
+    targetDate: Date
+    "A target measure"
+    targetMeasure: Score
+}
+
+type PagedReports {
+    "List of reports for the project"
+    results: [Report]
+    "Total number of reports for the project"
+    totalCount: Int
+}
+
+
+type Program {
+    "The acryonm the Program is known by"
+    acronym: String
+    "A list of validation errors on the entity"
+    errors: [Error]
+    "The name of the Program"
+    name: String
+    "If this Program is a sub-program, this field identifies the parent Program"
+    parent: Program
+    "The unique identifier for the Program"
+    programId: String
+}
+
+type Project {
+    "A list of organisations that have a relationship with this Project.  "
+    associatedOrgs: [AssociatedOrg]
+    "A longer description of the Project"
+    description: String
+    "A list of validation errors on the entity"
+    errors: [Error]
+    "Used by older MERIT projects that share a grant id from a devolved grant.  "
+    externalId: String
+    "A list of identifiers by which this Project may be known in external systems"
+    externalIds: [ExternalId]
+    "Mostly unique human readable identifier used for the Project.  Projects before 2018 sometimes share a grantId when run under a devolved grant.  When projects share a grantId, they are futher distinguished  via the externalId field.  The combination of grantId and externalId must be unique"
+    grantId: String
+    "The identifier of the Hub that was responsible for creating the Project"
+    hubId: String
+    "The managed natural resource region in which the activities of this Project are taking place"
+    managementUnit: ManagementUnit
+    "Has a meriPlan"
+    meriPlan: MeriPlan
+    "A short description of the Project"
+    name: String
+    "The program or sub-program that is funding this Project"
+    program: Program
+    "Unique indentifier of a MERIT project"
+    projectId: String
+    "Has reports"
+    reports: PagedReports
+    "The current status of the project: Application, Active, Deleted"
+    status: String
+}
+
+type ProjectOutcome {
+    "Description"
+    assets: [String]
+    "Description"
+    code: String
+    "Description"
+    description: String
+    "Description"
+    relatedOutcome: String
+}
+
+type ProjectPagedResult {
+    results: [Project]
+    totalCount: Int
+}
+
+type Query {
+    activityForm(activityFormName: String!): ActivityForm
+    activityFormList(ignoreCase: Boolean, max: Int, offset: Int, order: String, sort: String): [ActivityForm]
+    outputList: [Summary]
+    outputTypeByName(outputTypeName: String!): Schema
+    outputs(output: [output]): [Output]
+    project(projectId: String!): Project
+    searchManagementUnits(
+        "yyyy-mm-dd"
+        endDate: String,
+        managementUnitId: String,
+        name: String,
+        "yyyy-mm-dd"
+        startDate: String
+    ): [ManagementUnit]
+    searchMeritProjects(
+        activities: [activities],
+        assetsAddressed: [String],
+        associatedProgram: [String],
+        associatedSubProgram: [String],
+        biogeographicRegion: [String],
+        cmz: [String],
+        dateRange: DateRange,
+        federalElectorate: [String],
+        "yyyy-mm-dd"
+        fromDate: String,
+        grantManagerNominatedProject: [YesNo],
+        lga: [String],
+        mainTheme: [String],
+        majorVegetationGroup: [String],
+        managementArea: [String],
+        managementUnit: [String],
+        marineRegion: [String],
+        max: Int,
+        myProjects: Boolean,
+        organisation: [String],
+        otherRegion: [String],
+        page: Int,
+        partnerOrganisationType: [String],
+        primaryOutcome: [String],
+        projectId: String,
+        reports: ReportQuery,
+        secondaryOutcomes: [String],
+        state: [String],
+        status: [String],
+        tags: [String],
+        "yyyy-mm-dd"
+        toDate: String,
+        userNominatedProject: [String]
+    ): ProjectPagedResult
+    sites(max: Int, page: Int, siteIds: [String], term: String!): [Site]
+}
+
+type Report {
+    "category"
+    category: String
+    "A list of validation errors on the entity"
+    errors: [Error]
+    "name"
+    name: String
+    "progress"
+    progress: String
+    "publicationStatus"
+    publicationStatus: String
+    "The Project target measures as calculated from the data in this report"
+    targetMeasures: [TargetMeasure]
+}
+
+type Score {
+    label: String
+
+}
+
+type Site {
+    "A list of validation errors on the entity"
+    errors: [Error]
+}
+
+enum DateRange {
+    Jan_2012_Jul_2012
+    Jan_2013_Jul_2013
+    Jan_2014_Jul_2014
+    Jan_2015_Jul_2015
+    Jan_2016_Jul_2016
+    Jan_2017_Jul_2017
+    Jan_2018_Jul_2018
+    Jan_2019_Jul_2019
+    Jan_2020_Jul_2020
+    Jul_2011_Jan_2012
+    Jul_2012_Jan_2013
+    Jul_2013_Jan_2014
+    Jul_2014_Jan_2015
+    Jul_2015_Jan_2016
+    Jul_2016_Jan_2017
+    Jul_2017_Jan_2018
+    Jul_2018_Jan_2019
+    Jul_2019_Jan_2020
+    Jul_2020_Jan_2021
+}
+
+enum IdType {
+    ARDC_RAID
+    GRANT_AWARD
+    GRANT_OPPORTUNITY
+    INTERNAL_ORDER_NUMBER
+    MONITOR_MINTED_COLLECTION_ID
+    MONITOR_PLOT_GUID
+    MONITOR_PLOT_SELECTION_GUID
+    MONITOR_PROTOCOL_GUID
+    MONITOR_PROTOCOL_INTERNAL_ID
+    RELATED_PROJECT
+    TECH_ONE_CODE
+    TECH_ONE_CONTRACT_NUMBER
+    TECH_ONE_PARTY_ID
+    UNSPECIFIED
+    WORK_ORDER
+}
+
+enum YesNo {
+    no
+    yes
+}
+
+input ReportQuery {
+    "yyyy-mm-dd"
+    fromDate: String
+    max: Int
+    page: Int
+    reportId: String
+    reportType: String
+    status: [String]
+    "yyyy-mm-dd"
+    toDate: String
+}
+
+input activities {
+    activityType: String
+    output: [outputInput]
+}
+
+input output {
+    fields: [String]
+    outputType: String!
+}
+
+input outputInput {
+    outputType: String!
+}
+
+scalar Date
+scalar ObjectId
+scalar object
+scalar Schema
+scalar Summary
+scalar TargetMeasure
