@@ -1,3 +1,5 @@
+package au.org.ala.ecodata.graphql.config
+
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.Program
