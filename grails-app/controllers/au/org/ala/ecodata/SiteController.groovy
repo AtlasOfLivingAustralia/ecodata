@@ -37,7 +37,6 @@ class SiteController {
         if (params.scores || params.view == SCORES) { levelOfDetail << SCORES }
         if (params.projects || params.view == LevelOfDetail.PROJECTS.name().toLowerCase()) { levelOfDetail << LevelOfDetail.PROJECTS.name()}
 
-        println "Getting site with id ${id} and level of detail ${levelOfDetail}"
         if (!id) {
             def list = []
             def sites = params.includeDeleted ? Site.list() :
