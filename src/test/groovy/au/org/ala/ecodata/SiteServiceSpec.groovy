@@ -365,7 +365,82 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         service.getSimpleProjectArea(newSite.siteId) != null
     }
 
+    def "The site service won't attempt to re-intersect unless the geometry has changed"() {
+        Map site = buildSite('Site 1')
+
+        when: "We create the site for the first time the centroid / intersection will be calculated"
+        Map resp = service.create(site)
+
+        then:
+        1 * spatialServiceMock.intersectGeometry(_, _) >> ["state":["ACT"]]
+        resp.siteId != null
+
+        when:
+        Map selectedSite = service.get(resp.siteId, SiteService.FLAT)
+
+        then:
+        selectedSite.siteId == resp.siteId
+        selectedSite.extent.geometry.centre.size() == 2
+        selectedSite.extent.geometry.state == ["ACT"]
+
+        when: "we update the site with the same geometry"
+        service.update(site, resp.siteId)
+
+        then:
+        0 * spatialServiceMock.intersectGeometry(_, _) // No intersection should be done as the geometry hasn't changed
+
+        when: "We add a new feature to the site"
+        site.features << [
+                type    : "Feature",
+                geometry: [
+                        type       : "Polygon",
+                        coordinates: [[148.260498046875, -37.26530995561874], [148.260498046875, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.260498046875, -37.26530995561874]]
+                ]
+        ]
+        service.update(site, resp.siteId)
+
+        then: "The intersection should be done again as the geometry has changed"
+        1 * spatialServiceMock.intersectGeometry(_, _) >> ["state":["ACT"]]
+
+        when: "We modify one of the coordinates in the site"
+        site.features[0].geometry.coordinates[1][0] = site.features[0].geometry.coordinates[1][0] + 0.0001 // Change the first coordinate slightly
+        service.update(site, resp.siteId)
+
+        then: "The intersection should be done again as the geometry has changed"
+        1 * spatialServiceMock.intersectGeometry(_, _) >> ["state":["ACT"]]
+
+
+    }
+
+
     private Map buildExtent(source, type, coordinates, pid = '') {
         return [source:source, geometry:[type:type, coordinates: coordinates, pid:pid]]
     }
+
+    private Map buildSite(String name) {
+        def coordinates = [[148.260498046875, -37.26530995561874], [148.260498046875, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.260498046875, -37.26530995561874]]
+        def extent = buildExtent('drawn', 'Polygon', coordinates)
+        Map site =
+        [
+                name:name,
+                type: Site.TYPE_COMPOUND,
+                extent: extent,
+                features: [
+                [
+                        type    : "Feature",
+                        geometry: [
+                                type       : "Polygon",
+                                coordinates: coordinates
+                        ]
+                ],
+                [
+                        type    : "Feature",
+                        geometry: [
+                                type       : "Polygon",
+                                coordinates: coordinates
+                        ]
+                ]
+        ]]
+        site
+}
 }
