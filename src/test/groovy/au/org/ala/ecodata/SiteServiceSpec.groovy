@@ -3,6 +3,8 @@ package au.org.ala.ecodata
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DataTest
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 
@@ -14,7 +16,7 @@ import org.grails.web.converters.marshaller.json.MapMarshaller
  * Specification / tests for the SiteService
  */
 
-class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> {
+class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService>, DomainUnitTest<Site> {
 
     //def service = new SiteService()
     def webServiceMock = Mock(WebService)
@@ -39,10 +41,12 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         service.projectService = projectService
      //   grailsApplication.mainContext.registerSingleton('commonService', CommonService)
      //   grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
+
+        Site.findAll().each { it.delete(flush:true) }
     }
 
     void cleanup() {
-        Site.collection.remove(new BasicDBObject())
+        Site.findAll().each { it.delete(flush:true) }
     }
 
     // We should be storing the extent geometry as geojson already to enable geographic searching using
