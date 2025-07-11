@@ -16,7 +16,7 @@ import org.grails.web.converters.marshaller.json.MapMarshaller
  * Specification / tests for the SiteService
  */
 
-class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService>, DomainUnitTest<Site> {
+class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> {
 
     //def service = new SiteService()
     def webServiceMock = Mock(WebService)
@@ -25,13 +25,9 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService>,
     def projectService = Mock(ProjectService)
     CommonService commonService = new CommonService()
     void setup() {
-        //defineBeans {
-       //     commonService(CommonService)
-       // }
         service.commonService = commonService
         service.commonService.grailsApplication = grailsApplication
-       // grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
-        //mongoDomain([Site])
+
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
         service.webService = webServiceMock
@@ -39,14 +35,16 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService>,
         service.metadataService = metadataServiceMock
         service.spatialService = spatialServiceMock
         service.projectService = projectService
-     //   grailsApplication.mainContext.registerSingleton('commonService', CommonService)
-     //   grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
 
         Site.findAll().each { it.delete(flush:true) }
+        Site.metaClass.getDbo = {
+            delegate.properties
+        }
     }
 
     void cleanup() {
         Site.findAll().each { it.delete(flush:true) }
+        Site.metaClass.getDbo = null
     }
 
     // We should be storing the extent geometry as geojson already to enable geographic searching using
@@ -394,14 +392,15 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService>,
         0 * spatialServiceMock.intersectGeometry(_, _) // No intersection should be done as the geometry hasn't changed
 
         when: "We add a new feature to the site"
-        site.features << [
+        Map copyOfSite = buildSite('Site 1')
+        copyOfSite.features << [
                 type    : "Feature",
                 geometry: [
                         type       : "Polygon",
                         coordinates: [[148.260498046875, -37.26530995561874], [148.260498046875, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.310693359375, -37.26531995561874], [148.260498046875, -37.26530995561874]]
                 ]
         ]
-        service.update(site, resp.siteId)
+        service.update(copyOfSite, resp.siteId)
 
         then: "The intersection should be done again as the geometry has changed"
         1 * spatialServiceMock.intersectGeometry(_, _) >> ["state":["ACT"]]
