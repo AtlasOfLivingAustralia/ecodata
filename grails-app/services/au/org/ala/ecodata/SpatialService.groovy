@@ -111,33 +111,10 @@ class SpatialService {
 
         start = end
 
-        Map geographicFacets
-        Map intersectionAreaForFacets = [:].withDefault{ [:].withDefault{0.0d} }
-        if (geo.geometryType == 'GeometryCollection') {
-            geographicFacets = [:].withDefault{[]}
-            GeometryCollection geometryCollection = (GeometryCollection)geo
-            for (int i=0; i<geometryCollection.numGeometries; i++) {
-                def (filtered, intersectionArea) = filterOutObjectsInBoundary(result, geometryCollection.getGeometryN(i))
-                start = end
-                Map geographicFacetsForGeometry = convertResponsesToGeographicFacets(filtered)
-                geographicFacetsForGeometry.each { k, v ->
-                    geographicFacets[k] += v
-                    geographicFacets[k] = geographicFacets[k].unique()
-                }
-                intersectionArea.each { k, v ->
-                    v.each { fieldName, area ->
-                        intersectionAreaForFacets[k][fieldName] =  intersectionAreaForFacets[k][fieldName] + area
-                    }
-                }
-            }
-            
-            geographicFacets[INTERSECTION_AREA] = intersectionAreaForFacets
-        }
-        else {
-            def (filtered, intersectionArea) = filterOutObjectsInBoundary(result, geo)
-            geographicFacets = convertResponsesToGeographicFacets(filtered)
-            geographicFacets[INTERSECTION_AREA] = intersectionArea
-        }
+        def (filtered, intersectionArea) = filterOutObjectsInBoundary(result, geo)
+        Map geographicFacets = convertResponsesToGeographicFacets(filtered)
+        geographicFacets[INTERSECTION_AREA] = intersectionArea
+
         end = System.currentTimeMillis()
         log.info("Time taken to convert responses to geographic facets: ${end-start}ms")
         geographicFacets

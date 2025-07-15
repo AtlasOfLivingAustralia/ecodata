@@ -302,12 +302,12 @@ class SiteService {
         }
     }
 
-    def update(Map props, String id, boolean enableCentroidRefresh = true) {
+    def update(Map props, String id, boolean forceRefresh = false) {
         Site site = Site.findBySiteId(id)
 
         if (site) {
             try {
-                updateSite(site, props, enableCentroidRefresh)
+                updateSite(site, props, forceRefresh)
                 return [status:'ok']
             } catch (Exception e) {
                 Site.withSession { session -> session.clear() }
@@ -332,7 +332,7 @@ class SiteService {
 
         assignPOIIds(props)
         // If the site location is being updated, refresh the location metadata.
-        if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
+        if (forceRefresh || hasGeometryChanged(toMap(site, FLAT), props)) {
             if (asyncUpdate){
                 // Sharing props object between thread causes ConcurrentModificationException.
                 // Cloned object is used by spawned thread.
@@ -371,7 +371,8 @@ class SiteService {
 
         return (site.extent?.source != newProps.extent.source) ||
                 (site.extent?.geometry?.coordinates != newProps.extent.geometry.coordinates) ||
-                (site.extent?.geometry?.pid != newProps.extent.geometry.pid)
+                (site.extent?.geometry?.pid != newProps.extent.geometry.pid) ||
+                (site.features != newProps.features)
     }
 
     void delete(String siteId, boolean destroy = false) {
