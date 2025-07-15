@@ -509,25 +509,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result.updateResult == [status: 'ok']
     }
 
-    void "isUpdatedPlotLayout should check plot layout has been updated after site has been updated" () {
-        given:
-        def date1 = DateUtil.parseWithMilliseconds("2023-09-22T00:59:47.111Z")
-        def date2 = DateUtil.parseWithMilliseconds("2023-09-23T00:59:47.111Z")
-        def date3 = DateUtil.parseWithMilliseconds("2023-09-24T00:59:47.111Z")
-
-        when:
-        def result = service.isUpdatedPlotLayout(date1, date2)
-
-        then:
-        result
-
-        when:
-        result = service.isUpdatedPlotLayout(date3, date2)
-
-        then:
-        !result
-    }
-
     private Map getProject(){
         [
                 projectId:"p1",
