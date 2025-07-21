@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.Score
+import au.org.ala.ecodata.command.TargetReportCommand
 import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
@@ -358,31 +359,14 @@ class SearchController {
         render results as JSON
     }
 
-    def targetsReportForScoreIds() {
-        def scoreIds = params.getList("scoreIds")
-        def scores = reportService.findScoresByScoreId(scoreIds)
-
-        Map results = targetsReportForScores(scores, params)
+    def targetsReportForScoreIds(TargetReportCommand command) {
+        Map results = command.targetsReportForScores()
         render results as JSON
     }
 
-    def targetsReportByScoreLabel() {
-        def scoreLabels = params.getList("scores")
-        def scores = reportService.findScoresByLabel(scoreLabels)
-
-        Map results = targetsReportForScores(scores, params)
+    def targetsReportByScoreLabel(TargetReportCommand command) {
+        Map results = command.targetsReportForScores()
         render results as JSON
-    }
-
-    private def targetsReportForScores(List scores, params) {
-        List filters = params.getList("fq")
-        String searchTerm = params.query ?: "*:*"
-        boolean approvedActivitiesOnly = params.getBoolean('approvedActivitiesOnly', true)
-        def targets = reportService.outputTargetsBySubProgram(params, scores)
-        def scoresReport = reportService.aggregate(filters, searchTerm, scores, null, approvedActivitiesOnly)
-
-        def results = [scores:scoresReport, targets:targets]
-        return results
     }
 
     def targetsReport() {
