@@ -1,3 +1,4 @@
+import au.org.ala.ecodata.caching.EcodataCacheKeyGenerator
 import au.org.ala.ecodata.graphql.fetchers.ActivityFetcher
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
 import au.org.ala.ecodata.graphql.EcodataGraphQLCustomiser
@@ -18,4 +19,5 @@ beans = {
 
     formattedStringConverter ISODateBindingConverter
     graphQLDomainPropertyManager(GraphQLDomainPropertyManager)
+    customCacheKeyGenerator(EcodataCacheKeyGenerator)
 }
