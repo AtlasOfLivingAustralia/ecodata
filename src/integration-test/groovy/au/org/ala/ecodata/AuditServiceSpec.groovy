@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.gorm.PagedResultList
 import grails.testing.mixin.integration.Integration
 import grails.gorm.transactions.*
 
@@ -162,6 +163,43 @@ class AuditServiceSpec extends IntegrationTestHelper {
         result.count == 2
         result.data.find {it.entityId == 'p1'} != null
         result.data.find {it.entityId == 's1'} != null
+
+    }
+
+    def "We can search for audit messages"() {
+        setup:
+        userServiceStub.getCurrentUserDetails() >> {[userId:'1234']}
+        userServiceStub.getUserForUserId(_) >> [displayName:'test']
+
+        Project p = new Project(projectId:'p1', name:'test')
+        p.save(flush:true)
+
+        Site s = new Site(siteId:'s1', name:'test site')
+        s.projects << 'p1'
+        s.save(flush:true)
+        AuditMessage.withTransaction {
+            auditService.flushMessageQueue()
+        }
+
+        when:
+        PagedResultList<AuditMessage> result = null
+        AuditMessage.withTransaction {
+            result = auditService.search([projectId:'p1'])
+        }
+
+        then:
+        result.totalCount == 1
+        result[0].entityId == 'p1'
+
+
+        when:
+        AuditMessage.withTransaction {
+            result = auditService.search([entityType:'au.org.ala.ecodata.Site'])
+        }
+
+        then:
+        result.totalCount == 1
+        result[0].entityId == 's1'
 
     }
 

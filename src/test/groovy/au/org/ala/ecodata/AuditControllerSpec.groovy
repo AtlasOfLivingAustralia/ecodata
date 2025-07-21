@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.gorm.PagedResultList
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
@@ -338,5 +339,17 @@ class AuditControllerSpec extends Specification implements ControllerUnitTest<Au
 
         response.status == HttpStatus.SC_BAD_REQUEST
         response.errorMessage == "Project id is required"
+    }
+
+    void "We can search for audit messages via the controller"() {
+        when:
+        request.JSON = [criteria: [projectId: 'p1'], paginationOptions: [max: 10, offset: 0, sort: 'date', orderBy: 'desc']]
+        request.method = "POST"
+        controller.search()
+
+        then:
+        1 * auditService.search([projectId: 'p1'], null, null, [max: 10, offset: 0, sort: 'date', orderBy: 'desc']) >> new PagedResultList<AuditMessage>()
+        response.status == HttpStatus.SC_OK
+        response.getJson() == [messages: [], totalCount: 0]
     }
 }

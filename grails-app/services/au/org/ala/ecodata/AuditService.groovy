@@ -1,10 +1,13 @@
 package au.org.ala.ecodata
 
+import grails.gorm.PagedResultList
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.util.concurrent.ConcurrentLinkedQueue
+
+import static au.org.ala.ecodata.Status.DELETED
 
 class AuditService {
 
@@ -326,15 +329,56 @@ class AuditService {
     }
 
     def getAutoCompareAuditMessage(String auditId){
-        AuditMessage audit = AuditMessage.findById(auditId);
-        String entityId = audit.entityId;
+        AuditMessage audit = AuditMessage.findById(auditId)
+        String entityId = audit.entityId
+        String type = audit.entityType
         List revisions = AuditMessage.withCriteria {
             eq 'entityId', entityId
+            eq 'entityType', type
             lt 'date', audit.date
             order 'date', 'desc'
         }
         if(revisions.size()){
             return revisions[0]
         }
+    }
+
+    PagedResultList<AuditMessage> search(Map searchCriteria, Date startDate = null, Date endDate = null, Map options = [:]) {
+        final int MAX_RESULTS = 100
+        BuildableCriteria criteria = AuditMessage.createCriteria()
+
+        if (!options.max || options.max > MAX_RESULTS) {
+            options.max = 10
+        }
+        if (!options.offset) {
+            options.offset = 0
+        }
+        if (!options.order) {
+            options.order = 'desc'
+        }
+        if (!options.sort) {
+            options.sort = 'date'
+        }
+        PagedResultList<AuditMessage> auditMessages = criteria.list(options) {
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+            if (startDate) {
+                ge("date", startDate)
+            }
+            if (endDate) {
+                le("date", endDate)
+            }
+            ne("status", DELETED)
+
+
+        }
+        auditMessages
     }
 }
