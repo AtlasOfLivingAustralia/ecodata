@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
@@ -9,8 +11,6 @@ import org.locationtech.jts.io.WKTReader
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
-import static ParatooService.deepCopy
 /**
  * The SpatialService is responsible for:
  * 1. The interface to the spatial portal.
@@ -31,6 +31,7 @@ class SpatialService {
     MetadataService metadataService
     CacheService cacheService
     GrailsApplication grailsApplication
+    SpatialService spatialService
 
     Map lookupTable
     Map<String, Map> synonymLookupTable = [:]
@@ -142,32 +143,53 @@ class SpatialService {
                 result[fid] = lookupTable[pidFid][pid][fid].collect{[name:it]}
             }
             else {
-                def response = getPidFidIntersection(url, fid, pid)
+                def response = spatialService.getPidFidIntersection(url, fid, pid)
                 result[fid] = response
             }
         }
 
         fillMissingDetailsOfObjects(result)
-        Map pidGeoJson = getGeoJsonForPidToMap(pid)
+        Map pidGeoJson = spatialService.getGeoJsonForPidToMap(pid)
         def (geographicFacetsWithFID, intersectionProportion) = filterOutObjectsInBoundary(result, pidGeoJson)
         Map geographicFacets = convertResponsesToGeographicFacets(geographicFacetsWithFID)
         geographicFacets[INTERSECTION_AREA] = intersectionProportion
         geographicFacets
     }
 
-    @Cacheable(value = "spatialPidFidIntersection")
-    List getPidFidIntersection(String url, String fid, String pid) {
-        def intersections = webService.getJson(url + fid + "/" + pid)
-        if (intersections instanceof List) {
-            List intersectionsList = intersections.collect { obj ->
-                new HashMap(obj)
+
+    @Cacheable(value = "spatialPidFidIntersectionObject", key = { fid + pid })
+    List<HashMap> getPidFidIntersection(String url, String fid, String pid) {
+        try {
+            log.debug("Heap cache miss for getPidFidIntersection($url, $fid, $pid)")
+            String intersectionsInString = spatialService.getPidFidIntersectionAsString(url, fid, pid)
+            ObjectMapper objectMapper = new ObjectMapper()
+            List intersections = objectMapper.readValue(new String(intersectionsInString), List.class)
+            if (intersections instanceof List) {
+                List intersectionsList = intersections.collect { obj ->
+                    new HashMap(obj)
+                }
+                return intersectionsList
             }
-            return intersectionsList
-        }
-        else {
-            log.info("No intersection for pid $pid and fid $fid")
+            else {
+                log.info("No intersection for pid $pid and fid $fid")
+                return []
+            }
+        } catch (Exception e) {
+            log.error("Error getting pid-fid intersection for $pid and $fid", e)
             return []
         }
+    }
+
+    @Cacheable(value = "spatialPidFidIntersection", key = { fid + pid })
+    String getPidFidIntersectionAsString(String url, String fid, String pid) {
+        log.info("Cache miss for getPidFidIntersection($url, $fid, $pid)")
+        def intersections = webService.get(url + fid + "/" + pid)
+        if (intersections instanceof Map){
+            log.warn("An error occurred when getting intersection for pid $pid and fid $fid: ${intersections.error}")
+            return "[]"
+        }
+
+        intersections
     }
 
     private List filterOutObjectsInBoundary(Map response, Map mainObjectGeoJson) {
@@ -207,7 +229,7 @@ class SpatialService {
                         // Get geoJSON of the object stored in spatial portal
                         long start = System.currentTimeMillis()
 
-                        Geometry boundaryGeometry = getGeometryForPid(boundaryPid)
+                        Geometry boundaryGeometry = spatialService.getGeometryForPid(boundaryPid)
                         long end = System.currentTimeMillis()
                         log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end - start}ms")
 
@@ -321,7 +343,7 @@ class SpatialService {
             matchingObjects.each { Map obj ->
                 String pid = obj.pid
                 if (!pid) {
-                    def spatialObj = searchObjectToMap(obj.name, fid) ?: [:]
+                    def spatialObj = spatialService.searchObjectToMap(obj.name, fid) ?: [:]
                     obj << spatialObj
                 }
             }
@@ -330,32 +352,49 @@ class SpatialService {
 
     @Cacheable(value = "spatialSearchObjectMap")
     Map searchObjectToMap(String query, String fids = "") {
-        searchObject(query, fids)
+        log.debug("Heap cache miss for searchObjectToMap($query, $fids)")
+        spatialService.searchObject(query, fids)
+    }
+
+    @Cacheable(value = "spatialSearchObjectMatch", key = { query.toUpperCase() + fids.toUpperCase() })
+    Map<String, String> searchObject(String query, String fids = "") {
+        log.debug("Heap cache miss for searchObject($query, $fids)")
+        String respInString = spatialService.searchObjectInLayers(query, fids)
+        if (!respInString) {
+            log.warn("No response from spatial portal for searchObject($query, $fids)")
+            return [:]
+        }
+
+        List<Map<String,String>> resp = JSON.parse(respInString) as List<Map<String, String>>
+        // spatial portal returns all objects that match the query, so we need to find the one that matches the query exactly.
+        Map<String, String> result = resp?.find { it.name?.toUpperCase() == query?.toUpperCase() } ?: [:]
+        result
     }
 
     @Cacheable(value = "spatialSearchObject", key = { query.toUpperCase() + fids.toUpperCase() })
-    Map searchObject(String query, String fids = "") {
+    String searchObjectInLayers(String query, String fids) {
+        log.info("Cache miss for searchObjectInLayers($query, $fids)")
         String urlquery = URLEncoder.encode(query, 'UTF-8').replaceAll('\\+', '%20')
-        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/search?q=$urlquery&include=$fids"
-        def resp = webService.getJson(url)
-        if ((resp instanceof  Map) || !resp)
-            return [:]
+        String url = grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/search?q=$urlquery&include=$fids"
+        def resp = webService.get(url)
+        if(resp instanceof Map) {
+            log.warn("An error occurred when searching $query in layers $fids")
+            return null
+        }
 
-        def result = resp?.find { it.name?.toUpperCase() == query?.toUpperCase() } ?: [:]
-        deepCopy(result)
+        resp
     }
 
-    @Cacheable(value = "spatialGeoJsonPidObject")
+    @Cacheable(value = "spatialGeoJsonPidObject", key= {pid})
     Map getGeoJsonForPidToMap(String pid) {
-        log.debug("Cache miss for getGeoJsonForPidToMap($pid)")
-        getGeoJsonForPid(pid)
+        log.debug("Heap cache miss for getGeoJsonForPidToMap($pid)")
+        spatialService.getGeoJsonForPid(pid)
     }
 
-    @Cacheable(value = "spatialPidObjectGeometry", key={pid})
+    @Cacheable(value = "spatialGeometryFromPid", key= {pid})
     Geometry getGeometryForPid(String pid) {
-        log.debug("Cache miss for getGeometryForPid($pid)")
-        String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/wkt/$pid"
-        String wkt = webService.get(url)
+        log.debug("Heap cache miss for getGeometryForPid($pid)")
+        String wkt = spatialService.getWktForPid(pid)
 
         Geometry geometry = null
         try {
@@ -375,9 +414,21 @@ class SpatialService {
      * @param pid
      * @return
      */
-    @Cacheable(value="spatialGeoJsonPid", key= {pid})
+    @Cacheable(value = "spatialGeoJsonPidGeometry", key= {pid})
     Map getGeoJsonForPid (String pid) {
-        log.debug("Cache miss for getGeoJsonForPid($pid)")
+        log.debug("Heap cache miss for getGeoJsonForPid($pid)")
+        String wkt = spatialService.getWktForPid(pid)
+        if (!wkt) {
+            log.warn("No WKT found for pid $pid")
+            return [:]
+        }
+
+        GeometryUtils.wktToGeoJson(wkt)
+    }
+
+    @Cacheable(value="spatialGeoJsonPid", key= {pid})
+    String getWktForPid(String pid) {
+        log.info("Cache miss for getWktForPid($pid)")
         // spatial returning invalid polygons when using geojson endpoint
         String url = grailsApplication.config.getProperty('spatial.baseUrl')+"/ws/shapes/wkt/$pid"
         def resp = webService.get(url)
@@ -386,7 +437,7 @@ class SpatialService {
             return null
         }
 
-        GeometryUtils.wktToGeoJson(resp)
+        resp
     }
 
     /**
@@ -410,11 +461,11 @@ class SpatialService {
                             if (intersectedObjects instanceof List) {
                                 Map facetConfig = metadataService.getGeographicFacetConfig(fid)
                                 // get geometry of the objects in layer (get electorates list)
-                                Geometry mainGeometry = getGeometryForPid(obj.pid)
+                                Geometry mainGeometry = spatialService.getGeometryForPid(obj.pid)
                                 // filter out objects that are near boundary (get intersection of electorate with state
                                 // layer and check if they are at boundary)
                                 intersectedObjects = intersectedObjects.findAll { intersectObject ->
-                                    Geometry intersectGeometry = getGeometryForPid(intersectObject.pid)
+                                    Geometry intersectGeometry = spatialService.getGeometryForPid(intersectObject.pid)
                                     isValidGeometryIntersection(mainGeometry, intersectGeometry)
                                 }
 

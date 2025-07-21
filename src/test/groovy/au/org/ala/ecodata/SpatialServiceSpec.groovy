@@ -33,8 +33,8 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         service.fillMissingDetailsOfObjects(response)
 
         then:
-        1 * webService.getJson("/ws/search?q=ACT&include=123") >> [[name: "ACT", fid: "123", pid: "345"], [name: "ACT and QLD", fid: "123", pid: "789"]]
-        1 * webService.getJson("/ws/search?q=NSW&include=123") >> [[name: "NSW", fid: "123", pid: "890"]]
+        1 * webService.get("/ws/search?q=ACT&include=123") >> '[{"name":"ACT","fid":"123","pid":"345"},{"name":"ACT and QLD","fid":"123","pid":"789"}]'
+        1 * webService.get("/ws/search?q=NSW&include=123") >> '[{"name":"NSW","fid":"123","pid":"890"}]'
         response["123"].find {it.name == "ACT" }.pid == "345"
         response["123"].find {it.name == "NSW" }.pid == "890"
     }
