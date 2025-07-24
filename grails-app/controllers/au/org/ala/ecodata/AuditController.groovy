@@ -1,11 +1,14 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.PagedResultList
 
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST
 
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class AuditController {
+
+    static allowedMethods = [search: 'POST']
 
     def userService
     AuditService auditService
@@ -202,5 +205,24 @@ class AuditController {
         AuditMessage compareAudit = auditService.getAutoCompareAuditMessage(auditId)
         Map compare = compareAudit?commonService.toBareMap(compareAudit):[:]
         render(contentType: 'application/json', text: ['message':compare] as JSON)
+    }
+
+    def search() {
+        Map params = request.JSON
+
+        Map paginationOptions = params.paginationOptions ?: [:]
+        Map criteria = params.criteria ?: [:]
+
+        if (!criteria) {
+            render status: SC_BAD_REQUEST, text: 'Search criteria is required'
+            return
+        }
+        Date startDate = params.startDate ? DateUtil.parseDateWithAndWithoutMilliSeconds(params.startDate) : null
+        Date endDate = params.endDate ? DateUtil.parseDateWithAndWithoutMilliSeconds(params.endDate) : null
+
+        PagedResultList<AuditMessage> messages = auditService.search(criteria, startDate, endDate, paginationOptions)
+        Map results = [messages:messages, totalCount: messages?.totalCount ?: 0]
+        render results as JSON
+
     }
 }
