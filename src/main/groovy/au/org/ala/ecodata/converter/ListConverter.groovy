@@ -83,11 +83,8 @@ class ListConverter implements RecordFieldConverter {
 
                     recordFieldSets.each {
                         Map rowRecord = RecordConverter.overrideFieldValues(baseRecord, it)
-                        if(rowRecord.guid && rowRecord.guid != "") {
+                        if(SpeciesConverter.isRecordValid(rowRecord)) {
                             records << rowRecord
-                        } else {
-                            log.warn("Multi item Record [${rowRecord}] does not contain species information, " +
-                                    "was the form intended to work like that?")
                         }
                     }
                 }
