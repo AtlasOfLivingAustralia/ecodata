@@ -92,7 +92,7 @@ class OutputServiceSpec extends Specification {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid"], individualCount: 0]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["scientificName": "sc1", "commonName": "cn1","outputSpeciesId": "anotherid"], individualCount: 0]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -126,7 +126,7 @@ class OutputServiceSpec extends Specification {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: "guid"], individualCount: "10"]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotherid", guid: "guid"], individualCount: "10"]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -143,7 +143,7 @@ class OutputServiceSpec extends Specification {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: 'guid'], individualCount: null]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["scientificName": "sc1", "commonName": "cn1","outputSpeciesId": "anotherid", guid: 'guid'], individualCount: null]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -161,7 +161,7 @@ class OutputServiceSpec extends Specification {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: 'guid'], individualCount: 2.0]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["scientificName": "sc1", "commonName": "cn1","outputSpeciesId": "anotherid", guid: 'guid'], individualCount: 2.0]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -179,7 +179,7 @@ class OutputServiceSpec extends Specification {
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
 
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anotherid", guid: 'guid']]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["scientificName": "sc1", "commonName": "cn1","outputSpeciesId": "anotherid", guid: 'guid']]]
         def totalRecords = 0
         when:
         totalRecords = outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
@@ -196,7 +196,7 @@ class OutputServiceSpec extends Specification {
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
-        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anhotherid", guid: 'guid']]]
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["scientificName": "sc1", "commonName": "cn1","outputSpeciesId": "anhotherid", guid: 'guid']]]
 
         when:
         outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
