@@ -74,7 +74,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
             projectIds.add(projectInfo.projectId)
 
             if (context.hasPermission(projectInfo)) {
-                fullAccessProjectIds << projectInfo
+                fullAccessProjectIds << projectInfo.projectId
             }
             else {
                 restrictedAccessProjects << new Project(projectId:projectInfo.projectId, name:projectInfo.name, description:projectInfo.description)
