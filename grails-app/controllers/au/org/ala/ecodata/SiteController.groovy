@@ -302,7 +302,7 @@ class SiteController {
      *
      */
     def projectSites(String id) {
-        List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(siteService.toMap(it))})
+        List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(siteService.toMap(it, [SiteService.FLAT]))})
         Map result = [projectId:id, sites: features]
         render result as JSON
     }
