@@ -124,15 +124,9 @@ class RecordConverter {
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
             List<Map> recordFieldSets = converter.convert(data, dataModel, context)
             Map speciesRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
-            // We want to create a record in the DB only if species guid is present i.e. species is valid
-            if(recordGeneration){
-                if(speciesRecord.guid && speciesRecord.guid != "") {
+            if (recordGeneration) {
+                if (SpeciesConverter.isRecordValid(speciesRecord))
                     records << speciesRecord
-                }
-                else {
-                    log.warn("Record [${speciesRecord}] does not contain full species information. " +
-                            "This is most likely a bug.")
-                }
             }
             else {
                 updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
@@ -154,12 +148,8 @@ class RecordConverter {
                 recordFieldSets.each {
                     Map rowRecord = overrideAllExceptLists(baseRecord, it)
                     if(recordGeneration) {
-                        if (rowRecord.guid && rowRecord.guid != "") {
+                        if (SpeciesConverter.isRecordValid(rowRecord)) {
                             records << rowRecord
-
-                        } else {
-                            log.warn("Multi item Record [${rowRecord}] does not contain species information, " +
-                                    "was the form intended to work like that?")
                         }
                     }
                     else {
