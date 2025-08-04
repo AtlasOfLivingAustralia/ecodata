@@ -22,7 +22,7 @@ class RecordConverterSpec extends Specification {
         Activity activity = new Activity()
         Output output = new Output()
         Map outputMetadata = [record: true, dataModel: [[dataType: "text", dwcAttribute: "attribute1", name: "someField"], [dataType: "species", name: "species"]]]
-        Map submittedData = [ someField: "fieldValue", species: ["outputSpeciesId": "anhotherid", "guid": "someguid"]]
+        Map submittedData = [ someField: "fieldValue", species: ["scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anhotherid", "guid": "someguid"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata)
@@ -45,7 +45,7 @@ class RecordConverterSpec extends Specification {
                 [dataType: "text", dwcAttribute: "attribute2", name: "field2"],
                 [dataType: "species", dwcAttribute: "attribute3", name: "field3"]
         ]]
-        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: ["outputSpeciesId": "anotherid", "guid": "someguid"]]
+        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: ["scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotherid", "guid": "someguid"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata)
@@ -72,7 +72,7 @@ class RecordConverterSpec extends Specification {
                 [dataType: "species", dwcAttribute: "attribute3", name: "field3"],
                 [dataType: "species", dwcAttribute: "attribute4", name: "field4"]
         ]]
-        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: ["outputSpeciesId": "anotheridField3", "guid": "someguid1"], field4: ["outputSpeciesId": "anotheridField4", "guid": "someguid2"]]
+        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: ["scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotheridField3", "guid": "someguid1"], field4: ["scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotheridField4", "guid": "someguid2"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata)
@@ -129,11 +129,11 @@ class RecordConverterSpec extends Specification {
                               "mylist": [
                                 {
                                   "col1": "row1col1",
-                                  "col2": {"outputSpeciesId": "anotherid1", "guid": "someguid1"}
+                                  "col2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotherid1", "guid": "someguid1"}
                                 },
                                 {
                                   "col1": "row2col1",
-                                  "col2": {"outputSpeciesId": "anotherid2", "guid": "someguid2"}
+                                  "col2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotherid2", "guid": "someguid2"}
                                 }
                               ]
                             }
@@ -197,13 +197,13 @@ class RecordConverterSpec extends Specification {
                               "mylist": [
                                 {
                                   "col1": "row1col1",
-                                  "col2": {"outputSpeciesId": "anotheridRow1col2", "guid": "someguid1"},
-                                  "col3": {"outputSpeciesId": "anotheridRow1col3", "guid": "someguid2"}
+                                  "col2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotheridRow1col2", "guid": "someguid1"},
+                                  "col3": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotheridRow1col3", "guid": "someguid2"}
                                 },
                                 {
                                   "col1": "row2col1",
-                                  "col2": {"outputSpeciesId": "anotheridRow2col2", "guid": "someguid1"},
-                                  "col3": {"outputSpeciesId": "anotheridRow2col3", "guid": "someguid2"}
+                                  "col2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotheridRow2col2", "guid": "someguid1"},
+                                  "col3": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "anotheridRow2col3", "guid": "someguid2"}
                                 }
                               ]
                             }
@@ -283,15 +283,15 @@ class RecordConverterSpec extends Specification {
                               "mylist": [
                                 {
                                   "col1": "row1col1",
-                                  "col2": {"outputSpeciesId": "row1col2", "guid": "someguid1"}
+                                  "col2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "row1col2", "guid": "someguid1"}
                                 },
                                 {
                                   "col1": "row2col1",
-                                  "col2": {"outputSpeciesId": "row2col2", "guid": "someguid2"}
+                                  "col2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "row2col2", "guid": "someguid2"}
                                 }
                               ],
                               "singleItemField1": "singleItemValue1",
-                              "singleItemField2": {"outputSpeciesId": "singleItemValue2", "guid": "someguid3"}
+                              "singleItemField2": {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "singleItemValue2", "guid": "someguid3"}
                             }
                             """
 
@@ -330,7 +330,7 @@ class RecordConverterSpec extends Specification {
         Activity activity = new Activity(activityId: "activityId", projectActivityId: "projectActivityId", projectId: "projectId", userId: "user1")
         Output output = new Output(outputId: "outputId")
         Map outputMetadata = [record: true, dataModel: [[dataType: "species", dwcAttribute: "someAttribute", name: "someField"]]]
-        Map submittedData = [someField: [outputSpeciesId: "someFieldId", "guid": "someguid"]]
+        Map submittedData = [someField: ["scientificName": "sc1", "commonName": "cn1", outputSpeciesId: "someFieldId", "guid": "someguid"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata)
@@ -390,11 +390,11 @@ class RecordConverterSpec extends Specification {
                               "mylist": [
                                 {
                                   "field1": "secondValue",
-                                  "innerSpeciesField" : {"outputSpeciesId": "InnerspeciesFieldIdValue", "guid": "someguid"}
+                                  "innerSpeciesField" : {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "InnerspeciesFieldIdValue", "guid": "someguid"}
                                 }
                               ],
                               "field2": "firstValue",
-                              "speciesField" : {"outputSpeciesId": "speciesFieldIdValue", "guid": "someguid"}
+                              "speciesField" : {"scientificName": "sc1", "commonName": "cn1", "outputSpeciesId": "speciesFieldIdValue", "guid": "someguid"}
                             }
                             """
 

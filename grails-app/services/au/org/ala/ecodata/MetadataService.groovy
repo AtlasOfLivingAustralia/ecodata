@@ -911,10 +911,6 @@ class MetadataService implements DataBinder {
         String searchName = (data?.scientificName)?.trim()
         if (!data?.guid && (searchName)) {
             Map bestMatch = speciesReMatchService.searchByName(searchName)
-            if(!bestMatch && data.commonName) {
-                String commonName = data.commonName
-                bestMatch = speciesReMatchService.searchByName(commonName, false, true)
-            }
 
             if (bestMatch) {
                 data.guid = bestMatch?.guid
