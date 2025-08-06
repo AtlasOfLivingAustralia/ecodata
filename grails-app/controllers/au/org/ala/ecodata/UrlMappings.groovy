@@ -230,10 +230,6 @@ class UrlMappings {
             action = 'download'
         }
 
-        "/ws/graphql" {
-            controller = 'graphqlWs'
-        }
-
         "/ws/paratoo/user-projects" {
             controller = 'paratoo'
             action = 'userProjects'

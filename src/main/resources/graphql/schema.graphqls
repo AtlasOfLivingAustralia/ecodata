@@ -70,9 +70,27 @@ type MeriPlan {
     shortTermOutcomes: [ProjectOutcome]
 }
 
+type Service {
+    id: Int
+    name: String
+}
+
+type Activity {
+    type: String
+    description: String
+    progress: String
+    startDate: Date
+    endDate: Date
+    plannedStartDate: Date
+    plannedEndDate: Date
+    formVersion: Int
+    outputs: [Output]
+}
+
 type Output {
-    "A list of validation errors on the entity"
-    errors: [Error]
+    name: String
+    service: Service
+    data: OutputData
 }
 
 type OutcomeTarget {
@@ -148,6 +166,14 @@ type Project {
     reports: PagedReports
     "The current status of the project: Application, Active, Deleted"
     status: String
+
+    sites: [Site]
+}
+
+type Site {
+    siteId: String
+    name: String
+    geoJson: GeoJson
 }
 
 type ProjectOutcome {
@@ -222,8 +248,7 @@ type Query {
 type Report {
     "category"
     category: String
-    "A list of validation errors on the entity"
-    errors: [Error]
+
     "name"
     name: String
     "progress"
@@ -232,16 +257,13 @@ type Report {
     publicationStatus: String
     "The Project target measures as calculated from the data in this report"
     targetMeasures: [TargetMeasure]
+
+    activity: Activity
 }
 
 type Score {
     label: String
 
-}
-
-type Site {
-    "A list of validation errors on the entity"
-    errors: [Error]
 }
 
 enum DateRange {
@@ -321,3 +343,5 @@ scalar object
 scalar Schema
 scalar Summary
 scalar TargetMeasure
+scalar GeoJson
+scalar OutputData

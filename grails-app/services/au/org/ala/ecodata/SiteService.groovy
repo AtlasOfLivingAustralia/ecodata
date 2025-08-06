@@ -679,7 +679,7 @@ class SiteService {
         // getting wkt since spatial portal geojson api is not returning all precision points of lat and lng.
         def url = "${grailsApplication.config.getProperty('spatial.baseUrl')}${spatialService.WKT_SHAPE_URL_PREFIX}${pid}"
         def wkt = webService.get(url, false)
-        if (wkt instanceof String) {
+        if (wkt && (wkt instanceof String)) {
             return GeometryUtils.wktToGeoJson(wkt)
         }
         else {

@@ -1,11 +1,15 @@
 package au.org.ala.ecodata.graphql.config
 
+import au.org.ala.ecodata.Activity
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.Organisation
+import au.org.ala.ecodata.Output
 import au.org.ala.ecodata.Program
+import au.org.ala.ecodata.SiteService
 import au.org.ala.ecodata.graphql.converters.*
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.graphql.execution.BatchLoaderRegistry
@@ -17,6 +21,9 @@ import reactor.core.publisher.Mono
 @Configuration
 @Component
 class GraphQLConfig implements WebMvcConfigurer {
+
+    @Autowired
+    SiteService siteService
 
     GraphQLConfig(BatchLoaderRegistry registry) {
         registerBatchLoaders(registry)
@@ -34,7 +41,8 @@ class GraphQLConfig implements WebMvcConfigurer {
                  GraphQLScalarType.newScalar().name("Summary").description("").coercing(new SummaryConverter()).build(),
                  GraphQLScalarType.newScalar().name("Schema").description("").coercing(new SchemaConverter()).build(),
                  GraphQLScalarType.newScalar().name("Date").description("").coercing(new DateFormatting()).build(),
-                 GraphQLScalarType.newScalar().name('TargetMeasure').description('Target Measure').coercing(new TargetMeasureConverter()).build()
+                 GraphQLScalarType.newScalar().name('TargetMeasure').description('Target Measure').coercing(new TargetMeasureConverter()).build(),
+                 GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
         ]
 
         RuntimeWiringConfigurer configurer = new RuntimeWiringConfigurer() {
@@ -67,6 +75,18 @@ class GraphQLConfig implements WebMvcConfigurer {
                 [(organisation.organisationId): organisation]
             }
             Mono.just(organisations)
+        })
+        registry.forTypePair(String, Activity).registerMappedBatchLoader((activityIds, env) -> {
+            Map activities = Activity.findAllByActivityIdInList(new ArrayList(activityIds)).collectEntries { Activity activity ->
+                [(activity.activityId): activity]
+            }
+            Mono.just(activities)
+        })
+
+        registry.forTypePair(String, List<Output>).registerMappedBatchLoader((activityIds, env) -> {
+            Map<String, List<Output>> outputs = Output.findAllByActivityIdInList(new ArrayList(activityIds)).groupBy { Output output -> output.activityId }
+
+            Mono.just(outputs)
         })
     }
 

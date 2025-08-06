@@ -6,6 +6,7 @@ import au.org.ala.ecodata.graphql.fetchers.PagedList
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.PagedResultList
+import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +36,9 @@ class ProjectQueryController {
     @Autowired
     ManagementUnitService managementUnitService
 
+    @Autowired
+    SiteService siteService
+
 
     @QueryMapping
     Map<Integer, List<Project>> searchMeritProjects(DataFetchingEnvironment env) {
@@ -59,4 +63,61 @@ class ProjectQueryController {
     CompletableFuture<ManagementUnit> managementUnit(Project project, DataLoader<String, ManagementUnit> managementUnitDataLoader) {
         managementUnitDataLoader.load(project.managementUnitId)
     }
+
+    @SchemaMapping(typeName = "Report", field = "activity")
+    CompletableFuture<Activity> activity(Report report, DataLoader<String, Activity> activityDataLoader, @ContextValue EcodataGraphQLContext securityContext) {
+//        if (!securityContext.hasPermission(report)) {
+//            return null
+//        }
+        activityDataLoader.load(report.activityId)
+
+    }
+
+
+    @SchemaMapping(typeName = "Project", field = "sites")
+    List<Site> sites(Project project, @ContextValue EcodataGraphQLContext securityContext) {
+        if (!securityContext.hasPermission(project)) {
+            return null
+        }
+        Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'asc'])
+
+    }
+
+    @SchemaMapping(typeName = "Site", field = "geoJson")
+    Site geoJson(Site site) {
+        // The scalar type converter will handle the conversion to GeoJSON
+        site
+    }
+
+    @SchemaMapping(typeName = "Activity", field = "outputs")
+    CompletableFuture<List<Output>> outputs(Activity activity, DataLoader<String, List<Output>> outputDataLoader, GraphQLContext context, DataFetchingEnvironment dfe) {
+//        if (!securityContext.hasPermission(activity)) {
+//            return null
+//        }
+        dfe.graphQlContext.put("activity", activity)
+        println context
+        outputDataLoader.load(activity.activityId)
+
+    }
+
+    @SchemaMapping(typeName = "Output", field = "service")
+    Service service(Output output, GraphQLContext context ) {
+//        if (!securityContext.hasPermission(output)) {
+//            return null
+//        }
+
+        Activity activity = context.get("activity")
+        if (!activity) {
+            return null
+        }
+        context.delete("activity")
+
+        String formName = activity.type
+
+        Service.findAll().find {
+           it.outputs.find {ServiceForm form -> form.formName == formName && form.sectionName == output.name}
+        }
+
+    }
+
 }

@@ -35,6 +35,7 @@ class Output {
     Date dateCreated
     Date lastUpdated
     List tempArgs = []
+    Map data
 
     static constraints = {
         assessmentDate nullable: true
@@ -42,6 +43,10 @@ class Output {
     }
 
     static transients = ['tempArgs']
+
+    Map getData() {
+       this.data
+    }
 
     OutputData getData(List fields) {
         OutputData outputData = new OutputData(dataList: new ArrayList<KeyValue>())

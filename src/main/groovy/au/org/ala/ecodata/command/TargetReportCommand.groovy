@@ -1,9 +1,29 @@
 package au.org.ala.ecodata.command
 
+
 import au.org.ala.ecodata.ReportService
+import grails.validation.Validateable
 
 /** Command object for the targetsReportForScore* endpoints.  This is to support GET and POST requests */
-class TargetReportCommand {
+class TargetReportCommand implements Validateable {
+
+    static constraints = {
+        scoreIds nullable:true, validator: { value, targetReportCommand ->
+            // Adjustment reports must reference another report
+            if (!value && !targetReportCommand.scoreLabels) {
+                return 'nullable'
+            }
+        }
+        scoreLabels nullable: true, validator: { value, targetReportCommand ->
+            // Adjustment reports must reference another report
+            if (!value && !targetReportCommand.scoreIds) {
+                return 'nullable'
+            }
+        }
+        fq nullable: true
+        query nullable: true
+    }
+
     List<String> scoreIds
     List<String> scoreLabels
     List<String> fq

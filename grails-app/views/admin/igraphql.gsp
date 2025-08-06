@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/graphiql/graphiql.min.js"></script>
 <script>
-    const fetcher = GraphiQL.createFetcher({ url: '/graphql-spring' });
+    const fetcher = GraphiQL.createFetcher({ url: '/admin/graphql' });
     ReactDOM.render(
         React.createElement(GraphiQL, { fetcher }),
         document.getElementById('graphiql'),

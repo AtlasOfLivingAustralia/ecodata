@@ -937,4 +937,9 @@ class AdminController {
         render view:'igraphql'
     }
 
+    @AlaSecured(["ROLE_ADMIN"])
+    def graphql() {
+        forward(uri:'/ws/graphql-spring')
+    }
+
 }
