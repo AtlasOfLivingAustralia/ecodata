@@ -596,8 +596,7 @@ security {
         loginUrl = 'https://auth-test.ala.org.au/cas/login'
         logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
         casServerName = 'https://auth-test.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*', '/graphql/*', '/graphql-spring/*']
-        authenticateOnlyIfLoggedInPattern = "/graphql/*"
+        uriFilterPattern = ['/admin/*', '/activityForm/*']
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
     }
     oidc {
@@ -613,7 +612,7 @@ security {
         enabled = true
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
-        urlPatterns = ["/ws/graphql/*"]
+        urlPatterns = ["/ws/graphql/*,/ws/graphql-spring/*,/graphql/*"]
         requiredScopes = []
         connectTimeoutMs = 20000
         readTimeoutMs = 20000

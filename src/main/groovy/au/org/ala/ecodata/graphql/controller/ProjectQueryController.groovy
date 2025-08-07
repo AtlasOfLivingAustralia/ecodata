@@ -95,7 +95,6 @@ class ProjectQueryController {
 //            return null
 //        }
         dfe.graphQlContext.put("activity", activity)
-        println context
         outputDataLoader.load(activity.activityId)
 
     }
