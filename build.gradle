@@ -112,6 +112,7 @@ dependencies {
     implementation "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
     implementation "au.org.ala:userdetails-service-client:$alaSecurityLibsVersion"
 
+    implementation "au.org.ala.grails:interceptor-annotation-matcher:1.0.0"
     implementation "org.codehaus.gpars:gpars:1.1.0"
     implementation "org.apache.httpcomponents:httpclient:4.5.7"
     implementation "org.imgscalr:imgscalr-lib:4.2"

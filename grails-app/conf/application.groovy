@@ -596,7 +596,7 @@ security {
         loginUrl = 'https://auth-test.ala.org.au/cas/login'
         logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
         casServerName = 'https://auth-test.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*']
+        uriFilterPattern = ['/admin/*', '/activityForm/*', '/ws/igraphql/*']
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
     }
     oidc {

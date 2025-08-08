@@ -62,7 +62,7 @@ spring:
             max-file-size: 1024MB
             max-request-size: 1024MB
     graphql:
-        path: /ws/graphql-spring
+        path: /graphql-spring
     devtools:
         restart:
             additional-exclude:

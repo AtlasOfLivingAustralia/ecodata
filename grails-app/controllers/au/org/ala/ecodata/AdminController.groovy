@@ -3,10 +3,19 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
+import au.org.ala.plugins.openapi.Path
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -932,14 +941,50 @@ class AdminController {
             render text: [message: "Cache name not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
         }
     }
-    @AlaSecured(["ROLE_ADMIN"])
+
+    /**
+     * GraphQL interactive browser.
+     * @return
+     */
+    @PreAuthorise(idType="hubId", accessLevel = "readOnly")
     def igraphql() {
         render view:'igraphql'
     }
 
-    @AlaSecured(["ROLE_ADMIN"])
+    /**
+     * API used by GraphQL browser. A separate endpoint is needed for OIDC authenticated users compared to JWT authenticated users.
+     * @return
+     */
+    @PreAuthorise(idType="hubId", accessLevel = "readOnly")
+    def graphqlApi() {
+        forward(uri:'/graphql-spring')
+    }
+
+    /**
+     * GraphQL endpoint used by API gateway. M2M JWT token or User JWT can be used to access this endpoint.
+     * If M2M JWT token is used, the userId will be set to the clientId of the token. And the client should have
+     * atleast readOnly privilege to access the hub.
+     * @return
+     */
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/ws/graphql/{id}")
+    @Operation(
+            method = "POST",
+            description = "Executes a GraphQL query.",
+            parameters = [
+                    @Parameter(name = "id", description = "The hubId to which the query is related.", required = true, in = ParameterIn.PATH, schema = @Schema(type="string"))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns result of query", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "GraphQL"
+    )
+    @au.ala.org.ws.security.RequireApiKey()
+    @PreAuthorise(idType="hubId", accessLevel = "readOnly")
     def graphql() {
-        forward(uri:'/ws/graphql-spring')
+        forward(uri:'/graphql-spring')
     }
 
 }

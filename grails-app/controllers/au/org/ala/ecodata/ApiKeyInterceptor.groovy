@@ -37,49 +37,7 @@ class ApiKeyInterceptor {
         Map result = [error: '', status : 401]
 
         if (controllerClass?.isAnnotationPresent(PreAuthorise) || method?.isAnnotationPresent(PreAuthorise)) {
-            // What rules needs to be satisfied?
-            PreAuthorise pa = method.getAnnotation(PreAuthorise) ?: controllerClass.getAnnotation(PreAuthorise)
-
-            if (pa.basicAuth()) {
-                def user = userService.setUser()
-                request.userId = user?.userId
-                if(permissionService.isUserAlaAdmin(request.userId)) {
-                    /* Don't enforce check for ALA admin.*/
-                }
-                else if (request.userId) {
-                    String accessLevel = pa.accessLevel()
-                    String idType = pa.idType()
-                    String entityId = params[pa.id()]
-
-                    if (accessLevel && idType) {
-
-                        switch (idType) {
-                            case "organisationId":
-                                result = permissionService.checkPermission(accessLevel, entityId, Organisation.class.name, request.userId)
-                                break
-                            case "projectId":
-                                result = permissionService.checkPermission(accessLevel, entityId, Project.class.name, request.userId)
-                                break
-                            case "projectActivityId":
-                                def pActivity = projectActivityService.get(entityId)
-                                request.projectId = pActivity?.projectId
-                                result = permissionService.checkPermission(accessLevel, pActivity?.projectId, Project.class.name, request.userId)
-                                break
-                            case "activityId":
-                                def activity = activityService.get(entityId,'flat')
-                                result = permissionService.checkPermission(accessLevel, activity?.projectId, Project.class.name, request.userId)
-                                break
-                            default:
-                                break
-                        }
-                    }
-
-                } else {
-                    result.error = "Access denied"
-                    result.status = 401
-                }
-            }
-
+            // Moved PreAuthorise check to PreAuthoriseInterceptor since it requires AlaSecurityInterceptor to run first.
         } else {
 
             // Allow migration to the AlaSecured annotation.
