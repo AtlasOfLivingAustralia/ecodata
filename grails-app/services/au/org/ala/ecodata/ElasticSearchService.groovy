@@ -1226,7 +1226,7 @@ class ElasticSearchService {
 
         // Add keyword ALL to project participants if any survey is open to public. This will be helpful in places such
         // as  PWA app to list user's project or project with publicly accessible surveys.
-        if (projectMap.projectActivities?.any { it.publicAccess }) {
+        if (projectMap.projectActivities?.any { it.publicAccess && it.published }) {
             if (projectMap.allParticipants == null) {
                 projectMap.allParticipants = []
             }
