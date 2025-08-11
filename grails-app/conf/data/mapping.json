@@ -345,6 +345,8 @@
         "activityLastUpdatedYearFacet":{"type":"keyword"},
         "activityLastUpdatedMonthFacet":{"type":"keyword"},
         "recordNameFacet":{"type":"keyword"},
+        "scientificNameFacet":{"type":"keyword"},
+        "commonNameFacet":{"type":"keyword"},
         "surveyImage": {
           "type": "boolean"
         },
@@ -433,6 +435,14 @@
                 "name":{
                   "type":"text",
                   "copy_to": "recordNameFacet"
+                },
+                "scientificName":{
+                  "type": "text",
+                  "copy_to": "scientificNameFacet"
+                },
+                "commonName":{
+                  "type": "text",
+                  "copy_to": "commonNameFacet"
                 },
                 "eventTime":{
                   "type": "text"
