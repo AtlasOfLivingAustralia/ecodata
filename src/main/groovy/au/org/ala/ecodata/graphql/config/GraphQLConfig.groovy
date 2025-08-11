@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.graphql.config
 
 import au.org.ala.ecodata.Activity
+import au.org.ala.ecodata.AmountDelivered
 import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.Organisation
 import au.org.ala.ecodata.Output
@@ -42,7 +43,9 @@ class GraphQLConfig implements WebMvcConfigurer {
                  GraphQLScalarType.newScalar().name("Schema").description("").coercing(new SchemaConverter()).build(),
                  GraphQLScalarType.newScalar().name("Date").description("").coercing(new DateFormatting()).build(),
                  GraphQLScalarType.newScalar().name('TargetMeasure').description('Target Measure').coercing(new TargetMeasureConverter()).build(),
+                 GraphQLScalarType.newScalar().name('AmountDelivered').description("Amount delivered").coercing(new MapConverter()).build(),
                  GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
+
         ]
 
         RuntimeWiringConfigurer configurer = new RuntimeWiringConfigurer() {
@@ -88,6 +91,10 @@ class GraphQLConfig implements WebMvcConfigurer {
 
             Mono.just(outputs)
         })
+
+        registry.forTypePair(String, AmountDelivered).registerMappedBatchLoader { (scoreIds, env) ->
+            new AmountDelivered()
+        }
     }
 
 }

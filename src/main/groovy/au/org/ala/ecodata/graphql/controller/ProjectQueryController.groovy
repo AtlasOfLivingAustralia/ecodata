@@ -31,6 +31,9 @@ class ProjectQueryController {
     ReportingService reportingService
 
     @Autowired
+    ReportService reportService
+
+    @Autowired
     ProgramService programService
 
     @Autowired
@@ -46,10 +49,9 @@ class ProjectQueryController {
     }
 
     @SchemaMapping(typeName = "Project", field = "reports")
-    PagedList reports(Project project, @ContextValue EcodataGraphQLContext securityContext) {
-        if (!securityContext.hasPermission(project)) {
-            return null
-        }
+    PagedList reports(Project project, GraphQLContext context) {
+
+        context.put("project", project)
         PagedResultList resultList = (PagedResultList)reportingService.search(projectId:project.projectId, [max:100, offset:0, sort:'dateCreated', order:'desc'])
         new PagedList(resultList)
     }
@@ -65,14 +67,11 @@ class ProjectQueryController {
     }
 
     @SchemaMapping(typeName = "Report", field = "activity")
-    CompletableFuture<Activity> activity(Report report, DataLoader<String, Activity> activityDataLoader, @ContextValue EcodataGraphQLContext securityContext) {
-//        if (!securityContext.hasPermission(report)) {
-//            return null
-//        }
+    CompletableFuture<Activity> activity(Report report, DataLoader<String, Activity> activityDataLoader) {
+
         activityDataLoader.load(report.activityId)
 
     }
-
 
     @SchemaMapping(typeName = "Project", field = "sites")
     List<Site> sites(Project project, @ContextValue EcodataGraphQLContext securityContext) {
@@ -90,20 +89,15 @@ class ProjectQueryController {
     }
 
     @SchemaMapping(typeName = "Activity", field = "outputs")
-    CompletableFuture<List<Output>> outputs(Activity activity, DataLoader<String, List<Output>> outputDataLoader, GraphQLContext context, DataFetchingEnvironment dfe) {
-//        if (!securityContext.hasPermission(activity)) {
-//            return null
-//        }
-        dfe.graphQlContext.put("activity", activity)
+    CompletableFuture<List<Output>> outputs(Activity activity, DataLoader<String, List<Output>> outputDataLoader, GraphQLContext context) {
+
+        context.put("activity", activity)
         outputDataLoader.load(activity.activityId)
 
     }
 
     @SchemaMapping(typeName = "Output", field = "service")
     Service service(Output output, GraphQLContext context ) {
-//        if (!securityContext.hasPermission(output)) {
-//            return null
-//        }
 
         Activity activity = context.get("activity")
         if (!activity) {

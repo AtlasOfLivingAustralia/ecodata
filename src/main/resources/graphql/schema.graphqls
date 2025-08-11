@@ -54,8 +54,7 @@ type ManagementUnit {
 }
 
 type MeriPlan {
-    "A list of validation errors on the entity"
-    errors: [Error]
+
     "Environmental assets the Project is investing in protected"
     investmentPriorities: [String]
     "Project specific outcomes that are planned to be achieved in the medium term (3-5 years)"
@@ -68,6 +67,65 @@ type MeriPlan {
     secondaryOutcomes: [ProjectOutcome]
     "Project specific outcomes that are planned to be achieved in the short term (1-3 years)"
     shortTermOutcomes: [ProjectOutcome]
+
+    keyThreats: [KeyThreat]
+
+    deliveryAssumptions: String
+
+    partnerships: [Partnership]
+
+    projectBaselines: [Baseline]
+    monitoringMethodology: [MonitoringMethodology]
+    approach: String
+
+    conservationAndManagementPlans:[ManagementPlan]
+
+
+}
+
+type ManagementPlan {
+    documentName: String
+    documentSection: String
+    strategicAlignment: String
+    documentLink: String
+}
+
+type Baseline {
+    code: String
+    description: String
+    existsOrToBeEstablished: String
+    targetMeasures: [TargetMeasure]
+    method: [String]
+    otherMethod: String
+    evidenceToRetain: String
+    relatedOutcomeCodes: [String]
+}
+
+type MonitoringMethodology {
+    baselineCode: String
+    description: String
+    targetMeasures: [TargetMeasure]
+    method: [String]
+    otherMethod: String
+    evidenceToRetain: String
+}
+
+type Partnership {
+    partnerName: String
+    description: String
+    partnerOrganisationType: String
+}
+
+type KeyThreat {
+    "The code for the key threat"
+    relatedOutcomes: [String]
+    "A description of the key threat"
+    threat: String
+    threatCode: String
+    intervention: String
+    targetMeasures: [TargetMeasure]
+    evidenceToRetain: String
+
 }
 
 type Service {
@@ -94,7 +152,7 @@ type Output {
 }
 
 type OutcomeTarget {
-    outcomeCodes: [String]
+    relatedOutcomes: [String]
     target: Float
 }
 
@@ -113,7 +171,7 @@ type OutputTarget {
     "Description"
     targetDate: Date
     "A target measure"
-    targetMeasure: Score
+    targetMeasure: TargetMeasure
 }
 
 type PagedReports {
@@ -142,8 +200,6 @@ type Project {
     associatedOrgs: [AssociatedOrg]
     "A longer description of the Project"
     description: String
-    "A list of validation errors on the entity"
-    errors: [Error]
     "Used by older MERIT projects that share a grant id from a devolved grant.  "
     externalId: String
     "A list of identifiers by which this Project may be known in external systems"
@@ -256,15 +312,23 @@ type Report {
     "publicationStatus"
     publicationStatus: String
     "The Project target measures as calculated from the data in this report"
-    targetMeasures: [TargetMeasure]
+    targetsDelivery: [TargetDelivered]
 
     activity: Activity
 }
 
-type Score {
-    label: String
-
+type TargetDelivered {
+    targetMeasure: TargetMeasure
+    amountDelivered: Float
 }
+
+type TargetMeasure {
+    targetMeasureId: String
+    service: Service
+    label: String
+}
+
+
 
 enum DateRange {
     Jan_2012_Jul_2012
