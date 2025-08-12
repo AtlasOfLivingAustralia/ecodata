@@ -1352,7 +1352,8 @@ class ElasticSearchService {
                 values.name = it.name
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
-                values.commonName = it.commonName
+                values.scientificName = it.scientificName
+                values.commonName = it.commonName ?: it.vernacularName
 
                 // This check is required as elasticsearch JSON validation will fail for
                 // NaN & Infinity and the whole batch will not index.
