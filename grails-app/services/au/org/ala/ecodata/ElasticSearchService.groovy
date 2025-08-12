@@ -1195,7 +1195,8 @@ class ElasticSearchService {
                         name: it.name,
                         startDate: it.startDate,
                         endDate: it.endDate,
-                        published: it.published
+                        published: it.published,
+                        publicAccess: it.publicAccess
                 ]
             })
         }
@@ -1222,6 +1223,16 @@ class ElasticSearchService {
         projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
             it.userId
         }?.unique(false)
+
+        // Add keyword ALL to project participants if any survey is open to public. This will be helpful in places such
+        // as  PWA app to list user's project or project with publicly accessible surveys.
+        if (projectMap.projectActivities?.any { it.publicAccess && it.published }) {
+            if (projectMap.allParticipants == null) {
+                projectMap.allParticipants = []
+            }
+
+            projectMap.allParticipants << 'ALL'
+        }
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
