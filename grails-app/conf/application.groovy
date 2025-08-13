@@ -742,7 +742,19 @@ facets.data = [
                 name    : "recordNameFacet",
                 title   : 'Species name',
                 dataType: 'text',
+                helpText: 'Sighting\'s display name'
+        ],
+        [
+                name    : "scientificNameFacet",
+                title   : 'Species scientific name',
+                dataType: 'text',
                 helpText: 'Sighting\'s scientific name'
+        ],
+        [
+                name    : "commonNameFacet",
+                title   : 'Species common name',
+                dataType: 'text',
+                helpText: 'Sighting\'s common name'
         ],
         [
                 name    : "userId",
