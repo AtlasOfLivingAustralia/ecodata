@@ -67,7 +67,7 @@ class MetadataService implements DataBinder {
         Map maxVersionsByName = [:]
         Map activitiesByName = [:]
 
-        ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED).each { ActivityForm activityForm ->
+        ActivityForm.findAllByPublicationStatusAndStatusNotEqual(PublicationStatus.PUBLISHED, Status.DELETED).each { ActivityForm activityForm ->
             Map activityModel = [
                     name: activityForm.name,
                     gmsId: activityForm.gmsId,
@@ -911,10 +911,6 @@ class MetadataService implements DataBinder {
         String searchName = (data?.scientificName)?.trim()
         if (!data?.guid && (searchName)) {
             Map bestMatch = speciesReMatchService.searchByName(searchName)
-            if(!bestMatch && data.commonName) {
-                String commonName = data.commonName
-                bestMatch = speciesReMatchService.searchByName(commonName, false, true)
-            }
 
             if (bestMatch) {
                 data.guid = bestMatch?.guid
@@ -1226,7 +1222,7 @@ class MetadataService implements DataBinder {
         // Make a copy of the services as we are going to augment them with target information.
         List results = projectServices.collect { service ->
             [
-                    name:service.name,
+                    name:service.getNameForProgramId(project.programId),
                     id: service.id,
                     scores: service.scores()?.collect { score ->
                         [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]

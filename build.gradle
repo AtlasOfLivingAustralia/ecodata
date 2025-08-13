@@ -74,7 +74,8 @@ dependencies {
     implementation "org.grails:grails-plugin-services"
     implementation "org.grails:grails-plugin-url-mappings"
     implementation "org.grails:grails-plugin-interceptors"
-    implementation "org.grails.plugins:cache"
+    implementation "org.grails.plugins:cache-ehcache:3.0.0"
+    implementation "org.ehcache:ehcache:3.10.8"
     implementation "org.grails.plugins:async"
     implementation "org.grails.plugins:scaffolding"
     implementation "org.grails.plugins:events"
@@ -99,10 +100,7 @@ dependencies {
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "org.elasticsearch.client:elasticsearch-rest-client:$elasticsearchVersion"
 
-    implementation "com.spatial4j:spatial4j:0.5"
-
-    implementation group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.7'
-    implementation group: 'org.locationtech.jts', name: 'jts-core', version: '1.15.0'
+    implementation group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.8'
 
     implementation 'org.apache.poi:poi:5.2.2'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'

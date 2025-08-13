@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.io.WKTReader
 import spock.lang.Specification
 
 class SpatialServiceSpec extends Specification implements ServiceUnitTest<SpatialService> {
@@ -32,8 +33,8 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         service.fillMissingDetailsOfObjects(response)
 
         then:
-        1 * webService.getJson("/ws/search?q=ACT&include=123") >> [[name: "ACT", fid: "123", pid: "345"], [name: "ACT and QLD", fid: "123", pid: "789"]]
-        1 * webService.getJson("/ws/search?q=NSW&include=123") >> [[name: "NSW", fid: "123", pid: "890"]]
+        1 * webService.get("/ws/search?q=ACT&include=123") >> '[{"name":"ACT","fid":"123","pid":"345"},{"name":"ACT and QLD","fid":"123","pid":"789"}]'
+        1 * webService.get("/ws/search?q=NSW&include=123") >> '[{"name":"NSW","fid":"123","pid":"890"}]'
         response["123"].find {it.name == "ACT" }.pid == "345"
         response["123"].find {it.name == "NSW" }.pid == "890"
     }
@@ -103,7 +104,33 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         service.titleCase("act") == "Act"
         service.titleCase("nSw") == "Nsw"
     }
-    
+
+    def "getIntersectionProportionAndArea should be able to handle self-intersecting multi-line strings"() {
+        setup:
+        Geometry complexMultiLineString = getComplexMultiLineString()
+        Geometry boundaryShape = getComplexBoundaryForMultiLineString()
+
+        when: "We interect a complex multi-line string with a boundary shape in such a way a TopologyException is thrown"
+        def (intersectionProportion, intersectionArea) = service.getIntersectionProportionAndArea(complexMultiLineString, boundaryShape)
+
+        then:
+        intersectionProportion == 0
+        intersectionArea == 0
+    }
+
+    def "getIntersectionProportionAndArea should be able to handle multi-line strings"() {
+        setup:
+        Geometry complexMultiLineString = getComplexMultiLineString()
+        Geometry boundaryShape = getSimpleMultiLineStringIntersectionBoundary()
+
+        when: "We intersect a complex multi-line string with a simple envelope polygon"
+        def (intersectionProportion, intersectionArea) = service.getIntersectionProportionAndArea(complexMultiLineString, boundaryShape)
+
+        then:
+        intersectionProportion > 0.9
+        intersectionArea > 0
+    }
+
     private Geometry getBoundaryShape() {
         return GeometryUtils.geoJsonMapToGeometry(mapper.readValue('{' +
                 '        "coordinates": [' +
@@ -192,5 +219,29 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
                 '        ],' +
                 '        "type": "Polygon"' +
                 '      }', Map.class))
+    }
+
+    private Geometry getComplexMultiLineString() {
+        readWkt('complexMultiLineString.wkt')
+    }
+
+    private static readWkt(String fileName) {
+        File file = new File("src/test/resources/${fileName}")
+        if (!file.exists()) {
+            throw new IllegalArgumentException("File not found: ${file.absolutePath}")
+        }
+        WKTReader reader = new WKTReader()
+        return reader.read(file.text)
+    }
+
+    private Geometry getSimpleMultiLineStringIntersectionBoundary() {
+        String wkt = "POLYGON ((146.755331696078 -37.424036194691, 146.755331696078 -37.3940159990894, 146.812057 -37.3940159990894, 146.812057 -37.424036194691, 146.755331696078 -37.424036194691))"
+        WKTReader reader = new WKTReader()
+        Geometry geometry = reader.read(wkt)
+        geometry
+    }
+
+    private Geometry getComplexBoundaryForMultiLineString() {
+        readWkt('complexMultiLineStringBoundary.wkt')
     }
 }

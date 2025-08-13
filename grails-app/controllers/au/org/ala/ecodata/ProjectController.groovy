@@ -1,8 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import org.apache.http.HttpStatus
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
@@ -13,6 +16,7 @@ class ProjectController {
     ManagementUnitService managementUnitService
     OrganisationService organisationService
     ProgramService programService
+    ParatooService paratooService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -437,6 +441,8 @@ class ProjectController {
         List facets = grailsApplication.config.getProperty('facets.project', List)
         render text: facets as JSON, contentType: 'application/json'
     }
+
+
 
     private Map buildParams(Map params){
         Map values = [:]

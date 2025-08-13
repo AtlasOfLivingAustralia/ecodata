@@ -1,17 +1,29 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooProject
+import grails.test.mongodb.MongoSpec
+
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
-import spock.lang.Specification
 
-class DataSetSummaryControllerSpec extends Specification implements ControllerUnitTest<DataSetSummaryController> {
+class DataSetSummaryControllerSpec extends MongoSpec implements ControllerUnitTest<DataSetSummaryController> {
 
     ProjectService projectService = Mock(ProjectService)
+    UserService userService = Mock(UserService)
+    ParatooService paratooService = Mock(ParatooService)
+    SiteService siteService = Mock(SiteService)
+
     def setup() {
         controller.projectService = projectService
+        controller.userService = userService
+        controller.paratooService = paratooService
+        controller.siteService = siteService
+
     }
 
     def cleanup() {
+        Project.findAll().each { it.delete(flush: true) }
+        ActivityForm.findAll().each{ it.delete(flush: true) }
     }
 
     void "The update method delegates to the projectService"() {
@@ -86,5 +98,52 @@ class DataSetSummaryControllerSpec extends Specification implements ControllerUn
         then:
         0 * projectService.updateDataSets(_, _)
         response.status == HttpStatus.SC_BAD_REQUEST
+    }
+
+    void "The resync method submits a collection and returns success"() {
+        setup:
+        String projectId = 'p1'
+        String dataSetId = 'd1'
+        userService.currentUserDetails >> [userId: 'u1']
+
+        Project project = new Project(projectId: projectId, name:'Project 1', custom: [dataSets: [[dataSetId: dataSetId, siteId: 's1', surveyId:[survey_metadata:[provenance:[:], survey_details:[protocol_id:'p1']]]]]])
+        project.save(failOnError: true)
+        ParatooProject paratooProject = new ParatooProject()
+        paratooProject.project = project
+        ActivityForm siteForm = new ActivityForm(name: 'Site Form', type:"EMSA", externalIds: [new ExternalId(externalId:'p1')], tags:['site'])
+        siteForm.save(failOnError: true)
+
+        ActivityForm form2 = ActivityForm.findByName("Site Form")
+        println form2
+        def site = [siteId: 's1']
+
+        when:
+        controller.resync(projectId, dataSetId)
+
+        then:
+        1 * paratooService.protocolWriteCheck('u1', projectId,'p1') >> true
+        siteService.get('s1') >> site
+        1 * projectService.canModifyDataSetSite(site, project) >> true
+        1 * paratooService.paratooProjectFromProject(project, null) >> paratooProject
+        paratooService.submitCollection({it.orgMintedUUID == dataSetId}, paratooProject, 'u1', true) >> null
+
+        response.status == HttpStatus.SC_OK
+        response.json.message == "Submitted request to fetch data for dataSet d1 in project p1 by user u1"
+    }
+
+    void "The resync method returns not found if project or dataset is missing"() {
+        setup:
+        String projectId = 'p1'
+        String dataSetId = 'd1'
+        def userService = Mock(UserService)
+        controller.userService = userService
+        userService.currentUserDetails >> [userId: 'u1']
+
+        when:
+        controller.resync(projectId, dataSetId)
+
+        then:
+        response.status == HttpStatus.SC_NOT_FOUND
+        response.json.message == "Project not found"
     }
 }
