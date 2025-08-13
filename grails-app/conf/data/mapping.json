@@ -25,6 +25,9 @@
         "grantId": {
           "type": "keyword"
         },
+        "allParticipants" : {
+          "type" : "keyword"
+        },
         "origin" : {
           "type" : "keyword"
         },
