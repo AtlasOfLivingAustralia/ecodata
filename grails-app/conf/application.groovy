@@ -596,7 +596,7 @@ security {
         loginUrl = 'https://auth-test.ala.org.au/cas/login'
         logoutUrl = 'https://auth-test.ala.org.au/cas/logout'
         casServerName = 'https://auth-test.ala.org.au'
-        uriFilterPattern = ['/admin/*', '/activityForm/*', '/ws/igraphql/*']
+        uriFilterPattern = ['/admin/*', '/activityForm/*', '/ws/igraphql/*', '/graphql']
         uriExclusionFilterPattern = ['/assets/.*','/images/.*','/css/.*','/js/.*','/less/.*', '/activityForm/get.*']
     }
     oidc {
@@ -612,7 +612,6 @@ security {
         enabled = true
         discoveryUri = 'https://auth-test.ala.org.au/cas/oidc/.well-known'
         requiredClaims = ["sub", "iat", "exp", "jti", "client_id"]
-        urlPatterns = ["/ws/graphql/*,/ws/graphql-spring/*,/graphql/*"]
         requiredScopes = []
         connectTimeoutMs = 20000
         readTimeoutMs = 20000
@@ -627,8 +626,8 @@ webservice['client-id']='changeMe'
 webservice['client-secret'] = 'changeMe'
 webservice['callUserInfoEndpoint'] = false
 
-
-grails.gorm.graphql.browser = true
+grails.gorm.graphql.enabled = false
+grails.gorm.graphql.browser = false
 
 environments {
     development {

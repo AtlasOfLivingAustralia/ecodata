@@ -1,12 +1,7 @@
 package au.org.ala.ecodata.graphql.config
 
-import au.org.ala.ecodata.Activity
-import au.org.ala.ecodata.AmountDelivered
-import au.org.ala.ecodata.ManagementUnit
-import au.org.ala.ecodata.Organisation
-import au.org.ala.ecodata.Output
-import au.org.ala.ecodata.Program
-import au.org.ala.ecodata.SiteService
+import au.org.ala.ecodata.*
+import au.org.ala.ecodata.graphql.controller.GraphQLInterceptor
 import au.org.ala.ecodata.graphql.converters.*
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
@@ -15,21 +10,29 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.graphql.execution.BatchLoaderRegistry
 import org.springframework.graphql.execution.RuntimeWiringConfigurer
-import org.springframework.stereotype.Component
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.graphql.server.WebGraphQlInterceptor
 import reactor.core.publisher.Mono
 
 @Configuration
-@Component
-class GraphQLConfig implements WebMvcConfigurer {
+class GraphQLConfig {
 
     @Autowired
     SiteService siteService
+    @Autowired
+    UserService userService
+    @Autowired
+    PermissionService permissionService
+    @Autowired
+    HubService hubService
 
     GraphQLConfig(BatchLoaderRegistry registry) {
         registerBatchLoaders(registry)
     }
 
+    @Bean
+    WebGraphQlInterceptor webGraphQlInterceptor() {
+       new GraphQLInterceptor(userService, hubService, permissionService)
+    }
 
     @Bean
     RuntimeWiringConfigurer runtimeWiringConfigurer() {
