@@ -27,7 +27,12 @@ class GraphQLInterceptor implements WebGraphQlInterceptor {
 
     @Override
     Mono<WebGraphQlResponse> intercept(WebGraphQlRequest request, Chain chain) {
+        String userId = UserService.currentUser()?.userId
         String hubIdParam = request.uri.queryParams.getFirst("id")
+
+        if (!userId || !hubIdParam) {
+            return Mono.error(new IllegalArgumentException("Hub or user not found"))
+        }
 
         Map hubMap = hubService.findByUrlPath(hubIdParam)
 
@@ -38,8 +43,6 @@ class GraphQLInterceptor implements WebGraphQlInterceptor {
         if (!hubMap) {
             return Mono.error(new IllegalArgumentException("Hub not found for id: ${hubIdParam}"))
         }
-
-        String userId = UserService.currentUser()?.userId
 
         boolean canAccessAPI = permissionService.checkUserPermission(userId, (String)hubMap.hubId, Hub.class.name, AccessLevel.readOnly.code)
         if (!canAccessAPI) {
