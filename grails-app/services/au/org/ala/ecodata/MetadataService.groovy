@@ -1168,16 +1168,22 @@ class MetadataService implements DataBinder {
      */
     List<Service> getServiceList() {
 
+        long start = System.currentTimeMillis()
         List services = Service.findAllByStatusNotEqual(Status.DELETED)
 
+        long end = System.currentTimeMillis()
+        log.info("getServiceList took ${end - start} ms to retrieve ${services.size()} services")
+        
+        
         Map scoresByFormSection = [:].withDefault { String formSectionName ->
             Score.createCriteria().list {
                 or {
                     eq('configuration.filter.filterValue', formSectionName)
-                    eq('configuration.childAggregations.filter.filterValue', formSectionName)
+                        eq('configuration.childAggregations.filter.filterValue', formSectionName)
                 }
             }
         }
+        start = end
         services.each { service ->
             service.outputs?.each { ServiceForm serviceFormConfig ->
 
@@ -1185,6 +1191,9 @@ class MetadataService implements DataBinder {
                 serviceFormConfig.relatedScores = scores
             }
         }
+        end = System.currentTimeMillis()
+        log.info("getServiceList took ${end - start} ms to retrieve scores")
+        
         services
     }
 
