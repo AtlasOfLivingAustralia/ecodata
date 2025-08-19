@@ -153,18 +153,18 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
 
     void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {
 
-        def searchDetails = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
+    //    def searchDetails = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
 
-        fqList.each {
-            List fq = it.toString().split(":")
-            if(!enumList.contains(fq.first())) {
-                Aggregation aggregation = searchDetails.aggregations?.get(fq.first())
-                List<String> lookUps = aggregation?.buckets?.collect{it.keyAsString}
-                if (!lookUps.contains(fq.last())) {
-                    throw new GraphQLException('Invalid ' + fq.first() + ' : suggested values are : ' + lookUps)
-                }
-            }
-        }
+//        fqList.each {
+//            List fq = it.toString().split(":")
+//            if(!enumList.contains(fq.first())) {
+//                Aggregation aggregation = searchDetails.aggregations?.get(fq.first())
+//                List<String> lookUps = aggregation?.buckets?.collect{it.keyAsString}
+//                if (!lookUps.contains(fq.last())) {
+//                    throw new GraphQLException('Invalid ' + fq.first() + ' : suggested values are : ' + lookUps)
+//                }
+//            }
+//        }
 
         def datePattern = /\d{4}\-\d{2}\-\d{2}/
 
