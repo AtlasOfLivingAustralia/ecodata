@@ -4,6 +4,7 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder.EcodataGraphQLContext
 import au.org.ala.ecodata.graphql.fetchers.PagedList
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
+import au.org.ala.ecodata.graphql.models.TargetMeasure
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.PagedResultList
 import graphql.GraphQLContext
@@ -16,6 +17,7 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
 
 import java.util.concurrent.CompletableFuture
+import java.util.stream.Collectors
 
 @GrailsCompileStatic
 @Controller
@@ -115,6 +117,38 @@ class ProjectQueryController {
            it.outputs.find {ServiceForm form -> form.formName == formName && form.sectionName == output.name}
         }
 
+    }
+
+    @SchemaMapping(typeName = "Baseline", field = "targetMeasures")
+    CompletableFuture<List<TargetMeasure>> targetMeasures(Baseline baseline, DataLoader<String, TargetMeasure> dataLoader) {
+        targetMeasuresFromScoreIds(baseline.relatedTargetMeasures, dataLoader)
+    }
+
+
+    @SchemaMapping(typeName = "KeyThreat", field = "targetMeasures")
+    CompletableFuture<List<TargetMeasure>> targetMeasures(KeyThreat keyThreat, DataLoader<String, TargetMeasure> dataLoader) {
+        targetMeasuresFromScoreIds(keyThreat.relatedTargetMeasures, dataLoader)
+    }
+
+
+    @SchemaMapping(typeName = "MonitoringMethodology", field = "targetMeasures")
+    CompletableFuture<List<TargetMeasure>> targetMeasures(MonitoringMethodology monitoringMethodology, DataLoader<String, TargetMeasure> dataLoader) {
+        targetMeasuresFromScoreIds(monitoringMethodology.relatedTargetMeasures, dataLoader)
+    }
+
+
+    @SchemaMapping(typeName = "OutputTarget", field = "targetMeasure")
+    CompletableFuture<TargetMeasure> targetMeasure(OutputTarget outputTarget, DataLoader<String, TargetMeasure> dataLoader) {
+        dataLoader.load(outputTarget.scoreId)
+    }
+
+    private static CompletableFuture targetMeasuresFromScoreIds(List<String> scoreIds, DataLoader<String, TargetMeasure> targetMeasureDataLoader) {
+        List<CompletableFuture> futures = scoreIds?.collect {
+            targetMeasureDataLoader.load(it)
+        } ?: []
+
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply{futures.collect{it.join()}}
     }
 
 }

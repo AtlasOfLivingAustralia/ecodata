@@ -14,7 +14,7 @@ class KeyThreat {
     String threat
     String threatCode
     String intervention
-    List<TargetMeasure> relatedTargetMeasures
+    List<String> relatedTargetMeasures
 
 }
 
@@ -28,7 +28,7 @@ class MonitoringMethodology {
     String baselineCode
     List<String> method
     String description
-    String targetMeasures
+    List<String> relatedTargetMeasures
     String otherMethod
     String evidenceToRetain
 
@@ -38,7 +38,7 @@ class Baseline {
     String code
     String description
     String existsOrToBeEstablished
-    List<TargetMeasure> targetMeasures
+    List<String> relatedTargetMeasures
     List<String> methods
     String otherMethod
     String evidenceToRetain
@@ -132,6 +132,14 @@ class MeriPlan {
         details?.monitoring?.rows?.collect { Map monitoringDetails ->
             if (monitoringDetails && monitoringDetails.methodology) {
                 new MonitoringMethodology(monitoringDetails)
+            }
+        }?.findAll { it }
+    }
+
+    List<Baseline> getBaselines() {
+        details?.baseline?.rows?.collect { Map baselineDetails ->
+            if (baselineDetails && baselineDetails.code) {
+                new Baseline(baselineDetails)
             }
         }?.findAll { it }
     }

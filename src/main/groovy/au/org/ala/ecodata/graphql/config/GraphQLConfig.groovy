@@ -3,6 +3,7 @@ package au.org.ala.ecodata.graphql.config
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.controller.GraphQLInterceptor
 import au.org.ala.ecodata.graphql.converters.*
+import au.org.ala.ecodata.graphql.models.TargetMeasure
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,9 +25,20 @@ class GraphQLConfig {
     PermissionService permissionService
     @Autowired
     HubService hubService
+    @Autowired
+    MetadataService metadataService
+
+    List<Service> serviceList
 
     GraphQLConfig(BatchLoaderRegistry registry) {
         registerBatchLoaders(registry)
+    }
+
+    private List<Service> getServiceList() {
+        if (!serviceList) {
+            serviceList = Collections.synchronizedList(metadataService.getServiceList())
+        }
+        return serviceList
     }
 
     @Bean
@@ -98,6 +110,27 @@ class GraphQLConfig {
         registry.forTypePair(String, AmountDelivered).registerMappedBatchLoader { (scoreIds, env) ->
             new AmountDelivered()
         }
+
+        registry.forTypePair(String, TargetMeasure).registerMappedBatchLoader ( (scoreIds, env) -> {
+            Map<String, TargetMeasure> targetMeasures = Score.findAllByScoreIdInList(new ArrayList(scoreIds)).collectEntries { Score score ->
+                TargetMeasure targetMeasure = new TargetMeasure(
+                        targetMeasureId: score.scoreId,
+                        label: score.label,
+                        name: score.name
+                )
+                targetMeasure.service = getServiceList().find{ Service service ->
+                    service.scores().find { it.scoreId == score.scoreId }
+                }
+                [(score.scoreId): targetMeasure]
+            }
+            Mono.just(targetMeasures)
+        })
+
+        registry.forTypePair(Integer, Service).registerMappedBatchLoader ( (serviceIds, env) -> {
+            Mono.just(Service.findAllByLegacyIdInList(new ArrayList(serviceIds)).collectEntries { Service service ->
+                [(service.legacyId): service]
+            })
+        })
     }
 
 }

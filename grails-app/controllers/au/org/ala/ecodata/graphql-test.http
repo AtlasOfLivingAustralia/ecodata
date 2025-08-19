@@ -8,13 +8,14 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/ws/graphql
+POST http://localhost:8080/ws/graphql/d
 Authorization: Bearer eyJraWQiOiI2UEpOaFwvdU5EYlBIWlk4Y2xmTHJvMnBKUnJhTFRXTnpaU0tOcVdka3Y0az0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiOTMyNTY0Zi1hNjQxLTQ3MTYtYTAwMS0wMTRkODA2NzU0MmQiLCJjb2duaXRvOmdyb3VwcyI6WyJ1c2VyIiwiZWNvZGF0YV9hcGkiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmFwLXNvdXRoZWFzdC0yLmFtYXpvbmF3cy5jb21cL2FwLXNvdXRoZWFzdC0yX09PWFU5R1czOSIsInZlcnNpb24iOjIsImNsaWVudF9pZCI6IjRyaGtvcDl0bDMwbHJ0OThjcWpwY3UzZTF0Iiwib3JpZ2luX2p0aSI6IjMxYmYzYTg0LThiMDktNDVhNi05OTE3LTY5ODE5N2Y3N2EzYiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYWxhXC9hdHRycyBhbGFcL3JvbGVzIG9wZW5pZCBwcm9maWxlIGVtYWlsIiwiYXV0aF90aW1lIjoxNzA3MDgwMTM5LCJleHAiOjE3MDcwODczNDgsImlhdCI6MTcwNzA4Mzc0OCwianRpIjoiNjNhZTJjNTItYzUxZC00ZmJjLWFkMDAtODQ4NGIyOTQ1ZDI0IiwidXNlcm5hbWUiOiI2NDUwIn0.crLqFuvY9JLmxM88GI3ukYTZGlcYHmXTlJ8AFJHSkB2bkPoSJ8F7OnGnJuZlpzlBHLcyMM91JpVoNNdLlVFYptnafX279Q2oUXzAe_iiwPI2-JPPVEp4bDSYd7x9Yl488EYFBNGJ5cbEaSGyMh9WHggWAFG8BLXXUdWM8GfS2-PdqUwcFkPQAu7DDgSh0k6BDviZaOuA0-2AtLdx4c6yWA9dzfRlzMinbTnR3at0QAJ4Dv7xJhEsgvXaR2z4Pe9JrcIuoTZlJx360UQtuDgNLWA-fzDHfmsSOIuBBYB8E0gFkdKt7f7TE-M6KvIUKhp6z30xI4_OwGC52U0D11LISg
 Content-Type: application/json
 
 {
-  "query": "query {\n  project(projectId:\"5e416e05-cb4d-4f7e-84ec-e29291ce492a\") {\n    projectId\n    name\n    description\n    \n    program {\n      name\n      programId\n      acronym\n    }\n    organisation {\n    \torganisationId\n      name\n      abn\n    }\n    managementUnit {\n    \tmanagementUnitId\n      name\n      shortName\n    }\n  }\n}"
+  "query": "query {\n  project(projectId:\"5e416e05-cb4d-4f7e-84ec-e29291ce492a\") {\n    projectId\n    name\n    description\n    \n    program {\n      name\n      programId\n      acronym\n    }\n    associatedOrgs {\n    \torganisationId\n      name\n       }\n    managementUnit {\n    \tmanagementUnitId\n      name\n      shortName\n    }\n  }\n}"
 }
+
 
 ###
 GET http://localhost:8080/ws/paratoo/user-projects
@@ -44,7 +45,7 @@ userId=1493
 
 
 ### GraphQL
-POST http://localhost:8080/ws/graphql-spring
+POST http://localhost:8080/graphql-spring
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer eyJraWQiOiI2UEpOaFwvdU5EYlBIWlk4Y2xmTHJvMnBKUnJhTFRXTnpaU0tOcVdka3Y0az0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2ODMyZDkyNy03ZTE0LTRkMTYtODk0ZS00N2I4NGM3YjdkNWYiLCJjb2duaXRvOmdyb3VwcyI6WyJ1c2VyIiwiZWNvZGF0YV9hcGkiLCJhZG1pbiJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTIuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTJfT09YVTlHVzM5IiwidmVyc2lvbiI6MiwiY2xpZW50X2lkIjoiN3ExaTExNXQyajk3bHJwODU5bmNycnBmOSIsIm9yaWdpbl9qdGkiOiI5ZmUwYzA1MC0zZjQzLTRmMTYtYmRlZS1hYThjMjk1MzBjOTQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImFsYVwvYXR0cnMgYWxhXC9yb2xlcyBvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF1dGhfdGltZSI6MTc1NDUyMDUwMywiZXhwIjoxNzU0NTI3NzE1LCJpYXQiOjE3NTQ1MjQxMTUsImp0aSI6IjJhNTYwODRlLTM1ZjYtNGE3MS1iYmU4LTU2ZGQ0NzMzOWI1MyIsInVzZXJuYW1lIjoiNTY1MDEifQ.2CloRKBe2KMfVwM2_Koia1zL1u7Rg0sLIvEsmDXkw024ImPN8PM6ITjJ48V7fc3ObQ8OOpCGkcv1BVEv4t8wPjhirC6mBaqgWYCNqZWX9WxXtAQiasJALNZDmwinfPkboylDI9rIdzYlRpVvxhLq03RrWUruIAOsEa-tRq5DZiz_0hcMWJESNYHtMhgeboBZiEwILd-SWek7zzgL9tSXB70QF4eW5LERoKpzFD2gyJvr08v8SYjDtPYW3EoaLPEdNf4wccolVPkH65UVz5DtR5YG_zX8m6Chzi2-YIjH3ZzigvcJUNqf3v2G-tvdJianCj9cRTtylw7GqthggSmPIg
@@ -53,6 +54,10 @@ Authorization: Bearer eyJraWQiOiI2UEpOaFwvdU5EYlBIWlk4Y2xmTHJvMnBKUnJhTFRXTnpaU0
 
 
 ### GraphQL
-POST https://api.test.ala.org.au/ecodata/graphql
+POST https://ecodata-test.ala.org.au/ws/graphql/merit
 Accept: application/json
-Authorization: Bearer eyJraWQiOiI2UEpOaFwvdU5EYlBIWlk4Y2xmTHJvMnBKUnJhTFRXTnpaU0tOcVdka3Y0az0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2ODMyZDkyNy03ZTE0LTRkMTYtODk0ZS00N2I4NGM3YjdkNWYiLCJjb2duaXRvOmdyb3VwcyI6WyJ1c2VyIiwiZWNvZGF0YV9hcGkiLCJhZG1pbiJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTIuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTJfT09YVTlHVzM5IiwidmVyc2lvbiI6MiwiY2xpZW50X2lkIjoiN3ExaTExNXQyajk3bHJwODU5bmNycnBmOSIsIm9yaWdpbl9qdGkiOiI5ZmUwYzA1MC0zZjQzLTRmMTYtYmRlZS1hYThjMjk1MzBjOTQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImFsYVwvYXR0cnMgYWxhXC9yb2xlcyBvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF1dGhfdGltZSI6MTc1NDUyMDUwMywiZXhwIjoxNzU0NTI0MTAzLCJpYXQiOjE3NTQ1MjA1MDMsImp0aSI6ImE3NTc1OGE0LTJjOTgtNDZiYi1hNmQwLTI3M2FhNjQ5YmQwNCIsInVzZXJuYW1lIjoiNTY1MDEifQ.cXpSnH-H9iAN-2-gqlpEFBcpagXQYS3VrSSt23kxG5LxnXBFZpUNtBTB1gEUMhFHsA-znfvrYOCQzoAYUPbHBxuNzbK2e3K990YfknjSDc36MDPD8AIk3AgCjP9xCd3uozUjCUZ2j1L_WLYUjV6IUdG1GDTbedmSz4oFlTM3wQ_3B2huj8d_SySTYbLThC0XHyA7EiAlNepV9rWp_vSB6nVTOAjDpEHbAGNQFis1jvXiBmTatMfwkgiitRy445j8dd0NszBqOcBdg84x6hRRohUMuxMAB8qYHzfEDqtab0QnsGTUqxdJkPpAG6_Dayxx4V6-RfGIpp0SPRf5tAjC_Q
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiI2UEpOaFwvdU5EYlBIWlk4Y2xmTHJvMnBKUnJhTFRXTnpaU0tOcVdka3Y0az0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2ODMyZDkyNy03ZTE0LTRkMTYtODk0ZS00N2I4NGM3YjdkNWYiLCJjb2duaXRvOmdyb3VwcyI6WyJ1c2VyIiwiZWNvZGF0YV9hcGkiLCJhZG1pbiJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTIuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTJfT09YVTlHVzM5IiwidmVyc2lvbiI6MiwiY2xpZW50X2lkIjoiN3ExaTExNXQyajk3bHJwODU5bmNycnBmOSIsIm9yaWdpbl9qdGkiOiI0MmMwYTExYi1kNjhiLTRlMDQtODg3MS1iODEzNDJkNWQ1NTAiLCJldmVudF9pZCI6ImYyYjE2NGRlLWVkYmMtNDJhYi05NTFkLWQ4YjI0Y2RiZWI0ZSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYWxhXC9hdHRycyBhbGFcL3JvbGVzIG9wZW5pZCBwcm9maWxlIGVtYWlsIiwiYXV0aF90aW1lIjoxNzU1MTU0NTU3LCJleHAiOjE3NTUxNTgxNTcsImlhdCI6MTc1NTE1NDU1NywianRpIjoiMDhjZjgwOWMtMjUxMy00ODY4LWI5NWEtOTc1MTY1YzFiOTgwIiwidXNlcm5hbWUiOiI1NjUwMSJ9.PmR4aPk8nQsYtkP_4mER8tc28CyH-wmLHPhconTnoJf4U5AqUdkXI6_2TpgDUm624wbBo71d0bYMi9htLI6PoHxxFTztKBzxOXBOX-lVk7qQFbEmPmGr5pEy43ZRO64a3kV-Xwv13teDKpKNcxKeRNLQoitVRararr2bWk82mMhPynAMbFHrLcNYo8lXwUiGxIVubeG1z-7Tt4gTqAJx9EkZyHkKFcwIN2dxIo-CqHCSsXe9p0K0i-BL2IU43JEo_iKZnLdstBki-kOrH4CxMLrG805SMaBQkRg9naaT6keUGPATmtsfrcoUjB3t6NtVwKv72cjjENHQkmDDaSBTLA
+
+{"query":"{ searchMeritProjects( page:2, max:20, associatedProgram: \"Natural Heritage Trust\", reports: { fromDate:\"01-01-2023\" }) { results { projectId name reports { results { name category activity { progress formVersion outputs { name service { name } data } } } } } totalCount } }"}
+

@@ -1,9 +1,11 @@
 package au.org.ala.ecodata.graphql.models
 
+import au.org.ala.ecodata.Service
+
 class TargetMeasure {
+    String targetMeasureId
     String label
-    Object result
+    String name
 
-
-
+    Service service
 }
