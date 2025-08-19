@@ -28,17 +28,8 @@ class GraphQLConfig {
     @Autowired
     MetadataService metadataService
 
-    List<Service> serviceList
-
     GraphQLConfig(BatchLoaderRegistry registry) {
         registerBatchLoaders(registry)
-    }
-
-    private List<Service> getServiceList() {
-        if (!serviceList) {
-            serviceList = Collections.synchronizedList(metadataService.getServiceList())
-        }
-        return serviceList
     }
 
     @Bean
@@ -118,9 +109,7 @@ class GraphQLConfig {
                         label: score.label,
                         name: score.name
                 )
-                targetMeasure.service = getServiceList().find{ Service service ->
-                    service.scores().find { it.scoreId == score.scoreId }
-                }
+                targetMeasure.service = metadataService.serviceForScore(score.scoreId)
                 [(score.scoreId): targetMeasure]
             }
             Mono.just(targetMeasures)

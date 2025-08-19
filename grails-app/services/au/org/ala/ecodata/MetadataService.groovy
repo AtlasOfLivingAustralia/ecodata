@@ -6,6 +6,7 @@ import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
 import grails.web.databinding.DataBinder
@@ -1166,6 +1167,7 @@ class MetadataService implements DataBinder {
      * services.json should be identical with fieldcapture
      * @return
      */
+    @Cacheable("serviceList")
     List<Service> getServiceList() {
 
         long start = System.currentTimeMillis()
@@ -1256,6 +1258,13 @@ class MetadataService implements DataBinder {
         }
 
         return results
+    }
+
+    @Cacheable("serviceForScore")
+    Service serviceForScore(String scoreId) {
+        getServiceList().find{ Service service ->
+            service.scores().find { it.scoreId == scoreId }
+        }
     }
 
     /** Returns a value from the gradle git plugin generated git.properties */

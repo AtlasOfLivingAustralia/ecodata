@@ -283,6 +283,7 @@ type Query {
         managementUnit: [String],
         marineRegion: [String],
         max: Int,
+        meritProjectID: [String],
         myProjects: Boolean,
         organisation: [String],
         otherRegion: [String],

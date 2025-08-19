@@ -17,7 +17,6 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
 
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
 
 @GrailsCompileStatic
 @Controller

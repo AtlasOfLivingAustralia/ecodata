@@ -43,7 +43,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
     EcodataGraphQLContextBuilder ecodataGraphQLContextBuilder
 
     static String meritFacets = "status,organisationFacet,associatedProgramFacet,associatedSubProgramFacet,mainThemeFacet,stateFacet,nrmFacet,lgaFacet,mvgFacet,ibraFacet,imcra4_pbFacet,otherFacet,electFacet,meriPlanAssetFacet," +
-            "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet"
+            "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet,grantId.keyword,grantManagerNominatedProject"
     static Map meritParams = [hubFq:"isMERIT:true", flimit:1500, fsort:"term", query:"docType:project", facets:meritFacets, format:null, max:20]
 
     static  Map paramList = [flimit:1500, fsort:"term", query:"docType: project", format:null, offset:0, max:20, skipDefaultFilters:false,
@@ -302,8 +302,19 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
     def mapFq(DataFetchingEnvironment environment) {
 
         def fqList = []
-        def facetMappings = ["managementArea": "nrmFacet:", "majorVegetationGroup": "mvgFacet:", "biogeographicRegion": "ibraFacet:", "marineRegion": "imcra4_pbFacet:", "otherRegion": "otherFacet:", "grantManagerNominatedProject":"promoteOnHomepage:",
-                             "federalElectorate": "electFacet:", "assetsAddressed": "meriPlanAssetFacet:", "userNominatedProject": "custom.details.caseStudy:", "managementUnit": "muFacet:"]
+        def facetMappings = [
+                "managementArea": "nrmFacet:",
+                "majorVegetationGroup": "mvgFacet:",
+                "biogeographicRegion": "ibraFacet:",
+                "marineRegion": "imcra4_pbFacet:",
+                "otherRegion": "otherFacet:",
+                "grantManagerNominatedProject":"promoteOnHomepage:",
+                "federalElectorate": "electFacet:",
+                "assetsAddressed": "meriPlanAssetFacet:",
+                "userNominatedProject": "custom.details.caseStudy:",
+                "managementUnit": "muFacet:",
+                "meritProjectID": "grantId.keyword:"
+        ]
 
         environment.arguments.each {
             if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs", "reports",
@@ -336,6 +347,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
                     case "assetsAddressed" :
                     case "userNominatedProject" :
                     case "managementUnit" :
+                    case "meritProjectID"  :
                         key = facetMappings.get(it.key)
                         break;
                     default:
