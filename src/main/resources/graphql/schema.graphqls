@@ -55,7 +55,8 @@ type ManagementUnit {
 }
 
 type MeriPlan {
-
+    lastUpdated: Date
+    publicationStatus: PublicationStatus
     "Environmental assets the Project is investing in protected"
     investmentPriorities: [String]
     "Project specific outcomes that are planned to be achieved in the medium term (3-5 years)"
@@ -197,6 +198,9 @@ type Program {
 }
 
 type Project {
+    dateCreated: Date
+    lastUpdated: Date
+    status: Status
     "A list of organisations that have a relationship with this Project.  "
     associatedOrgs: [AssociatedOrg]
     "A longer description of the Project"
@@ -221,8 +225,6 @@ type Project {
     projectId: String
     "Has reports"
     reports: PagedReports
-    "The current status of the project: Application, Active, Deleted"
-    status: String
 
     sites: [Site]
 }
@@ -271,7 +273,6 @@ type Query {
         associatedSubProgram: [String],
         biogeographicRegion: [String],
         cmz: [String],
-        dateRange: DateRange,
         federalElectorate: [String],
         "yyyy-mm-dd"
         fromDate: String,
@@ -304,18 +305,15 @@ type Query {
 }
 
 type Report {
+    publicationStatus: PublicationStatus
     "category"
     category: String
-
     "name"
     name: String
-    "progress"
-    progress: String
-    "publicationStatus"
-    publicationStatus: String
     "The Project target measures as calculated from the data in this report"
     targetsDelivery: [TargetDelivered]
-
+    fromDate: Date
+    toDate: Date
     activity: Activity
 }
 
@@ -330,28 +328,26 @@ type TargetMeasure {
     label: String
 }
 
+enum Status {
+    APPLICATION
+    ACTIVE
+    COMPLETED
+    DELETED
+    TERMINATED
+}
 
+enum PublicationStatus {
+    APPROVED
+    SUBMITTED
+    DRAFT
+}
 
-enum DateRange {
-    Jan_2012_Jul_2012
-    Jan_2013_Jul_2013
-    Jan_2014_Jul_2014
-    Jan_2015_Jul_2015
-    Jan_2016_Jul_2016
-    Jan_2017_Jul_2017
-    Jan_2018_Jul_2018
-    Jan_2019_Jul_2019
-    Jan_2020_Jul_2020
-    Jul_2011_Jan_2012
-    Jul_2012_Jan_2013
-    Jul_2013_Jan_2014
-    Jul_2014_Jan_2015
-    Jul_2015_Jan_2016
-    Jul_2016_Jan_2017
-    Jul_2017_Jan_2018
-    Jul_2018_Jan_2019
-    Jul_2019_Jan_2020
-    Jul_2020_Jan_2021
+enum Progress {
+    NOT_STARTED
+    STARTED
+    FINISHED
+    CANCELLED
+    DEFERRED
 }
 
 enum IdType {

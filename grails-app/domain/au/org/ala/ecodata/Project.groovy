@@ -83,6 +83,11 @@ class Project {
     String projLifecycleStatus
 
     CustomMetadata customMetadata
+    /**
+     * The status of the project / MERI plan, eg. DRAFT, PUBLISHED, SUBMITTED_FOR_REVIEW.
+     * Only applicable to projects with a plan such as MERIT projects or BioCollect works projects
+     */
+    String planStatus
 
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
@@ -254,6 +259,7 @@ class Project {
         comment nullable: true
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         customMetadata nullable: true
+        planStatus nullable: true
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }
@@ -270,7 +276,7 @@ class Project {
             return null
         }
 
-        MeriPlan meriPlan = new MeriPlan(custom.details, getOutputTargets())
+        MeriPlan meriPlan = new MeriPlan(this)
         return meriPlan
     }
 

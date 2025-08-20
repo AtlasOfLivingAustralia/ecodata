@@ -4,7 +4,9 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.controller.GraphQLInterceptor
 import au.org.ala.ecodata.graphql.converters.*
 import au.org.ala.ecodata.graphql.models.TargetMeasure
+import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLScalarType
+import graphql.schema.idl.EnumValuesProvider
 import graphql.schema.idl.RuntimeWiring
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -53,16 +55,50 @@ class GraphQLConfig {
                  GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
 
         ]
+        GraphQLEnumType statusEnum = GraphQLEnumType.newEnum()
+                .name("Status")
+                .description("Project status")
+                .value("ACTIVE", Status.ACTIVE, "Active project")
+                .value("COMPLETED", Status.COMPLETED, "Inactive project")
+                .value("APPLICATION", Status.APPLICATION, "Pending approval")
+                .value("TERMINATED", Status.TERMINATED, "Project terminated")
+                .value("DELETED", Status.DELETED, "Project deleted")
+                .build();
 
+        Map<String, String> statusEnumValues = [
+                "ACTIVE":Status.ACTIVE,
+                "COMPLETED":Status.COMPLETED,
+                "APPLICATION":Status.APPLICATION,
+                "TERMINATED":Status.TERMINATED,
+                "DELETED":Status.DELETED
+        ]
+        Map<String, String> publicationStatusValues = [
+                "DRAFT": PublicationStatus.DRAFT,
+                "APPROVED": PublicationStatus.PUBLISHED,
+                "SUBMITTED": PublicationStatus.SUBMITTED_FOR_REVIEW
+        ]
         RuntimeWiringConfigurer configurer = new RuntimeWiringConfigurer() {
             @Override
             void configure(RuntimeWiring.Builder wiringBuilder) {
                 scalarTypes.each { scalarType ->
                     wiringBuilder.scalar(scalarType)
                 }
+                registerEnumMapping(wiringBuilder, "Status", statusEnumValues)
+                registerEnumMapping(wiringBuilder, "PublicationStatus", publicationStatusValues)
             }
         }
         configurer
+    }
+
+    private static void registerEnumMapping(RuntimeWiring.Builder wiringBuilder, String typeName, Map<String, String> values) {
+        wiringBuilder.type(typeName, typeWiring ->
+                typeWiring.enumValues(new EnumValuesProvider() {
+                    @Override
+                    Object getValue(String name) {
+                        values[name]
+                    }
+                })
+        )
     }
 
     void registerBatchLoaders(BatchLoaderRegistry registry) {

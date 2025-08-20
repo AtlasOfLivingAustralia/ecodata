@@ -57,11 +57,35 @@ class MeriPlan {
 
     Map details
     List<OutputTarget> outputTargets
+    String publicationStatus = PublicationStatus.DRAFT
+    Date lastUpdated
+    Project project
 
+    MeriPlan(Project project) {
 
-    MeriPlan(Map meriPlanDetails, List<OutputTarget> outputTargets) {
-        details = meriPlanDetails ?: [:]
-        this.outputTargets = outputTargets
+        this.project = project
+        String lastUpdated = project?.custom?.details?.lastUpdated
+        this.lastUpdated = lastUpdated ? DateUtil.parseDateWithAndWithoutMilliSeconds(lastUpdated) : null
+
+        this.details = project?.custom?.details ?: [:]
+        this.outputTargets = project?.outputTargets ?: []
+    }
+
+    String getPublicationStatus() {
+        String planStatus = project.planStatus
+
+        if (!planStatus) {
+            // If the project does not have a plan status, default to DRAFT
+            return project.custom?.details ? PublicationStatus.DRAFT : null
+        }
+        // Convert from MERI plan status to publication status
+        Map statusMap = [
+            'not approved': PublicationStatus.DRAFT,
+            'approved': PublicationStatus.PUBLISHED,
+            'submitted': PublicationStatus.SUBMITTED_FOR_REVIEW
+        ]
+
+        statusMap[planStatus]
     }
 
 
