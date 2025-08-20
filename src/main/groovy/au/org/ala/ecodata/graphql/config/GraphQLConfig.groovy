@@ -121,6 +121,7 @@ class GraphQLConfig {
             }
             Mono.just(organisations)
         })
+
         registry.forTypePair(String, Activity).registerMappedBatchLoader((activityIds, env) -> {
             Map activities = Activity.findAllByActivityIdInList(new ArrayList(activityIds)).collectEntries { Activity activity ->
                 [(activity.activityId): activity]

@@ -2,20 +2,15 @@ package au.org.ala.ecodata.graphql.fetchers
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
-
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
 import au.org.ala.ecodata.graphql.models.KeyValue
 import au.org.ala.ecodata.graphql.models.OutputData
-import grails.gorm.PagedResultList
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import graphql.schema.idl.SchemaPrinter
-import graphql.schema.GraphQLSchema
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-import org.elasticsearch.search.aggregations.Aggregation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

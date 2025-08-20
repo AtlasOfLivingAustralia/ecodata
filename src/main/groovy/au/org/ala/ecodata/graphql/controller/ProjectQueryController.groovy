@@ -2,11 +2,9 @@ package au.org.ala.ecodata.graphql.controller
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder.EcodataGraphQLContext
-import au.org.ala.ecodata.graphql.fetchers.PagedList
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import grails.compiler.GrailsCompileStatic
-import grails.gorm.PagedResultList
 import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
@@ -54,11 +52,12 @@ class ProjectQueryController {
     }
 
     @SchemaMapping(typeName = "Project", field = "reports")
-    PagedList reports(Project project, GraphQLContext context) {
+    List<Report> reports(Project project, GraphQLContext context) {
 
         context.put("project", project)
-        PagedResultList resultList = (PagedResultList)reportingService.search(projectId:project.projectId, [max:100, offset:0, sort:'dateCreated', order:'desc'])
-        new PagedList(resultList)
+
+        List<Report> resultList = (List<Report>)reportingService.search(projectId:project.projectId, [max:100, offset:0, sort:'dateCreated', order:'desc'])
+        resultList
     }
 
     @SchemaMapping(typeName = "Project", field = "program")
@@ -80,9 +79,7 @@ class ProjectQueryController {
 
     @SchemaMapping(typeName = "Project", field = "sites")
     List<Site> sites(Project project, @ContextValue EcodataGraphQLContext securityContext) {
-        if (!securityContext.hasPermission(project)) {
-            return null
-        }
+
         Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'asc'])
 
     }

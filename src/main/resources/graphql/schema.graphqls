@@ -176,19 +176,9 @@ type OutputTarget {
     targetMeasure: TargetMeasure
 }
 
-type PagedReports {
-    "List of reports for the project"
-    results: [Report]
-    "Total number of reports for the project"
-    totalCount: Int
-}
-
-
 type Program {
     "The acryonm the Program is known by"
     acronym: String
-    "A list of validation errors on the entity"
-    errors: [Error]
     "The name of the Program"
     name: String
     "If this Program is a sub-program, this field identifies the parent Program"
@@ -224,7 +214,7 @@ type Project {
     "Unique indentifier of a MERIT project"
     projectId: String
     "Has reports"
-    reports: PagedReports
+    reports: [Report]
 
     sites: [Site]
 }
@@ -380,7 +370,7 @@ input ReportQuery {
     page: Int
     reportId: String
     reportType: String
-    status: [String]
+    publicationStatus: [String]
     "yyyy-mm-dd"
     toDate: String
 }
