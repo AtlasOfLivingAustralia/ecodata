@@ -159,7 +159,7 @@ type OutcomeTarget {
 }
 
 type PeriodTarget {
-    period: Date
+    period: String
     target: Float
 }
 
