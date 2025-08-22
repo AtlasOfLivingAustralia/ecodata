@@ -57,6 +57,10 @@ type ManagementUnit {
 type MeriPlan {
     lastUpdated: Date
     publicationStatus: PublicationStatus
+
+    firstNationsPeopleInvolvement: String
+
+    supportedPriorityPlaces: [String]
     "Environmental assets the Project is investing in protected"
     investmentPriorities: [String]
     "Project specific outcomes that are planned to be achieved in the medium term (3-5 years)"
@@ -72,7 +76,8 @@ type MeriPlan {
 
     keyThreats: [KeyThreat]
 
-    deliveryAssumptions: String
+    implementationOrDeliveryAssumptions: String
+    evaluationApproach: String
 
     partnerships: [Partnership]
 
@@ -89,7 +94,7 @@ type ManagementPlan {
     documentName: String
     documentSection: String
     strategicAlignment: String
-    documentLink: String
+    documentUrl: String
 }
 
 type Baseline {
@@ -97,19 +102,19 @@ type Baseline {
     description: String
     existsOrToBeEstablished: String
     targetMeasures: [TargetMeasure]
-    method: [String]
-    otherMethod: String
-    evidenceToRetain: String
-    relatedOutcomeCodes: [String]
+    emsaModules: [String]
+    method: String
+    evidence: String
+    relatedOutcomes: [String]
 }
 
 type MonitoringMethodology {
-    baselineCode: String
+    relatedBaseline: String
     description: String
     targetMeasures: [TargetMeasure]
-    method: [String]
-    otherMethod: String
-    evidenceToRetain: String
+    emsaModules: [String]
+    method: String
+    evidence: String
 }
 
 type Partnership {
@@ -122,11 +127,11 @@ type KeyThreat {
     "The code for the key threat"
     relatedOutcomes: [String]
     "A description of the key threat"
-    threat: String
+    description: String
     threatCode: String
     intervention: String
     targetMeasures: [TargetMeasure]
-    evidenceToRetain: String
+    evidence: String
 
 }
 

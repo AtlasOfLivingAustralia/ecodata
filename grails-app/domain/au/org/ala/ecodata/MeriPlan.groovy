@@ -4,6 +4,16 @@ import au.org.ala.ecodata.graphql.mappers.MeriPlanGraphQLMapper
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+class KeyEvaluationQuestion {
+    String question
+    String evaluationApproach
+
+    KeyEvaluationQuestion(Map details) {
+        this.question = details.data1 ?: ''
+        this.evaluationApproach = details.data2 ?: ''
+    }
+}
+
 class AmountDelivered {
     TargetMeasure targetMeasure
     double amountDelivered
@@ -14,7 +24,16 @@ class KeyThreat {
     String threat
     String threatCode
     String intervention
+    String evidence
     List<String> relatedTargetMeasures
+
+    List<String> getTargetMeasures() {
+        relatedTargetMeasures ?: []
+    }
+
+    String getDescription() {
+        threat
+    }
 
 }
 
@@ -25,24 +44,72 @@ class Partnership {
 }
 
 class MonitoringMethodology {
-    String baselineCode
-    List<String> method
-    String description
+    String relatedBaseline
+    List<String> protocols
+    String data1
     List<String> relatedTargetMeasures
-    String otherMethod
-    String evidenceToRetain
+    String data2
+    String evidence
+    List<String> getEmsaModules() {
+        protocols
+    }
+
+    String getDescription() {
+        data1
+    }
+
+    String getMethod() {
+        data2
+    }
+
+    List<String> getTargetMeasures() {
+        relatedTargetMeasures ?: []
+    }
+
 
 }
 
 class Baseline {
     String code
-    String description
-    String existsOrToBeEstablished
+    String baseline
+    String monitoringDataStatus
     List<String> relatedTargetMeasures
-    List<String> methods
-    String otherMethod
-    String evidenceToRetain
+    List<String> protocols
+    String method
+    String evidence
     List<String> relatedOutcomes
+
+    String getDescription() {
+        baseline
+    }
+
+    List<String> getEmsaModules() {
+        protocols
+    }
+
+    String existsOrToBeEstablished() {
+        monitoringDataStatus
+    }
+
+}
+
+class ManagementPlan {
+    String data1
+    String data2
+    String data3
+    String documentUrl
+
+    String getDocumentName() {
+        data1
+    }
+
+    String getStrategicAlignment() {
+        data3
+    }
+
+    String getDocumentSection() {
+        data2
+    }
 }
 
 /**
@@ -61,6 +128,11 @@ class MeriPlan {
     Date lastUpdated
     Project project
 
+    List<String> supportedPriorityPlaces
+    String firstNationsPeopleInvolvement
+    String evaluationApproach
+    String implementationOrDeliveryAssumptions
+
     MeriPlan(Project project) {
 
         this.project = project
@@ -68,7 +140,13 @@ class MeriPlan {
         this.lastUpdated = lastUpdated ? DateUtil.parseDateWithAndWithoutMilliSeconds(lastUpdated) : null
 
         this.details = project?.custom?.details ?: [:]
+        this.supportedPriorityPlaces = this.details.supportedPriorityPlaces ?: null
+        this.firstNationsPeopleInvolvement = this.details.indigenousInvolvementType ?: null
+        this.publicationStatus = getPublicationStatus()
         this.outputTargets = project?.outputTargets ?: []
+        this.implementationOrDeliveryAssumptions = details.implementation?.description ?: null
+        this.evaluationApproach = details.projectEvaluationApproach
+
     }
 
     String getPublicationStatus() {
@@ -144,17 +222,9 @@ class MeriPlan {
         }?.findAll { it }
     }
 
-    List<MonitoringMethodology> getMonitoringMethodologies() {
-        details?.monitoring?.rows?.collect { Map monitoringDetails ->
-            if (monitoringDetails && monitoringDetails.methodology) {
-                new MonitoringMethodology(monitoringDetails)
-            }
-        }?.findAll { it }
-    }
-
     List<MonitoringMethodology> getMonitoringMethodology() {
         details?.monitoring?.rows?.collect { Map monitoringDetails ->
-            if (monitoringDetails && monitoringDetails.methodology) {
+            if (monitoringDetails && monitoringDetails.data1) {
                 new MonitoringMethodology(monitoringDetails)
             }
         }?.findAll { it }
@@ -164,6 +234,22 @@ class MeriPlan {
         details?.baseline?.rows?.collect { Map baselineDetails ->
             if (baselineDetails && baselineDetails.code) {
                 new Baseline(baselineDetails)
+            }
+        }?.findAll { it }
+    }
+
+    List<KeyEvaluationQuestion> getKeyEvaluationQuestions() {
+        details?.keq?.rows?.collect { Map keq ->
+            if (keq?.data1 || keq?.data2) {
+                new KeyEvaluationQuestion(keq)
+            }
+        }?.findAll { it }
+    }
+
+    List<ManagementPlan> getConservationAndManagementPlans() {
+        details?.priorities?.rows?.collect { Map managementPlanDetails ->
+            if (managementPlanDetails && managementPlanDetails.data1) {
+                new ManagementPlan(managementPlanDetails)
             }
         }?.findAll { it }
     }

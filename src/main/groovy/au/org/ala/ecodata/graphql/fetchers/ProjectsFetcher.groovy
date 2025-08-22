@@ -131,18 +131,6 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
         String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
         Map<Integer, List<Project>> results =  queryElasticSearch(environment, query, params)
 
-        if(environment.arguments.get("activities")) {
-            List projectIdList = results.results.projectId
-
-            List activities = new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
-                    Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(environment.arguments.get("activities") as List)
-
-            //get projects with requested activity output types
-            List projectIds = activities.findAll { it.projectId in projectIdList }.projectId.unique()
-
-            results.results =  results.results.findAll{ it.projectId in projectIds}
-        }
-
         return results
     }
 
