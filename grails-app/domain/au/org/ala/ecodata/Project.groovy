@@ -122,11 +122,6 @@ class Project {
 
     List<OutputTarget> outputTargets
 
-    //New fields to be used bt new search page (initiator=ala response of /ws/project/search)
-    String numberOfRecords
-    String publicParticipation
-    String fundingOrganisation
-
     /** Container to allow program config overrides for an individual Project */
     Map config
 
@@ -258,9 +253,6 @@ class Project {
         geographicInfo nullable:true
         portfolio nullable: true
         comment nullable: true
-        numberOfRecords nullable: true
-        publicParticipation nullable: true
-        fundingOrganisation nullable: true
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         customMetadata nullable: true
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
